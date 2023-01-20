@@ -30,27 +30,27 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
         parent::__construct($ebayFactory, $context);
 
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
-        $this->componentEbayCategory      = $componentEbayCategory;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
-        $this->magentoAttributeHelper     = $magentoAttributeHelper;
+        $this->componentEbayCategory = $componentEbayCategory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
     }
 
     public function execute()
     {
         $details = [
-            'path'               => '',
-            'interface_path'     => '',
-            'template_id'        => null,
-            'is_custom_template' => null
+            'path' => '',
+            'interface_path' => '',
+            'template_id' => null,
+            'is_custom_template' => null,
         ];
 
         $categoryHelper = $this->componentEbayCategory;
 
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
-        $accountId     = $this->getRequest()->getParam('account_id');
-        $value         = $this->getRequest()->getParam('value');
-        $mode          = $this->getRequest()->getParam('mode');
-        $categoryType  = $this->getRequest()->getParam('category_type');
+        $accountId = $this->getRequest()->getParam('account_id');
+        $value = $this->getRequest()->getParam('value');
+        $mode = $this->getRequest()->getParam('mode');
+        $categoryType = $this->getRequest()->getParam('category_type');
 
         switch ($mode) {
             case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY:
@@ -61,7 +61,7 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
                 $details['interface_path'] = $details['path'] . ' (' . $value . ')';
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE:
-                $details['path'] = $this->__('Magento Attribute') .' > '.
+                $details['path'] = $this->__('Magento Attribute') . ' > ' .
                     $this->magentoAttributeHelper->getAttributeLabel($value);
 
                 $details['interface_path'] = $details['path'];
@@ -75,7 +75,7 @@ class GetSelectedCategoryDetails extends \Ess\M2ePro\Controller\Adminhtml\Ebay\C
             $template->loadByCategoryValue($value, $mode, $marketplaceId, 0);
 
             $details['is_custom_template'] = $template->getIsCustomTemplate();
-            $details['template_id']        = $template->getId();
+            $details['template_id'] = $template->getId();
         }
 
         $this->setJsonContent($details);

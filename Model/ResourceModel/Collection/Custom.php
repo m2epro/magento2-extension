@@ -8,15 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Collection;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Collection\Custom
- */
 class Custom extends \Magento\Framework\Data\Collection
 {
-    //########################################
-
-    const CONDITION_LIKE  = 'like';
-    const CONDITION_MATCH = 'match';
+    public const CONDITION_LIKE = 'like';
+    public const CONDITION_MATCH = 'match';
 
     //########################################
 
@@ -107,7 +102,7 @@ class Custom extends \Magento\Framework\Data\Collection
             return $this;
         }
 
-        $orderColumn    = key($this->_orders);
+        $orderColumn = key($this->_orders);
         $orderDirection = current($this->_orders);
 
         $sortByColumn = [];
@@ -128,7 +123,7 @@ class Custom extends \Magento\Framework\Data\Collection
     {
         if ($this->_pageSize) {
             $this->_totalRecords = count($this->_items);
-            $this->_items        = array_splice(
+            $this->_items = array_splice(
                 $this->_items,
                 $this->_pageSize * ($this->getCurPage() - 1),
                 $this->_pageSize

@@ -45,8 +45,8 @@ class InterfaceAndMagentoInventory extends \Ess\M2ePro\Block\Adminhtml\System\Co
             self::HELP_BLOCK,
             [
                 'no_collapse' => true,
-                'no_hide'     => true,
-                'content'     => $this->__(
+                'no_hide' => true,
+                'content' => $this->__(
                     <<<HTML
 <p>Here you can provide global settings for the Module Interface, Inventory, Price, and Variational Product management.
 Recommendations for the tracking direct database changes can also be found below.
@@ -56,14 +56,14 @@ details.</p><br>
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/KX50B')
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'configuration_settings_interface',
             [
-                'legend'      => 'Interface',
+                'legend' => 'Interface',
                 'collapsable' => false,
             ]
         );
@@ -72,17 +72,17 @@ HTML
             'view_show_products_thumbnails_mode',
             self::SELECT,
             [
-                'name'    => 'groups[interface][fields][view_show_products_thumbnails_mode][value]',
-                'label'   => $this->__('Products Thumbnail'),
-                'values'  => [
+                'name' => 'groups[interface][fields][view_show_products_thumbnails_mode][value]',
+                'label' => $this->__('Products Thumbnail'),
+                'values' => [
                     0 => $this->__('Do Not Show'),
-                    1 => $this->__('Show')
+                    1 => $this->__('Show'),
                 ],
-                'value'   => $this->configurationHelper->getViewShowProductsThumbnailsMode(),
+                'value' => $this->configurationHelper->getViewShowProductsThumbnailsMode(),
                 'tooltip' => $this->__(
                     'Choose whether you want to see Thumbnail Images for Products on the
                     Add Products and View Listing Pages.'
-                )
+                ),
             ]
         );
 
@@ -90,19 +90,19 @@ HTML
             'view_show_block_notices_mode',
             self::SELECT,
             [
-                'name'    => 'groups[interface][fields][view_show_block_notices_mode][value]',
-                'label'   => $this->__('Help Information'),
-                'values'  => [
+                'name' => 'groups[interface][fields][view_show_block_notices_mode][value]',
+                'label' => $this->__('Help Information'),
+                'values' => [
                     0 => $this->__('Do Not Show'),
-                    1 => $this->__('Show')
+                    1 => $this->__('Show'),
                 ],
-                'value'   => $this->configurationHelper->getViewShowBlockNoticesMode(),
+                'value' => $this->configurationHelper->getViewShowBlockNoticesMode(),
                 'tooltip' => $this->__(
                     '<p>Choose whether you want the help information to be available at the top of
                     each M2E Pro Page.</p><br>
                     <p><strong>Please note</strong>, it does not disable the help-tips
                     (the icons with the additional information next to the main options).</p>'
-                )
+                ),
             ]
         );
 
@@ -110,16 +110,16 @@ HTML
             'restore_block_notices',
             self::BUTTON,
             [
-                'label'                  => '',
-                'content'                => $this->__('Restore All Helps & Remembered Choices'),
-                'field_extra_attributes' => 'id="restore_block_notices_tr"'
+                'label' => '',
+                'content' => $this->__('Restore All Helps & Remembered Choices'),
+                'field_extra_attributes' => 'id="restore_block_notices_tr"',
             ]
         );
 
         $fieldset = $form->addFieldset(
             'configuration_settings_magento_inventory_quantity',
             [
-                'legend'      => $this->__('Quantity & Price'),
+                'legend' => $this->__('Quantity & Price'),
                 'collapsable' => false,
             ]
         );
@@ -128,18 +128,18 @@ HTML
             'product_force_qty_mode',
             self::SELECT,
             [
-                'name'    => 'groups[quantity_and_price][fields][product_force_qty_mode][value]',
-                'label'   => $this->__('Manage Stock "No", Backorders'),
-                'values'  => [
+                'name' => 'groups[quantity_and_price][fields][product_force_qty_mode][value]',
+                'label' => $this->__('Manage Stock "No", Backorders'),
+                'values' => [
                     0 => $this->__('Disallow'),
-                    1 => $this->__('Allow')
+                    1 => $this->__('Allow'),
                 ],
-                'value'   => $this->configurationHelper->isEnableProductForceQtyMode(),
+                'value' => $this->configurationHelper->isEnableProductForceQtyMode(),
                 'tooltip' => $this->__(
                     'Choose whether M2E Pro is allowed to List Products with unlimited stock or that are
                     temporarily out of stock.<br>
                     <b>Disallow</b> is the recommended setting for eBay Integration.'
-                )
+                ),
             ]
         );
 
@@ -147,16 +147,16 @@ HTML
             'product_force_qty_value',
             self::TEXT,
             [
-                'name'                   => 'groups[quantity_and_price][fields][product_force_qty_value][value]',
-                'label'                  => $this->__('Quantity To Be Listed'),
-                'value'                  => $this->configurationHelper->getProductForceQtyValue(),
-                'tooltip'                => $this->__(
+                'name' => 'groups[quantity_and_price][fields][product_force_qty_value][value]',
+                'label' => $this->__('Quantity To Be Listed'),
+                'value' => $this->configurationHelper->getProductForceQtyValue(),
+                'tooltip' => $this->__(
                     'Set a number to List, e.g. if you have Manage Stock "No" in Magento Product and set this Value
                     to 10, 10 will be sent as available Quantity to the Channel.'
                 ),
                 'field_extra_attributes' => 'id="product_force_qty_value_tr"',
-                'class'                  => 'validate-greater-than-zero',
-                'required'               => true
+                'class' => 'validate-greater-than-zero',
+                'required' => true,
             ]
         );
 
@@ -164,14 +164,14 @@ HTML
             'magento_attribute_price_type_converting_mode',
             self::SELECT,
             [
-                'name'    => 'groups[quantity_and_price][fields][magento_attribute_price_type_converting_mode][value]',
-                'label'   => $this->__('Convert Magento Price Attribute'),
-                'values'  => [
+                'name' => 'groups[quantity_and_price][fields][magento_attribute_price_type_converting_mode][value]',
+                'label' => $this->__('Convert Magento Price Attribute'),
+                'values' => [
                     0 => $this->__('No'),
-                    1 => $this->__('Yes')
+                    1 => $this->__('Yes'),
                 ],
-                'value'   => $this->configurationHelper
-                                  ->getMagentoAttributePriceTypeConvertingMode(),
+                'value' => $this->configurationHelper
+                    ->getMagentoAttributePriceTypeConvertingMode(),
                 'tooltip' => $this->__(
                     '<p>Choose whether Magento Price Attribute values should be converted automatically.
                     With this option enabled, M2E Pro will provide currency conversion based on Magento
@@ -182,15 +182,15 @@ HTML
                     the currency conversion is performed automatically based on the set exchange rate
                     (e.g. 1 USD = 0.82 GBP).<br>
                     The Item will be available on Channel at the Price of 4.1 GBP.</p>'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_configuration_settings_variational_products_settings',
             [
-                'legend'      => $this->__('Variational Product Settings'),
-                'collapsable' => false
+                'legend' => $this->__('Variational Product Settings'),
+                'collapsable' => false,
             ]
         );
 
@@ -198,13 +198,13 @@ HTML
             'grouped_product_mode',
             self::SELECT,
             [
-                'name'    => 'groups[variational_product_settings][fields][grouped_product_mode][value]',
-                'label'   => $this->__('List Grouped Product as'),
-                'values'  => [
+                'name' => 'groups[variational_product_settings][fields][grouped_product_mode][value]',
+                'label' => $this->__('List Grouped Product as'),
+                'values' => [
                     1 => $this->__('Product Set'),
-                    0 => $this->__('Variations')
+                    0 => $this->__('Variations'),
                 ],
-                'value'   => $this->configurationHelper->getGroupedProductMode(),
+                'value' => $this->configurationHelper->getGroupedProductMode(),
                 'tooltip' => $this->__(
                     <<<HTML
 <b>Product Set</b> - a group of products will be listed as a Set (Individual Item).
@@ -216,15 +216,15 @@ HTML
                     $this->supportHelper->getSupportUrl(
                         '/support/solutions/articles/9000218437'
                     )
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'direct_database_changes_field',
             [
-                'legend'      => $this->__('Direct Database Changes'),
-                'collabsable' => false
+                'legend' => $this->__('Direct Database Changes'),
+                'collabsable' => false,
             ]
         );
 
@@ -234,13 +234,13 @@ HTML
             'listing_product_inspector_mode',
             self::SELECT,
             [
-                'name'    => 'groups[direct_database_changes][fields][listing_product_inspector_mode][value]',
-                'label'   => $this->__('Track Direct Database Changes'),
-                'values'  => [
+                'name' => 'groups[direct_database_changes][fields][listing_product_inspector_mode][value]',
+                'label' => $this->__('Track Direct Database Changes'),
+                'values' => [
                     ['value' => 0, 'label' => $this->__('No')],
-                    ['value' => 1, 'label' => $this->__('Yes')]
+                    ['value' => 1, 'label' => $this->__('Yes')],
                 ],
-                'value'   => $inspectorMode,
+                'value' => $inspectorMode,
                 'tooltip' => $this->__(
                     <<<HTML
 <p>If you update Magento Product information over the Magento Core Models (e.g. direct SQL injections),
@@ -256,7 +256,7 @@ HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/3Pxw'),
                     $this->supportHelper->getDocumentationArticleUrl('x/1fxw')
-                )
+                ),
             ]
         );
 
@@ -282,7 +282,7 @@ HTML
 
         $this->js->addRequireJs(
             [
-                'j' => 'jquery'
+                'j' => 'jquery',
             ],
             <<<JS
 $('view_show_block_notices_mode').observe('change', function() {

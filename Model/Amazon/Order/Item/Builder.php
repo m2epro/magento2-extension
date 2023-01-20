@@ -15,6 +15,7 @@ use Ess\M2ePro\Model\AbstractModel;
  */
 class Builder extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -68,10 +69,13 @@ class Builder extends AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Order\Item $existItem */
         $existItem = $this->amazonFactory->getObject('Order\Item')->getCollection()
-            ->addFieldToFilter('amazon_order_item_id', $this->getData('amazon_order_item_id'))
-            ->addFieldToFilter('order_id', $this->getData('order_id'))
-            ->addFieldToFilter('sku', $this->getData('sku'))
-            ->getFirstItem();
+                                         ->addFieldToFilter(
+                                             'amazon_order_item_id',
+                                             $this->getData('amazon_order_item_id')
+                                         )
+                                         ->addFieldToFilter('order_id', $this->getData('order_id'))
+                                         ->addFieldToFilter('sku', $this->getData('sku'))
+                                         ->getFirstItem();
 
         foreach ($this->getData() as $key => $value) {
             if (!$existItem->getId() || ($existItem->hasData($key) && $existItem->getData($key) != $value)) {

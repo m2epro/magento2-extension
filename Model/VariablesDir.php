@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model;
  */
 class VariablesDir extends AbstractModel
 {
-    const BASE_NAME = 'M2ePro';
+    public const BASE_NAME = 'M2ePro';
 
     private $_fileDriver = null;
     private $_childFolder = null;
@@ -39,13 +39,13 @@ class VariablesDir extends AbstractModel
 
         if ($data['child_folder'] !== null) {
             if ($data['child_folder'][0] != DIRECTORY_SEPARATOR) {
-                $data['child_folder'] = DIRECTORY_SEPARATOR.$data['child_folder'];
+                $data['child_folder'] = DIRECTORY_SEPARATOR . $data['child_folder'];
             }
-            if ($data['child_folder'][strlen($data['child_folder'])-1] != DIRECTORY_SEPARATOR) {
+            if ($data['child_folder'][strlen($data['child_folder']) - 1] != DIRECTORY_SEPARATOR) {
                 $data['child_folder'] .= DIRECTORY_SEPARATOR;
             }
 
-            $this->_pathVariablesDirChildFolder = $this->_pathVariablesDirBase.$data['child_folder'];
+            $this->_pathVariablesDirChildFolder = $this->_pathVariablesDirBase . $data['child_folder'];
             $this->_pathVariablesDirBase .= DIRECTORY_SEPARATOR;
             $this->_childFolder = $data['child_folder'];
         } else {
@@ -55,16 +55,16 @@ class VariablesDir extends AbstractModel
         }
 
         $this->_pathVariablesDirBase = str_replace(
-            ['/','\\'],
+            ['/', '\\'],
             DIRECTORY_SEPARATOR,
             $this->_pathVariablesDirBase
         );
         $this->_pathVariablesDirChildFolder = str_replace(
-            ['/','\\'],
+            ['/', '\\'],
             DIRECTORY_SEPARATOR,
             $this->_pathVariablesDirChildFolder
         );
-        $this->_childFolder = str_replace(['/','\\'], DIRECTORY_SEPARATOR, $this->_childFolder);
+        $this->_childFolder = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $this->_childFolder);
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -122,14 +122,14 @@ class VariablesDir extends AbstractModel
             $tempPath = $this->getBasePath();
             $tempChildFolders = explode(
                 DIRECTORY_SEPARATOR,
-                substr($this->_childFolder, 1, strlen($this->_childFolder)-2)
+                substr($this->_childFolder, 1, strlen($this->_childFolder) - 2)
             );
 
             foreach ($tempChildFolders as $key => $value) {
-                if (!$this->_fileDriver->isDirectory($tempPath.$value.DIRECTORY_SEPARATOR)) {
-                    $this->_fileDriver->createDirectory($tempPath.$value.DIRECTORY_SEPARATOR, 0777);
+                if (!$this->_fileDriver->isDirectory($tempPath . $value . DIRECTORY_SEPARATOR)) {
+                    $this->_fileDriver->createDirectory($tempPath . $value . DIRECTORY_SEPARATOR, 0777);
                 }
-                $tempPath = $tempPath.$value.DIRECTORY_SEPARATOR;
+                $tempPath = $tempPath . $value . DIRECTORY_SEPARATOR;
             }
         } else {
             $this->_fileDriver->createDirectory($this->getPath(), 0777);

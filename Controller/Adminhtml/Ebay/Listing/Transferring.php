@@ -75,9 +75,10 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                       ->createBlock(
                           \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Transferring\Destination::class,
                           '',
-                          ['data' => [
-                              'listing' => $this->listing
-                              ]
+                          [
+                              'data' => [
+                                  'listing' => $this->listing,
+                              ],
                           ]
                       );
 
@@ -98,7 +99,7 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                 [
                     '_current' => true,
                     'listing_id' => $this->listing->getId(),
-                    'step' => 3
+                    'step' => 3,
                 ]
             );
         }
@@ -110,7 +111,7 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         $sessionData = [
             'account_id' => (int)$this->getRequest()->getParam('account_id'),
             'marketplace_id' => (int)$this->getRequest()->getParam('marketplace_id'),
-            'store_id' => (int)$this->getRequest()->getParam('store_id')
+            'store_id' => (int)$this->getRequest()->getParam('store_id'),
         ];
 
         foreach ($templates as $nick) {
@@ -132,7 +133,7 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                 '_current' => true,
                 'step' => 1,
                 'creation_mode' => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
-                'wizard'        => true
+                'wizard' => true,
             ]
         );
     }
@@ -149,8 +150,8 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             '',
             [
                 'data' => [
-                    'listing' => $this->listing
-                ]
+                    'listing' => $this->listing,
+                ],
             ]
         );
 

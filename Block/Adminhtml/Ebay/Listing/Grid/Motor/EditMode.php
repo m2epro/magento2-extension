@@ -20,6 +20,7 @@ class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     public function setListingId($id)
     {
         $this->listingId = $id;
+
         return $this;
     }
 
@@ -41,19 +42,21 @@ class EditMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_mode_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_mode_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
             'id',
             'hidden',
             [
-                'name'  => 'id',
-                'value' => $this->getListing()->getId()
+                'name' => 'id',
+                'value' => $this->getListing()->getId(),
             ]
         );
 
@@ -73,7 +76,7 @@ You are able to select one of the available modes:<br>
     </li>
 </ul>
 HTML
-                )
+                ),
             ]
         );
 
@@ -89,13 +92,13 @@ HTML
                 'name' => 'parts_compatibility_mode',
                 'label' => $this->__('Mode'),
                 'value' => $this->getListing()->getChildObject()->isPartsCompatibilityModeEpids()
-                                ? \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_EPIDS
-                                : \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_KTYPES,
+                    ? \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_EPIDS
+                    : \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_KTYPES,
                 'values' => [
                     \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_EPIDS => $this->__('ePIDs'),
                     \Ess\M2ePro\Model\Ebay\Listing::PARTS_COMPATIBILITY_MODE_KTYPES => $this->__('kTypes'),
                 ],
-                'required' => true
+                'required' => true,
             ]
         );
 

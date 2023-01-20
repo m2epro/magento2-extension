@@ -66,7 +66,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         if (empty($filteredProductsIdsByType)) {
             $this->setJsonContent([
                 'type' => $msgType,
-                'messages' => $messages
+                'messages' => $messages,
             ]);
 
             return $this->getResult();
@@ -83,7 +83,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         $this->setJsonContent([
             'type' => $msgType,
             'messages' => $messages,
-            'products_ids' => implode(',', $filteredProductsIdsByType)
+            'products_ids' => implode(',', $filteredProductsIdsByType),
         ]);
 
         return $this->getResult();

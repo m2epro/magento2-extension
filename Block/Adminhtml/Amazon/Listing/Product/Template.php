@@ -41,9 +41,10 @@ abstract class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractCont
         $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         foreach ($this->getMessages() as $message) {
-            $addMethod = 'add'.ucfirst($message['type']);
+            $addMethod = 'add' . ucfirst($message['type']);
             $messages->$addMethod($message['text']);
         }
+
         return $messages->toHtml();
     }
 

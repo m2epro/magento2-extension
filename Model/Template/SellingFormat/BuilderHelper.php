@@ -42,12 +42,12 @@ class BuilderHelper
                 if ($priceModifierMode == SellingFormat::PRICE_MODIFIER_ATTRIBUTE) {
                     $priceModifierData[] = [
                         'mode' => $priceModifierMode,
-                        'attribute_code' => $input[$keyPriceModifierAttribute][$key]
+                        'attribute_code' => $input[$keyPriceModifierAttribute][$key],
                     ];
                 } else {
                     $priceModifierData[] = [
                         'mode' => $priceModifierMode,
-                        'value' => $input[$keyPriceModifierValue][$key]
+                        'value' => $input[$keyPriceModifierValue][$key],
                     ];
                 }
             }

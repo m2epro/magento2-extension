@@ -8,14 +8,14 @@
 
 namespace Ess\M2ePro\Model;
 
-use \Ess\M2ePro\Helper\Data as Helper;
+use Ess\M2ePro\Helper\Data as Helper;
 
 /**
  * Class \Ess\M2ePro\Model\OperationHistory
  */
 class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const MAX_LIFETIME_INTERVAL = 432000; // 5 days
+    public const MAX_LIFETIME_INTERVAL = 432000; // 5 days
 
     /**
      * @var OperationHistory
@@ -116,16 +116,16 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $data = [
             'nick' => $nick,
-            'parent_id'  => $parentId,
-            'data'       => $this->helperData->jsonEncode($data),
-            'initiator'  => $initiator,
-            'start_date' => $this->helperData->getCurrentGmtDate()
+            'parent_id' => $parentId,
+            'data' => $this->helperData->jsonEncode($data),
+            'initiator' => $initiator,
+            'start_date' => $this->helperData->getCurrentGmtDate(),
         ];
 
         $this->object = $this->activeRecordFactory
-                             ->getObject('OperationHistory')
-                             ->setData($data)
-                             ->save();
+            ->getObject('OperationHistory')
+            ->setData($data)
+            ->save();
 
         return true;
     }
@@ -172,10 +172,12 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         if ($existedData === null) {
             is_array($value) ? $existedData = [$value] : $existedData = $value;
+
             return $this->setContentData($key, $existedData);
         }
 
         is_array($existedData) ? $existedData[] = $value : $existedData .= $value;
+
         return $this->setContentData($key, $existedData);
     }
 
@@ -203,7 +205,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function cleanOldData()
     {
         $minDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $minDate->modify('-'.self::MAX_LIFETIME_INTERVAL.' seconds');
+        $minDate->modify('-' . self::MAX_LIFETIME_INTERVAL . ' seconds');
 
         $this->getResource()->getConnection()->delete(
             $this->getResource()->getMainTable(),
@@ -237,13 +239,13 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
                 return;
             }
 
-             $stackTrace = debug_backtrace(false);
-             $object->setContentData('fatal_error', [
+            $stackTrace = debug_backtrace(false);
+            $object->setContentData('fatal_error', [
                 'message' => $error['message'],
                 'file' => $error['file'],
                 'line' => $error['line'],
-                'trace' => $this->getHelper('Module\Exception')->getFatalStackTraceInfo($stackTrace)
-             ]);
+                'trace' => $this->getHelper('Module\Exception')->getFatalStackTraceInfo($stackTrace),
+            ]);
         });
 
         return true;
@@ -293,7 +295,6 @@ INFO;
         $childObjects->getSize() > 0 && $nestingLevel++;
 
         foreach ($childObjects as $item) {
-
             /** @var OperationHistory $object */
             $object = $this->activeRecordFactory->getObject('OperationHistory');
             $object->setObject($item);
@@ -359,8 +360,8 @@ INFO;
         $info = $this->getExecutionInfo($nestingLevel);
 
         $childObjects = $this->getCollection()
-            ->addFieldToFilter('parent_id', $this->getObject()->getId())
-            ->setOrder('start_date', 'ASC');
+                             ->addFieldToFilter('parent_id', $this->getObject()->getId())
+                             ->setOrder('start_date', 'ASC');
 
         $childObjects->getSize() > 0 && $nestingLevel++;
 
@@ -391,10 +392,10 @@ INFO;
         }
 
         $minutes = (int)($totalTime / 60);
-        $minutes < 10 && $minutes = '0'.$minutes;
+        $minutes < 10 && $minutes = '0' . $minutes;
 
         $seconds = $totalTime - $minutes * 60;
-        $seconds < 10 && $seconds = '0'.$seconds;
+        $seconds < 10 && $seconds = '0' . $seconds;
 
         return "{$minutes}:{$seconds}";
     }

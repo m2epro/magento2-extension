@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-
 use Ess\M2ePro\Model\Walmart\Account;
 
 class ListingOther extends AbstractForm
@@ -51,7 +50,9 @@ class ListingOther extends AbstractForm
         $attributes = $this->magentoAttributeHelper->filterByInputTypes(
             $allAttributes,
             [
-                'text', 'textarea', 'select'
+                'text',
+                'textarea',
+                'select',
             ]
         );
 
@@ -93,7 +94,7 @@ class ListingOther extends AbstractForm
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/ev1IB')
-                )
+                ),
             ]
         );
 
@@ -101,7 +102,7 @@ HTML
             'general',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -116,7 +117,7 @@ HTML
                     0 => $this->__('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
-                'tooltip' => $this->__('Enable to automatically import the Unmanaged Items.')
+                'tooltip' => $this->__('Enable to automatically import the Unmanaged Items.'),
             ]
         );
 
@@ -130,7 +131,7 @@ HTML
                 'value' => $formData['related_store_id'],
                 'tooltip' => $this->__(
                     'Select Magento Store View that will be associated with Marketplace set for the current Account.'
-                )
+                ),
             ]
         );
 
@@ -150,7 +151,7 @@ HTML
                 'tooltip' => $this->__(
                     'Enable to automatically link your Unmanaged Items to Magento
                     Products based on the linking Attribute settings.'
-                )
+                ),
             ]
         );
 
@@ -164,7 +165,7 @@ HTML
                     Unmanaged Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are linked based on the correspondence between Walmart Item values and
                     Magento Product Attribute values. </p>'
-                )
+                ),
             ]
         );
 
@@ -173,7 +174,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['sku']['mode'])
+            if (
+                isset($mappingSettings['sku']['mode'])
                 && $mappingSettings['sku']['mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['sku']['attribute'] == $attribute['code']
             ) {
@@ -204,16 +206,17 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'value' => isset($mappingSettings['sku']['mode'])
-                    && $mappingSettings['sku']['mode'] != Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
+                && $mappingSettings['sku']['mode'] != Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['sku']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_sku_priority_td">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_sku_priority"
@@ -238,7 +241,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['upc']['mode'])
+            if (
+                isset($mappingSettings['upc']['mode'])
                 && $mappingSettings['upc']['mode'] == $modeCustomAttribute
                 && $mappingSettings['upc']['attribute'] == $attribute['code']
             ) {
@@ -268,16 +272,17 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'value' => isset($mappingSettings['upc']['mode'])
-                    && $mappingSettings['upc']['mode'] != $modeCustomAttribute
+                && $mappingSettings['upc']['mode'] != $modeCustomAttribute
                     ? $mappingSettings['upc']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_upc_priority_td">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_upc_priority"
@@ -294,14 +299,15 @@ HTML
             [
                 'name' => 'mapping_upc_attribute',
                 'value' => isset($mappingSettings['upc']['attribute'])
-                    ? $mappingSettings['upc']['attribute'] : ''
+                    ? $mappingSettings['upc']['attribute'] : '',
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['gtin']['mode'])
+            if (
+                isset($mappingSettings['gtin']['mode'])
                 && $mappingSettings['gtin']['mode'] == Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['gtin']['attribute'] == $attribute['code']
             ) {
@@ -330,16 +336,17 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'value' => isset($mappingSettings['gtin']['mode'])
-                    && $mappingSettings['gtin']['mode'] != Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE
+                && $mappingSettings['gtin']['mode'] != Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['gtin']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_gtin_priority_td">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_gtin_priority"
@@ -364,7 +371,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['wpid']['mode'])
+            if (
+                isset($mappingSettings['wpid']['mode'])
                 && $mappingSettings['wpid']['mode'] == Account::OTHER_LISTINGS_MAPPING_WPID_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['wpid']['attribute'] == $attribute['code']
             ) {
@@ -395,16 +403,17 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'value' => isset($mappingSettings['wpid']['mode'])
-                           && $mappingSettings['wpid']['mode'] != $accountMappingWPIDModeCustomAttribute
+                && $mappingSettings['wpid']['mode'] != $accountMappingWPIDModeCustomAttribute
                     ? $mappingSettings['wpid']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_wpid_priority_td">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_wpid_priority"
@@ -429,7 +438,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['title']['mode'])
+            if (
+                isset($mappingSettings['title']['mode'])
                 && $mappingSettings['title']['mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['title']['attribute'] == $attribute['code']
             ) {
@@ -461,16 +471,17 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'value' => isset($mappingSettings['title']['mode'])
-                           && $mappingSettings['title']['mode'] != $accountMappingTitleModeCustomAttribute
+                && $mappingSettings['title']['mode'] != $accountMappingTitleModeCustomAttribute
                     ? $mappingSettings['title']['mode'] : '',
                 'create_magento_attribute' => true,
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <div id="mapping_title_priority_td">
     {$this->__('Priority')}: <input style="width: 50px;"
                                     name="mapping_title_priority"

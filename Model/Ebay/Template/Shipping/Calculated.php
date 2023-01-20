@@ -13,20 +13,20 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
  */
 class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const MEASUREMENT_SYSTEM_ENGLISH = 1;
-    const MEASUREMENT_SYSTEM_METRIC  = 2;
+    public const MEASUREMENT_SYSTEM_ENGLISH = 1;
+    public const MEASUREMENT_SYSTEM_METRIC = 2;
 
-    const PACKAGE_SIZE_NONE             = 0;
-    const PACKAGE_SIZE_CUSTOM_VALUE     = 1;
-    const PACKAGE_SIZE_CUSTOM_ATTRIBUTE = 2;
+    public const PACKAGE_SIZE_NONE = 0;
+    public const PACKAGE_SIZE_CUSTOM_VALUE = 1;
+    public const PACKAGE_SIZE_CUSTOM_ATTRIBUTE = 2;
 
-    const DIMENSION_NONE             = 0;
-    const DIMENSION_CUSTOM_VALUE     = 1;
-    const DIMENSION_CUSTOM_ATTRIBUTE = 2;
+    public const DIMENSION_NONE = 0;
+    public const DIMENSION_CUSTOM_VALUE = 1;
+    public const DIMENSION_CUSTOM_ATTRIBUTE = 2;
 
-    const WEIGHT_NONE             = 0;
-    const WEIGHT_CUSTOM_VALUE     = 1;
-    const WEIGHT_CUSTOM_ATTRIBUTE = 2;
+    public const WEIGHT_NONE = 0;
+    public const WEIGHT_CUSTOM_VALUE = 1;
+    public const WEIGHT_CUSTOM_ATTRIBUTE = 2;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
@@ -51,6 +51,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_shipping_calculated');
+
         return parent::save();
     }
 
@@ -89,13 +90,14 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function setShippingTemplate(\Ess\M2ePro\Model\Ebay\Template\Shipping $instance)
     {
-         $this->shippingTemplateModel = $instance;
+        $this->shippingTemplateModel = $instance;
     }
 
     // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -159,9 +161,9 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getPackageSizeSource()
     {
         return [
-            'mode'      => (int)$this->getData('package_size_mode'),
-            'value'     => $this->getData('package_size_value'),
-            'attribute' => $this->getData('package_size_attribute')
+            'mode' => (int)$this->getData('package_size_mode'),
+            'value' => $this->getData('package_size_value'),
+            'attribute' => $this->getData('package_size_attribute'),
         ];
     }
 
@@ -198,14 +200,14 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return [
             'mode' => (int)$this->getData('dimension_mode'),
 
-            'width_value'  => $this->getData('dimension_width_value'),
-            'width_attribute'  => $this->getData('dimension_width_attribute'),
+            'width_value' => $this->getData('dimension_width_value'),
+            'width_attribute' => $this->getData('dimension_width_attribute'),
 
             'length_value' => $this->getData('dimension_length_value'),
             'length_attribute' => $this->getData('dimension_length_attribute'),
 
-            'depth_value'  => $this->getData('dimension_depth_value'),
-            'depth_attribute'  => $this->getData('dimension_depth_attribute')
+            'depth_value' => $this->getData('dimension_depth_value'),
+            'depth_attribute' => $this->getData('dimension_depth_attribute'),
         ];
     }
 
@@ -245,7 +247,7 @@ class Calculated extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'mode' => (int)$this->getData('weight_mode'),
             'major' => $this->getData('weight_major'),
             'minor' => $this->getData('weight_minor'),
-            'attribute' => $this->getData('weight_attribute')
+            'attribute' => $this->getData('weight_attribute'),
         ];
     }
 

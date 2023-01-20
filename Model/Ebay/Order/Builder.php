@@ -16,19 +16,19 @@ use Ess\M2ePro\Model\Ebay\Order\Helper as OrderHelper;
  */
 class Builder extends AbstractModel
 {
-    const STATUS_NOT_MODIFIED = 0;
-    const STATUS_NEW          = 1;
-    const STATUS_UPDATED      = 2;
+    public const STATUS_NOT_MODIFIED = 0;
+    public const STATUS_NEW = 1;
+    public const STATUS_UPDATED = 2;
 
-    const UPDATE_COMPLETED_CHECKOUT = 'completed_checkout';
-    const UPDATE_COMPLETED_PAYMENT  = 'completed_payment';
-    const UPDATE_COMPLETED_SHIPPING = 'completed_shipping';
-    const UPDATE_CANCELLATION       = 'cancellation';
-    const UPDATE_BUYER_MESSAGE      = 'buyer_message';
-    const UPDATE_PAYMENT_DATA       = 'payment_data';
-    const UPDATE_SHIPPING_TAX_DATA  = 'shipping_tax_data';
-    const UPDATE_ITEMS_COUNT        = 'items_count';
-    const UPDATE_EMAIL              = 'email';
+    public const UPDATE_COMPLETED_CHECKOUT = 'completed_checkout';
+    public const UPDATE_COMPLETED_PAYMENT = 'completed_payment';
+    public const UPDATE_COMPLETED_SHIPPING = 'completed_shipping';
+    public const UPDATE_CANCELLATION = 'cancellation';
+    public const UPDATE_BUYER_MESSAGE = 'buyer_message';
+    public const UPDATE_PAYMENT_DATA = 'payment_data';
+    public const UPDATE_SHIPPING_TAX_DATA = 'shipping_tax_data';
+    public const UPDATE_ITEMS_COUNT = 'items_count';
+    public const UPDATE_EMAIL = 'email';
 
     /** @var \Ess\M2ePro\Model\Ebay\Order\Helper */
     private $helper;
@@ -78,6 +78,7 @@ class Builder extends AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Account $account
      * @param array $data
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -224,7 +225,6 @@ class Builder extends AbstractModel
             $isDeleted = false;
 
             foreach ($existOrders as $key => $order) {
-
                 $magentoOrderId = $order->getData('magento_order_id');
                 if (!empty($magentoOrderId)) {
                     continue;
@@ -252,7 +252,6 @@ class Builder extends AbstractModel
         if ($this->order->getMagentoOrderId() === null) {
             $this->order->setStatusUpdateRequired(true);
         }
-
         // ---------------------------------------
     }
 
@@ -269,14 +268,17 @@ class Builder extends AbstractModel
         }
 
         $existed = $this->ebayFactory->getObject('Order')->getCollection()
-            ->addFieldToFilter('account_id', $this->account->getId())
-            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC);
+                                     ->addFieldToFilter('account_id', $this->account->getId())
+                                     ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC);
 
         $whereExpression = sprintf(
             "ebay_order_id IN (%s)",
-            implode(',', array_map(function ($orderId) {
-                return "'$orderId'";
-            }, $orderIds))
+            implode(
+                ',',
+                array_map(function ($orderId) {
+                    return "'$orderId'";
+                }, $orderIds)
+            )
         );
 
         if ($this->getData('selling_manager_id')) {
@@ -348,7 +350,6 @@ class Builder extends AbstractModel
         $magentoOrder = $this->order->getMagentoOrder();
 
         if (!empty($finalFee) && !empty($magentoOrder)) {
-
             if (!empty($magentoOrder->getPayment())) {
                 $paymentAdditionalData = $this->getHelper('Data')->unserialize(
                     $magentoOrder->getPayment()->getAdditionalData()
@@ -425,7 +426,7 @@ class Builder extends AbstractModel
             $transactionData['order_id'] = $this->order->getId();
             // transaction_id may be empty for refunded transaction
             if (empty($transactionData['transaction_id'])) {
-                $transactionData['transaction_id'] = $paymentTransactionId . '-' . ++$postfix;
+                $transactionData['transaction_id'] = $paymentTransactionId . '-' . (++$postfix);
             }
 
             /** @var \Ess\M2ePro\Model\Ebay\Order\ExternalTransaction\Builder $transactionBuilder */
@@ -508,7 +509,8 @@ class Builder extends AbstractModel
             }
         }
 
-        if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED &&
+        if (
+            $this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED &&
             $this->order->getId() &&
             !$this->order->getChildObject()->isCanceled()
         ) {
@@ -598,7 +600,7 @@ class Builder extends AbstractModel
 
         $group = '/ebay/order/settings/marketplace_' . (int)$this->getData('marketplace_id') . '/';
         $useFirstStreetLineAsCompany = $this->getHelper('Module')->getConfig()
-            ->getGroupValue($group, 'use_first_street_line_as_company');
+                                            ->getGroupValue($group, 'use_first_street_line_as_company');
 
         if ($useFirstStreetLineAsCompany && count($shippingAddress['street']) > 1) {
             $shippingAddress['company'] = array_shift($shippingAddress['street']);
@@ -639,7 +641,7 @@ class Builder extends AbstractModel
                 'Magento Order was not created. Reason: %msg%',
                 [
                     'msg' => 'Order Creation Rules were not met. ' .
-                        'Press Create Order Button at Order View Page to create it anyway.'
+                        'Press Create Order Button at Order View Page to create it anyway.',
                 ]
             );
 
@@ -659,7 +661,7 @@ class Builder extends AbstractModel
                     'as new combined eBay order #%new_id% was created.',
                     [
                         '!order_id' => $relatedOrder->getMagentoOrder()->getRealOrderId(),
-                        '!new_id'   => $this->order->getChildObject()->getEbayOrderId(),
+                        '!new_id' => $this->order->getChildObject()->getEbayOrderId(),
                     ]
                 );
 
@@ -698,7 +700,7 @@ class Builder extends AbstractModel
                 'Combined eBay order #%new_id% was created for canceled eBay order(s) #%old_ids%.',
                 [
                     '!old_ids' => implode(', ', $ebayOrderIds),
-                    '!new_id'  => $this->order->getChildObject()->getEbayOrderId(),
+                    '!new_id' => $this->order->getChildObject()->getEbayOrderId(),
                 ]
             );
         }
@@ -708,7 +710,8 @@ class Builder extends AbstractModel
     {
         $ebayOrderIds = [];
         foreach ($this->relatedOrders as $relatedOrder) {
-            if ($this->order->getChildObject()->isPaymentCompleted() &&
+            if (
+                $this->order->getChildObject()->isPaymentCompleted() &&
                 !$relatedOrder->getChildObject()->isPaymentCompleted()
             ) {
                 $ebayOrderIds[] = $relatedOrder->getChildObject()->getEbayOrderId();
@@ -873,13 +876,17 @@ class Builder extends AbstractModel
         $shippingDetails = $this->getData('shipping_details');
         $taxDetails = $this->getData('tax_details');
 
-        if (!empty($shippingDetails['price']) && $shippingDetails['price'] != $ebayOrder->getShippingPrice() ||
-            !empty($shippingDetails['service']) && $shippingDetails['service'] != $ebayOrder->getShippingService()) {
+        if (
+            !empty($shippingDetails['price']) && $shippingDetails['price'] != $ebayOrder->getShippingPrice() ||
+            !empty($shippingDetails['service']) && $shippingDetails['service'] != $ebayOrder->getShippingService()
+        ) {
             return true;
         }
 
-        if ((!empty($taxDetails['rate']) && $taxDetails['rate'] != $ebayOrder->getTaxRate()) ||
-            (!empty($taxDetails['amount']) && $taxDetails['amount'] != $ebayOrder->getTaxAmount())) {
+        if (
+            (!empty($taxDetails['rate']) && $taxDetails['rate'] != $ebayOrder->getTaxRate()) ||
+            (!empty($taxDetails['amount']) && $taxDetails['amount'] != $ebayOrder->getTaxAmount())
+        ) {
             return true;
         }
 
@@ -954,6 +961,7 @@ class Builder extends AbstractModel
 
     /**
      * @param $update
+     *
      * @return bool
      */
     protected function hasUpdate($update)

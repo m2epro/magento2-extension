@@ -44,7 +44,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\
         $variations = $this->getListingProduct()->getVariations(true);
         if (empty($variations)) {
             throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.', [
-                'listing_product_id' => $this->getListingProduct()->getId()
+                'listing_product_id' => $this->getListingProduct()->getId(),
             ]);
         }
 

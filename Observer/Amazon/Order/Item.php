@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Amazon\Order;
 
-/**
- * Class \Ess\M2ePro\Observer\Amazon\Order\Item
- */
 class Item extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -32,7 +28,7 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
     public function process()
     {
         /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
-        $orderItem  = $this->getEvent()->getData('order_item');
+        $orderItem = $this->getEvent()->getData('order_item');
 
         /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem */
         $amazonOrderItem = $orderItem->getChildObject();
@@ -57,11 +53,11 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
             $otherListing->mapProduct($product->getId());
         } else {
             $dataForAdd = [
-                'account_id'     => $orderItem->getOrder()->getAccountId(),
+                'account_id' => $orderItem->getOrder()->getAccountId(),
                 'marketplace_id' => $orderItem->getOrder()->getMarketplaceId(),
-                'sku'            => $amazonOrderItem->getSku(),
-                'product_id'     => $product->getId(),
-                'store_id'       => $amazonOrderItem->getAmazonOrder()->getAssociatedStoreId(),
+                'sku' => $amazonOrderItem->getSku(),
+                'product_id' => $product->getId(),
+                'store_id' => $amazonOrderItem->getAmazonOrder()->getAssociatedStoreId(),
             ];
 
             $this->activeRecordFactory->getObject('Amazon\Item')->setData($dataForAdd)->save();

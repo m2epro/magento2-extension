@@ -32,6 +32,7 @@ class ChangeMaintenanceMode extends Main
         }
 
         $this->messageManager->addSuccess($this->__('Changed.'));
+
         return $this->_redirect($this->controlPanelHelper->getPageUrl());
     }
 }

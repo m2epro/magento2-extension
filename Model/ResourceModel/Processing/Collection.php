@@ -31,6 +31,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
             'expiration_date',
             ['lt' => $this->helperFactory->getObject('Data')->getCurrentGmtDate()]
         );
+
         return $this;
     }
 

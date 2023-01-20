@@ -16,7 +16,7 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
 
     private const INTERVAL_TO_FIRST_CHECK_BUYER_CANCELLATION_REQUESTS = 259200; // 3 days
     private const INTERVAL_TO_COMMON_CHECK_BUYER_CANCELLATION_REQUESTS = 86400; // 1 day
-    private const INTERVAL_FOR_ACCOUNT_SYNCHRONIZATION = 7200; // 2 hours
+    private const INTERVAL_FOR_ACCOUNT_SYNCHRONIZATION = 7200;                  // 2 hours
 
     private const REGISTRY_PREFIX = '/walmart/order/receive_with_cancellation_requested/by_account/';
     private const REGISTRY_SUFFIX = '/last_update/';
@@ -141,7 +141,7 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
         $accountsCollection = $this->accountCollectionFactory
             ->create(['childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]);
 
-        /** @var \Ess\M2ePro\Model\Account $account **/
+        /** @var \Ess\M2ePro\Model\Account $account * */
         foreach ($accountsCollection->getItems() as $account) {
             try {
                 $accountId = (int)$account->getId();
@@ -194,6 +194,7 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
 
         $now = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         $lastUpdateDateTime = \Ess\M2ePro\Helper\Date::createDateGmt($lastUpdate);
+
         return $now->getTimestamp() - $lastUpdateDateTime->getTimestamp() > self::INTERVAL_FOR_ACCOUNT_SYNCHRONIZATION;
     }
 
@@ -297,14 +298,14 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
             }
 
             $cancellationRequestSavedPreviously = $existItem->getChildObject()
-                ->isBuyerCancellationRequested();
+                                                            ->isBuyerCancellationRequested();
             if ($cancellationRequestSavedPreviously) {
                 continue;
             }
 
             $existItem->getChildObject()
-                ->setData('buyer_cancellation_requested', 1)
-                ->save();
+                      ->setData('buyer_cancellation_requested', 1)
+                      ->save();
 
             $this->notifyAboutBuyerCancellationRequested($existItem->getChildObject());
         }
@@ -325,7 +326,7 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
             $description,
             [
                 '!order_number' => $walmartOrder->getWalmartOrderId(),
-                '!item_name'  => $walmartOrderItem->getTitle()
+                '!item_name' => $walmartOrderItem->getTitle(),
             ]
         );
     }

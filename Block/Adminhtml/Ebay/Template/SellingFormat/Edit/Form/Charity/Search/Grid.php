@@ -78,40 +78,40 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('id', [
-            'header'        => $this->__('ID'),
-            'width'         => '50px',
-            'align'         => 'left',
-            'type'          => 'text',
-            'index'         => 'id',
-            'escape'        => true,
-            'sortable'      => false,
-            'filter'        => false,
+            'header' => $this->__('ID'),
+            'width' => '50px',
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'id',
+            'escape' => true,
+            'sortable' => false,
+            'filter' => false,
         ]);
 
         $this->addColumn('name', [
-            'header'        => $this->__('Name'),
-            'align'         => 'left',
-            'type'          => 'text',
-            'index'         => 'name',
-            'escape'        => true,
-            'sortable'      => false,
-            'filter'        => false,
+            'header' => $this->__('Name'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
+            'escape' => true,
+            'sortable' => false,
+            'filter' => false,
         ]);
 
         $this->addColumn('action', [
-            'header'    => $this->__('Action'),
-            'align'     => 'left',
-            'width'     => '50px',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'actions'   => [
+            'header' => $this->__('Action'),
+            'align' => 'left',
+            'width' => '50px',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'actions' => [
                 0 => [
                     'label' => $this->__('Select'),
                     'value' => 'selectNewCharity',
-                ]
+                ],
             ],
-            'frame_callback' => [$this, 'callbackColumnActions']
+            'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
 
         return parent::_prepareColumns();
@@ -147,7 +147,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/*', ['_current'=>true]);
+        return $this->getUrl('*/*/*', ['_current' => true]);
     }
 
     //########################################

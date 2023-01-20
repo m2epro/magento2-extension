@@ -27,32 +27,33 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'AmazonTemplateSellingFormatObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'AmazonTemplateSellingFormatObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
-        if (!$isSaveAndClose
+        if (
+            !$isSaveAndClose
             && $this->globalDataHelper->getValue('tmp_template')
             && $this->globalDataHelper->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
-                'label'   => $this->__('Duplicate'),
+                'label' => $this->__('Duplicate'),
                 'onclick' => 'AmazonTemplateSellingFormatObj.duplicateClick'
-                    .'(\'amazon-template-sellingFormat\')',
-                'class'   => 'add M2ePro_duplicate_button primary'
+                    . '(\'amazon-template-sellingFormat\')',
+                'class' => 'add M2ePro_duplicate_button primary',
             ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $this->addButton('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'AmazonTemplateSellingFormatObj.deleteClick()',
-                'class'     => 'delete M2ePro_delete_button primary'
+                'label' => $this->__('Delete'),
+                'onclick' => 'AmazonTemplateSellingFormatObj.deleteClick()',
+                'class' => 'delete M2ePro_delete_button primary',
             ]);
             // ---------------------------------------
         }
@@ -66,7 +67,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'id' => 'save_and_close',
                 'label' => $this->__('Save And Close'),
                 'class' => 'add',
-                'onclick'   => 'AmazonTemplateSellingFormatObj.saveAndCloseClick('
+                'onclick' => 'AmazonTemplateSellingFormatObj.saveAndCloseClick('
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                     . ')',
@@ -79,8 +80,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                             . 'undefined,'
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
-                            . ')'
-                    ]
+                            . ')',
+                    ],
                 ],
             ];
         } else {
@@ -88,7 +89,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
-                'onclick'   => 'AmazonTemplateSellingFormatObj.saveAndEditClick('
+                'onclick' => 'AmazonTemplateSellingFormatObj.saveAndEditClick('
                     . '\'\','
                     . 'undefined,'
                     . '\'' . $this->getSaveConfirmationText() . '\','
@@ -97,14 +98,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   =>'AmazonTemplateSellingFormatObj.saveClick('
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'AmazonTemplateSellingFormatObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                             . ')',
-                        'class'     => 'save primary'
-                    ]
+                        'class' => 'save primary',
+                    ],
                 ],
             ];
         }

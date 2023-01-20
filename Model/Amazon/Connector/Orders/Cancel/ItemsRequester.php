@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsRequester
- */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -37,7 +35,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getCommand()
     {
-        return ['orders','cancel','entities'];
+        return ['orders', 'cancel', 'entities'];
     }
 
     //########################################
@@ -61,11 +59,11 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
             parent::getProcessingParams(),
             [
                 'request_data' => $this->getRequestData(),
-                'order_id'     => $this->params['order']['order_id'],
-                'change_id'    => $this->params['order']['change_id'],
-                'action_type'  => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_CANCEL,
-                'lock_name'    => 'cancel_order',
-                'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
+                'order_id' => $this->params['order']['order_id'],
+                'change_id' => $this->params['order']['change_id'],
+                'action_type' => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_CANCEL,
+                'lock_name' => 'cancel_order',
+                'start_date' => $this->getHelper('Data')->getCurrentGmtDate(),
             ]
         );
     }

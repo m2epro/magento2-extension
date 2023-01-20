@@ -34,9 +34,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
         $tabsBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::class,
             '',
-            ['data' => [
-            'active_tab' => $activeTab
-            ]]
+            [
+                'data' => [
+                    'active_tab' => $activeTab,
+                ],
+            ]
         );
 
         if ($this->isAjax()) {

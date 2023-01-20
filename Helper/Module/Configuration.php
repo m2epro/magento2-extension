@@ -119,14 +119,6 @@ class Configuration
         );
     }
 
-    public function getRendererDescriptionConvertLinebreaksMode(): int
-    {
-        return (int)$this->config->getGroupValue(
-            self::CONFIG_GROUP,
-            'renderer_description_convert_linebreaks_mode'
-        );
-    }
-
     public function getOtherPayPalUrl()
     {
         return $this->config->getGroupValue(

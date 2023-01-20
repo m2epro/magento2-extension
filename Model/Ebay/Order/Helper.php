@@ -13,15 +13,15 @@ namespace Ess\M2ePro\Model\Ebay\Order;
  */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
-    const EBAY_ORDER_STATUS_ACTIVE = 'Active';
-    const EBAY_ORDER_STATUS_COMPLETED = 'Completed';
-    const EBAY_ORDER_STATUS_CANCELLED = 'Cancelled';
-    const EBAY_ORDER_STATUS_INACTIVE = 'Inactive';
+    public const EBAY_ORDER_STATUS_ACTIVE = 'Active';
+    public const EBAY_ORDER_STATUS_COMPLETED = 'Completed';
+    public const EBAY_ORDER_STATUS_CANCELLED = 'Cancelled';
+    public const EBAY_ORDER_STATUS_INACTIVE = 'Inactive';
 
-    const EBAY_CHECKOUT_STATUS_COMPLETE = 'Complete';
+    public const EBAY_CHECKOUT_STATUS_COMPLETE = 'Complete';
 
-    const EBAY_PAYMENT_METHOD_NONE = 'None';
-    const EBAY_PAYMENT_STATUS_SUCCEEDED = 'NoPaymentFailure';
+    public const EBAY_PAYMENT_METHOD_NONE = 'None';
+    public const EBAY_PAYMENT_STATUS_SUCCEEDED = 'NoPaymentFailure';
 
     protected $resourceConnection;
 
@@ -89,11 +89,11 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resourceConnection->getConnection();
         $tableDictMarketplace = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
+                                     ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
         $dbSelect = $connection->select()
-            ->from($tableDictMarketplace, 'payments')
-            ->where('`marketplace_id` = ?', (int)$marketplaceId);
+                               ->from($tableDictMarketplace, 'payments')
+                               ->where('`marketplace_id` = ?', (int)$marketplaceId);
         $marketplace = $connection->fetchRow($dbSelect);
 
         if (!$marketplace) {
@@ -119,12 +119,12 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resourceConnection->getConnection();
         $tableDictShipping = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
+                                  ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         $dbSelect = $connection->select()
-            ->from($tableDictShipping, 'title')
-            ->where('`marketplace_id` = ?', (int)$marketplaceId)
-            ->where('`ebay_id` = ?', $code);
+                               ->from($tableDictShipping, 'title')
+                               ->where('`marketplace_id` = ?', (int)$marketplaceId)
+                               ->where('`ebay_id` = ?', $code);
         $shipping = $connection->fetchRow($dbSelect);
 
         return !empty($shipping['title']) ? $shipping['title'] : $code;

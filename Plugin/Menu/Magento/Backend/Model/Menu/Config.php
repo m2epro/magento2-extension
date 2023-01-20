@@ -14,21 +14,20 @@ use Ess\M2ePro\Helper\View\Ebay;
 use Ess\M2ePro\Helper\View\Walmart;
 use Ess\M2ePro\Helper\Module\Maintenance as Maintenance;
 
-/**
- * Class \Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Config
- */
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    const MENU_STATE_REGISTRY_KEY = '/menu/state/';
-    const MAINTENANCE_MENU_STATE_CACHE_KEY = 'maintenance_menu_state';
+    public const MENU_STATE_REGISTRY_KEY = '/menu/state/';
+    public const MAINTENANCE_MENU_STATE_CACHE_KEY = 'maintenance_menu_state';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+    /** @var \Magento\Framework\View\Page\Config */
     protected $pageConfig;
+    /** @var \Magento\Backend\Model\Menu\Item\Factory */
     protected $itemFactory;
 
+    /** @var bool */
     protected $isProcessed = false;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -88,6 +87,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
                 $this->helperFactory->getObject('Magento')->clearMenuCache();
             }
             $this->processMaintenance($menuModel);
+
             return $menuModel;
         } elseif ($maintenanceMenuState !== null) {
             $this->helperFactory->getObject('Data_Cache_Permanent')->removeValue(
@@ -100,7 +100,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         $currentMenuState = $this->buildMenuStateData();
         $previousMenuState = $this->getHelper('Module')->getRegistry()
-            ->getValueFromJson(self::MENU_STATE_REGISTRY_KEY);
+                                  ->getValueFromJson(self::MENU_STATE_REGISTRY_KEY);
 
         if ($previousMenuState != $currentMenuState) {
             $this->getHelper('Module')->getRegistry()->setValue(self::MENU_STATE_REGISTRY_KEY, $currentMenuState);
@@ -111,6 +111,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         if ($this->helperFactory->getObject('Module')->isDisabled()) {
             $this->processModuleDisable($menuModel);
+
             return $menuModel;
         }
 
@@ -153,11 +154,11 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         foreach ($menuModel as $menuIndex => $menuItem) {
             if ($menuItem->getId() == $maintenanceMenuItemResource) {
                 $maintenanceMenuItem = $this->itemFactory->create([
-                    'id'       => Maintenance::MENU_ROOT_NODE_NICK,
-                    'module'   => Module::IDENTIFIER,
-                    'title'    => 'M2E Pro',
+                    'id' => Maintenance::MENU_ROOT_NODE_NICK,
+                    'module' => Module::IDENTIFIER,
+                    'title' => 'M2E Pro',
                     'resource' => $maintenanceMenuItemResource,
-                    'action'   => 'm2epro/maintenance',
+                    'action' => 'm2epro/maintenance',
                 ]);
 
                 $menuModel->remove($maintenanceMenuItemResource);
@@ -199,8 +200,10 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         $actionUrl = 'm2epro/wizard_' . $activeBlocker->getNick();
 
-        if ($activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 ||
-            $activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationToInnodb) {
+        if (
+            $activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 ||
+            $activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationToInnodb
+        ) {
             $actionUrl .= '/index/referrer/' . $viewNick;
         }
 
@@ -211,20 +214,20 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
     {
         return [
             Module::IDENTIFIER => [
-                $this->helperFactory->getObject('Module')->isDisabled()
+                $this->helperFactory->getObject('Module')->isDisabled(),
             ],
             Ebay::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Ebay')->isEnabled(),
-                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Ebay::NICK) === null
+                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Ebay::NICK) === null,
             ],
             Amazon::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Amazon')->isEnabled(),
-                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Amazon::NICK) === null
+                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Amazon::NICK) === null,
             ],
             Walmart::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Walmart')->isEnabled(),
-                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Walmart::NICK) === null
-            ]
+                $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Walmart::NICK) === null,
+            ],
         ];
     }
 

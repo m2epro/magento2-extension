@@ -11,14 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database\Table
- */
 abstract class Table extends Main
 {
+    /** @var \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory  */
     private $databaseTableFactory;
-
-    //########################################
 
     public function __construct(
         Context $context,
@@ -37,11 +33,13 @@ abstract class Table extends Main
         $mergeMode = (bool)$this->getRequest()->getParam('merge');
 
         /** @var \Ess\M2ePro\Model\ControlPanel\Database\TableModel $model */
-        $model = $this->databaseTableFactory->create(['data' => [
-            'table_name' => $tableName,
-            'merge_mode' => $mergeMode,
-            'merge_mode_component' => $component
-        ]]);
+        $model = $this->databaseTableFactory->create([
+            'data' => [
+                'table_name' => $tableName,
+                'merge_mode' => $mergeMode,
+                'merge_mode_component' => $component,
+            ],
+        ]);
 
         return $model;
     }
@@ -49,7 +47,7 @@ abstract class Table extends Main
     protected function isMergeModeEnabled($table)
     {
         return (bool)$this->getRequest()->getParam('merge') &&
-               $this->getHelper('Module_Database_Structure')->isTableHorizontal($table);
+            $this->getHelper('Module_Database_Structure')->isTableHorizontal($table);
     }
 
     protected function prepareCellsValuesArray()
@@ -59,7 +57,7 @@ abstract class Table extends Main
 
         $bindArray = [];
         foreach ($cells as $columnName) {
-            $columnValue = $this->getRequest()->getParam('value_'.$columnName);
+            $columnValue = $this->getRequest()->getParam('value_' . $columnName);
 
             if ($columnValue === null) {
                 continue;
@@ -75,6 +73,7 @@ abstract class Table extends Main
     protected function prepareIds()
     {
         $ids = explode(',', $this->getRequest()->getParam('ids'));
+
         return array_filter(array_map('intval', $ids));
     }
 

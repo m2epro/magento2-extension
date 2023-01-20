@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\ReturnPolicy;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_return_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_return_change_processor';
 
     //########################################
 
@@ -38,8 +38,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_RETURN_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_RETURN_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 

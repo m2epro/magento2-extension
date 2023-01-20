@@ -30,10 +30,13 @@ class Group extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Grid $block */
         $block = $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Grid::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Group\Grid::class
+                      );
         $block->setListingProductId($this->getListingProductId());
         $block->setMotorsType($this->getMotorsType());
         $this->setChild('view_group_grid', $block);
+
         //------------------------------
 
         return parent::_beforeToHtml();

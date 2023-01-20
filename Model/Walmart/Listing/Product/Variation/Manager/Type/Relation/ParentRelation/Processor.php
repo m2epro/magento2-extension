@@ -67,11 +67,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct($listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -108,7 +110,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @param  string $processorName
+     * @param string $processorName
+     *
      * @return AbstractModel
      */
     private function getProcessorModel($processorName)
@@ -129,17 +132,17 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public function getMagentoProductVariations()
     {
         return $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                    ->getMagentoProduct()
+                    ->getVariationInstance()
+                    ->getVariationsTypeStandard();
     }
 
     public function getProductVariation(array $options)
     {
         return $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationTypeStandard($options);
+                    ->getMagentoProduct()
+                    ->getVariationInstance()
+                    ->getVariationTypeStandard($options);
     }
 
     /**
@@ -152,14 +155,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->typeModel = $this->getWalmartListingProduct()
-            ->getVariationManager()
-            ->getTypeModel();
+                                       ->getVariationManager()
+                                       ->getTypeModel();
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $childListingProduct
+     *
      * @return bool
      */
     public function tryToRemoveChildListingProduct(\Ess\M2ePro\Model\Listing\Product $childListingProduct)
@@ -225,10 +229,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $possibleChannelAttributes = $this->modelFactory->getObject('Walmart_Marketplace_Details')
-            ->setMarketplaceId($this->getMarketplaceId())
-            ->getVariationAttributes(
-                $this->getWalmartCategoryTemplate()->getProductDataNick()
-            );
+                                                        ->setMarketplaceId($this->getMarketplaceId())
+                                                        ->getVariationAttributes(
+                                                            $this->getWalmartCategoryTemplate()->getProductDataNick()
+                                                        );
 
         return $this->possibleChannelAttributes = $possibleChannelAttributes;
     }

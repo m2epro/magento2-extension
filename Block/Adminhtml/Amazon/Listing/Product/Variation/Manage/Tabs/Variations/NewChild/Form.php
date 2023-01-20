@@ -47,7 +47,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'id' => 'variation_manager_product_options_form',
                     'method' => 'post',
                     'action' => 'javascript:void(0)',
-                ]
+                ],
             ]
         );
 
@@ -56,14 +56,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'product_id',
-                'value' => $this->getListingProduct()->getId()
+                'value' => $this->getListingProduct()->getId(),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
         $generalIdOwnerClass = $this->isGeneralIdOwner() ? 'manage-variations' : '';
@@ -249,7 +249,7 @@ CSS
             [
                 'text' => $html,
                 'field_extra_attributes' => 'style="margin-left: 0px;"',
-                'css_class' => 'variation_new_child_form-full-width'
+                'css_class' => 'variation_new_child_form-full-width',
             ]
         );
 
@@ -278,7 +278,7 @@ CSS
 
                 <b>Note:</b> You can set matching of Magento Product Attributes and Amazon Parent Product Attributes
                 in Settings Tab\'s Block Variation Attributes.'
-            )
+            ),
         ]);
 
         return '<div id="variation_manager_product_options_form_container">' .
@@ -328,19 +328,19 @@ CSS
     public function getMatchedAttributes()
     {
         return $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getMatchedAttributes();
+                    ->getVariationManager()->getTypeModel()->getMatchedAttributes();
     }
 
     public function getVirtualProductAttributes()
     {
         return $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getVirtualProductAttributes();
+                    ->getVariationManager()->getTypeModel()->getVirtualProductAttributes();
     }
 
     public function getVirtualChannelAttributes()
     {
         return $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getVirtualChannelAttributes();
+                    ->getVariationManager()->getTypeModel()->getVirtualChannelAttributes();
     }
 
     // ---------------------------------------
@@ -348,19 +348,19 @@ CSS
     public function getUnusedProductVariations()
     {
         return $this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUnusedProductOptions();
+                    ->getChildObject()
+                    ->getVariationManager()
+                    ->getTypeModel()
+                    ->getUnusedProductOptions();
     }
 
     public function getUnusedChannelVariations()
     {
         return $this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUnusedChannelOptions();
+                    ->getChildObject()
+                    ->getVariationManager()
+                    ->getTypeModel()
+                    ->getUnusedChannelOptions();
     }
 
     private function isVariationExistsInArray(array $needle, array $haystack)
@@ -385,7 +385,7 @@ CSS
         }
 
         return $this->childListingProducts = $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getChildListingsProducts();
+                                                  ->getVariationManager()->getTypeModel()->getChildListingsProducts();
     }
 
     public function getCurrentProductVariations()
@@ -395,9 +395,9 @@ CSS
         }
 
         $magentoProductVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                         ->getMagentoProduct()
+                                         ->getVariationInstance()
+                                         ->getVariationsTypeStandard();
 
         $productVariations = [];
 
@@ -417,7 +417,7 @@ CSS
     public function getCurrentChannelVariations()
     {
         return $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getChannelVariations();
+                    ->getVariationManager()->getTypeModel()->getChannelVariations();
     }
 
     // ---------------------------------------
@@ -447,19 +447,19 @@ CSS
     public function getUsedChannelVariations()
     {
         return $this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUsedChannelOptions();
+                    ->getChildObject()
+                    ->getVariationManager()
+                    ->getTypeModel()
+                    ->getUsedChannelOptions();
     }
 
     public function getUsedProductVariations()
     {
         return $this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUsedProductOptions();
+                    ->getChildObject()
+                    ->getVariationManager()
+                    ->getTypeModel()
+                    ->getUsedProductOptions();
     }
 
     // ---------------------------------------

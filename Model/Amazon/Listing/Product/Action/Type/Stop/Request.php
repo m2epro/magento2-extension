@@ -19,7 +19,7 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     {
         return [
             'sku' => $this->getAmazonListingProduct()->getSku(),
-            'qty' => 0
+            'qty' => 0,
         ];
     }
 

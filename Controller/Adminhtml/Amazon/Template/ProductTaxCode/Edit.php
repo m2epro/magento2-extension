@@ -17,11 +17,12 @@ class Edit extends Template
 {
     public function execute()
     {
-        $id    = $this->getRequest()->getParam('id');
+        $id = $this->getRequest()->getParam('id');
         $model = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_ProductTaxCode', $id, null, false);
 
         if ($model === null && $id) {
             $this->getMessageManager()->addError($this->__('Policy does not exist'));
+
             return $this->_redirect('*/amazon_template/index');
         }
 
@@ -30,11 +31,12 @@ class Edit extends Template
         $headerTextEdit = $this->__('Edit Product Tax Code Policy');
         $headerTextAdd = $this->__('Add Product Tax Code Policy');
 
-        if ($model !== null
+        if (
+            $model !== null
             && $model->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml($model->getTitle()).'"';
+            $headerText .= ' "' . $this->getHelper('Data')->escapeHtml($model->getTitle()) . '"';
         } else {
             $headerText = $headerTextAdd;
         }
@@ -43,8 +45,10 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Product Tax Code Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->addContent($this->getLayout()
-                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit::class));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit::class)
+        );
 
         $this->setPageHelpLink('x/-A03B');
 

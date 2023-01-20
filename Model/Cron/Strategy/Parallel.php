@@ -8,18 +8,15 @@
 
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
-use \Ess\M2ePro\Model\Lock\Item\Manager as LockManager;
+use Ess\M2ePro\Model\Lock\Item\Manager as LockManager;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Strategy\Parallel
- */
 class Parallel extends AbstractModel
 {
-    const GENERAL_LOCK_ITEM_PREFIX  = 'cron_strategy_parallel_';
-    const FAST_TASKS_LOCK_ITEM_NICK = 'cron_strategy_parallel_fast_tasks';
+    public const GENERAL_LOCK_ITEM_PREFIX = 'cron_strategy_parallel_';
+    public const FAST_TASKS_LOCK_ITEM_NICK = 'cron_strategy_parallel_fast_tasks';
 
-    const MAX_PARALLEL_EXECUTED_CRONS_COUNT = 10;
-    const MAX_FIRST_SLOW_TASK_EXECUTION_TIME_FOR_CONTINUE = 60;
+    public const MAX_PARALLEL_EXECUTED_CRONS_COUNT = 10;
+    public const MAX_FIRST_SLOW_TASK_EXECUTION_TIME_FOR_CONTINUE = 60;
 
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
@@ -46,6 +43,7 @@ class Parallel extends AbstractModel
 
         if ($this->isSerialStrategyInProgress()) {
             $this->getInitializationLockManager()->unlock();
+
             return;
         }
 
@@ -113,9 +111,8 @@ class Parallel extends AbstractModel
 
         $countOfAllowedTasks = count($this->getAllowedSlowTasks());
         for ($i = 0; $i < $countOfAllowedTasks; $i++) {
-
             $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager', [
-                'nick' => self::GENERAL_LOCK_ITEM_PREFIX . 'slow_task_switch'
+                'nick' => self::GENERAL_LOCK_ITEM_PREFIX . 'slow_task_switch',
             ]);
 
             $transactionalManager->lock();
@@ -126,7 +123,7 @@ class Parallel extends AbstractModel
             $transactionalManager->unlock();
 
             $taskLockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-                'nick' => 'cron_task_'.str_replace("/", "_", $taskNick)
+                'nick' => 'cron_task_' . str_replace("/", "_", $taskNick),
             ]);
 
             if ($taskLockItemManager->isExist()) {
@@ -169,6 +166,7 @@ class Parallel extends AbstractModel
     protected function getAllowedFastTasks($group)
     {
         $tasks = $this->taskRepo->getGroupTasks($group);
+
         return array_values(array_diff($tasks, $this->getAllowedSlowTasks()));
     }
 
@@ -208,7 +206,7 @@ class Parallel extends AbstractModel
 
         for ($index = 1; $index <= self::MAX_PARALLEL_EXECUTED_CRONS_COUNT; $index++) {
             $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-                'nick' => self::GENERAL_LOCK_ITEM_PREFIX.$index
+                'nick' => self::GENERAL_LOCK_ITEM_PREFIX . $index,
             ]);
 
             if (!$lockItemManager->isExist()) {
@@ -217,6 +215,7 @@ class Parallel extends AbstractModel
 
             if ($lockItemManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
                 $lockItemManager->remove();
+
                 return $this->lockItemManager = $lockItemManager;
             }
         }
@@ -234,7 +233,7 @@ class Parallel extends AbstractModel
         }
 
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => self::FAST_TASKS_LOCK_ITEM_NICK
+            'nick' => self::FAST_TASKS_LOCK_ITEM_NICK,
         ]);
 
         if (!$lockItemManager->isExist()) {
@@ -243,6 +242,7 @@ class Parallel extends AbstractModel
 
         if ($lockItemManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
             $lockItemManager->remove();
+
             return $this->fastTasksLockItemManager = $lockItemManager;
         }
 

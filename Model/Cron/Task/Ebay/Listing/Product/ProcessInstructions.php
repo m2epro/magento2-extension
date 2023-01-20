@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product;
 
 class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/listing/product/process_instructions';
+    public const NICK = 'ebay/listing/product/process_instructions';
 
     protected function performActions()
     {

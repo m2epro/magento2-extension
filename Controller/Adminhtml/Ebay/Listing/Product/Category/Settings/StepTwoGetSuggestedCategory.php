@@ -66,6 +66,7 @@ class StepTwoGetSuggestedCategory extends Settings
 
         if ($collection->getSize() == 0) {
             $this->setJsonContent([]);
+
             return $this->getResult();
         }
 
@@ -74,9 +75,9 @@ class StepTwoGetSuggestedCategory extends Settings
 
         foreach ($collection->getItems() as $product) {
             $lpId = $product->getData('listing_product_id');
-//            if (!empty($sessionData[$lpId][eBayCategory::TYPE_EBAY_MAIN]['value'])) {
-//                continue;
-//            }
+            //            if (!empty($sessionData[$lpId][eBayCategory::TYPE_EBAY_MAIN]['value'])) {
+            //                continue;
+            //            }
 
             if (($query = $product->getData('name')) == '') {
                 $result['failed']++;
@@ -89,7 +90,9 @@ class StepTwoGetSuggestedCategory extends Settings
             }
 
             try {
+                /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
                 $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+                /** @var \Ess\M2ePro\Model\Ebay\Connector\Category\Get\Suggested $connectorObj */
                 $connectorObj = $dispatcherObject->getConnector(
                     'category',
                     'get',
@@ -147,12 +150,12 @@ class StepTwoGetSuggestedCategory extends Settings
             );
 
             $sessionData[$lpId][eBayCategory::TYPE_EBAY_MAIN] = [
-                'mode'               => TemplateCategory::CATEGORY_MODE_EBAY,
-                'value'              => $suggestedCategory['category_id'],
-                'path'               => implode('>', $suggestedCategory['category_path']),
+                'mode' => TemplateCategory::CATEGORY_MODE_EBAY,
+                'value' => $suggestedCategory['category_id'],
+                'path' => implode('>', $suggestedCategory['category_path']),
                 'is_custom_template' => $template->getIsCustomTemplate(),
-                'template_id'        => $template->getId(),
-                'specific'           => null
+                'template_id' => $template->getId(),
+                'specific' => null,
             ];
             $sessionData[$lpId]['listing_products_ids'] = [$lpId];
 

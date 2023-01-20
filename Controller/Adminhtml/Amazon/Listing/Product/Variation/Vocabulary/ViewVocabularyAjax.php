@@ -9,10 +9,8 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary as VocabularyTab;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Vocabulary\ViewVocabularyAjax
- */
 class ViewVocabularyAjax extends Main
 {
     public function execute()
@@ -21,12 +19,13 @@ class ViewVocabularyAjax extends Main
 
         if (empty($productId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
         $vocabulary = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary::class)
-            ->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
+                           ->createBlock(VocabularyTab::class)
+                           ->setListingProduct($this->amazonFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($vocabulary);
 

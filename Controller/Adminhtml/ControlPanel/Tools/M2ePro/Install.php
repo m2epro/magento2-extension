@@ -15,20 +15,20 @@ use Magento\Framework\Component\ComponentRegistrar;
 
 class Install extends Command
 {
-    /** @var \Magento\Framework\Filesystem\Driver\File  */
+    /** @var \Magento\Framework\Filesystem\Driver\File */
     protected $filesystemDriver;
 
-    /** @var \Magento\Framework\Filesystem  */
+    /** @var \Magento\Framework\Filesystem */
     protected $fileSystem;
 
-    /** @var \Magento\Framework\Filesystem\File\ReadFactory  */
+    /** @var \Magento\Framework\Filesystem\File\ReadFactory */
     protected $fileReaderFactory;
 
     /** @var ComponentRegistrar */
     protected $componentRegistrar;
 
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
-    protected  $repository;
+    protected $repository;
 
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
@@ -45,8 +45,8 @@ class Install extends Command
     ) {
         parent::__construct($controlPanelHelper, $context);
 
-        $this->filesystemDriver  = $filesystemDriver;
-        $this->fileSystem        = $filesystem;
+        $this->filesystemDriver = $filesystemDriver;
+        $this->fileSystem = $filesystem;
         $this->fileReaderFactory = $fileReaderFactory;
 
         $this->componentRegistrar = $componentRegistrar;
@@ -87,24 +87,24 @@ class Install extends Command
      */
     public function filesDiffAction()
     {
-        $filePath     = base64_decode($this->getRequest()->getParam('filePath', ''));
+        $filePath = base64_decode($this->getRequest()->getParam('filePath', ''));
         $originalPath = base64_decode($this->getRequest()->getParam('originalPath', ''));
 
         $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
-        $fullPath = $basePath .DIRECTORY_SEPARATOR. $filePath;
+        $fullPath = $basePath . DIRECTORY_SEPARATOR . $filePath;
 
         $params = [
             'content' => '',
-            'path'    => $originalPath ? $originalPath : $filePath
+            'path' => $originalPath ? $originalPath : $filePath,
         ];
 
         if ($this->filesystemDriver->isExists($fullPath)) {
-
             /** @var \Magento\Framework\Filesystem\File\Read $fileReader */
             $fileReader = $this->fileReaderFactory->create($fullPath, $this->filesystemDriver);
             $params['content'] = $fileReader->readAll();
         }
 
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'diff', $params);
 

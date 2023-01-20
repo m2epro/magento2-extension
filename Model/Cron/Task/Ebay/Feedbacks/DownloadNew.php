@@ -46,7 +46,7 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($accounts as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
@@ -74,8 +74,9 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function getPermittedAccounts()
     {
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account')
-            ->getCollection()
-            ->addFieldToFilter('feedbacks_receive', 1);
+                                          ->getCollection()
+                                          ->addFieldToFilter('feedbacks_receive', 1);
+
         return $collection->getItems();
     }
 
@@ -85,8 +86,8 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $tableFeedbacks = $this->activeRecordFactory->getObject('Ebay\Feedback')->getResource()->getMainTable();
 
         $dbSelect = $connection->select()
-            ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`seller_feedback_date`)'))
-            ->where('`account_id` = ?', (int)$account->getId());
+                               ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`seller_feedback_date`)'))
+                               ->where('`account_id` = ?', (int)$account->getId());
         $maxSellerDate = $connection->fetchOne($dbSelect);
         $maxSellerDateTimestamp = (int)$this->helperData
             ->createGmtDateTime($maxSellerDate)
@@ -99,8 +100,8 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $dbSelect = $connection->select()
-            ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`buyer_feedback_date`)'))
-            ->where('`account_id` = ?', (int)$account->getId());
+                               ->from($tableFeedbacks, new \Zend_Db_Expr('MAX(`buyer_feedback_date`)'))
+                               ->where('`account_id` = ?', (int)$account->getId());
         $maxBuyerDate = $connection->fetchOne($dbSelect);
         $maxBuyerDateTimestamp = (int)$this->helperData
             ->createGmtDateTime($maxBuyerDate)
@@ -129,6 +130,7 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function receiveFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = []): array
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'feedback',
@@ -150,10 +152,13 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($feedbacks as $feedback) {
             /** @var \Ess\M2ePro\Model\Ebay\Feedback $feedbackObject */
             $feedbackObject = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection()
-                ->addFieldToFilter('account_id', $account->getId())
-                ->addFieldToFilter('ebay_item_id', $feedback['item_id'])
-                ->addFieldToFilter('ebay_transaction_id', $feedback['transaction_id'])
-                ->getFirstItem();
+                                                        ->addFieldToFilter('account_id', $account->getId())
+                                                        ->addFieldToFilter('ebay_item_id', $feedback['item_id'])
+                                                        ->addFieldToFilter(
+                                                            'ebay_transaction_id',
+                                                            $feedback['transaction_id']
+                                                        )
+                                                        ->getFirstItem();
 
             $feedbackObject
                 ->setAccountId((int)$account->getId())
@@ -202,7 +207,7 @@ class DownloadNew extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return [
             'total' => count($feedbacks),
-            'new'   => $countNewFeedbacks
+            'new' => $countNewFeedbacks,
         ];
     }
 

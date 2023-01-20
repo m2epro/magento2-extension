@@ -14,21 +14,21 @@ namespace Ess\M2ePro\Model\Amazon\Template;
  */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const QTY_MODIFICATION_MODE_OFF = 0;
-    const QTY_MODIFICATION_MODE_ON = 1;
+    public const QTY_MODIFICATION_MODE_OFF = 0;
+    public const QTY_MODIFICATION_MODE_ON = 1;
 
-    const QTY_MIN_POSTED_DEFAULT_VALUE = 1;
-    const QTY_MAX_POSTED_DEFAULT_VALUE = 100;
+    public const QTY_MIN_POSTED_DEFAULT_VALUE = 1;
+    public const QTY_MAX_POSTED_DEFAULT_VALUE = 100;
 
-    const PRICE_VARIATION_MODE_PARENT   = 1;
-    const PRICE_VARIATION_MODE_CHILDREN = 2;
+    public const PRICE_VARIATION_MODE_PARENT = 1;
+    public const PRICE_VARIATION_MODE_CHILDREN = 2;
 
-    const BUSINESS_DISCOUNTS_MODE_NONE          = 0;
-    const BUSINESS_DISCOUNTS_MODE_TIER          = 1;
-    const BUSINESS_DISCOUNTS_MODE_CUSTOM_VALUE  = 2;
+    public const BUSINESS_DISCOUNTS_MODE_NONE = 0;
+    public const BUSINESS_DISCOUNTS_MODE_TIER = 1;
+    public const BUSINESS_DISCOUNTS_MODE_CUSTOM_VALUE = 2;
 
-    const DATE_VALUE      = 0;
-    const DATE_ATTRIBUTE  = 1;
+    public const DATE_VALUE = 0;
+    public const DATE_ATTRIBUTE = 1;
 
     public const PRICE_TYPE_REGULAR = 'regular_price';
     public const PRICE_TYPE_REGULAR_SALE = 'regular_sale_price';
@@ -83,9 +83,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         }
 
         return (bool)$this->activeRecordFactory->getObject('Amazon\Listing')
-            ->getCollection()
-            ->addFieldToFilter('template_selling_format_id', $this->getId())
-            ->getSize();
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_selling_format_id', $this->getId())
+                                               ->getSize();
     }
 
     //########################################
@@ -93,12 +93,14 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
+
         return parent::save();
     }
 
     public function delete()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_sellingformat');
+
         return parent::delete();
     }
 
@@ -107,6 +109,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -185,13 +188,13 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function getQtySource()
     {
         return [
-            'mode'      => $this->getQtyMode(),
-            'value'     => $this->getQtyNumber(),
+            'mode' => $this->getQtyMode(),
+            'value' => $this->getQtyNumber(),
             'attribute' => $this->getData('qty_custom_attribute'),
-            'qty_modification_mode'     => $this->getQtyModificationMode(),
-            'qty_min_posted_value'      => $this->getQtyMinPostedValue(),
-            'qty_max_posted_value'      => $this->getQtyMaxPostedValue(),
-            'qty_percentage'            => $this->getQtyPercentage()
+            'qty_modification_mode' => $this->getQtyModificationMode(),
+            'qty_min_posted_value' => $this->getQtyMinPostedValue(),
+            'qty_max_posted_value' => $this->getQtyMaxPostedValue(),
+            'qty_percentage' => $this->getQtyPercentage(),
         ];
     }
 
@@ -402,8 +405,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function getRegularMapPriceSource()
     {
         return [
-            'mode'        => $this->getRegularMapPriceMode(),
-            'attribute'   => $this->getData('regular_map_price_custom_attribute')
+            'mode' => $this->getRegularMapPriceMode(),
+            'attribute' => $this->getData('regular_map_price_custom_attribute'),
         ];
     }
 
@@ -485,7 +488,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     {
         return [
             'mode' => $this->getRegularSalePriceMode(),
-            'attribute' => $this->getData('regular_sale_price_custom_attribute')
+            'attribute' => $this->getData('regular_sale_price_custom_attribute'),
         ];
     }
 
@@ -541,9 +544,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function getRegularSalePriceStartDateSource()
     {
         return [
-            'mode'        => $this->getRegularSalePriceStartDateMode(),
-            'value'       => $this->getRegularSalePriceStartDateValue(),
-            'attribute'   => $this->getData('regular_sale_price_start_date_custom_attribute')
+            'mode' => $this->getRegularSalePriceStartDateMode(),
+            'value' => $this->getRegularSalePriceStartDateValue(),
+            'attribute' => $this->getData('regular_sale_price_start_date_custom_attribute'),
         ];
     }
 
@@ -599,9 +602,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function getRegularSalePriceEndDateSource()
     {
         return [
-            'mode'        => $this->getRegularSalePriceEndDateMode(),
-            'value'       => $this->getRegularSalePriceEndDateValue(),
-            'attribute'   => $this->getData('regular_sale_price_end_date_custom_attribute')
+            'mode' => $this->getRegularSalePriceEndDateMode(),
+            'value' => $this->getRegularSalePriceEndDateValue(),
+            'attribute' => $this->getData('regular_sale_price_end_date_custom_attribute'),
         ];
     }
 
@@ -832,7 +835,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     public function getBusinessDiscountsSource()
     {
         return [
-            'mode'                   => $this->getBusinessDiscountsMode(),
+            'mode' => $this->getBusinessDiscountsMode(),
             'tier_customer_group_id' => $this->getBusinessDiscountsTierCustomerGroupId(),
         ];
     }

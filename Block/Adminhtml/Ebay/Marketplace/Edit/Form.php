@@ -46,12 +46,11 @@ class Form extends AbstractForm
 
         foreach ($this->groups as $group) {
             $fieldset = $form->addFieldset(
-                'marketplaces_group_'.$group['id'],
+                'marketplaces_group_' . $group['id'],
                 ['legend' => $this->__($group['title'])]
             );
 
             foreach ($group['marketplaces'] as $marketplace) {
-
                 $display = '';
                 if ($marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE) {
                     $display = 'display: none;';
@@ -62,12 +61,12 @@ class Form extends AbstractForm
 HTML;
 
                 $afterElementHtml .= $this->getLayout()
-                    ->createBlock(\Magento\Backend\Block\Widget\Button::class)
-                    ->setData([
-                        'label'   => $this->__('Update Now'),
-                        'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
-                        'class' => 'run_single_button primary'
-                    ])->toHtml();
+                                          ->createBlock(\Magento\Backend\Block\Widget\Button::class)
+                                          ->setData([
+                                              'label' => $this->__('Update Now'),
+                                              'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
+                                              'class' => 'run_single_button primary',
+                                          ])->toHtml();
 
                 $afterElementHtml .= <<<HTML
                 </div>
@@ -98,7 +97,7 @@ HTML;
                 $selectData = [
                     'label' => $this->__($marketplace['instance']->getData('title')),
                     'style' => 'display: inline-block;',
-                    'after_element_html' => $afterElementHtml
+                    'after_element_html' => $afterElementHtml,
                 ];
 
                 $selectData['values'] = [
@@ -107,19 +106,18 @@ HTML;
                 ];
                 $selectData['value'] = $marketplace['instance']->getStatus();
 
-
-                $selectData['name'] = 'status_'.$marketplace['instance']->getId();
+                $selectData['name'] = 'status_' . $marketplace['instance']->getId();
                 $selectData['class'] = 'marketplace_status_select';
                 $selectData['note'] = $marketplace['instance']->getUrl();
 
                 $fieldset->addField(
-                    'status_'.$marketplace['instance']->getId(),
+                    'status_' . $marketplace['instance']->getId(),
                     self::SELECT,
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
-                 ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Ebay::NICK)
-                 ->addCustomAttribute('component_title', $this->ebayHelper->getTitle())
-                 ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
+                         ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Ebay::NICK)
+                         ->addCustomAttribute('component_title', $this->ebayHelper->getTitle())
+                         ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
             }
         }
 
@@ -134,28 +132,28 @@ HTML;
         // ---------------------------------------
         /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplaces */
         $tempMarketplaces = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Marketplace')
-            ->getCollection()
-            ->setOrder('group_title', 'ASC')
-            ->setOrder('sorder', 'ASC')
-            ->setOrder('title', 'ASC')
-            ->getItems();
+                                                ->getCollection()
+                                                ->setOrder('group_title', 'ASC')
+                                                ->setOrder('sorder', 'ASC')
+                                                ->setOrder('title', 'ASC')
+                                                ->getItems();
 
         $storedStatuses = [];
         $groups = [];
         $idGroup = 1;
 
         $groupOrder = [
-            'america'      => 'America',
-            'europe'       => 'Europe',
+            'america' => 'America',
+            'europe' => 'Europe',
             'asia_pacific' => 'Asia / Pacific',
-            'other'        => 'Other'
+            'other' => 'Other',
         ];
 
         foreach ($groupOrder as $key => $groupOrderTitle) {
             $groups[$key] = [
-                'id'           => $idGroup++,
-                'title'        => $groupOrderTitle,
-                'marketplaces' => []
+                'id' => $idGroup++,
+                'title' => $groupOrderTitle,
+                'marketplaces' => [],
             ];
 
             foreach ($tempMarketplaces as $tempMarketplace) {
@@ -164,20 +162,23 @@ HTML;
                 }
 
                 $isLocked = (bool)$this->activeRecordFactory->getObject('Listing')->getCollection()
-                    ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
-                    ->getSize();
+                                                            ->addFieldToFilter(
+                                                                'marketplace_id',
+                                                                $tempMarketplace->getId()
+                                                            )
+                                                            ->getSize();
 
                 $storedStatuses[] = [
                     'marketplace_id' => $tempMarketplace->getId(),
-                    'status'         => $tempMarketplace->getStatus()
+                    'status' => $tempMarketplace->getStatus(),
                 ];
 
                 /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplace */
                 $marketplace = [
                     'instance' => $tempMarketplace,
-                    'params'   => [
+                    'params' => [
                         'locked' => $isLocked,
-                    ]
+                    ],
                 ];
 
                 $groups[$key]['marketplaces'][] = $marketplace;
@@ -186,6 +187,7 @@ HTML;
 
         $this->groups = $groups;
         $this->storedStatuses = $storedStatuses;
+
         // ---------------------------------------
 
         return parent::_beforeToHtml();
@@ -197,7 +199,7 @@ HTML;
             'formSubmit' => $this->getUrl('*/ebay_marketplace/save'),
             'logViewUrl' => $this->getUrl(
                 '*/ebay_synchronization_log/index',
-                ['back'=>$this->dataHelper->makeBackUrlParam('*/ebay_synchronization/index')]
+                ['back' => $this->dataHelper->makeBackUrlParam('*/ebay_synchronization/index')]
             ),
             'runSynchNow' => $this->getUrl('*/ebay_marketplace/runSynchNow'),
         ]);
@@ -211,11 +213,12 @@ HTML;
                 $this->__(
                     'Some eBay Categories were deleted from eBay.
                  Click <a target="_blank" href="%url%">here</a> to check.'
-                )
+                ),
         ]);
 
         $storedStatuses = $this->dataHelper->jsonEncode($this->storedStatuses);
-        $this->js->addOnReadyJs(<<<JS
+        $this->js->addOnReadyJs(
+            <<<JS
             require([
                 'M2ePro/Marketplace',
                 'M2ePro/Ebay/Marketplace/SynchProgress',

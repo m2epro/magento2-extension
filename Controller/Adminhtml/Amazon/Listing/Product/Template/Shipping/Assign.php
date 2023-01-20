@@ -15,11 +15,12 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
 {
     public function execute()
     {
-        $productsIds  = $this->getRequest()->getParam('products_ids');
-        $templateId   = $this->getRequest()->getParam('template_id');
+        $productsIds = $this->getRequest()->getParam('products_ids');
+        $templateId = $this->getRequest()->getParam('template_id');
 
         if (empty($productsIds) || empty($templateId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -36,14 +37,14 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
                 'text' => '<p>' . $this->__(
                     'Shipping Policy cannot be assigned to some Products
                          because the Products are in Action'
-                ). '</p>'
+                ) . '</p>',
             ];
         }
 
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Shipping Policy was assigned.')
+                'text' => $this->__('Shipping Policy was assigned.'),
             ];
 
             $this->setShippingTemplateForProducts($productsIdsLocked, $templateId);

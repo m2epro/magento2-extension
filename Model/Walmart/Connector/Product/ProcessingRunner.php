@@ -24,12 +24,14 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
     public function setProcessingAction(\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing $processingAction)
     {
         $this->processingAction = $processingAction;
+
         return $this;
     }
 
@@ -64,11 +66,13 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         // listing product can be removed during processing action
         if ($this->getListingProduct()->getId() === null) {
             $this->getProcessingObject()->delete();
+
             return;
         }
 
         if ($this->getProcessingAction() && !$this->getProcessingAction()->isPrepared()) {
             $this->stop();
+
             return;
         }
 
@@ -125,11 +129,11 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $processingAction = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_Processing');
         $processingAction->setData(
             [
-                'listing_product_id'    => $params['listing_product_id'],
+                'listing_product_id' => $params['listing_product_id'],
                 'processing_id' => $this->getProcessingObject()->getId(),
-                'type'          => $this->getProcessingActionType(),
-                'is_prepared'   => 0,
-                'group_hash'    => $params['group_hash'],
+                'type' => $this->getProcessingActionType(),
+                'is_prepared' => 0,
+                'group_hash' => $params['group_hash'],
             ]
         );
         $processingAction->save();
@@ -237,7 +241,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         }
 
         $processingActionCollection = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_Processing')
-            ->getCollection();
+                                                                ->getCollection();
 
         $processingActionCollection->addFieldToFilter('processing_id', $this->getProcessingObject()->getId());
 

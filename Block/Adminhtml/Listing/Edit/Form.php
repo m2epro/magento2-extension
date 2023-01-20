@@ -31,18 +31,20 @@ class Form extends AbstractForm
         $listing = $this->globalDataHelper->getValue('edit_listing');
 
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
             'id',
             'hidden',
             [
-                'name' => 'id'
+                'name' => 'id',
             ]
         );
 
@@ -58,7 +60,7 @@ class Form extends AbstractForm
                 'name' => 'title',
                 'class' => 'validate-no-empty M2ePro-listing-title',
                 'label' => $this->__('Title'),
-                'field_extra_attributes' => 'style="margin-bottom: 0;"'
+                'field_extra_attributes' => 'style="margin-bottom: 0;"',
             ]
         );
 

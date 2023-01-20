@@ -22,6 +22,7 @@ class Messages extends \Magento\Framework\View\Element\Messages
 
         if ($messages->getCount() < 2) {
             $this->addMessages($messages);
+
             return parent::_beforeToHtml();
         }
 

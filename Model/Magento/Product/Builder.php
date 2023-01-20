@@ -13,34 +13,34 @@ namespace Ess\M2ePro\Model\Magento\Product;
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Framework\Filesystem\DriverPool  */
+    /** @var \Magento\Framework\Filesystem\DriverPool */
     protected $driverPool;
 
-    /** @var \Magento\Framework\Filesystem  */
+    /** @var \Magento\Framework\Filesystem */
     protected $filesystem;
 
-    /** @var \Magento\Store\Model\StoreFactory  */
+    /** @var \Magento\Store\Model\StoreFactory */
     protected $storeFactory;
 
-    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface */
     protected $stockRegistry;
 
-    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface  */
+    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface */
     protected $stockItemRepository;
 
-    /** @var \Magento\Catalog\Model\Product\Media\Config  */
+    /** @var \Magento\Catalog\Model\Product\Media\Config */
     protected $productMediaConfig;
 
-    /** @var \Magento\Catalog\Model\ProductFactory  */
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor  */
+    /** @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor */
     protected $indexStockProcessor;
 
-    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface  */
+    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface */
     protected $stockConfiguration;
 
     /** @var \Magento\Catalog\Model\Product */
@@ -62,16 +62,16 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\CatalogInventory\Model\Indexer\Stock\Processor $indexStockProcessor,
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
     ) {
-        $this->driverPool           = $driverPool;
-        $this->filesystem           = $filesystem;
-        $this->storeFactory         = $storeFactory;
-        $this->stockRegistry        = $stockRegistry;
-        $this->productMediaConfig   = $productMediaConfig;
-        $this->productFactory       = $productFactory;
-        $this->helperFactory        = $helperFactory;
-        $this->indexStockProcessor  = $indexStockProcessor;
-        $this->stockConfiguration   = $stockConfiguration;
-        $this->stockItemRepository  = $stockItemRepository;
+        $this->driverPool = $driverPool;
+        $this->filesystem = $filesystem;
+        $this->storeFactory = $storeFactory;
+        $this->stockRegistry = $stockRegistry;
+        $this->productMediaConfig = $productMediaConfig;
+        $this->productFactory = $productFactory;
+        $this->helperFactory = $helperFactory;
+        $this->indexStockProcessor = $indexStockProcessor;
+        $this->stockConfiguration = $stockConfiguration;
+        $this->stockItemRepository = $stockItemRepository;
         parent::__construct(
             $helperFactory,
             $modelFactory
@@ -151,11 +151,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->product->setData('media_gallery', [
                 'images' => $gallery,
                 'values' => [
-                    'main'        => $firstImage,
-                    'image'       => $firstImage,
+                    'main' => $firstImage,
+                    'image' => $firstImage,
                     'small_image' => $firstImage,
-                    'thumbnail'   => $firstImage
-                ]
+                    'thumbnail' => $firstImage,
+                ],
             ]);
         }
 
@@ -169,10 +169,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function createStockItem()
     {
         $stockItem = $this->stockRegistry
-                          ->getStockItem(
-                              $this->product->getId(),
-                              $this->stockConfiguration->getDefaultScopeId()
-                          );
+            ->getStockItem(
+                $this->product->getId(),
+                $this->stockConfiguration->getDefaultScopeId()
+            );
         $stockItem->setProduct($this->product);
 
         $stockItem->setQty($this->getData('qty'))
@@ -198,7 +198,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $tempMediaPath = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
         )->getAbsolutePath()
-        . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
+            . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
 
         $gallery = [];
         $imagePosition = 1;
@@ -209,10 +209,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $gallery[] = [
-                'file'     => $tempImageName,
-                'label'    => '',
+                'file' => $tempImageName,
+                'label' => '',
                 'position' => $imagePosition++,
-                'disabled' => 0
+                'disabled' => 0,
             ];
         }
 

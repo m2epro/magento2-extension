@@ -39,18 +39,18 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         return [
             'template_category_id' => $this->getTemplateCategoryId(),
-            'xpath'             => $this->rawData['xpath'],
-            'mode'              => $this->rawData['mode'],
-            'is_required'       => isset($this->rawData['is_required']) ? $this->rawData['is_required'] : 0,
+            'xpath' => $this->rawData['xpath'],
+            'mode' => $this->rawData['mode'],
+            'is_required' => isset($this->rawData['is_required']) ? $this->rawData['is_required'] : 0,
             'recommended_value' => $this->rawData['mode'] == Specific::DICTIONARY_MODE_RECOMMENDED_VALUE
                 ? $this->rawData['recommended_value'] : '',
-            'custom_value'      => $this->rawData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_VALUE
+            'custom_value' => $this->rawData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_VALUE
                 ? $this->rawData['custom_value'] : '',
-            'custom_attribute'  => $this->rawData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_ATTRIBUTE
+            'custom_attribute' => $this->rawData['mode'] == Specific::DICTIONARY_MODE_CUSTOM_ATTRIBUTE
                 ? $this->rawData['custom_attribute'] : '',
-            'type'              => isset($this->rawData['type']) ? $this->rawData['type'] : '',
-            'attributes'        => isset($this->rawData['attributes']) ?
-                $this->getHelper('Data')->jsonEncode($this->rawData['attributes']) : '[]'
+            'type' => isset($this->rawData['type']) ? $this->rawData['type'] : '',
+            'attributes' => isset($this->rawData['attributes']) ?
+                $this->getHelper('Data')->jsonEncode($this->rawData['attributes']) : '[]',
         ];
     }
 

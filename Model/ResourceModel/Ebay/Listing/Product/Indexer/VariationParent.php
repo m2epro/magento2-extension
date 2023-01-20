@@ -52,7 +52,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
 
         $select->columns([
             new \Zend_Db_Expr($this->getConnection()->quote($listing->getId())),
-            new \Zend_Db_Expr($this->getConnection()->quote($createDate))
+            new \Zend_Db_Expr($this->getConnection()->quote($createDate)),
         ]);
 
         $query = $this->getConnection()->insertFromSelect(
@@ -63,7 +63,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
                 'min_price',
                 'max_price',
                 'listing_id',
-                'create_date'
+                'create_date',
             ],
             \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_IGNORE
         );
@@ -75,37 +75,37 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
     public function getBuildIndexSelect(\Ess\M2ePro\Model\Listing $listing)
     {
         $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
-            ->getResource()->getMainTable();
+                                                                  ->getResource()->getMainTable();
 
         $ebayListingProductVariationTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product_Variation')
-            ->getResource()->getMainTable();
+                                                                      ->getResource()->getMainTable();
 
         $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
-            ->getResource()->getMainTable();
+                                                         ->getResource()->getMainTable();
 
         $select = $this->getConnection()->select()
-            ->from(
-                ['mlpv' => $listingProductVariationTable],
-                [
-                    'listing_product_id'
-                ]
-            )
-            ->joinInner(
-                ['melpv' => $ebayListingProductVariationTable],
-                'mlpv.id = melpv.listing_product_variation_id',
-                [
-                    new \Zend_Db_Expr('MIN(`melpv`.`online_price`) as variation_min_price'),
-                    new \Zend_Db_Expr('MAX(`melpv`.`online_price`) as variation_max_price')
-                ]
-            )
-            ->joinInner(
-                ['mlp' => $listingProductTable],
-                'mlpv.listing_product_id = mlp.id',
-                []
-            )
-            ->where('mlp.listing_id = ?', (int)$listing->getId())
-            ->where('melpv.status != ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
-            ->group('mlpv.listing_product_id');
+                       ->from(
+                           ['mlpv' => $listingProductVariationTable],
+                           [
+                               'listing_product_id',
+                           ]
+                       )
+                       ->joinInner(
+                           ['melpv' => $ebayListingProductVariationTable],
+                           'mlpv.id = melpv.listing_product_variation_id',
+                           [
+                               new \Zend_Db_Expr('MIN(`melpv`.`online_price`) as variation_min_price'),
+                               new \Zend_Db_Expr('MAX(`melpv`.`online_price`) as variation_max_price'),
+                           ]
+                       )
+                       ->joinInner(
+                           ['mlp' => $listingProductTable],
+                           'mlpv.listing_product_id = mlp.id',
+                           []
+                       )
+                       ->where('mlp.listing_id = ?', (int)$listing->getId())
+                       ->where('melpv.status != ?', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
+                       ->group('mlpv.listing_product_id');
 
         return $select;
     }

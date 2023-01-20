@@ -17,6 +17,7 @@ class Unmapping extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         if (!$productIds || !$componentMode) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -24,6 +25,7 @@ class Unmapping extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         if (empty($productArray)) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -34,8 +36,10 @@ class Unmapping extends \Ess\M2ePro\Controller\Adminhtml\Listing
                 $productId
             );
 
-            if (!$listingOtherProductInstance->getId() ||
-                $listingOtherProductInstance->getData('product_id') === null) {
+            if (
+                !$listingOtherProductInstance->getId() ||
+                $listingOtherProductInstance->getData('product_id') === null
+            ) {
                 continue;
             }
 
@@ -43,6 +47,7 @@ class Unmapping extends \Ess\M2ePro\Controller\Adminhtml\Listing
         }
 
         $this->setAjaxContent('1', false);
+
         return $this->getResult();
     }
 }

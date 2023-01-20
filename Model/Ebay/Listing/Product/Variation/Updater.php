@@ -41,21 +41,25 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                                                ->getVariationInstance()
                                                ->getVariationsTypeStandard();
 
-        if (empty($rawMagentoVariations['set']) || !is_array($rawMagentoVariations['set']) ||
-            empty($rawMagentoVariations['variations']) || !is_array($rawMagentoVariations['variations'])) {
+        if (
+            empty($rawMagentoVariations['set']) || !is_array($rawMagentoVariations['set']) ||
+            empty($rawMagentoVariations['variations']) || !is_array($rawMagentoVariations['variations'])
+        ) {
             $rawMagentoVariations = [
-                'set'        => [],
-                'variations' => []
+                'set' => [],
+                'variations' => [],
             ];
         }
 
         $rawMagentoVariations = $this->getHelper('Component\Ebay')
-                                            ->prepareOptionsForVariations($rawMagentoVariations);
+                                     ->prepareOptionsForVariations($rawMagentoVariations);
 
         $magentoVariations = $this->prepareMagentoVariations($rawMagentoVariations);
 
-        if (!$listingProduct->getMagentoProduct()->isSimpleType() &&
-            !$listingProduct->getMagentoProduct()->isDownloadableType()) {
+        if (
+            !$listingProduct->getMagentoProduct()->isSimpleType() &&
+            !$listingProduct->getMagentoProduct()->isDownloadableType()
+        ) {
             $this->inspectAndFixProductOptionsIds($listingProduct, $magentoVariations);
         }
 
@@ -76,7 +80,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     {
         $additionalData = $listingProduct->getData('additional_data');
         $additionalData = $additionalData === null ? []
-                                                   : (array)$this->getHelper('Data')->jsonDecode($additionalData);
+            : (array)$this->getHelper('Data')->jsonDecode($additionalData);
 
         if (isset($variationsData['set'])) {
             $additionalData['variations_sets'] = $variationsData['set'];
@@ -117,8 +121,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
                 foreach ($listingProductVariationOptions as $listingProductVariationOption) {
                     foreach ($magentoVariationOptions as $magentoVariationOption) {
-                        if ($listingProductVariationOption['attribute'] !== $magentoVariationOption['attribute'] ||
-                            $listingProductVariationOption['option'] !== $magentoVariationOption['option']) {
+                        if (
+                            $listingProductVariationOption['attribute'] !== $magentoVariationOption['attribute'] ||
+                            $listingProductVariationOption['option'] !== $magentoVariationOption['option']
+                        ) {
                             continue;
                         }
 
@@ -129,7 +135,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                         $listingProductVariationOption['product_id'] = $magentoVariationOption['product_id'];
 
                         $this->ebayFactory->getObject('Listing_Product_Variation_Option')
-                            ->setData($listingProductVariationOption)->save();
+                                          ->setData($listingProductVariationOption)->save();
                     }
                 }
             }
@@ -208,8 +214,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 $status = $aVariation['variation']['status'];
 
                 $dataForUpdate = [
-                    'add'    => $status == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ? 1 : 0,
-                    'delete' => 0
+                    'add' => $status == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ? 1 : 0,
+                    'delete' => 0,
                 ];
 
                 $listingProductVariation = $this->ebayFactory->getObjectLoaded(
@@ -224,21 +230,21 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
             $dataForAdd = [
                 'listing_product_id' => $listingProduct->getId(),
-                'add'                => 1,
-                'delete'             => 0,
-                'status'             => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+                'add' => 1,
+                'delete' => 0,
+                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             ];
 
             $newVariationId = $this->ebayFactory->getObject('Listing_Product_Variation')
-                ->addData($dataForAdd)->save()->getId();
+                                                ->addData($dataForAdd)->save()->getId();
 
             foreach ($aVariation['options'] as $aOption) {
                 $dataForAdd = [
                     'listing_product_variation_id' => $newVariationId,
-                    'product_id'                   => $aOption['product_id'],
-                    'product_type'                 => $aOption['product_type'],
-                    'attribute'                    => $aOption['attribute'],
-                    'option'                       => $aOption['option']
+                    'product_id' => $aOption['product_id'],
+                    'product_type' => $aOption['product_type'],
+                    'attribute' => $aOption['attribute'],
+                    'option' => $aOption['option'],
                 ];
 
                 $this->ebayFactory->getObject('Listing_Product_Variation_Option')->addData($dataForAdd)->save();
@@ -256,8 +262,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 )->delete();
             } else {
                 $dataForUpdate = [
-                    'add'    => 0,
-                    'delete' => 1
+                    'add' => 0,
+                    'delete' => 1,
                 ];
 
                 $listingProductVariation = $this->ebayFactory->getObjectLoaded(
@@ -283,7 +289,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         foreach ($variations as $variation) {
             $result[] = [
                 'variation' => [],
-                'options' => $variation
+                'options' => $variation,
             ];
         }
 
@@ -295,7 +301,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $result = [];
 
         foreach ($variations as $variation) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             $tmpVariationData = $variation->getData();
@@ -303,7 +308,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
             $temp = [
                 'variation' => $tmpVariationData,
-                'options' => []
+                'options' => [],
             ];
 
             foreach ($variation->getOptions(false) as $option) {
@@ -328,8 +333,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $haveOption = false;
 
             foreach ($currentVariation as $cOption) {
-                if (trim($mOption['attribute']) == trim($cOption['attribute']) &&
-                    trim($mOption['option']) == trim($cOption['option'])) {
+                if (
+                    trim($mOption['attribute']) == trim($cOption['attribute']) &&
+                    trim($mOption['option']) == trim($cOption['option'])
+                ) {
                     $haveOption = true;
                     break;
                 }
@@ -348,7 +355,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $hash = [];
 
         foreach ($variation['options'] as $option) {
-            $hash[] = trim($option['attribute']) .'-'. trim($option['option']);
+            $hash[] = trim($option['attribute']) . '-' . trim($option['option']);
         }
 
         return implode('##', $hash);

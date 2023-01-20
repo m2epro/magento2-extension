@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
+use Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
 
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
@@ -31,7 +31,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         parent::__construct($context, $data);
 
         $this->ebayCategoryBuilderFactory = $ebayCategoryBuilderFactory;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->dataHelper = $dataHelper;
     }
 
@@ -57,7 +57,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $templateSpecifics = [];
         $dictionarySpecifics = $this->getDictionarySpecifics();
 
-        $selectedSpecs =  $this->dataHelper->jsonDecode($this->getData('selected_specifics'));
+        $selectedSpecs = $this->dataHelper->jsonDecode($this->getData('selected_specifics'));
 
         if ($this->getData('template_id')) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
@@ -105,8 +105,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->getChildBlock('form')->setData(
             'form_data',
             [
-                'dictionary_specifics'      => $dictionarySpecifics,
-                'template_custom_specifics' => $templateCustomSpecifics
+                'dictionary_specifics' => $dictionarySpecifics,
+                'template_custom_specifics' => $templateCustomSpecifics,
             ]
         );
     }
@@ -132,10 +132,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             '',
             [
                 'data' => [
-                    'category_mode'  => $this->getData('category_mode'),
+                    'category_mode' => $this->getData('category_mode'),
                     'category_value' => $this->getData('category_value'),
-                    'marketplace_id' => $this->getData('marketplace_id')
-                ]
+                    'marketplace_id' => $this->getData('marketplace_id'),
+                ],
             ]
         );
 
@@ -150,7 +150,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::class)
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 
     require([
         'M2ePro/Ebay/Template/Category/Specifics'

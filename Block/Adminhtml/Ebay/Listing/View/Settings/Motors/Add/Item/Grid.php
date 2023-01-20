@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Item;
 
-use \Ess\M2ePro\Helper\Component\Ebay\Motors;
+use Ess\M2ePro\Helper\Component\Ebay\Motors;
 
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -42,7 +42,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         // Initialization block
         //------------------------------
         $motorsType = $this->componentEbayMotors->getIdentifierKey($this->getMotorsType());
-        $this->setId('ebayMotor'.$motorsType.'Grid');
+        $this->setId('ebayMotor' . $motorsType . 'Grid');
         //------------------------------
 
         // Set default values
@@ -59,6 +59,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     public function setListingId($marketplaceId)
     {
         $this->listingId = $marketplaceId;
+
         return $this;
     }
 
@@ -70,6 +71,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     public function setMotorsType($motorsType)
     {
         $this->motorsType = $motorsType;
+
         return $this;
     }
 
@@ -95,24 +97,25 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         // Set mass-action
         //--------------------------------
         $this->getMassactionBlock()->addItem('select', [
-            'label'   => $this->__('Select'),
-            'url'     => ''
+            'label' => $this->__('Select'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('setNote', [
-            'label'   => $this->__('Set Note'),
-            'url'     => ''
+            'label' => $this->__('Set Note'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('resetNote', [
-            'label'   => $this->__('Reset Note'),
-            'url'     => ''
+            'label' => $this->__('Reset Note'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('saveAsGroup', [
-            'label'   => $this->__('Save As Group'),
-            'url'     => ''
+            'label' => $this->__('Save As Group'),
+            'url' => '',
         ]);
+
         //--------------------------------
 
         return parent::_prepareMassaction();
@@ -166,7 +169,7 @@ HTML;
             '*/ebay_listing_settings_motors/addItemGrid',
             [
                 '_current' => true,
-                'listing_id' => $this->getListingId()
+                'listing_id' => $this->getListingId(),
             ]
         );
     }
@@ -184,14 +187,15 @@ HTML;
     {
         //------------------------------
         $data = [
-            'id'      => 'save_filter_btn',
-            'label'   => $this->__('Save Filter'),
-            'class'   => 'action-primary',
-            'onclick' => 'EbayListingViewSettingsMotorsAddItemGridObj.saveFilter()'
+            'id' => 'save_filter_btn',
+            'label' => $this->__('Save Filter'),
+            'class' => 'action-primary',
+            'onclick' => 'EbayListingViewSettingsMotorsAddItemGridObj.saveFilter()',
         ];
         $saveFilterBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                           ->setData($data);
+                              ->setData($data);
         $this->setChild('save_filter', $saveFilterBtn);
+
         //------------------------------
 
         return parent::_prepareLayout();
@@ -217,7 +221,8 @@ HTML;
     protected function _toHtml()
     {
         if (!$this->canDisplayContainer()) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
                 EbayListingViewSettingsMotorsAddItemGridObj.afterInitPage();
 JS
             );
@@ -225,7 +230,8 @@ JS
             return parent::_toHtml();
         }
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
     a.remove-custom-created-record-link {
         display: inline-block;
         width: 8px;
@@ -271,7 +277,8 @@ HTML
             $this->dataHelper->getClassConstants(Motors::class)
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Listing/View/Settings/Motors/Add/Item/Grid'
     ], function() {
@@ -298,7 +305,7 @@ JS
 HTML
             ,
             $this->getUrl('*/ebay_settings/index', [
-                'active_tab' => \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_MOTORS
+                'active_tab' => \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_MOTORS,
             ])
         );
     }

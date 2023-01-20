@@ -26,8 +26,11 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
         $data['specifics'] = $this->getModel()->getSpecifics();
 
         $ignoredKeys = [
-            'id', 'title', 'template_category_id',
-            'update_date', 'create_date',
+            'id',
+            'title',
+            'template_category_id',
+            'update_date',
+            'create_date',
         ];
 
         foreach ($data['specifics'] as &$specificsData) {

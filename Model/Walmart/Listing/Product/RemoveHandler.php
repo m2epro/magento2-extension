@@ -6,7 +6,6 @@
  * @license    Commercial use is forbidden
  */
 
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
@@ -23,7 +22,6 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         $variationManager = $this->getWalmartListingProduct()->getVariationManager();
 
         if ($variationManager->isRelationChildType()) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $parentWalmartListingProduct */
             $parentWalmartListingProduct = $variationManager
                 ->getTypeModel()

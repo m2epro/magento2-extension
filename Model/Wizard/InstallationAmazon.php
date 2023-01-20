@@ -25,7 +25,7 @@ class InstallationAmazon extends Wizard
         'sourceMode',
         'productSelection',
         'searchAsin',
-        'newAsin'
+        'newAsin',
     ];
 
     /**

@@ -17,15 +17,15 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
     private $magentoOptions = [];
 
-    private $magentoValue   = [];
+    private $magentoValue = [];
 
-    private $channelLabels  = [];
+    private $channelLabels = [];
     /** @var \Ess\M2ePro\Model\Magento\Product */
     private $magentoProduct;
 
-    private $failedOptions  = [];
+    private $failedOptions = [];
 
-    private $optionsData    = ['associated_options'  => [], 'associated_products' => []];
+    private $optionsData = ['associated_options' => [], 'associated_products' => []];
     /** @var bool */
     private $isNeedToReturnFirstOptionValues;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
@@ -44,11 +44,13 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -56,31 +58,37 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setChannelOptions(array $options = [])
     {
         $this->channelOptions = $this->getHelper('Data')->toLowerCaseRecursive($options);
+
         return $this;
     }
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function addChannelOptions(array $options = [])
     {
         $this->channelOptions = $this->channelOptions + $this->getHelper('Data')->toLowerCaseRecursive($options);
+
         return $this;
     }
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setMagentoOptions(array $options = [])
     {
         $this->magentoOptions = $options;
+
         return $this;
     }
 
@@ -92,7 +100,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     public function find()
     {
         $this->failedOptions = [];
-        $this->optionsData   = ['associated_options'  => [], 'associated_products' => []];
+        $this->optionsData = ['associated_options' => [], 'associated_products' => []];
 
         if ($this->getProductType() === null || empty($this->magentoOptions)) {
             return;
@@ -106,11 +114,13 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $this->optionsData['associated_products'] = [$associatedProduct->getId()];
+
             return;
         }
 
         if (empty($this->channelOptions)) {
             $this->isNeedToReturnFirstOptionValues() && $this->matchFirstOptions();
+
             return;
         }
 
@@ -185,31 +195,31 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
     private function matchFirstOptions()
     {
-        $options  = [];
+        $options = [];
         $products = [];
 
         foreach ($this->magentoOptions as $magentoOption) {
             $optionId = $magentoOption['option_id'];
-            $valueId  = $magentoOption['values'][0]['value_id'];
+            $valueId = $magentoOption['values'][0]['value_id'];
 
             $options[$optionId] = $valueId;
             $products["{$optionId}::{$valueId}"] = $magentoOption['values'][0]['product_ids'];
         }
 
         $this->optionsData = [
-            'associated_options'  => $options,
-            'associated_products' => $products
+            'associated_options' => $options,
+            'associated_products' => $products,
         ];
     }
 
     private function matchOptions()
     {
-        $options  = [];
+        $options = [];
         $products = [];
 
         foreach ($this->magentoOptions as $magentoOption) {
             $this->channelLabels = [];
-            $this->magentoValue  = [];
+            $this->magentoValue = [];
 
             $magentoOption['labels'] = array_filter($magentoOption['labels']);
             if ($this->isOptionFailed($magentoOption)) {
@@ -221,8 +231,8 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->optionsData = [
-            'associated_options'  => $options,
-            'associated_products' => $products
+            'associated_options' => $options,
+            'associated_products' => $products,
         ];
     }
 
@@ -230,6 +240,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $magentoOption
+     *
      * @return bool
      */
     private function isOptionFailed(array $magentoOption)
@@ -238,15 +249,19 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($this->channelLabels)) {
             $this->failedOptions[] = array_shift($magentoOption['labels']);
+
             return true;
         }
 
         $this->findMagentoValue($magentoOption['values']);
 
-        if (empty($this->magentoValue) ||
+        if (
+            empty($this->magentoValue) ||
             !isset($this->magentoValue['value_id']) ||
-            !isset($this->magentoValue['product_ids'])) {
+            !isset($this->magentoValue['product_ids'])
+        ) {
             $this->failedOptions[] = array_shift($magentoOption['labels']);
+
             return true;
         }
 
@@ -263,6 +278,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
         foreach ($optionLabels as $label) {
             if (isset($this->channelOptions[$label])) {
                 $this->channelLabels = ['labels' => $this->channelOptions[$label]];
+
                 return;
             }
         }
@@ -279,6 +295,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             foreach ((array)$this->channelLabels['labels'] as $channelOptionLabel) {
                 if (in_array($channelOptionLabel, $valueLabels, true)) {
                     $this->magentoValue = $optionValue;
+
                     return;
                 }
             }
@@ -294,7 +311,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     private function appendOption(array $magentoOption, array &$options)
     {
         $optionId = $magentoOption['option_id'];
-        $valueId  = $this->magentoValue['value_id'];
+        $valueId = $this->magentoValue['value_id'];
 
         $options[$optionId] = $valueId;
     }
@@ -306,7 +323,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     private function appendProduct(array $magentoOption, array &$products)
     {
         $optionId = $magentoOption['option_id'];
-        $valueId  = $this->magentoValue['value_id'];
+        $valueId = $this->magentoValue['value_id'];
 
         $products["{$optionId}::{$valueId}"] = $this->magentoValue['product_ids'];
     }
@@ -315,8 +332,10 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     {
         $variationName = array_shift($this->channelOptions);
 
-        if (($variationName === null || strlen(trim($variationName)) == 0) &&
-            !$this->isNeedToReturnFirstOptionValues()) {
+        if (
+            ($variationName === null || strlen(trim($variationName)) == 0) &&
+            !$this->isNeedToReturnFirstOptionValues()
+        ) {
             return null;
         }
 

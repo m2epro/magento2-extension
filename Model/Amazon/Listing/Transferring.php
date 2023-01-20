@@ -12,8 +12,9 @@ class Transferring extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
 
-    const PARAM_LISTING_ID_DESTINATION_CREATE_NEW = 'create-new';
+    public const PARAM_LISTING_ID_DESTINATION_CREATE_NEW = 'create-new';
 
+    /** @var string  */
     protected $sessionPrefix = 'amazon_listing_transferring';
 
     /** @var \Ess\M2ePro\Model\Listing */
@@ -36,18 +37,21 @@ class Transferring extends \Ess\M2ePro\Model\AbstractModel
     public function setProductsIds($products)
     {
         $this->setSessionValue('products_ids', $products);
+
         return $this;
     }
 
     public function setTargetListingId($listingId)
     {
         $this->setSessionValue('to_listing_id', $listingId);
+
         return $this;
     }
 
     public function setErrorsCount($count)
     {
         $this->setSessionValue('errors_count', $count);
+
         return $this;
     }
 
@@ -86,6 +90,7 @@ class Transferring extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->getHelper('Data_Session')->setValue($this->sessionPrefix . $this->listing->getId(), $sessionData);
+
         return $this;
     }
 

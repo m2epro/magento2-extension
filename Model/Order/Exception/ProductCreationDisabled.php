@@ -7,5 +7,4 @@ namespace Ess\M2ePro\Model\Order\Exception;
  */
 class ProductCreationDisabled extends \Ess\M2ePro\Model\Exception
 {
-
 }

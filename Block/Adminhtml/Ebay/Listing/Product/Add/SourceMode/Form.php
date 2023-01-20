@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode;
 
 /**
@@ -17,10 +18,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_form',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
@@ -32,7 +35,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     be added into it. <br> The Products you add to the Listing will further be Listed on eBay.</p><br>
                     <p>There are several different options of how Magento products can be found/selected
                     and added to the Listing.</p>'
-                )
+                ),
             ]
         );
 
@@ -42,14 +45,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $defaultSource = $this->getRequest()
-            ->getParam('source', \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT);
+                              ->getParam(
+                                  'source',
+                                  \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT
+                              );
 
         $fieldset->addField(
             'block-title',
             'label',
             [
                 'value' => $this->__('Choose how you want to display Products for selection'),
-                'field_extra_attributes' => 'style="font-weight: bold;font-size:18px;margin-bottom:0px"'
+                'field_extra_attributes' => 'style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
         );
         $fieldset->addField(
@@ -61,12 +67,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     [
                         'value' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT,
-                        'label' => 'Products List'
-                    ]
+                        'label' => 'Products List',
+                    ],
                 ],
                 'value' => $defaultSource,
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Products displayed as a list without any grouping.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Products displayed as a list without any grouping.') . '</div>',
             ]
         );
 
@@ -79,12 +85,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     [
                         'value' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY,
-                        'label' => 'Categories'
-                    ]
+                        'label' => 'Categories',
+                    ],
                 ],
                 'value' => $defaultSource,
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Products grouped by Magento Categories.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Products grouped by Magento Categories.') . '</div>',
             ]
         );
 

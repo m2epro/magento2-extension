@@ -47,6 +47,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         if ($listing === null && $id) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
             return $this->_redirect('*/amazon_listing/index');
         }
 
@@ -66,7 +67,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $keys = [
             'template_selling_format_id',
             'template_synchronization_id',
-            'template_shipping_id'
+            'template_shipping_id',
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -119,7 +120,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
             'restock_date_mode',
             'restock_date_value',
-            'restock_date_custom_attribute'
+            'restock_date_custom_attribute',
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -178,7 +179,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
-        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
+        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit' => ['id' => $id]]));
     }
 
     // ----------------------------------------
@@ -188,8 +189,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         array $newData,
         array $affectedListingsProductsData
     ) {
-        if (empty($affectedListingsProductsData) ||
-            empty($oldData['template_selling_format_id']) || empty($newData['template_selling_format_id'])) {
+        if (
+            empty($affectedListingsProductsData) ||
+            empty($oldData['template_selling_format_id']) || empty($newData['template_selling_format_id'])
+        ) {
             return;
         }
 
@@ -231,8 +234,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         array $newData,
         array $affectedListingsProductsData
     ) {
-        if (empty($affectedListingsProductsData) ||
-            empty($oldData['template_synchronization_id']) || empty($newData['template_synchronization_id'])) {
+        if (
+            empty($affectedListingsProductsData) ||
+            empty($oldData['template_synchronization_id']) || empty($newData['template_synchronization_id'])
+        ) {
             return;
         }
 
@@ -274,9 +279,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         array $newData,
         array $affectedListingsProductsData
     ) {
-        if (empty($affectedListingsProductsData) ||
+        if (
+            empty($affectedListingsProductsData) ||
             empty($oldData['template_shipping_id']) &&
-            empty($newData['template_shipping_id'])) {
+            empty($newData['template_shipping_id'])
+        ) {
             return;
         }
 

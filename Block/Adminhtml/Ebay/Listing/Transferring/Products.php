@@ -46,7 +46,7 @@ class Products extends AbstractBlock
                 'Adding has been completed' => $this->__('Adding has been completed'),
                 'Adding Products in process. Please wait...' => $this->__(
                     'Adding Products in process. Please wait...'
-                )
+                ),
             ]
         );
 

@@ -50,21 +50,24 @@ class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
         );
 
         $component = ucfirst(strtolower($this->getRequest()->getParam('componentMode')));
-        $movingHandlerJs = $component.'ListingOtherGridObj.movingHandler';
+        $movingHandlerJs = $component . 'ListingOtherGridObj.movingHandler';
 
         $block = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid::class,
             '',
-            ['data' => [
-                'grid_url' => $this->getUrl(
-                    '*/listing_other_moving/moveToListingGrid',
-                    ['_current'=>true]
-                ),
-                'moving_handler_js' => $movingHandlerJs,
-            ]]
+            [
+                'data' => [
+                    'grid_url' => $this->getUrl(
+                        '*/listing_other_moving/moveToListingGrid',
+                        ['_current' => true]
+                    ),
+                    'moving_handler_js' => $movingHandlerJs,
+                ],
+            ]
         );
 
         $this->setAjaxContent($block->toHtml());
+
         return $this->getResult();
     }
 }

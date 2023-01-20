@@ -8,13 +8,12 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
 {
+    /** @var null  */
     protected $childMode = null;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     //########################################
@@ -52,6 +51,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
     {
         $mode = strtolower((string)$mode);
         $mode && $this->childMode = $mode;
+
         return $this;
     }
 
@@ -77,10 +77,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $componentPk = $resource->getChildPrimary($this->childMode);
 
         $this->getSelect()->join(
-            ['second_table'=>$componentTable],
-            "`second_table`.`".$componentPk."` = `main_table`.`id`"
+            ['second_table' => $componentTable],
+            "`second_table`.`" . $componentPk . "` = `main_table`.`id`"
         );
-        $this->getSelect()->where("`main_table`.`component_mode` = '".$this->childMode."'");
+        $this->getSelect()->where("`main_table`.`component_mode` = '" . $this->childMode . "'");
 
         return $temp;
     }

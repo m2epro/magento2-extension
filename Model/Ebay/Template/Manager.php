@@ -17,21 +17,21 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     private $templateNick = null;
     private $resultObject = null;
 
-    const MODE_PARENT   = 0;
-    const MODE_CUSTOM   = 1;
-    const MODE_TEMPLATE = 2;
+    public const MODE_PARENT = 0;
+    public const MODE_CUSTOM = 1;
+    public const MODE_TEMPLATE = 2;
 
-    const COLUMN_PREFIX = 'template';
+    public const COLUMN_PREFIX = 'template';
 
-    const OWNER_LISTING         = 'Listing';
-    const OWNER_LISTING_PRODUCT = 'Listing\Product';
+    public const OWNER_LISTING = 'Listing';
+    public const OWNER_LISTING_PRODUCT = 'Listing\Product';
 
-    const TEMPLATE_ALL_POLICY      = 'all_policy';
-    const TEMPLATE_RETURN_POLICY   = 'return_policy';
-    const TEMPLATE_SHIPPING        = 'shipping';
-    const TEMPLATE_DESCRIPTION     = 'description';
-    const TEMPLATE_SELLING_FORMAT  = 'selling_format';
-    const TEMPLATE_SYNCHRONIZATION = 'synchronization';
+    public const TEMPLATE_ALL_POLICY = 'all_policy';
+    public const TEMPLATE_RETURN_POLICY = 'return_policy';
+    public const TEMPLATE_SHIPPING = 'shipping';
+    public const TEMPLATE_DESCRIPTION = 'description';
+    public const TEMPLATE_SELLING_FORMAT = 'selling_format';
+    public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
 
     protected $activeRecordFactory;
     protected $ebayFactory;
@@ -61,13 +61,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Ebay\Listing|\Ess\M2ePro\Model\Ebay\Listing\Product $object
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception
      */
     public function setOwnerObject($object)
     {
-        if (!($object instanceof \Ess\M2ePro\Model\Ebay\Listing) &&
-            !($object instanceof \Ess\M2ePro\Model\Ebay\Listing\Product)) {
+        if (
+            !($object instanceof \Ess\M2ePro\Model\Ebay\Listing) &&
+            !($object instanceof \Ess\M2ePro\Model\Ebay\Listing\Product)
+        ) {
             throw new \Ess\M2ePro\Model\Exception('Owner object is out of knowledge range.');
         }
 
@@ -106,6 +109,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param string $nick
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -132,7 +136,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             self::TEMPLATE_SHIPPING,
             self::TEMPLATE_DESCRIPTION,
             self::TEMPLATE_SELLING_FORMAT,
-            self::TEMPLATE_SYNCHRONIZATION
+            self::TEMPLATE_SYNCHRONIZATION,
         ];
     }
 
@@ -175,7 +179,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         return [
             self::TEMPLATE_SELLING_FORMAT,
             self::TEMPLATE_SYNCHRONIZATION,
-            self::TEMPLATE_DESCRIPTION
+            self::TEMPLATE_DESCRIPTION,
         ];
     }
 
@@ -392,8 +396,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             case self::TEMPLATE_SYNCHRONIZATION:
             case self::TEMPLATE_DESCRIPTION:
                 if ($returnChildModel) {
-                    $modelPath = ucfirst(\Ess\M2ePro\Helper\Component\Ebay::NICK) . '\\' . $this->getTemplateModelName(
-                        );
+                    $modelPath = ucfirst(\Ess\M2ePro\Helper\Component\Ebay::NICK)
+                        . '\\' . $this->getTemplateModelName();
                     $model = $this->activeRecordFactory->getObject($modelPath);
                 } else {
                     $model = $this->ebayFactory->getObject($this->getTemplateModelName());
@@ -474,6 +478,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
      * @param int $templateId
      * @param bool $asArrays
      * @param string|array $columns
+     *
      * @return array
      */
     public function getAffectedOwnerObjects($ownerObjectModel, $templateId, $asArrays = true, $columns = '*')

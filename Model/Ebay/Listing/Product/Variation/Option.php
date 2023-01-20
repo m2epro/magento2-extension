@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Listing\Product\Variation\Option getParentObject()
  */
+
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
 /**
@@ -29,7 +30,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
     public function afterSave()
     {
         $listingProductId = $this->getListingProduct()->getId();
-        $variationId      = $this->getListingProductVariation()->getId();
+        $variationId = $this->getListingProductVariation()->getId();
 
         $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
@@ -41,7 +42,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
     public function beforeDelete()
     {
         $listingProductId = $this->getListingProduct()->getId();
-        $variationId      = $this->getListingProductVariation()->getId();
+        $variationId = $this->getListingProductVariation()->getId();
 
         $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
@@ -248,7 +249,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
             $tempAttributeTitles = [
                 $tempAttribute->getData('default_title'),
                 $tempAttribute->getData('store_title'),
-                $tempAttribute->getData('title')
+                $tempAttribute->getData('title'),
             ];
             $tempAttributeTitles = array_map('strtolower', array_filter($tempAttributeTitles));
             $tempAttributeTitles = $this->prepareAttributeTitles($tempAttributeTitles);
@@ -263,7 +264,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
                 $tempOptionTitles = [
                     $tempOption->getData('default_title'),
                     $tempOption->getData('store_title'),
-                    $tempOption->getData('title')
+                    $tempOption->getData('title'),
                 ];
                 $tempOptionTitles = array_map('strtolower', array_filter($tempOptionTitles));
                 $tempOptionTitles = $this->prepareOptionTitles($tempOptionTitles);
@@ -288,10 +289,12 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstrac
     protected function prepareOptionTitles($optionTitles)
     {
         foreach ($optionTitles as &$optionTitle) {
-            $optionTitle = trim($this->getHelper('Data')->reduceWordsInString(
-                $optionTitle,
-                \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
-            ));
+            $optionTitle = trim(
+                $this->getHelper('Data')->reduceWordsInString(
+                    $optionTitle,
+                    \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
+                )
+            );
         }
 
         return $optionTitles;

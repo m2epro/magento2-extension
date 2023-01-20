@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Block\Adminhtml\Category;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -37,6 +38,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function setStoreId($storeId)
     {
         $this->setData('store_id', $storeId);
+
         return $this;
     }
 
@@ -76,7 +78,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $this->getStoreId()
         );
         $collection->addFieldToFilter([
-            ['attribute' => 'entity_id', 'in' => $ids]
+            ['attribute' => 'entity_id', 'in' => $ids],
         ]);
 
         $cacheData = [];

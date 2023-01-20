@@ -20,6 +20,8 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
     private $registryManager;
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $configManager;
+    /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher */
+    private $connectorDispatcher;
 
     /**
      * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry
@@ -31,12 +33,14 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
         \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry,
         \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager,
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
-        \Ess\M2ePro\Model\Config\Manager $configManager
+        \Ess\M2ePro\Model\Config\Manager $configManager,
+        \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $connectorDispatcher
     ) {
         $this->registry = $registry;
         $this->statisticManager = $statisticManager;
         $this->registryManager = $registryManager;
         $this->configManager = $configManager;
+        $this->connectorDispatcher = $connectorDispatcher;
     }
 
     // ----------------------------------------
@@ -54,7 +58,7 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
     /**
      * @return bool
      */
-    function isAllowed(): bool
+    public function isAllowed(): bool
     {
         return true;
     }
@@ -120,7 +124,7 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
             if ($oldHostName != $newHostName || $oldBaseUrl != $newBaseUrl) {
                 $configUpdates[$index] = [
                     'hostname' => $newHostName,
-                    'baseurl'  => $newBaseUrl,
+                    'baseurl' => $newBaseUrl,
                 ];
             }
 
@@ -148,9 +152,7 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
 
         try {
             foreach ($configUpdates as $index => $change) {
-                $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-
-                $connectorObj = $dispatcherObject->getConnector(
+                $connectorObj = $this->connectorDispatcher->getConnector(
                     'server',
                     'check',
                     'state',
@@ -159,7 +161,7 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
                         'hostname' => $change['hostname'],
                     ]
                 );
-                $dispatcherObject->process($connectorObj);
+                $this->connectorDispatcher->process($connectorObj);
                 $response = $connectorObj->getResponseData();
 
                 if (empty($response['state'])) {
@@ -276,5 +278,4 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
 
         return rtrim($baseUrl, '/');
     }
-
 }

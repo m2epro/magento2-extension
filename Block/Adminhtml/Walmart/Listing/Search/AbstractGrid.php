@@ -39,18 +39,27 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     //########################################
 
     abstract public function callbackColumnProductTitle($value, $row, $column, $isExport);
+
     abstract public function callbackColumnStatus($value, $row, $column, $isExport);
+
     abstract public function callbackColumnActions($value, $row, $column, $isExport);
+
     abstract public function callbackColumnPrice($value, $row, $column, $isExport);
 
     //----------------------------------------
 
     abstract protected function callbackFilterProductId($collection, $column);
+
     abstract protected function callbackFilterTitle($collection, $column);
+
     abstract protected function callbackFilterOnlineSku($collection, $column);
+
     abstract protected function callbackFilterGtin($collection, $column);
+
     abstract protected function callbackFilterPrice($collection, $column);
+
     abstract protected function callbackFilterQty($collection, $column);
+
     abstract protected function callbackFilterStatus($collection, $column);
 
     //########################################
@@ -58,25 +67,25 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected function _prepareColumns()
     {
         $this->addColumn('entity_id', [
-            'header'   => $this->__('Product ID'),
-            'align'    => 'right',
-            'width'    => '100px',
-            'type'     => 'number',
-            'index'    => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
-            'filter_condition_callback' => [$this, 'callbackFilterProductId']
+            'filter_condition_callback' => [$this, 'callbackFilterProductId'],
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Listing / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
+            'header' => $this->__('Product Title / Listing / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
             'filter_index' => 'name',
-            'escape'       => false,
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('online_sku', [
@@ -88,7 +97,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'filter_index' => 'online_sku',
             'show_edit_sku' => false,
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class,
-            'filter_condition_callback' => [$this, 'callbackFilterOnlineSku']
+            'filter_condition_callback' => [$this, 'callbackFilterOnlineSku'],
         ]);
 
         $this->addColumn('gtin', [
@@ -100,7 +109,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'show_edit_identifier' => false,
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
             'filter_index' => 'gtin',
-            'filter_condition_callback' => [$this, 'callbackFilterGtin']
+            'filter_condition_callback' => [$this, 'callbackFilterGtin'],
         ]);
 
         $this->addColumn('online_qty', [
@@ -111,7 +120,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty::class,
-            'filter_condition_callback' => [$this, 'callbackFilterQty']
+            'filter_condition_callback' => [$this, 'callbackFilterQty'],
         ]);
 
         $this->addColumn('online_price', [
@@ -122,7 +131,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'index' => 'online_price',
             'filter_index' => 'online_price',
             'frame_callback' => [$this, 'callbackColumnPrice'],
-            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+            'filter_condition_callback' => [$this, 'callbackFilterPrice'],
         ]);
 
         $statusColumn = [
@@ -136,10 +145,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
-            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
         ];
 
         $listingType = $this->getRequest()->getParam(
@@ -154,13 +163,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $this->addColumn('status', $statusColumn);
 
         $this->addColumn('goto_listing_item', [
-            'header'    => $this->__('Manage'),
-            'align'     => 'center',
-            'width'     => '50px',
-            'type'      => 'text',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnActions']
+            'header' => $this->__('Manage'),
+            'align' => 'center',
+            'width' => '50px',
+            'type' => 'text',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
 
         return parent::_prepareColumns();
@@ -178,11 +187,11 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 return '<span style="color: green;">' . $this->__('Active') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                return'<span style="color: red;">' . $this->__('Inactive') . '</span>';
+                return '<span style="color: red;">' . $this->__('Inactive') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                return'<span style="color: orange; font-weight: bold;">' .
-                $this->__('Incomplete') . '</span>';
+                return '<span style="color: orange; font-weight: bold;">' .
+                    $this->__('Incomplete') . '</span>';
         }
 
         return '';
@@ -211,7 +220,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/walmart_listing_search/index', ['_current'=>true]);
+        return $this->getUrl('*/walmart_listing_search/index', ['_current' => true]);
     }
 
     public function getRowUrl($row)

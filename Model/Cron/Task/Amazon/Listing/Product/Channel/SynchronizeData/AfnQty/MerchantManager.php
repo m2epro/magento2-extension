@@ -23,7 +23,7 @@ class MerchantManager
     private $accountIdToMerchantId = [];
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registryManager;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     private $parentFactory;
 
     /**

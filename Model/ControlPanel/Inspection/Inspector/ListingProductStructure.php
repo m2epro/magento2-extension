@@ -16,7 +16,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
     /** @var array */
     private $brokenData = [];
 
-    /** @var HelperFactory  */
+    /** @var HelperFactory */
     private $helperFactory;
 
     /** @var UrlInterface */
@@ -31,7 +31,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
     /** @var ActiveRecordFactory */
     private $activeRecordFactory;
 
-    /** @var IssueFactory  */
+    /** @var IssueFactory */
     private $issueFactory;
 
     //########################################
@@ -44,12 +44,12 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
         ActiveRecordFactory $activeRecordFactory,
         IssueFactory $issueFactory
     ) {
-        $this->helperFactory       = $helperFactory;
-        $this->urlBuilder          = $urlBuilder;
-        $this->resourceConnection  = $resourceConnection;
-        $this->formKey             = $formKey;
+        $this->helperFactory = $helperFactory;
+        $this->urlBuilder = $urlBuilder;
+        $this->resourceConnection = $resourceConnection;
+        $this->formKey = $formKey;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->issueFactory        = $issueFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -78,7 +78,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
     private function getBrokenOption()
     {
         $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
-            ->getResource()->getMainTable();
+                                                                  ->getResource()->getMainTable();
 
         /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection();
@@ -92,14 +92,15 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'main_table.id', 'main_table.component_mode'
+            'main_table.id',
+            'main_table.component_mode',
         ]);
 
         if ($total = $collection->getSize()) {
             $this->brokenData['broken_option'] = [
                 'table' => $collection->getMainTable(),
                 'total' => $total,
-                'ids' => $collection->getAllIds()
+                'ids' => $collection->getAllIds(),
             ];
         }
     }
@@ -107,10 +108,10 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
     private function getBrokenVariation()
     {
         $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
-            ->getResource()->getMainTable();
+                                                         ->getResource()->getMainTable();
 
         $listingProductVariationOptionTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
-            ->getResource()->getMainTable();
+                                                                        ->getResource()->getMainTable();
 
         /** @var \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getCollection();
@@ -130,14 +131,15 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'main_table.id', 'main_table.component_mode'
+            'main_table.id',
+            'main_table.component_mode',
         ]);
 
         if ($total = $collection->getSize()) {
             $this->brokenData['broken_variation'] = [
                 'table' => $collection->getMainTable(),
                 'total' => $total,
-                'ids' => $collection->getAllIds()
+                'ids' => $collection->getAllIds(),
             ];
         }
     }
@@ -158,14 +160,15 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'main_table.id', 'main_table.component_mode'
+            'main_table.id',
+            'main_table.component_mode',
         ]);
 
         if ($total = $collection->getSize()) {
             $this->brokenData['broken_product'] = [
                 'table' => $collection->getMainTable(),
                 'total' => $total,
-                'ids' => $collection->getAllIds()
+                'ids' => $collection->getAllIds(),
             ];
         }
     }
@@ -186,14 +189,15 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'main_table.id', 'main_table.component_mode'
+            'main_table.id',
+            'main_table.component_mode',
         ]);
 
         if ($total = $collection->getSize()) {
             $this->brokenData['broken_listing'] = [
                 'table' => $collection->getMainTable(),
                 'total' => $total,
-                'ids' => $collection->getAllIds()
+                'ids' => $collection->getAllIds(),
             ];
         }
     }
@@ -217,7 +221,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
 HTML;
 
         foreach ($data as $key => $item) {
-            $repairInfo =  $this->helperFactory->getObject('Data')->jsonEncode($item);
+            $repairInfo = $this->helperFactory->getObject('Data')->jsonEncode($item);
             $description = str_replace('_', ' ', $key);
             $input = "<input type='checkbox' name='repair_info[]' value='" . $repairInfo . "'>";
             $html .= <<<HTML

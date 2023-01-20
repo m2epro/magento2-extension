@@ -14,8 +14,8 @@ namespace Ess\M2ePro\Model\Magento\Product\Websites;
  */
 class Update extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const ACTION_ADD = 1;
-    const ACTION_REMOVE = 2;
+    public const ACTION_ADD = 1;
+    public const ACTION_REMOVE = 2;
 
     //########################################
 

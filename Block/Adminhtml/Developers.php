@@ -34,7 +34,7 @@ class Developers extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected function _toHtml()
     {
-        return parent::_toHtml().'<div id="developers_tab_container"></div>';
+        return parent::_toHtml() . '<div id="developers_tab_container"></div>';
     }
 
     //########################################

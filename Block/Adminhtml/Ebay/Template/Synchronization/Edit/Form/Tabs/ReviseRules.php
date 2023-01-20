@@ -57,7 +57,7 @@ Policy Templates.</p><br>
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/Z-8UB')
-                )
+                ),
             ]
         );
 
@@ -65,7 +65,7 @@ HTML
             'magento_block_ebay_template_synchronization_form_data_revise_products',
             [
                 'legend' => $this->__('Revise Conditions'),
-                'collapsable' => true
+                'collapsable' => true,
             ]
         );
 
@@ -85,7 +85,7 @@ HTML
                     used for Item Quantity or Custom Quantity value are modified in Magento or Policy Template.
                     The Quantity management is the basic functionality the Magento-to-eBay integration is based on
                     and it cannot be disabled.'
-                )
+                ),
             ]
         );
 
@@ -104,15 +104,16 @@ HTML
                 'tooltip' => $this->__(
                     'Set the Item Quantity limit at which the Revise Action should be triggered.
                     It is recommended to keep this value relatively low, between 10 and 20 Items.'
-                )
+                ),
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <input name="synchronization[revise_update_qty_max_applied_value]" id="revise_update_qty_max_applied_value"
        value="{$formData['revise_update_qty_max_applied_value']}" type="text"
        style="width: 72px; margin-left: 10px;"
        class="input-text admin__control-text required-entry M2ePro-validate-qty _required" />
 HTML
-            );
+        );
 
         $fieldset->addField(
             'revise_update_qty_max_applied_value_line_tr',
@@ -134,7 +135,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Price on eBay when Product Price, Special Price or Magento Attribute
                     used for Item Price are modified in Magento or Policy Template.'
-                )
+                ),
             ]
         );
 
@@ -152,7 +153,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Title on eBay when Product Name, Magento Attribute used for Item Title
                     or Custom Title value are modified in Magento or Policy Template.'
-                )
+                ),
             ]
         );
 
@@ -170,7 +171,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Subtitle on eBay when Magento Attribute used for Item Subtitle or
                     Custom Subtitle value are modified in Magento or Policy Template.'
-                )
+                ),
             ]
         );
 
@@ -188,7 +189,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Description on eBay when Product Description, Product Short
                     Description or Custom Description value are modified in Magento or Policy Template.'
-                )
+                ),
             ]
         );
 
@@ -206,7 +207,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Image(s) on eBay when Product Image(s) or Magento Attribute used for
                     Product Image(s) are modified in Magento or Policy Template.'
-                )
+                ),
             ]
         );
 
@@ -224,7 +225,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Categories/Specifics on eBay when Categories/Specifics data or Magento
                     Attributes used for Categories/Specifics are modified.'
-                )
+                ),
             ]
         );
 
@@ -241,7 +242,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Parts Compatibility data on eBay once the related data is modified.'
-                )
+                ),
             ]
         );
 
@@ -259,7 +260,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Shipping information on eBay when the Shipping Policy Template or
                     Magento Attributes used in Shipping Policy Template are modified.'
-                )
+                ),
             ]
         );
 
@@ -276,7 +277,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Item Return information on eBay when Return Policy Template is modified.'
-                )
+                ),
             ]
         );
 
@@ -294,7 +295,7 @@ HTML
                 'tooltip' => $this->__(
                     'Automatically revises Item Condition, Condition Note, Lot Size, Taxation, Best Offer, and Charity
                     information on eBay when the related data is modified in Policy Templates.'
-                )
+                ),
             ]
         );
 
@@ -307,7 +308,7 @@ HTML
              <a href="%url%" target="_blank">this article</a> before using the option.',
                     $this->supportHelper->getSupportUrl('/support/solutions/articles/9000200401')
                 ),
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 

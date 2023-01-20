@@ -60,12 +60,12 @@ class Info
         $city,
         $postal_code
     ) {
-        $this->email      = $email;
-        $this->firstname  = $firstname;
-        $this->lastname   = $lastname;
-        $this->phone      = $phone;
-        $this->country    = $country;
-        $this->city       = $city;
+        $this->email = $email;
+        $this->firstname = $firstname;
+        $this->lastname = $lastname;
+        $this->phone = $phone;
+        $this->country = $country;
+        $this->city = $city;
         $this->postal_code = $postal_code;
     }
 

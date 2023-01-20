@@ -24,6 +24,7 @@ class GetVariationThemes extends Description
 
         $variationThemes = $model->getVariationThemes($this->getRequest()->getParam('product_data_nick'));
         $this->setJsonContent($variationThemes);
+
         return $this->getResult();
     }
 

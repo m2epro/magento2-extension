@@ -10,15 +10,13 @@ namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing;
 
 use Ess\M2ePro\Helper\Component\Walmart as WalmartHelper;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other
- */
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
 
     //########################################

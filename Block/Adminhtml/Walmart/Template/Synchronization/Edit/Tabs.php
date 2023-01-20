@@ -31,8 +31,10 @@ class Tabs extends AbstractTabs
                 'label' => __('List Rules'),
                 'title' => __('List Rules'),
                 'content' => $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\ListRules::class)
-                  ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\ListRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
@@ -42,8 +44,10 @@ class Tabs extends AbstractTabs
                 'label' => __('Revise Rules'),
                 'title' => __('Revise Rules'),
                 'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\ReviseRules::class)
-              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\ReviseRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
@@ -53,8 +57,10 @@ class Tabs extends AbstractTabs
                 'label' => __('Relist Rules'),
                 'title' => __('Relist Rules'),
                 'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\RelistRules::class)
-              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\RelistRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
@@ -64,8 +70,10 @@ class Tabs extends AbstractTabs
                 'label' => __('Stop Rules'),
                 'title' => __('Stop Rules'),
                 'content' => $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\StopRules::class)
-                  ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs\StopRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 

@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Account\Repricing;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Account\Repricing\AffectedListingsProducts
- */
 class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################

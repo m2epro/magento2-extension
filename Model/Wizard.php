@@ -27,6 +27,7 @@ class Wizard extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     /**
      * @param string|null $view
+     *
      * @return bool
      */
     public function isActive($view)
@@ -63,6 +64,7 @@ class Wizard extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $currentStep = $this->getHelper('Module\Wizard')->getStep($this->getNick());
         $prevStepIndex = array_search($currentStep, $this->steps) - 1;
+
         return isset($this->steps[$prevStepIndex]) ? $this->steps[$prevStepIndex] : false;
     }
 
@@ -70,6 +72,7 @@ class Wizard extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $currentStep = $this->getHelper('Module\Wizard')->getStep($this->getNick());
         $nextStepIndex = array_search($currentStep, $this->steps) + 1;
+
         return isset($this->steps[$nextStepIndex]) ? $this->steps[$nextStepIndex] : false;
     }
 

@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Listing\Other getParentObject()
  */
+
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
 /**
@@ -155,26 +156,32 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function afterMapProduct()
     {
         $existedRelation = $this->getResource()->getConnection()
-            ->select()
-            ->from(['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()])
-            ->where('`account_id` = ?', $this->getAccount()->getId())
-            ->where('`marketplace_id` = ?', $this->getMarketplace()->getId())
-            ->where('`item_id` = ?', $this->getItemId())
-            ->where('`product_id` = ?', $this->getParentObject()->getProductId())
-            ->where('`store_id` = ?', $this->getRelatedStoreId())
-            ->query()
-            ->fetchColumn();
+                                ->select()
+                                ->from(
+                                    [
+                                        'ei' => $this->activeRecordFactory->getObject('Ebay\Item')
+                                                                          ->getResource()
+                                                                          ->getMainTable(),
+                                    ]
+                                )
+                                ->where('`account_id` = ?', $this->getAccount()->getId())
+                                ->where('`marketplace_id` = ?', $this->getMarketplace()->getId())
+                                ->where('`item_id` = ?', $this->getItemId())
+                                ->where('`product_id` = ?', $this->getParentObject()->getProductId())
+                                ->where('`store_id` = ?', $this->getRelatedStoreId())
+                                ->query()
+                                ->fetchColumn();
 
         if ($existedRelation) {
             return;
         }
 
         $dataForAdd = [
-            'account_id'     => $this->getAccount()->getId(),
+            'account_id' => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
-            'item_id'        => $this->getItemId(),
-            'product_id'     => $this->getParentObject()->getProductId(),
-            'store_id'       => $this->getRelatedStoreId()
+            'item_id' => $this->getItemId(),
+            'product_id' => $this->getParentObject()->getProductId(),
+            'store_id' => $this->getRelatedStoreId(),
         ];
 
         $this->activeRecordFactory->getObject('Ebay\Item')->setData($dataForAdd)->save();
@@ -183,36 +190,42 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function beforeUnmapProduct()
     {
         $existedRelation = $this->getResource()->getConnection()
-            ->select()
-            ->from(
-                ['ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
-                []
-            )
-            ->join(
-                [
-                'elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()
-                ],
-                '(`elp`.`ebay_item_id` = `ei`.`id`)',
-                ['elp.listing_product_id']
-            )
-            ->where('`ei`.`item_id` = ?', $this->getItemId())
-            ->where('`ei`.`account_id` = ?', $this->getAccount()->getId())
-            ->query()
-            ->fetchColumn();
+                                ->select()
+                                ->from(
+                                    [
+                                        'ei' => $this->activeRecordFactory->getObject('Ebay\Item')
+                                                                          ->getResource()
+                                                                          ->getMainTable(),
+                                    ],
+                                    []
+                                )
+                                ->join(
+                                    [
+                                        'elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')
+                                                                           ->getResource()
+                                                                           ->getMainTable(),
+                                    ],
+                                    '(`elp`.`ebay_item_id` = `ei`.`id`)',
+                                    ['elp.listing_product_id']
+                                )
+                                ->where('`ei`.`item_id` = ?', $this->getItemId())
+                                ->where('`ei`.`account_id` = ?', $this->getAccount()->getId())
+                                ->query()
+                                ->fetchColumn();
 
         if ($existedRelation) {
             return;
         }
 
         $this->getResource()->getConnection()
-            ->delete(
-                $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable(),
-                [
-                    '`item_id` = ?' => $this->getItemId(),
-                    '`product_id` = ?' => $this->getParentObject()->getProductId(),
-                    '`account_id` = ?' => $this->getAccount()->getId()
-                ]
-            );
+             ->delete(
+                 $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable(),
+                 [
+                     '`item_id` = ?' => $this->getItemId(),
+                     '`product_id` = ?' => $this->getParentObject()->getProductId(),
+                     '`account_id` = ?' => $this->getAccount()->getId(),
+                 ]
+             );
     }
 
     //########################################

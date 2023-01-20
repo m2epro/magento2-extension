@@ -13,10 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Template;
  */
 class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    protected $amazonFactory;
+    public const TEMPLATE_NAME_VALUE = 1;
+    public const TEMPLATE_NAME_ATTRIBUTE = 2;
 
-    const TEMPLATE_NAME_VALUE     = 1;
-    const TEMPLATE_NAME_ATTRIBUTE = 2;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
+    protected $amazonFactory;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Shipping\Source[]
@@ -71,19 +72,20 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         return (bool)$this->activeRecordFactory->getObject('Amazon_Listing')
-                ->getCollection()
-                ->addFieldToFilter('template_shipping_id', $this->getId())
-                ->getSize() ||
-                (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
-                ->getCollection()
-                ->addFieldToFilter('template_shipping_id', $this->getId())
-                ->getSize();
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_shipping_id', $this->getId())
+                                               ->getSize() ||
+            (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
+                                            ->getCollection()
+                                            ->addFieldToFilter('template_shipping_id', $this->getId())
+                                            ->getSize();
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Amazon\Template\Shipping\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)

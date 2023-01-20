@@ -23,7 +23,7 @@ class FilesPermissions implements InspectorInterface
     /** @var \Magento\Framework\Filesystem\Driver\File */
     private $fileDriver;
 
-    /** @var IssueFactory  */
+    /** @var IssueFactory */
     private $issueFactory;
 
     public function __construct(
@@ -32,7 +32,7 @@ class FilesPermissions implements InspectorInterface
         IssueFactory $issueFactory
     ) {
         $this->componentRegistrar = $componentRegistrar;
-        $this->fileDriver         = $fileDriver;
+        $this->fileDriver = $fileDriver;
         $this->issueFactory = $issueFactory;
     }
 
@@ -56,9 +56,8 @@ class FilesPermissions implements InspectorInterface
 
     private function processModuleFiles()
     {
-
         $fullPath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER)
-            .DIRECTORY_SEPARATOR;
+            . DIRECTORY_SEPARATOR;
 
         $directoryIterator = new \RecursiveDirectoryIterator($fullPath, \FilesystemIterator::SKIP_DOTS);
         $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
@@ -75,8 +74,10 @@ class FilesPermissions implements InspectorInterface
             return;
         }
 
-        if ($this->fileDriver->isExists($object->getRealPath())
-            && !$this->fileDriver->isWritable($object->getRealPath())) {
+        if (
+            $this->fileDriver->isExists($object->getRealPath())
+            && !$this->fileDriver->isWritable($object->getRealPath())
+        ) {
             $this->_unWritable[$object->getRealPath()] = true;
         }
 

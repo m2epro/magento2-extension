@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action;
 
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList as ProcessingListModel;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList as ProcessingListModel;
 
 /**
  * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\ProcessingList
@@ -56,14 +56,14 @@ class ProcessingList extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstra
     public function getUniqueRelistRequestPendingSingleIds()
     {
         $select = $this->getConnection()
-            ->select()
-            ->distinct(true)
-            ->from(
-                $this->getMainTable(),
-                new \Zend_Db_Expr('DISTINCT `relist_request_pending_single_id`')
-            )
-            ->where('relist_request_pending_single_id IS NOT NULL')
-            ->where('stage = ?', ProcessingListModel::STAGE_RELIST_INVENTORY_WAITING_RESULT);
+                       ->select()
+                       ->distinct(true)
+                       ->from(
+                           $this->getMainTable(),
+                           new \Zend_Db_Expr('DISTINCT `relist_request_pending_single_id`')
+                       )
+                       ->where('relist_request_pending_single_id IS NOT NULL')
+                       ->where('stage = ?', ProcessingListModel::STAGE_RELIST_INVENTORY_WAITING_RESULT);
 
         return $this->getConnection()->fetchCol($select);
     }

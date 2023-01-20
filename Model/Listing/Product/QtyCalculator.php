@@ -45,11 +45,13 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $product
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\PriceCalculator
      */
     public function setProduct(\Ess\M2ePro\Model\Listing\Product $product)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -106,6 +108,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param null|string $key
+     *
      * @return array|mixed
      */
     protected function getSource($key = null)
@@ -115,7 +118,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return ($key !== null && isset($this->source[$key])) ?
-                $this->source[$key] : $this->source;
+            $this->source[$key] : $this->source;
     }
 
     /**
@@ -190,6 +193,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Variation $variation
+     *
      * @return int|mixed
      * @throws Logic
      */
@@ -197,7 +201,8 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     {
         $value = 0;
 
-        if ($this->getMagentoProduct()->isConfigurableType() ||
+        if (
+            $this->getMagentoProduct()->isConfigurableType() ||
             $this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
             $this->getMagentoProduct()->isGroupedType() ||
             $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
@@ -218,7 +223,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             foreach ($optionsQtyArray as $optionQty) {
-                $optionsQtyList[] = floor($optionQty[0]/count($optionQty));
+                $optionsQtyList[] = floor($optionQty[0] / count($optionQty));
             }
 
             !empty($optionsQtyArray) && $value = min($optionsQtyList);
@@ -228,7 +233,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
                 [
                     'listing_product_id' => $this->getProduct()->getId(),
                     'product_id' => $this->getMagentoProduct()->getProductId(),
-                    'type'       => $this->getMagentoProduct()->getTypeId()
+                    'type' => $this->getMagentoProduct()->getTypeId(),
                 ]
             );
         }
@@ -270,9 +275,11 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     {
         $mode = $this->getSource('mode');
 
-        if ($mode != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE &&
+        if (
+            $mode != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE &&
             $mode != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED &&
-            $mode != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
+            $mode != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
+        ) {
             return $value;
         }
 
@@ -294,7 +301,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
 
         $roundingFunction = $this->moduleConfiguration->getQtyPercentageRoundingGreater() ? 'ceil' : 'floor';
 
-        return (int)$roundingFunction(($value/100) * $percents);
+        return (int)$roundingFunction(($value / 100) * $percents);
     }
 
     protected function applyValueMinMaxModifications($value)

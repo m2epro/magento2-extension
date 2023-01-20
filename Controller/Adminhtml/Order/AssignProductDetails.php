@@ -23,17 +23,18 @@ class AssignProductDetails extends Order
 
         if (count($optionsData) == 0 || !$orderItem->getId()) {
             $this->setJsonContent([
-                'error' => $this->__('Please specify Required Options.')
+                'error' => $this->__('Please specify Required Options.'),
             ]);
+
             return $this->getResult();
         }
 
-        $associatedOptions  = [];
+        $associatedOptions = [];
         $associatedProducts = [];
 
         foreach ($optionsData as $optionId => $optionData) {
             $optionId = (int)$optionId;
-            $valueId  = (int)$optionData['value_id'];
+            $valueId = (int)$optionData['value_id'];
 
             $associatedOptions[$optionId] = $valueId;
             $associatedProducts["{$optionId}::{$valueId}"] = $optionData['product_ids'];
@@ -43,15 +44,16 @@ class AssignProductDetails extends Order
             $orderItem->assignProductDetails($associatedOptions, $associatedProducts);
         } catch (\Exception $e) {
             $this->setJsonContent([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return $this->getResult();
         }
 
         if ($saveMatching) {
             $outputData = [
-                'associated_options'  => $orderItem->getAssociatedOptions(),
-                'associated_products' => $orderItem->getAssociatedProducts()
+                'associated_options' => $orderItem->getAssociatedOptions(),
+                'associated_products' => $orderItem->getAssociatedProducts(),
             ];
 
             /** @var \Ess\M2ePro\Model\Order\Matching $orderMatching */
@@ -66,11 +68,11 @@ class AssignProductDetails extends Order
 
         $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
         $orderItem->getOrder()->addSuccessLog('Order Item "%title%" Options were configured.', [
-            'title' => $orderItem->getChildObject()->getTitle()
+            'title' => $orderItem->getChildObject()->getTitle(),
         ]);
 
         $this->setJsonContent([
-            'success' => $this->__('Order Item Options were configured.')
+            'success' => $this->__('Order Item Options were configured.'),
         ]);
 
         return $this->getResult();

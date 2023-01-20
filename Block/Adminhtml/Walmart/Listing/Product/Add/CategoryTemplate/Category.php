@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate;
 
 class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
@@ -55,9 +56,9 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             '_current' => true,
         ]);
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'ListingGridObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
@@ -79,9 +80,9 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         );
 
         $this->addButton('add_products_category_template_category_continue', [
-            'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridObj.completeCategoriesDataStep()',
-            'class'     => 'action-primary forward'
+            'label' => $this->__('Continue'),
+            'onclick' => 'ListingGridObj.completeCategoriesDataStep()',
+            'class' => 'action-primary forward',
         ]);
         // ---------------------------------------
     }
@@ -104,7 +105,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         // TEXT
         $this->jsTranslator->addTranslations([
             'templateCategoryPopupTitle' => $this->__('Assign Category Policy'),
-            'Add New Category Policy' => $this->__('Add New Category Policy')
+            'Add New Category Policy' => $this->__('Add New Category Policy'),
         ]);
         // ---------------------------------------
 
@@ -117,9 +118,12 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             $this->dataHelper->getControllerActions('Walmart_Listing_Product_Template_Category')
         );
 
-        $this->jsUrl->add($this->getUrl('*/walmart_listing_product_template_category/viewGrid', [
-            'map_to_template_js_fn' => 'selectTemplateCategory'
-        ]), 'walmart_listing_product_template_category/viewGrid');
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_listing_product_template_category/viewGrid', [
+                'map_to_template_js_fn' => 'selectTemplateCategory',
+            ]),
+            'walmart_listing_product_template_category/viewGrid'
+        );
 
         // ---------------------------------------
 

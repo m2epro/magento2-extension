@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Listing\Product\Indexer\VariationParent;
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
-    const INDEXER_LIFETIME = 1800;
+    public const INDEXER_LIFETIME = 1800;
 
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
@@ -58,6 +58,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $this->getHelper('Data_Cache_Permanent')->removeValue(
             $this->getUpToDateCacheKey()
         );
+
         return $this;
     }
 
@@ -78,6 +79,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             ['listing_product_indexer_variation_parent'],
             self::INDEXER_LIFETIME
         );
+
         return $this;
     }
 

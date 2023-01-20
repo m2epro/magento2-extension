@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
  */
 class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/create_failed';
+    public const NICK = 'amazon/order/create_failed';
 
-    const MAX_TRIES_TO_CREATE_ORDER = 3;
+    public const MAX_TRIES_TO_CREATE_ORDER = 3;
 
     //####################################
 
@@ -41,7 +41,7 @@ class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                                                   ->getCollection();
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             try {
                 $amazonOrders = $this->getAmazonOrders($account);
@@ -77,7 +77,7 @@ class CreateFailed extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $order->addData([
                     'magento_order_creation_failure' => \Ess\M2ePro\Model\Order::MAGENTO_ORDER_CREATION_FAILED_NO,
                     'magento_order_creation_fails_count' => 0,
-                    'magento_order_creation_latest_attempt_date' => null
+                    'magento_order_creation_latest_attempt_date' => null,
                 ]);
                 $order->save();
                 continue;

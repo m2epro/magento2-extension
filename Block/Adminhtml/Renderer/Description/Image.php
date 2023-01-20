@@ -40,12 +40,16 @@ class Image extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
     public function getImageId()
     {
         if ($this->imageId === null) {
-            $this->imageId = substr(sha1(
-                'image-'
-                . $this->getData('index_number')
-                . $this->dataHelper->jsonEncode($this->getData('src'))
-            ), 20);
+            $this->imageId = substr(
+                sha1(
+                    'image-'
+                    . $this->getData('index_number')
+                    . $this->dataHelper->jsonEncode($this->getData('src'))
+                ),
+                20
+            );
         }
+
         return $this->imageId;
     }
 

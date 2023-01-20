@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -12,9 +13,6 @@ use Magento\InventorySalesApi\Api\GetStockBySalesChannelInterface;
 use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
 use Ess\M2ePro\Model\MSI\Order\Reserve;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\PlaceReservationsForSalesEvent
- */
 class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -55,6 +53,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -67,6 +66,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     public function processExecute($interceptor, \Closure $callback, array $arguments)
@@ -75,7 +75,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
         /** @var \Magento\InventorySalesApi\Api\Data\SalesChannelInterface $salesChannel */
         /** @var \Magento\InventorySalesApi\Api\Data\SalesEventInterface $salesEvent */
 
-        list($items, $salesChannel, $salesEvent) = $arguments;
+        [$items, $salesChannel, $salesEvent] = $arguments;
 
         $result = $callback(...$arguments);
 
@@ -85,7 +85,6 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         $stock = $this->getStockByChannel->execute($salesChannel);
         foreach ($items as $item) {
-
             $affected = $this->msiAffectedProducts->getAffectedProductsByStockAndSku(
                 $stock->getStockId(),
                 $item->getSku()
@@ -120,7 +119,6 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
         $stock = $this->getStockByChannel->execute($salesChannel);
 
         switch ($salesEvent->getType()) {
-
             case SalesEventInterface::EVENT_ORDER_PLACED:
                 $resultMessage = sprintf(
                     'Product Quantity was reserved from the "%s" Stock in the amount of %s
@@ -130,7 +128,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
                 );
                 break;
 
-                case SalesEventInterface::EVENT_SHIPMENT_CREATED:
+            case SalesEventInterface::EVENT_SHIPMENT_CREATED:
                 $resultMessage = sprintf(
                     'Product Quantity reservation was released from the "%s" Stock ' .
                     'in the amount of %s because Magento Shipment was created.',
@@ -139,7 +137,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
                 );
                 break;
 
-                case Reserve::EVENT_TYPE_MAGENTO_RESERVATION_PLACED:
+            case Reserve::EVENT_TYPE_MAGENTO_RESERVATION_PLACED:
                 $resultMessage = sprintf(
                     'M2E Pro reserved Product Quantity from the "%s" Stock in the amount of %s.',
                     $stock->getName(),
@@ -147,7 +145,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
                 );
                 break;
 
-                case Reserve::EVENT_TYPE_MAGENTO_RESERVATION_RELEASED:
+            case Reserve::EVENT_TYPE_MAGENTO_RESERVATION_RELEASED:
                 $resultMessage = sprintf(
                     'M2E Pro released Product Quantity reservation from the "%s" Stock in the amount of %s.',
                     $stock->getName(),
@@ -155,7 +153,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
                 );
                 break;
 
-                default:
+            default:
                 if ($item->getQuantity()) {
                     $message = 'Product Quantity reservation was released ';
                 } else {
@@ -185,10 +183,10 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     private function isReservationCompensatingType(
         \Magento\InventorySalesApi\Api\Data\SalesEventInterface $salesEvent
-    ){
+    ) {
         $compensatingReservationTypes = [
             Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED,
-            Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED
+            Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED,
         ];
 
         return in_array($salesEvent->getType(), $compensatingReservationTypes, true);

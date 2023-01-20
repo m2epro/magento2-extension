@@ -25,6 +25,7 @@ trait BlockTrait
      * @param $block
      * @param $name
      * @param $arguments
+     *
      * @return \Magento\Framework\View\Element\AbstractBlock
      */
     public function createBlock($block, $name = '', array $arguments = [])
@@ -45,6 +46,7 @@ trait BlockTrait
     public function getTooltipHtml($content, $directionToRight = false)
     {
         $directionToRightClass = $directionToRight ? 'm2epro-field-tooltip-right' : '';
+
         return <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip {$directionToRightClass}">
     <a class="admin__field-tooltip-action" href="javascript://"></a>
@@ -63,6 +65,7 @@ HTML;
     /**
      * @param $block
      * @param string $name
+     *
      * @return mixed
      * @throws \Magento\Framework\Exception\LocalizedException
      */

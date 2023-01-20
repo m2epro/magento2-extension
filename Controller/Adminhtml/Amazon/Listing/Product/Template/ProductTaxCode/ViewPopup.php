@@ -17,10 +17,11 @@ class ViewPopup extends ProductTaxCode
 {
     public function execute()
     {
-        $productsIds  = $this->getRequest()->getParam('products_ids');
+        $productsIds = $this->getRequest()->getParam('products_ids');
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.');
+
             return $this->getResult();
         }
 
@@ -36,19 +37,22 @@ class ViewPopup extends ProductTaxCode
                 'type' => 'warning',
                 'text' => '<p>' . $this->__(
                     'The Product Tax Code Policy was not assigned because the Products have In Action Status.'
-                ). '</p>'
+                ) . '</p>',
             ];
         }
 
         if (empty($productsIdsLocked)) {
             $this->setJsonContent([
-                'messages' => $messages
+                'messages' => $messages,
             ]);
+
             return $this->getResult();
         }
 
         $mainBlock = $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode::class
+                          );
 
         if (!empty($messages)) {
             $mainBlock->setMessages($messages);
@@ -57,8 +61,9 @@ class ViewPopup extends ProductTaxCode
         $this->setJsonContent([
             'html' => $mainBlock->toHtml(),
             'messages' => $messages,
-            'products_ids' => implode(',', $productsIdsLocked)
+            'products_ids' => implode(',', $productsIdsLocked),
         ]);
+
         return $this->getResult();
     }
 }

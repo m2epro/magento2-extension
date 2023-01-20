@@ -8,16 +8,12 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Order
- */
 class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -49,7 +45,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->addFieldToFilter('order_id', (int)$orderId);
         $collection->getSelect()->columns([
-            'items_total' => new \Zend_Db_Expr('SUM((`price`)*`qty_purchased`)')
+            'items_total' => new \Zend_Db_Expr('SUM((`price`)*`qty_purchased`)'),
         ]);
         $collection->getSelect()->group('order_id');
 

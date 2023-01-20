@@ -32,9 +32,9 @@ class AddAttributes extends Main
 
     public function execute()
     {
-        $attributes           = $this->getRequest()->getParam('attributes');
+        $attributes = $this->getRequest()->getParam('attributes');
         $isRememberAutoAction = (bool)$this->getRequest()->getParam('is_remember', false);
-        $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
+        $needAddToVocabulary = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($attributes)) {
             $attributes = $this->dataHelper->jsonDecode($attributes);
@@ -46,6 +46,7 @@ class AddAttributes extends Main
 
         if ($isRememberAutoAction && !$needAddToVocabulary) {
             $this->vocabularyHelper->disableAttributeAutoAction();
+
             return;
         }
 

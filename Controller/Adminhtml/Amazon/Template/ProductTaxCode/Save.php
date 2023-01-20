@@ -65,15 +65,18 @@ class Save extends Template
 
         if ($this->isAjax()) {
             $this->setJsonContent([
-                'status' => true
+                'status' => true,
             ]);
+
             return $this->getResult();
         }
 
         $this->getMessageManager()->addSuccess($this->__('Policy was saved'));
 
-        return $this->_redirect($this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
-            'edit' => ['id' => $model->getId()],
-        ]));
+        return $this->_redirect(
+            $this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
+                'edit' => ['id' => $model->getId()],
+            ])
+        );
     }
 }

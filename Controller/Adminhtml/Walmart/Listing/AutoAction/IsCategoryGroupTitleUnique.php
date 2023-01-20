@@ -18,19 +18,21 @@ class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
         if ($title == '') {
             $this->setJsonContent(['unique' => false]);
+
             return $this->getResult();
         }
 
         $collection = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')
-            ->getCollection()
-            ->addFieldToFilter('listing_id', $listingId)
-            ->addFieldToFilter('title', $title);
+                                                ->getCollection()
+                                                ->addFieldToFilter('listing_id', $listingId)
+                                                ->addFieldToFilter('title', $title);
 
         if ($groupId) {
             $collection->addFieldToFilter('id', ['neq' => $groupId]);
         }
 
         $this->setJsonContent(['unique' => !(bool)$collection->getSize()]);
+
         return $this->getResult();
     }
 }

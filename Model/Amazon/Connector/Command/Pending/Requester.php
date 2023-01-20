@@ -22,6 +22,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
 
     /**
      * Requester constructor.
+     *
      * @param \Ess\M2ePro\Helper\Factory $helperFactory
      * @param \Ess\M2ePro\Model\Factory $modelFactory
      * @param \Ess\M2ePro\Model\Account $account

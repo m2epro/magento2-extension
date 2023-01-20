@@ -42,8 +42,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
         $this->applyFilters($logCollection);
 
         $logCollection->getSelect()
-            ->order(new \Zend_Db_Expr('main_table.id DESC'))
-            ->limit(1, $this->getMaxLastHandledRecordsCount() - 1);
+                      ->order(new \Zend_Db_Expr('main_table.id DESC'))
+                      ->limit(1, $this->getMaxLastHandledRecordsCount() - 1);
 
         $lastAllowedLog = $logCollection->getFirstItem();
 
@@ -52,9 +52,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
             $this->addMaxAllowedLogsCountExceededNotification($lastAllowedLog->getCreateDate());
         } else {
             $logCollection->getSelect()
-                ->reset(\Magento\Framework\DB\Select::ORDER)
-                ->reset(\Magento\Framework\DB\Select::LIMIT_COUNT)
-                ->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
+                          ->reset(\Magento\Framework\DB\Select::ORDER)
+                          ->reset(\Magento\Framework\DB\Select::LIMIT_COUNT)
+                          ->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
         }
 
         $groupedCollection = $this->wrapperCollectionFactory->create();
@@ -103,17 +103,17 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
         $logCollection = $this->activeRecordFactory->getObject('Listing\Log')->getCollection();
 
         $logCollection->getSelect()
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns([
-                'id',
-                self::LISTING_PRODUCT_ID_FIELD,
-                self::LISTING_ID_FIELD,
-                'action_id',
-                'description',
-                'type',
-                'create_date'
-            ])
-            ->order(new \Zend_Db_Expr('id DESC'));
+                      ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                      ->columns([
+                          'id',
+                          self::LISTING_PRODUCT_ID_FIELD,
+                          self::LISTING_ID_FIELD,
+                          'action_id',
+                          'description',
+                          'type',
+                          'create_date',
+                      ])
+                      ->order(new \Zend_Db_Expr('id DESC'));
 
         $nestedLogsIds = [];
         foreach ($this->getCollection()->getItems() as $log) {

@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
  */
 class GetSpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
-
     //########################################
 
     public function execute()
@@ -27,7 +26,9 @@ class GetSpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $uniqueId = $this->getRequest()->getParam('unique_id');
 
         $categoryBlock = $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific::class);
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific::class
+                              );
 
         $categoryBlock->setMarketplaceId($marketplaceId);
         $categoryBlock->setCategoryMode($categoryMode);

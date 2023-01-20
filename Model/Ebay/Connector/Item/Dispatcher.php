@@ -49,6 +49,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param int $action
      * @param array|\Ess\M2ePro\Model\Listing\Product $products
      * @param array $params
+     *
      * @return int
      */
     public function process($action, $products, array $params = [])
@@ -84,6 +85,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param string $action
      * @param bool $isRealTime
      * @param array $params
+     *
      * @return int
      * @throws \LogicException
      */
@@ -219,7 +221,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $sortedProducts = [];
 
         foreach ($products as $product) {
-            $accountId     = $product->getListing()->getAccountId();
+            $accountId = $product->getListing()->getAccountId();
             $marketplaceId = $product->getListing()->getMarketplaceId();
 
             $sortedProducts[$accountId][$marketplaceId][] = $product;

@@ -23,6 +23,7 @@ class Update
 
     /**
      * @param \Ess\M2ePro\Model\Ebay\Account $account
+     *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -68,7 +69,7 @@ class Update
         $connection = $account->getResource()->getConnection();
 
         $tableAccountStoreCategories = $this->moduleDatabaseStructure
-                                            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
+            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $connection->delete($tableAccountStoreCategories, ['account_id = ?' => $account->getId()]);
 
@@ -80,12 +81,12 @@ class Update
 
         foreach ($data['categories'] as $item) {
             $row = [
-                'account_id'  => $account->getId(),
+                'account_id' => $account->getId(),
                 'category_id' => $item['category_id'],
-                'parent_id'   => $item['parent_id'],
-                'title'       => $item['title'],
-                'sorder'      => $item['sorder'],
-                'is_leaf'     => $item['is_leaf'],
+                'parent_id' => $item['parent_id'],
+                'title' => $item['title'],
+                'sorder' => $item['sorder'],
+                'is_leaf' => $item['is_leaf'],
             ];
 
             $connection->insertOnDuplicate($tableAccountStoreCategories, $row);

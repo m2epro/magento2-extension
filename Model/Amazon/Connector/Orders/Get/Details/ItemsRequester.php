@@ -17,7 +17,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getCommand()
     {
-        return ['orders','get','entitiesDetails'];
+        return ['orders', 'get', 'entitiesDetails'];
     }
 
     //########################################
@@ -32,8 +32,8 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
     protected function getResponserParams()
     {
         return [
-            'account_id'     => $this->account->getId(),
-            'marketplace_id' => $this->account->getChildObject()->getMarketplaceId()
+            'account_id' => $this->account->getId(),
+            'marketplace_id' => $this->account->getChildObject()->getMarketplaceId(),
         ];
     }
 

@@ -186,6 +186,7 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             || $this->isUnmanagedListingsHaveAfnProducts($merchantAccountsIds)
         ) {
             $someAccount = $this->merchantManager->getMerchantAccount($merchantId);
+            /** @var AfnQty\Requester $connectorObj */
             $connectorObj = $this->amazonConnectorDispatcher->getCustomConnector(
                 'Cron_Task_Amazon_Listing_Product_Channel_SynchronizeData_AfnQty_Requester',
                 ['merchant_id' => $merchantId],
@@ -291,6 +292,7 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         if ($lockItemManager->isInactiveMoreThanSeconds(\Ess\M2ePro\Model\Processing\Runner::MAX_LIFETIME)) {
             $lockItemManager->remove();
+
             return false;
         }
 

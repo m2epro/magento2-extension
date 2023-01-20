@@ -25,11 +25,11 @@ class Content extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installation\ListingTut
         $this->jsUrl->add($newListingsUrl, 'walmart_listing_create');
 
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label'   => $this->__('Create First Listing'),
-                'onclick' => 'InstallationWalmartWizardObj.createListing()',
-                'class'   => 'primary create-first-listing'
-            ]);
+                            ->setData([
+                                'label' => $this->__('Create First Listing'),
+                                'onclick' => 'InstallationWalmartWizardObj.createListing()',
+                                'class' => 'primary create-first-listing',
+                            ]);
         $this->setChild('continue_button', $buttonBlock);
 
         return parent::_beforeToHtml();

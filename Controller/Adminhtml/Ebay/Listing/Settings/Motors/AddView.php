@@ -22,7 +22,9 @@ class AddView extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         if (!$this->wasInstructionShown()) {
             /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Instruction $block */
             $block = $this->getLayout()
-                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Instruction::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Instruction::class
+                          );
 
             $this->setAjaxContent($block);
 
@@ -31,7 +33,7 @@ class AddView extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add $block */
         $block = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add::class);
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add::class);
         $block->setMotorsType($motorsType);
 
         $this->setAjaxContent($block);

@@ -11,14 +11,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\UpdateShippingStatus
- */
 class UpdateShippingStatus extends Order
 {
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory  */
     protected $orderShipmentCollectionFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -37,6 +33,7 @@ class UpdateShippingStatus extends Order
 
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Order(s).'));
+
             return $this->_redirect('*/*/index');
         }
 
@@ -65,7 +62,7 @@ class UpdateShippingStatus extends Order
 
             if ($shipmentsCollection->getSize() === 0) {
                 $order->getChildObject()->updateShippingStatus([]) ? $hasSucceeded = true
-                                                                   : $hasFailed = true;
+                    : $hasFailed = true;
                 continue;
             }
 
@@ -75,10 +72,10 @@ class UpdateShippingStatus extends Order
                     continue;
                 }
 
-                $result  = $handler->handle($order, $shipment);
+                $result = $handler->handle($order, $shipment);
 
                 $result == \Ess\M2ePro\Model\Order\Shipment\Handler::HANDLE_RESULT_SUCCEEDED ? $hasSucceeded = true
-                                                                                             : $hasFailed = true;
+                    : $hasFailed = true;
             }
         }
 

@@ -20,18 +20,18 @@ class GetEditPopup extends Main
         if (!$listingProductId) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Listing Product must be specified.')
+                'message' => $this->__('Listing Product must be specified.'),
             ]);
 
             return $this->getResult();
         }
 
         $variationEditBlock = $this->getLayout()->createBlock(Edit::class)
-            ->setData('listing_product_id', $listingProductId);
+                                   ->setData('listing_product_id', $listingProductId);
 
         $this->setJsonContent([
             'type' => 'success',
-            'html' => $variationEditBlock->toHtml()
+            'html' => $variationEditBlock->toHtml(),
         ]);
 
         return $this->getResult();

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Other;
  */
 class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/listing/other/resolve_title';
+    public const NICK = 'amazon/listing/other/resolve_title';
 
     //####################################
 
@@ -47,7 +47,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
-            ->getCollection();
+                                                  ->getCollection();
         $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
 
         $accounts = $accountsCollection->getItems();
@@ -57,12 +57,11 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($accounts as $account) {
-
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             $this->getOperationHistory()->addTimePoint(
-                __METHOD__.'process'.$account->getId(),
-                'Get and process Titles for Account '.$account->getTitle()
+                __METHOD__ . 'process' . $account->getId(),
+                'Get and process Titles for Account ' . $account->getTitle()
             );
 
             try {
@@ -77,7 +76,7 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $this->processTaskException($exception);
             }
 
-            $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
         }
     }
 
@@ -86,7 +85,6 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function updateTitlesByAsins(\Ess\M2ePro\Model\Account $account)
     {
         for ($i = 0; $i <= 5; $i++) {
-
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other $listingOtherCollection */
             $listingOtherCollection = $this->parentFactory->getObject(
                 \Ess\M2ePro\Helper\Component\Amazon::NICK,
@@ -107,15 +105,16 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $neededItems[] = $tempItem->getChildObject()->getData('general_id');
             }
 
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'product',
                 'search',
                 'byIdentifiers',
                 [
-                    'items'         => $neededItems,
-                    'id_type'       => 'ASIN',
-                    'only_realtime' => 1
+                    'items' => $neededItems,
+                    'id_type' => 'ASIN',
+                    'only_realtime' => 1,
                 ],
                 null,
                 $account->getId()
@@ -165,14 +164,20 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $listingsOthersWithEmptyTitles = [];
             if ($account->getChildObject()->isOtherListingsMappingEnabled()) {
-
-                /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other $listingOtherCollection */
-                $listingOtherCollection = $this->parentFactory->getObject(
-                    \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                    'Listing\Other'
-                )->getCollection()
-                    ->addFieldToFilter('main_table.account_id', (int)$account->getId())
-                    ->addFieldToFilter('second_table.general_id', (int)$generalId)
+                /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $listingOtherCollection */
+                $listingOtherCollection = $this->parentFactory
+                    ->getObject(
+                        \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                        'Listing\Other'
+                    )->getCollection()
+                    ->addFieldToFilter(
+                        'main_table.account_id',
+                        (int)$account->getId()
+                    )
+                    ->addFieldToFilter(
+                        'second_table.general_id',
+                        (int)$generalId
+                    )
                     ->addFieldToFilter('second_table.title', ['null' => true]);
 
                 $listingsOthersWithEmptyTitles = $listingOtherCollection->getItems();
@@ -198,14 +203,15 @@ class ResolveTitle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function updateNotReceivedTitles($neededItems, $responseData)
     {
-
         $connection = $this->resource->getConnection();
 
         $aloTable = $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource()->getMainTable();
 
         foreach ($neededItems as $generalId) {
-            if (isset($responseData['items'][$generalId]) &&
-                !empty($responseData['items'][$generalId][0]['title'])) {
+            if (
+                isset($responseData['items'][$generalId]) &&
+                !empty($responseData['items'][$generalId][0]['title'])
+            ) {
                 continue;
             }
 

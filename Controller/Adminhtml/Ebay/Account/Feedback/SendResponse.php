@@ -47,6 +47,7 @@ class SendResponse extends Account
 
         if (empty($feedbackId) || $feedback === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -62,7 +63,7 @@ class SendResponse extends Account
             'type' => $result ? 'success' : 'error',
             'text' => $result ?
                 $this->__('Feedback has been sent.') :
-                $this->__('Feedback was not sent.')
+                $this->__('Feedback was not sent.'),
         ]);
 
         return $this->getResult();

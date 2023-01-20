@@ -13,10 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Marketplace;
  */
 class Details extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var int */
     private $marketplaceId = null;
-
+    /** @var array  */
     private $productData = [];
-
+    /** @var \Magento\Framework\App\ResourceConnection  */
     private $resourceConnection;
 
     //########################################
@@ -34,6 +35,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $marketplaceId
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -61,6 +63,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $productDataNick
+     *
      * @return array
      */
     public function getVariationThemes($productDataNick)
@@ -75,11 +78,13 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $productDataNick
      * @param $theme
+     *
      * @return array
      */
     public function getVariationThemeAttributes($productDataNick, $theme)
     {
         $themes = $this->getVariationThemes($productDataNick);
+
         return !empty($themes[$theme]['attributes']) ? $themes[$theme]['attributes'] : [];
     }
 
@@ -92,20 +97,20 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connRead = $this->resourceConnection->getConnection();
-        $table    = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
+        $table = $this->getHelper('Module_Database_Structure')
+                      ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
         $data = $connRead->select()
-            ->from($table)
-            ->where('marketplace_id = ?', (int)$this->marketplaceId)
-            ->query()
-            ->fetch();
+                         ->from($table)
+                         ->where('marketplace_id = ?', (int)$this->marketplaceId)
+                         ->query()
+                         ->fetch();
 
         if ($data === false) {
             throw new \Ess\M2ePro\Model\Exception('Marketplace not found or not synchronized');
         }
 
-        $this->productData    = $this->getHelper('Data')->jsonDecode($data['product_data']);
+        $this->productData = $this->getHelper('Data')->jsonDecode($data['product_data']);
     }
 
     //########################################

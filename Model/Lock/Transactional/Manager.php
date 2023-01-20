@@ -81,6 +81,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->commitTransaction();
+
         return false;
     }
 

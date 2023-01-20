@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Ebay\Order;
 
-/**
- * Class \Ess\M2ePro\Observer\Ebay\Order\Item
- */
 class Item extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -32,7 +28,7 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
     public function process()
     {
         /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
-        $orderItem  = $this->getEvent()->getData('order_item');
+        $orderItem = $this->getEvent()->getData('order_item');
 
         /** @var \Ess\M2ePro\Model\Ebay\Order\Item $ebayOrderItem */
         $ebayOrderItem = $orderItem->getChildObject();
@@ -58,11 +54,11 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
             $otherListing->mapProduct($product->getId());
         } else {
             $dataForAdd = [
-                'account_id'     => $orderItem->getOrder()->getAccountId(),
+                'account_id' => $orderItem->getOrder()->getAccountId(),
                 'marketplace_id' => $orderItem->getOrder()->getMarketplaceId(),
-                'item_id'        => $ebayOrderItem->getItemId(),
-                'product_id'     => $product->getId(),
-                'store_id'       => $ebayOrderItem->getEbayOrder()->getAssociatedStoreId(),
+                'item_id' => $ebayOrderItem->getItemId(),
+                'product_id' => $product->getId(),
+                'store_id' => $ebayOrderItem->getEbayOrder()->getAssociatedStoreId(),
             ];
 
             $this->activeRecordFactory->getObject('Ebay\Item')->setData($dataForAdd)->save();

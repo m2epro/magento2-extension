@@ -41,10 +41,10 @@ class Save extends Settings
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             $this->setJsonContent(
                 [
-                    'success'  => false,
+                    'success' => false,
                     'messages' => [
-                        ['error' => $this->__($e->getMessage())]
-                    ]
+                        ['error' => $this->__($e->getMessage())],
+                    ],
                 ]
             );
         }

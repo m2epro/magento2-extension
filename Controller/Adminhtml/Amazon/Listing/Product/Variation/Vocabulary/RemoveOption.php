@@ -38,6 +38,7 @@ class RemoveOption extends Main
 
         if (empty($productOption) || empty($productOptionsGroup) || empty($channelAttr)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -49,7 +50,7 @@ class RemoveOption extends Main
         $this->vocabularyHelper->removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttr);
 
         $this->setJsonContent([
-            'success' => true
+            'success' => true,
         ]);
 
         return $this->getResult();

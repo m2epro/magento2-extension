@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-use \Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
+use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
 
 /**
  * Class Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\InvoicesAndShipments
@@ -80,7 +80,7 @@ HTML
         $fieldset = $form->addFieldset(
             'invoices',
             [
-                'legend'      => $this->__('Invoices'),
+                'legend' => $this->__('Invoices'),
                 'collapsable' => false,
             ]
         );
@@ -90,17 +90,17 @@ HTML
                 'auto_invoicing',
                 'select',
                 [
-                    'label'   => $this->__('Invoice Uploading to Amazon'),
-                    'title'   => $this->__('Invoice Uploading to Amazon'),
-                    'name'    => 'auto_invoicing',
+                    'label' => $this->__('Invoice Uploading to Amazon'),
+                    'title' => $this->__('Invoice Uploading to Amazon'),
+                    'name' => 'auto_invoicing',
                     'options' => [
-                        AmazonAccount::AUTO_INVOICING_DISABLED                => $this->__('Disabled'),
+                        AmazonAccount::AUTO_INVOICING_DISABLED => $this->__('Disabled'),
                         AmazonAccount::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES =>
                             $this->__('Upload Magento Invoices'),
                         AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE =>
                             $this->__('Use VAT Calculation Service'),
                     ],
-                    'value'   => $formData['auto_invoicing'],
+                    'value' => $formData['auto_invoicing'],
                 ]
             );
 
@@ -109,19 +109,19 @@ HTML
                 'select',
                 [
                     'container_id' => 'invoice_generation_container',
-                    'label'        => $this->__('VAT Invoice Creation'),
-                    'title'        => $this->__('VAT Invoice Creation'),
-                    'name'         => 'invoice_generation',
-                    'class'        => 'M2ePro-required-when-visible M2ePro-is-ready-for-document-generation',
-                    'required'     => true,
-                    'values'       => [
-                        ''                                             => '',
-                        AmazonAccount::INVOICE_GENERATION_BY_AMAZON    =>
+                    'label' => $this->__('VAT Invoice Creation'),
+                    'title' => $this->__('VAT Invoice Creation'),
+                    'name' => 'invoice_generation',
+                    'class' => 'M2ePro-required-when-visible M2ePro-is-ready-for-document-generation',
+                    'required' => true,
+                    'values' => [
+                        '' => '',
+                        AmazonAccount::INVOICE_GENERATION_BY_AMAZON =>
                             $this->__('I want Amazon to generate VAT Invoices'),
                         AmazonAccount::INVOICE_GENERATION_BY_EXTENSION =>
                             $this->__('I will upload my own Invoices'),
                     ],
-                    'value'        => '',
+                    'value' => '',
                 ]
             );
 
@@ -136,9 +136,9 @@ HTML
             'create_magento_invoice',
             'select',
             [
-                'label'   => $this->__('Magento Invoice Creation'),
-                'title'   => $this->__('Magento Invoice Creation'),
-                'name'    => 'create_magento_invoice',
+                'label' => $this->__('Magento Invoice Creation'),
+                'title' => $this->__('Magento Invoice Creation'),
+                'name' => 'create_magento_invoice',
                 'options' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),
@@ -152,7 +152,7 @@ HTML
         $fieldset = $form->addFieldset(
             'shipments',
             [
-                'legend'      => $this->__('Shipments'),
+                'legend' => $this->__('Shipments'),
                 'collapsable' => false,
             ]
         );
@@ -161,9 +161,9 @@ HTML
             'create_magento_shipment',
             'select',
             [
-                'label'   => $this->__('Magento Shipment Creation'),
-                'title'   => $this->__('Magento Shipment Creation'),
-                'name'    => 'create_magento_shipment',
+                'label' => $this->__('Magento Shipment Creation'),
+                'title' => $this->__('Magento Shipment Creation'),
+                'name' => 'create_magento_shipment',
                 'options' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),

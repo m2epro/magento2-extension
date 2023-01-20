@@ -33,6 +33,7 @@ class RestoreRememberedChoices extends \Ess\M2ePro\Controller\Adminhtml\Base
         }
 
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 }

@@ -13,12 +13,12 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
  */
 class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const COST_MODE_FREE = 0;
-    const COST_MODE_CUSTOM_VALUE = 1;
-    const COST_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const COST_MODE_FREE = 0;
+    public const COST_MODE_CUSTOM_VALUE = 1;
+    public const COST_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const IS_SHIPPING_ALLOWED_REMOVE = 0;
-    const IS_SHIPPING_ALLOWED_ADD_OR_OVERRIDE = 1;
+    public const IS_SHIPPING_ALLOWED_REMOVE = 0;
+    public const IS_SHIPPING_ALLOWED_ADD_OR_OVERRIDE = 1;
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat
@@ -45,6 +45,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
         $temp = parent::delete();
         $temp && $this->sellingFormatTemplateModel = null;
         $temp && $this->sellingFormatShippingOverrideSourceModels = [];
+
         return $temp;
     }
 
@@ -77,6 +78,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)

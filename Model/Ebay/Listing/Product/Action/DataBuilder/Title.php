@@ -22,7 +22,7 @@ class Title extends AbstractModel
         $this->processNotFoundAttributes('Title');
 
         return [
-            'title' => $data
+            'title' => $data,
         ];
     }
 

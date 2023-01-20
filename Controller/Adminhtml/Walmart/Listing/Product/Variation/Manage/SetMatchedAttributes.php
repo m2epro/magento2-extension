@@ -32,6 +32,7 @@ class SetMatchedAttributes extends Main
 
         if (empty($productId) || empty($variationAttributes)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 

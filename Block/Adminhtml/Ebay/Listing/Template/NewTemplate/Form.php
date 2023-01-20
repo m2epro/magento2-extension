@@ -31,11 +31,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'new_template_form_' . $this->getData('nick'),
-                'action' => 'javascript:void(0)',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'new_template_form_' . $this->getData('nick'),
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
@@ -48,7 +50,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->supportHelper->getDocumentationArticleUrl('x/GwAVB')
-                )
+                ),
             ]
         );
 
@@ -61,11 +63,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'template_title_' . $this->getData('nick'),
             'text',
             [
-                'name'        => $this->getData('nick').'[template_title]',
-                'class'       => 'M2ePro-validate-ebay-template-title',
-                'label'       => $this->__('Title'),
+                'name' => $this->getData('nick') . '[template_title]',
+                'class' => 'M2ePro-validate-ebay-template-title',
+                'label' => $this->__('Title'),
                 'placeholder' => $this->__('Please specify Policy Title'),
-                'required'    => true,
+                'required' => true,
             ]
         );
 

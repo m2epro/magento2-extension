@@ -15,7 +15,7 @@ use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 class Ebay extends Command
 {
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
-    protected  $repository;
+    protected $repository;
 
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
@@ -39,27 +39,28 @@ class Ebay extends Command
     public function stopEbay3rdPartyAction()
     {
         $collection = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Other')->getCollection();
-        $collection->addFieldToFilter('status', ['in' => [
-            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN
-        ]]);
+        $collection->addFieldToFilter('status', [
+            'in' => [
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN,
+            ],
+        ]);
 
-        $total       = 0;
+        $total = 0;
         $groupedData = [];
 
         foreach ($collection->getItems() as $item) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $item */
 
-            $key = $item->getAccount()->getId() .'##'. $item->getMarketplace()->getId();
+            $key = $item->getAccount()->getId() . '##' . $item->getMarketplace()->getId();
             $groupedData[$key][$item->getId()] = $item->getItemId();
             $total++;
         }
 
         foreach ($groupedData as $groupKey => $items) {
-            list($accountId, $marketplaceId) = explode('##', $groupKey);
+            [$accountId, $marketplaceId] = explode('##', $groupKey);
 
             foreach (array_chunk($items, 10, true) as $itemsPart) {
-
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
                 $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
                 $connectorObj = $dispatcherObject->getVirtualConnector(
@@ -83,9 +84,11 @@ class Ebay extends Command
                         null,
                         false
                     );
-                    if ($item !== null &&
+                    if (
+                        $item !== null &&
                         ((isset($iResp['already_stop']) && $iResp['already_stop']) ||
-                            isset($iResp['ebay_end_date_raw']))) {
+                            isset($iResp['ebay_end_date_raw']))
+                    ) {
                         $item->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
                     }
                 }
@@ -118,6 +121,7 @@ class Ebay extends Command
 
         if (empty($listingProducts)) {
             $this->getMessageManager()->addError('Failed to load Listing Product.');
+
             return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
         }
 
@@ -125,8 +129,10 @@ class Ebay extends Command
         foreach ($listingProducts as $listingProduct) {
             $additionalData = $listingProduct->getAdditionalData();
 
-            if (!isset($additionalData['is_eps_ebay_images_mode']) ||
-                $additionalData['is_eps_ebay_images_mode'] == true) {
+            if (
+                !isset($additionalData['is_eps_ebay_images_mode']) ||
+                $additionalData['is_eps_ebay_images_mode'] == true
+            ) {
                 continue;
             }
 
@@ -134,10 +140,11 @@ class Ebay extends Command
             $affected++;
 
             $listingProduct->setData('additional_data', $this->getHelper('Data')->jsonEncode($additionalData))
-                ->save();
+                           ->save();
         }
 
         $this->getMessageManager()->addSuccess("Set for {$affected} affected Products.");
+
         return $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
     }
 
@@ -147,11 +154,11 @@ class Ebay extends Command
     public function showNonexistentTemplatesAction()
     {
         $fixData = [
-            'field'       => $this->getRequest()->getParam('field'),
-            'template'    => $this->getRequest()->getParam('template'),
+            'field' => $this->getRequest()->getParam('field'),
+            'template' => $this->getRequest()->getParam('template'),
             'field_value' => $this->getRequest()->getParam('field_value'),
-            'action'      => $this->getRequest()->getParam('action'),
-            'template_id' => $this->getRequest()->getParam('template_id', false)
+            'action' => $this->getRequest()->getParam('action'),
+            'template_id' => $this->getRequest()->getParam('template_id', false),
         ];
 
         $definition = $this->repository->getDefinition('NonexistentTemplates');
@@ -178,41 +185,42 @@ class Ebay extends Command
         $ebayItem = $structureHelper->getTableNameWithPrefix('m2epro_ebay_item');
 
         $subQuery = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['melp' => $ebayListingProduct],
-                []
-            )
-            ->joinInner(
-                ['mlp' => $listingProduct],
-                'mlp.id = melp.listing_product_id',
-                ['listing_id',
-                    'product_id',
-                    new \Zend_Db_Expr('COUNT(product_id) - 1 AS count_of_duplicates'),
-                    new \Zend_Db_Expr('MIN(mlp.id) AS save_this_id'),
-                ]
-            )
-            ->group(['mlp.product_id', 'mlp.listing_id'])
-            ->having(new \Zend_Db_Expr('count_of_duplicates > 0'));
+                                             ->select()
+                                             ->from(
+                                                 ['melp' => $ebayListingProduct],
+                                                 []
+                                             )
+                                             ->joinInner(
+                                                 ['mlp' => $listingProduct],
+                                                 'mlp.id = melp.listing_product_id',
+                                                 [
+                                                     'listing_id',
+                                                     'product_id',
+                                                     new \Zend_Db_Expr('COUNT(product_id) - 1 AS count_of_duplicates'),
+                                                     new \Zend_Db_Expr('MIN(mlp.id) AS save_this_id'),
+                                                 ]
+                                             )
+                                             ->group(['mlp.product_id', 'mlp.listing_id'])
+                                             ->having(new \Zend_Db_Expr('count_of_duplicates > 0'));
 
         $query = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['melp' => $ebayListingProduct],
-                ['listing_product_id', 'ebay_item_id']
-            )
-            ->joinInner(
-                ['mlp' => $listingProduct],
-                'mlp.id = melp.listing_product_id',
-                ['status']
-            )
-            ->joinInner(
-                ['templ_table' => $subQuery],
-                'mlp.product_id = templ_table.product_id AND
+                                          ->select()
+                                          ->from(
+                                              ['melp' => $ebayListingProduct],
+                                              ['listing_product_id', 'ebay_item_id']
+                                          )
+                                          ->joinInner(
+                                              ['mlp' => $listingProduct],
+                                              'mlp.id = melp.listing_product_id',
+                                              ['status']
+                                          )
+                                          ->joinInner(
+                                              ['templ_table' => $subQuery],
+                                              'mlp.product_id = templ_table.product_id AND
                          mlp.listing_id = templ_table.listing_id'
-            )
-            ->where('melp.listing_product_id <> templ_table.save_this_id')
-            ->query();
+                                          )
+                                          ->where('melp.listing_product_id <> templ_table.save_this_id')
+                                          ->query();
 
         $removed = 0;
         $stopped = 0;
@@ -220,8 +228,10 @@ class Ebay extends Command
 
         while ($row = $query->fetch()) {
             if ((bool)$this->getRequest()->getParam('remove', false)) {
-                if ($row['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
-                    $row['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
+                if (
+                    $row['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
+                    $row['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN
+                ) {
                     $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Item_Dispatcher');
                     $dispatcher->process(
                         \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
@@ -295,6 +305,7 @@ HTML;
     </body>
 </html>
 HTML;
+
         return str_replace('#count#', count($duplicated), $html);
     }
 
@@ -307,7 +318,6 @@ HTML;
     public function tryToFixVariationProductAction()
     {
         if ((bool)$this->getRequest()->getParam('fix', false)) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $lp */
             $lpId = $this->getRequest()->getParam('listing_product_id');
             $lp = $this->parentFactory->getObjectLoaded(EbayHelper::NICK, 'Listing\Product', $lpId);
@@ -330,11 +340,11 @@ HTML;
             }
 
             return '<pre>' .
-                        sprintf('Listing Product ID: %s<br/><br/>', $lpId) .
-                        sprintf('Errors: %s<br/><br/>', print_r($errors, true)) .
-                        sprintf('Warnings: %s<br/><br/>', print_r($warnings, true)) .
-                        sprintf('Notices: %s<br/><br/>', print_r($notices, true)) .
-                   '</pre>';
+                sprintf('Listing Product ID: %s<br/><br/>', $lpId) .
+                sprintf('Errors: %s<br/><br/>', print_r($errors, true)) .
+                sprintf('Warnings: %s<br/><br/>', print_r($warnings, true)) .
+                sprintf('Notices: %s<br/><br/>', print_r($notices, true)) .
+                '</pre>';
         }
 
         $url = $this->getUrl('*/*/*', ['action' => 'tryToFixVariationProduct']);

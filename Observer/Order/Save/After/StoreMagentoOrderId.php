@@ -7,6 +7,7 @@
  */
 
 namespace Ess\M2ePro\Observer\Order\Save\After;
+
 /**
  * Class \Ess\M2ePro\Observer\Order\Save\After\StoreMagentoOrderId
  */
@@ -32,9 +33,9 @@ class StoreMagentoOrderId extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         $order->addData([
-            'magento_order_id'                           => $magentoOrder->getId(),
-            'magento_order_creation_failure'             => \Ess\M2ePro\Model\Order::MAGENTO_ORDER_CREATION_FAILED_NO,
-            'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+            'magento_order_id' => $magentoOrder->getId(),
+            'magento_order_creation_failure' => \Ess\M2ePro\Model\Order::MAGENTO_ORDER_CREATION_FAILED_NO,
+            'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate(),
         ]);
 
         $order->setMagentoOrder($magentoOrder);

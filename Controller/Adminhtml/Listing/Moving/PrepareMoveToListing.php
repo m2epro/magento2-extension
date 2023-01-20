@@ -49,6 +49,7 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         if (!(bool)$this->getRequest()->getParam('is_last_part')) {
             $this->setJsonContent(['result' => true]);
+
             return $this->getResult();
         }
 
@@ -75,10 +76,11 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
             ->fetch();
 
         $this->setJsonContent([
-            'result'        => true,
-            'accountId'     => (int)$row['account_id'],
-            'marketplaceId' => (int)$row['marketplace_id']
+            'result' => true,
+            'accountId' => (int)$row['account_id'],
+            'marketplaceId' => (int)$row['marketplace_id'],
         ]);
+
         return $this->getResult();
     }
 }

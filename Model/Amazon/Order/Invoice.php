@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Amazon\Order;
  */
 class Invoice extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const DOCUMENT_TYPE_INVOICE = 'invoice';
-    const DOCUMENT_TYPE_CREDIT_NOTE = 'credit_note';
+    public const DOCUMENT_TYPE_INVOICE = 'invoice';
+    public const DOCUMENT_TYPE_CREDIT_NOTE = 'credit_note';
 
     //########################################
 

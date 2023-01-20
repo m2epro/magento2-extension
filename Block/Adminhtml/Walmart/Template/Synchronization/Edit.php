@@ -32,32 +32,33 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'WalmartTemplateSynchronizationObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'WalmartTemplateSynchronizationObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
-        if (!$isSaveAndClose
+        if (
+            !$isSaveAndClose
             && $this->globalDataHelper->getValue('tmp_template')
             && $this->globalDataHelper->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
-                'label'     => $this->__('Duplicate'),
-                'onclick'   => 'WalmartTemplateSynchronizationObj.duplicateClick'
-                    .'(\'Walmart-template-synchronization\')',
-                'class'     => 'add M2ePro_duplicate_button primary'
+                'label' => $this->__('Duplicate'),
+                'onclick' => 'WalmartTemplateSynchronizationObj.duplicateClick'
+                    . '(\'Walmart-template-synchronization\')',
+                'class' => 'add M2ePro_duplicate_button primary',
             ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $this->addButton('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'WalmartTemplateSynchronizationObj.deleteClick()',
-                'class'     => 'delete M2ePro_delete_button primary'
+                'label' => $this->__('Delete'),
+                'onclick' => 'WalmartTemplateSynchronizationObj.deleteClick()',
+                'class' => 'delete M2ePro_delete_button primary',
             ]);
             // ---------------------------------------
         }
@@ -72,7 +73,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'label' => $this->__('Save And Close'),
                 'class' => 'add',
                 'button_class' => '',
-                'onclick'   => 'WalmartTemplateSynchronizationObj.saveAndCloseClick('
+                'onclick' => 'WalmartTemplateSynchronizationObj.saveAndCloseClick('
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SYNCHRONIZATION . '\''
                     . ')',
@@ -85,9 +86,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                             . 'undefined,'
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SYNCHRONIZATION . '\''
-                            . ')'
-                    ]
-                ]
+                            . ')',
+                    ],
+                ],
             ];
         } else {
             $saveButtons = [
@@ -95,7 +96,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
                 'button_class' => '',
-                'onclick'   => 'WalmartTemplateSynchronizationObj.saveAndEditClick('
+                'onclick' => 'WalmartTemplateSynchronizationObj.saveAndEditClick('
                     . '\'\','
                     . 'undefined,'
                     . '\'' . $this->getSaveConfirmationText() . '\','
@@ -104,15 +105,15 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   =>'WalmartTemplateSynchronizationObj.saveClick('
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'WalmartTemplateSynchronizationObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SYNCHRONIZATION . '\''
                             . ')',
-                        'class'     => 'save primary'
-                    ]
-                ]
+                        'class' => 'save primary',
+                    ],
+                ],
             ];
         }
 

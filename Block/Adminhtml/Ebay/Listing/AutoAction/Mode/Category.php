@@ -28,7 +28,9 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
     protected function prepareGroupsGrid()
     {
         $groupGrid = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Group\Grid::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Group\Grid::class
+                          );
         $groupGrid->prepareGrid();
         $this->setChild('group_grid', $groupGrid);
 
@@ -64,7 +66,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                 $this->supportHelper->getDocumentationArticleUrl('x/uv8UB')
-            )
+            ),
         ]);
 
         return $helpBlock->toHtml() . parent::_toHtml();

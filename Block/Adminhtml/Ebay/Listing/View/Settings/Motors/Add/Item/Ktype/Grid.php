@@ -16,7 +16,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item\CollectionFactory */
     protected $itemCollectionFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -57,11 +57,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $collection->getSelect()->reset()->from([
-            'main_table' => $table
+            'main_table' => $table,
         ]);
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'ktype', 'make', 'model', 'variant', 'body_style', 'type', 'from_year', 'to_year', 'engine', 'is_custom'
+            'ktype',
+            'make',
+            'model',
+            'variant',
+            'body_style',
+            'type',
+            'from_year',
+            'to_year',
+            'engine',
+            'is_custom',
         ]);
 
         $this->setCollection($collection);
@@ -75,71 +84,71 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
     {
         $this->addColumn('ktype', [
             'header' => $this->__('kType'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'ktype',
-            'width'  => '100px',
-            'frame_callback' => [$this, 'callbackColumnIdentifier']
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'ktype',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackColumnIdentifier'],
         ]);
 
         $this->addColumn('make', [
             'header' => $this->__('Make'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'make',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'make',
+            'width' => '150px',
         ]);
 
         $this->addColumn('model', [
             'header' => $this->__('Model'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'model',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'model',
+            'width' => '150px',
         ]);
 
         $this->addColumn('variant', [
             'header' => $this->__('Variant'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'variant',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'variant',
+            'width' => '150px',
         ]);
 
         $this->addColumn('body_style', [
             'header' => $this->__('Body Style'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'body_style',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'body_style',
+            'width' => '150px',
         ]);
 
         $this->addColumn('type', [
             'header' => $this->__('Type'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'type',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'type',
+            'width' => '150px',
         ]);
 
         $this->addColumn('year', [
             'header' => $this->__('Year'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'width'  => '150px',
-            'index'  => 'to_year',
+            'align' => 'left',
+            'type' => 'text',
+            'width' => '150px',
+            'index' => 'to_year',
             'filter_index' => 'from_year',
-            'frame_callback'            => [$this, 'callbackYearColumn'],
+            'frame_callback' => [$this, 'callbackYearColumn'],
             'filter_condition_callback' => [$this, 'yearColumnFilter'],
         ]);
 
         $this->addColumn('engine', [
             'header' => $this->__('Engine'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'engine',
-            'width'  => '100px',
-            'frame_callback' => [$this, 'callbackNullableColumn']
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'engine',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackNullableColumn'],
         ]);
 
         return parent::_prepareColumns();

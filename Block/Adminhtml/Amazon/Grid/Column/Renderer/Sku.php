@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
@@ -14,7 +14,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -43,9 +43,11 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     {
         $value = $this->_getValue($row);
 
-        if ((!$row->getData('is_variation_parent') &&
+        if (
+            (!$row->getData('is_variation_parent') &&
                 $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
-            ($row->getData('is_variation_parent') && $row->getData('general_id') == '')) {
+            ($row->getData('is_variation_parent') && $row->getData('general_id') == '')
+        ) {
             return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
         }
 
@@ -54,8 +56,8 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         $showDefectedMessages = ($this->getColumn()->getData('show_defected_messages') !== null)
-                                ? $this->getColumn()->getData('show_defected_messages')
-                                : true;
+            ? $this->getColumn()->getData('show_defected_messages')
+            : true;
 
         if (!$showDefectedMessages) {
             return $value;
@@ -73,9 +75,9 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
                     continue;
                 }
 
-                $msg .= '<p>'.$message['message'] . '&nbsp;';
+                $msg .= '<p>' . $message['message'] . '&nbsp;';
                 if (!empty($message['value'])) {
-                    $msg .= $this->translationHelper->__('Current Value') .': "' . $message['value'] .'"';
+                    $msg .= $this->translationHelper->__('Current Value') . ': "' . $message['value'] . '"';
                 }
                 $msg .= '</p>';
             }

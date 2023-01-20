@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\System\ConnectorCommandPending;
  */
 class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/connector_command_pending/process_partial';
+    public const NICK = 'system/connector_command_pending/process_partial';
 
     //####################################
 
@@ -29,7 +29,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function removeMissedProcessingItems()
     {
         $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Partial')
-            ->getCollection();
+                                                ->getCollection();
         $collection->getSelect()->joinLeft(
             ['p' => $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable()],
             'p.id = main_table.processing_id',
@@ -56,10 +56,12 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function completeExpiredItems()
     {
         $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Partial')
-            ->getCollection();
+                                                ->getCollection();
         $collection->getSelect()->joinLeft(
             [
-                'rpp' => $this->activeRecordFactory->getObject('Request_Pending_Partial')->getResource()->getMainTable()
+                'rpp' => $this->activeRecordFactory->getObject('Request_Pending_Partial')
+                                                   ->getResource()
+                                                   ->getMainTable(),
             ],
             'rpp.id = main_table.request_pending_partial_id',
             []
@@ -93,7 +95,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function processCompletedItems()
     {
         $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Partial')
-            ->getCollection();
+                                                ->getCollection();
         $collection->setCompletedRequestPendingPartialFilter();
         $collection->setNotCompletedProcessingFilter();
 

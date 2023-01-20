@@ -34,7 +34,7 @@ class ViewListing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Produ
         $this->sessionHelper->setValue('temp_products', []);
 
         return $this->_redirect('*/walmart_listing/view', [
-            'id' => $listingId
+            'id' => $listingId,
         ]);
     }
 }

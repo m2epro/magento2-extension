@@ -18,14 +18,16 @@ namespace Ess\M2ePro\Model\Amazon;
  */
 class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
 {
-    const REQUEST_TYPE_FEED   = 'feed';
-    const REQUEST_TYPE_REPORT = 'report';
+    public const REQUEST_TYPE_FEED = 'feed';
+    public const REQUEST_TYPE_REPORT = 'report';
 
-    const RESERVED_REQUESTS_REGISTRY_KEY = '/amazon/throttling/reserved_requests/';
+    public const RESERVED_REQUESTS_REGISTRY_KEY = '/amazon/throttling/reserved_requests/';
 
+    /** @var array  */
     protected $availableRequestsCount = [];
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -83,7 +85,7 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
     public function getReservedRequestsCount($merchantId, $requestType)
     {
         $reservedRequests = $this->getHelper('Module')->getRegistry()
-            ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
+                                 ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
 
         if (!isset($reservedRequests[$merchantId][$requestType])) {
             return 0;
@@ -95,7 +97,7 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
     public function reserveRequests($merchantId, $requestType, $requestsCount)
     {
         $reservedRequests = $this->getHelper('Module')->getRegistry()
-            ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
+                                 ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
 
         if (!isset($reservedRequests[$merchantId][$requestType])) {
             $reservedRequests[$merchantId][$requestType] = 0;
@@ -109,7 +111,7 @@ class ThrottlingManager extends \Ess\M2ePro\Model\AbstractModel
     public function releaseReservedRequests($merchantId, $requestType, $requestsCount)
     {
         $reservedRequests = $this->getHelper('Module')->getRegistry()
-            ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
+                                 ->getValueFromJson(self::RESERVED_REQUESTS_REGISTRY_KEY);
 
         if (!isset($reservedRequests[$merchantId][$requestType])) {
             return;

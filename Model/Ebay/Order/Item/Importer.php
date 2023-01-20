@@ -73,6 +73,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $rawData
+     *
      * @return array
      */
     public function prepareDataForProductCreation(array $rawData)
@@ -102,9 +103,9 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
             );
 
             if ($isSaveStart) {
-                $sku = substr($sku, 0, $savedSkuLength).'-'.$hash;
+                $sku = substr($sku, 0, $savedSkuLength) . '-' . $hash;
             } else {
-                $sku = $hash.'-'.substr($sku, strlen($sku) - $savedSkuLength, $savedSkuLength);
+                $sku = $hash . '-' . substr($sku, strlen($sku) - $savedSkuLength, $savedSkuLength);
             }
         }
 
@@ -120,6 +121,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $itemData
+     *
      * @return float
      */
     protected function getNewProductPrice(array $itemData)
@@ -153,6 +155,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $itemData
+     *
      * @return array
      */
     protected function getNewProductImages(array $itemData)
@@ -181,7 +184,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
             $imagePath = $destinationFolder
                 . DIRECTORY_SEPARATOR
                 . $this->getHelper('Data')->convertStringToSku($itemData['title']);
-            $imagePath .=  '-' . $imageCounter . $extension;
+            $imagePath .= '-' . $imageCounter . $extension;
 
             try {
                 $this->downloadImage($url, $imagePath);
@@ -189,7 +192,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $images[] = str_replace($mediaPath.$this->productMediaConfig->getBaseTmpMediaPath(), '', $imagePath);
+            $images[] = str_replace($mediaPath . $this->productMediaConfig->getBaseTmpMediaPath(), '', $imagePath);
             $imageCounter++;
         }
 
@@ -203,12 +206,14 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         $destinationFolder = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
         )->getAbsolutePath()
-        . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
+            . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
 
         $destinationFolder .= $baseTmpImageName[0] . DIRECTORY_SEPARATOR . $baseTmpImageName[1];
 
-        if (!($this->fileDriver->isDirectory($destinationFolder)
-            || $this->fileDriver->createDirectory($destinationFolder, 0777))) {
+        if (
+            !($this->fileDriver->isDirectory($destinationFolder)
+                || $this->fileDriver->createDirectory($destinationFolder, 0777))
+        ) {
             throw new \Ess\M2ePro\Model\Exception("Unable to create directory '{$destinationFolder}'.");
         }
 

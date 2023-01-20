@@ -53,10 +53,10 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
             [
                 [
                     'listing_product_id' => $this->getListingProduct()->getId(),
-                    'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-                    'initiator'          => self::INSTRUCTION_INITIATOR,
-                    'priority'           => 80
-                ]
+                    'type' => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => 80,
+                ],
             ]
         );
     }

@@ -31,6 +31,7 @@ class SaveAutoActionSettings extends Main
 
         if ($attributeAutoAction === null || $optionAutoAction === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -59,7 +60,7 @@ class SaveAutoActionSettings extends Main
         }
 
         $this->setJsonContent([
-            'success' => true
+            'success' => true,
         ]);
 
         return $this->getResult();

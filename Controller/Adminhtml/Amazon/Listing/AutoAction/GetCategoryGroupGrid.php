@@ -21,6 +21,7 @@ class GetCategoryGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listi
     {
         $grid = $this->getLayout()->createBlock(Grid::class);
         $this->setAjaxContent($grid);
+
         return $this->getResult();
     }
 

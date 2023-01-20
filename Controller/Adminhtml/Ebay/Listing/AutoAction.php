@@ -16,6 +16,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
      * @param $autoMode
      * @param int $groupId
      * @param int $magentoCategoryId
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Category|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -26,21 +27,23 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN) {
                     return $listing->getChildObject()->getAutoGlobalAddingCategoryTemplate();
                 }
+
                 return $listing->getChildObject()->getAutoGlobalAddingCategorySecondaryTemplate();
 
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE:
                 if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN) {
                     return $listing->getChildObject()->getAutoWebsiteAddingCategoryTemplate();
                 }
+
                 return $listing->getChildObject()->getAutoWebsiteAddingCategorySecondaryTemplate();
 
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY:
                 if ($magentoCategoryId) {
                     /** @var \Ess\M2ePro\Model\Listing\Auto\Category $autoCategory */
                     $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection()
-                        ->addFieldToFilter('group_id', $groupId)
-                        ->addFieldToFilter('category_id', $magentoCategoryId)
-                        ->getFirstItem();
+                                                              ->addFieldToFilter('group_id', $groupId)
+                                                              ->addFieldToFilter('category_id', $magentoCategoryId)
+                                                              ->getFirstItem();
 
                     if ($autoCategory->getId()) {
                         $template = $this->activeRecordFactory->getObjectLoaded(
@@ -54,6 +57,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                         return $template->getCategorySecondaryTemplate();
                     }
                 }
+
                 return null;
         }
 
@@ -66,6 +70,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
      * @param $autoMode
      * @param int $groupId
      * @param int $magentoCategoryId
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -76,21 +81,23 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN) {
                     return $listing->getChildObject()->getAutoGlobalAddingStoreCategoryTemplate();
                 }
+
                 return $listing->getChildObject()->getAutoGlobalAddingStoreCategorySecondaryTemplate();
 
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE:
                 if ($categoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN) {
                     return $listing->getChildObject()->getAutoWebsiteAddingStoreCategoryTemplate();
                 }
+
                 return $listing->getChildObject()->getAutoWebsiteAddingStoreCategorySecondaryTemplate();
 
             case \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY:
                 if ($magentoCategoryId) {
                     /** @var \Ess\M2ePro\Model\Listing\Auto\Category $autoCategory */
                     $autoCategory = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection()
-                        ->addFieldToFilter('group_id', $groupId)
-                        ->addFieldToFilter('category_id', $magentoCategoryId)
-                        ->getFirstItem();
+                                                              ->addFieldToFilter('group_id', $groupId)
+                                                              ->addFieldToFilter('category_id', $magentoCategoryId)
+                                                              ->getFirstItem();
 
                     if ($autoCategory->getId()) {
                         $template = $this->activeRecordFactory->getObjectLoaded(
@@ -104,6 +111,7 @@ abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                         return $template->getStoreCategorySecondaryTemplate();
                     }
                 }
+
                 return null;
         }
 

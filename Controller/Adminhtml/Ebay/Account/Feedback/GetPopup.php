@@ -22,13 +22,14 @@ class GetPopup extends Account
 
         if (empty($id) || $account === null) {
             $this->setAjaxContent('Account not found.', false);
+
             return $this->getResult();
         }
 
         $this->setJsonContent([
             'html' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback::class)
-                                        ->toHtml(),
-            'title' => $this->__('Feedback for account "%account_title%"', $account->getTitle())
+                           ->toHtml(),
+            'title' => $this->__('Feedback for account "%account_title%"', $account->getTitle()),
         ]);
 
         return $this->getResult();

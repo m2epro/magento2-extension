@@ -15,31 +15,31 @@ use Ess\M2ePro\Model\Account;
  */
 class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const PRICE_MODE_MANUAL    = 0;
-    const PRICE_MODE_PRODUCT   = 1;
-    const PRICE_MODE_SPECIAL   = 2;
-    const PRICE_MODE_ATTRIBUTE = 3;
+    public const PRICE_MODE_MANUAL = 0;
+    public const PRICE_MODE_PRODUCT = 1;
+    public const PRICE_MODE_SPECIAL = 2;
+    public const PRICE_MODE_ATTRIBUTE = 3;
 
-    const REGULAR_PRICE_MODE_PRODUCT_POLICY  = 4;
+    public const REGULAR_PRICE_MODE_PRODUCT_POLICY = 4;
 
-    const MIN_PRICE_MODE_REGULAR_VALUE       = 4;
-    const MIN_PRICE_MODE_REGULAR_PERCENT     = 5;
+    public const MIN_PRICE_MODE_REGULAR_VALUE = 4;
+    public const MIN_PRICE_MODE_REGULAR_PERCENT = 5;
 
-    const MAX_PRICE_MODE_REGULAR_VALUE       = 4;
-    const MAX_PRICE_MODE_REGULAR_PERCENT     = 5;
+    public const MAX_PRICE_MODE_REGULAR_VALUE = 4;
+    public const MAX_PRICE_MODE_REGULAR_PERCENT = 5;
 
-    const PRICE_VARIATION_MODE_PARENT        = 1;
-    const PRICE_VARIATION_MODE_CHILDREN      = 2;
+    public const PRICE_VARIATION_MODE_PARENT = 1;
+    public const PRICE_VARIATION_MODE_CHILDREN = 2;
 
-    const DISABLE_MODE_MANUAL                = 0;
-    const DISABLE_MODE_PRODUCT_STATUS        = 1;
-    const DISABLE_MODE_ATTRIBUTE             = 2;
+    public const DISABLE_MODE_MANUAL = 0;
+    public const DISABLE_MODE_PRODUCT_STATUS = 1;
+    public const DISABLE_MODE_ATTRIBUTE = 2;
 
     /**
      * @var Account
      */
     private $accountModel = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -82,6 +82,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+
         return parent::save();
     }
 
@@ -158,9 +159,9 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function markAsInvalid(): Repricing
     {
-         $this->setData('invalid', 1);
+        $this->setData('invalid', 1);
 
-         return $this;
+        return $this;
     }
 
     /**
@@ -232,9 +233,9 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getRegularPriceSource()
     {
         return [
-            'mode'        => $this->getRegularPriceMode(),
+            'mode' => $this->getRegularPriceMode(),
             'coefficient' => $this->getRegularPriceCoefficient(),
-            'attribute'   => $this->getData('regular_price_attribute')
+            'attribute' => $this->getData('regular_price_attribute'),
         ];
     }
 
@@ -332,10 +333,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getMinPriceSource()
     {
         return [
-            'mode'            => $this->getMinPriceMode(),
-            'coefficient'     => $this->getMinPriceCoefficient(),
-            'attribute'       => $this->getData('min_price_attribute'),
-            'regular_value'   => $this->getData('min_price_value'),
+            'mode' => $this->getMinPriceMode(),
+            'coefficient' => $this->getMinPriceCoefficient(),
+            'attribute' => $this->getData('min_price_attribute'),
+            'regular_value' => $this->getData('min_price_value'),
             'regular_percent' => $this->getData('min_price_percent'),
         ];
     }
@@ -434,10 +435,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getMaxPriceSource()
     {
         return [
-            'mode'            => $this->getMaxPriceMode(),
-            'coefficient'     => $this->getMaxPriceCoefficient(),
-            'attribute'       => $this->getData('max_price_attribute'),
-            'regular_value'   => $this->getData('max_price_value'),
+            'mode' => $this->getMaxPriceMode(),
+            'coefficient' => $this->getMaxPriceCoefficient(),
+            'attribute' => $this->getData('max_price_attribute'),
+            'regular_value' => $this->getData('max_price_value'),
             'regular_percent' => $this->getData('max_price_percent'),
         ];
     }
@@ -533,8 +534,8 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getDisableSource()
     {
         return [
-            'mode'        => $this->getDisableMode(),
-            'attribute'   => $this->getData('disable_mode_attribute')
+            'mode' => $this->getDisableMode(),
+            'attribute' => $this->getData('disable_mode_attribute'),
         ];
     }
 
@@ -564,6 +565,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $tags = parent::getCacheGroupTags();
         $tags[] = 'account';
+
         return $tags;
     }
 

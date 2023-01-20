@@ -27,7 +27,7 @@ class CheckCustomerId extends \Ess\M2ePro\Controller\Adminhtml\General
         $customerId = $this->getRequest()->getParam('customer_id');
 
         $this->setJsonContent([
-            'ok' => (bool)$this->customerModel->load($customerId)->getId()
+            'ok' => (bool)$this->customerModel->load($customerId)->getId(),
         ]);
 
         return $this->getResult();

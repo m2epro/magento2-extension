@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento;
 
-/**
- * Class \Ess\M2ePro\Plugin\Order\Magento\View
- */
 class View extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -47,9 +45,8 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
         /** @var \Magento\Sales\Block\Adminhtml\Order\View $interceptor */
 
         if ($order = $this->getOrder($interceptor)) {
-
             $buttonUrl = $interceptor->getUrl(
-                'm2epro/'.strtolower($order->getComponentMode()).'_order/view',
+                'm2epro/' . strtolower($order->getComponentMode()) . '_order/view',
                 ['id' => $order->getId()]
             );
 
@@ -60,7 +57,7 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
                 'go_to_m2epro_order',
                 [
                     'label' => $this->getHelper('Module\Translation')->__('Show %component% Order', $title),
-                    'onclick' => 'setLocation(\''.$buttonUrl.'\')',
+                    'onclick' => 'setLocation(\'' . $buttonUrl . '\')',
                 ],
                 0,
                 -1
@@ -74,6 +71,7 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     /**
      * @param \Magento\Sales\Block\Adminhtml\Order\View $interceptor
+     *
      * @return \Ess\M2ePro\Model\Order|NULL
      */
     private function getOrder($interceptor)
@@ -95,10 +93,9 @@ class View extends \Ess\M2ePro\Plugin\AbstractPlugin
                 return null;
             }
 
-            if (!$this->getHelper('Component\\'.ucfirst($order->getComponentMode()))->isEnabled()) {
+            if (!$this->getHelper('Component\\' . ucfirst($order->getComponentMode()))->isEnabled()) {
                 return null;
             }
-
         } catch (\Exception $exception) {
             return null;
         }

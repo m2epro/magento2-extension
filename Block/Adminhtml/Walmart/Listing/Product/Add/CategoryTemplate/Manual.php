@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate;
 
 class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
@@ -51,12 +52,12 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
         $url = $this->getUrl('*/*/resetCategoryTemplate', [
-            '_current' => true
+            '_current' => true,
         ]);
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'ListingGridObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
@@ -78,9 +79,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
 
         $this->addButton('add_products_category_template_manual_continue', [
-            'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridObj.completeCategoriesDataStep()',
-            'class'     => 'action-primary forward'
+            'label' => $this->__('Continue'),
+            'onclick' => 'ListingGridObj.completeCategoriesDataStep()',
+            'class' => 'action-primary forward',
         ]);
         // ---------------------------------------
     }
@@ -104,7 +105,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsTranslator->addTranslations([
             'templateCategoryPopupTitle' => $this->__('Assign Category Policy'),
             'setCategoryPolicy' => $this->__('Set Category Policy'),
-            'Add New Category Policy' => $this->__('Add New Category Policy')
+            'Add New Category Policy' => $this->__('Add New Category Policy'),
         ]);
         // ---------------------------------------
 
@@ -117,9 +118,12 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->dataHelper->getControllerActions('Walmart_Listing_Product_Template_Category')
         );
 
-        $this->jsUrl->add($this->getUrl('*/walmart_listing_product_template_category/viewGrid', [
-            'map_to_template_js_fn' => 'selectTemplateCategory'
-        ]), 'walmart_listing_product_template_category/viewGrid');
+        $this->jsUrl->add(
+            $this->getUrl('*/walmart_listing_product_template_category/viewGrid', [
+                'map_to_template_js_fn' => 'selectTemplateCategory',
+            ]),
+            'walmart_listing_product_template_category/viewGrid'
+        );
         // ---------------------------------------
 
         $this->js->add(
@@ -145,7 +149,7 @@ JS
         );
 
         return '<div id="search_asin_products_container">' .
-                parent::_toHtml() .
+            parent::_toHtml() .
             '</div>';
     }
 }

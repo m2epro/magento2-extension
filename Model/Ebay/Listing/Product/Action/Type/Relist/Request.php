@@ -44,8 +44,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         $data = array_merge(
             [
-                'item_id'   => $this->getEbayListingProduct()->getEbayItemIdReal(),
-                'item_uuid' => $uuid
+                'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal(),
+                'item_uuid' => $uuid,
             ],
             $this->getQtyData(),
             $this->getPriceData(),
@@ -75,9 +75,11 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     {
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
-        if (!isset($additionalData['is_need_relist_condition']) ||
+        if (
+            !isset($additionalData['is_need_relist_condition']) ||
             !$additionalData['is_need_relist_condition'] ||
-            isset($data['item_condition'])) {
+            isset($data['item_condition'])
+        ) {
             return $data;
         }
 

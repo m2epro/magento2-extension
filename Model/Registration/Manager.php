@@ -20,7 +20,7 @@ class Manager
         \Ess\M2ePro\Model\Registry\Manager $register,
         \Ess\M2ePro\Model\Registration\InfoFactory $infoFactory
     ) {
-        $this->register    = $register;
+        $this->register = $register;
         $this->infoFactory = $infoFactory;
     }
 
@@ -32,13 +32,13 @@ class Manager
         $data = $this->register->getValueFromJson('/registration/user_info/');
 
         return $this->infoFactory->create([
-            'email'       => isset($data['email']) ? $data['email'] : null,
-            'firstname'   => isset($data['firstname']) ? $data['firstname'] : null,
-            'lastname'    => isset($data['lastname']) ? $data['lastname'] : null,
-            'phone'       => isset($data['phone']) ? $data['phone'] : null,
-            'country'     => isset($data['country']) ? $data['country'] : null,
-            'city'        => isset($data['city']) ? $data['city'] : null,
-            'postal_code' => isset($data['postal_code']) ? $data['postal_code'] : null
+            'email' => isset($data['email']) ? $data['email'] : null,
+            'firstname' => isset($data['firstname']) ? $data['firstname'] : null,
+            'lastname' => isset($data['lastname']) ? $data['lastname'] : null,
+            'phone' => isset($data['phone']) ? $data['phone'] : null,
+            'country' => isset($data['country']) ? $data['country'] : null,
+            'city' => isset($data['city']) ? $data['city'] : null,
+            'postal_code' => isset($data['postal_code']) ? $data['postal_code'] : null,
         ]);
     }
 
@@ -50,12 +50,12 @@ class Manager
     public function saveInfo(\Ess\M2ePro\Model\Registration\Info $info)
     {
         $data = [
-            'email'       => $info->getEmail(),
-            'firstname'   => $info->getFirstname(),
-            'lastname'    => $info->getLastname(),
-            'phone'       => $info->getPhone(),
-            'country'     => $info->getCountry(),
-            'city'        => $info->getCity(),
+            'email' => $info->getEmail(),
+            'firstname' => $info->getFirstname(),
+            'lastname' => $info->getLastname(),
+            'phone' => $info->getPhone(),
+            'country' => $info->getCountry(),
+            'city' => $info->getCity(),
             'postal_code' => $info->getPostalCode(),
         ];
 

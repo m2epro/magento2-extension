@@ -65,7 +65,6 @@ HTML;
         $orderId = $this->getRequest()->getParam('id', false);
 
         if ($orderId) {
-
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
 
@@ -122,7 +121,7 @@ HTML;
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter::class)->setData([
             'route' => "*/{$this->getComponentMode()}_log_order/",
-            'title' => $this->__('Only messages with a unique Order ID')
+            'title' => $this->__('Only messages with a unique Order ID'),
         ]);
     }
 

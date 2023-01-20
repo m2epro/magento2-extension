@@ -95,10 +95,22 @@ class MagentoVersion extends AbstractCheck
     {
         $replace = [
             // \Composer\Semver\VersionParser::$stabilities
-            'stable', 'RC', 'beta', 'alpha', 'dev',
+            'stable',
+            'RC',
+            'beta',
+            'alpha',
+            'dev',
             // \Composer\Semver\Constraint\Constraint::$transOpStr
-            '=', '==', '<', '<=', '>', '>=', '<>', '!=',
-            '-', ' '
+            '=',
+            '==',
+            '<',
+            '<=',
+            '>',
+            '>=',
+            '<>',
+            '!=',
+            '-',
+            ' ',
         ];
 
         return str_replace($replace, '', $constraint->__toString());

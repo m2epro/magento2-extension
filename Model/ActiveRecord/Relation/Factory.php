@@ -39,6 +39,7 @@ class Factory
     /**
      * @param $component
      * @param $parentModelName
+     *
      * @return false|\Ess\M2ePro\Model\ActiveRecord\Relation
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -55,7 +56,7 @@ class Factory
             \Ess\M2ePro\Model\ActiveRecord\Relation::class,
             [
                 'parentObject' => $parentModel,
-                'childObject'  => $this->activeRecordFactory->getObject(ucfirst($component) .'\\'. $parentModelName)
+                'childObject' => $this->activeRecordFactory->getObject(ucfirst($component) . '\\' . $parentModelName),
             ]
         );
     }
@@ -63,6 +64,7 @@ class Factory
     /**
      * @param $component
      * @param $modelName
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Relation\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -77,6 +79,7 @@ class Factory
      * @param $value
      * @param null $field
      * @param bool $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Relation|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -99,6 +102,7 @@ class Factory
      * @param $value
      * @param null $field
      * @param bool $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Relation|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -126,7 +130,7 @@ class Factory
             \Ess\M2ePro\Model\ActiveRecord\Relation::class,
             [
                 'parentObject' => $parentModel,
-                'childObject'  => $childModel
+                'childObject' => $childModel,
             ]
         );
     }
@@ -135,6 +139,7 @@ class Factory
 
     /**
      * @param \Ess\M2ePro\Model\ActiveRecord\Relation\ParentAbstract $parent
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Relation
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -148,7 +153,7 @@ class Factory
 
         /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\ChildAbstract $child */
         $child = $this->activeRecordFactory->getObject(
-            ucfirst($parent->getComponentMode()) .'\\'. $parent->getObjectModelName()
+            ucfirst($parent->getComponentMode()) . '\\' . $parent->getObjectModelName()
         );
 
         if (null !== $parent->getId()) {
@@ -159,13 +164,14 @@ class Factory
             \Ess\M2ePro\Model\ActiveRecord\Relation::class,
             [
                 'parentObject' => $parent,
-                'childObject'  => $child
+                'childObject' => $child,
             ]
         );
     }
 
     /**
      * @param \Ess\M2ePro\Model\ActiveRecord\Relation\ChildAbstract $child
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Relation
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -176,7 +182,6 @@ class Factory
                 'Relation object require `component_mode` from ' . $child->getObjectModelName()
             );
         }
-
 
         /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\ParentAbstract $parent */
         $parent = $this->activeRecordFactory->getObject(
@@ -191,7 +196,7 @@ class Factory
             \Ess\M2ePro\Model\ActiveRecord\Relation::class,
             [
                 'parentObject' => $parent,
-                'childObject'  => $child
+                'childObject' => $child,
             ]
         );
     }

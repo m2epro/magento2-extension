@@ -78,7 +78,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_form_data_revise_products',
             [
-                'legend'      => $this->__('Revise Conditions'),
+                'legend' => $this->__('Revise Conditions'),
                 'collapsable' => true,
             ]
         );
@@ -87,14 +87,14 @@ HTML
             'revise_update_qty',
             self::SELECT,
             [
-                'name'     => 'revise_update_qty',
-                'label'    => $this->__('Quantity'),
-                'value'    => $formData['revise_update_qty'],
-                'values'   => [
+                'name' => 'revise_update_qty',
+                'label' => $this->__('Quantity'),
+                'value' => $formData['revise_update_qty'],
+                'values' => [
                     1 => $this->__('Yes'),
                 ],
                 'disabled' => true,
-                'tooltip'  => $this->__(
+                'tooltip' => $this->__(
                     'Automatically revises Item Quantity, Production Time and Restock Date in Amazon Listing
                     when there are changes made in Magento to at least one mentioned parameter.'
                 ),
@@ -106,14 +106,14 @@ HTML
             self::SELECT,
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
-                'name'         => 'revise_update_qty_max_applied_value_mode',
-                'label'        => $this->__('Conditional Revise'),
-                'value'        => $formData['revise_update_qty_max_applied_value_mode'],
-                'values'       => [
+                'name' => 'revise_update_qty_max_applied_value_mode',
+                'label' => $this->__('Conditional Revise'),
+                'value' => $formData['revise_update_qty_max_applied_value_mode'],
+                'values' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Revise When Less or Equal to'),
                 ],
-                'tooltip'      => $this->__(
+                'tooltip' => $this->__(
                     'Set the Item Quantity limit at which the Revise Action should be triggered.
                     It is recommended to keep this value relatively low, between 10 and 20 Items.'
                 ),
@@ -137,10 +137,10 @@ HTML
             'revise_update_price',
             self::SELECT,
             [
-                'name'    => 'revise_update_price',
-                'label'   => $this->__('Price'),
-                'value'   => $formData['revise_update_price'],
-                'values'  => [
+                'name' => 'revise_update_price',
+                'label' => $this->__('Price'),
+                'value' => $formData['revise_update_price'],
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
@@ -155,10 +155,10 @@ HTML
             'revise_update_details',
             self::SELECT,
             [
-                'name'    => 'revise_update_details',
-                'label'   => $this->__('Details'),
-                'value'   => $formData['revise_update_details'],
-                'values'  => [
+                'name' => 'revise_update_details',
+                'label' => $this->__('Details'),
+                'value' => $formData['revise_update_details'],
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
@@ -175,10 +175,10 @@ HTML
             'revise_update_images',
             self::SELECT,
             [
-                'name'    => 'revise_update_images',
-                'label'   => $this->__('Images'),
-                'value'   => $formData['revise_update_images'],
-                'values'  => [
+                'name' => 'revise_update_images',
+                'label' => $this->__('Images'),
+                'value' => $formData['revise_update_images'],
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
@@ -193,7 +193,7 @@ HTML
             'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text'  => $this->__(
+                'text' => $this->__(
                     '<br/>Disabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
                     $this->supportHelper->getSupportUrl('/support/solutions/articles/9000200401')
@@ -206,7 +206,7 @@ HTML
             'revise_update_details_or_images_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text'  => $this->__(
+                'text' => $this->__(
                     '<br/>Enabling this option might affect synchronization performance. Please read
              <a href="%url%" target="_blank">this article</a> before using the option.',
                     $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219398')

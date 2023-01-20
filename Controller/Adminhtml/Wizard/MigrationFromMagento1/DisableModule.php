@@ -15,7 +15,7 @@ class DisableModule extends \Magento\Backend\App\Action
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Magento\Framework\View\Result\PageFactory $resultPageFactory  */
+    /** @var \Magento\Framework\View\Result\PageFactory $resultPageFactory */
     protected $resultPageFactory;
 
     public function __construct(
@@ -47,9 +47,11 @@ class DisableModule extends \Magento\Backend\App\Action
         $result->getConfig()->addPageAsset("Ess_M2ePro::css/style.css");
         $result->getConfig()->addPageAsset("Ess_M2ePro::css/wizard.css");
 
-        $result->getConfig()->getTitle()->set(__(
-            'M2E Pro Module Migration from Magento v1.x'
-        ));
+        $result->getConfig()->getTitle()->set(
+            __(
+                'M2E Pro Module Migration from Magento v1.x'
+            )
+        );
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\DisableModule $block */
         $block = $result->getLayout()->createBlock(

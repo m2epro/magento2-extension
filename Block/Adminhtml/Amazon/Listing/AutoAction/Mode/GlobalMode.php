@@ -57,7 +57,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->supportHelper->getDocumentationArticleUrl('x/uAMVB')
-                )
+                ),
             ]
         );
 
@@ -66,7 +66,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             'hidden',
             [
                 'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL
+                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL,
             ]
         );
 
@@ -85,7 +85,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 ],
                 'value' => $this->formData['auto_global_adding_mode'],
                 'tooltip' => $this->__('Action which will be applied automatically.'),
-                'style' => 'width: 350px;'
+                'style' => 'width: 350px;',
             ]
         );
 
@@ -100,7 +100,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => $this->__('No')],
                     [
                         'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                        'label' => $this->__('Yes')
+                        'label' => $this->__('Yes'),
                     ],
                 ],
                 'value' => $this->formData['auto_global_adding_add_not_visible'],
@@ -112,7 +112,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     If set to <strong>No</strong>, only Variation (i.e.
                     Parent) Magento Products will be added to the Listing Automatically,
                     excluding Child Products.'
-                )
+                ),
             ]
         );
 
@@ -126,11 +126,11 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 'values' => [
                     [
                         'value' => \Ess\M2ePro\Model\Amazon\Listing::ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_NO,
-                        'label' => $this->__('No')
+                        'label' => $this->__('No'),
                     ],
                     [
                         'value' => \Ess\M2ePro\Model\Amazon\Listing::ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_YES,
-                        'label' => $this->__('Yes')
+                        'label' => $this->__('Yes'),
                     ],
                 ],
                 'value' => (int)!empty($this->formData['auto_global_adding_description_template_id']),
@@ -138,7 +138,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 'tooltip' => $this->__(
                     'Should M2E Pro try to create new ASIN/ISBN in case Search
                     Settings are not set or contain the incorrect values?'
-                )
+                ),
             ]
         );
 
@@ -158,11 +158,11 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             return $b["is_new_asin_accepted"] <=> $a["is_new_asin_accepted"];
         });
 
-        $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
+        $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($descriptionTemplates as $template) {
             $tmp = [
                 'label' => $this->_escaper->escapeHtml($template['title']),
-                'value' => $template['id']
+                'value' => $template['id'],
             ];
 
             if (!$template['is_new_asin_accepted']) {
@@ -173,9 +173,9 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
         }
 
         $url = $this->getUrl('*/amazon_template_description/new', [
-            'is_new_asin_accepted'  => 1,
-            'marketplace_id'        => $this->getListing()->getMarketplaceId(),
-            'close_on_save' => true
+            'is_new_asin_accepted' => 1,
+            'marketplace_id' => $this->getListing()->getMarketplaceId(),
+            'close_on_save' => true,
         ]);
 
         $fieldSet->addField(
@@ -189,17 +189,19 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 'value' => $this->formData['auto_global_adding_description_template_id'],
                 'field_extra_attributes' => 'id="auto_action_amazon_add_and_assign_description_template"',
                 'required' => true,
-                'after_element_html' => $this->getTooltipHtml($this->__(
-                    'Creation of new ASIN/ISBN will be performed based on specified Description Policy.
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        'Creation of new ASIN/ISBN will be performed based on specified Description Policy.
                             Only the Description Policies set for new ASIN/ISBN creation are available for choosing.
                             <br/><br/><b>Note:</b> If chosen Description Policy doesn’t meet all the
                             Conditions for new ASIN/ISBN creation, the Products will still be added to M2E Pro Listings
                             but will not be Listed on Amazon.'
-                )) . '<a href="javascript: void(0);"
+                    )
+                ) . '<a href="javascript: void(0);"
                             style="vertical-align: inherit; margin-left: 65px;"
-                            onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
-                            ListingAutoActionObj.reloadDescriptionTemplates);">'.$this->__('Add New').'
-                         </a>'
+                            onclick="ListingAutoActionObj.addNewTemplate(\'' . $url . '\',
+                            ListingAutoActionObj.reloadDescriptionTemplates);">' . $this->__('Add New') . '
+                         </a>',
             ]
         );
 
@@ -212,10 +214,12 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 'label' => $this->__('Product Deleted from Magento'),
                 'title' => $this->__('Product Deleted from Magento'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                        'label' => $this->__('Stop on Channel and Delete from Listing')],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
+                        'label' => $this->__('Stop on Channel and Delete from Listing'),
+                    ],
                 ],
-                'style' => 'width: 350px;'
+                'style' => 'width: 350px;',
             ]
         );
 
@@ -233,7 +237,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Listing::class)
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 
         ListingAutoActionObj.showCreateNewAsin = {$this->showCreateNewAsin};
 

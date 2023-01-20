@@ -18,8 +18,7 @@ class Repository
 
     public function __construct(
         \Ess\M2ePro\Model\ControlPanel\Inspection\Repository\DefinitionProvider $definitionProvider
-    )
-    {
+    ) {
         foreach ($definitionProvider->getDefinitions() as $definition) {
             $this->definitions[$definition->getNick()] = $definition;
         }

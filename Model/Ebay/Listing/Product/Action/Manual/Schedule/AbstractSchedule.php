@@ -8,20 +8,21 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Schedule;
 
-use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Result;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Result;
+use Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction as ListingProductScheduledAction;
 
 abstract class AbstractSchedule extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\AbstractManual
 {
     /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledActionFactory */
     private $scheduledActionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\CollectionFactory */
+    /** @var ListingProductScheduledAction\CollectionFactory */
     private $scheduledActionCollectionFactory;
     /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction\Manager */
     private $scheduledActionManager;
 
     public function __construct(
         \Ess\M2ePro\Model\Listing\Product\ScheduledActionFactory $scheduledActionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\CollectionFactory $scheduledActionCollectionFactory,
+        ListingProductScheduledAction\CollectionFactory $scheduledActionCollectionFactory,
         \Ess\M2ePro\Model\Listing\Product\ScheduledAction\Manager $scheduledActionManager,
         \Ess\M2ePro\Model\Listing\Product\LockManagerFactory $lockManagerFactory
     ) {
@@ -60,7 +61,7 @@ abstract class AbstractSchedule extends \Ess\M2ePro\Model\Ebay\Listing\Product\A
             $listingsProductsIds[] = $listingProduct->getId();
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $existedScheduled */
+        /** @var ListingProductScheduledAction\Collection $existedScheduled */
         $existedScheduled = $this->scheduledActionCollectionFactory->create();
         $existedScheduled->addFieldToFilter('listing_product_id', $listingsProductsIds);
 

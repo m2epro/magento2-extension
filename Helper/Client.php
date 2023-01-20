@@ -268,7 +268,8 @@ class Client
                     '#  +#',
                     '# class=".*?"#',
                     '%&#039;%',
-                    '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
+                    '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" />' .
+                    '</a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
                     '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
                     '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
                     "# +#",
@@ -509,7 +510,7 @@ class Client
         // @codingStandardsIgnoreStart
         while (($usage = memory_get_usage(true)) < $bytes || $bytes === null) {
             $array[] = $array;
-            if (++$i % 100 === 0) {
+            if ((++$i) % 100 === 0) {
                 $this->registry->setValue('/tools/memory-limit/test/', $usage);
             }
         }
@@ -548,7 +549,7 @@ class Client
         // @codingStandardsIgnoreStart
         while ($i < $seconds) {
             sleep(1);
-            if (++$i % 10 === 0) {
+            if ((++$i) % 10 === 0) {
                 $this->registry->setValue('/tools/execution-time/test/', $i);
             }
         }

@@ -61,9 +61,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
         $helper = $this->helperFactory->getObject('Magento\Staging');
 
-        if ($helper->isInstalled() &&
+        if (
+            $helper->isInstalled() &&
             $helper->isStagedTable($table, CategoryAttributeInterface::ENTITY_TYPE_CODE) &&
-            strpos($bind, 'entity_id') !== false) {
+            strpos($bind, 'entity_id') !== false
+        ) {
             $bind = str_replace(
                 'entity_id',
                 $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE),
@@ -88,6 +90,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
                 $bind = $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE);
             }
         }
+
         return parent::joinAttribute($alias, $attribute, $bind, $filter, $joinType, $storeId);
     }
 

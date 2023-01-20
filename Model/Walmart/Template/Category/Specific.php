@@ -13,21 +13,21 @@ namespace Ess\M2ePro\Model\Walmart\Template\Category;
  */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const DICTIONARY_TYPE_TEXT = 1;
-    const DICTIONARY_TYPE_SELECT = 2;
-    const DICTIONARY_TYPE_CONTAINER = 3;
+    public const DICTIONARY_TYPE_TEXT = 1;
+    public const DICTIONARY_TYPE_SELECT = 2;
+    public const DICTIONARY_TYPE_CONTAINER = 3;
 
-    const DICTIONARY_MODE_RECOMMENDED_VALUE = 'recommended_value';
-    const DICTIONARY_MODE_CUSTOM_VALUE = 'custom_value';
-    const DICTIONARY_MODE_CUSTOM_ATTRIBUTE = 'custom_attribute';
-    const DICTIONARY_MODE_NONE = 'none';
+    public const DICTIONARY_MODE_RECOMMENDED_VALUE = 'recommended_value';
+    public const DICTIONARY_MODE_CUSTOM_VALUE = 'custom_value';
+    public const DICTIONARY_MODE_CUSTOM_ATTRIBUTE = 'custom_attribute';
+    public const DICTIONARY_MODE_NONE = 'none';
 
-    const TYPE_INT = 'int';
-    const TYPE_FLOAT = 'float';
-    const TYPE_DATETIME = 'date_time';
+    public const TYPE_INT = 'int';
+    public const TYPE_FLOAT = 'float';
+    public const TYPE_DATETIME = 'date_time';
 
-    const UNIT_SPECIFIC_CODE = 'unit';
-    const MEASURE_SPECIFIC_CODE = 'measure';
+    public const UNIT_SPECIFIC_CODE = 'unit';
+    public const MEASURE_SPECIFIC_CODE = 'measure';
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Template\Category
@@ -54,6 +54,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $temp = parent::delete();
         $temp && $this->categoryTemplateModel = null;
         $temp && $this->categorySpecificSourceModels = [];
+
         return $temp;
     }
 
@@ -96,6 +97,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Walmart\Template\Category\Specific\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -164,6 +166,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getAttributes()
     {
         $value = $this->getData('attributes');
+
         return is_string($value) ? (array)$this->getHelper('Data')->jsonDecode($value) : [];
     }
 
@@ -172,6 +175,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getCode()
     {
         $pathParts = explode('/', $this->getXpath());
+
         return preg_replace('/-[0-9]+$/', '', array_pop($pathParts));
     }
 

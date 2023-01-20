@@ -75,6 +75,7 @@ abstract class MigrationToInnodb extends Wizard
         empty($redirectUrl) && $redirectUrl = $this->getUrl('*/support/index');
 
         $wizard->clearRefererUrl();
+
         return $this->_redirect($redirectUrl);
     }
 }

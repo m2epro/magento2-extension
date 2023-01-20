@@ -21,6 +21,7 @@ class GoToOrder extends Account
 
         if ($feedbackId === null) {
             $this->getMessageManager()->addError($this->__('Feedback is not defined.'));
+
             return $this->_redirect('*/ebay_order/index');
         }
 
@@ -30,6 +31,7 @@ class GoToOrder extends Account
 
         if ($order === null) {
             $this->getMessageManager()->addError($this->__('Requested Order was not found.'));
+
             return $this->_redirect('*/ebay_order/index');
         }
 

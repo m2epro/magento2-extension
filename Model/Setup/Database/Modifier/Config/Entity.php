@@ -37,7 +37,7 @@ class Entity extends AbstractModel
         $this->configModifier = $configModifier;
 
         $this->group = $group;
-        $this->key   = $key;
+        $this->key = $key;
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -64,6 +64,7 @@ class Entity extends AbstractModel
     public function getValue()
     {
         $row = $this->configModifier->getRow($this->group, $this->key);
+
         return isset($row['value']) ? $row['value'] : null;
     }
 

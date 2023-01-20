@@ -53,14 +53,14 @@ class ErrorsSummary extends AbstractBlock
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $fields = new \Zend_Db_Expr('COUNT(`'.$countField.'`) as `count_products`, `description`');
+        $fields = new \Zend_Db_Expr('COUNT(`' . $countField . '`) as `count_products`, `description`');
         $dbSelect = $connection->select()
-                             ->from($tableName, $fields)
-                             ->where('`action_id` IN ('.$actionIdsString.')')
-                             ->where('`type` = ?', \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR)
-                             ->group('description')
-                             ->order(['count_products DESC'])
-                             ->limit(100);
+                               ->from($tableName, $fields)
+                               ->where('`action_id` IN (' . $actionIdsString . ')')
+                               ->where('`type` = ?', \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR)
+                               ->group('description')
+                               ->order(['count_products DESC'])
+                               ->limit(100);
 
         $newErrors = [];
         $tempErrors = $connection->fetchAll($dbSelect);

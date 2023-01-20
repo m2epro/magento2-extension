@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Account\Repricing
- */
 class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     //########################################
@@ -51,8 +49,12 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
     {
         $ignoreFields = [
             $this->getIdFieldName(),
-            'account_id', 'email', 'token',
-            'total_products', 'create_date', 'update_date',
+            'account_id',
+            'email',
+            'token',
+            'total_products',
+            'create_date',
+            'update_date',
         ];
 
         foreach ($ignoreFields as $ignoreField) {

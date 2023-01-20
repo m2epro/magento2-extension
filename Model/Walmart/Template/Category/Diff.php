@@ -25,7 +25,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         $mainKeys = [
             'browsenode_id',
             'product_data_nick',
-            'specifics'
+            'specifics',
         ];
 
         return $this->isSettingsDifferent($mainKeys);

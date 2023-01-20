@@ -28,6 +28,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             $this->setAjaxContent(
                 $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Grid::class)
             );
+
             return $this->getResult();
         }
 

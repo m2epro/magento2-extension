@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -13,19 +13,22 @@ namespace Ess\M2ePro\Model\Cron\Task\Magento\Product;
  */
 class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'magento/product/bulk_website_updated';
+    public const NICK = 'magento/product/bulk_website_updated';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 600;
 
-    const PRODUCTS_COUNT = 1000;
+    public const PRODUCTS_COUNT = 1000;
 
     /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
     private $listingAutoActionsModeFactory;
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     protected $productFactory;
+    /** @var \Magento\Store\Model\ResourceModel\Website\CollectionFactory  */
     protected $websiteCollectionFactory;
+    /** @var \Magento\Store\Model\StoreFactory  */
     protected $storeFactory;
 
     public function __construct(
@@ -94,7 +97,7 @@ class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function getUpdatingProductsIds()
     {
         $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_magento_product_websites_update');
+                      ->getTableNameWithPrefix('m2epro_magento_product_websites_update');
 
         $limit = self::PRODUCTS_COUNT;
 
@@ -115,7 +118,7 @@ SQL;
     {
         $this->resource->getConnection()->delete(
             $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('m2epro_magento_product_websites_update'),
+                 ->getTableNameWithPrefix('m2epro_magento_product_websites_update'),
             ['product_id IN (?)' => $productsIds]
         );
     }
@@ -139,7 +142,7 @@ SQL;
             if (empty($updatedProductsData[$websiteUpdate->getProductId()])) {
                 $updatedProductsData[$websiteUpdate->getProductId()] = [
                     $actionAdd => [],
-                    $actionRemove => []
+                    $actionRemove => [],
                 ];
             }
 
@@ -186,7 +189,7 @@ SQL;
         }
 
         $websitesCollection = $this->websiteCollectionFactory->create()
-            ->addFieldToFilter('website_id', ['in' => $websiteIds]);
+                                                             ->addFieldToFilter('website_id', ['in' => $websiteIds]);
 
         $websitesCollection->getSelect()->joinLeft(
             ['cs' => $this->storeFactory->create()->getResource()->getMainTable()],
@@ -197,18 +200,18 @@ SQL;
             $websitesCollection->getSelect()->joinLeft(
                 ['ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 '(`ml`.`store_id` = `cs`.`store_id` AND `ml`.`auto_website_adding_mode` != ' .
-                    \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE . ')',
+                \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE . ')',
                 [
-                    'listing_id' => 'id'
+                    'listing_id' => 'id',
                 ]
             );
         } elseif ($action == \Ess\M2ePro\Model\Magento\Product\Websites\Update::ACTION_REMOVE) {
             $websitesCollection->getSelect()->joinLeft(
                 ['ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
                 '(`ml`.`store_id` = `cs`.`store_id` AND `ml`.`auto_website_deleting_mode` != ' .
-                    \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE . ')',
+                \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE . ')',
                 [
-                    'listing_id' => 'id'
+                    'listing_id' => 'id',
                 ]
             );
         }

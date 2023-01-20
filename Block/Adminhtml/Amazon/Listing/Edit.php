@@ -57,9 +57,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->addButton(
                 'back',
                 [
-                    'label'   => $this->__('Back'),
+                    'label' => $this->__('Back'),
                     'onclick' => 'AmazonListingSettingsObj.backClick(\'' . $url . '\')',
-                    'class'   => 'back'
+                    'class' => 'back',
                 ]
             );
         }
@@ -67,9 +67,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton(
             'auto_action',
             [
-                'label'   => $this->__('Auto Add/Remove Rules'),
+                'label' => $this->__('Auto Add/Remove Rules'),
                 'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-                'class'   => 'action-primary'
+                'class' => 'action-primary',
             ]
         );
 
@@ -78,22 +78,22 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $url = $this->getUrl(
             '*/amazon_listing/save',
             [
-                'id'   => $this->getListing()->getId(),
-                'back' => $backUrl
+                'id' => $this->getListing()->getId(),
+                'back' => $backUrl,
             ]
         );
         $saveButtonsProps = [
             'save' => [
-                'label'   => $this->__('Save And Back'),
+                'label' => $this->__('Save And Back'),
                 'onclick' => 'AmazonListingSettingsObj.saveClick(\'' . $url . '\')',
-                'class'   => 'save primary'
-            ]
+                'class' => 'save primary',
+            ],
         ];
 
         $url = $this->getUrl(
             '*/amazon_listing/save',
             [
-                'id'   => $this->getListing()->getId(),
+                'id' => $this->getListing()->getId(),
             ]
         );
 
@@ -106,14 +106,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         );
 
         $saveButtons = [
-            'id'           => 'save_and_continue',
-            'label'        => $this->__('Save And Continue Edit'),
-            'class'        => 'add',
+            'id' => 'save_and_continue',
+            'label' => $this->__('Save And Continue Edit'),
+            'class' => 'add',
             'button_class' => '',
-            'onclick'      =>
+            'onclick' =>
                 "AmazonListingSettingsObj.saveAndEditClick('$url', '$editBackUrl')",
-            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
-            'options'      => $saveButtonsProps
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+            'options' => $saveButtonsProps,
         ];
 
         $this->addButton('save_buttons', $saveButtons);
@@ -141,8 +141,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->getUrl(
                 '*/' . $path,
                 [
-                    'marketplace_id'       => $this->getListing()->getMarketplaceId(),
-                    'is_new_asin_accepted' => 1
+                    'marketplace_id' => $this->getListing()->getMarketplaceId(),
+                    'is_new_asin_accepted' => 1,
                 ]
             ),
             $path
@@ -150,13 +150,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         $this->jsTranslator->addTranslations(
             [
-                'Remove Category'                          => $this->__('Remove Category'),
-                'Add New Rule'                             => $this->__('Add New Rule'),
-                'Add/Edit Categories Rule'                 => $this->__('Add/Edit Categories Rule'),
-                'Auto Add/Remove Rules'                    => $this->__('Auto Add/Remove Rules'),
-                'Based on Magento Categories'              => $this->__('Based on Magento Categories'),
-                'You must select at least 1 Category.'     => $this->__('You must select at least 1 Category.'),
-                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.')
+                'Remove Category' => $this->__('Remove Category'),
+                'Add New Rule' => $this->__('Add New Rule'),
+                'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
+                'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
+                'Based on Magento Categories' => $this->__('Based on Magento Categories'),
+                'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
+                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
             ]
         );
 
@@ -181,7 +181,7 @@ JS
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
-                'data' => ['listing' => $this->listing]
+                'data' => ['listing' => $this->listing],
             ]
         );
 

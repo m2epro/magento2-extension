@@ -8,16 +8,16 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
     use Traits\BlockTrait;
 
-    const ONLINE_QTY_SOLD      = 'online_qty_sold';
-    const ONLINE_AVAILABLE_QTY = 'online_available_qty';
+    public const ONLINE_QTY_SOLD = 'online_qty_sold';
+    public const ONLINE_AVAILABLE_QTY = 'online_available_qty';
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -58,8 +58,8 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         }
 
         $renderOnlineQty = ($this->getColumn()->getData('render_online_qty'))
-                           ? $this->getColumn()->getData('render_online_qty')
-                           : self::ONLINE_QTY_SOLD;
+            ? $this->getColumn()->getData('render_online_qty')
+            : self::ONLINE_QTY_SOLD;
 
         if ($renderOnlineQty === self::ONLINE_AVAILABLE_QTY) {
             if ($row->getData('status') != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {

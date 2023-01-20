@@ -55,7 +55,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
         $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
-        $this->setId('ebayListingProductGrid'.$this->listing->getId());
+        $this->setId('ebayListingProductGrid' . $this->listing->getId());
         // ---------------------------------------
 
         $this->hideMassactionDropDown = true;
@@ -66,9 +66,9 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('type_id');
+                                                            ->addAttributeToSelect('sku')
+                                                            ->addAttributeToSelect('name')
+                                                            ->addAttributeToSelect('type_id');
 
         $collection->setStoreId($this->listing->getStoreId());
         $collection->joinStockItem();
@@ -157,10 +157,12 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $collection->addFieldToFilter(
-            [[
-                'attribute' => 'type_id',
-                'in' => $this->magentoProductHelper->getOriginKnownTypes()
-            ]]
+            [
+                [
+                    'attribute' => 'type_id',
+                    'in' => $this->magentoProductHelper->getOriginKnownTypes(),
+                ],
+            ]
         );
 
         $this->setCollection($collection);
@@ -173,83 +175,83 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'    => $this->__('ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'entity_id',
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Title'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
             'filter_index' => 'name',
-            'escape'    => false,
-            'frame_callback' => [$this, 'callbackColumnProductTitle']
+            'escape' => false,
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
         ]);
 
         $this->addColumn('type', [
-            'header'    => $this->__('Type'),
-            'align'     => 'left',
-            'width'     => '90px',
-            'type'      => 'options',
-            'sortable'  => false,
-            'index'     => 'type_id',
+            'header' => $this->__('Type'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'type_id',
             'filter_index' => 'type_id',
-            'options'   => $this->getProductTypes()
+            'options' => $this->getProductTypes(),
         ]);
 
         $this->addColumn('is_in_stock', [
-            'header'    => $this->__('Stock Availability'),
-            'align'     => 'left',
-            'width'     => '90px',
-            'type'      => 'options',
-            'sortable'  => false,
-            'index'     => 'is_in_stock',
+            'header' => $this->__('Stock Availability'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
             'options' => [
                 '1' => $this->__('In Stock'),
-                '0' => $this->__('Out of Stock')
+                '0' => $this->__('Out of Stock'),
             ],
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('sku', [
-            'header'    => $this->__('SKU'),
-            'align'     => 'left',
-            'width'     => '90px',
-            'type'      => 'text',
-            'index'     => 'sku',
-            'filter_index' => 'sku'
+            'header' => $this->__('SKU'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'text',
+            'index' => 'sku',
+            'filter_index' => 'sku',
         ]);
 
         $store = $this->_getStore();
 
         $this->addColumn('price', [
-            'header'    => $this->__('Price'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'price',
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'price',
             'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
             'currency_code' => $store->getBaseCurrency()->getCode(),
-            'index'     => 'price',
+            'index' => 'price',
             'filter_index' => 'price',
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('qty', [
-            'header'    => $this->__('QTY'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'qty',
+            'header' => $this->__('QTY'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'qty',
             'filter_index' => 'qty',
-            'frame_callback' => [$this, 'callbackColumnQty']
+            'frame_callback' => [$this, 'callbackColumnQty'],
         ]);
 
         return parent::_prepareColumns();
@@ -276,6 +278,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 );
             }
         }
+
         return parent::_addColumnFilterToCollection($column);
     }
 
@@ -290,6 +293,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         if (isset($this->listing['store_id'])) {
             $storeId = (int)$this->listing['store_id'];
         }
+
         // ---------------------------------------
 
         return $this->_storeManager->getStore($storeId);
@@ -300,7 +304,8 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
             require([
                 'M2ePro/General/PhpFunctions',
             ], function(){
@@ -318,15 +323,19 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Ebay_Listing_AutoAction',
-            ['listing_id' => $this->listing->getId()]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Ebay_Listing_AutoAction',
+                ['listing_id' => $this->listing->getId()]
+            )
+        );
 
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Ebay_Listing_Product_Add',
-            ['_current' => true]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Ebay_Listing_Product_Add',
+                ['_current' => true]
+            )
+        );
 
         $this->jsUrl->add(
             $this->getUrl('*/ebay_listing_product_add', ['_current' => true, 'step' => null]),

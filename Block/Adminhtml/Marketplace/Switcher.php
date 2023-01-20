@@ -25,9 +25,12 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
     protected function loadItems()
     {
         $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection()
-            ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-            ->setOrder('component_mode', 'ASC')
-            ->setOrder('sorder', 'ASC');
+                                                ->addFieldToFilter(
+                                                    'status',
+                                                    \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE
+                                                )
+                                                ->setOrder('component_mode', 'ASC')
+                                                ->setOrder('sorder', 'ASC');
 
         if ($this->getData('component_mode') !== null) {
             $collection->addFieldToFilter('component_mode', $this->getData('component_mode'));
@@ -35,6 +38,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
 
         if (!$collection->getSize()) {
             $this->items = [];
+
             return;
         }
 
@@ -49,7 +53,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
             $items[$marketplace->getComponentMode()]['value'][] = [
                 'value' => $marketplace->getId(),
-                'label' => $marketplace->getTitle()
+                'label' => $marketplace->getTitle(),
             ];
         }
 

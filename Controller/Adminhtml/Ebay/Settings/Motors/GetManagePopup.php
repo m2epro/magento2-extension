@@ -15,6 +15,7 @@ class GetManagePopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $popup = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors\Manage::class);
 
         $this->setAjaxContent($popup);
+
         return $this->getResult();
     }
 }

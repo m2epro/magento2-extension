@@ -10,16 +10,13 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\TableCellsPopup
- */
 class TableCellsPopup extends AbstractBlock
 {
-    const MODE_CREATE = 'create';
-    const MODE_UPDATE = 'update';
+    public const MODE_CREATE = 'create';
+    public const MODE_UPDATE = 'update';
 
     private $tableName;
-    private $mode    = self::MODE_UPDATE;
+    private $mode = self::MODE_UPDATE;
     private $rowsIds = [];
 
     /** @var  \Ess\M2ePro\Model\ControlPanel\Database\TableModel */
@@ -54,18 +51,20 @@ class TableCellsPopup extends AbstractBlock
     private function init()
     {
         $this->tableName = $this->getRequest()->getParam('table');
-        $this->mode      = $this->getRequest()->getParam('mode');
-        $this->rowsIds   = explode(',', $this->getRequest()->getParam('ids'));
+        $this->mode = $this->getRequest()->getParam('mode');
+        $this->rowsIds = explode(',', $this->getRequest()->getParam('ids'));
 
         $component = $this->getRequest()->getParam('component');
         $mergeMode = (bool)$this->getRequest()->getParam('merge', false);
 
         /** @var \Ess\M2ePro\Model\ControlPanel\Database\TableModel $model */
-        $model = $this->databaseTableFactory->create(['data' => [
-            'table_name' => $this->tableName,
-            'merge_mode' => $mergeMode,
-            'merge_mode_component' => $component
-        ]]);
+        $model = $this->databaseTableFactory->create([
+            'data' => [
+                'table_name' => $this->tableName,
+                'merge_mode' => $mergeMode,
+                'merge_mode_component' => $component,
+            ],
+        ]);
 
         $this->tableModel = $model;
     }

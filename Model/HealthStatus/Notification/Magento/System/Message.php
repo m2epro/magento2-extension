@@ -32,7 +32,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
-        $this->currentStatus        = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
+        $this->currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
         $this->notificationSettings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
     }
 
@@ -40,7 +40,8 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
 
     public function getIdentity()
     {
-        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
+        if (
+            $this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
             !$this->helperFactory->getObject('Module')->areImportantTablesExist()
         ) {
             return 'm2epro-health-status-notification';
@@ -73,6 +74,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
     public function getText()
     {
         $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
+
         return $messageBuilder->build();
     }
 

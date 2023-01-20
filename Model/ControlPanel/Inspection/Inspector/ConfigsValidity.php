@@ -4,7 +4,7 @@ namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
 use Ess\M2ePro\Helper\Module\Database\Structure as DatabaseStructure;
-use \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher as ConnectorDispatcher;
+use Ess\M2ePro\Model\M2ePro\Connector\Dispatcher as ConnectorDispatcher;
 use Magento\Backend\Model\UrlInterface;
 use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
 use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
@@ -23,7 +23,7 @@ class ConfigsValidity implements InspectorInterface
     /** @var ActiveRecordFactory */
     private $activeRecordFactory;
 
-    /** @var IssueFactory  */
+    /** @var IssueFactory */
     private $issueFactory;
 
     //########################################
@@ -35,11 +35,11 @@ class ConfigsValidity implements InspectorInterface
         ActiveRecordFactory $activeRecordFactory,
         IssueFactory $issueFactory
     ) {
-        $this->databaseStructure   = $databaseStructure;
+        $this->databaseStructure = $databaseStructure;
         $this->connectorDispatcher = $connectorDispatcher;
-        $this->urlBuilder          = $urlBuilder;
+        $this->urlBuilder = $urlBuilder;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->issueFactory        = $issueFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -56,8 +56,10 @@ class ConfigsValidity implements InspectorInterface
             return $issues;
         }
 
-        $configTableName = $this->databaseStructure->getTableNameWithoutPrefix($this->activeRecordFactory
-            ->getObject('Config')->getResource()->getMainTable());
+        $configTableName = $this->databaseStructure->getTableNameWithoutPrefix(
+            $this->activeRecordFactory
+                ->getObject('Config')->getResource()->getMainTable()
+        );
         if (!isset($responseData['configs_info']) || !isset($responseData['configs_info'][$configTableName])) {
             $issues[] = $this->issueFactory->create('No info for this M2e Pro version');
 
@@ -87,6 +89,7 @@ class ConfigsValidity implements InspectorInterface
             ['magento_version' => 2]
         );
         $dispatcherObject->process($connectorObj);
+
         return $connectorObj->getResponseData();
     }
 
@@ -107,9 +110,10 @@ class ConfigsValidity implements InspectorInterface
                 }
 
                 $differences[] = [
-                    'table'    => $tableName,
-                    'item'     => $item,
-                    'solution' => 'insert'];
+                    'table' => $tableName,
+                    'item' => $item,
+                    'solution' => 'insert',
+                ];
             }
         }
 
@@ -178,7 +182,8 @@ JS;
 HTML;
         }
 
-        $html .='</table>';
+        $html .= '</table>';
+
         return $html;
     }
 

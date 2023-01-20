@@ -36,7 +36,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
     public function afterSave()
     {
         $listingProductId = $this->getListingProduct()->getId();
-        $variationId      = $this->getListingProductVariationId();
+        $variationId = $this->getListingProductVariationId();
 
         $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
@@ -48,7 +48,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
     public function beforeDelete()
     {
         $listingProductId = $this->getListingProduct()->getId();
-        $variationId      = $this->getListingProductVariationId();
+        $variationId = $this->getListingProductVariationId();
 
         $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
@@ -92,7 +92,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
      */
     public function setListingProductVariation(\Ess\M2ePro\Model\Listing\Product\Variation $instance)
     {
-         $this->listingProductVariationModel = $instance;
+        $this->listingProductVariationModel = $instance;
     }
 
     // ---------------------------------------
@@ -104,9 +104,9 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
     {
         if (!$this->magentoProductModel) {
             $this->magentoProductModel = $this->modelFactory->getObject('Magento_Product_Cache')
-                ->setStoreId($this->getListing()->getStoreId())
-                ->setProductId($this->getData('product_id'))
-                ->setStatisticId($this->getListingProduct()->getId());
+                                                            ->setStoreId($this->getListing()->getStoreId())
+                                                            ->setProductId($this->getData('product_id'))
+                                                            ->setStatisticId($this->getListingProduct()->getId());
         }
 
         $this->getListingProduct()->getMagentoProduct()->isCacheEnabled()
@@ -191,7 +191,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
 
     public function getAttribute()
     {
-         return $this->getData('attribute');
+        return $this->getData('attribute');
     }
 
     public function getOption()

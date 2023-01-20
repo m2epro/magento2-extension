@@ -181,10 +181,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         $from = $this->listingProduct->getChildObject()->getOrigData('online_qty') -
-                $this->listingProduct->getChildObject()->getOrigData('online_qty_sold');
+            $this->listingProduct->getChildObject()->getOrigData('online_qty_sold');
 
         $to = $this->listingProduct->getChildObject()->getOnlineQty() -
-              $this->listingProduct->getChildObject()->getOnlineQtySold();
+            $this->listingProduct->getChildObject()->getOnlineQtySold();
 
         if ($from == $to) {
             return;
@@ -202,7 +202,8 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
     protected function processSuccessReviseVariations()
     {
-        if (!$this->getRequestDataObject()->isVariationItem() ||
+        if (
+            !$this->getRequestDataObject()->isVariationItem() ||
             !$this->getConfigurator()->isVariationsAllowed()
         ) {
             return;
@@ -216,7 +217,8 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         $variationMetadata = !empty($requestMetadata['variation_data']) ? $requestMetadata['variation_data'] : [];
 
         foreach ($this->listingProduct->getVariations(true) as $variation) {
-            if (!isset($variationMetadata[$variation->getId()]['online_qty']) ||
+            if (
+                !isset($variationMetadata[$variation->getId()]['online_qty']) ||
                 !isset($variationMetadata[$variation->getId()]['online_price'])
             ) {
                 continue;
@@ -274,9 +276,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     {
         $responseMessages = $this->getResponse()->getMessages()->getEntities();
 
-        if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
-            $this->getConfigurator()->isIncludingMode()) {
-
+        if (
+            $this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
+            $this->getConfigurator()->isIncludingMode()
+        ) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 

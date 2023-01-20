@@ -30,11 +30,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -50,11 +52,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
      * @return $this
      */
     public function setListing(\Ess\M2ePro\Model\Listing $listing)
     {
         $this->listing = $listing;
+
         return $this;
     }
 
@@ -245,13 +249,15 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_LIKE_NEW,
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_VERY_GOOD,
             \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_GOOD,
-            \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_ACCEPTABLE
+            \Ess\M2ePro\Model\Amazon\Listing::CONDITION_COLLECTIBLE_ACCEPTABLE,
         ];
 
         $conditionData = $this->getAmazonListing()->getConditionSource();
 
-        if ($this->getAmazonListing()->isConditionDefaultMode() &&
-            !in_array($conditionData['value'], $allowedConditionValues)) {
+        if (
+            $this->getAmazonListing()->isConditionDefaultMode() &&
+            !in_array($conditionData['value'], $allowedConditionValues)
+        ) {
             return [];
         }
 

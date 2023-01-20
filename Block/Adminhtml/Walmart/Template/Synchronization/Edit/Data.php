@@ -19,12 +19,14 @@ class Data extends AbstractBlock
 
     protected function _prepareLayout()
     {
-        $this->setChild('tabs',
+        $this->setChild(
+            'tabs',
             $this->getLayout()
                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Synchronization\Edit\Tabs::class)
         );
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 .field-advanced_filter ul.rule-param-children {
     margin-top: 1em;
 }

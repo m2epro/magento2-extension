@@ -70,10 +70,10 @@ abstract class AbstractGrid extends Extended
             $this->getColumnSet()->setChild(
                 $columnId,
                 $this->getLayout()
-                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite::class)
-                    ->setData($column)
-                    ->setId($columnId)
-                    ->setGrid($this)
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite::class)
+                     ->setData($column)
+                     ->setId($columnId)
+                     ->setGrid($this)
             );
             $this->getColumnSet()->getChildBlock($columnId)->setGrid($this);
         } else {
@@ -98,6 +98,7 @@ abstract class AbstractGrid extends Extended
     public function setCustomPageSize($value)
     {
         $this->customPageSize = $value;
+
         return $this;
     }
 

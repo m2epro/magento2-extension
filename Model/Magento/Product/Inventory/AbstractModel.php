@@ -44,11 +44,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return $this
      */
     public function setProduct(\Magento\Catalog\Model\Product $product)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -94,6 +96,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $withScope
+     *
      * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
      * @throws Exception
      */

@@ -17,7 +17,9 @@ class ViewFilterGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter\Grid $block */
         $block = $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter\Grid::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\View\Filter\Grid::class
+                      );
         $block->setListingProductId($entityId);
         $block->setMotorsType($motorsType);
 

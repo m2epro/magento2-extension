@@ -24,6 +24,7 @@ class Ebay extends IssueType
     private $ebayFactory;
 
     private $urlBuilder;
+
     //########################################
 
     public function __construct(
@@ -35,8 +36,8 @@ class Ebay extends IssueType
     ) {
         parent::__construct($helperFactory, $modelFactory);
         $this->resultFactory = $resultFactory;
-        $this->ebayFactory   = $ebayFactory;
-        $this->urlBuilder    = $urlBuilder;
+        $this->ebayFactory = $ebayFactory;
+        $this->urlBuilder = $urlBuilder;
     }
 
     //########################################
@@ -49,15 +50,17 @@ class Ebay extends IssueType
         if ($failedOrders = $this->getCountOfFailedOrders()) {
             $result->setTaskResult(TaskResult::STATE_WARNING);
             $result->setTaskData($failedOrders);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-                <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 During the last 24 hours, M2E Pro has not created Magento orders for <strong>%failed_orders_count%</strong>
 imported Channel orders. See the <a target="_blank" href="%url%">Order Log</a> for more details.
 HTML
-                ,
-                $failedOrders,
-                $this->urlBuilder->getUrl('m2epro/ebay_log_order/index', ['magento_order_failed' => true])
-            ]));
+                    ,
+                    $failedOrders,
+                    $this->urlBuilder->getUrl('m2epro/ebay_log_order/index', ['magento_order_failed' => true]),
+                ])
+            );
         }
 
         return $result;

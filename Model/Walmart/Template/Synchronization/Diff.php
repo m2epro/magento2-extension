@@ -18,14 +18,14 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
     public function isReviseSettingsChanged()
     {
         return $this->isReviseQtyEnabled() ||
-               $this->isReviseQtyDisabled() ||
-               $this->isReviseQtySettingsChanged() ||
-               $this->isRevisePriceEnabled() ||
-               $this->isRevisePriceDisabled() ||
-               $this->isRevisePromotionsEnabled() ||
-               $this->isRevisePromotionsDisabled() ||
-               $this->isReviseDetailsEnabled() ||
-               $this->isReviseDetailsDisabled();
+            $this->isReviseQtyDisabled() ||
+            $this->isReviseQtySettingsChanged() ||
+            $this->isRevisePriceEnabled() ||
+            $this->isRevisePriceDisabled() ||
+            $this->isRevisePromotionsEnabled() ||
+            $this->isRevisePromotionsDisabled() ||
+            $this->isReviseDetailsEnabled() ||
+            $this->isReviseDetailsDisabled();
     }
 
     //########################################
@@ -84,7 +84,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         $oldSnapshotData = $this->oldSnapshot;
 
         return empty($oldSnapshotData['revise_update_promotions']) &&
-              !empty($newSnapshotData['revise_update_promotions']);
+            !empty($newSnapshotData['revise_update_promotions']);
     }
 
     public function isRevisePromotionsDisabled()
@@ -93,7 +93,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         $oldSnapshotData = $this->oldSnapshot;
 
         return !empty($oldSnapshotData['revise_update_promotions']) &&
-                empty($newSnapshotData['revise_update_promotions']);
+            empty($newSnapshotData['revise_update_promotions']);
     }
 
     //########################################
@@ -104,7 +104,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         $oldSnapshotData = $this->oldSnapshot;
 
         return empty($oldSnapshotData['revise_update_details']) &&
-               !empty($newSnapshotData['revise_update_details']);
+            !empty($newSnapshotData['revise_update_details']);
     }
 
     public function isReviseDetailsDisabled()
@@ -113,7 +113,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         $oldSnapshotData = $this->oldSnapshot;
 
         return !empty($oldSnapshotData['revise_update_details']) &&
-               empty($newSnapshotData['revise_update_details']);
+            empty($newSnapshotData['revise_update_details']);
     }
 
     //########################################

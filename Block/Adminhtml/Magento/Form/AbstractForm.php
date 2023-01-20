@@ -18,20 +18,18 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Separator;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\StoreSwitcher;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
- */
 abstract class AbstractForm extends Generic
 {
-    public const CUSTOM_CONTAINER = CustomContainer::class;
-    public const HELP_BLOCK       = HelpBlock::class;
-    public const MESSAGES         = Messages::class;
-    public const SELECT           = Select::class;
-    public const SEPARATOR        = Separator::class;
-    public const STORE_SWITCHER   = StoreSwitcher::class;
-
     use Traits\BlockTrait;
     use Traits\RendererTrait;
+
+    public const CUSTOM_CONTAINER = CustomContainer::class;
+    public const HELP_BLOCK = HelpBlock::class;
+    public const MESSAGES = Messages::class;
+    public const SELECT = Select::class;
+    public const SEPARATOR = Separator::class;
+
+    public const STORE_SWITCHER = StoreSwitcher::class;
 
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;

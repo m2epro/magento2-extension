@@ -15,7 +15,7 @@ use Ess\M2ePro\Helper\Component\Walmart;
  */
 class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/order/receive';
+    public const NICK = 'walmart/order/receive';
 
     //####################################
 
@@ -55,7 +55,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setSynchronizationLog($this->getSynchronizationLog());
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             try {
                 $responseData = $this->receiveWalmartOrdersData($account);
@@ -84,6 +84,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return array|null
      * @throws \Exception
      */
@@ -114,9 +115,9 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 'get',
                 'items',
                 [
-                    'account'          => $account->getChildObject()->getServerHash(),
+                    'account' => $account->getChildObject()->getServerHash(),
                     'from_create_date' => $fromDate->format('Y-m-d H:i:s'),
-                    'to_create_date'   => $toDate->format('Y-m-d H:i:s')
+                    'to_create_date' => $toDate->format('Y-m-d H:i:s'),
                 ]
             );
             $dispatcherObject->process($connectorObj);
@@ -131,11 +132,11 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             if (!isset($responseData['items']) || !isset($responseData['to_create_date'])) {
                 $this->getHelper('Module_Logger')->process(
                     [
-                        'from_create_date'  => $fromDate->format('Y-m-d H:i:s'),
-                        'to_create_date'    => $toDate->format('Y-m-d H:i:s'),
-                        'account_id'        => $account->getId(),
-                        'response_data'     => $responseData,
-                        'response_messages' => $connectorObj->getResponseMessages()
+                        'from_create_date' => $fromDate->format('Y-m-d H:i:s'),
+                        'to_create_date' => $toDate->format('Y-m-d H:i:s'),
+                        'account_id' => $account->getId(),
+                        'response_data' => $responseData,
+                        'response_messages' => $connectorObj->getResponseMessages(),
                     ],
                     'Walmart orders receive task - empty response'
                 );
@@ -161,8 +162,8 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         // ----------------------------------------
 
         return [
-            'items'          => call_user_func_array('array_merge', $orders),
-            'to_create_date' => $responseData['to_create_date']
+            'items' => call_user_func_array('array_merge', $orders),
+            'to_create_date' => $responseData['to_create_date'],
         ];
     }
 
@@ -178,7 +179,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-                                           : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module_Translation')->__($message->getText()),
@@ -191,6 +192,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \DateTime $minPurchaseDateTime
+     *
      * @return \DateTime|null
      * @throws \Exception
      */
@@ -202,7 +204,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             'status',
             [
                 'from' => \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED,
-                'to'   => \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY
+                'to' => \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY,
             ]
         );
         $collection->addFieldToFilter(
@@ -230,6 +232,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param mixed $lastFromDate
+     *
      * @return \DateTime
      * @throws \Exception
      */

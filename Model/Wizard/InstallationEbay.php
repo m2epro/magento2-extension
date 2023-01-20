@@ -12,6 +12,7 @@ use Ess\M2ePro\Model\Wizard;
 
 class InstallationEbay extends Wizard
 {
+    /** @var string[] */
     protected $steps = [
         'registration',
         'account',

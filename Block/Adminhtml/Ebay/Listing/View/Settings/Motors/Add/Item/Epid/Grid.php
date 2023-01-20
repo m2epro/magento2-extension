@@ -30,7 +30,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         array $data = []
     ) {
         $this->itemCollectionFactory = $itemCollectionFactory;
-        $this->resourceConnection    = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
         $this->databaseHelper = $databaseHelper;
         parent::__construct(
             $componentEbayMotors,
@@ -54,11 +54,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_epid');
 
         $collection->getSelect()->reset()->from([
-            'main_table' => $table
+            'main_table' => $table,
         ]);
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
-            'epid', 'product_type', 'make', 'model', 'year', 'trim', 'engine', 'submodel', 'street_name', 'is_custom'
+            'epid',
+            'product_type',
+            'make',
+            'model',
+            'year',
+            'trim',
+            'engine',
+            'submodel',
+            'street_name',
+            'is_custom',
         ]);
         $collection->setScope($this->componentEbayMotors->getEpidsScopeByType($this->getMotorsType()));
 
@@ -73,86 +82,86 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
     {
         $this->addColumn('epid', [
             'header' => $this->__('ePID'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'epid',
-            'width'  => '100px',
-            'frame_callback' => [$this, 'callbackColumnIdentifier']
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'epid',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackColumnIdentifier'],
         ]);
 
         $this->addColumn('product_type', [
             'header' => $this->__('Type'),
-            'align'  => 'left',
-            'type'   => 'options',
-            'index'  => 'product_type',
-            'options'  => [
+            'align' => 'left',
+            'type' => 'options',
+            'index' => 'product_type',
+            'options' => [
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_VEHICLE
-                    => $this->__('Car / Truck'),
+                => $this->__('Car / Truck'),
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_MOTORCYCLE
-                    => $this->__('Motorcycle'),
+                => $this->__('Motorcycle'),
                 \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_ATV
-                    => $this->__('ATV / Snowmobiles'),
-            ]
+                => $this->__('ATV / Snowmobiles'),
+            ],
         ]);
 
         $this->addColumn('make', [
             'header' => $this->__('Make'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'make',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'make',
+            'width' => '150px',
         ]);
 
         $this->addColumn('model', [
             'header' => $this->__('Model'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'model',
-            'width'  => '150px'
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'model',
+            'width' => '150px',
         ]);
 
         $this->addColumn('submodel', [
             'header' => $this->__('Submodel'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'submodel',
-            'width'  => '100px',
-            'frame_callback' => [$this, 'callbackNullableColumn']
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'submodel',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackNullableColumn'],
         ]);
 
         $this->addColumn('year', [
             'header' => $this->__('Year'),
-            'align'  => 'left',
-            'type'   => 'number',
-            'index'  => 'year',
-            'width'  => '100px'
+            'align' => 'left',
+            'type' => 'number',
+            'index' => 'year',
+            'width' => '100px',
         ]);
 
         $this->addColumn('trim', [
             'header' => $this->__('Trim'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'trim',
-            'width'  => '100px',
-            'frame_callback' => [$this, 'callbackNullableColumn']
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'trim',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackNullableColumn'],
         ]);
 
         $this->addColumn('engine', [
             'header' => $this->__('Engine'),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'engine',
-            'width'  => '100px',
-            'frame_callback' => [$this, 'callbackNullableColumn']
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'engine',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackNullableColumn'],
         ]);
 
         $this->addColumn('street_name', [
-                'header' => $this->__('Street Name'),
-                'align'  => 'left',
-                'type'   => 'text',
-                'index'  => 'street_name',
-                'width'  => '100px',
-                'frame_callback' => [$this, 'callbackNullableColumn']
+            'header' => $this->__('Street Name'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'street_name',
+            'width' => '100px',
+            'frame_callback' => [$this, 'callbackNullableColumn'],
         ]);
 
         return parent::_prepareColumns();

@@ -55,9 +55,12 @@ class Cron extends AbstractInspection
             $this->cronIsNotWorking = $this->cronHelper->isLastRunMoreThan(1, true);
         }
 
-        $this->isMagentoCronDisabled    = (bool)(int)$this->config->getGroupValue('/cron/magento/', 'disabled');
-        $this->isControllerCronDisabled = (bool)(int)$this->config->getGroupValue('/cron/service_controller/', 'disabled');
-        $this->isPubCronDisabled        = (bool)(int)$this->config->getGroupValue('/cron/service_pub/', 'disabled');
+        $this->isMagentoCronDisabled = (bool)(int)$this->config->getGroupValue('/cron/magento/', 'disabled');
+        $this->isControllerCronDisabled = (bool)(int)$this->config->getGroupValue(
+            '/cron/service_controller/',
+            'disabled'
+        );
+        $this->isPubCronDisabled = (bool)(int)$this->config->getGroupValue('/cron/service_pub/', 'disabled');
 
         return parent::_beforeToHtml();
     }

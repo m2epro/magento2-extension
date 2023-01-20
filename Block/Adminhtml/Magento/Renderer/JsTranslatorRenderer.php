@@ -26,12 +26,14 @@ class JsTranslatorRenderer extends AbstractRenderer
     public function add($alias, $translation)
     {
         $this->jsTranslations[$alias] = $translation;
+
         return $this;
     }
 
     public function addTranslations(array $translations)
     {
         $this->jsTranslations = array_merge($this->jsTranslations, $translations);
+
         return $this;
     }
 

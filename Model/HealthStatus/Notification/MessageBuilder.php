@@ -51,7 +51,9 @@ class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
     public function getMessage(): string
     {
         $manageUrl = $this->urlBuilder->getUrl('m2epro/healthStatus/index');
-        return (string)__(<<<HTML
+
+        return (string)__(
+            <<<HTML
 Something went wrong with your M2E Pro running and some actions from your side are required.
  A detailed information you can find in <a target="_blank" href="{$manageUrl}">M2E Pro Health Status Center</a>.
 HTML

@@ -8,15 +8,15 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
-    const MODE_BOTH_CATEGORY   = 'both';
-    const MODE_EBAY_CATEGORY   = 'ebay';
-    const MODE_EBAY_PRIMARY    = 'ebay_primary';
-    const MODE_EBAY_SECONDARY  = 'ebay_secondary';
-    const MODE_STORE_CATEGORY  = 'store';
+    public const MODE_BOTH_CATEGORY = 'both';
+    public const MODE_EBAY_CATEGORY = 'ebay';
+    public const MODE_EBAY_PRIMARY = 'ebay_primary';
+    public const MODE_EBAY_SECONDARY = 'ebay_secondary';
+    public const MODE_STORE_CATEGORY = 'store';
 
     protected $_marketplaceId;
     protected $_accountId;
@@ -24,7 +24,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected $_isEditCategoryAllowed = true;
 
-    protected $_attributes     = [];
+    protected $_attributes = [];
     protected $_categoriesData = [];
 
     protected $ebayFactory;
@@ -44,10 +44,10 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
-        $this->ebayFactory               = $ebayFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
-        $this->ebayViewHelper            = $ebayViewHelper;
-        $this->magentoAttributeHelper    = $magentoAttributeHelper;
+        $this->ebayViewHelper = $ebayViewHelper;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
         parent::__construct($context, $data);
     }
 
@@ -74,6 +74,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setMarketplaceId($marketplaceId)
     {
         $this->_marketplaceId = $marketplaceId;
+
         return $this;
     }
 
@@ -87,6 +88,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setAccountId($accountId)
     {
         $this->_accountId = $accountId;
+
         return $this;
     }
 
@@ -107,6 +109,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setCategoriesData(array $data)
     {
         $this->_categoriesData = $data;
+
         return $this;
     }
 
@@ -115,6 +118,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setCategoryMode($mode)
     {
         $this->_categoryMode = $mode;
+
         return $this;
     }
 
@@ -194,7 +198,8 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     public function getCategoryPathHtml($categoryType)
     {
-        if (!isset($this->_categoriesData[$categoryType]['mode']) ||
+        if (
+            !isset($this->_categoriesData[$categoryType]['mode']) ||
             $this->_categoriesData[$categoryType]['mode'] == TemplateCategory::CATEGORY_MODE_NONE
         ) {
             return <<<HTML
@@ -203,6 +208,7 @@ HTML;
         }
 
         $category = $this->_categoriesData[$categoryType];
+
         return $category['mode'] == TemplateCategory::CATEGORY_MODE_EBAY
             ? "{$category['path']} ({$category['value']})"
             : $category['path'];

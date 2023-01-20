@@ -57,7 +57,7 @@ class Item extends \Ess\M2ePro\Observer\Shipment\AbstractShipment
          * 3. New track(s) was added for existing shipment. Only 'Track' observer will be called.
          */
         $objectHash = spl_object_hash($shipment->getTracksCollection()->getLastItem());
-        $eventKey = 'skip_' . $shipment->getId() .'##'. $objectHash;
+        $eventKey = 'skip_' . $shipment->getId() . '##' . $objectHash;
         if (!$this->getHelper('Data_GlobalData')->getValue($eventKey)) {
             $this->getHelper('Data_GlobalData')->setValue($eventKey, true);
         }

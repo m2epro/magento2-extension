@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Variation\Vocabulary;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
+use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary as VocabularyTab;
 
 class ViewVocabularyAjax extends Main
 {
@@ -18,12 +19,13 @@ class ViewVocabularyAjax extends Main
 
         if (empty($productId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
         $vocabulary = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary::class)
-            ->setListingProduct($this->walmartFactory->getObjectLoaded('Listing\Product', $productId));
+                           ->createBlock(VocabularyTab::class)
+                           ->setListingProduct($this->walmartFactory->getObjectLoaded('Listing\Product', $productId));
 
         $this->setAjaxContent($vocabulary);
 

@@ -28,6 +28,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
 
             if (!$order->getId()) {
                 $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
                 return $this->_redirect('*/*/index');
             }
 
@@ -39,6 +40,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Log\Order
         }
 
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Log\Order::class));
+
         return $this->getResult();
     }
 

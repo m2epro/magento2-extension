@@ -58,6 +58,7 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
         if (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isRevisable()) {
             $this->addMessage('Item is not Listed or not available');
+
             return false;
         }
 

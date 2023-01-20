@@ -44,7 +44,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
         $tags = [
             'magento_product',
-            'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
+            'magento_product_' . $this->getProductId() . '_' . $this->getStoreId(),
         ];
 
         $this->getHelper('Data_Cache_Runtime')->setValue($key, $value, $tags);
@@ -55,7 +55,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function clearCache()
     {
         return $this->getHelper('Data_Cache_Runtime')->removeTagValues(
-            'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
+            'magento_product_' . $this->getProductId() . '_' . $this->getStoreId()
         );
     }
 
@@ -75,6 +75,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function enableCache()
     {
         $this->isCacheEnabled = true;
+
         return $this;
     }
 
@@ -84,6 +85,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function disableCache()
     {
         $this->isCacheEnabled = false;
+
         return $this;
     }
 
@@ -174,6 +176,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     {
         $args = func_get_args();
         $args[] = $this->isGroupedProductMode;
+
         return $this->getMethodData(__FUNCTION__, $args);
     }
 
@@ -182,6 +185,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function getAttributeValue($attributeCode, $convertBoolean = true)
     {
         $args = func_get_args();
+
         return $this->getMethodData(__FUNCTION__, $args);
     }
 
@@ -195,12 +199,14 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function getImage($attribute = 'image')
     {
         $args = func_get_args();
+
         return $this->getMethodData(__FUNCTION__, $args);
     }
 
     public function getGalleryImages($limitImages = 0)
     {
         $args = func_get_args();
+
         return $this->getMethodData(__FUNCTION__, $args);
     }
 
@@ -214,6 +220,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
         $this->_variationInstance = $this->modelFactory
             ->getObject('Magento_Product_Variation_Cache')->setMagentoProduct($this);
+
         return $this->_variationInstance;
     }
 

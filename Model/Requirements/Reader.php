@@ -49,18 +49,21 @@ class Reader extends \Ess\M2ePro\Model\AbstractModel
     public function getMemoryLimitData($dataPart = null)
     {
         $path = array_filter(['memory_limit', $dataPart]);
+
         return $this->getPath($path);
     }
 
     public function getExecutionTimeData($dataPart = null)
     {
         $path = array_filter(['execution_time', $dataPart]);
+
         return $this->getPath($path);
     }
 
     public function getMagentoVersionData($dataPart = null)
     {
         $path = array_filter(['magento_version', $dataPart]);
+
         return $this->getPath($path);
     }
 

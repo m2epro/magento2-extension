@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
 
 class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/receive';
+    public const NICK = 'amazon/order/receive';
 
     /** @var bool */
     private $isErrorMessageReceived = false;
@@ -45,7 +45,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($permittedAccounts as $merchantId => $accounts) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             try {
                 $this->processAccounts($merchantId, $accounts);
@@ -140,7 +140,7 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
 
         $fromDate = $this->prepareFromDate($updateSinceTime);
-        $toDate   = $this->prepareToDate();
+        $toDate = $this->prepareToDate();
 
         $fromDateTimestamp = (int)$this->helperData
             ->createGmtDateTime($fromDate)
@@ -156,9 +156,9 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $params = [
-            'accounts'         => $accounts,
+            'accounts' => $accounts,
             'from_update_date' => $fromDate,
-            'to_update_date'   => $toDate
+            'to_update_date' => $toDate,
         ];
 
         $jobToken = $this->getHelper('Module')->getRegistry()->getValue(
@@ -169,8 +169,9 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $params['job_token'] = $jobToken;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Items $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Amazon_Connector_Orders_Get_Items',
             $params

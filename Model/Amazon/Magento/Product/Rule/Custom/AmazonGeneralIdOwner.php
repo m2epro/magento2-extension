@@ -35,6 +35,7 @@ class AmazonGeneralIdOwner extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return int
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
@@ -64,6 +65,7 @@ class AmazonGeneralIdOwner extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             [
                 'value' => AmazonListingProduct::IS_GENERAL_ID_OWNER_YES,

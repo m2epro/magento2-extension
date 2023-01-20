@@ -10,15 +10,12 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher
- */
 class Switcher extends AbstractBlock
 {
-    const MODE_LISTING_PRODUCT = 1;
-    const MODE_COMMON = 2;
+    public const MODE_LISTING_PRODUCT = 1;
+    public const MODE_COMMON = 2;
 
-    const MAX_TEMPLATE_ITEMS_COUNT = 10000;
+    public const MAX_TEMPLATE_ITEMS_COUNT = 10000;
 
     protected $_template = 'ebay/listing/template/switcher.phtml';
 
@@ -201,8 +198,8 @@ class Switcher extends AbstractBlock
         }
 
         $parameters = [
-            'is_custom'           => $this->isTemplateModeCustom(),
-            'custom_title'        => $this->globalDataHelper->getValue('ebay_custom_template_title'),
+            'is_custom' => $this->isTemplateModeCustom(),
+            'custom_title' => $this->globalDataHelper->getValue('ebay_custom_template_title'),
             'policy_localization' => $this->getData('policy_localization'),
         ];
 
@@ -348,12 +345,12 @@ HTML;
         // ---------------------------------------
         $nick = $this->getTemplateNick();
         $data = [
-            'class'   => 'action primary save-custom-template-' . $nick,
-            'label'   => $this->__('Save as New Policy'),
+            'class' => 'action primary save-custom-template-' . $nick,
+            'label' => $this->__('Save as New Policy'),
             'onclick' => 'EbayListingTemplateSwitcherObj.customSaveAsTemplate(\'' . $nick . '\');',
         ];
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                         ->setData($data);
+                            ->setData($data);
         $this->setChild('save_custom_as_template', $buttonBlock);
         // ---------------------------------------
     }

@@ -9,7 +9,8 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
 /**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\GeneralIdOwner
+ * Class
+ * \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\GeneralIdOwner
  */
 class GeneralIdOwner extends AbstractModel
 {
@@ -21,7 +22,8 @@ class GeneralIdOwner extends AbstractModel
             $this->getProcessor()->getListingProduct()->getChildObject()->setData('sku', null);
         }
 
-        if ($this->getProcessor()->isGeneralIdOwner() &&
+        if (
+            $this->getProcessor()->isGeneralIdOwner() &&
             !$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate()
         ) {
             $this->getProcessor()->getListingProduct()->getChildObject()->setData('is_general_id_owner', 0);
@@ -33,7 +35,6 @@ class GeneralIdOwner extends AbstractModel
         $isGeneralIdOwner = $this->getProcessor()->getAmazonListingProduct()->isGeneralIdOwner();
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
 

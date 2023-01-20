@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Ebay\Template;
  */
 class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const CATEGORY_MODE_NONE       = 0;
-    const CATEGORY_MODE_EBAY       = 1;
-    const CATEGORY_MODE_ATTRIBUTE  = 2;
+    public const CATEGORY_MODE_NONE = 0;
+    public const CATEGORY_MODE_EBAY = 1;
+    public const CATEGORY_MODE_ATTRIBUTE = 2;
 
     protected $ebayFactory;
 
@@ -49,7 +49,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             $data
         );
 
-        $this->ebayFactory           = $ebayFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->componentEbayCategory = $componentEbayCategory;
     }
 
@@ -116,6 +116,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_category');
+
         return parent::save();
     }
 
@@ -162,13 +163,14 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $instance)
     {
-         $this->marketplaceModel = $instance;
+        $this->marketplaceModel = $instance;
     }
 
     // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Category\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -191,6 +193,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Ebay\Template\Category\Specific[]
      */
     public function getSpecifics($asObjects = false, array $filters = [])
@@ -301,16 +304,17 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getCategorySource()
     {
         return [
-            'mode'      => $this->getData('category_mode'),
-            'value'     => $this->getData('category_id'),
-            'path'      => $this->getData('category_path'),
-            'attribute' => $this->getData('category_attribute')
+            'mode' => $this->getData('category_mode'),
+            'value' => $this->getData('category_id'),
+            'path' => $this->getData('category_path'),
+            'attribute' => $this->getData('category_attribute'),
         ];
     }
 
     /**
      * @param \Ess\M2ePro\Model\Listing $listing
      * @param bool $withId
+     *
      * @return string
      */
     public function getCategoryPath(\Ess\M2ePro\Model\Listing $listing, $withId = true)
@@ -318,9 +322,9 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $src = $this->getCategorySource();
 
         $data = [
-            'category_id'        => $src['value'],
-            'category_mode'      => $src['mode'],
-            'category_path'      => $src['path'],
+            'category_id' => $src['value'],
+            'category_mode' => $src['mode'],
+            'category_path' => $src['path'],
             'category_attribute' => $src['attribute'],
         ];
 
@@ -328,7 +332,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         $path = $data['category_path'];
         if ($withId && $src['mode'] == self::CATEGORY_MODE_EBAY) {
-            $path .= ' ('.$src['value'].')';
+            $path .= ' (' . $src['value'] . ')';
         }
 
         return $path;

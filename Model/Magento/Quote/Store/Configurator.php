@@ -34,7 +34,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Store\Api\Data\StoreInterface */
     protected $originalStore;
 
-    /** @var array  */
+    /** @var array */
     protected $originalStoreConfig = [];
 
     //########################################
@@ -53,16 +53,16 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->mutableConfig = $mutableConfig;
-        $this->taxHelper     = $taxHelper;
-        $this->storeConfig   = $storeConfig;
-        $this->quote         = $quote;
-        $this->proxyOrder    = $proxyOrder;
-        $this->taxConfig     = $taxConfig;
-        $this->storeManager  = $storeManager;
+        $this->taxHelper = $taxHelper;
+        $this->storeConfig = $storeConfig;
+        $this->quote = $quote;
+        $this->proxyOrder = $proxyOrder;
+        $this->taxConfig = $taxConfig;
+        $this->storeManager = $storeManager;
 
         // We need to use newly created instances, because magento caches tax rates in private properties
         $this->calculation = $objectManager->create(\Magento\Tax\Model\Calculation::class, [
-            'resource' => $objectManager->create($calculation->getResourceName())
+            'resource' => $objectManager->create($calculation->getResourceName()),
         ]);
 
         parent::__construct($helperFactory, $modelFactory);
@@ -97,7 +97,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
         // Fixed Product Tax settings
         // ---------------------------------------
-        if ($this->proxyOrder->isTaxModeChannel() ||
+        if (
+            $this->proxyOrder->isTaxModeChannel() ||
             ($this->proxyOrder->isTaxModeMixed() &&
                 ($this->proxyOrder->hasTax() || $this->proxyOrder->getWasteRecyclingFee()))
         ) {
@@ -162,7 +163,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             \Magento\Weee\Model\Config::XML_PATH_FPT_ENABLED,
             $this->getOriginCountryIdXmlPath(),
             $this->getOriginRegionIdXmlPath(),
-            $this->getOriginPostcodeXmlPath()
+            $this->getOriginPostcodeXmlPath(),
         ];
 
         $this->originalStoreConfig = [];
@@ -207,14 +208,16 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $isTaxSourceChannel = $proxyOrder->isTaxModeChannel()
             || ($proxyOrder->isTaxModeMixed() && $shippingPriceTaxRate > 0);
 
-        if ($proxyOrder->isTaxModeNone()
+        if (
+            $proxyOrder->isTaxModeNone()
             || ($isTaxSourceChannel && $shippingPriceTaxRate <= 0)
             || ($proxyOrder->isTaxModeMagento() && !$hasRatesForCountry && !$calculationBasedOnOrigin)
         ) {
             return \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE;
         }
 
-        if ($proxyOrder->isTaxModeMagento()
+        if (
+            $proxyOrder->isTaxModeMagento()
             || $proxyOrder->getShippingPriceTaxRate() <= 0
             || $shippingPriceTaxRate == $storeShippingTaxRate
         ) {
@@ -233,6 +236,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
         $taxRule = $taxRuleBuilder->getRule();
         $productTaxClasses = $taxRule->getProductTaxClasses();
+
         // ---------------------------------------
 
         return array_shift($productTaxClasses);
@@ -252,7 +256,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             return $originCountryId;
         }
 
-        if ($this->proxyOrder->isTaxModeNone()
+        if (
+            $this->proxyOrder->isTaxModeNone()
             || ($this->proxyOrder->isTaxModeChannel() && !$this->proxyOrder->hasTax())
         ) {
             return '';
@@ -273,7 +278,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             return $originRegionId;
         }
 
-        if ($this->proxyOrder->isTaxModeNone()
+        if (
+            $this->proxyOrder->isTaxModeNone()
             || ($this->proxyOrder->isTaxModeChannel() && !$this->proxyOrder->hasTax())
         ) {
             return '';
@@ -294,7 +300,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             return $originPostcode;
         }
 
-        if ($this->proxyOrder->isTaxModeNone()
+        if (
+            $this->proxyOrder->isTaxModeNone()
             || ($this->proxyOrder->isTaxModeChannel() && !$this->proxyOrder->hasTax())
         ) {
             return '';

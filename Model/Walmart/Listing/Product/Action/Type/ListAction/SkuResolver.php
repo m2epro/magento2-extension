@@ -226,8 +226,8 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
         $processingActionListCollection->addFieldToFilter(
             'account_id',
             $this->getListingProduct()
-                ->getListing()
-                ->getAccountId()
+                 ->getListing()
+                 ->getAccountId()
         );
 
         return $this->skusInProcessing = $processingActionListCollection->getColumnValues('sku');
@@ -235,7 +235,8 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function getSku()
     {
-        if ($this->getVariationManager()->isPhysicalUnit() &&
+        if (
+            $this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
             $variations = $this->getListingProduct()->getVariations(true);
@@ -243,7 +244,7 @@ class SkuResolver extends \Ess\M2ePro\Model\AbstractModel
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getListingProduct()->getId()
+                        'listing_product_id' => $this->getListingProduct()->getId(),
                     ]
                 );
             }

@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product
- */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
-    //########################################
 
     public function _construct()
     {
@@ -23,16 +19,14 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $this->_isPkAutoIncrement = false;
     }
 
-    //########################################
-
     public function getTemplateCategoryIds(array $listingProductIds, $columnName, $returnNull = false)
     {
         $select = $this->getConnection()
-            ->select()
-            ->from(['elp' => $this->getMainTable()])
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns([$columnName])
-            ->where('listing_product_id IN (?)', $listingProductIds);
+                       ->select()
+                       ->from(['elp' => $this->getMainTable()])
+                       ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                       ->columns([$columnName])
+                       ->where('listing_product_id IN (?)', $listingProductIds);
 
         !$returnNull && $select->where("{$columnName} IS NOT NULL");
 
@@ -62,10 +56,10 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         }
 
         $bind = [
-            'template_category_id'                 => $categoryTemplateId,
-            'template_category_secondary_id'       => $categorySecondaryTemplateId,
-            'template_store_category_id'           => $storeCategoryTemplateId,
-            'template_store_category_secondary_id' => $storeCategorySecondaryTemplateId
+            'template_category_id' => $categoryTemplateId,
+            'template_category_secondary_id' => $categorySecondaryTemplateId,
+            'template_store_category_id' => $storeCategoryTemplateId,
+            'template_store_category_secondary_id' => $storeCategorySecondaryTemplateId,
         ];
         $bind = array_filter($bind);
 
@@ -87,15 +81,15 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         );
         $ebayItemTable = $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable();
         $existedRelation = $this->getConnection()
-            ->select()
-            ->from(['ei' => $ebayItemTable])
-            ->where('`account_id` = ?', $ebayItem->getAccountId())
-            ->where('`marketplace_id` = ?', $ebayItem->getMarketplaceId())
-            ->where('`item_id` = ?', $ebayItem->getItemId())
-            ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
-            ->where('`store_id` = ?', $ebayItem->getStoreId())
-            ->query()
-            ->fetchColumn();
+                                ->select()
+                                ->from(['ei' => $ebayItemTable])
+                                ->where('`account_id` = ?', $ebayItem->getAccountId())
+                                ->where('`marketplace_id` = ?', $ebayItem->getMarketplaceId())
+                                ->where('`item_id` = ?', $ebayItem->getItemId())
+                                ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
+                                ->where('`store_id` = ?', $ebayItem->getStoreId())
+                                ->query()
+                                ->fetchColumn();
 
         if ($existedRelation) {
             return;

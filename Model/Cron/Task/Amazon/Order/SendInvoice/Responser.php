@@ -76,6 +76,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
 
     /**
      * @param array $messages
+     *
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -124,7 +125,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
             $this->order->addSuccessLog(
                 'Invoice #%document_number% was sent.',
                 [
-                    'document_number' => $this->params['order']['document_number']
+                    'document_number' => $this->params['order']['document_number'],
                 ]
             );
         } elseif ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE) {
@@ -132,7 +133,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
             $this->order->addSuccessLog(
                 'Credit Memo #%document_number% was sent.',
                 [
-                    'document_number' => $this->params['order']['document_number']
+                    'document_number' => $this->params['order']['document_number'],
                 ]
             );
         }
@@ -148,7 +149,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
                 'Invoice #%document_number% was not sent. Reason: %msg%',
                 [
                     'document_number' => $this->params['order']['document_number'],
-                    'msg' => $message->getText()
+                    'msg' => $message->getText(),
                 ]
             );
         } elseif ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE) {
@@ -156,7 +157,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
                 'Credit Memo #%document_number% was not sent. Reason: %msg%',
                 [
                     'document_number' => $this->params['order']['document_number'],
-                    'msg' => $message->getText()
+                    'msg' => $message->getText(),
                 ]
             );
         }

@@ -13,23 +13,23 @@ use Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\WorldwideId;
 
 class Identifiers
 {
-    private const PRODUCT_OVERRIDE_ID_CUSTOM_CODE    = 'CUSTOM';
+    private const PRODUCT_OVERRIDE_ID_CUSTOM_CODE = 'CUSTOM';
     private const REGISTERED_PARAMETER_PRIVATE_LABEL = 'PrivateLabel';
 
     private const PRODUCT_OVERRIDE_ID_SPECIALIZED_CODE = 'CUSTOM_SPECIALIZED';
-    private const REGISTERED_PARAMETER_SPECIALIZED     = 'Specialized';
+    private const REGISTERED_PARAMETER_SPECIALIZED = 'Specialized';
 
     private const PRODUCT_OVERRIDE_ID_NON_CONSUMER_CODE = 'CUSTOM_NONCONSUMER';
-    private const REGISTERED_PARAMETER_NON_CONSUMER     = 'NonConsumer';
+    private const REGISTERED_PARAMETER_NON_CONSUMER = 'NonConsumer';
 
     private const PRODUCT_OVERRIDE_ID_PRE_CONFIGURED_CODE = 'CUSTOM_PRECONFIGURED';
-    private const REGISTERED_PARAMETER_PRE_CONFIGURED     = 'PreConfigured';
+    private const REGISTERED_PARAMETER_PRE_CONFIGURED = 'PreConfigured';
 
     /** @var string[] */
     private $registeredParameterMap = [
-        self::PRODUCT_OVERRIDE_ID_CUSTOM_CODE         => self::REGISTERED_PARAMETER_PRIVATE_LABEL,
-        self::PRODUCT_OVERRIDE_ID_SPECIALIZED_CODE    => self::REGISTERED_PARAMETER_SPECIALIZED,
-        self::PRODUCT_OVERRIDE_ID_NON_CONSUMER_CODE   => self::REGISTERED_PARAMETER_NON_CONSUMER,
+        self::PRODUCT_OVERRIDE_ID_CUSTOM_CODE => self::REGISTERED_PARAMETER_PRIVATE_LABEL,
+        self::PRODUCT_OVERRIDE_ID_SPECIALIZED_CODE => self::REGISTERED_PARAMETER_SPECIALIZED,
+        self::PRODUCT_OVERRIDE_ID_NON_CONSUMER_CODE => self::REGISTERED_PARAMETER_NON_CONSUMER,
         self::PRODUCT_OVERRIDE_ID_PRE_CONFIGURED_CODE => self::REGISTERED_PARAMETER_PRE_CONFIGURED,
     ];
 
@@ -129,6 +129,7 @@ class Identifiers
 
         if ($this->config->isWorldwideIdModeCustomAttribute()) {
             $attributeCode = $this->config->getWorldwideCustomAttribute();
+
             return $this->getAttributeValue($attributeCode);
         }
 
@@ -154,6 +155,7 @@ class Identifiers
     private function getRegisteredParameterByCode(string $code): ?string
     {
         $code = strtoupper($code);
+
         return $this->registeredParameterMap[$code] ?? null;
     }
 
@@ -166,6 +168,7 @@ class Identifiers
     {
         $value = $this->magentoProduct->getAttributeValue($attributeCode);
         $value = trim(str_replace('-', '', $value));
+
         return $value === '' ? null : $value;
     }
 }

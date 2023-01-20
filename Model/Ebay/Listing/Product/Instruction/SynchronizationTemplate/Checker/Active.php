@@ -72,7 +72,8 @@ class Active extends AbstractModel
             return false;
         }
 
-        if (!$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
+        if (
+            !$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {
             return false;
@@ -100,6 +101,7 @@ class Active extends AbstractModel
 
     /**
      * @param array $params
+     *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -114,7 +116,6 @@ class Active extends AbstractModel
 
         if ($this->input->hasInstructionWithTypes($this->getStopInstructionTypes())) {
             if ($this->isMeetStopRequirements()) {
-
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $this->input->getListingProduct()->getChildObject();
 
@@ -163,7 +164,8 @@ class Active extends AbstractModel
 
         $additionalData = $scheduledAction->getAdditionalData();
 
-        if ($scheduledAction->isActionTypeStop() ||
+        if (
+            $scheduledAction->isActionTypeStop() ||
             ($scheduledAction->isActionTypeRevise() &&
                 isset($additionalData['params']['replaced_action']) &&
                 $additionalData['params']['replaced_action'] == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP)
@@ -334,9 +336,9 @@ class Active extends AbstractModel
                 'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                     [
                         'params' => $params,
-                        'configurator' => $configurator->getSerializedData()
+                        'configurator' => $configurator->getSerializedData(),
                     ]
-                )
+                ),
             ]
         );
 
@@ -421,7 +423,7 @@ class Active extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix' => \Ess\M2ePro\Model\Ebay\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Ebay\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($ebaySynchronizationTemplate->getStopAdvancedRulesFilters());

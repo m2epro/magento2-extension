@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\M2ePro\Connector\Tables\Get;
  */
 class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
-    const SEVERITY_CRITICAL = 'critical';
-    const SEVERITY_WARNING  = 'warning';
-    const SEVERITY_NOTICE   = 'notice';
+    public const SEVERITY_CRITICAL = 'critical';
+    public const SEVERITY_WARNING = 'warning';
+    public const SEVERITY_NOTICE = 'notice';
 
     //########################################
 
@@ -29,7 +29,7 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
         return [
             'tables_info' => $this->getHelper('Data')->jsonEncode(
                 $this->getHelper('Module_Database_Structure')->getModuleTablesInfo()
-            )
+            ),
         ];
     }
 

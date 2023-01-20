@@ -43,6 +43,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     protected function getCustomOptions()
     {
         $attributes = $this->getCustomOptionsAttributes();
+
         return !empty($attributes) ?
             $this->getOptions('Walmart\Magento\Product\Rule\Condition\Product', $attributes, ['walmart'])
             : [];
@@ -53,18 +54,18 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
         $translation = $this->helperFactory->getObject('Module\Translation');
 
         return [
-            'walmart_sku'                  => $translation->__('SKU'),
-            'walmart_gtin'                 => $translation->__('GTIN'),
-            'walmart_upc'                  => $translation->__('UPC'),
-            'walmart_ean'                  => $translation->__('EAN'),
-            'walmart_isbn'                 => $translation->__('ISBN'),
-            'walmart_wpid'                 => $translation->__('Walmart ID'),
-            'walmart_item_id'              => $translation->__('Item ID'),
-            'walmart_online_qty'           => $translation->__('QTY'),
-            'walmart_online_price'         => $translation->__('Price'),
-            'walmart_start_date'           => $translation->__('Start Date'),
-            'walmart_end_date'             => $translation->__('End Date'),
-            'walmart_status'               => $translation->__('Status'),
+            'walmart_sku' => $translation->__('SKU'),
+            'walmart_gtin' => $translation->__('GTIN'),
+            'walmart_upc' => $translation->__('UPC'),
+            'walmart_ean' => $translation->__('EAN'),
+            'walmart_isbn' => $translation->__('ISBN'),
+            'walmart_wpid' => $translation->__('Walmart ID'),
+            'walmart_item_id' => $translation->__('Item ID'),
+            'walmart_online_qty' => $translation->__('QTY'),
+            'walmart_online_price' => $translation->__('Price'),
+            'walmart_start_date' => $translation->__('Start Date'),
+            'walmart_end_date' => $translation->__('End Date'),
+            'walmart_status' => $translation->__('Status'),
             'walmart_online_price_invalid' => $translation->__('Pricing Rules violated'),
         ];
     }

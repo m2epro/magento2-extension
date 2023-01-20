@@ -70,10 +70,10 @@ class Categories extends AbstractModel
     public function getCategoriesData()
     {
         $data = [
-            'category_main_id'            => $this->getCategorySource()->getCategoryId(),
-            'category_secondary_id'       => 0,
-            'store_category_main_id'      => 0,
-            'store_category_secondary_id' => 0
+            'category_main_id' => $this->getCategorySource()->getCategoryId(),
+            'category_secondary_id' => 0,
+            'store_category_main_id' => 0,
+            'store_category_secondary_id' => 0,
         ];
 
         if ($this->getCategorySecondaryTemplate() !== null) {
@@ -99,15 +99,14 @@ class Categories extends AbstractModel
         $data = [];
 
         foreach ($this->getCategoryTemplate()->getSpecifics(true) as $specific) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific */
 
             $this->searchNotFoundAttributes();
 
             $tempAttributeLabel = $specific->getSource($this->getMagentoProduct())
-                ->getLabel();
+                                           ->getLabel();
             $tempAttributeValues = $specific->getSource($this->getMagentoProduct())
-                ->getValues();
+                                            ->getValues();
 
             if (empty($tempAttributeValues) || !$this->processNotFoundAttributes('Specifics')) {
                 continue;
@@ -124,7 +123,7 @@ class Categories extends AbstractModel
 
             $data[] = [
                 'name' => $tempAttributeLabel,
-                'value' => $values
+                'value' => $values,
             ];
         }
 
@@ -140,8 +139,8 @@ class Categories extends AbstractModel
     {
         if ($this->categoryTemplate === null) {
             $this->categoryTemplate = $this->getListingProduct()
-                ->getChildObject()
-                ->getCategoryTemplate();
+                                           ->getChildObject()
+                                           ->getCategoryTemplate();
         }
 
         return $this->categoryTemplate;
@@ -154,7 +153,7 @@ class Categories extends AbstractModel
     {
         if ($this->categorySecondaryTemplate === null) {
             $this->categorySecondaryTemplate = $this->getListingProduct()->getChildObject()
-                ->getCategorySecondaryTemplate();
+                                                    ->getCategorySecondaryTemplate();
         }
 
         return $this->categorySecondaryTemplate;
@@ -167,7 +166,7 @@ class Categories extends AbstractModel
     {
         if ($this->storeCategoryTemplate === null) {
             $this->storeCategoryTemplate = $this->getListingProduct()->getChildObject()
-                ->getStoreCategoryTemplate();
+                                                ->getStoreCategoryTemplate();
         }
 
         return $this->storeCategoryTemplate;
@@ -180,7 +179,7 @@ class Categories extends AbstractModel
     {
         if ($this->storeCategorySecondaryTemplate === null) {
             $this->storeCategorySecondaryTemplate = $this->getListingProduct()->getChildObject()
-                ->getStoreCategorySecondaryTemplate();
+                                                         ->getStoreCategorySecondaryTemplate();
         }
 
         return $this->storeCategorySecondaryTemplate;

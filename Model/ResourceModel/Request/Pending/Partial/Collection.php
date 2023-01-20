@@ -29,12 +29,14 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function setOnlyExpiredItemsFilter()
     {
         $this->addFieldToFilter('expiration_date', ['lt' => $this->getHelper('Data')->getCurrentGmtDate()]);
+
         return $this;
     }
 
     public function setOnlyOutdatedItemsFilter()
     {
         $this->getSelect()->where(new \Zend_Db_Expr('DATE_ADD(`expiration_date`, INTERVAL 12 HOUR) < NOW()'));
+
         return $this;
     }
 

@@ -24,12 +24,12 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
         $url = $this->getUrl('*/walmart_listing_create/index', [
             'step' => '1',
-            'clear' => 'yes'
+            'clear' => 'yes',
         ]);
         $this->addButton('add', [
-            'label'     => $this->__('Add Listing'),
-            'onclick'   => 'setLocation(\'' . $url . '\')',
-            'class'     => 'action-primary'
+            'label' => $this->__('Add Listing'),
+            'onclick' => 'setLocation(\'' . $url . '\')',
+            'class' => 'action-primary',
         ]);
         // ---------------------------------------
     }
@@ -46,7 +46,7 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
 
         $this->appendHelpBlock([
-            'content' => $content
+            'content' => $content,
         ]);
 
         return parent::_prepareLayout();

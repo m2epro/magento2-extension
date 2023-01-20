@@ -16,6 +16,7 @@ class UpdatePaymentStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Order(s).'));
+
             return false;
         }
 
@@ -29,7 +30,7 @@ class UpdatePaymentStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
             /** @var \Ess\M2ePro\Model\Order $order */
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
             $order->getChildObject()->updatePaymentStatus() ? $hasSucceeded = true
-                                                            : $hasFailed = true;
+                : $hasFailed = true;
         }
 
         if (!$hasFailed && $hasSucceeded) {

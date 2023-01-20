@@ -81,17 +81,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             ['lp' => $lpTable],
             'product_id=entity_id',
             [
-                'id' => 'id'
+                'id' => 'id',
             ],
-            '{{table}}.listing_id='.(int)$this->listing->getId()
+            '{{table}}.listing_id=' . (int)$this->listing->getId()
         );
         $alpTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
         $collection->joinTable(
             ['alp' => $alpTable],
             'listing_product_id=id',
             [
-                'listing_product_id'        => 'listing_product_id',
-                'template_description_id'   => 'template_description_id'
+                'listing_product_id' => 'listing_product_id',
+                'template_description_id' => 'template_description_id',
             ]
         );
 
@@ -113,67 +113,67 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'   => $this->__('Product ID'),
-            'align'    => 'right',
-            'width'    => '100px',
-            'type'     => 'number',
-            'index'    => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'width'     => '400px',
-            'type'      => 'text',
-            'index'     => 'name',
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'width' => '400px',
+            'type' => 'text',
+            'index' => 'name',
             'filter_index' => 'name',
-            'escape'       => false,
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterProductTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterProductTitle'],
         ]);
 
         $this->addColumn('description_template', [
-            'header'    => $this->__('Description Policy'),
-            'align'     => 'left',
-            'width'     => '*',
-            'sortable'  => false,
-            'type'      => 'options',
-            'index'     => 'description_template_id',
+            'header' => $this->__('Description Policy'),
+            'align' => 'left',
+            'width' => '*',
+            'sortable' => false,
+            'type' => 'options',
+            'index' => 'description_template_id',
             'filter_index' => 'description_template_id',
-            'options'   => [
+            'options' => [
                 1 => $this->__('Description Policy Selected'),
-                0 => $this->__('Description Policy Not Selected')
+                0 => $this->__('Description Policy Not Selected'),
             ],
             'frame_callback' => [$this, 'callbackColumnDescriptionTemplateCallback'],
-            'filter_condition_callback' => [$this, 'callbackColumnDescriptionTemplateFilterCallback']
+            'filter_condition_callback' => [$this, 'callbackColumnDescriptionTemplateFilterCallback'],
         ]);
 
         $actionsColumn = [
-            'header'    => $this->__('Actions'),
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'align'     => 'center',
-            'width'     => '130px',
-            'type'      => 'text',
-            'field'     => 'id',
-            'sortable'  => false,
-            'filter'    => false,
-            'actions'   => []
+            'header' => $this->__('Actions'),
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'align' => 'center',
+            'width' => '130px',
+            'type' => 'text',
+            'field' => 'id',
+            'sortable' => false,
+            'filter' => false,
+            'actions' => [],
         ];
 
         $actions = [
             [
                 'caption' => $this->__('Set Description Policy'),
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.setDescriptionTemplateRowAction'
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.setDescriptionTemplateRowAction',
             ],
             [
                 'caption' => $this->__('Reset Description Policy'),
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.resetDescriptionTemplateRowAction'
-            ]
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.resetDescriptionTemplateRowAction',
+            ],
         ];
 
         $actionsColumn['actions'] = $actions;
@@ -191,13 +191,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('setDescriptionTemplate', [
             'label' => $this->__('Set Description Policy'),
-            'url'   => ''
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('resetDescriptionTemplate', [
             'label' => $this->__('Reset Description Policy'),
-            'url'   => ''
+            'url' => '',
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -211,12 +212,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-        $value = '<span>'.$productTitle.'</span>';
+        $value = '<span>' . $productTitle . '</span>';
 
         $sku = $row->getData('sku');
 
-        $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
+        $value .= '<br/><strong>' . $this->__('SKU') .
+            ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
@@ -230,10 +231,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
             $productAttributes = (array)$amazonListingProduct->getVariationManager()
-                ->getTypeModel()->getProductAttributes();
+                                                             ->getTypeModel()->getProductAttributes();
         } else {
             $productOptions = $amazonListingProduct->getVariationManager()
-                ->getTypeModel()->getProductOptions();
+                                                   ->getTypeModel()->getProductOptions();
             $productAttributes = !empty($productOptions) ? array_keys($productOptions) : [];
         }
 
@@ -259,7 +260,7 @@ HTML;
         }
 
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $descriptionTemplateId
+            'id' => $descriptionTemplateId,
         ]);
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
@@ -285,8 +286,8 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ]
         );
     }

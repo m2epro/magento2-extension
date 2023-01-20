@@ -36,13 +36,6 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         // ---------------------------------------
     }
 
-    protected function _beforeToHtml()
-    {
-        parent::_beforeToHtml();
-    }
-
-    //########################################
-
     protected function _toHtml()
     {
         // ---------------------------------------
@@ -117,7 +110,8 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $store = $this->globalDataHelper->getValue('ebay_store');
         $marketplace = $this->globalDataHelper->getValue('ebay_marketplace');
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     define('Switcher/Initialization',[
         'M2ePro/Ebay/Listing/Template/Switcher',
         'M2ePro/TemplateManager'
@@ -135,6 +129,4 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
 }

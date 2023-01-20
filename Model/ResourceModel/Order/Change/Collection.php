@@ -34,7 +34,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
         $this->getSelect()->join(
             ['mo' => $mpTable],
-            '(`mo`.`id` = `main_table`.`order_id` AND `mo`.`account_id` = '.$accountId.')',
+            '(`mo`.`id` = `main_table`.`order_id` AND `mo`.`account_id` = ' . $accountId . ')',
             ['account_id', 'marketplace_id']
         );
     }
@@ -65,7 +65,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $mysqlTag = $this->getConnection()->quote($tag);
         $this->getSelect()->joinLeft(
             ['lo' => $this->activeRecordFactory->getObject('Processing\Lock')->getResource()->getMainTable()],
-            '(`lo`.`object_id` = `main_table`.`order_id` AND `lo`.`tag` = '.$mysqlTag.')',
+            '(`lo`.`object_id` = `main_table`.`order_id` AND `lo`.`tag` = ' . $mysqlTag . ')',
             []
         );
         $this->getSelect()->where(

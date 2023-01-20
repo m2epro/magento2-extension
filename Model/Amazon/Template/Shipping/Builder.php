@@ -33,7 +33,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'title'         => '',
+            'title' => '',
 
             'template_name_mode' => '',
             'template_name_value' => '',

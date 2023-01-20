@@ -17,7 +17,6 @@ class SplitButton extends \Magento\Backend\Block\Widget\Button\SplitButton
 
     /**
      * Retrieve button attributes html
-     *
      * @return string
      */
     public function getButtonAttributesHtml()

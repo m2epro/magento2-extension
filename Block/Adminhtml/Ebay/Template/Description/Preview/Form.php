@@ -25,7 +25,7 @@ class Form extends AbstractForm
             'hidden',
             [
                 'name' => 'show',
-                'value' => 1
+                'value' => 1,
             ]
         );
 
@@ -44,22 +44,22 @@ class Form extends AbstractForm
                     'messages' => [
                         [
                             'type' => MessageInterface::TYPE_ERROR,
-                            'content' => $errorMessage
+                            'content' => $errorMessage,
                         ],
-                    ]
+                    ],
                 ]
             );
         }
 
         $viewButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
             'label' => $this->__('View'),
-            'type' => 'submit'
+            'type' => 'submit',
         ]);
 
         $randomButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
             'label' => $this->__('View Random Product'),
             'type' => 'submit',
-            'onclick' => '$(\'product_id\').value = \'\'; return true;'
+            'onclick' => '$(\'product_id\').value = \'\'; return true;',
         ]);
 
         $fieldset->addField(
@@ -69,7 +69,7 @@ class Form extends AbstractForm
                 'name' => 'id',
                 'value' => $this->getData('product_id'),
                 'label' => $this->__('Enter Product Id'),
-                'after_element_html' => $viewButton->toHtml() . $this->__('or') . $randomButton->toHtml()
+                'after_element_html' => $viewButton->toHtml() . $this->__('or') . $randomButton->toHtml(),
             ]
         );
 

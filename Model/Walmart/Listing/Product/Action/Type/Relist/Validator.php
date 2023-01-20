@@ -52,8 +52,10 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
             return false;
         }
 
-        if (!$this->getListingProduct()->isStopped() &&
-            (!$this->getListingProduct()->isBlocked() || !$this->getWalmartListingProduct()->isOnlinePriceInvalid())) {
+        if (
+            !$this->getListingProduct()->isStopped() &&
+            (!$this->getListingProduct()->isBlocked() || !$this->getWalmartListingProduct()->isOnlinePriceInvalid())
+        ) {
             $this->addMessage(
                 'The Item either is Listed, or not Listed yet or not available'
             );

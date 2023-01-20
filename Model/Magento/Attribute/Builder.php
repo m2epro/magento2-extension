@@ -13,19 +13,19 @@ namespace Ess\M2ePro\Model\Magento\Attribute;
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
-    const TYPE_TEXT            = 'text';
-    const TYPE_TEXTAREA        = 'textarea';
-    const TYPE_SELECT          = 'select';
-    const TYPE_MULTIPLE_SELECT = 'multiselect';
-    const TYPE_BOOLEAN         = 'boolean';
-    const TYPE_PRICE           = 'price';
-    const TYPE_DATE            = 'date';
+    public const TYPE_TEXT = 'text';
+    public const TYPE_TEXTAREA = 'textarea';
+    public const TYPE_SELECT = 'select';
+    public const TYPE_MULTIPLE_SELECT = 'multiselect';
+    public const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_PRICE = 'price';
+    public const TYPE_DATE = 'date';
 
-    const SCOPE_STORE   = 0;
-    const SCOPE_GLOBAL  = 1;
-    const SCOPE_WEBSITE = 2;
+    public const SCOPE_STORE = 0;
+    public const SCOPE_GLOBAL = 1;
+    public const SCOPE_WEBSITE = 2;
 
-    const CODE_MAX_LENGTH = 30;
+    public const CODE_MAX_LENGTH = 30;
 
     protected $productFactory;
     protected $attributeFactory;
@@ -69,6 +69,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public function save()
     {
         $this->init();
+
         return $this->saveAttribute();
     }
 
@@ -85,7 +86,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->attributeObj = $this->attributeFactory->create()
-                                        ->loadByCode($this->entityTypeId, $this->code);
+                                                     ->loadByCode($this->entityTypeId, $this->code);
 
         return $this;
     }
@@ -107,11 +108,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $data['frontend_label'] = [\Magento\Store\Model\Store::DEFAULT_STORE_ID => $this->primaryLabel];
         $data['frontend_input'] = $this->inputType;
         $data['entity_type_id'] = $this->entityTypeId;
-        $data['is_user_defined']   = 1;
+        $data['is_user_defined'] = 1;
 
-        $data['source_model']  = $this->productHelper->getAttributeSourceModelByInputType($this->inputType);
+        $data['source_model'] = $this->productHelper->getAttributeSourceModelByInputType($this->inputType);
         $data['backend_model'] = $this->productHelper->getAttributeBackendModelByInputType($this->inputType);
-        $data['backend_type']  = $this->attributeObj->getBackendTypeByInput($this->inputType);
+        $data['backend_type'] = $this->attributeObj->getBackendTypeByInput($this->inputType);
 
         !isset($data['is_global']) && $data['is_global'] = self::SCOPE_STORE;
         !isset($data['is_configurable']) && $data['is_configurable'] = 0;
@@ -167,7 +168,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $abc = 'abcdefghijklmnopqrstuvwxyz';
         if (preg_match('/^\d{1}/', $attributeCode, $matches)) {
             $index = $matches[0];
-            $attributeCode = $abc[$index].'_'.$attributeCode;
+            $attributeCode = $abc[$index] . '_' . $attributeCode;
         }
 
         return strtolower($attributeCode);
@@ -199,7 +200,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function getOptionCode($optionValue)
     {
-        return 'option_'.substr(sha1($optionValue), 0, 6);
+        return 'option_' . substr(sha1($optionValue), 0, 6);
     }
 
     //----------------------------------------
@@ -212,17 +213,19 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->isDateType() || $this->isTextAreaType() || $this->isTextType()) {
             $data['default_value'] = (string)$this->params['default_value'];
+
             return;
         }
 
         if ($this->isBooleanType()) {
             $data['default_value'] = (int)(strtolower($this->params['default_value']) == 'yes');
+
             return;
         }
 
         if ($this->isSelectType() || $this->isMultipleSelectType()) {
             $defaultValues = is_array($this->params['default_value']) ? $this->params['default_value']
-                                                                      : [$this->params['default_value']];
+                : [$this->params['default_value']];
 
             $data['default_value'] = null;
             foreach ($defaultValues as $value) {
@@ -238,53 +241,63 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public function setCode($value)
     {
         $this->code = $value;
+
         return $this;
     }
 
     public function setLabel($value)
     {
         $this->primaryLabel = $value;
+
         return $this;
     }
 
     public function setInputType($value)
     {
         $this->inputType = $value;
+
         return $this;
     }
 
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
     public function setParams(array $value = [])
     {
         $this->params = $value;
+
         return $this;
     }
 
     /**
      * Can be string|int or array for multi select attribute
+     *
      * @param $value
+     *
      * @return $this
      */
     public function setDefaultValue($value)
     {
         $this->params['default_value'] = $value;
+
         return $this;
     }
 
     public function setScope($value)
     {
         $this->params['is_global'] = $value;
+
         return $this;
     }
 
     public function setEntityTypeId($value)
     {
         $this->entityTypeId = $value;
+
         return $this;
     }
 

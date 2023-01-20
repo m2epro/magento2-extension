@@ -26,6 +26,7 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\AbstractModel
     public function setModel($model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -40,8 +41,9 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\AbstractModel
     {
         $data = $this->getModel()->getData();
 
-        if (($this->getModel() instanceof \Ess\M2ePro\Model\ActiveRecord\Relation\ParentAbstract ||
-             $this->getModel() instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel) &&
+        if (
+            ($this->getModel() instanceof \Ess\M2ePro\Model\ActiveRecord\Relation\ParentAbstract ||
+                $this->getModel() instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel) &&
             $this->getModel()->getChildObject() !== null
         ) {
             $data = array_merge($data, $this->getModel()->getChildObject()->getData());

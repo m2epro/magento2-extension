@@ -35,7 +35,7 @@ class IsAttributeCodeUnique extends \Ess\M2ePro\Controller\Adminhtml\General
         );
 
         $this->setJsonContent([
-            'status' => $attributeObj->getId() === null
+            'status' => $attributeObj->getId() === null,
         ]);
 
         return $this->getResult();

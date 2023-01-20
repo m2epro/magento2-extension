@@ -10,9 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View;
 
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
-    public const VIEW_MODE_EBAY        = 'ebay';
-    public const VIEW_MODE_MAGENTO     = 'magento';
-    public const VIEW_MODE_SETTINGS    = 'settings';
+    public const VIEW_MODE_EBAY = 'ebay';
+    public const VIEW_MODE_MAGENTO = 'magento';
+    public const VIEW_MODE_SETTINGS = 'settings';
 
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
@@ -73,18 +73,18 @@ HTML
                 'value' => [
                     [
                         'value' => self::VIEW_MODE_EBAY,
-                        'label' => $this->ebayHelper->getTitle()
+                        'label' => $this->ebayHelper->getTitle(),
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
-                        'label' => $this->__('Settings')
+                        'label' => $this->__('Settings'),
                     ],
                     [
                         'value' => self::VIEW_MODE_MAGENTO,
-                        'label' => $this->__('Magento')
+                        'label' => $this->__('Magento'),
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

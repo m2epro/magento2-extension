@@ -20,22 +20,28 @@ class GetAllSpecifics extends Description
     public function execute()
     {
         $tempSpecifics = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
-            )
-            ->where('marketplace_id = ?', $this->getRequest()->getParam('marketplace_id'))
-            ->where('product_data_nick = ?', $this->getRequest()->getParam('product_data_nick'))
-            ->query()->fetchAll();
+                                                  ->from(
+                                                      $this->getHelper('Module_Database_Structure')
+                                                           ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
+                                                  )
+                                                  ->where(
+                                                      'marketplace_id = ?',
+                                                      $this->getRequest()->getParam('marketplace_id')
+                                                  )
+                                                  ->where(
+                                                      'product_data_nick = ?',
+                                                      $this->getRequest()->getParam('product_data_nick')
+                                                  )
+                                                  ->query()->fetchAll();
 
         $specifics = [];
         foreach ($tempSpecifics as $tempSpecific) {
-            $tempSpecific['values']             = (array)$this->getHelper('Data')->jsonDecode($tempSpecific['values']);
+            $tempSpecific['values'] = (array)$this->getHelper('Data')->jsonDecode($tempSpecific['values']);
             $tempSpecific['recommended_values'] = (array)$this->getHelper('Data')->jsonDecode(
                 $tempSpecific['recommended_values']
             );
-            $tempSpecific['params']             = (array)$this->getHelper('Data')->jsonDecode($tempSpecific['params']);
-            $tempSpecific['data_definition']    = (array)$this->getHelper('Data')->jsonDecode(
+            $tempSpecific['params'] = (array)$this->getHelper('Data')->jsonDecode($tempSpecific['params']);
+            $tempSpecific['data_definition'] = (array)$this->getHelper('Data')->jsonDecode(
                 $tempSpecific['data_definition']
             );
 
@@ -43,6 +49,7 @@ class GetAllSpecifics extends Description
         }
 
         $this->setJsonContent($specifics);
+
         return $this->getResult();
     }
 

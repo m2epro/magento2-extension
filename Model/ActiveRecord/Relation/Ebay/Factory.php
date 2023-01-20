@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\ActiveRecord\Relation\Ebay;
  */
 class Factory implements \Ess\M2ePro\Model\ActiveRecord\Relation\FactoryInterface
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Factory */
     protected $relationFactory;
 
     //########################################
@@ -35,6 +35,7 @@ class Factory implements \Ess\M2ePro\Model\ActiveRecord\Relation\FactoryInterfac
 
     /**
      * @param $modelName
+     *
      * @return false|\Ess\M2ePro\Model\ActiveRecord\Relation
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -45,6 +46,7 @@ class Factory implements \Ess\M2ePro\Model\ActiveRecord\Relation\FactoryInterfac
 
     /**
      * @param $modelName
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Relation\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -58,6 +60,7 @@ class Factory implements \Ess\M2ePro\Model\ActiveRecord\Relation\FactoryInterfac
      * @param $value
      * @param null $field
      * @param bool $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Relation|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -77,6 +80,7 @@ class Factory implements \Ess\M2ePro\Model\ActiveRecord\Relation\FactoryInterfac
      * @param $value
      * @param null $field
      * @param bool $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Relation|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

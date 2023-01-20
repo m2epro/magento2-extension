@@ -55,27 +55,27 @@ class Grid extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('create_date', [
-            'header'    => $this->__('Creation Date'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'datetime',
-            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'format'    => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('Creation Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'     => 'create_date',
-            'filter_index' => 'main_table.create_date'
+            'index' => 'create_date',
+            'filter_index' => 'main_table.create_date',
         ]);
 
         $this->addColumn('update_date', [
-            'header'    => $this->__('Update Date'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'datetime',
-            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'format'    => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('Update Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'     => 'update_date',
-            'filter_index' => 'main_table.update_date'
+            'index' => 'update_date',
+            'filter_index' => 'main_table.update_date',
         ]);
 
         $confirm = 'Attention! By Deleting Account you delete all information on it from M2E Pro Server. ';
@@ -83,24 +83,24 @@ class Grid extends AbstractGrid
         $confirm = $this->__($confirm);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'getter'    => 'getId',
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'actions'   => [
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'getter' => 'getId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'actions' => [
                 [
-                    'caption'   => $this->__('Delete'),
-                    'class'     => 'action-default scalable add primary account-delete-btn',
-                    'url'       => ['base'=> '*/*/delete'],
-                    'field'     => 'id',
-                    'confirm'  => $confirm
-                ]
-            ]
+                    'caption' => $this->__('Delete'),
+                    'class' => 'action-default scalable add primary account-delete-btn',
+                    'url' => ['base' => '*/*/delete'],
+                    'field' => 'id',
+                    'confirm' => $confirm,
+                ],
+            ],
         ]);
 
         return parent::_prepareColumns();
@@ -110,7 +110,7 @@ class Grid extends AbstractGrid
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/accountGrid', ['_current'=>true]);
+        return $this->getUrl('*/*/accountGrid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

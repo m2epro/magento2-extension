@@ -18,6 +18,7 @@ class GoToPaypal extends Order
 
         if (!$transactionId) {
             $this->messageManager->addError($this->__('Transaction ID should be defined.'));
+
             return $this->_redirect('*/ebay_order/index');
         }
 
@@ -29,11 +30,13 @@ class GoToPaypal extends Order
 
         if ($transaction->getId() === null) {
             $this->messageManager->addError($this->__('eBay Order Transaction does not exist.'));
+
             return $this->_redirect('*/ebay_order/index');
         }
 
         if (!$transaction->isPaypal()) {
             $this->messageManager->addError($this->__('This is not a PayPal Transaction.'));
+
             return $this->_redirect('*/ebay_order/index');
         }
 

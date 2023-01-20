@@ -21,8 +21,8 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         parent::__construct($context, $data);
         $this->dataHelper = $dataHelper;
     }
@@ -32,15 +32,15 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         parent::_construct();
 
         $this->_headerText = $this->__('eBay Categories');
-        $this->_listing =$this->activeRecordFactory->getCachedObjectLoaded(
+        $this->_listing = $this->activeRecordFactory->getCachedObjectLoaded(
             'Listing',
             $this->getRequest()->getParam('id')
         );
 
         $this->addButton('back', [
-            'label'   => $this->__('Back'),
-            'class'   => 'back',
-            'onclick' => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');'
+            'label' => $this->__('Back'),
+            'class' => 'back',
+            'onclick' => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');',
         ]);
 
         $url = $this->getUrl(
@@ -61,13 +61,13 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $onClick = <<<JS
 EbayListingCategoryObj.modeSameSubmitData(
-    '{$this->getUrl('*/*/*', array('step' => 2,'_current' => true))}'
+    '{$this->getUrl('*/*/*', ['step' => 2, '_current' => true])}'
 );
 JS;
         $this->addButton('next', [
-            'label'   => $this->__('Continue'),
-            'class'   => 'action-primary forward',
-            'onclick' => $onClick
+            'label' => $this->__('Continue'),
+            'class' => 'action-primary forward',
+            'onclick' => $onClick,
         ]);
     }
 
@@ -85,28 +85,36 @@ JS;
         $parentHtml = parent::_toHtml();
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Ebay_Listing_Product_Category_Settings',
-            [
-                '_current' => true
-            ]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Ebay_Listing_Product_Category_Settings',
+                [
+                    '_current' => true,
+                ]
+            )
+        );
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
-        $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
-            'step' => 3,
-            '_current' => true
-        ]), 'ebay_listing_product_category_settings');
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_listing_product_category_settings', [
+                'step' => 3,
+                '_current' => true,
+            ]),
+            'ebay_listing_product_category_settings'
+        );
 
-        $this->jsUrl->add($this->getUrl('*/ebay_listing/review', [
-            '_current' => true
-        ]), 'ebay_listing/review');
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_listing/review', [
+                '_current' => true,
+            ]),
+            'ebay_listing/review'
+        );
         // ---------------------------------------
 
         // ---------------------------------------
         $viewHeaderBlock = $this->getLayout()->createBlock(Header::class, '', [
-            'data' => ['listing' => $this->_listing]
+            'data' => ['listing' => $this->_listing],
         ]);
         // ---------------------------------------
 

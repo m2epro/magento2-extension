@@ -27,11 +27,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -47,11 +49,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Template\Description\Specific $instance
+     *
      * @return $this
      */
     public function setDescriptionSpecificTemplate(\Ess\M2ePro\Model\Amazon\Template\Description\Specific $instance)
     {
         $this->descriptionSpecificTemplateModel = $instance;
+
         return $this;
     }
 
@@ -77,7 +81,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $isFirst = true;
 
         foreach ($xpathParts as $part) {
-            [$tag,$index] = explode('-', $part);
+            [$tag, $index] = explode('-', $part);
 
             if (!$tag) {
                 continue;
@@ -104,7 +108,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             '%data%',
             '{"value": '
             . $this->getHelper('Data')->jsonEncode($this->getValue())
-            . ',"attributes": ' .$this->getValueAttributes(). '}',
+            . ',"attributes": ' . $this->getValueAttributes() . '}',
             $path
         );
 
@@ -146,11 +150,11 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
             $attributeValue = ($attributeData['mode'] ==
                 \Ess\M2ePro\Model\Amazon\Template\Description\Specific::DICTIONARY_MODE_CUSTOM_VALUE)
-                    ? $attributeData['custom_value']
-                    : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute'], false);
+                ? $attributeData['custom_value']
+                : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute'], false);
 
             $attributes[$index] = [
-                'name'  => str_replace(' ', '', $attributeName),
+                'name' => str_replace(' ', '', $attributeName),
                 'value' => $attributeValue,
             ];
         }

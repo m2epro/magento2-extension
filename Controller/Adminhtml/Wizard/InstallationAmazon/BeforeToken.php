@@ -59,6 +59,7 @@ class BeforeToken extends InstallationAmazon
         try {
             $backUrl = $this->getUrl('*/*/afterToken');
 
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',

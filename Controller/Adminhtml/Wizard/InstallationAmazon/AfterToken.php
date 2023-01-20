@@ -128,7 +128,7 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
 
         return [
             'merchant' => $params['Merchant'],
-            'token'    => $params['MWSAuthToken'],
+            'token' => $params['MWSAuthToken'],
         ];
     }
 

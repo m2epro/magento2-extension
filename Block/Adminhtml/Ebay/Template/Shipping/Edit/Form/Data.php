@@ -87,13 +87,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->attributes = $this->globalDataHelper->getValue('ebay_attributes');
 
         $this->attributesByInputTypes = [
-            'text'              => $this->magentoAttributeHelper
+            'text' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->attributes, ['text']),
-            'text_select'       => $this->magentoAttributeHelper
+            'text_select' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->attributes, ['text', 'select']),
-            'text_price'        => $this->magentoAttributeHelper
+            'text_price' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->attributes, ['text', 'price']),
-            'text_weight'       => $this->magentoAttributeHelper
+            'text_weight' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->attributes, ['text', 'weight']),
             'text_price_select' => $this->magentoAttributeHelper
                 ->filterByInputTypes(
@@ -117,7 +117,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'shipping_id',
             'hidden',
             [
-                'name'  => 'shipping[id]',
+                'name' => 'shipping[id]',
                 'value' => (!$this->isCustom() && isset($this->formData['id'])) ?
                     (int)$this->formData['id'] : '',
             ]
@@ -127,7 +127,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'shipping_title',
             'hidden',
             [
-                'name'  => 'shipping[title]',
+                'name' => 'shipping[title]',
                 'value' => $this->getTitle(),
             ]
         );
@@ -136,7 +136,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden_marketplace_id_' . $this->marketplaceData['id'],
             'hidden',
             [
-                'name'  => 'shipping[marketplace_id]',
+                'name' => 'shipping[marketplace_id]',
                 'value' => $this->marketplaceData['id'],
             ]
         );
@@ -145,7 +145,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'is_custom_template',
             'hidden',
             [
-                'name'  => 'shipping[is_custom_template]',
+                'name' => 'shipping[is_custom_template]',
                 'value' => $this->isCustom() ? 1 : 0,
             ]
         );
@@ -167,7 +167,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'country_custom_value',
             'hidden',
             [
-                'name'  => 'shipping[country_custom_value]',
+                'name' => 'shipping[country_custom_value]',
                 'value' => $this->formData['country_custom_value'],
             ]
         );
@@ -176,7 +176,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'country_custom_attribute',
             'hidden',
             [
-                'name'  => 'shipping[country_custom_attribute]',
+                'name' => 'shipping[country_custom_attribute]',
                 'value' => $this->formData['country_custom_attribute'],
             ]
         );
@@ -185,10 +185,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'country_mode',
             self::SELECT,
             [
-                'name'                     => 'shipping[country_mode]',
-                'label'                    => $this->__('Country'),
-                'title'                    => $this->__('Country'),
-                'values'                   => [
+                'name' => 'shipping[country_mode]',
+                'label' => $this->__('Country'),
+                'title' => $this->__('Country'),
+                'values' => [
                     $this->getCountryOptions(),
                     $this->getAttributesOptions(
                         Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE,
@@ -198,7 +198,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                         }
                     ),
                 ],
-                'class'                    => 'required-entry',
+                'class' => 'required-entry',
                 'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
@@ -209,7 +209,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'postal_code_custom_attribute',
             'hidden',
             [
-                'name'  => 'shipping[postal_code_custom_attribute]',
+                'name' => 'shipping[postal_code_custom_attribute]',
                 'value' => $this->formData['postal_code_custom_attribute'],
             ]
         );
@@ -223,10 +223,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'postal_code_mode',
             self::SELECT,
             [
-                'name'                     => 'shipping[postal_code_mode]',
-                'label'                    => $this->__('Zip/Postal Code'),
-                'title'                    => $this->__('Zip/Postal Code'),
-                'values'                   => [
+                'name' => 'shipping[postal_code_mode]',
+                'label' => $this->__('Zip/Postal Code'),
+                'title' => $this->__('Zip/Postal Code'),
+                'values' => [
                     ['label' => $this->__('None'), 'value' => Shipping::POSTAL_CODE_MODE_NONE],
                     ['label' => $this->__('Custom Value'), 'value' => Shipping::POSTAL_CODE_MODE_CUSTOM_VALUE],
                     $this->getAttributesOptions(
@@ -237,8 +237,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                         }
                     ),
                 ],
-                'value'                    => $defaultValue,
-                'class'                    => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated',
+                'value' => $defaultValue,
+                'class' => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated',
                 'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
@@ -247,12 +247,12 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'postal_code_custom_value',
             'text',
             [
-                'name'                   => 'shipping[postal_code_custom_value]',
-                'label'                  => $this->__('Zip/Postal Code Value'),
-                'title'                  => $this->__('Zip/Postal Code Value'),
-                'value'                  => $this->formData['postal_code_custom_value'],
-                'class'                  => 'M2ePro-required-when-visible input-text',
-                'required'               => true,
+                'name' => 'shipping[postal_code_custom_value]',
+                'label' => $this->__('Zip/Postal Code Value'),
+                'title' => $this->__('Zip/Postal Code Value'),
+                'value' => $this->formData['postal_code_custom_value'],
+                'class' => 'M2ePro-required-when-visible input-text',
+                'required' => true,
                 'field_extra_attributes' => 'id="postal_code_custom_value_tr" style="display: none;"',
             ]
         );
@@ -263,7 +263,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'address_custom_attribute',
             'hidden',
             [
-                'name'  => 'shipping[address_custom_attribute]',
+                'name' => 'shipping[address_custom_attribute]',
                 'value' => $this->formData['address_custom_attribute'],
             ]
         );
@@ -277,10 +277,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'address_mode',
             self::SELECT,
             [
-                'name'                     => 'shipping[address_mode]',
-                'label'                    => $this->__('City, State'),
-                'title'                    => $this->__('City, State'),
-                'values'                   => [
+                'name' => 'shipping[address_mode]',
+                'label' => $this->__('City, State'),
+                'title' => $this->__('City, State'),
+                'values' => [
                     ['label' => $this->__('None'), 'value' => Shipping::ADDRESS_MODE_NONE],
                     ['label' => $this->__('Custom Value'), 'value' => Shipping::ADDRESS_MODE_CUSTOM_VALUE],
                     $this->getAttributesOptions(
@@ -291,8 +291,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                         }
                     ),
                 ],
-                'value'                    => $defaultValue,
-                'class'                    => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated',
+                'value' => $defaultValue,
+                'class' => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated',
                 'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
@@ -301,13 +301,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'address_custom_value',
             'text',
             [
-                'name'                   => 'shipping[address_custom_value]',
-                'label'                  => $this->__('City, State Value'),
-                'title'                  => $this->__('City, State Value'),
-                'value'                  => $this->formData['address_custom_value'],
-                'class'                  => 'M2ePro-required-when-visible input-text',
+                'name' => 'shipping[address_custom_value]',
+                'label' => $this->__('City, State Value'),
+                'title' => $this->__('City, State Value'),
+                'value' => $this->formData['address_custom_value'],
+                'class' => 'M2ePro-required-when-visible input-text',
                 'field_extra_attributes' => 'id="address_custom_value_tr" style="display: none;"',
-                'required'               => true,
+                'required' => true,
             ]
         );
 
@@ -326,11 +326,11 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'local_shipping_mode',
             self::SELECT,
             [
-                'name'   => 'shipping[local_shipping_mode]',
-                'label'  => $this->__('Type'),
-                'title'  => $this->__('Type'),
+                'name' => 'shipping[local_shipping_mode]',
+                'label' => $this->__('Type'),
+                'title' => $this->__('Type'),
                 'values' => $this->getDomesticShippingOptions(),
-                'value'  => $this->formData['local_shipping_mode'],
+                'value' => $this->formData['local_shipping_mode'],
             ]
         );
 
@@ -365,7 +365,7 @@ HTML
                     'local_shipping_rate_table_mode_' . $this->getAccountId(),
                     'hidden',
                     [
-                        'name'  => 'shipping[local_shipping_rate_table][' . $this->getAccountId() . '][mode]',
+                        'name' => 'shipping[local_shipping_rate_table][' . $this->getAccountId() . '][mode]',
                         'value' => $this->formData['local_shipping_rate_table'][$this->getAccountId()]['mode'],
                     ]
                 );
@@ -393,14 +393,13 @@ HTML
                     'local_shipping_rate_table_value_' . $this->getAccountId(),
                     self::SELECT,
                     [
-                        'name'                   => 'shipping[local_shipping_rate_table][' . $this->getAccountId(
-                            ) . '][value]',
-                        'label'                  => $this->__('Use eBay Shipping Rate Table'),
-                        'title'                  => $this->__('Use eBay Shipping Rate Table'),
-                        'class'                  => 'M2ePro-validate-rate-table',
+                        'name' => 'shipping[local_shipping_rate_table][' . $this->getAccountId() . '][value]',
+                        'label' => $this->__('Use eBay Shipping Rate Table'),
+                        'title' => $this->__('Use eBay Shipping Rate Table'),
+                        'class' => 'M2ePro-validate-rate-table',
                         'field_extra_attributes' => 'id="local_shipping_rate_table_mode_tr"',
-                        'style'                  => 'margin-right: 18px',
-                        'tooltip'                => $this->__(
+                        'style' => 'margin-right: 18px',
+                        'tooltip' => $this->__(
                             <<<HTML
     <span class="shipping_rate_table_note_accepted" style="{$shippingRateTableModeToolTipStyleAccept}">
         {$shippingRateTableModeToolTipHtmlAccept}
@@ -518,8 +517,8 @@ HTML;
                     'local_shipping_rate_table_mode_tr_wrapper',
                     self::CUSTOM_CONTAINER,
                     [
-                        'text'                   => $shippingRateTableModeHtml,
-                        'css_class'              => 'm2epro-fieldset-table',
+                        'text' => $shippingRateTableModeHtml,
+                        'css_class' => 'm2epro-fieldset-table',
                         'field_extra_attributes' => 'id="local_shipping_rate_table_mode_tr"',
                     ]
                 );
@@ -532,7 +531,7 @@ HTML;
             'shipping_local_table_messages',
             self::CUSTOM_CONTAINER,
             [
-                'text'      => '',
+                'text' => '',
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom',
             ]
         );
@@ -541,8 +540,8 @@ HTML;
             'local_shipping_methods_tr_wrapper',
             self::CUSTOM_CONTAINER,
             [
-                'text'                   => $this->getShippingLocalTable(),
-                'css_class'              => 'm2epro-fieldset-table',
+                'text' => $this->getShippingLocalTable(),
+                'css_class' => 'm2epro-fieldset-table',
                 'field_extra_attributes' => 'id="local_shipping_methods_tr"',
             ]
         );
@@ -553,7 +552,7 @@ HTML;
             'dispatch_time_value',
             'hidden',
             [
-                'name'  => 'shipping[dispatch_time_value]',
+                'name' => 'shipping[dispatch_time_value]',
                 'value' => $this->formData['dispatch_time_value'],
             ]
         );
@@ -562,7 +561,7 @@ HTML;
             'dispatch_time_attribute',
             'hidden',
             [
-                'name'  => 'shipping[dispatch_time_attribute]',
+                'name' => 'shipping[dispatch_time_attribute]',
                 'value' => $this->formData['dispatch_time_attribute'],
             ]
         );
@@ -580,13 +579,13 @@ HTML;
             'dispatch_time_mode',
             self::SELECT,
             [
-                'name'      => 'shipping[dispatch_time_mode]',
-                'label'     => $this->__('Dispatch Time'),
-                'title'     => $this->__('Dispatch Time'),
-                'values'    => $dispatchModeOptions,
-                'class'     => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
+                'name' => 'shipping[dispatch_time_mode]',
+                'label' => $this->__('Dispatch Time'),
+                'title' => $this->__('Dispatch Time'),
+                'values' => $dispatchModeOptions,
+                'class' => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
                 'css_class' => 'local-shipping-tr local-shipping-always-visible-tr',
-                'tooltip'   => $this->__(
+                'tooltip' => $this->__(
                     'The dispatch (or handling) time is the number of working days during which seller will take the
                     item to carrier after buyer\'s payment is credited to seller\'s account.'
                 ),
@@ -599,14 +598,14 @@ HTML;
             'local_handling_cost',
             'text',
             [
-                'name'                   => 'shipping[local_handling_cost]',
-                'label'                  => $this->__('Handling Cost'),
-                'title'                  => $this->__('Handling Cost'),
-                'value'                  => $this->formData['local_handling_cost'],
-                'class'                  => 'input-text M2ePro-validation-float',
-                'css_class'              => 'local-shipping-tr',
+                'name' => 'shipping[local_handling_cost]',
+                'label' => $this->__('Handling Cost'),
+                'title' => $this->__('Handling Cost'),
+                'value' => $this->formData['local_handling_cost'],
+                'class' => 'input-text M2ePro-validation-float',
+                'css_class' => 'local-shipping-tr',
                 'field_extra_attributes' => 'id="local_handling_cost_cv_tr"',
-                'tooltip'                => $this->__('Addition of handling cost to the shipping costs.'),
+                'tooltip' => $this->__('Addition of handling cost to the shipping costs.'),
             ]
         );
 
@@ -616,9 +615,9 @@ HTML;
             $fieldsetCombined = $fieldSet->addFieldset(
                 'combined_shipping_profile',
                 [
-                    'legend'      => __('Combined Shipping Profile'),
+                    'legend' => __('Combined Shipping Profile'),
                     'collapsable' => false,
-                    'class'       => 'local-shipping-tr',
+                    'class' => 'local-shipping-tr',
                 ]
             );
 
@@ -626,15 +625,15 @@ HTML;
                 'local_shipping_discount_combined_profile_id_' . $this->getAccountId(),
                 self::SELECT,
                 [
-                    'name'    => 'shipping[local_shipping_discount_combined_profile_id][' . $this->getAccountId() . ']',
-                    'label'   => $this->__('Combined Shipping Profile'),
-                    'title'   => $this->__('Combined Shipping Profile'),
-                    'values'  => [
+                    'name' => 'shipping[local_shipping_discount_combined_profile_id][' . $this->getAccountId() . ']',
+                    'label' => $this->__('Combined Shipping Profile'),
+                    'title' => $this->__('Combined Shipping Profile'),
+                    'values' => [
                         ['label' => $this->__('None'), 'value' => ''],
                     ],
-                    'class'   => 'local-discount-profile-account-tr',
-                    'value'   => '',
-                    'style'   => 'margin-right: 18px',
+                    'class' => 'local-discount-profile-account-tr',
+                    'value' => '',
+                    'style' => 'margin-right: 18px',
                     'tooltip' => $this->__(
                         'If you have Flat Shipping Rules or Calculated Shipping Rules set up in eBay,
                         you can choose to use them here.<br/><br/>
@@ -654,7 +653,7 @@ HTML;
                 'account_combined_shipping_profile_local',
                 self::CUSTOM_CONTAINER,
                 [
-                    'text'      => $this->getAccountCombinedShippingProfile('local'),
+                    'text' => $this->getAccountCombinedShippingProfile('local'),
                     'css_class' => 'local-shipping-tr',
                 ]
             );
@@ -666,16 +665,16 @@ HTML;
             'local_shipping_discount_promotional_mode',
             self::SELECT,
             [
-                'name'      => 'shipping[local_shipping_discount_promotional_mode]',
-                'label'     => $this->__('Promotional Shipping Rule'),
-                'title'     => $this->__('Promotional Shipping Rule'),
-                'values'    => [
+                'name' => 'shipping[local_shipping_discount_promotional_mode]',
+                'label' => $this->__('Promotional Shipping Rule'),
+                'title' => $this->__('Promotional Shipping Rule'),
+                'values' => [
                     ['value' => 0, 'label' => __('No')],
                     ['value' => 1, 'label' => __('Yes')],
                 ],
-                'value'     => $this->formData['local_shipping_discount_promotional_mode'],
+                'value' => $this->formData['local_shipping_discount_promotional_mode'],
                 'css_class' => 'local-shipping-tr',
-                'tooltip'   => $this->__(
+                'tooltip' => $this->__(
                     'Offers the Shipping Discounts according to the \'Promotional shipping Rule
                     (applies to all Listings)\' Settings in your eBay Account.
                     Shipping Discounts are set up directly on eBay, not in M2E Pro.
@@ -691,13 +690,13 @@ HTML;
                 'cash_on_delivery_cost',
                 'text',
                 [
-                    'name'                   => 'shipping[cash_on_delivery_cost]',
-                    'label'                  => $this->__('"Cash On Delivery" Cost'),
-                    'title'                  => $this->__('"Cash On Delivery" Cost'),
-                    'value'                  => $this->formData['cash_on_delivery_cost'],
-                    'class'                  => 'input-text M2ePro-validation-float',
+                    'name' => 'shipping[cash_on_delivery_cost]',
+                    'label' => $this->__('"Cash On Delivery" Cost'),
+                    'title' => $this->__('"Cash On Delivery" Cost'),
+                    'value' => $this->formData['cash_on_delivery_cost'],
+                    'class' => 'input-text M2ePro-validation-float',
                     'field_extra_attributes' => 'id="cash_on_delivery_cost_cv_tr"',
-                    'tooltip'                => $this->__('Required when using COD Payment Method.'),
+                    'tooltip' => $this->__('Required when using COD Payment Method.'),
                 ]
             );
         }
@@ -707,7 +706,7 @@ HTML;
         $fieldSet = $form->addFieldset(
             'magento_block_ebay_template_shipping_form_data_international',
             [
-                'legend'      => __('International Shipping'),
+                'legend' => __('International Shipping'),
                 'collapsable' => true,
             ]
         );
@@ -720,13 +719,13 @@ HTML;
                 'cross_border_trade',
                 self::SELECT,
                 [
-                    'name'                   => 'shipping[cross_border_trade]',
-                    'label'                  => $this->__('Cross Border Trade'),
-                    'title'                  => $this->__('Cross Border Trade'),
-                    'values'                 => $this->getSiteVisibilityOptions(),
-                    'value'                  => $this->formData['cross_border_trade'],
+                    'name' => 'shipping[cross_border_trade]',
+                    'label' => $this->__('Cross Border Trade'),
+                    'title' => $this->__('Cross Border Trade'),
+                    'values' => $this->getSiteVisibilityOptions(),
+                    'value' => $this->formData['cross_border_trade'],
                     'field_extra_attributes' => 'id="cross_border_trade_container"',
-                    'tooltip'                => $this->__(
+                    'tooltip' => $this->__(
                         'The international Site visibility feature allows qualifying Listings to be posted on
                         international Marketplaces.
                         <br/>Buyers on these Marketplaces will see the Listings exactly as you originally post them.
@@ -741,14 +740,14 @@ HTML;
                 'global_shipping_program',
                 self::SELECT,
                 [
-                    'name'    => 'shipping[global_shipping_program]',
-                    'label'   => $this->__('Offer Global Shipping Program'),
-                    'title'   => $this->__('Offer Global Shipping Program'),
-                    'values'  => [
+                    'name' => 'shipping[global_shipping_program]',
+                    'label' => $this->__('Offer Global Shipping Program'),
+                    'title' => $this->__('Offer Global Shipping Program'),
+                    'values' => [
                         ['value' => 0, 'label' => __('No')],
                         ['value' => 1, 'label' => __('Yes')],
                     ],
-                    'value'   => $this->formData['global_shipping_program'],
+                    'value' => $this->formData['global_shipping_program'],
                     'tooltip' => $this->__(
                         'Simplifies selling an Item to an international Buyer. Click
                         <a href="http://pages.ebay.com/help/sell/shipping-globally.html"
@@ -766,11 +765,11 @@ HTML;
             'international_shipping_mode',
             self::SELECT,
             [
-                'name'   => 'shipping[international_shipping_mode]',
-                'label'  => $this->__('Type'),
-                'title'  => $this->__('Type'),
+                'name' => 'shipping[international_shipping_mode]',
+                'label' => $this->__('Type'),
+                'title' => $this->__('Type'),
                 'values' => $this->getInternationalShippingOptions(),
-                'value'  => $this->formData['international_shipping_mode'],
+                'value' => $this->formData['international_shipping_mode'],
             ]
         );
 
@@ -805,7 +804,7 @@ HTML
                     'international_shipping_rate_table_mode_' . $this->getAccountId(),
                     'hidden',
                     [
-                        'name'  => 'shipping[international_shipping_rate_table][' . $this->getAccountId() . '][mode]',
+                        'name' => 'shipping[international_shipping_rate_table][' . $this->getAccountId() . '][mode]',
                         'value' => $this->formData['international_shipping_rate_table'][$this->getAccountId()]['mode'],
                     ]
                 );
@@ -833,14 +832,13 @@ HTML
                     'international_shipping_rate_table_value_' . $this->getAccountId(),
                     self::SELECT,
                     [
-                        'name'                   => 'shipping[international_shipping_rate_table][' . $this->getAccountId(
-                            ) . '][value]',
-                        'label'                  => $this->__('Use eBay Shipping Rate Table'),
-                        'title'                  => $this->__('Use eBay Shipping Rate Table'),
-                        'css_class'              => 'international-shipping-tr M2ePro-validate-rate-table',
+                        'name' => 'shipping[international_shipping_rate_table][' . $this->getAccountId() . '][value]',
+                        'label' => $this->__('Use eBay Shipping Rate Table'),
+                        'title' => $this->__('Use eBay Shipping Rate Table'),
+                        'css_class' => 'international-shipping-tr M2ePro-validate-rate-table',
                         'field_extra_attributes' => 'id="international_shipping_rate_table_mode_tr"',
-                        'style'                  => 'margin-right: 18px',
-                        'tooltip'                => $this->__(
+                        'style' => 'margin-right: 18px',
+                        'tooltip' => $this->__(
                             <<<HTML
     <span class="shipping_rate_table_note_accepted" style="{$shippingRateTableModeToolTipStyleAccept}">
         {$shippingRateTableModeToolTipHtmlAccept}
@@ -960,8 +958,8 @@ HTML;
                     'international_shipping_rate_table_mode_tr_wrapper',
                     self::CUSTOM_CONTAINER,
                     [
-                        'text'                   => $shippingRateTableModeHtml,
-                        'css_class'              => 'm2epro-fieldset-table',
+                        'text' => $shippingRateTableModeHtml,
+                        'css_class' => 'm2epro-fieldset-table',
                         'field_extra_attributes' => 'id="international_shipping_rate_table_mode_tr"',
                     ]
                 );
@@ -974,7 +972,7 @@ HTML;
             'shipping_international_table_messages',
             self::CUSTOM_CONTAINER,
             [
-                'text'      => '',
+                'text' => '',
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom',
             ]
         );
@@ -983,9 +981,9 @@ HTML;
             'international_shipping_methods_tr_wrapper',
             self::CUSTOM_CONTAINER,
             [
-                'text'                   => $this->getShippingInternationalTable(),
-                'css_class'              => 'm2epro-fieldset-table',
-                'container_class'        => 'international-shipping-tr international-shipping-always-visible-tr',
+                'text' => $this->getShippingInternationalTable(),
+                'css_class' => 'm2epro-fieldset-table',
+                'container_class' => 'international-shipping-tr international-shipping-always-visible-tr',
                 'field_extra_attributes' => 'id="international_shipping_methods_tr"',
             ]
         );
@@ -996,13 +994,13 @@ HTML;
             'international_handling_cost',
             'text',
             [
-                'name'                   => 'shipping[international_handling_cost]',
-                'label'                  => $this->__('Handling Cost'),
-                'title'                  => $this->__('Handling Cost'),
-                'value'                  => $this->formData['international_handling_cost'],
-                'css_class'              => 'international-shipping-tr',
+                'name' => 'shipping[international_handling_cost]',
+                'label' => $this->__('Handling Cost'),
+                'title' => $this->__('Handling Cost'),
+                'value' => $this->formData['international_handling_cost'],
+                'css_class' => 'international-shipping-tr',
                 'field_extra_attributes' => 'id="international_handling_cost_cv_tr"',
-                'tooltip'                => $this->__('Addition of handling cost to the shipping costs.'),
+                'tooltip' => $this->__('Addition of handling cost to the shipping costs.'),
             ]
         );
 
@@ -1012,9 +1010,9 @@ HTML;
             $fieldsetCombined = $fieldSet->addFieldset(
                 'international_shipping_profile',
                 [
-                    'legend'      => __('Combined Shipping Profile'),
+                    'legend' => __('Combined Shipping Profile'),
                     'collapsable' => false,
-                    'class'       => 'international-shipping-tr',
+                    'class' => 'international-shipping-tr',
                 ]
             );
 
@@ -1022,17 +1020,17 @@ HTML;
                 'international_shipping_discount_combined_profile_id_' . $this->getAccountId(),
                 self::SELECT,
                 [
-                    'name'                   =>
+                    'name' =>
                         'shipping[international_shipping_discount_combined_profile_id][' . $this->getAccountId() . ']',
-                    'label'                  => $this->__('Combined Shipping Profile'),
-                    'title'                  => $this->__('Combined Shipping Profile'),
-                    'class'                  => 'international-discount-profile-account-tr',
-                    'values'                 => [
+                    'label' => $this->__('Combined Shipping Profile'),
+                    'title' => $this->__('Combined Shipping Profile'),
+                    'class' => 'international-discount-profile-account-tr',
+                    'values' => [
                         ['label' => $this->__('None'), 'value' => ''],
                     ],
-                    'value'                  => '',
-                    'style'                  => 'margin-right: 18px',
-                    'tooltip'                => $this->__(
+                    'value' => '',
+                    'style' => 'margin-right: 18px',
+                    'tooltip' => $this->__(
                         'Use the Flat Shipping Rule and Calculated Shipping Rule Profiles, which were created on eBay.
                         <br/><br/><b>Note:</b> Press "Refresh Profiles" Button for upload new or refreshes
                         eBay Shipping Profiles.'
@@ -1052,7 +1050,7 @@ HTML;
                 'account_international_shipping_profile_international',
                 self::CUSTOM_CONTAINER,
                 [
-                    'text'      => $this->getAccountCombinedShippingProfile('international'),
+                    'text' => $this->getAccountCombinedShippingProfile('international'),
                     'css_class' => 'international-shipping-tr',
                 ]
             );
@@ -1064,17 +1062,17 @@ HTML;
             'international_shipping_discount_promotional_mode',
             self::SELECT,
             [
-                'name'      => 'shipping[international_shipping_discount_promotional_mode]',
-                'label'     => $this->__('Promotional Shipping Rule'),
-                'title'     => $this->__('Promotional Shipping Rule'),
-                'values'    => [
+                'name' => 'shipping[international_shipping_discount_promotional_mode]',
+                'label' => $this->__('Promotional Shipping Rule'),
+                'title' => $this->__('Promotional Shipping Rule'),
+                'values' => [
                     ['value' => 0, 'label' => __('No')],
                     ['value' => 1, 'label' => __('Yes')],
                 ],
-                'value'     => $this->formData['international_shipping_discount_promotional_mode'],
-                'class'     => 'M2ePro-required-when-visible',
+                'value' => $this->formData['international_shipping_discount_promotional_mode'],
+                'class' => 'M2ePro-required-when-visible',
                 'css_class' => 'international-shipping-tr',
-                'tooltip'   => $this->__('Add Shipping Discounts according to Rules that are set in your eBay Account.'),
+                'tooltip' => $this->__('Add Shipping Discounts according to Rules that are set in your eBay Account.'),
             ]
         );
 
@@ -1093,12 +1091,12 @@ HTML;
             'measurement_system',
             self::SELECT,
             [
-                'name'   => 'shipping[measurement_system]',
-                'label'  => $this->__('Measurement System'),
-                'title'  => $this->__('Measurement System'),
+                'name' => 'shipping[measurement_system]',
+                'label' => $this->__('Measurement System'),
+                'title' => $this->__('Measurement System'),
                 'values' => $this->getMeasurementSystemOptions(),
-                'value'  => $this->formData['measurement_system'],
-                'class'  => 'select',
+                'value' => $this->formData['measurement_system'],
+                'class' => 'select',
             ]
         );
 
@@ -1108,7 +1106,7 @@ HTML;
             'package_size_mode',
             'hidden',
             [
-                'name'  => 'shipping[package_size_mode]',
+                'name' => 'shipping[package_size_mode]',
                 'value' => $this->formData['package_size_mode'],
             ]
         );
@@ -1117,7 +1115,7 @@ HTML;
             'package_size_value',
             'hidden',
             [
-                'name'  => 'shipping[package_size_value]',
+                'name' => 'shipping[package_size_value]',
                 'value' => $this->formData['package_size_value'],
             ]
         );
@@ -1126,7 +1124,7 @@ HTML;
             'package_size_attribute',
             'hidden',
             [
-                'name'  => 'shipping[package_size_attribute]',
+                'name' => 'shipping[package_size_attribute]',
                 'value' => $this->formData['package_size_attribute'],
             ]
         );
@@ -1137,10 +1135,10 @@ HTML;
             'package_size',
             self::SELECT,
             [
-                'label'                    => $this->__('Package Size Source'),
-                'title'                    => $this->__('Package Size Source'),
-                'values'                   => $this->getPackageSizeSourceOptions(),
-                'field_extra_attributes'   => 'id="package_size_tr"',
+                'label' => $this->__('Package Size Source'),
+                'title' => $this->__('Package Size Source'),
+                'values' => $this->getPackageSizeSourceOptions(),
+                'field_extra_attributes' => 'id="package_size_tr"',
                 'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
@@ -1151,10 +1149,10 @@ HTML;
             'dimension_mode',
             self::SELECT,
             [
-                'name'                   => 'shipping[dimension_mode]',
-                'label'                  => $this->__('Dimension Source'),
-                'title'                  => $this->__('Dimension Source'),
-                'values'                 => [
+                'name' => 'shipping[dimension_mode]',
+                'label' => $this->__('Dimension Source'),
+                'title' => $this->__('Dimension Source'),
+                'values' => [
                     [
                         'value' => Shipping\Calculated::DIMENSION_NONE,
                         'label' => $this->__('None'),
@@ -1170,8 +1168,8 @@ HTML;
                         'attrs' => ['id' => 'dimension_mode_none'],
                     ],
                 ],
-                'value'                  => $this->formData['dimension_mode'],
-                'class'                  => 'select',
+                'value' => $this->formData['dimension_mode'],
+                'class' => 'select',
                 'field_extra_attributes' => 'id="dimensions_tr"',
             ]
         );
@@ -1186,11 +1184,11 @@ HTML;
             self::SELECT,
             [
                 'data' => [
-                    'html_id'                  => 'shipping_dimension_length_attribute',
-                    'name'                     => 'shipping[dimension_length_attribute]',
-                    'values'                   => $this->getDimensionsOptions('dimension_length_attribute'),
-                    'value'                    => $this->formData['dimension_length_attribute'],
-                    'class'                    => 'M2ePro-required-when-visible dimension-custom-input',
+                    'html_id' => 'shipping_dimension_length_attribute',
+                    'name' => 'shipping[dimension_length_attribute]',
+                    'values' => $this->getDimensionsOptions('dimension_length_attribute'),
+                    'value' => $this->formData['dimension_length_attribute'],
+                    'class' => 'M2ePro-required-when-visible dimension-custom-input',
                     'create_magento_attribute' => true,
                 ],
             ]
@@ -1201,11 +1199,11 @@ HTML;
             self::SELECT,
             [
                 'data' => [
-                    'html_id'                  => 'shipping_dimension_depth_attribute',
-                    'name'                     => 'shipping[dimension_depth_attribute]',
-                    'values'                   => $this->getDimensionsOptions('dimension_depth_attribute'),
-                    'value'                    => $this->formData['dimension_depth_attribute'],
-                    'class'                    => 'M2ePro-required-when-visible dimension-custom-input',
+                    'html_id' => 'shipping_dimension_depth_attribute',
+                    'name' => 'shipping[dimension_depth_attribute]',
+                    'values' => $this->getDimensionsOptions('dimension_depth_attribute'),
+                    'value' => $this->formData['dimension_depth_attribute'],
+                    'class' => 'M2ePro-required-when-visible dimension-custom-input',
                     'create_magento_attribute' => true,
                 ],
             ]
@@ -1216,16 +1214,16 @@ HTML;
             'dimension',
             self::SELECT,
             [
-                'css_class'                => 'dimensions_ca_tr',
-                'name'                     => 'shipping[dimension_width_attribute]',
-                'label'                    => $this->__('Dimensions (Width×Height×Depth)'),
-                'values'                   => $this->getDimensionsOptions('dimension_width_attribute'),
-                'value'                    => $this->formData['dimension_width_attribute'],
-                'class'                    => 'M2ePro-required-when-visible dimension-custom-input',
-                'required'                 => true,
-                'note'                     => $this->__('inches'),
+                'css_class' => 'dimensions_ca_tr',
+                'name' => 'shipping[dimension_width_attribute]',
+                'label' => $this->__('Dimensions (Width×Height×Depth)'),
+                'values' => $this->getDimensionsOptions('dimension_width_attribute'),
+                'value' => $this->formData['dimension_width_attribute'],
+                'class' => 'M2ePro-required-when-visible dimension-custom-input',
+                'required' => true,
+                'note' => $this->__('inches'),
                 'create_magento_attribute' => true,
-                'after_element_html'       => ' <span style="color: #303030">&times;</span> '
+                'after_element_html' => ' <span style="color: #303030">&times;</span> '
                     . $heightAttrBlock->toHtml()
                     . ' <span style="color: #303030">&times;</span> '
                     . $depthAttrBlock->toHtml(),
@@ -1236,7 +1234,7 @@ HTML;
             'text',
             [
                 'data' => [
-                    'name'  => 'shipping[dimension_length_value]',
+                    'name' => 'shipping[dimension_length_value]',
                     'value' => $this->formData['dimension_length_value'],
                     'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
                     'style' => 'width: 125px;',
@@ -1249,7 +1247,7 @@ HTML;
             'text',
             [
                 'data' => [
-                    'name'  => 'shipping[dimension_depth_value]',
+                    'name' => 'shipping[dimension_depth_value]',
                     'value' => $this->formData['dimension_depth_value'],
                     'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
                 ],
@@ -1261,13 +1259,13 @@ HTML;
             'dimension_width_attribute_text',
             'text',
             [
-                'css_class'          => 'dimensions_cv_tr',
-                'name'               => 'shipping[dimension_width_value]',
-                'label'              => $this->__('Dimensions (Width×Height×Depth)'),
-                'value'              => $this->formData['dimension_width_value'],
-                'class'              => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
-                'required'           => true,
-                'note'               => $this->__('inches'),
+                'css_class' => 'dimensions_cv_tr',
+                'name' => 'shipping[dimension_width_value]',
+                'label' => $this->__('Dimensions (Width×Height×Depth)'),
+                'value' => $this->formData['dimension_width_value'],
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
+                'required' => true,
+                'note' => $this->__('inches'),
                 'after_element_html' => ' <span style="color: #303030">&times;</span> '
                     . $heightValBlock->toHtml()
                     . ' <span style="color: #303030">&times;</span> '
@@ -1281,7 +1279,7 @@ HTML;
             'weight_mode',
             'hidden',
             [
-                'name'  => 'shipping[weight_mode]',
+                'name' => 'shipping[weight_mode]',
                 'value' => $this->formData['weight_mode'],
             ]
         );
@@ -1290,7 +1288,7 @@ HTML;
             'weight_attribute',
             'hidden',
             [
-                'name'  => 'shipping[weight_attribute]',
+                'name' => 'shipping[weight_attribute]',
                 'value' => $this->formData['weight_attribute'],
             ]
         );
@@ -1301,15 +1299,15 @@ HTML;
             'weight',
             self::SELECT,
             [
-                'name'                     => 'shipping[test]',
-                'label'                    => $this->__('Weight Source'),
-                'title'                    => $this->__('Weight Source'),
-                'values'                   => $this->getWeightSourceOptions(),
-                'value'                    => $this->formData['weight_mode'] != Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE
+                'name' => 'shipping[test]',
+                'label' => $this->__('Weight Source'),
+                'title' => $this->__('Weight Source'),
+                'values' => $this->getWeightSourceOptions(),
+                'value' => $this->formData['weight_mode'] != Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE
                     ? $this->formData['weight_mode'] : '',
-                'class'                    => 'select',
-                'field_extra_attributes'   => 'id="weight_tr"',
-                'note'                     => ($this->canDisplayEnglishMeasurementSystemOption() ?
+                'class' => 'select',
+                'field_extra_attributes' => 'id="weight_tr"',
+                'note' => ($this->canDisplayEnglishMeasurementSystemOption() ?
                     $this->__('lbs. oz.') : $this->__('kg. g.')),
                 'create_magento_attribute' => true,
             ]
@@ -1319,7 +1317,7 @@ HTML;
             'text',
             [
                 'data' => [
-                    'name'  => 'shipping[weight_minor]',
+                    'name' => 'shipping[weight_minor]',
                     'value' => $this->formData['weight_minor'],
                     'class' => 'M2ePro-required-when-visible M2ePro-validation-float input-text admin__control-text
                             shipping_weight_minor',
@@ -1332,14 +1330,14 @@ HTML;
             'weight_mode_container',
             'text',
             [
-                'container_id'       => 'weight_cv',
-                'label'              => $this->__('Weight'),
-                'name'               => 'shipping[weight_major]',
-                'value'              => $this->formData['weight_major'],
-                'class'              => 'M2ePro-required-when-visible M2ePro-validation-float input-text',
-                'style'              => 'width: 30%',
-                'required'           => true,
-                'note'               => ($this->canDisplayEnglishMeasurementSystemOption() ? $this->__('lbs. oz.') :
+                'container_id' => 'weight_cv',
+                'label' => $this->__('Weight'),
+                'name' => 'shipping[weight_major]',
+                'value' => $this->formData['weight_major'],
+                'class' => 'M2ePro-required-when-visible M2ePro-validation-float input-text',
+                'style' => 'width: 30%',
+                'required' => true,
+                'note' => ($this->canDisplayEnglishMeasurementSystemOption() ? $this->__('lbs. oz.') :
                     $this->__('kg. g.')),
                 'after_element_html' => '<span style="color: black;"> &times; </span>' . $weightMinorBlock->toHtml(),
             ]
@@ -1354,9 +1352,9 @@ HTML;
         $fieldSet = $form->addFieldset(
             'magento_block_ebay_template_shipping_form_data_excluded_locations',
             [
-                'legend'      => $this->__('Excluded Locations'),
+                'legend' => $this->__('Excluded Locations'),
                 'collapsable' => true,
-                'tooltip'     => $this->__(
+                'tooltip' => $this->__(
                     'To exclude Buyers in certain Locations from purchasing your Item,
                     create a Shipping Exclusion List.'
                 ),
@@ -1367,7 +1365,7 @@ HTML;
             'excluded_locations_hidden',
             'hidden',
             [
-                'name'  => 'shipping[excluded_locations]',
+                'name' => 'shipping[excluded_locations]',
                 'value' => '',
             ]
         );
@@ -1377,7 +1375,7 @@ HTML;
             self::CUSTOM_CONTAINER,
             [
                 'label' => __('Locations'),
-                'text'  => '<p><span id="excluded_locations_titles"></span></p>
+                'text' => '<p><span id="excluded_locations_titles"></span></p>
                 <a href="javascript:void(0)" onclick="EbayTemplateShippingExcludedLocationsObj.showPopup();">'
                     . $this->__('Edit Exclusion List') .
                     '</a>',
@@ -1396,12 +1394,12 @@ HTML;
     public function getShippingLocalTable()
     {
         $localShippingMethodButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'onclick' => 'EbayTemplateShippingObj.addRow(\'local\');',
-                    'class'   => 'add add_local_shipping_method_button primary',
-                ]
-            );
+                                          ->setData(
+                                              [
+                                                  'onclick' => 'EbayTemplateShippingObj.addRow(\'local\');',
+                                                  'class' => 'add add_local_shipping_method_button primary',
+                                              ]
+                                          );
 
         return <<<HTML
 
@@ -1465,12 +1463,12 @@ HTML;
     public function getShippingInternationalTable()
     {
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'onclick' => 'EbayTemplateShippingObj.addRow(\'international\');',
-                    'class'   => 'add add_international_shipping_method_button primary',
-                ]
-            );
+                            ->setData(
+                                [
+                                    'onclick' => 'EbayTemplateShippingObj.addRow(\'international\');',
+                                    'class' => 'add add_international_shipping_method_button primary',
+                                ]
+                            );
 
         return <<<HTML
         <table id="shipping_international_table"
@@ -1815,7 +1813,7 @@ HTML;
                 'value' => Shipping\Calculated::PACKAGE_SIZE_CUSTOM_VALUE,
                 'label' => $package['title'],
                 'attrs' => [
-                    'attribute_code'       => $helper->escapeHtml($package['ebay_id']),
+                    'attribute_code' => $helper->escapeHtml($package['ebay_id']),
                     'dimensions_supported' => $package['dimensions_supported'],
                 ],
             ];
@@ -2038,8 +2036,8 @@ HTML;
             if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {
                 foreach ($accountProfiles[$marketplaceId]['profiles'] as $profile) {
                     $temp['profiles'][] = [
-                        'type'         => $this->dataHelper->escapeHtml($profile['type']),
-                        'profile_id'   => $this->dataHelper->escapeHtml($profile['profile_id']),
+                        'type' => $this->dataHelper->escapeHtml($profile['type']),
+                        'profile_id' => $this->dataHelper->escapeHtml($profile['profile_id']),
                         'profile_name' => $this->dataHelper->escapeHtml($profile['profile_name']),
                     ];
                 }
@@ -2180,13 +2178,13 @@ HTML;
             if ($default[$type . '_shipping_rate_table'] === null) {
                 if ($this->getAccountId() !== null) {
                     $default[$type . '_shipping_rate_table'][$this->getAccountId()] = [
-                        'mode'  => \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_ACCEPT_MODE,
+                        'mode' => \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_ACCEPT_MODE,
                         'value' => 0,
                     ];
                 } else {
                     foreach ($this->getAccounts() as $account) {
                         $default[$type . '_shipping_rate_table'][$account->getId()] = [
-                            'mode'  => \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_ACCEPT_MODE,
+                            'mode' => \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_RATE_TABLE_ACCEPT_MODE,
                             'value' => 0,
                         ];
                     }
@@ -2202,14 +2200,14 @@ HTML;
     public function getMarketplaceData()
     {
         $data = [
-            'id'                => $this->getMarketplace()->getId(),
-            'currency'          => $this->getMarketplace()->getChildObject()->getCurrency(),
-            'services'          => $this->getMarketplace()->getChildObject()->getShippingInfo(),
-            'packages'          => $this->getMarketplace()->getChildObject()->getPackageInfo(),
-            'dispatch'          => $this->getSortedDispatchInfo(),
-            'locations'         => $this->getMarketplace()->getChildObject()->getShippingLocationInfo(),
+            'id' => $this->getMarketplace()->getId(),
+            'currency' => $this->getMarketplace()->getChildObject()->getCurrency(),
+            'services' => $this->getMarketplace()->getChildObject()->getShippingInfo(),
+            'packages' => $this->getMarketplace()->getChildObject()->getPackageInfo(),
+            'dispatch' => $this->getSortedDispatchInfo(),
+            'locations' => $this->getMarketplace()->getChildObject()->getShippingLocationInfo(),
             'locations_exclude' => $this->getSortedLocationExcludeInfo(),
-            'origin_country'    => $this->getMarketplace()->getChildObject()->getOriginCountry(),
+            'origin_country' => $this->getMarketplace()->getChildObject()->getOriginCountry(),
         ];
 
         $data['services'] = $this->modifyNonUniqueShippingServicesTitles($data['services']);
@@ -2263,8 +2261,8 @@ HTML;
     {
         $sortedInfo = [
             'international' => [],
-            'domestic'      => [],
-            'additional'    => [],
+            'domestic' => [],
+            'additional' => [],
         ];
 
         foreach ($this->getMarketplace()->getChildObject()->getShippingLocationExcludeInfo() as $item) {
@@ -2629,12 +2627,12 @@ HTML;
     protected function _beforeToHtml()
     {
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'label' => $this->__('Remove'),
-                    'class' => 'delete icon-btn remove_shipping_method_button',
-                ]
-            );
+                            ->setData(
+                                [
+                                    'label' => $this->__('Remove'),
+                                    'class' => 'delete icon-btn remove_shipping_method_button',
+                                ]
+                            );
         $this->setChild('remove_shipping_method_button', $buttonBlock);
 
         return parent::_beforeToHtml();
@@ -2644,33 +2642,33 @@ HTML;
     {
         $this->jsTranslator->addTranslations(
             [
-                'Location or Zip/Postal Code should be specified.'                  => $this->__(
+                'Location or Zip/Postal Code should be specified.' => $this->__(
                     'Location or Zip/Postal Code should be specified.'
                 ),
-                'Select one or more international ship-to Locations.'               => $this->__(
+                'Select one or more international ship-to Locations.' => $this->__(
                     'Select one or more international ship-to Locations.'
                 ),
                 'PayPal payment method should be specified for Cross Border trade.' => $this->__(
                     'PayPal payment method should be specified for Cross Border trade.'
                 ),
-                'You should specify at least one Shipping Method.'                  => $this->__(
+                'You should specify at least one Shipping Method.' => $this->__(
                     'You should specify at least one Shipping Method.'
                 ),
-                'None'                                                              => $this->__('None'),
-                'Select Shipping Service'                                           => $this->__(
+                'None' => $this->__('None'),
+                'Select Shipping Service' => $this->__(
                     'Select Shipping Service'
                 ),
 
-                'Excluded Shipping Locations'          => $this->__('Excluded Shipping Locations'),
+                'Excluded Shipping Locations' => $this->__('Excluded Shipping Locations'),
                 'No Locations are currently excluded.' => $this->__('No Locations are currently excluded.'),
-                'selected'                             => $this->__('selected'),
+                'selected' => $this->__('selected'),
 
                 'Refresh Rate Tables' => $this->__('Refresh Rate Tables'),
 
-                'Download Shipping Rate Tables'                               => $this->__(
+                'Download Shipping Rate Tables' => $this->__(
                     'Download Shipping Rate Tables'
                 ),
-                'sell_api_popup_text'                                         => $this->__(
+                'sell_api_popup_text' => $this->__(
                     <<<HTML
     To download the Shipping Rate Tables, you should grant M2E Pro access to your eBay data.
 If you consent, click <strong>Confirm</strong>. You will be redirected to M2E Pro eBay Account page. Under the
@@ -2698,17 +2696,17 @@ HTML
                     '*/ebay_template_shipping/updateDiscountProfiles',
                     [
                         'marketplace_id' => $this->marketplaceData['id'],
-                        'account_id'     => $this->getAccountId(),
+                        'account_id' => $this->getAccountId(),
                     ]
                 ),
-                'ebay_template_shipping/getRateTableData'       => $this->getUrl(
+                'ebay_template_shipping/getRateTableData' => $this->getUrl(
                     '*/ebay_template_shipping/getRateTableData'
                 ),
-                'ebay_account/edit'                             => $this->getUrl(
+                'ebay_account/edit' => $this->getUrl(
                     '*/ebay_account/edit',
                     $this->getRequest()->getParam('wizard') ?
                         [
-                            'wizard'        => 1,
+                            'wizard' => 1,
                             'close_on_save' => true,
                         ] : []
                 ),
@@ -2816,8 +2814,8 @@ JS;
 
         $this->js->addRequireJs(
             [
-                'attr'  => 'M2ePro/Attribute',
-                'form'  => 'M2ePro/Ebay/Template/Shipping',
+                'attr' => 'M2ePro/Attribute',
+                'form' => 'M2ePro/Ebay/Template/Shipping',
                 'etsel' => 'M2ePro/Ebay/Template/Shipping/ExcludedLocations',
             ],
             <<<JS

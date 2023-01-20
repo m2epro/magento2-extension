@@ -19,9 +19,9 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
     {
         $params = [
             'virtual_attributes' => $this->getMagentoProduct()->getVariationVirtualAttributes(),
-            'filter_attributes'  => $this->getMagentoProduct()->getVariationFilterAttributes(),
+            'filter_attributes' => $this->getMagentoProduct()->getVariationFilterAttributes(),
             'is_ignore_virtual_attributes' => $this->getMagentoProduct()->isIgnoreVariationVirtualAttributes(),
-            'is_ignore_filter_attributes'  => $this->getMagentoProduct()->isIgnoreVariationFilterAttributes(),
+            'is_ignore_filter_attributes' => $this->getMagentoProduct()->isIgnoreVariationFilterAttributes(),
         ];
 
         return $this->getMethodData(__FUNCTION__, $params);

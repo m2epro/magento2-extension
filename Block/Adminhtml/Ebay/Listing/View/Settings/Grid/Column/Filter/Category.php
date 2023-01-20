@@ -28,10 +28,11 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Ab
 
     protected function _renderOption($option, $value)
     {
-        $selected = (($option['value'] == $value && ($value !== null)) ? ' selected="selected"' : '' );
-        return '<option value="'. $this->escapeHtml($option['value']).'"'.$selected.'>'
-                    .$this->escapeHtml($option['label'])
-              .'</option>';
+        $selected = (($option['value'] == $value && ($value !== null)) ? ' selected="selected"' : '');
+
+        return '<option value="' . $this->escapeHtml($option['value']) . '"' . $selected . '>'
+            . $this->escapeHtml($option['label'])
+            . '</option>';
     }
 
     public function getHtml()
@@ -70,15 +71,15 @@ HTML;
         return [
             [
                 'label' => $this->__('Any'),
-                'value' => ''
+                'value' => '',
             ],
             [
                 'label' => $this->__('Yes'),
-                'value' => 1
+                'value' => 1,
             ],
             [
                 'label' => $this->__('No'),
-                'value' => 0
+                'value' => 0,
             ],
         ];
     }

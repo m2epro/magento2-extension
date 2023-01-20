@@ -31,7 +31,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
     public function removeDeletedProduct($product, $component = null)
     {
         $productId = $product instanceof \Magento\Catalog\Model\Product
-                        ? (int)$product->getId() : (int)$product;
+            ? (int)$product->getId() : (int)$product;
 
         $connection = $this->resourceConnection->getConnection();
         $existTables = $this->getHelper('Magento')->getMySqlTables();
@@ -44,7 +44,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($components as $component) {
             $itemTable = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix("m2epro_{$component}_item");
+                              ->getTableNameWithPrefix("m2epro_{$component}_item");
             if (!in_array($itemTable, $existTables)) {
                 continue;
             }

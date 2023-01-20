@@ -45,7 +45,7 @@ class GetForm extends Account
 
         $this->setJsonContent([
             'html' => $form,
-            'title' => $title
+            'title' => $title,
         ]);
 
         return $this->getResult();

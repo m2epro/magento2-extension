@@ -24,6 +24,7 @@ class Delete extends Description
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Item(s) to remove.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
@@ -41,7 +42,7 @@ class Delete extends Description
         $tempString = $this->__('%deleted% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
-        $tempString  = $this->__('%deleted% record(s) are used in Listing(s).', $locked) . ' ';
+        $tempString = $this->__('%deleted% record(s) are used in Listing(s).', $locked) . ' ';
         $tempString .= $this->__('Policy must not be in use to be deleted.');
         $locked && $this->messageManager->addError($tempString);
 

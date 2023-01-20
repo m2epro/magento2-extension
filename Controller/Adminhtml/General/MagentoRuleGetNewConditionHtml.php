@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -7,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-class MagentoRuleGetNewConditionHtml extends  \Ess\M2ePro\Controller\Adminhtml\General
+class MagentoRuleGetNewConditionHtml extends \Ess\M2ePro\Controller\Adminhtml\General
 {
     public function execute()
     {
@@ -26,12 +27,14 @@ class MagentoRuleGetNewConditionHtml extends  \Ess\M2ePro\Controller\Adminhtml\G
         }
 
         $model = $this->modelFactory->getObject($type)
-            ->setId($id)
-            ->setType($type)
-            ->setRule($this->activeRecordFactory->getObject($ruleModelPrefix.'Magento\Product\Rule'))
-            ->setPrefix($prefix);
+                                    ->setId($id)
+                                    ->setType($type)
+                                    ->setRule(
+                                        $this->activeRecordFactory->getObject($ruleModelPrefix . 'Magento\Product\Rule')
+                                    )
+                                    ->setPrefix($prefix);
 
-        if ($type == $ruleModelPrefix.'Magento\Product\Rule\Condition\Combine') {
+        if ($type == $ruleModelPrefix . 'Magento\Product\Rule\Condition\Combine') {
             $model->setData($prefix, []);
         }
 
@@ -47,6 +50,7 @@ class MagentoRuleGetNewConditionHtml extends  \Ess\M2ePro\Controller\Adminhtml\G
             $html = '';
         }
         $this->setAjaxContent($html);
+
         return $this->getResult();
     }
 }

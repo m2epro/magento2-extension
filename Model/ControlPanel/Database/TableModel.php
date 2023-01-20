@@ -9,24 +9,31 @@
 namespace Ess\M2ePro\Model\ControlPanel\Database;
 
 use Ess\M2ePro\Model\Exception;
-use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
 /**
  * Class \Ess\M2ePro\Model\ControlPanel\Database\TableModel
  */
 class TableModel extends \Magento\Framework\DataObject
 {
-    //########################################
-
+    /** @var mixed|null  */
     protected $tableName;
+    /** @var mixed */
     protected $modelName;
+    /** @var bool|mixed  */
     protected $isMergeModeEnabled = false;
+    /** @var mixed|null  */
     protected $mergeModeComponent;
 
+    /** @var \Ess\M2ePro\Model\Factory  */
     protected $modelFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
     protected $parentFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
 
     //########################################
@@ -48,7 +55,7 @@ class TableModel extends \Magento\Framework\DataObject
             $data
         );
 
-        $this->tableName          = isset($data['table_name']) ? $data['table_name'] : null;
+        $this->tableName = isset($data['table_name']) ? $data['table_name'] : null;
         $this->isMergeModeEnabled = isset($data['merge_mode']) ? $data['merge_mode'] : false;
         $this->mergeModeComponent = isset($data['merge_mode_component']) ? $data['merge_mode_component'] : null;
 
@@ -71,13 +78,14 @@ class TableModel extends \Magento\Framework\DataObject
         if (!$helper->isTableHorizontal($this->tableName)) {
             $this->isMergeModeEnabled = false;
             $this->mergeModeComponent = null;
+
             return;
         }
 
         if ($helper->isTableHorizontalChild($this->tableName)) {
             preg_match('/(Ebay|Amazon|Walmart)/i', $this->modelName, $matches);
             $this->mergeModeComponent = isset($matches[1]) ? strtolower($matches[1]) : null;
-            $this->modelName = str_replace($matches[1].'\\', '', $this->modelName);
+            $this->modelName = str_replace($matches[1] . '\\', '', $this->modelName);
         }
 
         if (!$this->mergeModeComponent && $this->isMergeModeEnabled) {
@@ -98,11 +106,11 @@ class TableModel extends \Magento\Framework\DataObject
 
         $resultColumns = $helper->getTableInfo($tableName);
         $isParent = $this->isMergeModeEnabled && $helper->isTableHorizontalParent($tableName);
-        $isChild  = $this->isMergeModeEnabled && $helper->isTableHorizontalChild($tableName);
+        $isChild = $this->isMergeModeEnabled && $helper->isTableHorizontalChild($tableName);
 
         array_walk($resultColumns, function (&$el) use ($isParent, $isChild) {
             $el['is_parent'] = $isParent;
-            $el['is_child']  = $isChild;
+            $el['is_child'] = $isChild;
         });
 
         if ($this->isMergeModeEnabled) {
@@ -110,13 +118,13 @@ class TableModel extends \Magento\Framework\DataObject
                                                         ->getResource()->getMainTable();
             $mergeTableName = str_replace($prefix, '', $mergeTableName);
 
-            $columns  = $helper->getTableInfo($mergeTableName);
+            $columns = $helper->getTableInfo($mergeTableName);
             $isParent = $helper->isTableHorizontalParent($mergeTableName);
-            $isChild  = $helper->isTableHorizontalChild($mergeTableName);
+            $isChild = $helper->isTableHorizontalChild($mergeTableName);
 
             array_walk($columns, function (&$el) use ($isParent, $isChild) {
                 $el['is_parent'] = $isParent;
-                $el['is_child']  = $isChild;
+                $el['is_child'] = $isChild;
             });
 
             $resultColumns = array_merge($resultColumns, $columns);
@@ -236,7 +244,8 @@ class TableModel extends \Magento\Framework\DataObject
         if (!$this->getIsMergeModeEnabled()) {
             return null;
         }
-        return ucfirst($this->mergeModeComponent).'\\'.$this->modelName;
+
+        return ucfirst($this->mergeModeComponent) . '\\' . $this->modelName;
     }
 
     public function getIsMergeModeEnabled()

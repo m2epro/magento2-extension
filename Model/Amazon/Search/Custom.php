@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Search;
 
+use Ess\M2ePro\Model\Amazon\Search\Custom as SearchCustom;
+
 class Custom
 {
     /** @var \Ess\M2ePro\Model\Amazon\Search\Custom\Query */
@@ -50,6 +52,7 @@ class Custom
                 : $this->processForOtherIdentifier();
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
+
             return $this->result->setStatus(Custom\Result::FAIL_STATUS);
         }
 
@@ -68,6 +71,7 @@ class Custom
     {
         $requesterClassName = 'Amazon\Search\Custom\ByAsin\Requester'; // @codingStandardsIgnoreLine
         $connectorParams = $this->getConnectorParams();
+
         return $this->sendRequest($requesterClassName, $connectorParams);
     }
 
@@ -80,6 +84,7 @@ class Custom
         $requesterClassName = 'Amazon\Search\Custom\ByIdentifier\Requester'; // @codingStandardsIgnoreLine
         $connectorParams = $this->getConnectorParams();
         $connectorParams['query_type'] = $this->query->getOtherIdentifierType();
+
         return $this->sendRequest($requesterClassName, $connectorParams);
     }
 
@@ -107,6 +112,7 @@ class Custom
      */
     private function sendRequest(string $requesterClassName, array $connectorParams): ?array
     {
+        /** @var SearchCustom\ByAsin\Requester|SearchCustom\ByIdentifier\Requester $connector */
         $connector = $this->connectorDispatcher->getCustomConnector(
             $requesterClassName,
             $connectorParams,
@@ -114,6 +120,7 @@ class Custom
         );
 
         $this->connectorDispatcher->process($connector);
+
         return $connector->getPreparedResponseData();
     }
 

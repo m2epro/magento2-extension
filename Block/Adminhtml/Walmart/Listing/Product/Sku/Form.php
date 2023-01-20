@@ -18,11 +18,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id'    => 'edit_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $fieldset = $form->addFieldset(
@@ -35,7 +37,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'You may edit SKU of the already listed Item. Enter a new SKU value and click Submit. M2E Pro will
                     automatically submit the new Item SKU to Walmart.<br><br>
                     <strong>Note:</strong> a new SKU value must be unique.'
-                )
+                ),
             ]
         );
 

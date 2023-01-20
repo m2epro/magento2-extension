@@ -29,9 +29,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\HealthStatus
             '',
             [
                 'resultSet' => $resultSet,
-                'data'      => [
-                    'active_tab' => $activeTab
-                ]
+                'data' => [
+                    'active_tab' => $activeTab,
+                ],
             ]
         );
 

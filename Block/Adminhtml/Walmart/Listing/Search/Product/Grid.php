@@ -70,38 +70,38 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
 
         $collection->joinTable(
             [
-                'lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable()
+                'lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
             ],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'status'          => 'status',
-                'component_mode'  => 'component_mode',
-                'listing_id'      => 'listing_id',
+                'id' => 'id',
+                'status' => 'status',
+                'component_mode' => 'component_mode',
+                'listing_id' => 'listing_id',
                 'additional_data' => 'additional_data',
             ]
         );
         $collection->joinTable(
             [
-                'wlp' => $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable()
+                'wlp' => $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable(),
             ],
             'listing_product_id=id',
             [
-                'listing_product_id'           => 'listing_product_id',
-                'listing_other_id'             => new \Zend_Db_Expr('NULL'),
-                'variation_parent_id'          => 'variation_parent_id',
-                'is_variation_parent'          => 'is_variation_parent',
-                'variation_child_statuses'     => 'variation_child_statuses',
-                'online_sku'                   => 'sku',
-                'gtin'                         => 'gtin',
-                'upc'                          => 'upc',
-                'ean'                          => 'ean',
-                'isbn'                         => 'isbn',
-                'wpid'                         => 'wpid',
-                'item_id'                      => 'item_id',
-                'online_qty'                   => 'online_qty',
-                'online_price'                 => 'online_price',
-                'is_online_price_invalid'      => 'is_online_price_invalid',
+                'listing_product_id' => 'listing_product_id',
+                'listing_other_id' => new \Zend_Db_Expr('NULL'),
+                'variation_parent_id' => 'variation_parent_id',
+                'is_variation_parent' => 'is_variation_parent',
+                'variation_child_statuses' => 'variation_child_statuses',
+                'online_sku' => 'sku',
+                'gtin' => 'gtin',
+                'upc' => 'upc',
+                'ean' => 'ean',
+                'isbn' => 'isbn',
+                'wpid' => 'wpid',
+                'item_id' => 'item_id',
+                'online_qty' => 'online_qty',
+                'online_price' => 'online_price',
+                'is_online_price_invalid' => 'is_online_price_invalid',
             ],
             'variation_parent_id IS NULL'
         );
@@ -109,10 +109,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
             ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             'id=listing_id',
             [
-                'store_id'       => 'store_id',
-                'account_id'     => 'account_id',
+                'store_id' => 'store_id',
+                'account_id' => 'account_id',
                 'marketplace_id' => 'marketplace_id',
-                'listing_title'  => 'title',
+                'listing_title' => 'title',
             ]
         );
 
@@ -136,8 +136,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
     {
         $collection = $this->walmartFactory->getObject('Listing_Product')->getCollection();
         $collection->getSelect()->join(
-            ['lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-                ->getResource()->getMainTable()],
+            [
+                'lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+                                                   ->getResource()->getMainTable(),
+            ],
             'lps.listing_product_id=main_table.id',
             []
         );
@@ -150,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         $collection->getSelect()->columns(
             [
                 'variation_parent_id' => 'second_table.variation_parent_id',
-                'count'               => new \Zend_Db_Expr('COUNT(lps.id)')
+                'count' => new \Zend_Db_Expr('COUNT(lps.id)'),
             ]
         );
         $collection->getSelect()->group('variation_parent_id');
@@ -169,7 +171,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         $title = $row->getData('name');
         $title = $this->dataHelper->escapeHtml($title);
 
-        $listingWord  = $this->__('Listing');
+        $listingWord = $this->__('Listing');
         $listingTitle = $this->dataHelper->escapeHtml($row->getData('listing_title'));
         $listingTitle = $this->filterManager->truncate($listingTitle, ['length' => 50]);
 
@@ -189,10 +191,10 @@ HTML;
 
         $value .= '<br/><strong>' . $this->__('Account') . ':</strong>'
             . '&nbsp;' . $account->getTitle() . '<br/>'
-            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '<strong>' . $this->__('Marketplace') . ':</strong>'
             . '&nbsp;' . $marketplace->getTitle();
 
-        $sku     = $this->dataHelper->escapeHtml($row->getData('sku'));
+        $sku = $this->dataHelper->escapeHtml($row->getData('sku'));
         $skuWord = $this->__('SKU');
 
         $value .= <<<HTML
@@ -239,7 +241,8 @@ HTML;
 HTML;
         }
 
-        if ($variationManager->isIndividualType() &&
+        if (
+            $variationManager->isIndividualType() &&
             $variationManager->getTypeModel()->isVariationProductMatched()
         ) {
             $optionsStr = '';
@@ -282,45 +285,46 @@ HTML;
 
         if (!$variationManager->isVariationParent()) {
             $statusChangeReasons = $listingProduct->getChildObject()->getStatusChangeReasons();
+
             return $value . $this->getStatusChangeReasons($statusChangeReasons)
-                          . $this->getScheduledTag($row)
-                          . $this->getLockedTag($row);
+                . $this->getScheduledTag($row)
+                . $this->getLockedTag($row);
         }
 
         $html = '';
 
         $sNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
-        $sListed    = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-        $sStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-        $sBlocked   = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
+        $sListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
+        $sStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+        $sBlocked = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
         $variationsStatuses = $row->getData('variation_child_statuses');
 
         if (empty($variationsStatuses)) {
             return $this->getProductStatus($row->getData('status'))
-                   . $this->getScheduledTag($row)
-                   . $this->getLockedTag($row);
+                . $this->getScheduledTag($row)
+                . $this->getLockedTag($row);
         }
 
-        $sortedStatuses     = [];
+        $sortedStatuses = [];
         $variationsStatuses = $this->dataHelper->jsonDecode($variationsStatuses);
 
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
-        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed]    = $variationsStatuses[$sListed];
-        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped]   = $variationsStatuses[$sStopped];
-        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked]   = $variationsStatuses[$sBlocked];
+        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed] = $variationsStatuses[$sListed];
+        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped] = $variationsStatuses[$sStopped];
+        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked] = $variationsStatuses[$sBlocked];
 
         foreach ($sortedStatuses as $status => $productsCount) {
             if (empty($productsCount)) {
                 continue;
             }
 
-            $productsCount = '['.$productsCount.']';
-            $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
+            $productsCount = '[' . $productsCount . ']';
+            $html .= $this->getProductStatus($status) . '&nbsp;' . $productsCount . '<br/>';
         }
 
         return $html . $this->getScheduledTag($row)
-                     . $this->getLockedTag($row);
+            . $this->getLockedTag($row);
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
@@ -328,8 +332,8 @@ HTML;
         $productId = (int)$row->getData('entity_id');
 
         $urlData = [
-            'id'     => $row->getData('listing_id'),
-            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}")
+            'id' => $row->getData('listing_id'),
+            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}"),
         ];
 
         $searchedChildHtml = '';
@@ -339,10 +343,12 @@ HTML;
             $searchedChildHtml = <<<HTML
 <br/>
 <div class="fix-magento-tooltip searched_child_product" style="margin-top: 4px; padding-left: 10px;">
-    {$this->getTooltipHtml($this->__(
-                'A Product you are searching for is found as part of a Multi-Variational Product.' .
-                ' Click on the arrow icon to manage it individually.'
-            ))}
+    {$this->getTooltipHtml(
+                $this->__(
+                    'A Product you are searching for is found as part of a Multi-Variational Product.' .
+                    ' Click on the arrow icon to manage it individually.'
+                )
+            )}
 </div>
 HTML;
         }
@@ -495,7 +501,7 @@ HTML;
          * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
          */
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
+                                                                ->getCollection();
         $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
 
         /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
@@ -517,8 +523,10 @@ HTML;
                 $reviseParts = [];
 
                 $additionalData = $scheduledAction->getAdditionalData();
-                if (!empty($additionalData['configurator']) &&
-                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                if (
+                    !empty($additionalData['configurator']) &&
+                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])
+                ) {
                     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
                     $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
                     $configurator->setUnserializedData($additionalData['configurator']);
@@ -554,7 +562,7 @@ HTML;
 
                 if (!empty($reviseParts)) {
                     $reviseParts = implode(', ', $reviseParts);
-                    $html .= '<br/><span style="color: #605fff">[Revise of '.$reviseParts.' is Scheduled...]</span>';
+                    $html .= '<br/><span style="color: #605fff">[Revise of ' . $reviseParts . ' is Scheduled...]</span>';
                 } else {
                     $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
                 }
@@ -594,13 +602,13 @@ HTML;
             'product_id_subQuery.variation_parent_id=lp.id',
             [
                 'product_id_child_listing_product_ids' => 'child_listing_product_ids',
-                'product_id_searched_by_child'         => 'searched_by_child'
+                'product_id_searched_by_child' => 'searched_by_child',
             ]
         );
 
         $collection->addFieldToFilter([
             ['attribute' => 'entity_id', $cond],
-            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
         ]);
     }
 
@@ -615,19 +623,21 @@ HTML;
 
         $childCollection = $this->getMagentoChildProductsCollection();
         $childCollection->getSelect()->joinLeft(
-            ['cpe' => $this->databaseHelper
-                ->getTableNameWithPrefix('catalog_product_entity')],
+            [
+                'cpe' => $this->databaseHelper
+                    ->getTableNameWithPrefix('catalog_product_entity'),
+            ],
             'cpe.entity_id=main_table.product_id',
             []
         );
-        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%'.$value.'%']);
+        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%' . $value . '%']);
 
         $collection->getSelect()->joinLeft(
             ['product_sku_subQuery' => $childCollection->getSelect()],
             'product_sku_subQuery.variation_parent_id=lp.id',
             [
                 'product_sku_child_listing_product_ids' => 'child_listing_product_ids',
-                'product_sku_searched_by_child'         => 'searched_by_child'
+                'product_sku_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -657,13 +667,13 @@ HTML;
             'online_sku_subQuery.variation_parent_id=lp.id',
             [
                 'online_sku_child_listing_product_ids' => 'child_listing_product_ids',
-                'online_sku_searched_by_child'         => 'searched_by_child'
+                'online_sku_searched_by_child' => 'searched_by_child',
             ]
         );
 
         $collection->addFieldToFilter([
             ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
-            ['attribute' => 'online_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+            ['attribute' => 'online_sku_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
         ]);
     }
 
@@ -692,7 +702,7 @@ SQL;
             'gtin_subQuery.variation_parent_id=lp.id',
             [
                 'gtin_child_listing_product_ids' => 'child_listing_product_ids',
-                'gtin_searched_by_child'         => 'searched_by_child'
+                'gtin_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -704,7 +714,7 @@ SQL;
                 ['attribute' => 'isbn', 'like' => '%' . $value . '%'],
                 ['attribute' => 'wpid', 'like' => '%' . $value . '%'],
                 ['attribute' => 'item_id', 'like' => '%' . $value . '%'],
-                ['attribute' => 'gtin_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+                ['attribute' => 'gtin_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
             ]
         );
     }
@@ -781,12 +791,17 @@ SQL;
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection()
-            ->addFieldToSelect('listing_product_variation_id')
-            ->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Walmart::NICK);
+                                                ->addFieldToSelect('listing_product_variation_id')
+                                                ->addFieldToFilter(
+                                                    'main_table.component_mode',
+                                                    \Ess\M2ePro\Helper\Component\Walmart::NICK
+                                                );
 
         $collection->getSelect()->joinLeft(
-            ['lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
-                ->getResource()->getMainTable()],
+            [
+                'lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
+                                                   ->getResource()->getMainTable(),
+            ],
             'lpv.id=main_table.listing_product_variation_id',
             ['listing_product_id']
         );
@@ -801,8 +816,8 @@ SQL;
         $collection->getSelect()->columns(
             [
                 'child_listing_product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(DISTINCT alp.listing_product_id)'),
-                'variation_parent_id'       => 'alp.variation_parent_id',
-                'searched_by_child'         => new \Zend_Db_Expr('1')
+                'variation_parent_id' => 'alp.variation_parent_id',
+                'searched_by_child' => new \Zend_Db_Expr('1'),
             ]
         );
 
@@ -815,15 +830,15 @@ SQL;
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getCollection()
-            ->addFieldToFilter('variation_parent_id', ['notnull' => true])
-            ->addFieldToFilter('is_variation_product', 1);
+                                                ->addFieldToFilter('variation_parent_id', ['notnull' => true])
+                                                ->addFieldToFilter('is_variation_product', 1);
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'child_listing_product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(listing_product_id)'),
-                'variation_parent_id'       => 'variation_parent_id',
-                'searched_by_child'         => new \Zend_Db_Expr('1')
+                'variation_parent_id' => 'variation_parent_id',
+                'searched_by_child' => new \Zend_Db_Expr('1'),
             ]
         );
         $collection->getSelect()->group('variation_parent_id');

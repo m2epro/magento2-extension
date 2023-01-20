@@ -38,12 +38,12 @@ class Delete extends Account
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Account(s) to remove.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
         $deleted = $locked = 0;
         foreach ($ids as $id) {
-
             /** @var \Ess\M2ePro\Model\Account $account */
             $account = $this->ebayFactory->getObjectLoaded('Account', $id);
 
@@ -64,7 +64,7 @@ class Delete extends Account
         $tempString = $this->__('%amount% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
-        $tempString  = $this->__('%amount% record(s) are used in M2E Pro Listing(s).', $locked) . ' ';
+        $tempString = $this->__('%amount% record(s) are used in M2E Pro Listing(s).', $locked) . ' ';
         $tempString .= $this->__('Account must not be in use to be deleted.');
         $locked && $this->messageManager->addError($tempString);
 

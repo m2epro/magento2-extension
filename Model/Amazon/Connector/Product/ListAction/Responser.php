@@ -77,7 +77,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $this->listingProduct->getChildObject();
 
-        if ($amazonListingProduct->getVariationManager()->isRelationMode() &&
+        if (
+            $amazonListingProduct->getVariationManager()->isRelationMode() &&
             !$this->getRequestDataObject()->hasProductId() &&
             empty($params['general_id'])
         ) {
@@ -90,6 +91,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             );
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+
             return;
         }
 

@@ -36,17 +36,17 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
             $headId = 'amazon-template-description';
             // ---------------------------------------
             $this->buttonList->add('duplicate', [
-                'label'   => $this->__('Duplicate'),
+                'label' => $this->__('Duplicate'),
                 'onclick' => "AmazonTemplateDescriptionObj.duplicateClick('{$headId}')",
-                'class'   => 'add M2ePro_duplicate_button primary'
+                'class' => 'add M2ePro_duplicate_button primary',
             ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $this->buttonList->add('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'CommonObj.deleteClick()',
-                'class'     => 'delete M2ePro_delete_button primary'
+                'label' => $this->__('Delete'),
+                'onclick' => 'CommonObj.deleteClick()',
+                'class' => 'delete M2ePro_delete_button primary',
             ]);
             // ---------------------------------------
         }
@@ -72,8 +72,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                             . '\'amazonTemplateDescriptionEditTabs\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
-                            . ')'
-                    ]
+                            . ')',
+                    ],
                 ],
             ];
             $this->removeButton('back');
@@ -82,7 +82,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
-                'onclick'   => 'AmazonTemplateDescriptionObj.saveAndEditClick('
+                'onclick' => 'AmazonTemplateDescriptionObj.saveAndEditClick('
                     . '\'\','
                     . '\'amazonTemplateDescriptionEditTabs\','
                     . '\'' . $this->getSaveConfirmationText() . '\','
@@ -91,13 +91,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   =>'AmazonTemplateDescriptionObj.saveClick('
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'AmazonTemplateDescriptionObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                             . ')',
-                    ]
+                    ],
                 ],
             ];
         }
@@ -112,6 +112,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
     private function isEditMode()
     {
         $templateModel = $this->globalDataHelper->getValue('tmp_template');
+
         return $templateModel && $templateModel->getId();
     }
 }

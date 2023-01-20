@@ -66,8 +66,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
             [
                 'data' => [
                     'enctype' => 'multipart/form-data',
-                    'method' => 'post'
-                ]
+                    'method' => 'post',
+                ],
             ]
         );
 
@@ -83,11 +83,11 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
             'instructions_mode',
             self::SELECT,
             [
-                'name'        => 'instructions_mode',
-                'label'       => $this->__('Enabled'),
+                'name' => 'instructions_mode',
+                'label' => $this->__('Enabled'),
                 'values' => [
                     0 => $this->__('No'),
-                    1 => $this->__('Yes')
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $instructionsMode,
                 'tooltip' => $this->__(
@@ -96,7 +96,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
                     Synchronization Policy Rules.</p><br>
                     <p>However, it does not exclude the ability to manually manage Items in Listings using the
                     available List, Revise, Relist or Stop Action options.</p>'
-                )
+                ),
             ]
         );
 
@@ -127,8 +127,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
         $this->jsUrl->addUrls([
             Tabs::TAB_ID_SYNCHRONIZATION => $this->getUrl('*/amazon_synchronization/save'),
             'synch_formSubmit' => $this->getUrl('*/amazon_synchronization/save'),
-            'logViewUrl' => $this->getUrl('*/amazon_synchronization_log/index', ['back'=>$this->dataHelper
-                ->makeBackUrlParam('*/amazon_synchronization/index')]),
+            'logViewUrl' => $this->getUrl('*/amazon_synchronization_log/index', [
+                'back' => $this->dataHelper
+                    ->makeBackUrlParam('*/amazon_synchronization/index'),
+            ]),
         ]);
 
         return parent::_toHtml();

@@ -53,7 +53,7 @@ class ListingOther extends AbstractForm
             [
                 'text',
                 'textarea',
-                'select'
+                'select',
             ]
         );
 
@@ -72,11 +72,11 @@ class ListingOther extends AbstractForm
         }
 
         $marketplaces = $this->ebayFactory->getObject('Marketplace')
-            ->getCollection()
-            ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-            ->setOrder('sorder', 'ASC')
-            ->setOrder('title', 'ASC')
-            ->toArray();
+                                          ->getCollection()
+                                          ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
+                                          ->setOrder('sorder', 'ASC')
+                                          ->setOrder('title', 'ASC')
+                                          ->toArray();
         $marketplaces = $marketplaces['items'];
 
         foreach ($marketplaces as &$marketplace) {
@@ -110,15 +110,15 @@ automatically link them to Magento Product, etc.</p><br>
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/FP8UB')
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend'      => $this->__('General'),
-                'collapsable' => false
+                'legend' => $this->__('General'),
+                'collapsable' => false,
             ]
         );
 
@@ -126,17 +126,17 @@ HTML
             'other_listings_synchronization',
             'select',
             [
-                'name'    => 'other_listings_synchronization',
-                'label'   => $this->__('Import Unmanaged Listings'),
-                'values'  => [
+                'name' => 'other_listings_synchronization',
+                'label' => $this->__('Import Unmanaged Listings'),
+                'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
-                'value'   => $formData['other_listings_synchronization'],
+                'value' => $formData['other_listings_synchronization'],
                 'tooltip' => $this->__(
                     'Choose whether to import items that have been listed on eBay either directly or using a tool
                     other than M2E Pro. M2E Pro will import only active eBay items.'
-                )
+                ),
             ]
         );
 
@@ -145,32 +145,32 @@ HTML
             'select',
             [
                 'container_id' => 'other_listings_mapping_mode_tr',
-                'name'         => 'other_listings_mapping_mode',
-                'label'        => $this->__('Product Linking'),
-                'class'        => 'M2ePro-require-select-attribute',
-                'values'       => [
+                'name' => 'other_listings_mapping_mode',
+                'label' => $this->__('Product Linking'),
+                'class' => 'M2ePro-require-select-attribute',
+                'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
-                'value'        => $formData['other_listings_mapping_mode'],
-                'tooltip'      => $this->__(
+                'value' => $formData['other_listings_mapping_mode'],
+                'tooltip' => $this->__(
                     'Choose whether imported eBay Listings should automatically link to a
                     Product in your Magento Inventory.'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_other_listings_product_mapping',
             [
-                'legend'      => $this->__('Magento Product Linking Settings'),
+                'legend' => $this->__('Magento Product Linking Settings'),
                 'collapsable' => true,
-                'tooltip'     => $this->__(
+                'tooltip' => $this->__(
                     '<p>In this section you can provide settings for automatic Linking of the newly
                     imported Unmanaged Listings to the appropriate Magento Products.</p><br>
                     <p>The imported Items are linked based on the correspondence between eBay Item
                     values and Magento Product Attribute values. </p>'
-                )
+                ),
             ]
         );
 
@@ -179,7 +179,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['sku']['mode'])
+            if (
+                isset($mappingSettings['sku']['mode'])
                 && $mappingSettings['sku']['mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['sku']['attribute'] == $attribute['code']
             ) {
@@ -198,23 +199,23 @@ HTML
             'mapping_sku_mode',
             self::SELECT,
             [
-                'name'                     => 'mapping_sku_mode',
-                'label'                    => $this->__('Custom Label (SKU)'),
-                'class'                    => 'attribute-mode-select',
-                'style'                    => 'float:left; margin-right: 15px;',
-                'values'                   => [
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE       => $this->__('None'),
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT    => $this->__('Product SKU'),
+                'name' => 'mapping_sku_mode',
+                'label' => $this->__('Custom Label (SKU)'),
+                'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
+                'values' => [
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => isset($mappingSettings['sku']['mode'])
+                'value' => isset($mappingSettings['sku']['mode'])
                 && $mappingSettings['sku']['mode'] != Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['sku']['mode'] : '',
                 'create_magento_attribute' => true,
@@ -235,7 +236,7 @@ HTML
             'mapping_sku_attribute',
             'hidden',
             [
-                'name'  => 'mapping_sku_attribute',
+                'name' => 'mapping_sku_attribute',
                 'value' => isset($mappingSettings['sku']['attribute']) ? $mappingSettings['sku']['attribute'] : '',
             ]
         );
@@ -243,7 +244,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['title']['mode'])
+            if (
+                isset($mappingSettings['title']['mode'])
                 && $mappingSettings['title']['mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['title']['attribute'] == $attribute['code']
             ) {
@@ -252,7 +254,7 @@ HTML
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $attribute['label']
+                'label' => $attribute['label'],
             ];
         }
 
@@ -264,22 +266,22 @@ HTML
             'mapping_title_mode',
             self::SELECT,
             [
-                'name'                     => 'mapping_title_mode',
-                'label'                    => $this->__('Listing Title'),
-                'class'                    => 'attribute-mode-select',
-                'style'                    => 'float:left; margin-right: 15px;',
-                'values'                   => [
-                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE    => $this->__('None'),
+                'name' => 'mapping_title_mode',
+                'label' => $this->__('Listing Title'),
+                'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
+                'values' => [
+                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => isset($mappingSettings['title']['mode'])
+                'value' => isset($mappingSettings['title']['mode'])
                 && $mappingSettings['title']['mode'] != Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['title']['mode'] : '',
                 'create_magento_attribute' => true,
@@ -300,7 +302,7 @@ HTML
             'mapping_title_attribute',
             'hidden',
             [
-                'name'  => 'mapping_title_attribute',
+                'name' => 'mapping_title_attribute',
                 'value' => isset($mappingSettings['title']['attribute']) ? $mappingSettings['title']['attribute'] : '',
             ]
         );
@@ -310,7 +312,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if (isset($mappingSettings['item_id']['mode'])
+            if (
+                isset($mappingSettings['item_id']['mode'])
                 && $mappingSettings['item_id']['mode'] == Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE
                 && $mappingSettings['item_id']['attribute'] == $attribute['code']
             ) {
@@ -319,7 +322,7 @@ HTML
             $preparedAttributes[] = [
                 'attrs' => $attrs,
                 'value' => Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $attribute['label']
+                'label' => $attribute['label'],
             ];
         }
 
@@ -329,21 +332,21 @@ HTML
             'mapping_item_id_mode',
             self::SELECT,
             [
-                'name'                     => 'mapping_item_id_mode',
-                'label'                    => $this->__('eBay Item ID'),
-                'class'                    => 'attribute-mode-select',
-                'style'                    => 'float:left; margin-right: 15px;',
-                'values'                   => [
+                'name' => 'mapping_item_id_mode',
+                'label' => $this->__('eBay Item ID'),
+                'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
+                'values' => [
                     Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE => $this->__('None'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => isset($mappingSettings['item_id']['mode'])
+                'value' => isset($mappingSettings['item_id']['mode'])
                 && $mappingSettings['item_id']['mode'] != Account::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['item_id']['mode'] : '',
                 'create_magento_attribute' => true,
@@ -364,7 +367,7 @@ HTML
             'mapping_item_id_attribute',
             'hidden',
             [
-                'name'  => 'mapping_item_id_attribute',
+                'name' => 'mapping_item_id_attribute',
                 'value' => isset($mappingSettings['item_id']['attribute'])
                     ? $mappingSettings['item_id']['attribute'] : '',
             ]
@@ -374,12 +377,12 @@ HTML
             $fieldset = $form->addFieldset(
                 'magento_block_ebay_accounts_other_listings_related_store_views',
                 [
-                    'legend'      => $this->__('Related Store Views'),
+                    'legend' => $this->__('Related Store Views'),
                     'collapsable' => true,
-                    'tooltip'     => $this->__(
+                    'tooltip' => $this->__(
                         'Establish Connection between Marketplaces and Magento Store
                         Views for correct data Synchronization.'
-                    )
+                    ),
                 ]
             );
 
@@ -389,7 +392,7 @@ HTML
                     self::STORE_SWITCHER,
                     [
                         'label' => $this->__($marketplace['title']),
-                        'value' => $marketplace['related_store_id']
+                        'value' => $marketplace['related_store_id'],
                     ]
                 );
             }

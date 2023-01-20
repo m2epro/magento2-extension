@@ -18,9 +18,10 @@ class MarketplacesSynchronization extends MigrationToInnodb
             $this->getLayout()->createBlock(
                 \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationToInnodb\Installation\MarketplacesSynchronization::class
             )->setData([
-                'nick' => $this->getNick()
+                'nick' => $this->getNick(),
             ])
         );
+
         return $this->getResult();
     }
 }

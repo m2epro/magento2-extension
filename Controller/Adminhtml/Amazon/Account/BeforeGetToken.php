@@ -46,6 +46,7 @@ class BeforeGetToken extends Account
         try {
             $backUrl = $this->getUrl('*/*/afterGetToken', ['_current' => true]);
 
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',
@@ -62,7 +63,7 @@ class BeforeGetToken extends Account
             $error = $this->__($error, $exception->getMessage());
 
             $this->setJsonContent([
-                'message' => $error
+                'message' => $error,
             ]);
 
             return $this->getResult();

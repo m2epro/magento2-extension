@@ -99,7 +99,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_general_id_mode'])) {
             $mappingSettings['general_id']['mode'] = (int)$tempData['mapping_general_id_mode'];
 
-            if ($tempData['mapping_general_id_mode'] == Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE) {
+            if (
+                $tempData['mapping_general_id_mode'] == Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
+            ) {
                 $mappingSettings['general_id']['priority'] = (int)$tempData['mapping_general_id_priority'];
                 $mappingSettings['general_id']['attribute'] = (string)$tempData['mapping_general_id_attribute'];
             }
@@ -399,90 +401,90 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         return [
             // general
-            'title'            => '',
-            'marketplace_id'   => 0,
-            'merchant_id'      => '',
+            'title' => '',
+            'marketplace_id' => 0,
+            'merchant_id' => '',
 
             // listing_other
             'related_store_id' => 0,
 
-            'other_listings_synchronization'  => 1, // yes
-            'other_listings_mapping_mode'     => 0, // no
+            'other_listings_synchronization' => 1, // yes
+            'other_listings_mapping_mode' => 0, // no
             'other_listings_mapping_settings' => [],
 
             // order
-            'magento_orders_settings'         => [
-                'listing'                 => [
-                    'mode'       => 1,
+            'magento_orders_settings' => [
+                'listing' => [
+                    'mode' => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id'   => null,
+                    'store_id' => null,
                 ],
-                'listing_other'           => [
-                    'mode'                 => 1,
-                    'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
+                'listing_other' => [
+                    'mode' => 1,
+                    'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id'             => $this->magentoStoreHelper->getDefaultStoreId(),
+                    'store_id' => $this->magentoStoreHelper->getDefaultStoreId(),
                 ],
-                'number'                  => [
-                    'source'          => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
-                    'prefix'          => [
-                        'mode'         => 0,
-                        'prefix'       => '',
-                        'afn-prefix'   => '',
+                'number' => [
+                    'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
+                    'prefix' => [
+                        'mode' => 0,
+                        'prefix' => '',
+                        'afn-prefix' => '',
                         'prime-prefix' => '',
-                        'b2b-prefix'   => '',
+                        'b2b-prefix' => '',
                     ],
                     'apply_to_amazon' => 0,
                 ],
-                'tax'                     => [
-                    'mode'                           => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
-                    'amazon_collects'                => 1,
-                    'excluded_states'                => $this->getGeneralExcludedStates(),
-                    'excluded_countries'             => [],
-                    'amazon_collect_for_uk'          => Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE,
-                    'amazon_collect_for_eea'         => 0,
+                'tax' => [
+                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
+                    'amazon_collects' => 1,
+                    'excluded_states' => $this->getGeneralExcludedStates(),
+                    'excluded_countries' => [],
+                    'amazon_collect_for_uk' => Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE,
+                    'amazon_collect_for_eea' => 0,
                     'import_tax_id_in_magento_order' => 0,
                 ],
-                'customer'                => [
-                    'mode'                 => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id'                   => null,
-                    'website_id'           => null,
-                    'group_id'             => null,
-                    'notifications'        => [
+                'customer' => [
+                    'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
+                    'id' => null,
+                    'website_id' => null,
+                    'group_id' => null,
+                    'notifications' => [
                         'invoice_created' => false,
-                        'order_created'   => false,
+                        'order_created' => false,
                     ],
                     'billing_address_mode' =>
                         Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT,
                 ],
-                'status_mapping'          => [
-                    'mode'       => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
+                'status_mapping' => [
+                    'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
                     'processing' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
-                    'shipped'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
+                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
                 ],
-                'qty_reservation'         => [
+                'qty_reservation' => [
                     'days' => 1,
                 ],
                 'refund_and_cancellation' => [
                     'refund_mode' => 1,
                 ],
-                'fba'                     => [
-                    'mode'       => 1,
+                'fba' => [
+                    'mode' => 1,
                     'store_mode' => 0,
-                    'store_id'   => null,
+                    'store_id' => null,
                     'stock_mode' => 0,
                 ],
-                'shipping_information'    => [
-                    'ship_by_date'         => 1,
+                'shipping_information' => [
+                    'ship_by_date' => 1,
                     'update_without_track' => 1,
                 ],
             ],
 
             // vcs_upload_invoices
-            'auto_invoicing'                  => 0,
-            'invoice_generation'              => 0,
-            'create_magento_invoice'          => 1,
-            'create_magento_shipment'         => 1,
+            'auto_invoicing' => 0,
+            'invoice_generation' => 0,
+            'create_magento_invoice' => 1,
+            'create_magento_shipment' => 1,
         ];
     }
 

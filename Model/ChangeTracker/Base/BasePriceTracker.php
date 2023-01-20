@@ -77,9 +77,9 @@ abstract class BasePriceTracker implements TrackerInterface
             ->from('base', $query);
 
         $mainQuery->andWhere('calculated_price IS NOT NULL')
-            ->andWhere('calculated_price != online_price')
-            ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
-            ->andWhere('base.revise_update_price = 1');
+                  ->andWhere('calculated_price != online_price')
+                  ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
+                  ->andWhere('base.revise_update_price = 1');
 
         $message = sprintf(
             'Data query %s %s',
@@ -87,7 +87,7 @@ abstract class BasePriceTracker implements TrackerInterface
             $this->getChannel()
         );
         $this->logger->debug($message, [
-            'query' => (string) $mainQuery->getQuery(),
+            'query' => (string)$mainQuery->getQuery(),
             'type' => $this->getType(),
             'channel' => $this->getChannel(),
         ]);
@@ -112,8 +112,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->addSelect('status', 'lp.status')
             ->addSelect('store_id', 'l.store_id')
             ->addSelect('sync_template_id', 'c_l.template_synchronization_id')
-            ->addSelect('selling_template_id', 'c_l.template_selling_format_id')
-        ;
+            ->addSelect('selling_template_id', 'c_l.template_selling_format_id');
 
         $query->addSelect('online_price', $this->getOnlinePriceCondition());
 
@@ -165,8 +164,7 @@ abstract class BasePriceTracker implements TrackerInterface
                 'lpvo',
                 'm2epro_listing_product_variation_option',
                 'lpvo.listing_product_variation_id = lpv.id'
-            )
-        ;
+            );
 
         /* Не включаємо у вибірку grouped and bundle товари */
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
@@ -201,8 +199,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->from(
                 'ts',
                 $this->setChannelToTableName('m2epro_%s_template_synchronization')
-            )
-            ;
+            );
     }
 
     /**
@@ -217,13 +214,12 @@ abstract class BasePriceTracker implements TrackerInterface
         $query->addSelect('calculated_price', $this->priceConditionBuilder->getCondition());
 
         $query->addSelect('product_id', 'product.product_id')
-            ->addSelect('status', 'product.status')
-            ->addSelect('store_id', 'product.store_id')
-            ->addSelect('sync_template_id', 'product.sync_template_id')
-            ->addSelect('selling_template_id', 'product.selling_template_id')
-            ->addSelect('online_price', 'product.online_price')
-            ->addSelect('revise_update_price', 'sync_policy.revise_update_price')
-        ;
+              ->addSelect('status', 'product.status')
+              ->addSelect('store_id', 'product.store_id')
+              ->addSelect('sync_template_id', 'product.sync_template_id')
+              ->addSelect('selling_template_id', 'product.selling_template_id')
+              ->addSelect('online_price', 'product.online_price')
+              ->addSelect('revise_update_price', 'sync_policy.revise_update_price');
 
         /* Tables */
         $query
@@ -232,14 +228,12 @@ abstract class BasePriceTracker implements TrackerInterface
                 'sync_policy',
                 $this->synchronizationPolicySubQuery(),
                 'sync_policy.template_synchronization_id = product.sync_template_id'
-            )
-        ;
+            );
 
         /* Groups */
         $query
             ->addGroup('product.listing_product_id')
-            ->addGroup('product.product_id')
-        ;
+            ->addGroup('product.product_id');
 
         return $query;
     }
@@ -278,6 +272,7 @@ abstract class BasePriceTracker implements TrackerInterface
                     'product.store_id',
                     'product.product_id'
                 );
+
             return "($attributeQuery)";
         }
 

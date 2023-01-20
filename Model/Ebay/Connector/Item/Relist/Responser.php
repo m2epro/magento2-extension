@@ -58,7 +58,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         );
 
         $onlineQty = $this->listingProduct->getChildObject()->getOnlineQty() -
-                     $this->listingProduct->getChildObject()->getOnlineQtySold();
+            $this->listingProduct->getChildObject()->getOnlineQtySold();
 
         if ($this->getRequestDataObject()->isVariationItem()) {
             $calculateWithEmptyQty = $this->listingProduct->getChildObject()->isOutOfStockControlEnabled();
@@ -93,6 +93,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             );
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
+
             return;
         }
 
@@ -108,8 +109,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     {
         $responseMessages = $this->getResponse()->getMessages()->getEntities();
 
-        if (!$this->listingProduct->getAccount()->getChildObject()->isModeSandbox() &&
-            $this->isEbayApplicationErrorAppeared($responseMessages)) {
+        if (
+            !$this->listingProduct->getAccount()->getChildObject()->isModeSandbox() &&
+            $this->isEbayApplicationErrorAppeared($responseMessages)
+        ) {
             $this->markAsPotentialDuplicate();
 
             /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
@@ -143,8 +146,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
                 ->save();
         }
 
-        if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
-            $this->isItemCanNotBeAccessed($responseMessages)) {
+        if (
+            $this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
+            $this->isItemCanNotBeAccessed($responseMessages)
+        ) {
             $itemId = null;
             if (isset($this->params['product']['request']['item_id'])) {
                 $itemId = $this->params['product']['request']['item_id'];
@@ -170,8 +175,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             );
         }
 
-        if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
-            $this->getConfigurator()->isIncludingMode()) {
+        if (
+            $this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
+            $this->getConfigurator()->isIncludingMode()
+        ) {
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 

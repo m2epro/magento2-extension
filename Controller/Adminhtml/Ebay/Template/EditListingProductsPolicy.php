@@ -35,17 +35,19 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
 
         if (empty($ids)) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
         // ---------------------------------------
         $collection = $this->ebayFactory->getObject('Listing\Product')
-            ->getCollection()
-            ->addFieldToFilter('id', ['in' => $ids]);
+                                        ->getCollection()
+                                        ->addFieldToFilter('id', ['in' => $ids]);
         // ---------------------------------------
 
         if ($collection->getSize() == 0) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -61,6 +63,7 @@ class EditListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Template\Edit::class);
 
         $this->setAjaxContent($content->toHtml());
+
         return $this->getResult();
     }
 }

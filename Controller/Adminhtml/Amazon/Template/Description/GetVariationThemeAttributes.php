@@ -36,6 +36,7 @@ class GetVariationThemeAttributes extends Description
         }
 
         $this->setJsonContent($attributes);
+
         return $this->getResult();
     }
 

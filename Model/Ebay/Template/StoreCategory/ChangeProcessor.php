@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\StoreCategory;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_store_category_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_store_category_change_processor';
 
     //########################################
 
@@ -32,7 +32,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
 
         if ($diff->isCategoriesDifferent()) {
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
                 'priority' => $status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ? 30 : 5,
             ];
         }

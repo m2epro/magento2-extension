@@ -8,18 +8,12 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Description\AffectedListingsProducts
- */
-class AffectedListingsProducts
-    extends \Ess\M2ePro\Model\Ebay\Template\AffectedListingsProducts\AffectedListingsProductsAbstract
-{
-    //########################################
+use Ess\M2ePro\Model\Ebay\Template\AffectedListingsProducts\AffectedListingsProductsAbstract;
 
+class AffectedListingsProducts extends AffectedListingsProductsAbstract
+{
     public function getTemplateNick()
     {
         return \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION;
     }
-
-    //########################################
 }

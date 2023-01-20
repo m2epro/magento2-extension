@@ -19,6 +19,7 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $itemsStatuses
+     *
      * @return int
      */
     public function getOrderStatus(array $itemsStatuses)

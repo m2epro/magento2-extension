@@ -10,5 +10,4 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Moving;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Moving\Grid
 {
-
 }

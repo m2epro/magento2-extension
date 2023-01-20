@@ -29,11 +29,13 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
     /**
      * @param $componentMode
+     *
      * @return $this
      */
     public function setComponentMode($componentMode)
     {
         $this->componentMode = $componentMode;
+
         return $this;
     }
 
@@ -53,6 +55,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     /**
      * @param int $priority
      * @param int $actionType
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -78,22 +81,22 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
         $now = $this->getHelper('Data')->getCurrentGmtDate();
         $this->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(
-                [
-                    'id'                 => 'main_table.id',
-                    'listing_product_id' => 'main_table.listing_product_id',
-                    'account_id'         => 'l.account_id',
-                    'action_type'        => 'main_table.action_type',
-                    'tag'                => new \Zend_Db_Expr('NULL'),
-                    'additional_data'    => 'main_table.additional_data',
-                    'coefficient'        => new \Zend_Db_Expr(
-                        "{$priority} +
+             ->columns(
+                 [
+                     'id' => 'main_table.id',
+                     'listing_product_id' => 'main_table.listing_product_id',
+                     'account_id' => 'l.account_id',
+                     'action_type' => 'main_table.action_type',
+                     'tag' => new \Zend_Db_Expr('NULL'),
+                     'additional_data' => 'main_table.additional_data',
+                     'coefficient' => new \Zend_Db_Expr(
+                         "{$priority} +
                         (time_to_sec(timediff('{$now}', main_table.create_date)) / "
-                        . self::SECONDS_TO_INCREMENT_PRIORITY . ")"
-                    ),
-                    'create_date'        => 'create_date',
-                ]
-            );
+                         . self::SECONDS_TO_INCREMENT_PRIORITY . ")"
+                     ),
+                     'create_date' => 'create_date',
+                 ]
+             );
 
         return $this;
     }
@@ -112,7 +115,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
                     ->activeRecordFactory
                     ->getObject("{$componentMode}_Account")
                     ->getResource()
-                    ->getMainTable()
+                    ->getMainTable(),
             ],
             'l.account_id = account.account_id'
         );
@@ -123,6 +126,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     /**
      * @param string $tag
      * @param bool $canBeEmpty
+     *
      * @return $this
      */
     public function addTagFilter($tag, $canBeEmpty = false)
@@ -133,16 +137,19 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         }
 
         $this->getSelect()->where($whereExpression);
+
         return $this;
     }
 
     /**
      * @param \Zend_Db_Expr $expression
+     *
      * @return $this
      */
     public function addFilteredTagColumnToSelect(\Zend_Db_Expr $expression)
     {
-        $this->getSelect()->columns(array('filtered_tag' => $expression));
+        $this->getSelect()->columns(['filtered_tag' => $expression]);
+
         return $this;
     }
 
@@ -150,6 +157,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
     /**
      * @param $secondsInterval
+     *
      * @return $this
      * @throws \Exception
      */
@@ -159,6 +167,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $interval->modify("-{$secondsInterval} seconds");
 
         $this->addFieldToFilter('main_table.create_date', ['lt' => $interval->format('Y-m-d H:i:s')]);
+
         return $this;
     }
 

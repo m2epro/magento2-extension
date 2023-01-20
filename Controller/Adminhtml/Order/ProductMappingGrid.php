@@ -16,6 +16,7 @@ class ProductMappingGrid extends Order
     {
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping\Grid::class);
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

@@ -58,7 +58,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         );
 
         $onlineQty = $this->listingProduct->getChildObject()->getOnlineQty() -
-                     $this->listingProduct->getChildObject()->getOnlineQtySold();
+            $this->listingProduct->getChildObject()->getOnlineQtySold();
 
         if ($this->getRequestDataObject()->isVariationItem()) {
             $calculateWithEmptyQty = $this->listingProduct->getChildObject()->isOutOfStockControlEnabled();
@@ -84,8 +84,10 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     {
         $responseMessages = $this->getResponse()->getMessages()->getEntities();
 
-        if (!$this->listingProduct->getAccount()->getChildObject()->isModeSandbox() &&
-            $this->isEbayApplicationErrorAppeared($responseMessages)) {
+        if (
+            !$this->listingProduct->getAccount()->getChildObject()->isModeSandbox() &&
+            $this->isEbayApplicationErrorAppeared($responseMessages)
+        ) {
             $this->markAsPotentialDuplicate();
 
             /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */

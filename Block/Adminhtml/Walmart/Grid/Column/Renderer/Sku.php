@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
@@ -17,7 +17,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -44,8 +44,8 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $isVariationParent = $row->getData('is_variation_parent');
 
         $isVariationGrid = ($this->getColumn()->getData('is_variation_grid') !== null)
-                            ? $this->getColumn()->getData('is_variation_grid')
-                            : false;
+            ? $this->getColumn()->getData('is_variation_grid')
+            : false;
         if ($isVariationGrid) {
             $value = $row->getChildObject()->getData('sku');
         }
@@ -55,8 +55,8 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         $showEditSku = ($this->getColumn()->getData('show_edit_sku') !== null)
-                       ? $this->getColumn()->getData('show_edit_sku')
-                       : true;
+            ? $this->getColumn()->getData('show_edit_sku')
+            : true;
 
         if (!$showEditSku) {
             return $value;

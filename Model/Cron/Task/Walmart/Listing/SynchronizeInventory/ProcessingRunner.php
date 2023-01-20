@@ -15,7 +15,7 @@ use Ess\M2ePro\Helper\Component\Walmart;
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial\Runner
 {
-    const LOCK_ITEM_PREFIX = 'synchronization_walmart_listings_products_update';
+    public const LOCK_ITEM_PREFIX = 'synchronization_walmart_listings_products_update';
 
     //##################################
 
@@ -39,7 +39,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         parent::__construct($parentFactory, $activeRecordFactory, $helperData, $helperFactory, $modelFactory);
 
         $this->blockedProductsHandler = $blockedProductsHandler;
-        $this->resourceConnection     = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
     }
 
     //##################################

@@ -20,6 +20,7 @@ class IsTitleUnique extends Template
 
         if ($title == '') {
             $this->setJsonContent(['unique' => false]);
+
             return $this->getResult();
         }
 
@@ -35,6 +36,7 @@ class IsTitleUnique extends Template
         }
 
         $this->setJsonContent(['unique' => !(bool)count($collection)]);
+
         return $this->getResult();
     }
 }

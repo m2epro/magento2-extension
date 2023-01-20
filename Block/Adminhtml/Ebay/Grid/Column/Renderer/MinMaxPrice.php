@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
@@ -17,13 +17,13 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
 
-    /** @var \Magento\Framework\Locale\CurrencyInterface  */
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -77,7 +77,7 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
             $onlineReservePrice = $row->getData('online_reserve_price');
             $onlineBuyItNowPrice = $row->getData('online_buyitnow_price');
 
-            $onlineStartStr= $this->localeCurrency->getCurrency($currency)->toCurrency($onlineStartPrice);
+            $onlineStartStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineStartPrice);
 
             $startPriceText = $translator->__('Start Price');
 
@@ -88,22 +88,23 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
                 $currentPriceText = $translator->__('Current Price');
                 $onlineCurrentStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
-                $onlineCurrentPriceHtml = '<strong>'.$currentPriceText.':</strong> '.$onlineCurrentStr.'<br/><br/>';
+                $onlineCurrentPriceHtml = '<strong>' . $currentPriceText . ':</strong> ' . $onlineCurrentStr . '<br/><br/>';
             }
 
             if ($onlineReservePrice > 0) {
                 $reservePriceText = $translator->__('Reserve Price');
                 $onlineReserveStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineReservePrice);
-                $onlineReservePriceHtml = '<strong>'.$reservePriceText.':</strong> '.$onlineReserveStr.'<br/>';
+                $onlineReservePriceHtml = '<strong>' . $reservePriceText . ':</strong> ' . $onlineReserveStr . '<br/>';
             }
 
             if ($onlineBuyItNowPrice > 0) {
                 $buyItNowText = $translator->__('Buy It Now Price');
                 $onlineBuyItNowStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineBuyItNowPrice);
-                $onlineBuyItNowPriceHtml = '<strong>'.$buyItNowText.':</strong> '.$onlineBuyItNowStr;
+                $onlineBuyItNowPriceHtml = '<strong>' . $buyItNowText . ':</strong> ' . $onlineBuyItNowStr;
             }
 
-            $intervalHtml = $this->getTooltipHtml(<<<HTML
+            $intervalHtml = $this->getTooltipHtml(
+                <<<HTML
 <span style="color:gray;">
     {$onlineCurrentPriceHtml}
     <strong>{$startPriceText}:</strong> {$onlineStartStr}<br/>
@@ -117,20 +118,19 @@ HTML
 <div class="fix-magento-tooltip ebay-auction-grid-tooltip">{$intervalHtml}</div>
 HTML;
 
-
             if ($onlineCurrentPrice > $onlineStartPrice) {
-                $resultHtml = '<span style="color: grey; text-decoration: line-through;">'.$onlineStartStr.'</span>';
-                $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.
-                    '<span class="product-price-value">'.$onlineCurrentStr.'</span>';
+                $resultHtml = '<span style="color: grey; text-decoration: line-through;">' . $onlineStartStr . '</span>';
+                $resultHtml .= '<br/>' . $intervalHtml . '&nbsp;' .
+                    '<span class="product-price-value">' . $onlineCurrentStr . '</span>';
             } else {
-                $resultHtml = $intervalHtml.'&nbsp;'.'<span class="product-price-value">'.$onlineStartStr.'</span>';
+                $resultHtml = $intervalHtml . '&nbsp;' . '<span class="product-price-value">' . $onlineStartStr . '</span>';
             }
         } else {
             $onlineMinPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineMinPrice);
             $onlineMaxPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineMaxPrice);
 
             $resultHtml = '<span class="product-price-value">' . $onlineMinPriceStr . '</span>' .
-                (($onlineMinPrice != $onlineMaxPrice) ? ' - ' . $onlineMaxPriceStr :  '');
+                (($onlineMinPrice != $onlineMaxPrice) ? ' - ' . $onlineMaxPriceStr : '');
         }
 
         $listingProductId = (int)$row->getData('listing_product_id');
@@ -154,7 +154,7 @@ HTML;
 
             if ($listingProduct->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED) {
                 $resultHtml .= '<br/><br/><span style="font-size: 10px; color: gray;">' .
-                    $onlineBids. ' ' . $bidsText . '</span>';
+                    $onlineBids . ' ' . $bidsText . '</span>';
             } else {
                 $resultHtml .= <<<HTML
 <br/>

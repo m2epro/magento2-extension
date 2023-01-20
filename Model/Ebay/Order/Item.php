@@ -15,11 +15,11 @@ use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const UNPAID_ITEM_PROCESS_NOT_OPENED = 0;
-    const UNPAID_ITEM_PROCESS_OPENED = 1;
+    public const UNPAID_ITEM_PROCESS_NOT_OPENED = 0;
+    public const UNPAID_ITEM_PROCESS_OPENED = 1;
 
-    const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
-    const DISPUTE_REASON_BUYER_HAS_NOT_PAID = 'BuyerHasNotPaid';
+    public const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
+    public const DISPUTE_REASON_BUYER_HAS_NOT_PAID = 'BuyerHasNotPaid';
 
     /** @var \Ess\M2ePro\Model\Ebay\Item $channelItem */
     private $channelItem = null;
@@ -73,7 +73,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function getProxy()
     {
         return $this->modelFactory->getObject('Ebay_Order_Item_ProxyObject', [
-            'item' => $this
+            'item' => $this,
         ]);
     }
 
@@ -104,10 +104,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     {
         if ($this->channelItem === null) {
             $this->channelItem = $this->activeRecordFactory->getObject('Ebay\Item')->getCollection()
-                ->addFieldToFilter('item_id', $this->getItemId())
-                ->addFieldToFilter('account_id', $this->getEbayAccount()->getId())
-                ->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-                ->getFirstItem();
+                                                           ->addFieldToFilter('item_id', $this->getItemId())
+                                                           ->addFieldToFilter(
+                                                               'account_id',
+                                                               $this->getEbayAccount()->getId()
+                                                           )
+                                                           ->setOrder(
+                                                               'create_date',
+                                                               \Magento\Framework\Data\Collection::SORT_ORDER_DESC
+                                                           )
+                                                           ->getFirstItem();
         }
 
         return $this->channelItem->getId() !== null ? $this->channelItem : null;
@@ -231,6 +237,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function hasVariation()
     {
         $details = $this->getVariationDetails();
+
         return !empty($details);
     }
 
@@ -260,6 +267,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function getVariationOptions()
     {
         $variationDetails = $this->getVariationDetails();
+
         return isset($variationDetails['options']) ? $variationDetails['options'] : [];
     }
 
@@ -272,6 +280,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     public function getTrackingDetails()
     {
         $trackingDetails = $this->getSettings('tracking_details');
+
         return is_array($trackingDetails) ? $trackingDetails : [];
     }
 
@@ -398,14 +407,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         if ($sku != '' && strlen($sku) <= \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
             $product = $this->productFactory->create()
-                ->setStoreId($this->getEbayOrder()->getAssociatedStoreId())
-                ->getCollection()
-                ->addAttributeToSelect('sku')
-                ->addAttributeToFilter('sku', $sku)
-                ->getFirstItem();
+                                            ->setStoreId($this->getEbayOrder()->getAssociatedStoreId())
+                                            ->getCollection()
+                                            ->addAttributeToSelect('sku')
+                                            ->addAttributeToFilter('sku', $sku)
+                                            ->getFirstItem();
 
             if ($product->getId()) {
                 $this->associateWithProduct($product);
+
                 return $product->getId();
             }
         }
@@ -430,16 +440,18 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     protected function createProduct()
     {
         if (!$this->getEbayAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
-            throw new ProductCreationDisabled($this->getHelper('Module\Translation')->__(
-                'Product creation is disabled in "Account > Orders > Product Not Found".'
-            ));
+            throw new ProductCreationDisabled(
+                $this->getHelper('Module\Translation')->__(
+                    'Product creation is disabled in "Account > Orders > Product Not Found".'
+                )
+            );
         }
 
         $order = $this->getParentObject()->getOrder();
 
         /** @var \Ess\M2ePro\Model\Ebay\Order\Item\Importer $itemImporter */
         $itemImporter = $this->modelFactory->getObject('Ebay_Order_Item_Importer', [
-            'item' => $this
+            'item' => $this,
         ]);
 
         $rawItemData = $itemImporter->getDataFromChannel();
@@ -453,11 +465,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         // Try to find exist product with sku from eBay
         // ---------------------------------------
         $product = $this->productFactory->create()
-            ->setStoreId($this->getEbayOrder()->getAssociatedStoreId())
-            ->getCollection()
-            ->addAttributeToSelect('sku')
-            ->addAttributeToFilter('sku', $productData['sku'])
-            ->getFirstItem();
+                                        ->setStoreId($this->getEbayOrder()->getAssociatedStoreId())
+                                        ->getCollection()
+                                        ->addAttributeToSelect('sku')
+                                        ->addAttributeToFilter('sku', $productData['sku'])
+                                        ->getFirstItem();
 
         if ($product->getId()) {
             return $product;

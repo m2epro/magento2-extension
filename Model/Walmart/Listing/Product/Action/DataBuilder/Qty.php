@@ -38,13 +38,16 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
     public function checkQtyWarnings()
     {
         $qtyMode = $this->getWalmartListing()->getWalmartSellingFormatTemplate()->getQtyMode();
-        if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
-            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
+        if (
+            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
+            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
+        ) {
             $listingProductId = $this->getListingProduct()->getId();
             $productId = $this->getWalmartListingProduct()->getActualMagentoProduct()->getProductId();
             $storeId = $this->getListing()->getStoreId();
 
-            if (!empty(\Ess\M2ePro\Model\Magento\Product::$statistics[$listingProductId][$productId][$storeId]['qty'])
+            if (
+                !empty(\Ess\M2ePro\Model\Magento\Product::$statistics[$listingProductId][$productId][$storeId]['qty'])
             ) {
                 $qtys = \Ess\M2ePro\Model\Magento\Product::$statistics[$listingProductId][$productId][$storeId]['qty'];
                 foreach ($qtys as $type => $override) {
@@ -57,13 +60,17 @@ class Qty extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\A
     public function addQtyWarnings($type)
     {
         if ($type === \Ess\M2ePro\Model\Magento\Product::FORCING_QTY_TYPE_MANAGE_STOCK_NO) {
-            $this->addWarningMessage('During the Quantity Calculation the Settings in the "Manage Stock No" ' .
-                'field were taken into consideration.');
+            $this->addWarningMessage(
+                'During the Quantity Calculation the Settings in the "Manage Stock No" ' .
+                'field were taken into consideration.'
+            );
         }
 
         if ($type === \Ess\M2ePro\Model\Magento\Product::FORCING_QTY_TYPE_BACKORDERS) {
-            $this->addWarningMessage('During the Quantity Calculation the Settings in the "Backorders" ' .
-                'field were taken into consideration.');
+            $this->addWarningMessage(
+                'During the Quantity Calculation the Settings in the "Backorders" ' .
+                'field were taken into consideration.'
+            );
         }
     }
 

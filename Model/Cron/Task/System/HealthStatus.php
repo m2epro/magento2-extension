@@ -10,21 +10,18 @@ namespace Ess\M2ePro\Model\Cron\Task\System;
 
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\System\HealthStatus
- */
 class HealthStatus extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/health_status';
+    public const NICK = 'system/health_status';
+
+    public const MAX_MEMORY_LIMIT = 512;
+
+    public const MESSAGE_SEND_REGISTRY_KEY = '/health_status/notification/send/';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 3600;
-
-    const MAX_MEMORY_LIMIT = 512;
-
-    const MESSAGE_SEND_REGISTRY_KEY = '/health_status/notification/send/';
 
     //########################################
 
@@ -58,6 +55,7 @@ class HealthStatus extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         if ($currentStatus->get() < $settings->getLevel()) {
             $this->unsetProblemExistsMark();
+
             return;
         }
 

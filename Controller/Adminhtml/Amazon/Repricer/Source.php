@@ -19,7 +19,7 @@ class Source extends Account
     public function execute()
     {
         if ($this->activeRecordFactory->getObject('Amazon_Account_Repricing')->getCollection()->getSize() > 0) {
-            return $this->_redirect('https://repricer.m2epro.com/');
+            return $this->_redirect('https://repricer.m2e.cloud');
         }
 
         return $this->_redirect($this->getUrl('*/amazon_repricer_settings/index', ['warning' => true]));

@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
  */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const DATA_TYPE_QTY            = 'qty';
-    const DATA_TYPE_REGULAR_PRICE  = 'regular_price';
-    const DATA_TYPE_BUSINESS_PRICE = 'business_price';
-    const DATA_TYPE_IMAGES         = 'images';
-    const DATA_TYPE_DETAILS        = 'details';
+    public const DATA_TYPE_QTY = 'qty';
+    public const DATA_TYPE_REGULAR_PRICE = 'regular_price';
+    public const DATA_TYPE_BUSINESS_PRICE = 'business_price';
+    public const DATA_TYPE_IMAGES = 'images';
+    public const DATA_TYPE_DETAILS = 'details';
 
     //########################################
 

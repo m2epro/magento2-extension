@@ -15,10 +15,10 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
 {
     protected $_code = 'm2epropayment';
 
-    protected $_canUseCheckout          = false;
-    protected $_canUseInternal          = false;
-    protected $_canUseForMultishipping  = false;
-    protected $_canRefund               = true;
+    protected $_canUseCheckout = false;
+    protected $_canUseInternal = false;
+    protected $_canUseForMultishipping = false;
+    protected $_canRefund = true;
     protected $_canRefundInvoicePartial = true;
 
     protected $_infoBlockType = \Ess\M2ePro\Block\Adminhtml\Magento\Payment\Info::class;
@@ -35,13 +35,13 @@ class Payment extends \Magento\Payment\Model\Method\AbstractMethod
         $data = $data->getData()['additional_data'];
 
         $details = [
-            'component_mode'        => $data['component_mode'],
-            'payment_method'        => $data['payment_method'],
-            'channel_order_id'      => $data['channel_order_id'],
-            'channel_final_fee'     => $data['channel_final_fee'],
+            'component_mode' => $data['component_mode'],
+            'payment_method' => $data['payment_method'],
+            'channel_order_id' => $data['channel_order_id'],
+            'channel_final_fee' => $data['channel_final_fee'],
             'cash_on_delivery_cost' => $data['cash_on_delivery_cost'],
-            'transactions'          => $data['transactions'],
-            'tax_id'                => isset($data['tax_id']) ? $data['tax_id'] : null,
+            'transactions' => $data['transactions'],
+            'tax_id' => isset($data['tax_id']) ? $data['tax_id'] : null,
         ];
 
         $this->getInfoInstance()->setAdditionalInformation($details);

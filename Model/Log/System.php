@@ -13,10 +13,10 @@ namespace Ess\M2ePro\Model\Log;
  */
 class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const TYPE_LOGGER              = 100;
-    const TYPE_EXCEPTION           = 200;
-    const TYPE_EXCEPTION_CONNECTOR = 201;
-    const TYPE_FATAL_ERROR         = 300;
+    public const TYPE_LOGGER = 100;
+    public const TYPE_EXCEPTION = 200;
+    public const TYPE_EXCEPTION_CONNECTOR = 201;
+    public const TYPE_FATAL_ERROR = 300;
 
     //########################################
 

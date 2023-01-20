@@ -57,24 +57,24 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByInputTypes = [
-            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
         ];
 
         $form = $this->_formFactory->create([
             'data' => [
-                'id'      => 'edit_form',
-                'method'  => 'post',
-                'action'  => $this->getUrl('*/*/save'),
+                'id' => 'edit_form',
+                'method' => 'post',
+                'action' => $this->getUrl('*/*/save'),
                 'enctype' => 'multipart/form-data',
-                'class' => 'admin__scope-old'
-            ]
+                'class' => 'admin__scope-old',
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_product_tax_code_general',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -95,7 +95,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'magento_block_amazon_template_product_tax_code_channel',
             [
                 'legend' => $this->__('Product Tax Code'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -112,7 +112,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         foreach ($attributesByInputTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['product_tax_code_mode'] == ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE
+            if (
+                $formData['product_tax_code_mode'] == ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE
                 && $formData['product_tax_code_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -127,7 +128,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $customValueOption = [
             'html_id' => 'product_tax_code_mode_cv',
             'value' => ProductTaxCode::PRODUCT_TAX_CODE_MODE_VALUE,
-            'label' => $this->__('Custom Value')
+            'label' => $this->__('Custom Value'),
         ];
 
         if ($formData['product_tax_code_mode'] == ProductTaxCode::PRODUCT_TAX_CODE_MODE_VALUE) {
@@ -142,17 +143,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'product_tax_code_mode',
                 'values' => [
                     [
-                        'label' => '', 'value' => '',
-                        'attrs' => ['style' => 'display: none']
+                        'label' => '',
+                        'value' => '',
+                        'attrs' => ['style' => 'display: none'],
                     ],
                     $customValueOption,
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'new_option_value' => ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE
-                        ]
-                    ]
+                            'new_option_value' => ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE,
+                        ],
+                    ],
                 ],
                 'create_magento_attribute' => true,
                 'required' => true,
@@ -160,7 +162,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'Apply Amazon Product Tax Codes to display VAT-exclusive prices to B2B customers. Find more info in
                     <a href="%url%" target="_blank">this article</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/-A03B')
-                )
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -184,15 +186,15 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $this->jsUrl->addUrls([
-            'formSubmit'    => $this->getUrl(
+            'formSubmit' => $this->getUrl(
                 '*/amazon_template_productTaxCode/save',
                 ['id' => $this->getRequest()->getParam('id')]
             ),
             'formSubmitNew' => $this->getUrl('*/amazon_template_productTaxCode/save'),
-            'deleteAction'  => $this->getUrl(
+            'deleteAction' => $this->getUrl(
                 '*/amazon_template_productTaxCode/delete',
                 ['id' => $this->getRequest()->getParam('id')]
-            )
+            ),
         ]);
 
         $this->jsTranslator->addTranslations([
@@ -203,7 +205,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $title = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']));
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Amazon/Template/ProductTaxCode',
     ], function(){

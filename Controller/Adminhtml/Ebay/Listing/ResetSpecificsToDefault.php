@@ -13,7 +13,7 @@ class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
 
-    /** @var \Magento\Framework\DB\TransactionFactory  */
+    /** @var \Magento\Framework\DB\TransactionFactory */
     private $transactionFactory;
 
     //########################################
@@ -57,11 +57,13 @@ class ResetSpecificsToDefault extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
             $transaction->rollback();
 
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
         $this->updateProcessChanges($collection->getItems(), $snapshots);
         $this->setAjaxContent('1', false);
+
         return $this->getResult();
     }
 

@@ -10,10 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View;
 
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
-    public const VIEW_MODE_AMAZON          = 'amazon';
-    public const VIEW_MODE_MAGENTO         = 'magento';
-    public const VIEW_MODE_SELLERCENTRAL   = 'sellercentral';
-    public const VIEW_MODE_SETTINGS        = 'settings';
+    public const VIEW_MODE_AMAZON = 'amazon';
+    public const VIEW_MODE_MAGENTO = 'magento';
+    public const VIEW_MODE_SELLERCENTRAL = 'sellercentral';
+    public const VIEW_MODE_SETTINGS = 'settings';
 
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
@@ -94,22 +94,22 @@ HTML
                 'value' => [
                     [
                         'value' => self::VIEW_MODE_AMAZON,
-                        'label' => $this->componentAmazonHelper->getTitle()
+                        'label' => $this->componentAmazonHelper->getTitle(),
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
-                        'label' => $this->__('Settings')
+                        'label' => $this->__('Settings'),
                     ],
                     [
                         'value' => self::VIEW_MODE_SELLERCENTRAL,
-                        'label' => $this->__('Seller Сentral')
+                        'label' => $this->__('Seller Сentral'),
                     ],
                     [
                         'value' => self::VIEW_MODE_MAGENTO,
-                        'label' => $this->__('Magento')
+                        'label' => $this->__('Magento'),
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

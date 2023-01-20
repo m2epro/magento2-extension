@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Messages
- */
 class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
 {
-    const TYPE_CURRENCY_CONVERSION = 'currency_conversion';
+    public const TYPE_CURRENCY_CONVERSION = 'currency_conversion';
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
@@ -57,7 +54,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         }
 
         $storePath = $this->helperFactory->getObject('Magento\Store')->getStorePath($this->getStore()->getId());
-        $allowed   = $this->modelFactory->getObject('Currency')->isAllowed($marketplaceCurrency, $this->getStore());
+        $allowed = $this->modelFactory->getObject('Currency')->isAllowed($marketplaceCurrency, $this->getStore());
 
         if (!$allowed) {
             $currencySetupUrl = $this->getUrl(
@@ -65,9 +62,9 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
                 [
                     'section' => 'currency',
                     'website' => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID
-                                    ? $this->getStore()->getWebsite()->getId() : null,
-                    'store'   => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID
-                                    ? $this->getStore()->getId() : null
+                        ? $this->getStore()->getWebsite()->getId() : null,
+                    'store' => $this->getStore()->getId() != \Magento\Store\Model\Store::DEFAULT_STORE_ID
+                        ? $this->getStore()->getId() : null,
                 ]
             );
 
@@ -83,11 +80,11 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         }
 
         $rate = $this->modelFactory->getObject('Currency')
-            ->getConvertRateFromBase(
-                $marketplaceCurrency,
-                $this->getStore(),
-                4
-            );
+                                   ->getConvertRateFromBase(
+                                       $marketplaceCurrency,
+                                       $this->getStore(),
+                                       4
+                                   );
 
         if ($rate == 0) {
             return

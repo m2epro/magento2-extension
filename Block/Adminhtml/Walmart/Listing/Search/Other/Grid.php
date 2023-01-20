@@ -76,7 +76,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         $collection->getSelect()->joinLeft(
             [
                 'cpe' => $this->databaseHelper
-                    ->getTableNameWithPrefix('catalog_product_entity')
+                    ->getTableNameWithPrefix('catalog_product_entity'),
             ],
             '(cpe.entity_id = `main_table`.product_id)',
             ['sku' => 'sku']
@@ -85,32 +85,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
-                'sku'                          => 'cpe.sku',
-                'name'                         => 'second_table.title',
-                'listing_title'                => new \Zend_Db_Expr('NULL'),
-                'store_id'                     => new \Zend_Db_Expr(0),
-                'account_id'                   => 'main_table.account_id',
-                'marketplace_id'               => 'main_table.marketplace_id',
-                'listing_product_id'           => new \Zend_Db_Expr('NULL'),
-                'entity_id'                    => 'main_table.product_id',
-                'listing_id'                   => new \Zend_Db_Expr('NULL'),
-                'status'                       => 'main_table.status',
-                'is_variation_parent'          => new \Zend_Db_Expr('NULL'),
-                'variation_child_statuses'     => new \Zend_Db_Expr('NULL'),
-                'online_sku'                   => 'second_table.sku',
-                'gtin'                         => 'second_table.gtin',
-                'upc'                          => 'second_table.upc',
-                'ean'                          => new \Zend_Db_Expr('NULL'),
-                'isbn'                         => new \Zend_Db_Expr('NULL'),
-                'wpid'                         => 'second_table.wpid',
-                'item_id'                      => 'second_table.item_id',
-                'online_title'                 => new \Zend_Db_Expr('NULL'),
-                'online_qty'                   => 'second_table.online_qty',
-                'online_price'                 => 'second_table.online_price',
-                'online_sale_price'            => new \Zend_Db_Expr('NULL'),
+                'sku' => 'cpe.sku',
+                'name' => 'second_table.title',
+                'listing_title' => new \Zend_Db_Expr('NULL'),
+                'store_id' => new \Zend_Db_Expr(0),
+                'account_id' => 'main_table.account_id',
+                'marketplace_id' => 'main_table.marketplace_id',
+                'listing_product_id' => new \Zend_Db_Expr('NULL'),
+                'entity_id' => 'main_table.product_id',
+                'listing_id' => new \Zend_Db_Expr('NULL'),
+                'status' => 'main_table.status',
+                'is_variation_parent' => new \Zend_Db_Expr('NULL'),
+                'variation_child_statuses' => new \Zend_Db_Expr('NULL'),
+                'online_sku' => 'second_table.sku',
+                'gtin' => 'second_table.gtin',
+                'upc' => 'second_table.upc',
+                'ean' => new \Zend_Db_Expr('NULL'),
+                'isbn' => new \Zend_Db_Expr('NULL'),
+                'wpid' => 'second_table.wpid',
+                'item_id' => 'second_table.item_id',
+                'online_title' => new \Zend_Db_Expr('NULL'),
+                'online_qty' => 'second_table.online_qty',
+                'online_price' => 'second_table.online_price',
+                'online_sale_price' => new \Zend_Db_Expr('NULL'),
                 'online_sale_price_start_date' => new \Zend_Db_Expr('NULL'),
-                'online_sale_price_end_date'   => new \Zend_Db_Expr('NULL'),
-                'is_online_price_invalid'      => 'second_table.is_online_price_invalid',
+                'online_sale_price_end_date' => new \Zend_Db_Expr('NULL'),
+                'is_online_price_invalid' => 'second_table.is_online_price_invalid',
             ]
         );
 
@@ -139,7 +139,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
         if ($title === null || $title === '') {
             $value = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
         } else {
-            $value = '<span>' .$this->dataHelper->escapeHtml($title). '</span>';
+            $value = '<span>' . $this->dataHelper->escapeHtml($title) . '</span>';
         }
 
         $value = '<div style="margin-bottom: 5px">' . $value . '</div>';
@@ -149,7 +149,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Search\AbstractGr
 
         $value .= '<strong>' . $this->__('Account') . ':</strong>'
             . '&nbsp;' . $account->getTitle() . '<br/>'
-            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '<strong>' . $this->__('Marketplace') . ':</strong>'
             . '&nbsp;' . $marketplace->getTitle();
 
         $sku = $row->getData('sku');
@@ -174,14 +174,14 @@ HTML;
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
         $altTitle = $this->dataHelper->escapeHtml($this->__('Go to Listing'));
-        $iconSrc  = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
+        $iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
 
         $manageUrl = $this->getUrl('*/walmart_listing_other/view/', [
-            'account'     => $row->getData('account_id'),
+            'account' => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
-            'filter'      => base64_encode(
+            'filter' => base64_encode(
                 'title=' . $row->getData('online_sku')
-            )
+            ),
         ]);
 
         $html = <<<HTML
@@ -251,7 +251,7 @@ HTML;
             return;
         }
 
-        $collection->getSelect()->where('second_table.title LIKE ? OR cpe.sku LIKE ?', '%'.$value.'%');
+        $collection->getSelect()->where('second_table.title LIKE ? OR cpe.sku LIKE ?', '%' . $value . '%');
     }
 
     protected function callbackFilterOnlineSku($collection, $column)
@@ -262,7 +262,7 @@ HTML;
             return;
         }
 
-        $collection->getSelect()->where('second_table.sku LIKE ?', '%'.$value.'%');
+        $collection->getSelect()->where('second_table.sku LIKE ?', '%' . $value . '%');
     }
 
     protected function callbackFilterPrice($collection, $column)

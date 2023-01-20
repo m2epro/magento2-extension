@@ -57,22 +57,22 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
     ) {
         parent::__construct($shipmentDocumentFactory, $helperFactory, $modelFactory, $transactionFactory);
 
-        $this->itemRequestFactory       = $objectManager->get(ItemRequestInterfaceFactory::class);
-        $this->inventoryRequestFactory  = $objectManager->get(InventoryRequestInterfaceFactory::class);
+        $this->itemRequestFactory = $objectManager->get(ItemRequestInterfaceFactory::class);
+        $this->inventoryRequestFactory = $objectManager->get(InventoryRequestInterfaceFactory::class);
         $this->stockByWebsiteIdResolver = $objectManager->get(StockByWebsiteIdResolverInterface::class);
-        $this->algorithm                = $objectManager->get(DefaultAlgorithm::class);
-        $this->sourceSelectionService   = $objectManager->get(SourceSelectionServiceInterface::class);
-        $this->itemCreationFactory      = $objectManager->get(ShipmentItemCreationInterfaceFactory::class);
+        $this->algorithm = $objectManager->get(DefaultAlgorithm::class);
+        $this->sourceSelectionService = $objectManager->get(SourceSelectionServiceInterface::class);
+        $this->itemCreationFactory = $objectManager->get(ShipmentItemCreationInterfaceFactory::class);
         $this->shipmentExtensionFactory = $objectManager->get(ShipmentExtensionFactory::class);
-        $this->isSourceItemManagement   = $objectManager->get(isSourceManagement::class);
+        $this->isSourceItemManagement = $objectManager->get(isSourceManagement::class);
     }
 
     //########################################
 
     protected function prepareShipments()
     {
-        $selectionRequestItems   = [];
-        $orderItemIdsBySku       = [];
+        $selectionRequestItems = [];
+        $orderItemIdsBySku = [];
 
         foreach ($this->magentoOrder->getAllItems() as $item) {
             $qtyToShip = $item->getQtyToShip();
@@ -85,7 +85,8 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
              * with the parameter "Ship Bundle Items" == "Together" is in one order with products
              * with more then 1 Source
              */
-            if ($this->getHelper('Magento\Product')->isBundleType($item->getProductType()) &&
+            if (
+                $this->getHelper('Magento\Product')->isBundleType($item->getProductType()) &&
                 !$item->isShipSeparately()
             ) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -110,11 +111,11 @@ class Shipment extends \Ess\M2ePro\Model\Magento\Order\Shipment
         /** @var \Magento\InventorySourceSelectionApi\Api\Data\InventoryRequestInterface $inventoryRequest */
         $inventoryRequest = $this->inventoryRequestFactory->create([
             'stockId' => $this->stockByWebsiteIdResolver->execute($websiteId)->getStockId(),
-            'items'   => $selectionRequestItems
+            'items' => $selectionRequestItems,
         ]);
 
         $selectionAlgorithmCode = $this->algorithm->execute();
-        $sourceSelectionResult  = $this->sourceSelectionService->execute($inventoryRequest, $selectionAlgorithmCode);
+        $sourceSelectionResult = $this->sourceSelectionService->execute($inventoryRequest, $selectionAlgorithmCode);
 
         $itemsPerSourceCode = [];
 

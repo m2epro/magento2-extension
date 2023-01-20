@@ -40,7 +40,7 @@ class SaveAsGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             foreach ($post['items'] as $id => $note) {
                 $itemsData[] = [
                     'id' => $id,
-                    'note' => $note
+                    'note' => $note,
                 ];
             }
 
@@ -59,14 +59,14 @@ class SaveAsGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             }
 
             $tableName = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+                              ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
             $connection = $this->resourceConnection->getConnection();
 
             foreach ($filtersIds as $filterId) {
                 $connection->insert($tableName, [
-                        'filter_id' => $filterId,
-                        'group_id' => $model->getId(),
-                    ]);
+                    'filter_id' => $filterId,
+                    'group_id' => $model->getId(),
+                ]);
             }
         }
 

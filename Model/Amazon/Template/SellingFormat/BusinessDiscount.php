@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Amazon\Template\SellingFormat;
  */
 class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const MODE_PRODUCT   = 1;
-    const MODE_SPECIAL   = 2;
-    const MODE_ATTRIBUTE = 3;
+    public const MODE_PRODUCT = 1;
+    public const MODE_SPECIAL = 2;
+    public const MODE_ATTRIBUTE = 3;
 
     /**
      * @var \Ess\M2ePro\Model\Template\SellingFormat
@@ -36,6 +36,7 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     {
         $temp = parent::delete();
         $temp && $this->sellingFormatTemplateModel = null;
+
         return $temp;
     }
 
@@ -141,9 +142,9 @@ class BusinessDiscount extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     public function getSource()
     {
         return [
-            'mode'        => $this->getMode(),
+            'mode' => $this->getMode(),
             'coefficient' => $this->getCoefficient(),
-            'attribute'   => $this->getAttribute(),
+            'attribute' => $this->getAttribute(),
         ];
     }
 

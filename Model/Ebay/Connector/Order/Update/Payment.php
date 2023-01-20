@@ -34,6 +34,7 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMode
             $this->order->addErrorLog(
                 'Payment Status for eBay Order was not updated. Reason: eBay Failure.'
             );
+
             return;
         }
 

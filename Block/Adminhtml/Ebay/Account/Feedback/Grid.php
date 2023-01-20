@@ -57,11 +57,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $dbExpr = new \Zend_Db_Expr('if(`main_table`.`seller_feedback_text` = \'\', 0, 1)');
         $collection->getSelect()
-            ->joinLeft(
-                ['mea' => $this->activeRecordFactory->getObject('Ebay\Account')->getResource()->getMainTable()],
-                '(`mea`.`account_id` = `main_table`.`account_id`)',
-                ['account_mode'=>'mode','have_seller_feedback' => $dbExpr]
-            );
+                   ->joinLeft(
+                       ['mea' => $this->activeRecordFactory->getObject('Ebay\Account')->getResource()->getMainTable()],
+                       '(`mea`.`account_id` = `main_table`.`account_id`)',
+                       ['account_mode' => 'mode', 'have_seller_feedback' => $dbExpr]
+                   );
 
         $collection->addFieldToFilter('main_table.account_id', $accountId);
 
@@ -74,12 +74,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
      * Add column filtering conditions to collection
      *
      * @param \Magento\Backend\Block\Widget\Grid\Column $column
+     *
      * @return $this
      */
     protected function _addColumnFilterToCollection($column)
     {
         if ($this->getCollection()) {
-            $field = ( $column->getFilterIndex() ) ? $column->getFilterIndex() : $column->getIndex();
+            $field = ($column->getFilterIndex()) ? $column->getFilterIndex() : $column->getIndex();
             if ($column->getFilterConditionCallback()) {
                 call_user_func($column->getFilterConditionCallback(), $this->getCollection(), $column);
             } else {
@@ -97,6 +98,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 }
             }
         }
+
         return $this;
     }
 
@@ -104,88 +106,88 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->addColumn('ebay_item_id', [
             'header' => $this->__('Item ID'),
-            'align'  => 'right',
-            'type'   => 'text',
-            'width'  => '50px',
-            'index'  => 'ebay_item_id',
-            'frame_callback' => [$this, 'callbackColumnEbayItemId']
+            'align' => 'right',
+            'type' => 'text',
+            'width' => '50px',
+            'index' => 'ebay_item_id',
+            'frame_callback' => [$this, 'callbackColumnEbayItemId'],
         ]);
 
         $this->addColumn('transaction_id', [
             'header' => $this->__('Transaction ID'),
-            'align'  => 'right',
-            'type'   => 'text',
-            'width'  => '105px',
-            'index'  => 'ebay_transaction_id',
-            'frame_callback' => [$this, 'callbackColumnTransactionId']
+            'align' => 'right',
+            'type' => 'text',
+            'width' => '105px',
+            'index' => 'ebay_transaction_id',
+            'frame_callback' => [$this, 'callbackColumnTransactionId'],
         ]);
 
         $this->addColumn('buyer_feedback', [
             'header' => $this->__('Buyer Feedback'),
-            'width'  => '155px',
-            'type'   => 'text',
-            'index'  => 'buyer_feedback_text',
-            'frame_callback' => [$this, 'callbackColumnBuyerFeedback']
+            'width' => '155px',
+            'type' => 'text',
+            'index' => 'buyer_feedback_text',
+            'frame_callback' => [$this, 'callbackColumnBuyerFeedback'],
         ]);
 
         $this->addColumn('buyer_feedback_date', [
             'header' => $this->__('Buyer Feedback Date'),
-            'width'  => '155px',
-            'type'   => 'datetime',
+            'width' => '155px',
+            'type' => 'datetime',
             'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'  => 'buyer_feedback_date',
-            'frame_callback' => [$this, 'callbackColumnBuyerFeedbackDate']
+            'index' => 'buyer_feedback_date',
+            'frame_callback' => [$this, 'callbackColumnBuyerFeedbackDate'],
         ]);
 
         $this->addColumn('seller_feedback', [
             'header' => $this->__('Seller Feedback'),
-            'width'  => '155px',
-            'type'   => 'text',
-            'index'  => 'seller_feedback_text',
-            'frame_callback' => [$this, 'callbackColumnSellerFeedback']
+            'width' => '155px',
+            'type' => 'text',
+            'index' => 'seller_feedback_text',
+            'frame_callback' => [$this, 'callbackColumnSellerFeedback'],
         ]);
 
         $this->addColumn('seller_feedback_date', [
             'header' => $this->__('Seller Feedback Date'),
-            'width'  => '155px',
-            'type'   => 'datetime',
+            'width' => '155px',
+            'type' => 'datetime',
             'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'  => 'seller_feedback_date',
-            'frame_callback' => [$this, 'callbackColumnSellerFeedbackDate']
+            'index' => 'seller_feedback_date',
+            'frame_callback' => [$this, 'callbackColumnSellerFeedbackDate'],
         ]);
 
         $this->addColumn('buyer_feedback_type', [
-            'header'       => $this->__('Type'),
-            'width'        => '50px',
-            'align'        => 'center',
-            'type'         => 'options',
-            'index'        => 'buyer_feedback_type',
+            'header' => $this->__('Type'),
+            'width' => '50px',
+            'align' => 'center',
+            'type' => 'options',
+            'index' => 'buyer_feedback_type',
             'filter_index' => 'buyer_feedback_type',
-            'sortable'     => false,
-            'options'      => [
-                'Neutral'  => $this->__('Neutral'),
+            'sortable' => false,
+            'options' => [
+                'Neutral' => $this->__('Neutral'),
                 'Positive' => $this->__('Positive'),
-                'Negative' => $this->__('Negative')
+                'Negative' => $this->__('Negative'),
             ],
             'frame_callback' => [$this, 'callbackColumnFeedbackType'],
             'filter_condition_callback' => [$this, 'callbackFilterFeedbackType'],
         ]);
 
         $this->addColumn('feedback_respond_status', [
-            'header'       => $this->__('Status'),
-            'align'        => 'center',
-            'type'         => 'options',
-            'index'        => 'have_seller_feedback',
+            'header' => $this->__('Status'),
+            'align' => 'center',
+            'type' => 'options',
+            'index' => 'have_seller_feedback',
             'filter_index' => 'have_seller_feedback',
-            'sortable'     => false,
-            'options'      => [
+            'sortable' => false,
+            'options' => [
                 0 => $this->__('Unresponded'),
-                1 => $this->__('Responded')
-            ]
+                1 => $this->__('Responded'),
+            ],
         ]);
 
         return parent::_prepareColumns();
@@ -197,9 +199,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $url = $this->getUrl('*/*/goToItem', ['feedback_id' => $row->getData('id')]);
 
-        return '<a href="'.$url.'" target="_blank">'
-                . $this->helperData->escapeHtml($value)
-                . '</a>';
+        return '<a href="' . $url . '" target="_blank">'
+            . $this->helperData->escapeHtml($value)
+            . '</a>';
     }
 
     public function callbackColumnTransactionId($value, $row, $column, $isExport)
@@ -207,7 +209,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value == 0 && $value = $this->__('No ID For Auction');
         $url = $this->getUrl('*/*/goToOrder/', ['feedback_id' => $row->getData('id')]);
 
-        return '<a href="'.$url.'" target="_blank">'.$this->helperData->escapeHtml($value).'</a>';
+        return '<a href="' . $url . '" target="_blank">' . $this->helperData->escapeHtml($value) . '</a>';
     }
 
     public function callbackColumnBuyerFeedback($value, $row, $column, $isExport)
@@ -333,7 +335,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/getGrid', ['_current'=>true]);
+        return $this->getUrl('*/*/getGrid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

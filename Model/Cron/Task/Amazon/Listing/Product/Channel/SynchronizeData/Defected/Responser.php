@@ -13,8 +13,9 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeD
  */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defected\ItemsResponser
 {
+    /** @var null  */
     protected $synchronizationLog = null;
-
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
 
     //########################################
@@ -117,7 +118,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         $listingsProductsIds = $listingProductCollection->getAllIds();
 
         foreach (array_chunk($listingsProductsIds, 1000) as $partIds) {
-            $where = '`listing_product_id` IN ('.implode(',', $partIds).')';
+            $where = '`listing_product_id` IN (' . implode(',', $partIds) . ')';
             $connection->update(
                 $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable(),
                 [
@@ -145,7 +146,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         $defectedListingsProducts = $listingProductCollection->getItems();
 
         foreach ($defectedListingsProducts as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
 
@@ -153,9 +153,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
 
             $defectedMessage = [
                 'attribute' => $receivedData['defected_attribute'],
-                'value'     => $receivedData['current_value'],
-                'type'      => $receivedData['defect_type'],
-                'message'   => $receivedData['message'],
+                'value' => $receivedData['current_value'],
+                'type' => $receivedData['defect_type'],
+                'message' => $receivedData['message'],
             ];
 
             $listingProduct->setSettings('defected_messages', [$defectedMessage])->save();

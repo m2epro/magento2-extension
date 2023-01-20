@@ -19,10 +19,11 @@ class PolicySettings extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Fil
 
     protected function _renderOption($option, $value)
     {
-        $selected = (($option['value'] == $value && ($value !== null)) ? ' selected="selected"' : '' );
-        return '<option value="'. $this->escapeHtml($option['value']).'"'.$selected.'>'
-            .$this->escapeHtml($option['label'])
-            .'</option>';
+        $selected = (($option['value'] == $value && ($value !== null)) ? ' selected="selected"' : '');
+
+        return '<option value="' . $this->escapeHtml($option['value']) . '"' . $selected . '>'
+            . $this->escapeHtml($option['label'])
+            . '</option>';
     }
 
     public function getHtml()
@@ -58,19 +59,19 @@ HTML;
         return [
             [
                 'label' => $this->__('Any'),
-                'value' => ''
+                'value' => '',
             ],
             [
                 'label' => $this->__('Policies'),
-                'value' => Manager::MODE_TEMPLATE
+                'value' => Manager::MODE_TEMPLATE,
             ],
             [
                 'label' => $this->__('Custom Settings'),
-                'value' => Manager::MODE_CUSTOM
+                'value' => Manager::MODE_CUSTOM,
             ],
             [
                 'label' => $this->__('No'),
-                'value' => Manager::MODE_PARENT
+                'value' => Manager::MODE_PARENT,
             ],
         ];
     }

@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
  */
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const DATA_TYPE_QTY        = 'qty';
-    const DATA_TYPE_LAG_TIME   = 'lag_time';
-    const DATA_TYPE_PRICE      = 'price';
-    const DATA_TYPE_PROMOTIONS = 'promotions';
-    const DATA_TYPE_DETAILS    = 'details';
+    public const DATA_TYPE_QTY = 'qty';
+    public const DATA_TYPE_LAG_TIME = 'lag_time';
+    public const DATA_TYPE_PRICE = 'price';
+    public const DATA_TYPE_PROMOTIONS = 'promotions';
+    public const DATA_TYPE_DETAILS = 'details';
 
     //########################################
 

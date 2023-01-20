@@ -35,10 +35,10 @@ class Images extends AbstractModel
 
         $data = [
             'gallery_type' => $this->getEbayListingProduct()->getEbayDescriptionTemplate()->getGalleryType(),
-            'images'       => $links,
-            'supersize'    => $this->getEbayListingProduct()
-                ->getEbayDescriptionTemplate()
-                ->isUseSupersizeImagesEnabled()
+            'images' => $links,
+            'supersize' => $this->getEbayListingProduct()
+                                ->getEbayDescriptionTemplate()
+                                ->isUseSupersizeImagesEnabled(),
         ];
 
         $this->processNotFoundAttributes('Main Image / Gallery Images');
@@ -116,7 +116,6 @@ class Images extends AbstractModel
         $productTypeInstance = $this->getMagentoProduct()->getTypeInstance();
 
         foreach ($productTypeInstance->getConfigurableAttributes($product) as $configurableAttribute) {
-
             /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute $configurableAttribute */
             $configurableAttribute->setStoteId($product->getStoreId());
 
@@ -173,7 +172,6 @@ class Images extends AbstractModel
             }
 
             foreach ($variation->getOptions(true) as $option) {
-
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $optionLabel = trim($option->getAttribute());
@@ -197,8 +195,8 @@ class Images extends AbstractModel
 
                 $attributeLabel = $foundAttributeLabel;
                 $optionImages = $this->getEbayListingProduct()->getEbayDescriptionTemplate()
-                    ->getSource($option->getMagentoProduct())
-                    ->getVariationImages();
+                                     ->getSource($option->getMagentoProduct())
+                                     ->getVariationImages();
 
                 foreach ($optionImages as $image) {
                     if (!$image->getUrl()) {
@@ -223,7 +221,7 @@ class Images extends AbstractModel
 
         return [
             'specific' => $attributeLabel,
-            'images'   => $imagesLinks
+            'images' => $imagesLinks,
         ];
     }
 

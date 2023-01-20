@@ -17,6 +17,7 @@ trait AbstractElementTrait
     /**
      * @param string $idSuffix
      * @param string $scopeLabel
+     *
      * @return string
      */
     public function getLabelHtml($idSuffix = '', $scopeLabel = ''): string
@@ -44,6 +45,7 @@ trait AbstractElementTrait
      * @param string $valueSeparator
      * @param string $fieldSeparator
      * @param string $quote
+     *
      * @return string
      */
     public function serialize($attributes = [], $valueSeparator = '=', $fieldSeparator = ' ', $quote = '"'): string

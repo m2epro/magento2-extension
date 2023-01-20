@@ -117,30 +117,30 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function setSimpleType()
     {
         $this->getWalmartListingProduct()->setData('is_variation_product', 0)
-            ->setData('is_variation_parent', 0)
-            ->setData('variation_parent_id', null)
-            ->save();
+             ->setData('is_variation_parent', 0)
+             ->setData('variation_parent_id', null)
+             ->save();
     }
 
     public function setIndividualType()
     {
         $this->getWalmartListingProduct()->setData('is_variation_parent', 0)
-            ->setData('variation_parent_id', null)
-            ->save();
+             ->setData('variation_parent_id', null)
+             ->save();
     }
 
     public function setRelationParentType()
     {
         $this->getWalmartListingProduct()->setData('is_variation_parent', 1)
-            ->setData('variation_parent_id', null)
-            ->save();
+             ->setData('variation_parent_id', null)
+             ->save();
     }
 
     public function setRelationChildType($variationParentId)
     {
         $this->getWalmartListingProduct()->setData('is_variation_parent', 0)
-            ->setData('variation_parent_id', $variationParentId)
-            ->save();
+             ->setData('variation_parent_id', $variationParentId)
+             ->save();
     }
 
     //########################################

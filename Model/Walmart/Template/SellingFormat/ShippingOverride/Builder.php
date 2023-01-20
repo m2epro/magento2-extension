@@ -38,12 +38,12 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         return [
             'template_selling_format_id' => $this->getTemplateSellingFormatId(),
 
-            'method'              => $this->rawData['method'],
+            'method' => $this->rawData['method'],
             'is_shipping_allowed' => $this->rawData['is_shipping_allowed'],
-            'region'              => $this->rawData['region'],
-            'cost_mode'           => !empty($this->rawData['cost_mode']) ? $this->rawData['cost_mode'] : 0,
-            'cost_value'          => !empty($this->rawData['cost_value']) ? $this->rawData['cost_value'] : 0,
-            'cost_attribute'      => !empty($this->rawData['cost_attribute']) ? $this->rawData['cost_attribute'] : ''
+            'region' => $this->rawData['region'],
+            'cost_mode' => !empty($this->rawData['cost_mode']) ? $this->rawData['cost_mode'] : 0,
+            'cost_value' => !empty($this->rawData['cost_value']) ? $this->rawData['cost_value'] : 0,
+            'cost_attribute' => !empty($this->rawData['cost_attribute']) ? $this->rawData['cost_attribute'] : '',
         ];
     }
 

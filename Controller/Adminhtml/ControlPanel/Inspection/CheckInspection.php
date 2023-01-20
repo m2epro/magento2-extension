@@ -21,8 +21,7 @@ class CheckInspection extends Main
         Repository $repository,
         Processor $processor,
         Context $context
-    )
-    {
+    ) {
         $this->repository = $repository;
         $this->processor = $processor;
 
@@ -56,9 +55,9 @@ class CheckInspection extends Main
         }
 
         $this->setJsonContent([
-            'result'   => $isSuccess,
+            'result' => $isSuccess,
             'metadata' => $metadata,
-            'message'  => $message
+            'message' => $message,
         ]);
 
         return $this->getResult();

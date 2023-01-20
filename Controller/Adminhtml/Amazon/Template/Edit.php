@@ -24,6 +24,7 @@ class Edit extends Template
 
         if ($id === null || empty($type)) {
             $this->messageManager->addError($this->__('You should provide correct parameters.'));
+
             return $this->_redirect('*/*/index');
         }
 
@@ -31,7 +32,7 @@ class Edit extends Template
 
         return $this->_redirect(
             "*/amazon_template_{$type}/edit",
-            ['id'=>$id]
+            ['id' => $id]
         );
     }
 

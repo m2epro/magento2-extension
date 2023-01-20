@@ -49,12 +49,14 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
+
         return parent::save();
     }
 
     public function delete()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
+
         return parent::delete();
     }
 

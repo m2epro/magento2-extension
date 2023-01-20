@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Walmart\Listing;
 
 use Ess\M2ePro\Helper\Component\Walmart;
-use \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory\ProcessingRunner as ProcessingRunner;
+use Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory\ProcessingRunner as ProcessingRunner;
 use Ess\M2ePro\Model\Synchronization\Log;
 
 /**
@@ -17,10 +17,10 @@ use Ess\M2ePro\Model\Synchronization\Log;
  */
 class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/listing/synchronize_inventory';
+    public const NICK = 'walmart/listing/synchronize_inventory';
 
-    const DEFAULT_INTERVAL_PER_ACCOUNT = 86400;
-    const QUICKER_INTERVAL_PER_ACCOUNT = 7200;
+    public const DEFAULT_INTERVAL_PER_ACCOUNT = 86400;
+    public const QUICKER_INTERVAL_PER_ACCOUNT = 7200;
 
     //####################################
 
@@ -96,7 +96,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\View\Walmart::NICK, 'Account')
-            ->getCollection();
+                                          ->getCollection();
         $collection->getSelect()->joinLeft(
             ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             'main_table.id = l.account_id',
@@ -106,7 +106,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             'second_table.inventory_last_synchronization',
             [
                 ['lt' => $quickerDate->format('Y-m-d H:i:s')],
-                ['null' => true]
+                ['null' => true],
             ]
         );
         $collection->getSelect()->where('l.id IS NOT NULL OR second_table.other_listings_synchronization = 1');
@@ -137,7 +137,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
             $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\View\Walmart::NICK, 'Listing\Product')
-                ->getCollection();
+                                              ->getCollection();
             $collection->joinListingTable();
 
             $collection->addFieldToFilter('l.account_id', (int)$account->getId());
@@ -157,7 +157,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $lockItemManager = $this->modelFactory->getObject(
             'Lock_Item_Manager',
             [
-                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
+                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX,
             ]
         );
         if (!$lockItemManager->isExist()) {

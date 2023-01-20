@@ -13,7 +13,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDifferent()
     {
         return $this->isDetailsDifferent() ||
-               $this->isImagesDifferent();
+            $this->isImagesDifferent();
     }
 
     public function isDetailsDifferent()
@@ -23,7 +23,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'category_path',
             'browsenode_id',
             'product_data_nick',
-            'specifics'
+            'specifics',
         ];
 
         if ($this->isSettingsDifferent($mainKeys)) {

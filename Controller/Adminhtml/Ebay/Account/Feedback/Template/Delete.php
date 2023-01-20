@@ -27,8 +27,9 @@ class Delete extends Account
         }
 
         $this->setJsonContent([
-            'status' => true
+            'status' => true,
         ]);
+
         return $this->getResult();
     }
 }

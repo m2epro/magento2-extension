@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\Channel;
  */
 class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/listing/other/channel/synchronize_data';
+    public const NICK = 'ebay/listing/other/channel/synchronize_data';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 86400;
 
-    const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
+    public const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
 
     //####################################
 
@@ -66,14 +66,14 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($accounts as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
             if (!$this->isLockedAccount($account)) {
                 $this->getOperationHistory()->addTimePoint(
-                    __METHOD__.'process'.$account->getId(),
-                    'Process Account '.$account->getTitle()
+                    __METHOD__ . 'process' . $account->getId(),
+                    'Process Account ' . $account->getTitle()
                 );
 
                 try {
@@ -88,7 +88,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $this->processTaskException($exception);
                 }
 
-                $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+                $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
             }
         }
     }
@@ -111,7 +111,9 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $marketplace = \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_US;
             }
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+            /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\Channel\SynchronizeData\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Ebay_Listing_Other_Channel_SynchronizeData_Requester',
                 [],
@@ -119,6 +121,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $account
             );
             $dispatcherObject->process($connectorObj);
+
             return;
         }
 
@@ -153,7 +156,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $response = $this->receiveChangesFromEbay(
             $account,
-            ['since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
+            ['since_time' => $nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
         );
 
         if ($response) {
@@ -168,7 +171,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         if ($previousSinceTime->format('U') < $nextSinceTime->format('U')) {
             $response = $this->receiveChangesFromEbay(
                 $account,
-                ['since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
+                ['since_time' => $nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
             );
 
             if ($response) {
@@ -184,7 +187,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         if ($previousSinceTime->format('U') < $nextSinceTime->format('U')) {
             $response = $this->receiveChangesFromEbay(
                 $account,
-                ['since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
+                ['since_time' => $nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s')]
             );
 
             if ($response) {
@@ -197,6 +200,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function receiveChangesFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = [])
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'inventory',
@@ -248,7 +252,8 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $minTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $minTime->modify("-1 month");
 
-        if (empty($sinceTime) ||
+        if (
+            empty($sinceTime) ||
             (int)$this->helperData->createGmtDateTime($sinceTime)->format('U') < (int)$minTime->format('U')
         ) {
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -262,7 +267,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItem */
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => self::LOCK_ITEM_PREFIX.'_'.$account->getId()
+            'nick' => self::LOCK_ITEM_PREFIX . '_' . $account->getId(),
         ]);
 
         if (!$lockItemManager->isExist()) {
@@ -271,6 +276,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         if ($lockItemManager->isInactiveMoreThanSeconds(\Ess\M2ePro\Model\Processing\Runner::MAX_LIFETIME)) {
             $lockItemManager->remove();
+
             return false;
         }
 

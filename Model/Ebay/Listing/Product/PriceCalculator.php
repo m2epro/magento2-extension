@@ -26,10 +26,12 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     protected function prepareOptionTitles($optionTitles)
     {
         foreach ($optionTitles as &$optionTitle) {
-            $optionTitle = trim($this->helperFactory->getObject('Data')->reduceWordsInString(
-                $optionTitle,
-                \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
-            ));
+            $optionTitle = trim(
+                $this->helperFactory->getObject('Data')->reduceWordsInString(
+                    $optionTitle,
+                    \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
+                )
+            );
         }
 
         return $optionTitles;

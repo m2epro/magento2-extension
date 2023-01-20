@@ -8,13 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation
  */
 class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\LogicalUnit
 {
+    /** @var null  */
     private $processor = null;
 
     /** @var \Ess\M2ePro\Model\Listing\Product[] $childListingsProducts */
@@ -28,8 +29,10 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
     public function getProcessor()
     {
         if ($this->processor === null) {
-            $this->processor = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Manager'
-                . '\Type\Relation\ParentRelation\Processor');
+            $this->processor = $this->modelFactory->getObject(
+                'Amazon_Listing_Product_Variation_Manager'
+                . '\Type\Relation\ParentRelation\Processor'
+            );
             $this->processor->setListingProduct($this->getListingProduct());
         }
 
@@ -126,6 +129,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
     /**
      * @param bool $save
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function resetProductAttributes($save = true)
@@ -163,11 +167,13 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         }
 
         $themeAttributes = $this->modelFactory->getObject('Amazon_Marketplace_Details')
-            ->setMarketplaceId($this->getListingProduct()->getMarketplace()->getId())
-            ->getVariationThemeAttributes(
-                $this->getAmazonListingProduct()->getAmazonDescriptionTemplate()->getProductDataNick(),
-                $this->getChannelTheme()
-            );
+                                              ->setMarketplaceId($this->getListingProduct()->getMarketplace()->getId())
+                                              ->getVariationThemeAttributes(
+                                                  $this->getAmazonListingProduct()
+                                                       ->getAmazonDescriptionTemplate()
+                                                       ->getProductDataNick(),
+                                                  $this->getChannelTheme()
+                                              );
 
         $channelAttributes = $this->getRealChannelAttributes();
 
@@ -216,6 +222,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
      * @param $value
      * @param bool $isManually
      * @param bool $save
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function setChannelTheme($value, $isManually = false, $save = true)
@@ -709,6 +716,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
     /**
      * @param bool $freeOptionsFilter
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -719,13 +727,15 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         foreach ($this->getChildListingsProducts() as $childListingProduct) {
             $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
 
-            if (!$childTypeModel->isVariationProductMatched() ||
+            if (
+                !$childTypeModel->isVariationProductMatched() ||
                 ($childTypeModel->isVariationChannelMatched() && $freeOptionsFilter)
             ) {
                 continue;
             }
 
-            if ($freeOptionsFilter
+            if (
+                $freeOptionsFilter
                 && ($childListingProduct->isLocked()
                     || $childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
             ) {
@@ -740,6 +750,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
     /**
      * @param bool $freeOptionsFilter
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -753,13 +764,15 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             /** @var ChildRelation $childTypeModel */
             $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
 
-            if (!$childTypeModel->isVariationChannelMatched() ||
+            if (
+                !$childTypeModel->isVariationChannelMatched() ||
                 ($childTypeModel->isVariationProductMatched() && $freeOptionsFilter)
             ) {
                 continue;
             }
 
-            if ($freeOptionsFilter
+            if (
+                $freeOptionsFilter
                 && ($childListingProduct->isLocked()
                     || $childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
             ) {
@@ -849,6 +862,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
      * @param array $productOptions
      * @param array $channelOptions
      * @param $generalId
+     *
      * @return \Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -861,16 +875,16 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         $data = [
             'listing_id' => $this->getListingProduct()->getListingId(),
             'product_id' => $this->getListingProduct()->getProductId(),
-            'status'     => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             'general_id' => $generalId,
             'is_general_id_owner' => $this->getAmazonListingProduct()->isGeneralIdOwner(),
-            'status_changer'      => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
-            'is_variation_product'    => 1,
-            'is_variation_parent'     => 0,
-            'variation_parent_id'     => $this->getListingProduct()->getId(),
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
+            'is_variation_product' => 1,
+            'is_variation_parent' => 0,
+            'variation_parent_id' => $this->getListingProduct()->getId(),
             'template_description_id' => $this->getAmazonListingProduct()->getTemplateDescriptionId(),
-            'template_shipping_id'    => $this->getAmazonListingProduct()->getTemplateShippingId(),
-            'template_product_tax_code_id'  => $this->getAmazonListingProduct()->getTemplateProductTaxCodeId(),
+            'template_shipping_id' => $this->getAmazonListingProduct()->getTemplateShippingId(),
+            'template_product_tax_code_id' => $this->getAmazonListingProduct()->getTemplateProductTaxCodeId(),
         ];
 
         /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
@@ -882,10 +896,10 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         $instruction->setData(
             [
                 'listing_product_id' => $childListingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
-                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
-                'priority'           => 70,
+                'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                'priority' => 70,
             ]
         );
         $instruction->save();
@@ -901,9 +915,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
         if (!empty($productOptions)) {
             $productVariation = $this->getListingProduct()
-                ->getMagentoProduct()
-                ->getVariationInstance()
-                ->getVariationTypeStandard($productOptions);
+                                     ->getMagentoProduct()
+                                     ->getVariationInstance()
+                                     ->getVariationTypeStandard($productOptions);
 
             if ($productVariation !== null) {
                 $childTypeModel->setProductVariation($productVariation);
@@ -919,6 +933,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
     /**
      * @param $listingProductId
+     *
      * @return bool
      */
     public function removeChildListingProduct($listingProductId)
@@ -963,7 +978,6 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         $this->getListingProduct()->save();
 
         foreach ($this->getChildListingsProducts() as $childListingProduct) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $childVariationManager */
             $childVariationManager = $childListingProduct->getChildObject()->getVariationManager();
 
@@ -983,6 +997,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
     public function getRealMagentoAttributes()
     {
         $magentoVariations = $this->getRealMagentoVariations();
+
         return array_keys($magentoVariations['set']);
     }
 

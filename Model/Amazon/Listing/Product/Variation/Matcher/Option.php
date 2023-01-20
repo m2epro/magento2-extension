@@ -15,13 +15,13 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Magento\Product */
     private $magentoProduct = null;
-
+    /** @var array  */
     private $destinationOptions = [];
-
+    /** @var array  */
     private $destinationOptionsLocalVocabularyNames = [];
-
+    /** @var array  */
     private $destinationOptionsServerVocabularyNames = [];
-
+    /** @var array  */
     private $matchedAttributes = [];
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option\Resolver $resolver */
@@ -42,33 +42,36 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
     // ---------------------------------------
 
-//    $destinationOptions = array(
-//        'B00005N5PF' => array(
-//          'Color' => 'Red',
-//          'Size'  => 'XL',
-//        ),
-//        ...
-//    )
+    //    $destinationOptions = array(
+    //        'B00005N5PF' => array(
+    //          'Color' => 'Red',
+    //          'Size'  => 'XL',
+    //        ),
+    //        ...
+    //    )
 
     /**
      * @param array $destinationOptions
+     *
      * @return $this
      */
     public function setDestinationOptions(array $destinationOptions)
     {
         $this->destinationOptions = $destinationOptions;
 
-        $this->destinationOptionsLocalVocabularyNames  = [];
+        $this->destinationOptionsLocalVocabularyNames = [];
         $this->destinationOptionsServerVocabularyNames = [];
 
         return $this;
@@ -76,23 +79,26 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $matchedAttributes
+     *
      * @return $this
      */
     public function setMatchedAttributes(array $matchedAttributes)
     {
         $this->matchedAttributes = $matchedAttributes;
+
         return $this;
     }
 
     //########################################
 
-//    $sourceOption = array(
-//         'Color' => 'red',
-//         'Size'  => 'L'
-//    )
+    //    $sourceOption = array(
+    //         'Color' => 'red',
+    //         'Size'  => 'L'
+    //    )
 
     /**
      * @param array $sourceOption
+     *
      * @return null|int
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -138,9 +144,9 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->getResolver()
-            ->setSourceOption($sourceOptionNames)
-            ->setDestinationOptions($this->destinationOptions)
-            ->setMatchedAttributes($this->matchedAttributes);
+             ->setSourceOption($sourceOptionNames)
+             ->setDestinationOptions($this->destinationOptions)
+             ->setMatchedAttributes($this->matchedAttributes);
 
         return $this->getResolver()->resolve()->getResolvedGeneralId();
     }
@@ -148,9 +154,9 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
     private function matchGeneralIdByLocalVocabulary(array $sourceOption)
     {
         $this->getResolver()
-            ->setSourceOption($this->getSourceOptionNames($sourceOption))
-            ->setDestinationOptions($this->getDestinationOptionLocalVocabularyNames())
-            ->setMatchedAttributes($this->matchedAttributes);
+             ->setSourceOption($this->getSourceOptionNames($sourceOption))
+             ->setDestinationOptions($this->getDestinationOptionLocalVocabularyNames())
+             ->setMatchedAttributes($this->matchedAttributes);
 
         return $this->getResolver()->resolve()->getResolvedGeneralId();
     }
@@ -158,9 +164,9 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
     private function matchGeneralIdByServerVocabulary(array $sourceOption)
     {
         $this->getResolver()
-            ->setSourceOption($this->getSourceOptionNames($sourceOption))
-            ->setDestinationOptions($this->getDestinationOptionServerVocabularyNames())
-            ->setMatchedAttributes($this->matchedAttributes);
+             ->setSourceOption($this->getSourceOptionNames($sourceOption))
+             ->setDestinationOptions($this->getDestinationOptionServerVocabularyNames())
+             ->setMatchedAttributes($this->matchedAttributes);
 
         return $this->getResolver()->resolve()->getResolvedGeneralId();
     }
@@ -234,6 +240,7 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->resolver = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Option_Resolver');
+
         return $this->resolver;
     }
 

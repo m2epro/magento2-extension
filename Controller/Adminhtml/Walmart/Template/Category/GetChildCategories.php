@@ -28,11 +28,13 @@ class GetChildCategories extends Category
     public function execute()
     {
         $select = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
-            )
-            ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
-            ->order('title ASC');
+                                           ->from(
+                                               $this->dbStructureHelper->getTableNameWithPrefix(
+                                                   'm2epro_walmart_dictionary_category'
+                                               )
+                                           )
+                                           ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
+                                           ->order('title ASC');
 
         $parentCategoryId = $this->getRequest()->getPost('parent_category_id');
         empty($parentCategoryId) ? $select->where('parent_category_id IS NULL')
@@ -50,6 +52,7 @@ class GetChildCategories extends Category
 
         ksort($tempCategories);
         $this->setJsonContent(array_values($tempCategories));
+
         return $this->getResult();
     }
 

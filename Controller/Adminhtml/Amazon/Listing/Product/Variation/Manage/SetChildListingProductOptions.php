@@ -27,7 +27,7 @@ class SetChildListingProductOptions extends Main
     public function execute()
     {
         $listingProductId = $this->getRequest()->getParam('product_id');
-        $productOptions   = $this->getRequest()->getParam('product_options');
+        $productOptions = $this->getRequest()->getParam('product_options');
 
         if (empty($listingProductId) || empty($productOptions['values']) || empty($productOptions['attr'])) {
             $this->setAjaxContent('You should provide correct parameters.', false);
@@ -83,7 +83,8 @@ class SetChildListingProductOptions extends Main
                 continue;
             }
 
-            if ($this->vocabularyHelper->isOptionExistsInLocalStorage(
+            if (
+                $this->vocabularyHelper->isOptionExistsInLocalStorage(
                     $productOption,
                     $channelOption,
                     $channelAttribute
@@ -92,7 +93,8 @@ class SetChildListingProductOptions extends Main
                 continue;
             }
 
-            if ($this->vocabularyHelper->isOptionExistsInServerStorage(
+            if (
+                $this->vocabularyHelper->isOptionExistsInServerStorage(
                     $productOption,
                     $channelOption,
                     $channelAttribute

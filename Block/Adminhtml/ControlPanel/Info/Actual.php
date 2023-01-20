@@ -135,6 +135,7 @@ class Actual extends AbstractBlock
         if (empty($this->mySqlPrefix)) {
             $this->mySqlPrefix = $this->__('disabled');
         }
+
         // ---------------------------------------
 
         return parent::_beforeToHtml();

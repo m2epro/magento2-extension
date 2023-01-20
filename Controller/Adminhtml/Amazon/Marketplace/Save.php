@@ -22,7 +22,7 @@ class Save extends Marketplace
         $marketplaces = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
 
         foreach ($marketplaces as $marketplace) {
-            $newStatus = $this->getRequest()->getParam('status_'.$marketplace->getId());
+            $newStatus = $this->getRequest()->getParam('status_' . $marketplace->getId());
 
             if ($newStatus === null) {
                 continue;

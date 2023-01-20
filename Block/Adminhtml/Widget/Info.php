@@ -47,6 +47,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function setInfo(array $steps)
     {
         $this->_info = $steps;
+
         return $this;
     }
 

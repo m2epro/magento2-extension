@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description\Definition
- */
 class Definition extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     //########################################

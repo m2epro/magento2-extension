@@ -66,21 +66,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'title',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
             'filter_index' => 'title',
-            'escape'       => true,
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'escape' => true,
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('note', [
-            'header'       => $this->__('Note'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'note',
-            'filter_index' => 'note'
+            'header' => $this->__('Note'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'note',
+            'filter_index' => 'note',
         ]);
     }
 
@@ -93,9 +93,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set mass-action
         //--------------------------------
         $this->getMassactionBlock()->addItem('removeFilter', [
-            'label'   => $this->__('Remove'),
-            'url'     => ''
+            'label' => $this->__('Remove'),
+            'url' => '',
         ]);
+
         //--------------------------------
 
         return parent::_prepareMassaction();
@@ -113,7 +114,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _toHtml()
     {
         if (!$this->canDisplayContainer()) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
     EbayListingViewSettingsMotorsViewFilterGridObj.afterInitPage();
 JS
             );
@@ -121,7 +123,8 @@ JS
             return parent::_toHtml();
         }
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Listing/View/Settings/Motors/View/Filter/Grid'
     ], function() {
@@ -142,7 +145,7 @@ JS
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_settings_motors/viewFilterGrid', [
-            '_current' => true
+            '_current' => true,
         ]);
     }
 

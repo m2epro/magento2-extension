@@ -10,15 +10,12 @@ namespace Ess\M2ePro\Plugin;
 
 use Ess\M2ePro\Model\Exception;
 
-/**
- * Class \Ess\M2ePro\Plugin\AbstractPlugin
- */
 abstract class AbstractPlugin
 {
+    /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Model\Factory  */
     protected $modelFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -50,9 +47,9 @@ abstract class AbstractPlugin
     protected function canExecute()
     {
         return $this->helperFactory->getObject('Magento')->isInstalled() &&
-               !$this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
-               $this->helperFactory->getObject('Module')->isReadyToWork() &&
-               !$this->helperFactory->getObject('Module')->isDisabled();
+            !$this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
+            $this->helperFactory->getObject('Module')->isReadyToWork() &&
+            !$this->helperFactory->getObject('Module')->isDisabled();
     }
 
     //########################################
@@ -60,6 +57,7 @@ abstract class AbstractPlugin
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

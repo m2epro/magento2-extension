@@ -35,6 +35,7 @@ class NewAsin extends InstallationAmazon
         $source = isset($productAddSessionData['source']) ? $productAddSessionData['source'] : null;
 
         $this->sessionHelper->setValue('amazon_listing_product_add', $productAddSessionData);
+
         return $this->_redirect(
             '*/amazon_listing_product_add/index',
             [

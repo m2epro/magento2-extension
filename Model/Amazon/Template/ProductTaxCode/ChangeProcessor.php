@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Template\ProductTaxCode;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_product_tax_code_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_product_tax_code_change_processor';
 
     //########################################
 
@@ -38,7 +38,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }

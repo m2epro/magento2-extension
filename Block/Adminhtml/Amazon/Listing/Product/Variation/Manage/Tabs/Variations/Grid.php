@@ -96,7 +96,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->getSelect()->columns([
-            'online_current_price' => new \Zend_Db_Expr('
+            'online_current_price' => new \Zend_Db_Expr(
+                '
                 IF (
                     `second_table`.`online_regular_price` IS NULL,
                     `second_table`.`online_business_price`,
@@ -109,25 +110,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                         `second_table`.`online_regular_price`
                     )
                 )
-            '),
+            '
+            ),
             'amazon_status' => 'status',
-            'amazon_sku'    => 'second_table.sku',
+            'amazon_sku' => 'second_table.sku',
         ]);
 
         $lpvTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource()->getMainTable();
         $lpvoTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
-            ->getResource()->getMainTable();
+                                               ->getResource()->getMainTable();
         $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(
+            new \Zend_Db_Expr(
+                '(
                 SELECT
                     mlpv.listing_product_id,
                     GROUP_CONCAT(`mlpvo`.`attribute`, \'==\', `mlpvo`.`product_id` SEPARATOR \'||\') as products_ids
-                FROM `'. $lpvTable .'` as mlpv
-                INNER JOIN `'. $lpvoTable .
-                    '` AS `mlpvo` ON (`mlpvo`.`listing_product_variation_id`=`mlpv`.`id`)
+                FROM `' . $lpvTable . '` as mlpv
+                INNER JOIN `' . $lpvoTable .
+                '` AS `mlpvo` ON (`mlpvo`.`listing_product_variation_id`=`mlpv`.`id`)
                 WHERE `mlpv`.`component_mode` = \'amazon\'
                 GROUP BY `mlpv`.`listing_product_id`
-            )'),
+            )'
+            ),
             'main_table.id=t.listing_product_id',
             [
                 'products_ids' => 'products_ids',
@@ -135,7 +139,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $alprTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-            ->getResource()->getMainTable();
+                                               ->getResource()->getMainTable();
         $collection->getSelect()->joinLeft(
             ['malpr' => $alprTable],
             '(`second_table`.`listing_product_id` = `malpr`.`listing_product_id`)',
@@ -144,7 +148,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child') {
             $collection->addFieldToFilter(
                 'second_table.listing_product_id',
                 ['in' => explode(',', $this->getRequest()->getParam('listing_product_id_filter'))]
@@ -174,77 +178,77 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $this->addColumn('product_options', [
-            'header'         => $this->__('Magento Variation'),
-            'align'          => 'left',
-            'width'          => '210px',
-            'sortable'       => false,
-            'index'          => 'additional_data',
-            'options'        => $productAttributes,
-            'filter_index'   => 'additional_data',
+            'header' => $this->__('Magento Variation'),
+            'align' => 'left',
+            'width' => '210px',
+            'sortable' => false,
+            'index' => 'additional_data',
+            'options' => $productAttributes,
+            'filter_index' => 'additional_data',
             'frame_callback' => [$this, 'callbackColumnProductOptions'],
             'filter_condition_callback' => [$this, 'callbackProductOptions'],
-            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
         ]);
 
         $this->addColumn('channel_options', [
-            'header'         => $this->__('Amazon Variation'),
-            'align'          => 'left',
-            'width'          => '210px',
-            'sortable'       => false,
-            'index'          => 'additional_data',
-            'filter_index'   => 'additional_data',
+            'header' => $this->__('Amazon Variation'),
+            'align' => 'left',
+            'width' => '210px',
+            'sortable' => false,
+            'index' => 'additional_data',
+            'filter_index' => 'additional_data',
             'frame_callback' => [$this, 'callbackColumnChannelOptions'],
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
-            'options'        => $channelAttributes,
-            'filter_condition_callback' => [$this, 'callbackChannelOptions']
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions::class,
+            'options' => $channelAttributes,
+            'filter_condition_callback' => [$this, 'callbackChannelOptions'],
         ]);
 
         $this->addColumn('amazon_sku', [
-            'header'       => $this->__('SKU'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'amazon_sku',
+            'header' => $this->__('SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'amazon_sku',
             'filter_index' => 'amazon_sku',
             'frame_callback' => [$this, 'callbackColumnAmazonSku'],
-            'filter_condition_callback' => [$this, 'callbackFilterSku']
+            'filter_condition_callback' => [$this, 'callbackFilterSku'],
         ]);
 
         $this->addColumn('general_id', [
-            'header'         => $this->__('ASIN / ISBN'),
-            'align'          => 'left',
-            'width'          => '100px',
-            'type'           => 'text',
-            'index'          => 'general_id',
-            'filter_index'   => 'general_id',
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'header' => $this->__('ASIN / ISBN'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'text',
+            'index' => 'general_id',
+            'filter_index' => 'general_id',
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
         ]);
 
         $this->addColumn('online_qty', [
-            'header'              => $this->__('QTY'),
-            'align'               => 'right',
-            'width'               => '70px',
-            'type'                => 'number',
-            'index'               => 'online_qty',
-            'filter_index'        => 'online_qty',
-            'show_receiving'      => false,
-            'is_variation_grid'   => true,
-            'renderer'            => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty::class,
-            'filter'              => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
-            'filter_condition_callback' => [$this, 'callbackFilterQty']
+            'header' => $this->__('QTY'),
+            'align' => 'right',
+            'width' => '70px',
+            'type' => 'number',
+            'index' => 'online_qty',
+            'filter_index' => 'online_qty',
+            'show_receiving' => false,
+            'is_variation_grid' => true,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Qty::class,
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Qty::class,
+            'filter_condition_callback' => [$this, 'callbackFilterQty'],
         ]);
 
         $priceColumn = [
-            'header'                    => $this->__('Price'),
-            'align'                     => 'right',
-            'width'                     => '70px',
-            'type'                      => 'number',
-            'index'                     => 'online_current_price',
-            'filter_index'              => 'online_current_price',
-            'is_variation_grid'         => true,
-            'marketplace_id'            => $this->getListingProduct()->getListing()->getMarketplaceId(),
-            'account_id'                => $this->getListingProduct()->getListing()->getAccountId(),
-            'renderer'                  => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price::class,
-            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '70px',
+            'type' => 'number',
+            'index' => 'online_current_price',
+            'filter_index' => 'online_current_price',
+            'is_variation_grid' => true,
+            'marketplace_id' => $this->getListingProduct()->getListing()->getMarketplaceId(),
+            'account_id' => $this->getListingProduct()->getListing()->getAccountId(),
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Price::class,
+            'filter_condition_callback' => [$this, 'callbackFilterPrice'],
         ];
 
         if ($this->getListingProduct()->getListing()->getAccount()->getChildObject()->isRepricing()) {
@@ -254,22 +258,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn('online_current_price', $priceColumn);
 
         $this->addColumn('amazon_status', [
-            'header'   => $this->__('Status'),
-            'width'    => '100px',
-            'index'    => 'amazon_status',
+            'header' => $this->__('Status'),
+            'width' => '100px',
+            'index' => 'amazon_status',
             'filter_index' => 'amazon_status',
-            'type'     => 'options',
+            'type' => 'options',
             'sortable' => false,
-            'options'  => [
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete'),
             ],
             'is_variation_grid' => true,
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status::class,
-            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
         ]);
 
         return parent::_prepareColumns();
@@ -281,33 +285,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setMassactionIdFieldOnlyIndexValue(true);
 
         $this->getMassactionBlock()->addItem('list', [
-            'label'    => $this->__('List Item(s)'),
-            'url'      => ''
+            'label' => $this->__('List Item(s)'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('revise', [
-            'label'    => $this->__('Revise Item(s)'),
-            'url'      => ''
+            'label' => $this->__('Revise Item(s)'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('relist', [
-            'label'    => $this->__('Relist Item(s)'),
-            'url'      => ''
+            'label' => $this->__('Relist Item(s)'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('stop', [
-            'label'    => $this->__('Stop Item(s)'),
-            'url'      => ''
+            'label' => $this->__('Stop Item(s)'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
-            'label'    => $this->__('Stop on Channel / Remove from Listing'),
-            'url'      => ''
+            'label' => $this->__('Stop on Channel / Remove from Listing'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('deleteAndRemove', [
-            'label'    => $this->__('Remove from Channel & Listing'),
-            'url'      => ''
+            'label' => $this->__('Remove from Channel & Listing'),
+            'url' => '',
         ]);
 
         return parent::_prepareMassaction();
@@ -418,8 +422,8 @@ HTML;
         $parentAmazonListingProduct = $typeModel->getParentListingProduct()->getChildObject();
 
         $matchedAttributes = $parentAmazonListingProduct->getVariationManager()
-            ->getTypeModel()
-            ->getMatchedAttributes();
+                                                        ->getTypeModel()
+                                                        ->getMatchedAttributes();
 
         if (!$typeModel->isVariationChannelMatched()) {
             if (!$typeModel->isVariationProductMatched() || !$amazonListingProduct->isGeneralIdOwner()) {
@@ -519,7 +523,7 @@ HTML;
                     continue;
                 }
 
-                $msg .= '<p>'.$message['message'] . '&nbsp;';
+                $msg .= '<p>' . $message['message'] . '&nbsp;';
                 if (!empty($message['value'])) {
                     $msg .= $this->__('Current Value') . ': "' . $message['value'] . '"';
                 }
@@ -532,7 +536,7 @@ HTML;
 
             $value .= <<<HTML
 <span style="float:right;">
-    {$this->getTooltipHtml($msg, 'map_link_defected_message_icon_'.$row->getId())}
+    {$this->getTooltipHtml($msg, 'map_link_defected_message_icon_' . $row->getId())}
 </span>
 HTML;
         }
@@ -580,10 +584,12 @@ HTML;
             if (is_array($value) && isset($value['value'])) {
                 $collection->addFieldToFilter(
                     'additional_data',
-                    ['regexp'=> '"variation_product_options":[^}]*' .
-                        $value['attr'] . '[[:space:]]*":"[[:space:]]*' .
-                        // trying to screen slashes that in json
-                        addslashes(addslashes($value['value']).'[[:space:]]*')]
+                    [
+                        'regexp' => '"variation_product_options":[^}]*' .
+                            $value['attr'] . '[[:space:]]*":"[[:space:]]*' .
+                            // trying to screen slashes that in json
+                            addslashes(addslashes($value['value']) . '[[:space:]]*'),
+                    ]
                 );
             }
         }
@@ -601,10 +607,12 @@ HTML;
             if (is_array($value) && isset($value['value'])) {
                 $collection->addFieldToFilter(
                     'additional_data',
-                    ['regexp'=> '"variation_channel_options":[^}]*' .
-                        $value['attr'] . '[[:space:]]*":"[[:space:]]*' .
-                        // trying to screen slashes that in json
-                        addslashes(addslashes($value['value']).'[[:space:]]*')]
+                    [
+                        'regexp' => '"variation_channel_options":[^}]*' .
+                            $value['attr'] . '[[:space:]]*":"[[:space:]]*' .
+                            // trying to screen slashes that in json
+                            addslashes(addslashes($value['value']) . '[[:space:]]*'),
+                    ]
                 );
             }
         }
@@ -653,13 +661,13 @@ HTML;
 
         if (isset($value['from']) || isset($value['to'])) {
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'second_table.online_regular_price >= \''.(float)$value['from'].'\'';
+                $condition = 'second_table.online_regular_price >= \'' . (float)$value['from'] . '\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'second_table.online_regular_price <= \''.(float)$value['to'].'\'';
+                $condition .= 'second_table.online_regular_price <= \'' . (float)$value['to'] . '\'';
             }
 
             $condition = '(' . $condition . ' AND
@@ -673,13 +681,13 @@ HTML;
             )) OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'second_table.online_regular_sale_price >= \''.(float)$value['from'].'\'';
+                $condition .= 'second_table.online_regular_sale_price >= \'' . (float)$value['from'] . '\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'second_table.online_regular_sale_price <= \''.(float)$value['to'].'\'';
+                $condition .= 'second_table.online_regular_sale_price <= \'' . (float)$value['to'] . '\'';
             }
 
             $condition .= ' AND
@@ -693,13 +701,13 @@ HTML;
             )) OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'online_business_price >= \''.(float)$value['from'].'\'';
+                $condition .= 'online_business_price >= \'' . (float)$value['from'] . '\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'second_table.online_business_price <= \''.(float)$value['to'].'\'';
+                $condition .= 'second_table.online_business_price <= \'' . (float)$value['to'] . '\'';
             }
 
             $condition .= ' AND (second_table.online_regular_price IS NULL))';
@@ -742,10 +750,11 @@ HTML;
     {
         $html = '';
         if ($this->getFilterVisibility()) {
-            $html.= $this->getSearchButtonHtml();
-            $html.= $this->getResetFilterButtonHtml();
-            $html.= $this->getAddNewChildButtonsHtml();
+            $html .= $this->getSearchButtonHtml();
+            $html .= $this->getResetFilterButtonHtml();
+            $html .= $this->getAddNewChildButtonsHtml();
         }
+
         return $html;
     }
 
@@ -754,16 +763,16 @@ HTML;
         if ($this->isNewChildAllowed()) {
             // ---------------------------------------
             $data = [
-                'label'   => $this->__('Add New Child Product'),
+                'label' => $this->__('Add New Child Product'),
                 'onclick' => 'ListingProductVariationManageVariationsGridObj.showNewChildForm(' .
                     var_export(!$this->hasUnusedChannelVariations(), true) .
                     ', ' . $this->getListingProduct()->getId() . ')',
-                'class'   => 'action primary',
-                'style'   => 'float: right;',
-                'id'      => 'add_new_child_button'
+                'class' => 'action primary',
+                'style' => 'float: right;',
+                'id' => 'add_new_child_button',
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('add_new_child_button', $buttonBlock);
             // ---------------------------------------
         }
@@ -811,25 +820,25 @@ HTML;
     public function getCurrentChannelVariations()
     {
         return $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getChannelVariations();
+                    ->getVariationManager()->getTypeModel()->getChannelVariations();
     }
 
     public function hasUnusedProductVariation()
     {
         return (bool)$this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUnusedProductOptions();
+                          ->getChildObject()
+                          ->getVariationManager()
+                          ->getTypeModel()
+                          ->getUnusedProductOptions();
     }
 
     public function hasUnusedChannelVariations()
     {
         return (bool)$this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUnusedChannelOptions();
+                          ->getChildObject()
+                          ->getVariationManager()
+                          ->getTypeModel()
+                          ->getUnusedChannelOptions();
     }
 
     public function hasChildWithEmptyProductOptions()
@@ -867,16 +876,16 @@ HTML;
     public function getUsedChannelVariations()
     {
         return (bool)$this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUsedChannelOptions();
+                          ->getChildObject()
+                          ->getVariationManager()
+                          ->getTypeModel()
+                          ->getUsedChannelOptions();
     }
 
     public function getGridUrl()
     {
         return $this->getUrl('*/amazon_listing_product_variation_manage/viewVariationsGridAjax', [
-            'product_id' => $this->getListingProduct()->getId()
+            'product_id' => $this->getListingProduct()->getId(),
         ]);
     }
 
@@ -920,7 +929,7 @@ CSS
 JS
         );
 
-        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child'){
+        if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child') {
             $noticeMessage = $this->__('This list includes a Product you are searching for.');
             $this->js->add(
                 <<<JS
@@ -973,7 +982,7 @@ JS
         $listingProductId = $row->getData('id');
         if (!isset($this->lockedDataCache[$listingProductId])) {
             $objectLocks = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId)
-                ->getProcessingLocks();
+                                                     ->getProcessingLocks();
             $tempArray = [
                 'object_locks' => $objectLocks,
                 'in_action' => !empty($objectLocks),
@@ -987,7 +996,7 @@ JS
     protected function getTemplateDescriptionLinkHtml($listingProduct)
     {
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $listingProduct->getChildObject()->getTemplateDescriptionId()
+            'id' => $listingProduct->getChildObject()->getTemplateDescriptionId(),
         ]);
 
         $helper = $this->dataHelper;
@@ -1014,7 +1023,7 @@ HTML;
         }
 
         $variationsSets = $this->getAttributesVariationsSets($unusedVariations);
-        $variationsSetsSorted =  [];
+        $variationsSetsSorted = [];
 
         foreach ($attributes as $attribute) {
             $variationsSetsSorted[$attribute] = $variationsSets[$attribute];
@@ -1107,15 +1116,14 @@ HTML;
 
     public function getCurrentProductVariations()
     {
-
         if ($this->currentProductVariations !== null) {
             return $this->currentProductVariations;
         }
 
         $magentoProductVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                         ->getMagentoProduct()
+                                         ->getVariationInstance()
+                                         ->getVariationsTypeStandard();
 
         $productVariations = [];
 
@@ -1136,10 +1144,10 @@ HTML;
     {
         if ($this->usedProductVariations === null) {
             $this->usedProductVariations = $this->getListingProduct()
-                ->getChildObject()
-                ->getVariationManager()
-                ->getTypeModel()
-                ->getUsedProductOptions();
+                                                ->getChildObject()
+                                                ->getVariationManager()
+                                                ->getTypeModel()
+                                                ->getUsedProductOptions();
         }
 
         return $this->usedProductVariations;
@@ -1148,10 +1156,10 @@ HTML;
     public function getUnusedProductVariations()
     {
         return $this->getListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel()
-            ->getUnusedProductOptions();
+                    ->getChildObject()
+                    ->getVariationManager()
+                    ->getTypeModel()
+                    ->getUnusedProductOptions();
     }
 
     private function isVariationExistsInArray(array $needle, array $haystack)
@@ -1174,7 +1182,7 @@ HTML;
         }
 
         return $this->childListingProducts = $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getChildListingsProducts();
+                                                  ->getVariationManager()->getTypeModel()->getChildListingsProducts();
     }
 
     public function getAttributesVariationsSets($variations)

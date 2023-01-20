@@ -51,7 +51,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         );
 
         $parts = [
-            sprintf('Product was Relisted with QTY %d', $this->listingProduct->getChildObject()->getOnlineQty())
+            sprintf('Product was Relisted with QTY %d', $this->listingProduct->getChildObject()->getOnlineQty()),
         ];
 
         if ($regularPrice = $this->listingProduct->getChildObject()->getOnlineRegularPrice()) {

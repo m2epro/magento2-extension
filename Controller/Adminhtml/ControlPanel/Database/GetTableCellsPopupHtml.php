@@ -16,8 +16,11 @@ class GetTableCellsPopupHtml extends Table
     public function execute()
     {
         $block = $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\TableCellsPopup::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\TableCellsPopup::class
+                      );
         $this->setAjaxContent($block->toHtml());
+
         return $this->getResult();
     }
 }

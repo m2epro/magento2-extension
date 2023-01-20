@@ -25,17 +25,17 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
             [
                 'id' => 1,
                 'title' => $this->__('Step 1'),
-                'description' => $this->__('General Settings')
+                'description' => $this->__('General Settings'),
             ],
             [
                 'id' => 2,
                 'title' => $this->__('Step 2'),
-                'description' => $this->__('Selling Settings')
+                'description' => $this->__('Selling Settings'),
             ],
         ]);
 
         $this->setContainerData([
-            'style' => 'margin-bottom: 30px;'
+            'style' => 'margin-bottom: 30px;',
         ]);
     }
 

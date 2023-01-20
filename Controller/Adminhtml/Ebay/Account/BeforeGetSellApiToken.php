@@ -54,6 +54,7 @@ class BeforeGetSellApiToken extends Account
         try {
             $backUrl = $this->getUrl('*/*/afterGetSellApiToken', ['_current' => true]);
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',
@@ -76,6 +77,7 @@ class BeforeGetSellApiToken extends Account
             $this->getMessageManager()->addErrorMessage($error);
 
             $this->_redirect($this->getUrl('*/*/index'));
+
             return;
         }
 

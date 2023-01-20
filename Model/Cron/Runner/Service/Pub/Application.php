@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Cron\Runner\Service\Pub;
  */
 class Application implements \Magento\Framework\AppInterface
 {
-    const ACTION_PARAM        = 'action';
-    const CONNECTION_ID_PARAM = 'connection_id';
-    const AUTH_KEY_PARAM      = 'auth_key';
+    public const ACTION_PARAM = 'action';
+    public const CONNECTION_ID_PARAM = 'connection_id';
+    public const AUTH_KEY_PARAM = 'auth_key';
 
-    const ACTION_PROCESS = 'process';
-    const ACTION_TEST    = 'test';
-    const ACTION_RESET   = 'reset';
+    public const ACTION_PROCESS = 'process';
+    public const ACTION_TEST = 'test';
+    public const ACTION_RESET = 'reset';
 
     /** @var \Magento\Framework\App\State */
     private $state;
@@ -65,8 +65,8 @@ class Application implements \Magento\Framework\AppInterface
         $this->objectManager = $objectManager;
         $this->areaList = $areaList ? $areaList : $this->objectManager->get(\Magento\Framework\App\AreaList::class);
 
-        $this->helperFactory   = $helperFactory;
-        $this->modelFactory    = $modelFactory;
+        $this->helperFactory = $helperFactory;
+        $this->modelFactory = $modelFactory;
         $this->responseFactory = $responseFactory;
     }
 
@@ -155,6 +155,7 @@ class Application implements \Magento\Framework\AppInterface
     public function catchException(\Magento\Framework\App\Bootstrap $bootstrap, \Exception $exception)
     {
         $this->helperFactory->getObject('Module\Exception')->process($exception);
+
         return true;
     }
 

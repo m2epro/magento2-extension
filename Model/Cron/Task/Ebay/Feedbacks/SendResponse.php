@@ -143,11 +143,11 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $accountsIdsTemplate = implode(', ', $accountsIds);
         $feedbackTypePositive = \Ess\M2ePro\Model\Ebay\Feedback::TYPE_POSITIVE;
         $minBuyerFeedbackDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-            ->modify("-{$daysAgo} days")
-            ->format('Y-m-d H:i:s');
+                                                       ->modify("-{$daysAgo} days")
+                                                       ->format('Y-m-d H:i:s');
         $maxResponseAttemptDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-            ->modify('-' . self::ATTEMPT_INTERVAL . 'seconds')
-            ->format('Y-m-d H:i:s');
+                                                         ->modify('-' . self::ATTEMPT_INTERVAL . 'seconds')
+                                                         ->format('Y-m-d H:i:s');
 
         $sqlCondition = <<<SQL
 (`main_table`.`seller_feedback_id` = 0)
@@ -170,13 +170,13 @@ SQL;
 
         $collection = $this->ebayFeedbackCollectionFactory->create();
         $collection->getSelect()
-            ->join(
-                ['ea' => $this->ebayAccountResource->getMainTable()],
-                "`ea`.`account_id` = `main_table`.`account_id` AND `ea`.`account_id` IN ($accountsIdsTemplate)",
-                []
-            )
-            ->where($sqlCondition)
-            ->order(['buyer_feedback_date ASC']);
+                   ->join(
+                       ['ea' => $this->ebayAccountResource->getMainTable()],
+                       "`ea`.`account_id` = `main_table`.`account_id` AND `ea`.`account_id` IN ($accountsIdsTemplate)",
+                       []
+                   )
+                   ->where($sqlCondition)
+                   ->order(['buyer_feedback_date ASC']);
 
         return $collection->getItems();
     }
@@ -238,9 +238,12 @@ SQL;
             }
 
             $feedbackTemplatesIds = $this->ebayFeedbackTemplateCollectionFactory->create()
-                ->addFieldToFilter('account_id', $account->getId())
-                ->setOrder('id', 'ASC')
-                ->getAllIds();
+                                                                                ->addFieldToFilter(
+                                                                                    'account_id',
+                                                                                    $account->getId()
+                                                                                )
+                                                                                ->setOrder('id', 'ASC')
+                                                                                ->getAllIds();
 
             if (!count($feedbackTemplatesIds)) {
                 return '';
@@ -272,8 +275,11 @@ SQL;
 
         if ($account->getChildObject()->isFeedbacksAutoResponseRandom()) {
             $feedbackTemplatesIds = $this->ebayFeedbackTemplateCollectionFactory->create()
-                ->addFieldToFilter('account_id', $account->getId())
-                ->getAllIds();
+                                                                                ->addFieldToFilter(
+                                                                                    'account_id',
+                                                                                    $account->getId()
+                                                                                )
+                                                                                ->getAllIds();
 
             if (!count($feedbackTemplatesIds)) {
                 return '';

@@ -30,6 +30,7 @@ class Map extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         if (!$productId || !$productOtherId || !$componentMode) {
             $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
@@ -40,6 +41,7 @@ class Map extends \Ess\M2ePro\Controller\Adminhtml\Listing
         $magentoCatalogProductModel = $collection->getFirstItem();
         if ($magentoCatalogProductModel->isEmpty()) {
             $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
@@ -54,6 +56,7 @@ class Map extends \Ess\M2ePro\Controller\Adminhtml\Listing
         $productOtherInstance->mapProduct($productId);
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 }

@@ -13,8 +13,8 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDifferent()
     {
         return $this->isQtyDifferent() ||
-               $this->isRegularPriceDifferent() ||
-               $this->isBusinessPriceDifferent();
+            $this->isRegularPriceDifferent() ||
+            $this->isBusinessPriceDifferent();
     }
 
     public function isQtyDifferent()

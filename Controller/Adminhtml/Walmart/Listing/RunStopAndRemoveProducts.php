@@ -27,6 +27,7 @@ class RunStopAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\
         $this->checkLocking($listingsProducts, $logsActionId, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP);
         if (empty($listingsProducts)) {
             $this->setJsonContent(['result' => 'error', 'action_id' => $logsActionId]);
+
             return $this->getResult();
         }
 
@@ -43,6 +44,7 @@ class RunStopAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\
 
         if (empty($listingsProducts)) {
             $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
+
             return $this->getResult();
         }
 
@@ -53,6 +55,7 @@ class RunStopAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\
         );
 
         $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
+
         return $this->getResult();
     }
 }

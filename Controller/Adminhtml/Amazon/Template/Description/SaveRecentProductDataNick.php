@@ -26,16 +26,18 @@ class SaveRecentProductDataNick extends Description
 
     public function execute()
     {
-        $marketplaceId   = $this->getRequest()->getPost('marketplace_id');
+        $marketplaceId = $this->getRequest()->getPost('marketplace_id');
         $productDataNick = $this->getRequest()->getPost('product_data_nick');
 
         if (!$marketplaceId || !$productDataNick) {
             $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
         $this->productData->addRecent($marketplaceId, $productDataNick);
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 }

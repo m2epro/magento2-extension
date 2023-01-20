@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Order;
  */
 class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/order/cancel';
+    public const NICK = 'ebay/order/cancel';
 
     //########################################
 
@@ -107,7 +107,7 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
-            ->incrementAttemptCount(array_keys($relatedChanges));
+                                  ->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
@@ -129,10 +129,11 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $params = [
-                'order_id'  => $change->getOrderId(),
+                'order_id' => $change->getOrderId(),
                 'change_id' => $change->getId(),
             ];
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Cancellation\Cancel $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Ebay_Connector_Order_Cancellation_Cancel',
                 $params,
@@ -151,6 +152,7 @@ class Cancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Ess\M2ePro\Model\Order\Change[]
      */
     protected function getRelatedChanges(\Ess\M2ePro\Model\Account $account)

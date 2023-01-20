@@ -15,43 +15,43 @@ namespace Ess\M2ePro\Model\Walmart\Template;
 
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const QTY_MODIFICATION_MODE_OFF = 0;
-    const QTY_MODIFICATION_MODE_ON = 1;
+    public const QTY_MODIFICATION_MODE_OFF = 0;
+    public const QTY_MODIFICATION_MODE_ON = 1;
 
-    const QTY_MIN_POSTED_DEFAULT_VALUE = 1;
-    const QTY_MAX_POSTED_DEFAULT_VALUE = 100;
+    public const QTY_MIN_POSTED_DEFAULT_VALUE = 1;
+    public const QTY_MAX_POSTED_DEFAULT_VALUE = 100;
 
-    const PRICE_VARIATION_MODE_PARENT = 1;
-    const PRICE_VARIATION_MODE_CHILDREN = 2;
+    public const PRICE_VARIATION_MODE_PARENT = 1;
+    public const PRICE_VARIATION_MODE_CHILDREN = 2;
 
-    const PROMOTIONS_MODE_NO = 0;
-    const PROMOTIONS_MODE_YES = 1;
+    public const PROMOTIONS_MODE_NO = 0;
+    public const PROMOTIONS_MODE_YES = 1;
 
-    const SHIPPING_OVERRIDE_RULE_MODE_NO = 0;
-    const SHIPPING_OVERRIDE_RULE_MODE_YES = 1;
+    public const SHIPPING_OVERRIDE_RULE_MODE_NO = 0;
+    public const SHIPPING_OVERRIDE_RULE_MODE_YES = 1;
 
-    const LAG_TIME_MODE_RECOMMENDED = 1;
-    const LAG_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const LAG_TIME_MODE_RECOMMENDED = 1;
+    public const LAG_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const WEIGHT_MODE_CUSTOM_VALUE = 1;
-    const WEIGHT_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const WEIGHT_MODE_CUSTOM_VALUE = 1;
+    public const WEIGHT_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const MUST_SHIP_ALONE_MODE_NONE = 0;
-    const MUST_SHIP_ALONE_MODE_YES = 1;
-    const MUST_SHIP_ALONE_MODE_NO = 2;
-    const MUST_SHIP_ALONE_MODE_CUSTOM_ATTRIBUTE = 3;
+    public const MUST_SHIP_ALONE_MODE_NONE = 0;
+    public const MUST_SHIP_ALONE_MODE_YES = 1;
+    public const MUST_SHIP_ALONE_MODE_NO = 2;
+    public const MUST_SHIP_ALONE_MODE_CUSTOM_ATTRIBUTE = 3;
 
-    const SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE = 0;
-    const SHIPS_IN_ORIGINAL_PACKAGING_MODE_YES = 1;
-    const SHIPS_IN_ORIGINAL_PACKAGING_MODE_NO = 2;
-    const SHIPS_IN_ORIGINAL_PACKAGING_MODE_CUSTOM_ATTRIBUTE = 3;
+    public const SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE = 0;
+    public const SHIPS_IN_ORIGINAL_PACKAGING_MODE_YES = 1;
+    public const SHIPS_IN_ORIGINAL_PACKAGING_MODE_NO = 2;
+    public const SHIPS_IN_ORIGINAL_PACKAGING_MODE_CUSTOM_ATTRIBUTE = 3;
 
-    const DATE_NONE = 0;
-    const DATE_VALUE = 1;
-    const DATE_ATTRIBUTE = 2;
+    public const DATE_NONE = 0;
+    public const DATE_VALUE = 1;
+    public const DATE_ATTRIBUTE = 2;
 
-    const ATTRIBUTES_MODE_NONE = 0;
-    const ATTRIBUTES_MODE_CUSTOM = 1;
+    public const ATTRIBUTES_MODE_NONE = 0;
+    public const ATTRIBUTES_MODE_CUSTOM = 1;
 
     /**
      * @var \Ess\M2ePro\Model\Marketplace
@@ -78,8 +78,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
-    )
-    {
+    ) {
         parent::__construct(
             $walmartFactory,
             $parentFactory,
@@ -114,9 +113,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         }
 
         return (bool)$this->activeRecordFactory->getObject('Walmart\Listing')
-            ->getCollection()
-            ->addFieldToFilter('template_selling_format_id', $this->getId())
-            ->getSize();
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_selling_format_id', $this->getId())
+                                               ->getSize();
     }
 
     /**
@@ -152,6 +151,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -201,6 +201,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -226,6 +227,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -314,13 +316,13 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getQtySource()
     {
         return [
-            'mode'                  => $this->getQtyMode(),
-            'value'                 => $this->getQtyNumber(),
-            'attribute'             => $this->getData('qty_custom_attribute'),
+            'mode' => $this->getQtyMode(),
+            'value' => $this->getQtyNumber(),
+            'attribute' => $this->getData('qty_custom_attribute'),
             'qty_modification_mode' => $this->getQtyModificationMode(),
-            'qty_min_posted_value'  => $this->getQtyMinPostedValue(),
-            'qty_max_posted_value'  => $this->getQtyMaxPostedValue(),
-            'qty_percentage'        => $this->getQtyPercentage()
+            'qty_min_posted_value' => $this->getQtyMinPostedValue(),
+            'qty_max_posted_value' => $this->getQtyMaxPostedValue(),
+            'qty_percentage' => $this->getQtyPercentage(),
         ];
     }
 
@@ -445,8 +447,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getPriceSource()
     {
         return [
-            'mode'        => $this->getPriceMode(),
-            'attribute'   => $this->getData('price_custom_attribute')
+            'mode' => $this->getPriceMode(),
+            'attribute' => $this->getData('price_custom_attribute'),
         ];
     }
 
@@ -544,9 +546,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getSaleTimeStartDateSource()
     {
         return [
-            'mode'      => $this->getSaleTimeStartDateMode(),
-            'value'     => $this->getSaleTimeStartDateValue(),
-            'attribute' => $this->getData('sale_time_start_date_custom_attribute')
+            'mode' => $this->getSaleTimeStartDateMode(),
+            'value' => $this->getSaleTimeStartDateValue(),
+            'attribute' => $this->getData('sale_time_start_date_custom_attribute'),
         ];
     }
 
@@ -615,9 +617,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getSaleTimeEndDateSource()
     {
         return [
-            'mode'      => $this->getSaleTimeEndDateMode(),
-            'value'     => $this->getSaleTimeEndDateValue(),
-            'attribute' => $this->getData('sale_time_end_date_custom_attribute')
+            'mode' => $this->getSaleTimeEndDateMode(),
+            'value' => $this->getSaleTimeEndDateValue(),
+            'attribute' => $this->getData('sale_time_end_date_custom_attribute'),
         ];
     }
 
@@ -709,9 +711,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getLagTimeSource()
     {
         return [
-            'mode'      => $this->getLagTimeMode(),
-            'value'     => (int)$this->getData('lag_time_value'),
-            'attribute' => $this->getData('lag_time_custom_attribute')
+            'mode' => $this->getLagTimeMode(),
+            'value' => (int)$this->getData('lag_time_value'),
+            'attribute' => $this->getData('lag_time_custom_attribute'),
         ];
     }
 
@@ -762,9 +764,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getItemWeightSource()
     {
         return [
-            'mode'             => $this->getItemWeightMode(),
-            'custom_value'     => $this->getData('item_weight_custom_value'),
-            'custom_attribute' => $this->getData('item_weight_custom_attribute')
+            'mode' => $this->getItemWeightMode(),
+            'custom_value' => $this->getData('item_weight_custom_value'),
+            'custom_attribute' => $this->getData('item_weight_custom_attribute'),
         ];
     }
 
@@ -831,8 +833,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getMustShipAloneSource()
     {
         return [
-            'mode'      => $this->getMustShipAloneMode(),
-            'value'     => $this->getData('must_ship_alone_value'),
+            'mode' => $this->getMustShipAloneMode(),
+            'value' => $this->getData('must_ship_alone_value'),
             'attribute' => $this->getData('must_ship_alone_custom_attribute'),
         ];
     }
@@ -900,8 +902,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getShipsInOriginalPackagingModeSource()
     {
         return [
-            'mode'      => $this->getShipsInOriginalPackagingModeMode(),
-            'value'     => $this->getData('ships_in_original_packaging_value'),
+            'mode' => $this->getShipsInOriginalPackagingModeMode(),
+            'value' => $this->getData('ships_in_original_packaging_value'),
             'attribute' => $this->getData('ships_in_original_packaging_custom_attribute'),
         ];
     }
@@ -962,8 +964,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public function getAttributesSource()
     {
         return [
-            'mode'     => $this->getAttributesMode(),
-            'template' => $this->getAttributesTemplate()
+            'mode' => $this->getAttributesMode(),
+            'template' => $this->getAttributesTemplate(),
         ];
     }
 

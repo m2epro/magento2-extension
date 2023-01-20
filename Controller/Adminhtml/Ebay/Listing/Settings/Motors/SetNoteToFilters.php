@@ -23,8 +23,8 @@ class SetNoteToFilters extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $connection = $this->resourceConnection->getConnection();
         $connection->update($tableName, [
-            'note' => $note
-        ], '`id` IN ('.implode(',', $filtersIds).')');
+            'note' => $note,
+        ], '`id` IN (' . implode(',', $filtersIds) . ')');
 
         $this->setAjaxContent(0, false);
 

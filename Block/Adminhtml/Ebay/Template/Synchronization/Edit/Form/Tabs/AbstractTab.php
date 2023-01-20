@@ -40,6 +40,7 @@ abstract class AbstractTab extends AbstractForm
     {
         if ($this->isCustom()) {
             $customTitle = $this->globalDataHelper->getValue('custom_title');
+
             return $customTitle !== null ? $customTitle : '';
         }
 

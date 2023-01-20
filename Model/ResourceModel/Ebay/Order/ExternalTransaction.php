@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Order;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction
- */
 class ExternalTransaction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     //########################################

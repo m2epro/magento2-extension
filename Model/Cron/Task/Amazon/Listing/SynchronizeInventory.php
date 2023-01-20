@@ -78,6 +78,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+            /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Amazon_Listing_SynchronizeInventory_Requester',
                 $params,
@@ -120,7 +121,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             'second_table.inventory_last_synchronization',
             [
                 ['lt' => $date->format('Y-m-d H:i:s')],
-                ['null' => true]
+                ['null' => true],
             ]
         );
         $collection->getSelect()->where('l.id IS NOT NULL OR second_table.other_listings_synchronization = 1');
@@ -141,7 +142,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $lockItemManager = $this->modelFactory->getObject(
             'Lock_Item_Manager',
             [
-                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
+                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX,
             ]
         );
 
@@ -160,6 +161,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -172,6 +174,7 @@ class SynchronizeInventory extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

@@ -13,10 +13,10 @@ use Ess\M2ePro\Helper\Component\Amazon;
 
 class Tabs extends AbstractTabs
 {
-    const TAB_ID_GENERAL                = 'general';
-    const TAB_ID_LISTING_OTHER          = 'listingOther';
-    const TAB_ID_ORDERS                 = 'orders';
-    const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
+    public const TAB_ID_GENERAL = 'general';
+    public const TAB_ID_LISTING_OTHER = 'listingOther';
+    public const TAB_ID_ORDERS = 'orders';
+    public const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
@@ -53,24 +53,24 @@ class Tabs extends AbstractTabs
         $account = $this->globalDataHelper->getValue('edit_account');
 
         $this->addTab(self::TAB_ID_GENERAL, [
-            'label'   => $this->__('General'),
-            'title'   => $this->__('General'),
+            'label' => $this->__('General'),
+            'title' => $this->__('General'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\General::class)
                               ->toHtml(),
         ]);
 
         $this->addTab(self::TAB_ID_LISTING_OTHER, [
-            'label'   => $this->__('Unmanaged Listings'),
-            'title'   => $this->__('Unmanaged Listings'),
+            'label' => $this->__('Unmanaged Listings'),
+            'title' => $this->__('Unmanaged Listings'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\ListingOther::class)
                               ->toHtml(),
         ]);
 
         $this->addTab(self::TAB_ID_ORDERS, [
-            'label'   => $this->__('Orders'),
-            'title'   => $this->__('Orders'),
+            'label' => $this->__('Orders'),
+            'title' => $this->__('Orders'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order::class)
                               ->toHtml(),
@@ -78,17 +78,20 @@ class Tabs extends AbstractTabs
 
         if ($account !== null && $account->getId()) {
             $this->addTab(self::TAB_ID_INVOICES_AND_SHIPMENTS, [
-                'label'   => $this->__('Invoices & Shipments'),
-                'title'   => $this->__('Invoices & Shipments'),
+                'label' => $this->__('Invoices & Shipments'),
+                'title' => $this->__('Invoices & Shipments'),
                 'content' => $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\InvoicesAndShipments::class)
-                      ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\InvoicesAndShipments::class
+                                  )
+                                  ->toHtml(),
             ]);
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
-        $this->js->addOnReadyJs(<<<JS
+        $this->js->addOnReadyJs(
+            <<<JS
 
     var urlHash = location.hash.substr(1);
     if (urlHash != '') {

@@ -54,9 +54,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\Item\ProxyObject
         }
 
         return [
-            'sender'    => '',
+            'sender' => '',
             'recipient' => '',
-            'message'   => $this->item->getGiftMessage()
+            'message' => $this->item->getGiftMessage(),
         ];
     }
 
@@ -71,9 +71,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\Item\ProxyObject
         if (count($this->additionalData) == 0) {
             $this->additionalData[Helper::CUSTOM_IDENTIFIER]['pretended_to_be_simple'] = $this->pretendedToBeSimple();
             $this->additionalData[Helper::CUSTOM_IDENTIFIER]['items'][] = [
-                'order_item_id' => $this->item->getWalmartOrderItemId()
+                'order_item_id' => $this->item->getWalmartOrderItemId(),
             ];
         }
+
         return $this->additionalData;
     }
 

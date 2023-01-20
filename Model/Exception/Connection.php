@@ -15,7 +15,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
 {
     //########################################
 
-    const CONNECTION_ERROR_REPEAT_TIMEOUT = 180;
+    public const CONNECTION_ERROR_REPEAT_TIMEOUT = 180;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -87,7 +87,6 @@ class Connection extends \Ess\M2ePro\Model\Exception
     /**
      * @param string $key
      * @param string $date
-     *
      */
     protected function setFirstConnectionErrorDate($key, $date)
     {
@@ -96,7 +95,6 @@ class Connection extends \Ess\M2ePro\Model\Exception
 
     /**
      * @param string $key
-     *
      */
     protected function removeFirstConnectionErrorDate($key)
     {
@@ -108,6 +106,7 @@ class Connection extends \Ess\M2ePro\Model\Exception
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

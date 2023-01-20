@@ -12,8 +12,8 @@ use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\Pare
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    const MESSAGE_TYPE_ERROR = 'error';
-    const MESSAGE_TYPE_WARNING = 'warning';
+    public const MESSAGE_TYPE_ERROR = 'error';
+    public const MESSAGE_TYPE_WARNING = 'warning';
 
     protected $warningsCalculated = false;
 
@@ -61,14 +61,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'id' => 'variation_settings_form',
                     'method' => 'post',
                     'action' => 'javascript:void(0)',
-                ]
+                ],
             ]
         );
 
         $magentoProductVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                         ->getMagentoProduct()
+                                         ->getVariationInstance()
+                                         ->getVariationsTypeStandard();
 
         $fieldset = $form->addFieldset(
             'general_id_fieldset',
@@ -98,15 +98,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
                     If you are not the Creator of this Product, you can only sell existing Child Products of the
                     Parent Product.'
-                )
+                ),
             ]
         );
 
         $html = '';
         if ($this->hasGeneralId() && !$this->isGeneralIdOwner()) {
             $html = <<<HTML
-{$this->__('You are not the Creator of Amazon Parent Product: %asin%. It is not allowed to you to create
-           New Amazon Child Products.', $this->getGeneralIdLink())}
+{$this->__(
+                'You are not the Creator of Amazon Parent Product: %asin%. It is not allowed to you to create
+           New Amazon Child Products.',
+                $this->getGeneralIdLink()
+            )}
 HTML;
             if ($this->showGeneralIdActions()) {
                 $generalIdOwnerYes = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES;
@@ -121,19 +124,22 @@ HTML;
     <a class="admin__field-tooltip-action" href="javascript://"></a>
     <div class="admin__field-tooltip-content">
         {$this->__(
-        'In case your Amazon Parent Product is in your Amazon Inventory and has SKU there, you can specify
+                    'In case your Amazon Parent Product is in your Amazon Inventory and has SKU there, you can specify
          for M2E Pro that you created this Product earlier.<br/>
-         To do that just enter Amazon Parent Product SKU.')}
+         To do that just enter Amazon Parent Product SKU.'
+                )}
     </div>
 </div>
 HTML;
             }
         } elseif ($this->hasGeneralId() && $this->isGeneralIdOwner()) {
             $html .= <<<HTML
-        <p>{$this->__('You are the Creator of Amazon Parent Product %asin%. It is allowed to you to create
+        <p>{$this->__(
+                'You are the Creator of Amazon Parent Product %asin%. It is allowed to you to create
                        New Amazon Child Products. <br/><br/><b>Please Note:</b> New Amazon Child Products will be
                        created based on Description Policy %template_link%.',
-                array('asin' => $this->getGeneralIdLink(), 'template_link' => $this->getDescriptionTemplateLink()))}
+                ['asin' => $this->getGeneralIdLink(), 'template_link' => $this->getDescriptionTemplateLink()]
+            )}
 HTML;
             if ($this->showGeneralIdActions()) {
                 $generalIdOwnerNo = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO;
@@ -147,8 +153,11 @@ HTML;
             $html .= '</p>';
         } elseif (!$this->hasGeneralId() && $this->isGeneralIdOwner()) {
             $html .= <<<HTML
-        <p>{$this->__('New Amazon Parent Product will be created based on %desctemplate% Description Policy.<br/>
-                      You will be able to create New Amazon Child Products.', $this->getDescriptionTemplateLink())}</p>
+        <p>{$this->__(
+                'New Amazon Parent Product will be created based on %desctemplate% Description Policy.<br/>
+                      You will be able to create New Amazon Child Products.',
+                $this->getDescriptionTemplateLink()
+            )}</p>
 HTML;
         }
 
@@ -157,7 +166,7 @@ HTML;
             self::CUSTOM_CONTAINER,
             [
                 'text' => $html,
-                'css_class' => 'm2epro-custom-container-full-width'
+                'css_class' => 'm2epro-custom-container-full-width',
             ]
         );
 
@@ -178,7 +187,7 @@ HTML;
                         <b>Note:</b> You cannot change the Variation Theme once the ASIN/ISBN is assigned
                         to the Parent Product.
                          '
-                    )
+                    ),
                 ]
             );
 
@@ -211,7 +220,7 @@ HTML;
                     self::CUSTOM_CONTAINER,
                     [
                         'label' => $this->__('Variation Theme'),
-                        'text' => $html
+                        'text' => $html,
                     ]
                 );
             } else {
@@ -227,7 +236,7 @@ HTML;
                 foreach ($channelThemes as $key => $theme) {
                     $channelThemesOptions[] = [
                         'value' => $key,
-                        'label' => implode(', ', $theme['attributes'])
+                        'label' => implode(', ', $theme['attributes']),
                     ];
                 }
 
@@ -238,8 +247,8 @@ HTML;
                         'style' => 'display: none; width: 50%;',
                         'no_span' => true,
                         'value' => $this->getChannelTheme(),
-                        'values' => $channelThemesOptions
-                    ]
+                        'values' => $channelThemesOptions,
+                    ],
                 ]);
                 $themeSelect->setForm($form);
 
@@ -259,27 +268,30 @@ HTML;
 
                 if (!$this->isInAction()) {
                     $html .= $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                               ->setData([
-                        'class' => 'action primary',
-                        'style' => '    margin-left: 60px;',
-                        'label' => $this->hasChannelTheme() ? $this->__('Change') : $this->__('Set Theme'),
-                        'onclick' => 'ListingGridObj.variationProductManageHandler.changeVariationTheme(this)'
-                    ])->toHtml();
+                                  ->setData([
+                                      'class' => 'action primary',
+                                      'style' => '    margin-left: 60px;',
+                                      'label' => $this->hasChannelTheme() ? $this->__('Change') :
+                                          $this->__('Set Theme'),
+                                      'onclick' => 'ListingGridObj.variationProductManageHandler.changeVariationTheme(this)',
+                                  ])->toHtml();
 
                     $confirmBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                                    ->setData([
-                        'class' => 'action primary',
-                        'label' => $this->__('Confirm'),
-                        'onclick' => 'ListingGridObj.variationProductManageHandler.setVariationTheme()'
-                    ])->toHtml();
+                                       ->setData([
+                                           'class' => 'action primary',
+                                           'label' => $this->__('Confirm'),
+                                           'onclick' => 'ListingGridObj.variationProductManageHandler.setVariationTheme()',
+                                       ])->toHtml();
 
                     $html .= <<<HTML
 <span id="edit_variation_btns" style="display: none;">
     <div class="m2epro-field-tooltip admin__field-tooltip">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content">
-            {$this->__('Some Variation Themes cannot be used because number of Attributes in Variation Theme is
-                       not equal to number of Magento Product Attributes.')}
+            {$this->__(
+                        'Some Variation Themes cannot be used because number of Attributes in Variation Theme is
+                       not equal to number of Magento Product Attributes.'
+                    )}
         </div>
     </div>
     &nbsp;&nbsp;
@@ -300,14 +312,16 @@ HTML;
                         'label' => $this->__('Variation Theme'),
                         'style' => 'padding-top: 0;',
                         'required' => true,
-                        'text' => $html
+                        'text' => $html,
                     ]
                 );
             }
         }
 
-        if ($this->hasGeneralId() ||
-            (!$this->hasGeneralId() && $this->isGeneralIdOwner() && $this->hasChannelTheme())) {
+        if (
+            $this->hasGeneralId() ||
+            (!$this->hasGeneralId() && $this->isGeneralIdOwner() && $this->hasChannelTheme())
+        ) {
             $this->js->add(
                 <<<JS
     ListingGridObj.variationProductManageHandler.virtualAmazonMatchedAttributes = false;
@@ -317,29 +331,41 @@ JS
 
             $this->jsTranslator->addTranslations([
                 'help_icon_magento_greater_left' =>
-                    $this->__('This Amazon Attribute and its Value are virtualized based on the selected Magento ' .
-                        'Variational Attribute and its Value as physically this Amazon Attribute does not exist.'),
+                    $this->__(
+                        'This Amazon Attribute and its Value are virtualized based on the selected Magento ' .
+                        'Variational Attribute and its Value as physically this Amazon Attribute does not exist.'
+                    ),
                 'help_icon_magento_greater_right' =>
-                    $this->__('Select a particular Option of the Attribute to fix it for virtualized Amazon ' .
+                    $this->__(
+                        'Select a particular Option of the Attribute to fix it for virtualized Amazon ' .
                         'Attribute. Please, be thoughtful as only those Variations of Magento Product which ' .
-                        'contains the selected Option can be sold on Amazon.'),
+                        'contains the selected Option can be sold on Amazon.'
+                    ),
 
                 'help_icon_amazon_greater_left' =>
-                    $this->__('This Magento Attribute and its Value are virtualized based on the selected Amazon ' .
-                        'Variational Attribute and its Value as physically this Magento Attribute does not exist.'),
+                    $this->__(
+                        'This Magento Attribute and its Value are virtualized based on the selected Amazon ' .
+                        'Variational Attribute and its Value as physically this Magento Attribute does not exist.'
+                    ),
                 'help_icon_amazon_greater_right' =>
-                    $this->__('Select a particular Option of the Attribute to fix it for virtualized Magento ' .
+                    $this->__(
+                        'Select a particular Option of the Attribute to fix it for virtualized Magento ' .
                         'Attribute. Please, be thoughtful as your offer will be available only for those Buyers who ' .
-                        'selected the same Option.'),
+                        'selected the same Option.'
+                    ),
 
                 'duplicate_magento_attribute_error' =>
-                    $this->__('The Magento Attributes which you selected in your settings have the same Labels. Such ' .
-                        'combination is invalid. Please, add the valid combination of Attributes.'),
+                    $this->__(
+                        'The Magento Attributes which you selected in your settings have the same Labels. Such ' .
+                        'combination is invalid. Please, add the valid combination of Attributes.'
+                    ),
                 'duplicate_amazon_attribute_error' =>
-                    $this->__('The Amazon Attributes which you selected in your settings have the same Labels. Such ' .
-                        'combination is invalid. Please, add the valid combination of Attributes.'),
+                    $this->__(
+                        'The Amazon Attributes which you selected in your settings have the same Labels. Such ' .
+                        'combination is invalid. Please, add the valid combination of Attributes.'
+                    ),
 
-                'change_option' => $this->__('Change option')
+                'change_option' => $this->__('Change option'),
             ]);
 
             $fieldset = $form->addFieldset(
@@ -347,7 +373,8 @@ JS
                 [
                     'legend' => $this->__('Variation Attributes'),
                     'collapsable' => true,
-                    'tooltip' => $this->__('
+                    'tooltip' => $this->__(
+                        '
                         To sell Magento Variational Product as Amazon Parent-Child Product it is necessary
                         to set correspondence of Magento and Amazon Variation Attributes.
                         Prerequisite to set correspondence is equal number of Magento Product Attributes and
@@ -357,7 +384,8 @@ JS
                         <i class="underline">"Change"</i> Button. <br/><br/>
 
                         <b>Note:</b> In case correspondence between Amazon and Magento Variation Attributes
-                        is not set adding and selling of Amazon Child Products is impossible.')
+                        is not set adding and selling of Amazon Child Products is impossible.'
+                    ),
                 ]
             );
 
@@ -506,20 +534,20 @@ HTML;
 
                             $options[] = [
                                 'value' => $attr,
-                                'label' => $attr
+                                'label' => $attr,
                             ];
                         }
 
                         $attributesSelect = $this->elementFactory->create('select', [
                             'data' => [
-                                'html_id' => 'variation_manager_attributes_amazon_'.$attrId,
+                                'html_id' => 'variation_manager_attributes_amazon_' . $attrId,
                                 'name' => 'variation_attributes[amazon_attributes][]',
                                 'style' => 'display: none;',
-                                'class' =>'variation_manager_attributes_amazon_select',
+                                'class' => 'variation_manager_attributes_amazon_select',
                                 'value' => $amazonAttr,
                                 'values' => $options,
-                                'required' => true
-                            ]
+                                'required' => true,
+                            ],
                         ]);
                         $attributesSelect->setForm($form);
 
@@ -544,19 +572,20 @@ HTML;
                 $style = $this->isChangeMatchedAttributesAllowed() ? '' : 'display: none;';
 
                 $changeButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                                  ->setData([
-                    'class' => 'action primary',
-                    'label' => $this->hasMatchedAttributes() ? $this->__('Change') : $this->__('Set Attributes'),
-                    'onclick' => 'ListingGridObj.variationProductManageHandler.changeMatchedAttributes(this)'
-                ])->toHtml();
+                                     ->setData([
+                                         'class' => 'action primary',
+                                         'label' => $this->hasMatchedAttributes() ? $this->__('Change') :
+                                             $this->__('Set Attributes'),
+                                         'onclick' => 'ListingGridObj.variationProductManageHandler.changeMatchedAttributes(this)',
+                                     ])->toHtml();
 
                 $confirmButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                                   ->setData([
-                    'class' => 'action primary',
-                    'style' => 'display: none;',
-                    'label' => $this->__('Confirm'),
-                    'onclick' => 'ListingGridObj.variationProductManageHandler.setMatchedAttributes()'
-                ])->toHtml();
+                                      ->setData([
+                                          'class' => 'action primary',
+                                          'style' => 'display: none;',
+                                          'label' => $this->__('Confirm'),
+                                          'onclick' => 'ListingGridObj.variationProductManageHandler.setMatchedAttributes()',
+                                      ])->toHtml();
 
                 $html .= <<<HTML
         <tr>
@@ -579,7 +608,7 @@ HTML;
                 self::CUSTOM_CONTAINER,
                 [
                     'text' => $html,
-                    'css_class' => 'm2epro-custom-container-full-width'
+                    'css_class' => 'm2epro-custom-container-full-width',
                 ]
             );
 
@@ -614,7 +643,7 @@ CSS
                         for unused Magento Product Variations.',
                         implode(', ', $this->getProductAttributes()),
                         implode(', ', $this->getDestinationAttributes())
-                    )
+                    ),
                 ]
             );
 
@@ -649,7 +678,7 @@ CSS
                         'onclick' => 'ListingGridObj.variationProductManageHandler.openVariationsTab(' .
                             var_export(!$this->hasUnusedChannelVariations(), true) .
                             ', ' . $this->getListingProduct()->getId() .
-                        ');'
+                            ');',
                     ]
                 );
             }
@@ -659,7 +688,7 @@ CSS
                 self::CUSTOM_CONTAINER,
                 [
                     'text' => $html,
-                    'css_class' => 'm2epro-custom-container-full-width'
+                    'css_class' => 'm2epro-custom-container-full-width',
                 ]
             );
         }
@@ -678,9 +707,10 @@ CSS
     {
         $this->messages[] = [
             'type' => $type,
-            'text' => $message
+            'text' => $message,
         ];
     }
+
     /**
      * @param array $messages
      */
@@ -688,6 +718,7 @@ CSS
     {
         $this->messages = $messages;
     }
+
     /**
      * @return array
      */
@@ -711,6 +742,7 @@ CSS
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -768,9 +800,10 @@ CSS
         $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
 
         foreach ($this->getMessages() as $message) {
-            $addMethod = 'add'.ucfirst($message['type']);
+            $addMethod = 'add' . ucfirst($message['type']);
             $messages->$addMethod($message['text']);
         }
+
         return $messages->toHtml();
     }
 
@@ -838,6 +871,7 @@ CSS
     public function isInAction()
     {
         $processingLocks = $this->getListingProduct()->getProcessingLocks();
+
         return !empty($processingLocks);
     }
 
@@ -849,8 +883,8 @@ CSS
     public function showGeneralIdActions()
     {
         return !$this->getListingProduct()->getMagentoProduct()->isBundleType() &&
-               !$this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() &&
-               !$this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
+            !$this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() &&
+            !$this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
 
     public function hasGeneralId()
@@ -883,7 +917,7 @@ HTML;
     public function getDescriptionTemplateLink()
     {
         $url = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $this->getListingProduct()->getChildObject()->getTemplateDescriptionId()
+            'id' => $this->getListingProduct()->getChildObject()->getTemplateDescriptionId(),
         ]);
 
         $templateTitle = $this->getListingProduct()->getChildObject()->getDescriptionTemplate()->getTitle();
@@ -983,6 +1017,7 @@ HTML;
         if ($this->hasMatchedAttributes()) {
             return $this->getListingProductTypeModel()->getMatchedAttributes();
         }
+
         return $this->getMatcherAttributes()->getMatchedAttributes();
     }
 
@@ -991,6 +1026,7 @@ HTML;
         if (!$this->hasGeneralId() && $this->isGeneralIdOwner() && $this->hasChannelTheme()) {
             return $this->getChannelThemeAttr();
         }
+
         return array_keys($this->getListingProductTypeModel()->getChannelAttributesSets());
     }
 
@@ -1065,9 +1101,9 @@ HTML;
         }
 
         $magentoProductVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                         ->getMagentoProduct()
+                                         ->getVariationInstance()
+                                         ->getVariationsTypeStandard();
 
         $productVariations = [];
 

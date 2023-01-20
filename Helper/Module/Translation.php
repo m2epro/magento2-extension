@@ -19,7 +19,7 @@ class Translation
     /** @var array */
     private $values = [];
 
-    /** @var array  */
+    /** @var array */
     private $args = [];
 
     /** @var string */
@@ -39,6 +39,7 @@ class Translation
         $this->clear();
 
         $args = func_get_args();
+
         return $this->translate($args);
     }
 
@@ -56,6 +57,7 @@ class Translation
 
         if (count($this->placeholders) <= 0) {
             array_unshift($this->args, $this->text);
+
             return call_user_func_array('__', $this->args);
         }
 
@@ -121,14 +123,14 @@ class Translation
     private function replacePlaceholdersByValue(): void
     {
         foreach ($this->values as $placeholder => $value) {
-            $newText = str_replace('%'.$placeholder.'%', $value, $this->translatedText, $count);
+            $newText = str_replace('%' . $placeholder . '%', $value, $this->translatedText, $count);
 
             if ($count <= 0) {
                 continue;
             }
 
             $this->translatedText = $newText;
-            $this->processedPlaceholders[] = '%'.$placeholder.'%';
+            $this->processedPlaceholders[] = '%' . $placeholder . '%';
         }
     }
 

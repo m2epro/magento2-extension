@@ -10,14 +10,15 @@ namespace Ess\M2ePro\Model\ControlPanel\Inspection\Repository;
 
 class DefinitionProvider
 {
-    const GROUP_ORDERS    = 'orders';
-    const GROUP_PRODUCTS  = 'products';
-    const GROUP_STRUCTURE = 'structure';
-    const GROUP_GENERAL   = 'general';
+    public const GROUP_ORDERS = 'orders';
+    public const GROUP_PRODUCTS = 'products';
+    public const GROUP_STRUCTURE = 'structure';
+    public const GROUP_GENERAL = 'general';
 
-    const EXECUTION_SPEED_SLOW = 'slow';
-    const EXECUTION_SPEED_FAST = 'fast';
+    public const EXECUTION_SPEED_SLOW = 'slow';
+    public const EXECUTION_SPEED_FAST = 'fast';
 
+    /** @var array[]  */
     private $inspectionsData = [
         [
             'nick' => 'AmazonProductWithoutVariations',
@@ -25,7 +26,7 @@ class DefinitionProvider
             'description' => '',
             'group' => self::GROUP_PRODUCTS,
             'execution_speed_group' => self::EXECUTION_SPEED_FAST,
-            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\AmazonProductWithoutVariations::class
+            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\AmazonProductWithoutVariations::class,
         ],
         [
             'nick' => 'BrokenTables',
@@ -33,7 +34,7 @@ class DefinitionProvider
             'description' => '',
             'group' => self::GROUP_STRUCTURE,
             'execution_speed_group' => self::EXECUTION_SPEED_FAST,
-            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables::class
+            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\BrokenTables::class,
         ],
         [
             'nick' => 'ConfigsValidity',
@@ -41,7 +42,7 @@ class DefinitionProvider
             'description' => '',
             'group' => self::GROUP_STRUCTURE,
             'execution_speed_group' => self::EXECUTION_SPEED_FAST,
-            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\ConfigsValidity::class
+            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\ConfigsValidity::class,
         ],
         [
             'nick' => 'EbayItemIdStructure',
@@ -49,7 +50,7 @@ class DefinitionProvider
             'description' => '',
             'group' => self::GROUP_PRODUCTS,
             'execution_speed_group' => self::EXECUTION_SPEED_FAST,
-            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\EbayItemIdStructure::class
+            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\EbayItemIdStructure::class,
         ],
         [
             'nick' => 'ExtensionCron',
@@ -61,7 +62,7 @@ class DefinitionProvider
             ',
             'group' => self::GROUP_GENERAL,
             'execution_speed_group' => self::EXECUTION_SPEED_FAST,
-            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\ExtensionCron::class
+            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\ExtensionCron::class,
         ],
         [
             'nick' => 'FilesPermissions',
@@ -69,7 +70,7 @@ class DefinitionProvider
             'description' => '',
             'group' => self::GROUP_STRUCTURE,
             'execution_speed_group' => self::EXECUTION_SPEED_SLOW,
-            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\FilesPermissions::class
+            'handler' => \Ess\M2ePro\Model\ControlPanel\Inspection\Inspector\FilesPermissions::class,
         ],
         [
             'nick' => 'FilesValidity',
@@ -188,12 +189,12 @@ class DefinitionProvider
 
             $definitions[] = $this->definitionFactory->create(
                 [
-                    'nick'                => $inspectionData['nick'],
-                    'title'               => $inspectionData['title'],
-                    'description'         => $inspectionData['description'],
-                    'group'               => $inspectionData['group'],
+                    'nick' => $inspectionData['nick'],
+                    'title' => $inspectionData['title'],
+                    'description' => $inspectionData['description'],
+                    'group' => $inspectionData['group'],
                     'executionSpeedGroup' => $inspectionData['execution_speed_group'],
-                    'handler'             => $inspectionData['handler'],
+                    'handler' => $inspectionData['handler'],
                 ]
             );
         }

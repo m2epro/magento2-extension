@@ -32,8 +32,8 @@ class ReturnPolicy extends AbstractModel
                 'international_within' => $this->getReturnTemplate()->getInternationalWithin(),
                 'international_shipping_cost' => $this->getReturnTemplate()->getInternationalShippingCost(),
 
-                'description' => $this->getReturnTemplate()->getDescription()
-            ]
+                'description' => $this->getReturnTemplate()->getDescription(),
+            ],
         ];
     }
 
@@ -46,8 +46,8 @@ class ReturnPolicy extends AbstractModel
     {
         if ($this->returnTemplate === null) {
             $this->returnTemplate = $this->getListingProduct()
-                ->getChildObject()
-                ->getReturnTemplate();
+                                         ->getChildObject()
+                                         ->getReturnTemplate();
         }
 
         return $this->returnTemplate;

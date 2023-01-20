@@ -69,25 +69,25 @@ class CreditNote extends \Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf\AbstractPdf
         $page->setFillColor(new \Zend_Pdf_Color_Html('#0E0621'));
         $page = $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
-                            'text'      => $this->getHelper('Module\Translation')->__('Credit Note Total'),
-                            'feed'      => 290,
-                            'font'      => 'bold',
-                            'font_size' => 12
+                            'text' => $this->getHelper('Module\Translation')->__('Credit Note Total'),
+                            'feed' => 290,
+                            'font' => 'bold',
+                            'font_size' => 12,
                         ],
                         [
-                            'text'      => $this->getFormatedPrice($this->getDocumentTotal()),
-                            'feed'      => 570,
-                            'align'     => 'right',
-                            'font'      => 'bold',
-                            'font_size' => 12
-                        ]
-                    ]
+                            'text' => $this->getFormatedPrice($this->getDocumentTotal()),
+                            'feed' => 570,
+                            'align' => 'right',
+                            'font' => 'bold',
+                            'font_size' => 12,
+                        ],
+                    ],
                 ],
-                'height' => 8
-            ]
+                'height' => 8,
+            ],
         ]);
 
         $page = $this->drawSubtotalHeader($page);
@@ -102,32 +102,32 @@ class CreditNote extends \Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf\AbstractPdf
         $this->y -= 20;
         $page = $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
                             'text' => $this->getHelper('Module\Translation')->__('Total'),
                             'feed' => 290,
                             'font' => 'bold',
-                            'font_size' => 14
+                            'font_size' => 14,
                         ],
                         [
-                            'text'  => $this->getFormatedPrice($this->getDocumentExclVatTotal()),
-                            'feed'  => 470,
+                            'text' => $this->getFormatedPrice($this->getDocumentExclVatTotal()),
+                            'feed' => 470,
                             'align' => 'right',
-                            'font'  => 'bold',
-                            'font_size' => 14
+                            'font' => 'bold',
+                            'font_size' => 14,
                         ],
                         [
-                            'text'  => $this->getFormatedPrice($this->getDocumentVatTotal()),
-                            'feed'  => 570,
+                            'text' => $this->getFormatedPrice($this->getDocumentVatTotal()),
+                            'feed' => 570,
                             'align' => 'right',
-                            'font'  => 'bold',
-                            'font_size' => 14
-                        ]
+                            'font' => 'bold',
+                            'font_size' => 14,
+                        ],
                     ],
                 ],
-                'height' => 20
-            ]
+                'height' => 20,
+            ],
         ]);
 
         if ($this->order->getStoreId()) {
@@ -135,6 +135,7 @@ class CreditNote extends \Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf\AbstractPdf
         }
 
         $this->_afterGetPdf();
+
         return $pdf;
     }
 

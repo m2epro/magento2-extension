@@ -19,15 +19,19 @@ class ReservationPlace extends Order
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Order(s).'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Order[] $orders */
         $orders = $this->activeRecordFactory->getObject('Order')
-            ->getCollection()
-            ->addFieldToFilter('id', ['in' => $ids])
-            ->addFieldToFilter('reservation_state', ['neq' => \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED])
-            ->addFieldToFilter('magento_order_id', ['null' => true]);
+                                            ->getCollection()
+                                            ->addFieldToFilter('id', ['in' => $ids])
+                                            ->addFieldToFilter(
+                                                'reservation_state',
+                                                ['neq' => \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED]
+                                            )
+                                            ->addFieldToFilter('magento_order_id', ['null' => true]);
 
         try {
             $actionSuccessful = false;

@@ -35,7 +35,6 @@ abstract class AbstractWizard extends AbstractContainer
         return parent::_prepareLayout();
     }
 
-
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants(
@@ -45,14 +44,14 @@ abstract class AbstractWizard extends AbstractContainer
 
         $this->jsUrl->addUrls(
             [
-                'setStep'   => $this->getUrl('*/wizard_' . $this->getNick() . '/setStep'),
+                'setStep' => $this->getUrl('*/wizard_' . $this->getNick() . '/setStep'),
                 'setStatus' => $this->getUrl('*/wizard_' . $this->getNick() . '/setStatus'),
             ]
         );
 
         $this->jsTranslator->addTranslations(
             [
-                'Step'      => $this->__('Step'),
+                'Step' => $this->__('Step'),
                 'Completed' => $this->__('Completed'),
             ]
         );

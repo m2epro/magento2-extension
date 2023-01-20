@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
 
-class SkipStaticContentValidationMessage extends  \Ess\M2ePro\Controller\Adminhtml\General
+class SkipStaticContentValidationMessage extends \Ess\M2ePro\Controller\Adminhtml\General
 {
     /** @var \Ess\M2ePro\Helper\Module */
     private $moduleHelper;
@@ -32,6 +32,7 @@ class SkipStaticContentValidationMessage extends  \Ess\M2ePro\Controller\Adminht
         }
 
         $backUrl = base64_decode($this->getRequest()->getParam('back'));
+
         return $this->_redirect($backUrl);
     }
 }

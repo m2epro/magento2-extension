@@ -8,11 +8,8 @@
 
 namespace Ess\M2ePro\Observer\StockItem\Save;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Observer\StockItem\Save\After
- */
 class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 {
     /**
@@ -20,11 +17,10 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
      */
     private $productId = null;
 
+    /** @var array */
     private $affectedListingsProducts = [];
-
+    /** @var array */
     private $affectedListingsParentProducts = [];
-
-    //########################################
 
     public function beforeProcess()
     {
@@ -74,7 +70,6 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         );
 
         foreach ($listingProducts as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $this->logListingProductMessage(
@@ -104,7 +99,6 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         );
 
         foreach ($listingProducts as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $this->logListingProductMessage(
@@ -215,7 +209,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
             $action,
             $this->getHelper('Module\Log')->encodeDescription(
                 'From [%from%] to [%to%].',
-                ['!from'=>$oldValue,'!to'=>$newValue]
+                ['!from' => $oldValue, '!to' => $newValue]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
@@ -225,7 +219,8 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     private function getStoredStockItem()
     {
-        $key = $this->getStockItemId().'_'.$this->getStoreId();
+        $key = $this->getStockItemId() . '_' . $this->getStoreId();
+
         return $this->getRegistry()->registry($key);
     }
 

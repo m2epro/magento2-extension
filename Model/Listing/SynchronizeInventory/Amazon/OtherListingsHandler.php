@@ -22,6 +22,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
 
     /**
      * @param array $responseData
+     *
      * @return array|void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
@@ -41,7 +42,6 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
     protected function updateReceivedOtherListings()
     {
         foreach (array_chunk(array_keys($this->responseData), 200) as $skuPack) {
-
             $stmtTemp = $this->getPdoStatementExistingListings($skuPack);
             while ($existingItem = $stmtTemp->fetch()) {
                 if (!isset($this->responseData[$existingItem['sku']])) {
@@ -52,22 +52,22 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                 unset($this->responseData[$existingItem['sku']]);
 
                 $existingData = [
-                    'general_id'         => (string)$existingItem['general_id'],
-                    'title'              => (string)$existingItem['title'],
-                    'online_price'       => (float)$existingItem['online_price'],
-                    'online_qty'         => (int)$existingItem['online_qty'],
-                    'is_afn_channel'     => (bool)$existingItem['is_afn_channel'],
+                    'general_id' => (string)$existingItem['general_id'],
+                    'title' => (string)$existingItem['title'],
+                    'online_price' => (float)$existingItem['online_price'],
+                    'online_qty' => (int)$existingItem['online_qty'],
+                    'is_afn_channel' => (bool)$existingItem['is_afn_channel'],
                     'is_isbn_general_id' => (bool)$existingItem['is_isbn_general_id'],
-                    'status'             => (int)$existingItem['status']
+                    'status' => (int)$existingItem['status'],
                 ];
 
                 $newData = [
-                    'general_id'         => (string)$receivedItem['identifiers']['general_id'],
-                    'title'              => (string)$receivedItem['title'],
-                    'online_price'       => (float)$receivedItem['price'],
-                    'online_qty'         => (int)$receivedItem['qty'],
-                    'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
-                    'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
+                    'general_id' => (string)$receivedItem['identifiers']['general_id'],
+                    'title' => (string)$receivedItem['title'],
+                    'online_price' => (float)$receivedItem['price'],
+                    'online_qty' => (int)$receivedItem['qty'],
+                    'is_afn_channel' => (bool)$receivedItem['channel']['is_afn'],
+                    'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn'],
                 ];
 
                 if ($newData['is_afn_channel']) {
@@ -86,8 +86,10 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                     }
                 }
 
-                if ($receivedItem['title'] === null ||
-                    $receivedItem['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER) {
+                if (
+                    $receivedItem['title'] === null ||
+                    $receivedItem['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER
+                ) {
                     unset($newData['title'], $existingData['title']);
                 }
 
@@ -127,25 +129,25 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
         }
 
         foreach ($this->responseData as $receivedItem) {
-
             $newData = [
-                'account_id'     => $this->getAccount()->getId(),
+                'account_id' => $this->getAccount()->getId(),
                 'marketplace_id' => $this->getAccount()->getChildObject()->getMarketplace()->getId(),
-                'product_id'     => null,
+                'product_id' => null,
 
                 'general_id' => (string)$receivedItem['identifiers']['general_id'],
 
-                'sku'   => (string)$receivedItem['identifiers']['sku'],
+                'sku' => (string)$receivedItem['identifiers']['sku'],
                 'title' => $receivedItem['title'],
 
                 'online_price' => (float)$receivedItem['price'],
-                'online_qty'   => (int)$receivedItem['qty'],
+                'online_qty' => (int)$receivedItem['qty'],
 
-                'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
-                'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
+                'is_afn_channel' => (bool)$receivedItem['channel']['is_afn'],
+                'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn'],
             ];
 
-            if (isset($this->responserParams['full_items_data']) && $this->responserParams['full_items_data'] &&
+            if (
+                isset($this->responserParams['full_items_data']) && $this->responserParams['full_items_data'] &&
                 $newData['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER
             ) {
                 $newData['title'] = null;
@@ -201,7 +203,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                 'second_table.is_isbn_general_id',
                 'second_table.listing_other_id',
                 'second_table.is_repricing',
-                'second_table.is_repricing_disabled'
+                'second_table.is_repricing_disabled',
             ]
         );
 

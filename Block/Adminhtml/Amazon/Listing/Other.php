@@ -45,7 +45,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $lockItemManager = $this->modelFactory->getObject(
             'Lock_Item_Manager',
             [
-                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX
+                'nick' => ProcessingRunner::LOCK_ITEM_PREFIX,
             ]
         );
 
@@ -58,10 +58,10 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->addButton(
             'reset_other_listings',
             [
-                'label'    => $this->__($label),
-                'onclick'  => "ListingOtherObj.showResetPopup('{$url}');",
-                'class'    => 'action-primary',
-                'disabled' => $disabled
+                'label' => $this->__($label),
+                'onclick' => "ListingOtherObj.showResetPopup('{$url}');",
+                'class' => 'action-primary',
+                'disabled' => $disabled,
             ]
         );
 
@@ -87,7 +87,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 them into M2E Pro Listings.</p>
 
 HTML
-                )
+                ),
             ]
         );
 

@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 class EditItem extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
-    const MAPPING_PRODUCT = 'product';
-    const MAPPING_OPTIONS = 'options';
+    public const MAPPING_PRODUCT = 'product';
+    public const MAPPING_OPTIONS = 'options';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
@@ -33,7 +33,7 @@ class EditItem extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         if ($item->getId() === null) {
             $this->setJsonContent([
-                'error' => $this->__('Order Item does not exist.')
+                'error' => $this->__('Order Item does not exist.'),
             ]);
 
             return $this->getResult();
@@ -57,9 +57,9 @@ class EditItem extends \Ess\M2ePro\Controller\Adminhtml\Order
             $block = $this->getLayout()
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options\Mapping::class)
                           ->setData([
-                'order_id' => $item->getOrderId(),
-                'product_id' => $item->getProductId()
-            ]);
+                              'order_id' => $item->getOrderId(),
+                              'product_id' => $item->getProductId(),
+                          ]);
 
             $this->setJsonContent([
                 'title' => $this->__('Setting Product Options'),
@@ -71,7 +71,7 @@ class EditItem extends \Ess\M2ePro\Controller\Adminhtml\Order
         }
 
         $this->setJsonContent([
-            'error' => $this->__('Product does not have Required Options.')
+            'error' => $this->__('Product does not have Required Options.'),
         ]);
 
         return $this->getResult();

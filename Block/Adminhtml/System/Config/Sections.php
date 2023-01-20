@@ -15,19 +15,19 @@ class Sections extends AbstractForm
     /** @var \Magento\Framework\View\Asset\Repository */
     protected $assetRepo;
 
-    public const SECTION_ID_MODULE_AND_CHANNELS             = 'm2epro_module_and_channels';
+    public const SECTION_ID_MODULE_AND_CHANNELS = 'm2epro_module_and_channels';
     public const SECTION_ID_INTERFACE_AND_MAGENTO_INVENTORY = 'm2epro_interface_and_magento_inventory';
-    public const SECTION_ID_LOGS_CLEARING                   = 'm2epro_logs_clearing';
-    public const SECTION_ID_LICENSE                         = 'm2epro_extension_key';
+    public const SECTION_ID_LOGS_CLEARING = 'm2epro_logs_clearing';
+    public const SECTION_ID_LICENSE = 'm2epro_extension_key';
 
-    public const SELECT               = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Select::class;
-    public const TEXT                 = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Text::class;
-    public const LINK                 = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Link::class;
-    public const HELP_BLOCK           = \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\HelpBlock::class;
+    public const SELECT = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Select::class;
+    public const TEXT = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Text::class;
+    public const LINK = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Link::class;
+    public const HELP_BLOCK = \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\HelpBlock::class;
     public const STATE_CONTROL_BUTTON =
         \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\StateControlButton::class;
-    public const BUTTON               = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Button::class;
-    public const NOTE                 = \Magento\Framework\Data\Form\Element\Note::class;
+    public const BUTTON = \Ess\M2ePro\Block\Adminhtml\System\Config\Form\Element\Button::class;
+    public const NOTE = \Magento\Framework\Data\Form\Element\Note::class;
 
     /**
      * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context

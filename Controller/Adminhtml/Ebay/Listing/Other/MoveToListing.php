@@ -87,28 +87,27 @@ class MoveToListing extends Main
 
         if ($errorsCount) {
             if (count($selectedProducts) == $errorsCount) {
-
                 $this->setJsonContent(
                     [
-                        'result'  => false,
+                        'result' => false,
                         'message' => $this->__(
                             'Products were not moved because they already exist in the selected Listing.'
-                        )
+                        ),
                     ]
                 );
+
                 return $this->getResult();
             }
 
             $this->setJsonContent(
                 [
-                    'result'   => true,
+                    'result' => true,
                     'isFailed' => true,
-                    'message'  => $this->__(
+                    'message' => $this->__(
                         'Some products were not moved because they already exist in the selected Listing.'
-                    )
+                    ),
                 ]
             );
-
         } else {
             $allProductsHaveOnlineCategory = false;
             if (empty($addingProducts) && !empty($productsHaveOnlineCategory)) {
@@ -132,25 +131,25 @@ class MoveToListing extends Main
             return $categoryData;
         }
 
-        list($path, $value) = explode(" (", $onlineMainCategory);
+        [$path, $value] = explode(" (", $onlineMainCategory);
         $value = trim($value, ')');
 
         /** @var \Ess\M2ePro\Model\Ebay\Template\Category $templateCategory */
         $templateCategory = $this->activeRecordFactory->getObject('Ebay_Template_Category')->getCollection()
-            ->addFieldToFilter('marketplace_id', $listing->getMarketplaceId())
-            ->addFieldToFilter('category_id', $value)
-            ->addFieldToFilter('is_custom_template', 0)
-            ->getFirstItem();
+                                                      ->addFieldToFilter('marketplace_id', $listing->getMarketplaceId())
+                                                      ->addFieldToFilter('category_id', $value)
+                                                      ->addFieldToFilter('is_custom_template', 0)
+                                                      ->getFirstItem();
 
         if ($templateCategory->getId()) {
             $categoryData['id'] = $templateCategory->getId();
         } else {
             $categoryData['create_new_category'] = [
-                'mode'               => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
-                'value'              => $value,
-                'path'               => $path,
+                'mode' => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
+                'value' => $value,
+                'path' => $path,
                 'is_custom_template' => 0,
-                'specific'           => []
+                'specific' => [],
             ];
         }
 

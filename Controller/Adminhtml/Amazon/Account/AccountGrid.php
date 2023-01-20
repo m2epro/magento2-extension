@@ -22,6 +22,7 @@ class AccountGrid extends Account
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Grid $switcherBlock */
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Grid::class);
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 

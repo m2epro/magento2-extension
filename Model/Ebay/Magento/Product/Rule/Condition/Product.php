@@ -45,6 +45,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 
     /**
      * @param $filterId
+     *
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
     protected function getCustomFilterInstance($filterId, $isReadyToCache = true)
@@ -64,14 +65,15 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         }
 
         $model = $this->modelFactory->getObject(
-            'Ebay\Magento\Product\Rule\Custom\\'.$customFilters[$filterId],
+            'Ebay\Magento\Product\Rule\Custom\\' . $customFilters[$filterId],
             [
-                'filterOperator'  => $this->getData('operator'),
-                'filterCondition' => $this->getData('value')
+                'filterOperator' => $this->getData('operator'),
+                'filterCondition' => $this->getData('value'),
             ]
         );
 
         $isReadyToCache && $this->_customFiltersCache[$filterId] = $model;
+
         return $model;
     }
 
@@ -79,6 +81,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 
     /**
      * @param mixed $validatedValue
+     *
      * @return bool
      */
     public function validateAttribute($validatedValue)

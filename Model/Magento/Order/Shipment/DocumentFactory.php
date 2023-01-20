@@ -33,6 +33,7 @@ class DocumentFactory
 
     /**
      * @param \Magento\Sales\Model\Order $order
+     *
      * @return \Magento\Sales\Api\Data\ShipmentInterface
      */
     public function create(\Magento\Sales\Model\Order $order, $items = [])

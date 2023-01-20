@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -29,18 +30,21 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         }
 
         $this->addFieldToFilter('request_pending_single_id', ['in' => $requestPendingSingleIds]);
+
         return $this;
     }
 
     public function setNotProcessedFilter()
     {
         $this->addFieldToFilter('request_pending_single_id', ['null' => true]);
+
         return $this;
     }
 
     public function setInProgressFilter()
     {
         $this->addFieldToFilter('request_pending_single_id', ['notnull' => true]);
+
         return $this;
     }
 

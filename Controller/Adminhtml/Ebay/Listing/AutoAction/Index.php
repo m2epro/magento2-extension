@@ -39,8 +39,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 
         $this->setJsonContent([
             'mode' => $autoMode,
-            'html' => $this->getLayout()->createBlock($blockName)->toHtml()
+            'html' => $this->getLayout()->createBlock($blockName)->toHtml(),
         ]);
+
         return $this->getResult();
     }
 }

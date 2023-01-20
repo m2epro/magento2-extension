@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
+use Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
@@ -59,11 +59,11 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
         return array_merge(
             [
                 [
-                    '__template__'           => true,
-                    'attribute_title'        => '',
-                    'value_mode'             => '',
-                    'value_custom_value'     => '',
-                    'value_custom_attribute' => ''
+                    '__template__' => true,
+                    'attribute_title' => '',
+                    'value_mode' => '',
+                    'value_custom_value' => '',
+                    'value_custom_attribute' => '',
                 ],
             ],
             $this->getData('specifics')
@@ -76,11 +76,11 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
     {
         $element = $this->_factoryElement->create('hidden', [
             'data' => [
-                'name'     => 'specific[custom_' . $index . '][mode]',
-                'class'    => 'specific_mode',
-                'value'    => Specific::MODE_CUSTOM_ITEM_SPECIFICS,
-                'disabled' => isset($specific['__template__'])
-            ]
+                'name' => 'specific[custom_' . $index . '][mode]',
+                'class' => 'specific_mode',
+                'value' => Specific::MODE_CUSTOM_ITEM_SPECIFICS,
+                'disabled' => isset($specific['__template__']),
+            ],
         ]);
 
         $element->setForm($this->getForm());
@@ -92,7 +92,8 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
     public function getAttributeTitleLabelHtml($index, $specific)
     {
         $display = 'display: none;';
-        if (isset($specific['value_mode']) &&
+        if (
+            isset($specific['value_mode']) &&
             ($specific['value_mode'] == Specific::VALUE_MODE_CUSTOM_ATTRIBUTE)
         ) {
             $display = '';
@@ -110,7 +111,8 @@ HTML;
     public function getAttributeTitleInputHtml($index, $specific)
     {
         $display = 'display: none;';
-        if (isset($specific['value_mode']) &&
+        if (
+            isset($specific['value_mode']) &&
             ($specific['value_mode'] == Specific::VALUE_MODE_CUSTOM_VALUE ||
                 $specific['value_mode'] == Specific::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE)
         ) {
@@ -120,11 +122,11 @@ HTML;
         /** @var \Magento\Framework\Data\Form\Element\Text $element */
         $element = $this->_factoryElement->create('text', [
             'data' => [
-                'name'  => 'specific[custom_' . $index . '][attribute_title]',
+                'name' => 'specific[custom_' . $index . '][attribute_title]',
                 'class' => 'M2ePro-required-when-visible M2ePro-custom-specific-attribute-title custom-item-specific',
                 'value' => isset($specific['attribute_title']) ? $specific['attribute_title'] : '',
-                'disabled' => isset($specific['__template__'])
-            ]
+                'disabled' => isset($specific['__template__']),
+            ],
         ]);
 
         $element->addCustomAttribute('style', 'width: 100%;' . $display);
@@ -141,7 +143,7 @@ HTML;
             [
                 'label' => '',
                 'value' => '',
-                'style' => 'display: none'
+                'style' => 'display: none',
             ],
             [
                 'value' => Specific::VALUE_MODE_CUSTOM_ATTRIBUTE,
@@ -154,18 +156,18 @@ HTML;
             [
                 'value' => Specific::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE,
                 'label' => $this->translationHelper->__('Custom Label / Attribute'),
-            ]
+            ],
         ];
 
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
         $element = $this->_factoryElement->create('select', [
             'data' => [
-                'name'     => 'specific[custom_' . $index . '][value_mode]',
-                'class'    => 'M2ePro-required-when-visible specific-value-mode',
-                'value'    => isset($specific['value_mode']) ? $specific['value_mode'] : '',
-                'values'   => $values,
-                'disabled' => isset($specific['__template__'])
-            ]
+                'name' => 'specific[custom_' . $index . '][value_mode]',
+                'class' => 'M2ePro-required-when-visible specific-value-mode',
+                'value' => isset($specific['value_mode']) ? $specific['value_mode'] : '',
+                'values' => $values,
+                'disabled' => isset($specific['__template__']),
+            ],
         ]);
 
         $element->addCustomAttribute('onchange', 'EbayTemplateCategorySpecificsObj.customSpecificModeChange(this);');
@@ -184,18 +186,19 @@ HTML;
         $attributesValues = [
             [
                 'label' => '',
-                'value' => ''
-            ]
+                'value' => '',
+            ],
         ];
         foreach ($attributes as $attribute) {
             $attributesValues[] = [
                 'label' => $attribute['label'],
-                'value' => $attribute['code']
+                'value' => $attribute['code'],
             ];
         }
 
         $display = 'display: none;';
-        if (isset($specific['value_mode']) &&
+        if (
+            isset($specific['value_mode']) &&
             ($specific['value_mode'] == Specific::VALUE_MODE_CUSTOM_ATTRIBUTE ||
                 $specific['value_mode'] == Specific::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE)
         ) {
@@ -205,13 +208,13 @@ HTML;
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
         $element = $this->_factoryElement->create('select', [
             'data' => [
-                'name'                        => 'specific[custom_' . $index . '][value_custom_attribute]',
-                'class'                       => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
-                'value'                       => isset($specific['value_custom_attribute']) ? $specific['value_custom_attribute'] : '',
-                'values'                      => $attributesValues,
-                'disabled'                    => isset($specific['__template__']),
-                'apply_to_all_attribute_sets' => 0
-            ]
+                'name' => 'specific[custom_' . $index . '][value_custom_attribute]',
+                'class' => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
+                'value' => isset($specific['value_custom_attribute']) ? $specific['value_custom_attribute'] : '',
+                'values' => $attributesValues,
+                'disabled' => isset($specific['__template__']),
+                'apply_to_all_attribute_sets' => 0,
+            ],
         ]);
 
         $element->addCustomAttribute('style', 'width: 100%;' . $display);
@@ -231,7 +234,8 @@ HTML;
         }
 
         $display = 'display: none;';
-        if (isset($specific['value_mode']) &&
+        if (
+            isset($specific['value_mode']) &&
             $specific['value_mode'] == Specific::VALUE_MODE_CUSTOM_VALUE
         ) {
             $display = '';
@@ -240,11 +244,11 @@ HTML;
         /** @var \Magento\Framework\Data\Form\Element\Text $element */
         $element = $this->_factoryElement->create('text', [
             'data' => [
-                'name'     => 'specific[custom_' . $index . '][value_custom_value][]',
-                'class'    => 'M2ePro-required-when-visible item-specific',
-                'value'    => $customValues[0],
-                'disabled' => isset($specific['__template__'])
-            ]
+                'name' => 'specific[custom_' . $index . '][value_custom_value][]',
+                'class' => 'M2ePro-required-when-visible item-specific',
+                'value' => $customValues[0],
+                'disabled' => isset($specific['__template__']),
+            ],
         ]);
 
         $element->addCustomAttribute('style', 'width: 100%;' . $display);

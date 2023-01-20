@@ -19,8 +19,7 @@ class Processor
     public function __construct(
         \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory,
         \Ess\M2ePro\Model\ControlPanel\Inspection\Result\Factory $resultFactory
-    )
-    {
+    ) {
         $this->handlerFactory = $handlerFactory;
         $this->resultFactory = $resultFactory;
     }

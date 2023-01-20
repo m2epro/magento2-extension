@@ -32,12 +32,12 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
     public function execute()
     {
-        $categoryType  = $this->getRequest()->getParam('category_type');
-        $selectedMode  = $this->getRequest()->getParam('selected_mode', TemplateCategory::CATEGORY_MODE_NONE);
+        $categoryType = $this->getRequest()->getParam('category_type');
+        $selectedMode = $this->getRequest()->getParam('selected_mode', TemplateCategory::CATEGORY_MODE_NONE);
         $selectedValue = $this->getRequest()->getParam('selected_value');
-        $selectedPath  = $this->getRequest()->getParam('selected_path');
+        $selectedPath = $this->getRequest()->getParam('selected_path');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
-        $accountId     = $this->getRequest()->getParam('account_id');
+        $accountId = $this->getRequest()->getParam('account_id');
 
         $editBlock = $this->getLayout()
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Edit::class);
@@ -57,9 +57,9 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         if ($selectedMode != TemplateCategory::CATEGORY_MODE_NONE) {
             $editBlock->setSelectedCategory([
-                'mode'  => $selectedMode,
+                'mode' => $selectedMode,
                 'value' => $selectedValue,
-                'path'  => $selectedPath
+                'path' => $selectedPath,
             ]);
         }
 

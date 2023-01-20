@@ -43,6 +43,7 @@ class Factory extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return \Ess\M2ePro\Model\AbstractModel|AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

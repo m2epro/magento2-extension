@@ -31,6 +31,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $product
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $product)
@@ -47,6 +48,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function setSourceAttributes(array $attributes)
@@ -61,6 +63,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function setDestinationAttributes(array $attributes)
@@ -75,11 +78,13 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $flag
+     *
      * @return $this
      */
     public function canUseDictionary($flag = true)
     {
         $this->canUseDictionary = $flag;
+
         return $this;
     }
 
@@ -165,6 +170,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
     public function getChannelUnmatchedAttributes()
     {
         $matchedChannelAttributes = array_values($this->getMatchedAttributes());
+
         return array_diff($this->destinationAttributes, $matchedChannelAttributes);
     }
 
@@ -172,13 +178,14 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
     private function match()
     {
-        if ($this->magentoProduct !== null && $this->magentoProduct->isGroupedType() &&
+        if (
+            $this->magentoProduct !== null && $this->magentoProduct->isGroupedType() &&
             !$this->magentoProduct->getVariationVirtualAttributes()
         ) {
             $channelAttribute = reset($this->destinationAttributes);
 
             $this->matchedAttributes = [
-                \Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL => $channelAttribute
+                \Ess\M2ePro\Model\Magento\Product\Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL => $channelAttribute,
             ];
 
             return;
@@ -359,6 +366,7 @@ class Attribute extends \Ess\M2ePro\Model\AbstractModel
 
         $this->resolver =
             $this->modelFactory->getObject('Walmart_Listing_Product_Variation_Matcher_Attribute_Resolver');
+
         return $this->resolver;
     }
 

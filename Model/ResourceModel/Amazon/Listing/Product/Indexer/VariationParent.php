@@ -56,7 +56,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
 
         $select->columns([
             new \Zend_Db_Expr($this->getConnection()->quote($listing->getId())),
-            new \Zend_Db_Expr($this->getConnection()->quote($createDate))
+            new \Zend_Db_Expr($this->getConnection()->quote($createDate)),
         ]);
 
         $query = $this->getConnection()->insertFromSelect(
@@ -69,7 +69,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
                 'min_business_price',
                 'max_business_price',
                 'listing_id',
-                'create_date'
+                'create_date',
             ],
             \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_IGNORE
         );
@@ -81,18 +81,18 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
     public function getBuildIndexSelect(\Ess\M2ePro\Model\Listing $listing)
     {
         $amazonListingProductTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
-            ->getResource()->getMainTable();
+                                                               ->getResource()->getMainTable();
 
         $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
-            ->getResource()->getMainTable();
+                                                         ->getResource()->getMainTable();
 
         $select = $this->getConnection()->select()
-            ->from(
-                ['malp' => $amazonListingProductTable],
-                [
-                    'variation_parent_id',
-                    new \Zend_Db_Expr(
-                        "MIN(
+                       ->from(
+                           ['malp' => $amazonListingProductTable],
+                           [
+                               'variation_parent_id',
+                               new \Zend_Db_Expr(
+                                   "MIN(
                             IF(
                                 malp.online_regular_sale_price_start_date IS NOT NULL AND
                                 malp.online_regular_sale_price_end_date IS NOT NULL AND
@@ -102,9 +102,9 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
                                 malp.online_regular_price
                             )
                         ) as variation_min_regular_price"
-                    ),
-                    new \Zend_Db_Expr(
-                        "MAX(
+                               ),
+                               new \Zend_Db_Expr(
+                                   "MAX(
                             IF(
                                 malp.online_regular_sale_price_start_date IS NOT NULL AND
                                 malp.online_regular_sale_price_end_date IS NOT NULL AND
@@ -114,32 +114,32 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstr
                                 malp.online_regular_price
                             )
                         ) as variation_max_regular_price"
-                    ),
-                    new \Zend_Db_Expr(
-                        "MIN(
+                               ),
+                               new \Zend_Db_Expr(
+                                   "MIN(
                             malp.online_business_price
                         ) as variation_min_business_price"
-                    ),
-                    new \Zend_Db_Expr(
-                        "MAX(
+                               ),
+                               new \Zend_Db_Expr(
+                                   "MAX(
                             malp.online_business_price
                         ) as variation_max_business_price"
-                    )
-                ]
-            )
-            ->joinInner(
-                ['mlp' => $listingProductTable],
-                'malp.listing_product_id = mlp.id',
-                []
-            )
-            ->where('mlp.status IN (?)', [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN
-            ])
-            ->where('mlp.listing_id = ?', (int)$listing->getId())
-            ->where('malp.variation_parent_id IS NOT NULL')
-            ->group('malp.variation_parent_id');
+                               ),
+                           ]
+                       )
+                       ->joinInner(
+                           ['mlp' => $listingProductTable],
+                           'malp.listing_product_id = mlp.id',
+                           []
+                       )
+                       ->where('mlp.status IN (?)', [
+                           \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+                           \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                           \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
+                       ])
+                       ->where('mlp.listing_id = ?', (int)$listing->getId())
+                       ->where('malp.variation_parent_id IS NOT NULL')
+                       ->group('malp.variation_parent_id');
 
         return $select;
     }

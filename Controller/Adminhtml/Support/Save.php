@@ -68,7 +68,7 @@ class Save extends Support
         $this->messageManager->addSuccess($this->__('Your message has been sent.'));
 
         $referrer = $this->getRequest()->getParam('referrer', false);
-        $params   = [];
+        $params = [];
         $referrer && $params['referrer'] = $referrer;
 
         return $this->_redirect('*/*/index', $params);

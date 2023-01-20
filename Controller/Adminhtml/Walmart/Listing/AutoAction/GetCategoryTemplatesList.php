@@ -19,6 +19,7 @@ class GetCategoryTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\
         $marketplaceId != '' && $collection->addFieldToFilter('marketplace_id', $marketplaceId);
 
         $this->setJsonContent($collection->getData());
+
         return $this->getResult();
     }
 }

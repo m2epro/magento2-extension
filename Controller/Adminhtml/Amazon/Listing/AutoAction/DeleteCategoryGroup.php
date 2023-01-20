@@ -20,8 +20,8 @@ class DeleteCategoryGroup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listin
         $groupId = $this->getRequest()->getParam('group_id');
 
         $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')
-            ->load($groupId)
-            ->delete();
+                                  ->load($groupId)
+                                  ->delete();
     }
 
     //########################################

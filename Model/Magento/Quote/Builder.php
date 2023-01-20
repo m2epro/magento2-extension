@@ -15,7 +15,7 @@ use Ess\M2ePro\Helper\Module\Configuration;
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
-    const PROCESS_QUOTE_ID = 'PROCESS_QUOTE_ID';
+    public const PROCESS_QUOTE_ID = 'PROCESS_QUOTE_ID';
 
     //########################################
 
@@ -39,7 +39,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Sales\Model\OrderIncrementIdChecker */
     protected $orderIncrementIdChecker;
 
-    /** @var \Ess\M2ePro\Helper\Module\Configuration  */
+    /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $configurationHelper;
 
     //########################################
@@ -196,7 +196,6 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $shippingAddress->setLimitCarrier('m2eproshipping');
         $shippingAddress->setShippingMethod('m2eproshipping_m2eproshipping');
         $shippingAddress->setCollectShippingRates(true);
-
         // ---------------------------------------
     }
 
@@ -249,6 +248,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Magento\Quote\Item $quoteItemBuilder
      * @param \Magento\Catalog\Model\Product $product
      * @param \Magento\Framework\DataObject $request
+     *
      * @throws \Ess\M2ePro\Model\Exception
      */
     protected function initializeQuoteItem($item, $quoteItemBuilder, $product, $request)
@@ -309,8 +309,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $quoteItemBuilder = $this->modelFactory->getObject(
                 'Magento_Quote_Item',
                 [
-                    'quote'     => $this->quote,
-                    'proxyItem' => $item
+                    'quote' => $this->quote,
+                    'proxyItem' => $item,
                 ]
             );
 
@@ -356,8 +356,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $quoteItemBuilder = $this->modelFactory->getObject(
                     'Magento_Quote_Item',
                     [
-                        'quote'     => $this->quote,
-                        'proxyItem' => $item
+                        'quote' => $this->quote,
+                        'proxyItem' => $item,
                     ]
                 );
 

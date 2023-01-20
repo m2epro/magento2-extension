@@ -34,13 +34,15 @@ abstract class AbstractCheck extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->requirementsReader = $requirementsReader;
-        $this->versionParser      = $versionParser;
+        $this->versionParser = $versionParser;
     }
 
     //########################################
 
     abstract public function isMeet();
+
     abstract public function getMin();
+
     abstract public function getReal();
 
     //########################################

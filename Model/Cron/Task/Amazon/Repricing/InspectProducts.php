@@ -93,10 +93,10 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             'main_table.status',
             [
                 'in' => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN
-                ]
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
+                ],
             ]
         );
         $listingProductCollection->addFieldToFilter(
@@ -120,7 +120,7 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $accountId = $account->getId();
 
         $lastCheckedUpdateTime = $this->activeRecordFactory->getObjectLoaded('Amazon_Account_Repricing', $accountId)
-            ->getLastCheckedListingProductDate();
+                                                           ->getLastCheckedListingProductDate();
 
         if ($lastCheckedUpdateTime === null) {
             $lastCheckedUpdateTime = new \DateTime(
@@ -131,18 +131,18 @@ class InspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $lastCheckedUpdateTime = $lastCheckedUpdateTime->format('Y-m-d H:i:s');
         }
 
-         return $lastCheckedUpdateTime;
+        return $lastCheckedUpdateTime;
     }
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
-     * @param \Datetime|String          $syncDate
+     * @param \Datetime|String $syncDate
      */
     protected function setLastUpdateDate(\Ess\M2ePro\Model\Account $account, $syncDate)
     {
         $accountId = $account->getId();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing$accountRepricingModel  */
+        /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $accountRepricingModel */
         $accountRepricingModel = $this->activeRecordFactory->getObjectLoaded('Amazon_Account_Repricing', $accountId);
         $accountRepricingModel->setData(
             'last_checked_listing_product_update_date',

@@ -71,10 +71,10 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'     => 'edit_form',
+                    'id' => 'edit_form',
                     'method' => 'post',
-                    'action' => $this->getUrl('*/*/save')
-                ]
+                    'action' => $this->getUrl('*/*/save'),
+                ],
             ]
         );
 
@@ -84,11 +84,11 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_email',
             'text',
             [
-                'name'     => 'email',
-                'label'    => $this->__('Email'),
-                'title'    => $this->__('Email'),
-                'class'    => 'M2ePro-validate-email validate-length maximum-length-80',
-                'value'    => isset($licenseFormData['email']) ? $licenseFormData['email'] : '',
+                'name' => 'email',
+                'label' => $this->__('Email'),
+                'title' => $this->__('Email'),
+                'class' => 'M2ePro-validate-email validate-length maximum-length-80',
+                'value' => isset($licenseFormData['email']) ? $licenseFormData['email'] : '',
                 'required' => true,
             ]
         );
@@ -97,11 +97,11 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_firstname',
             'text',
             [
-                'name'     => 'firstname',
-                'label'    => $this->__('First Name'),
-                'title'    => $this->__('First Name'),
-                'class'    => 'validate-length maximum-length-40',
-                'value'    => isset($licenseFormData['firstname']) ? $licenseFormData['firstname'] : '',
+                'name' => 'firstname',
+                'label' => $this->__('First Name'),
+                'title' => $this->__('First Name'),
+                'class' => 'validate-length maximum-length-40',
+                'value' => isset($licenseFormData['firstname']) ? $licenseFormData['firstname'] : '',
                 'required' => true,
             ]
         );
@@ -110,11 +110,11 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_lastname',
             'text',
             [
-                'name'     => 'lastname',
-                'label'    => $this->__('Last Name'),
-                'title'    => $this->__('Last Name'),
-                'class'    => 'validate-length maximum-length-40',
-                'value'    => isset($licenseFormData['lastname']) ? $licenseFormData['lastname'] : '',
+                'name' => 'lastname',
+                'label' => $this->__('Last Name'),
+                'title' => $this->__('Last Name'),
+                'class' => 'validate-length maximum-length-40',
+                'value' => isset($licenseFormData['lastname']) ? $licenseFormData['lastname'] : '',
                 'required' => true,
             ]
         );
@@ -123,11 +123,11 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_phone',
             'text',
             [
-                'name'     => 'phone',
-                'label'    => $this->__('Phone'),
-                'title'    => $this->__('Phone'),
-                'class'    => 'validate-length maximum-length-40',
-                'value'    => '',
+                'name' => 'phone',
+                'label' => $this->__('Phone'),
+                'title' => $this->__('Phone'),
+                'class' => 'validate-length maximum-length-40',
+                'value' => '',
                 'required' => true,
             ]
         );
@@ -136,12 +136,12 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_country',
             self::SELECT,
             [
-                'name'     => 'country',
-                'label'    => $this->__('Country'),
-                'title'    => $this->__('Country'),
-                'class'    => 'validate-length maximum-length-40',
-                'values'   => $this->country->toOptionArray(),
-                'value'    => isset($licenseFormData['country']) ? $licenseFormData['country'] : '',
+                'name' => 'country',
+                'label' => $this->__('Country'),
+                'title' => $this->__('Country'),
+                'class' => 'validate-length maximum-length-40',
+                'values' => $this->country->toOptionArray(),
+                'value' => isset($licenseFormData['country']) ? $licenseFormData['country'] : '',
                 'required' => true,
             ]
         );
@@ -150,11 +150,11 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_city',
             'text',
             [
-                'name'     => 'city',
-                'label'    => $this->__('City'),
-                'title'    => $this->__('City'),
-                'class'    => 'validate-length maximum-length-40',
-                'value'    => isset($licenseFormData['city']) ? $licenseFormData['city'] : '',
+                'name' => 'city',
+                'label' => $this->__('City'),
+                'title' => $this->__('City'),
+                'class' => 'validate-length maximum-length-40',
+                'value' => isset($licenseFormData['city']) ? $licenseFormData['city'] : '',
                 'required' => true,
             ]
         );
@@ -163,11 +163,11 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'create_new_license_postal_code',
             'text',
             [
-                'name'     => 'postal_code',
-                'label'    => $this->__('Postal Code'),
-                'title'    => $this->__('Postal Code'),
-                'class'    => 'validate-length maximum-length-40',
-                'value'    => isset($licenseFormData['postal_code']) ? $licenseFormData['postal_code'] : '',
+                'name' => 'postal_code',
+                'label' => $this->__('Postal Code'),
+                'title' => $this->__('Postal Code'),
+                'class' => 'validate-length maximum-length-40',
+                'value' => isset($licenseFormData['postal_code']) ? $licenseFormData['postal_code'] : '',
                 'required' => true,
             ]
         );

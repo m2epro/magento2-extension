@@ -29,9 +29,9 @@ class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->removeButton('edit');
 
         $this->addButton('save', [
-            'label'     => $this->__('Save'),
-            'onclick'   => 'SettingsObj.saveSettings()',
-            'class'     => 'primary'
+            'label' => $this->__('Save'),
+            'onclick' => 'SettingsObj.saveSettings()',
+            'class' => 'primary',
         ]);
     }
 
@@ -39,7 +39,7 @@ class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected function _toHtml()
     {
-        return parent::_toHtml().'<div id="tabs_container"></div>';
+        return parent::_toHtml() . '<div id="tabs_container"></div>';
     }
 
     //########################################

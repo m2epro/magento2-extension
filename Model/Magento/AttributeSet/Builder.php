@@ -17,7 +17,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     protected $entityAttributeSetFactory;
 
     /** @var \Magento\Eav\Model\Entity\Attribute\Set */
-    protected $attributeSetObj  = null;
+    protected $attributeSetObj = null;
 
     protected $setName = null;
     protected $params = [];
@@ -43,6 +43,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public function save()
     {
         $this->init();
+
         return $this->saveAttributeSet();
     }
 
@@ -56,15 +57,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->skeletonId !== null) {
             $skeletonAttributeSetId = $this->entityAttributeSetFactory->create()
-                  ->load($this->skeletonId)
-                  ->getId();
+                                                                      ->load($this->skeletonId)
+                                                                      ->getId();
 
             !$skeletonAttributeSetId && $this->skeletonId = null;
         }
         !$this->skeletonId && $this->productFactory->create()->getDefaultAttributeSetId();
 
         $this->attributeSetObj = $this->entityAttributeSetFactory->create()
-                                       ->load($this->setName, 'attribute_set_name');
+                                                                 ->load($this->setName, 'attribute_set_name');
     }
 
     private function saveAttributeSet()
@@ -94,24 +95,28 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public function setName($value)
     {
         $this->setName = $value;
+
         return $this;
     }
 
     public function setParams(array $value = [])
     {
         $this->params = $value;
+
         return $this;
     }
 
     public function setEntityTypeId($value)
     {
         $this->entityTypeId = $value;
+
         return $this;
     }
 
     public function setSkeletonAttributeSetId($value)
     {
         $this->skeletonId = $value;
+
         return $this;
     }
 

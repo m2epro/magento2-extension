@@ -27,7 +27,7 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         $this->getConnection()->delete(
             $this->getMainTable(),
             [
-                'id IN(?)' => $ids
+                'id IN(?)' => $ids,
             ]
         );
     }
@@ -38,7 +38,7 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             $this->getMainTable(),
             [
                 'order_id = ?' => $orderId,
-                'action = ?' => $action
+                'action = ?' => $action,
             ]
         );
     }
@@ -52,7 +52,7 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         }
 
         $where = [
-            'processing_attempt_count >= ?' => $count
+            'processing_attempt_count >= ?' => $count,
         ];
 
         if ($component !== null) {
@@ -79,10 +79,10 @@ class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             $this->getMainTable(),
             [
                 'processing_attempt_count' => new \Zend_Db_Expr('processing_attempt_count + ' . $increment),
-                'processing_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+                'processing_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate(),
             ],
             [
-                'id IN (?)' => $ids
+                'id IN (?)' => $ids,
             ]
         );
     }

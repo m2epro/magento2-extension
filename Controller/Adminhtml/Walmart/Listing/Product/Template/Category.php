@@ -12,6 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template
 {
+    /** @var \Magento\Framework\DB\TransactionFactory  */
     protected $transactionFactory;
 
     public function __construct(
@@ -45,7 +46,7 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
                 $oldTemplateIds[$listingProduct->getId()] = $listingProduct->getChildObject()
-                    ->getData('template_category_id');
+                                                                           ->getData('template_category_id');
 
                 $listingProduct->getChildObject()->setData('template_category_id', $templateId);
                 $transaction->addObject($listingProduct);

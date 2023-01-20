@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Ebay\Template\Description;
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
-    const GALLERY_IMAGES_COUNT_MAX = 11;
-    const VARIATION_IMAGES_COUNT_MAX = 12;
+    public const GALLERY_IMAGES_COUNT_MAX = 11;
+    public const VARIATION_IMAGES_COUNT_MAX = 12;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
@@ -61,11 +61,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -81,11 +83,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Template\Description $instance
+     *
      * @return $this
      */
     public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance)
     {
         $this->descriptionTemplateModel = $instance;
+
         return $this;
     }
 
@@ -121,7 +125,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
             case \Ess\M2ePro\Model\Ebay\Template\Description::TITLE_MODE_CUSTOM:
                 $title = $this->getHelper('Module_Renderer_Description')
-                    ->parseTemplate($src['template'], $this->getMagentoProduct());
+                              ->parseTemplate($src['template'], $this->getMagentoProduct());
                 break;
 
             default:
@@ -146,7 +150,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Description::SUBTITLE_MODE_CUSTOM) {
             $subTitle = $this->getHelper('Module_Renderer_Description')
-                ->parseTemplate($src['template'], $this->getMagentoProduct());
+                             ->parseTemplate($src['template'], $this->getMagentoProduct());
 
             if ($this->getEbayDescriptionTemplate()->isCutLongTitles()) {
                 $subTitle = $this->cutLongTitles($subTitle, 55);
@@ -165,7 +169,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getEbayDescriptionTemplate()->getDescriptionSource();
 
         switch ($src['mode']) {
-
             case \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_PRODUCT:
                 $description = (string)$this->getMagentoProduct()->getProduct()->getDescription();
                 $description = $this->emailTemplateFilter->filter($description);
@@ -178,7 +181,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
             case \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_CUSTOM:
                 $description = $this->getHelper('Module_Renderer_Description')
-                    ->parseTemplate($src['template'], $this->getMagentoProduct());
+                                    ->parseTemplate($src['template'], $this->getMagentoProduct());
                 $this->addWatermarkForCustomDescription($description);
                 break;
 
@@ -302,7 +305,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getEbayDescriptionTemplate()->isGalleryImagesModeProduct()) {
             $limitGalleryImages = (int)$gallerySource['limit'];
-            $galleryImagesTemp = $this->getMagentoProduct()->getGalleryImages((int)$gallerySource['limit']+1);
+            $galleryImagesTemp = $this->getMagentoProduct()->getGalleryImages((int)$gallerySource['limit'] + 1);
 
             foreach ($galleryImagesTemp as $image) {
                 if (array_key_exists($image->getHash(), $galleryImages)) {
@@ -362,8 +365,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getVariationImages()
     {
-        if ($this->getEbayDescriptionTemplate()->isImageMainModeNone() ||
-            $this->getEbayDescriptionTemplate()->isVariationImagesModeNone()) {
+        if (
+            $this->getEbayDescriptionTemplate()->isImageMainModeNone() ||
+            $this->getEbayDescriptionTemplate()->isVariationImagesModeNone()
+        ) {
             return [];
         }
 
@@ -426,6 +431,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param string $str
      * @param int $length
+     *
      * @return string
      */
     private function cutLongTitles($str, $length = 80)
@@ -456,21 +462,22 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
 
-        // @codingStandardsIgnoreLine
         $fileExtension = pathinfo($imageObj->getPath(), PATHINFO_EXTENSION);
-        $pathWithoutExtension = preg_replace('/\.'.$fileExtension.'$/', '', $imageObj->getPath());
+        $pathWithoutExtension = preg_replace('/\.' . $fileExtension . '$/', '', $imageObj->getPath());
 
-        $markingImagePath = $pathWithoutExtension.'-'.$this->getEbayDescriptionTemplate()->getWatermarkHash()
-            .'.'.$fileExtension;
+        $markingImagePath = $pathWithoutExtension . '-' . $this->getEbayDescriptionTemplate()->getWatermarkHash()
+            . '.' . $fileExtension;
 
         if ($fileDriver->isFile($markingImagePath)) {
             $currentTime = $this->getHelper('Data')->getCurrentGmtDate(true);
             // @codingStandardsIgnoreLine
-            if (filemtime($markingImagePath) + \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_CACHE_TIME >
-                $currentTime) {
+            if (
+                filemtime($markingImagePath) + \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_CACHE_TIME >
+                $currentTime
+            ) {
                 $imageObj->setPath($markingImagePath)
-                    ->setUrl($imageObj->getUrlByPath())
-                    ->resetHash();
+                         ->setUrl($imageObj->getUrlByPath())
+                         ->resetHash();
 
                 return;
             }
@@ -478,18 +485,20 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             $fileDriver->deleteFile($markingImagePath);
         }
 
-        $prevMarkingImagePath = $pathWithoutExtension.'-'
-            .$this->getEbayDescriptionTemplate()->getWatermarkPreviousHash().'.'.$fileExtension;
+        $prevMarkingImagePath = $pathWithoutExtension . '-'
+            . $this->getEbayDescriptionTemplate()->getWatermarkPreviousHash() . '.' . $fileExtension;
 
         if ($fileDriver->isFile($prevMarkingImagePath)) {
             $fileDriver->deleteFile($prevMarkingImagePath);
         }
 
         /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
-        $varDir = $this->modelFactory->getObject('VariablesDir', ['data' => [
-            'child_folder' => 'ebay/template/description/watermarks'
-        ]]);
-        $watermarkPath = $varDir->getPath().$this->getEbayDescriptionTemplate()->getId().'.png';
+        $varDir = $this->modelFactory->getObject('VariablesDir', [
+            'data' => [
+                'child_folder' => 'ebay/template/description/watermarks',
+            ],
+        ]);
+        $watermarkPath = $varDir->getPath() . $this->getEbayDescriptionTemplate()->getId() . '.png';
         if (!$fileDriver->isFile($watermarkPath)) {
             $varDir->create();
             // @codingStandardsIgnoreLine
@@ -502,13 +511,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_MIDDLE =>
                 \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_CENTER,
             \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_BOTTOM =>
-                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_BOTTOM_RIGHT
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_BOTTOM_RIGHT,
         ];
 
         /** @var \Magento\Framework\Image $image */
         $image = $this->imageFactory->create([
             'adapter' => $this->gd2AdapterFactory->create(),
-            'fileName' => $imageObj->getPath()
+            'fileName' => $imageObj->getPath(),
         ]);
         $imageOriginalHeight = $image->getOriginalHeight();
         $imageOriginalWidth = $image->getOriginalWidth();
@@ -521,7 +530,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Magento\Framework\Image $watermark */
         $watermark = $this->imageFactory->create([
             'adapter' => $this->gd2AdapterFactory->create(),
-            'fileName' => $watermarkPath
+            'fileName' => $watermarkPath,
         ]);
         $watermarkOriginalHeight = $watermark->getOriginalHeight();
         $watermarkOriginalWidth = $watermark->getOriginalWidth();
@@ -572,8 +581,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $imageObj->setPath($markingImagePath)
-            ->setUrl($imageObj->getUrlByPath())
-            ->resetHash();
+                 ->setUrl($imageObj->getUrlByPath())
+                 ->resetHash();
     }
 
     private function addWatermarkForCustomDescription(&$description)

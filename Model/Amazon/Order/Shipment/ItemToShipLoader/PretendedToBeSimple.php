@@ -69,8 +69,8 @@ class PretendedToBeSimple extends DefaultObject implements ItemToShipLoaderInter
         $items = [
             [
                 'amazon_order_item_id' => $orderItem->getChildObject()->getAmazonOrderItemId(),
-                'qty'                  => $shippingInfo['send']
-            ]
+                'qty' => $shippingInfo['send'],
+            ],
         ];
 
         $additionalData[Helper::CUSTOM_IDENTIFIER]['shipments'][$this->shipmentItem->getId()] = $items;

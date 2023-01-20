@@ -24,12 +24,14 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $listingProductsIds = $this->filterProductsForNewAsin($listingProductsIds);
 
-        if (empty($listingProductsIds) ||
-            !$this->getListing()->getMarketplace()->getChildObject()->isNewAsinAvailable()) {
+        if (
+            empty($listingProductsIds) ||
+            !$this->getListing()->getMarketplace()->getChildObject()->isNewAsinAvailable()
+        ) {
             $redirectUrl = $this->getUrl('*/*/index', [
                 'step' => 5,
                 'id' => $this->getRequest()->getParam('id'),
-                'wizard' => $this->getRequest()->getParam('wizard')
+                'wizard' => $this->getRequest()->getParam('wizard'),
             ]);
             $this->setJsonContent(['redirect' => $redirectUrl]);
 
@@ -37,8 +39,8 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         }
 
         $this->getListing()
-            ->setSetting('additional_data', 'adding_new_asin_listing_products_ids', $listingProductsIds)
-            ->save();
+             ->setSetting('additional_data', 'adding_new_asin_listing_products_ids', $listingProductsIds)
+             ->save();
 
         $showNewAsinStep = $this->getListing()->getSetting('additional_data', 'show_new_asin_step');
         if (isset($showNewAsinStep)) {
@@ -46,15 +48,17 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
                 'redirect' => $this->getUrl('*/*/index', [
                     'id' => $this->getRequest()->getParam('id'),
                     'step' => $showNewAsinStep ? 4 : 5,
-                    'wizard' => $this->getRequest()->getParam('wizard')
-                ])
+                    'wizard' => $this->getRequest()->getParam('wizard'),
+                ]),
             ]);
 
             return $this->getResult();
         }
 
         $newAsinPopup = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup::class);
+                             ->createBlock(
+                                 \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin\NewAsinPopup::class
+                             );
 
         $this->setJsonContent(['html' => $newAsinPopup->toHtml()]);
 

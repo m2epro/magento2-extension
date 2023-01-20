@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive;
  */
 class InvoiceDataReport extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/receive/invoice_data_report';
+    public const NICK = 'amazon/order/receive/invoice_data_report';
 
     /** @var int $interval (in seconds) */
     protected $interval = 3600;
@@ -124,6 +124,7 @@ class InvoiceDataReport extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive\InvoiceDataReport\Requester $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Cron_Task_Amazon_Order_Receive_InvoiceDataReport_Requester',
             [],

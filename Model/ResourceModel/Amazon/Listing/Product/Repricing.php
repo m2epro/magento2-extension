@@ -10,13 +10,11 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product;
 
 use Ess\M2ePro\Model\Account;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing
- */
 class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -71,7 +69,7 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
 
         $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
-            ['sku'  => 'second_table.sku']
+            ['sku' => 'second_table.sku']
         );
 
         return $listingProductCollection->getColumnValues('sku');
@@ -84,12 +82,12 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
         $this->getConnection()->update(
             $this->getMainTable(),
             [
-                'update_date'         => $this->getHelper('Data')->getCurrentGmtDate(),
-                'is_process_required' => 1
+                'update_date' => $this->getHelper('Data')->getCurrentGmtDate(),
+                'is_process_required' => 1,
             ],
             [
                 'listing_product_id IN (?)' => array_unique($listingsProductsIds),
-                'is_process_required = ?'   => 0,
+                'is_process_required = ?' => 0,
             ]
         );
     }
@@ -99,12 +97,12 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
         $this->getConnection()->update(
             $this->getMainTable(),
             [
-                'update_date'         => $this->getHelper('Data')->getCurrentGmtDate(),
-                'is_process_required' => 0
+                'update_date' => $this->getHelper('Data')->getCurrentGmtDate(),
+                'is_process_required' => 0,
             ],
             [
                 'listing_product_id IN (?)' => array_unique($listingsProductsIds),
-                'is_process_required = ?'   => 1,
+                'is_process_required = ?' => 1,
             ]
         );
     }

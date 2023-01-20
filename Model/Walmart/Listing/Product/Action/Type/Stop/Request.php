@@ -19,9 +19,9 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     {
         $data = array_merge(
             [
-                'sku'  => $this->getWalmartListingProduct()->getSku(),
+                'sku' => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
-                'qty'  => 0
+                'qty' => 0,
             ],
             $this->getLagTimeData()
         );
@@ -45,7 +45,6 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
 
         return parent::getLagTimeData();
     }
-
 
     //########################################
 }

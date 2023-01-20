@@ -54,9 +54,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->dataHelper->getBackUrl();
             $this->buttonList->add('back', [
-                'label'   => $this->__('Back'),
+                'label' => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
-                'class'   => 'back'
+                'class' => 'back',
             ]);
         }
         // ---------------------------------------
@@ -71,7 +71,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 selected M2E Pro Listing. Manage each Item individually or use the
                 Mass Actions to update the Items in bulk.
 HTML
-            )
+            ),
         ]);
 
         return parent::_prepareLayout();
@@ -88,11 +88,14 @@ HTML
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\Other\View\Header::class,
             '',
-            ['data' => [
-                'account' => $this->walmartFactory->getCachedObjectLoaded('Account', $accountId),
-                'marketplace' => $this->walmartFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
-            ]]
+            [
+                'data' => [
+                    'account' => $this->walmartFactory->getCachedObjectLoaded('Account', $accountId),
+                    'marketplace' => $this->walmartFactory->getCachedObjectLoaded('Marketplace', $marketplaceId),
+                ],
+            ]
         );
+
         // ---------------------------------------
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
@@ -108,8 +111,8 @@ HTML
             'mapProductPopupHtml' => $this->getUrl(
                 '*/listing_other_mapping/mapProductPopupHtml',
                 [
-                    'account_id'     => $this->getRequest()->getParam('account'),
-                    'marketplace_id' => $this->getRequest()->getParam('marketplace')
+                    'account_id' => $this->getRequest()->getParam('account'),
+                    'marketplace_id' => $this->getRequest()->getParam('marketplace'),
                 ]
             ),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
@@ -122,7 +125,7 @@ HTML
             'mapAutoToProduct' => $this->getUrl('*/listing_other_mapping/autoMap'),
 
             'removingProducts' => $this->getUrl('*/walmart_listing_other/removing'),
-            'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping')
+            'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping'),
         ]);
 
         $someProductsWereNotMappedMessage = $this->__(
@@ -174,10 +177,11 @@ HTML
             'error_word' => $this->__('Error'),
             'close_word' => $this->__('Close'),
 
-            'task_completed_message' => $this->__('Task completed. Please wait ...')
+            'task_completed_message' => $this->__('Task completed. Please wait ...'),
         ]);
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'jQuery' => 'jquery',
 
             'p' => 'M2ePro/Plugin/ProgressBar',
@@ -188,8 +192,9 @@ HTML
             'lor' => 'M2ePro/Listing/Other/Removing',
             'lou' => 'M2ePro/Listing/Other/Unmapping',
 
-            'alog' => 'M2ePro/Walmart/Listing/Other/Grid'
-        ], <<<JS
+            'alog' => 'M2ePro/Walmart/Listing/Other/Grid',
+            ],
+            <<<JS
 
         M2ePro.customData.componentMode = '{$componentMode}';
         M2ePro.customData.gridId = 'walmartListingOtherGrid';
@@ -210,10 +215,10 @@ JS
         );
 
         return '<div id="listing_other_progress_bar"></div>' .
-               '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
-               '<div id="listing_other_content_container">' .
-               parent::_toHtml() .
-               '</div>';
+            '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
+            '<div id="listing_other_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 
     //########################################

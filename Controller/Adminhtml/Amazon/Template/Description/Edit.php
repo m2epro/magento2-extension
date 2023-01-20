@@ -31,19 +31,22 @@ class Edit extends Description
         if ($marketplaces->getSize() <= 0) {
             $message = 'You should select and update at least one Amazon Marketplace.';
             $this->messageManager->addError($this->__($message));
+
             return $this->_redirect('*/*/index');
         }
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $templateModel);
 
-        $this->addContent($this->getLayout()
-                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit::class));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit::class)
+        );
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Description Policy");
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml(
+            $headerText .= ' "' . $this->getHelper('Data')->escapeHtml(
                 $templateModel->getTitle()
-            ).'"';
+            ) . '"';
         } else {
             $headerText = $this->__("Add Description Policy");
         }

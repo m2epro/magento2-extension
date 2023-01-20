@@ -27,11 +27,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
     {
         if (!$post = $this->getRequest()->getPost()) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
         if (!isset($post['auto_action_data'])) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
@@ -61,7 +63,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'categories' => []
+            'categories' => [],
         ];
 
         // mode global
@@ -133,6 +135,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
         $listing->save();
 
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 }

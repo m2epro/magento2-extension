@@ -15,15 +15,16 @@ use Magento\Sales\Model\Order\Creditmemo;
  */
 abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
-    const HANDLE_RESULT_FAILED    = -1;
-    const HANDLE_RESULT_SKIPPED   = 0;
-    const HANDLE_RESULT_SUCCEEDED = 1;
+    public const HANDLE_RESULT_FAILED = -1;
+    public const HANDLE_RESULT_SKIPPED = 0;
+    public const HANDLE_RESULT_SUCCEEDED = 1;
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param Creditmemo $creditmemo
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -38,10 +39,12 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $items = $this->getItemsToRefund($order, $creditmemo);
+
         return $order->getChildObject()->refund($items) ? self::HANDLE_RESULT_SUCCEEDED : self::HANDLE_RESULT_FAILED;
     }
 
     abstract protected function getItemsToRefund(\Ess\M2ePro\Model\Order $order, Creditmemo $creditmemo);
+
     abstract protected function getComponentMode();
 
     //########################################

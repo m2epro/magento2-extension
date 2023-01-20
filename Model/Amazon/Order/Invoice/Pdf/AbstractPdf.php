@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf;
  */
 abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
 {
+    /** @var int */
     protected $bottomMinY = 25;
 
     /** @var \Ess\M2ePro\Model\Order */
@@ -20,16 +21,19 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
 
     /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice */
     protected $invoice;
-
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
-
+    /** @var \Magento\Directory\Model\CountryFactory */
     protected $countryFactory;
+    /** @var \Magento\Directory\Model\RegionFactory */
     protected $regionFactory;
+    /** @var \Magento\Framework\Module\Dir\Reader */
     protected $moduleReader;
-
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $_storeManager;
-
+    /** @var \Magento\Framework\Locale\ResolverInterface */
     protected $_localeResolver;
 
     public function __construct(
@@ -106,7 +110,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
             $this->sumByField($documentData['items'], 'shipping-vat-incl-amount'),
             $this->sumByField($documentData['items'], 'shipping-promo-vat-incl-amount'),
             $this->sumByField($documentData['items'], 'gift-wrap-vat-incl-amount'),
-            $this->sumByField($documentData['items'], 'gift-promo-vat-incl-amount')
+            $this->sumByField($documentData['items'], 'gift-promo-vat-incl-amount'),
         ]);
     }
 
@@ -120,7 +124,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
             $this->sumByField($documentData['items'], 'shipping-vat-excl-amount'),
             $this->sumByField($documentData['items'], 'shipping-promo-vat-excl-amount'),
             $this->sumByField($documentData['items'], 'gift-wrap-vat-excl-amount'),
-            $this->sumByField($documentData['items'], 'gift-promo-vat-excl-amount')
+            $this->sumByField($documentData['items'], 'gift-promo-vat-excl-amount'),
         ]);
     }
 
@@ -176,9 +180,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         foreach ($data as $value) {
             if ($value !== '') {
                 $text = [];
-                foreach ($this->string->split($value, $strMaxLength, true, true)
-                as
-                $_value) {
+                foreach ($this->string->split($value, $strMaxLength, true, true) as $_value) {
                     $text[] = $_value;
                 }
                 foreach ($text as $part) {
@@ -228,19 +230,19 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
     {
         $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
-                            'text'      => $title,
-                            'feed'      => 575,
-                            'font'      => 'bold',
+                            'text' => $title,
+                            'feed' => 575,
+                            'font' => 'bold',
                             'font_size' => 10,
-                            'align'     => 'right'
-                        ]
+                            'align' => 'right',
+                        ],
                     ],
                 ],
-                'height' => 10
-            ]
+                'height' => 10,
+            ],
         ]);
     }
 
@@ -260,22 +262,22 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $page->setFillColor(new \Zend_Pdf_Color_Html('#0B151E'));
 
         $this->drawLabelValueData($page, [
-            'label'     => $this->getHelper('Module\Translation')->__($lablesTitle . ' date'),
-            'value'     => $this->_localeDate->formatDate(
+            'label' => $this->getHelper('Module\Translation')->__($lablesTitle . ' date'),
+            'value' => $this->_localeDate->formatDate(
                 $this->invoice->getData('create_date'),
                 \IntlDateFormatter::MEDIUM,
                 false
             ),
-            'x'         => $x + 20,
-            'y'         => $this->y - 25,
+            'x' => $x + 20,
+            'y' => $this->y - 25,
             'font_size' => 9,
         ]);
 
         $this->drawLabelValueData($page, [
-            'label'     => $this->getHelper('Module\Translation')->__($lablesTitle . ' #'),
-            'value'     => $this->invoice->getDocumentNumber(),
-            'x'         => $x + 20,
-            'y'         => $this->y - 38,
+            'label' => $this->getHelper('Module\Translation')->__($lablesTitle . ' #'),
+            'value' => $this->invoice->getDocumentNumber(),
+            'x' => $x + 20,
+            'y' => $this->y - 38,
             'font_size' => 9,
         ]);
 
@@ -294,30 +296,30 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $page->setFillColor(new \Zend_Pdf_Color_Html('#0E0621'));
         $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
-                            'text'      => $this->getHelper('Module\Translation')->__('Billing address'),
-                            'feed'      => 25,
-                            'font'      => 'bold',
-                            'font_size' => 12
+                            'text' => $this->getHelper('Module\Translation')->__('Billing address'),
+                            'feed' => 25,
+                            'font' => 'bold',
+                            'font_size' => 12,
                         ],
                         [
-                            'text'      => $this->getHelper('Module\Translation')->__('Delivery address'),
-                            'feed'      => 205,
-                            'font'      => 'bold',
-                            'font_size' => 12
+                            'text' => $this->getHelper('Module\Translation')->__('Delivery address'),
+                            'feed' => 205,
+                            'font' => 'bold',
+                            'font_size' => 12,
                         ],
                         [
-                            'text'      => $this->getHelper('Module\Translation')->__('Sold by'),
-                            'feed'      => 395,
-                            'font'      => 'bold',
-                            'font_size' => 12
-                        ]
-                    ]
+                            'text' => $this->getHelper('Module\Translation')->__('Sold by'),
+                            'feed' => 395,
+                            'font' => 'bold',
+                            'font_size' => 12,
+                        ],
+                    ],
                 ],
-                'height' => 16
-            ]
+                'height' => 16,
+            ],
         ]);
 
         $country = $this->countryFactory->create()->loadByCode($storeData['country_id'])->getName();
@@ -333,71 +335,71 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $page->setFillColor(new \Zend_Pdf_Color_GrayScale(0));
         $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
-                            'text'      => $this->prepareColumnData([
+                            'text' => $this->prepareColumnData([
                                 $documentData['billing-address']['billing-name'],
                                 $documentData['buyer-company-name'],
                                 $this->getFormatedAddress([
                                     $documentData['billing-address']['bill-address-1'],
                                     $documentData['billing-address']['bill-address-2'],
                                     $documentData['billing-address']['bill-address-3'],
-                                    $documentData['billing-address']['bill-city']
+                                    $documentData['billing-address']['bill-city'],
                                 ]),
                                 $this->getFormatedAddress([
                                     $documentData['billing-address']['bill-state'],
-                                    $documentData['billing-address']['bill-postal-code']
+                                    $documentData['billing-address']['bill-postal-code'],
                                 ]),
                                 $documentData['billing-address']['bill-country'],
                                 $documentData['billing-address']['billing-phone-number'],
                                 $documentData['buyer-vat-number'],
                             ], 35),
-                            'feed'      => 25,
-                            'font_size' => 8
+                            'feed' => 25,
+                            'font_size' => 8,
                         ],
                         [
-                            'text'      => $this->prepareColumnData([
+                            'text' => $this->prepareColumnData([
                                 $documentData['shipping-address']['recipient-name'],
                                 $this->getFormatedAddress([
                                     $documentData['shipping-address']['ship-address-1'],
                                     $documentData['shipping-address']['ship-address-2'],
                                     $documentData['shipping-address']['ship-address-3'],
-                                    $documentData['shipping-address']['ship-city']
+                                    $documentData['shipping-address']['ship-city'],
                                 ]),
                                 $this->getFormatedAddress([
                                     $documentData['shipping-address']['ship-state'],
-                                    $documentData['shipping-address']['ship-postal-code']
+                                    $documentData['shipping-address']['ship-postal-code'],
                                 ]),
                                 $documentData['shipping-address']['ship-country'],
                                 $documentData['shipping-address']['ship-phone-number'],
                             ], 35),
-                            'feed'      => 205,
-                            'font_size' => 8
+                            'feed' => 205,
+                            'font_size' => 8,
                         ],
                         [
-                            'text'      => $this->prepareColumnData([
+                            'text' => $this->prepareColumnData([
                                 $storeData['name'],
                                 $this->getFormatedAddress([
                                     $storeData['street_line1'],
                                     $storeData['street_line2'],
-                                    $storeData['city']
+                                    $storeData['city'],
                                 ]),
                                 $this->getFormatedAddress([
                                     $region,
-                                    $storeData['postcode']
+                                    $storeData['postcode'],
                                 ]),
                                 $country,
                                 $this->getHelper('Module\Translation')->__('VAT Number') . ': ' .
-                                $documentData['seller-vat-number']
+                                $documentData['seller-vat-number'],
                             ], 35),
-                            'feed'      => 395,
-                            'font_size' => 8
-                        ]
-                    ]
+                            'feed' => 395,
+                            'font_size' => 8,
+                        ],
+                    ],
                 ],
-                'height' => 12
-            ]
+                'height' => 12,
+            ],
         ]);
         $this->y -= 20;
     }
@@ -409,27 +411,27 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $page->setFillColor(new \Zend_Pdf_Color_Html('#0E0621'));
         $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
-                            'text'      => $this->getHelper('Module\Translation')->__('Order Information'),
-                            'feed'      => 25,
-                            'font'      => 'bold',
-                            'font_size' => 12
-                        ]
-                    ]
+                            'text' => $this->getHelper('Module\Translation')->__('Order Information'),
+                            'feed' => 25,
+                            'font' => 'bold',
+                            'font_size' => 12,
+                        ],
+                    ],
                 ],
-                'height' => 16
-            ]
+                'height' => 16,
+            ],
         ]);
 
         $page->setFillColor(new \Zend_Pdf_Color_GrayScale(0));
         $this->drawLineBlocks($page, [
             [
-                'lines'  => [
+                'lines' => [
                     [
                         [
-                            'text'      => $this->prepareColumnData([
+                            'text' => $this->prepareColumnData([
                                 $this->getHelper('Module\Translation')->__('Order date') . ': ' .
                                 $this->_localeDate->formatDate(
                                     $documentData['order-date'],
@@ -437,15 +439,15 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
                                     false
                                 ),
                                 $this->getHelper('Module\Translation')->__('Order #') . ': ' .
-                                $documentData['order-id']
+                                $documentData['order-id'],
                             ], 35),
-                            'feed'      => 25,
-                            'font_size' => 8
-                        ]
-                    ]
+                            'feed' => 25,
+                            'font_size' => 8,
+                        ],
+                    ],
                 ],
-                'height' => 12
-            ]
+                'height' => 12,
+            ],
         ]);
         $this->y -= 20;
     }
@@ -468,76 +470,76 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
 
         //columns headers
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Description'),
-            'feed'      => 30,
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Description'),
+            'feed' => 30,
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Qty'),
-            'feed'      => 240,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Qty'),
+            'feed' => 240,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Unit price'),
-            'feed'      => 320,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Unit price'),
+            'feed' => 320,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('VAT rate'),
-            'feed'      => 400,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('VAT rate'),
+            'feed' => 400,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Unit price'),
-            'feed'      => 480,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Unit price'),
+            'feed' => 480,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Item subtotal'),
-            'feed'      => 570,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Item subtotal'),
+            'feed' => 570,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[1][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('(excl. VAT)'),
-            'feed'      => 320,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('(excl. VAT)'),
+            'feed' => 320,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[1][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('(incl. VAT)'),
-            'feed'      => 480,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('(incl. VAT)'),
+            'feed' => 480,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[1][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('(incl. VAT)'),
-            'feed'      => 570,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('(incl. VAT)'),
+            'feed' => 570,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lineBlock = [
-            'lines'  => $lines,
-            'height' => 10
+            'lines' => $lines,
+            'height' => 10,
         ];
 
         $page = $this->drawLineBlocks($page, [$lineBlock]);
@@ -554,55 +556,55 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
 
         $lines[0] = [
             [
-                'text'      => array_merge(
+                'text' => array_merge(
                     $this->string->split($item['product-name'], 45, true, true),
                     [
-                        $item['asin']
+                        $item['asin'],
                     ]
                 ),
-                'feed'      => 30,
-                'font_size' => 8
-            ]
+                'feed' => 30,
+                'font_size' => 8,
+            ],
         ];
 
         $lines[0][] = [
-            'text'      => $item['quantity-purchased'],
-            'feed'      => 240,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $item['quantity-purchased'],
+            'feed' => 240,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getFormatedPrice($item['item-vat-excl-amount'] / $item['quantity-purchased']),
-            'feed'      => 320,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getFormatedPrice($item['item-vat-excl-amount'] / $item['quantity-purchased']),
+            'feed' => 320,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getFormatedVAT($item['item-vat-rate']),
-            'feed'      => 400,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getFormatedVAT($item['item-vat-rate']),
+            'feed' => 400,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getFormatedPrice($item['item-vat-incl-amount'] / $item['quantity-purchased']),
-            'feed'      => 480,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getFormatedPrice($item['item-vat-incl-amount'] / $item['quantity-purchased']),
+            'feed' => 480,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getFormatedPrice($item['item-vat-incl-amount']),
-            'feed'      => 570,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getFormatedPrice($item['item-vat-incl-amount']),
+            'feed' => 570,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lineBlock = [
-            'lines'  => $lines,
-            'height' => 10
+            'lines' => $lines,
+            'height' => 10,
         ];
 
         $page = $this->drawLineBlocks($page, [$lineBlock], ['table_header_method' => 'drawItemsHeader']);
@@ -625,35 +627,45 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $documentData = $this->invoice->getSettings('document_data');
 
         $this->drawLabelValueData($page, [
-            'label'       => $this->getHelper('Module\Translation')->__('Shipping Charge'),
-            'value'       => $this->getFormatedPrice($this->sumByField($documentData['items'],
-                'shipping-vat-incl-amount')),
-            'x'           => 570,
-            'align'       => 'right',
-            'font_size'   => 8,
+            'label' => $this->getHelper('Module\Translation')->__('Shipping Charge'),
+            'value' => $this->getFormatedPrice(
+                $this->sumByField(
+                    $documentData['items'],
+                    'shipping-vat-incl-amount'
+                )
+            ),
+            'x' => 570,
+            'align' => 'right',
+            'font_size' => 8,
             'line_height' => 12,
         ]);
 
         $this->drawLabelValueData($page, [
-            'label'       => $this->getHelper('Module\Translation')->__('Gift Wrap'),
-            'value'       => $this->getFormatedPrice($this->sumByField($documentData['items'],
-                'gift-wrap-vat-incl-amount')),
-            'x'           => 570,
-            'align'       => 'right',
-            'font_size'   => 8,
+            'label' => $this->getHelper('Module\Translation')->__('Gift Wrap'),
+            'value' => $this->getFormatedPrice(
+                $this->sumByField(
+                    $documentData['items'],
+                    'gift-wrap-vat-incl-amount'
+                )
+            ),
+            'x' => 570,
+            'align' => 'right',
+            'font_size' => 8,
             'line_height' => 12,
         ]);
 
         $this->drawLabelValueData($page, [
-            'label'       => $this->getHelper('Module\Translation')->__('Promotions'),
-            'value'       => $this->getFormatedPrice(array_sum([
-                $this->sumByField($documentData['items'], 'item-promo-vat-incl-amount'),
-                $this->sumByField($documentData['items'], 'gift-promo-vat-incl-amount'),
-                $this->sumByField($documentData['items'], 'shipping-promo-vat-incl-amount')
-            ])),
-            'x'           => 570,
-            'align'       => 'right',
-            'font_size'   => 8,
+            'label' => $this->getHelper('Module\Translation')->__('Promotions'),
+            'value' => $this->getFormatedPrice(
+                array_sum([
+                    $this->sumByField($documentData['items'], 'item-promo-vat-incl-amount'),
+                    $this->sumByField($documentData['items'], 'gift-promo-vat-incl-amount'),
+                    $this->sumByField($documentData['items'], 'shipping-promo-vat-incl-amount'),
+                ])
+            ),
+            'x' => 570,
+            'align' => 'right',
+            'font_size' => 8,
             'line_height' => 12,
         ]);
 
@@ -677,38 +689,38 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $page->setFillColor(new \Zend_Pdf_Color_GrayScale(1));
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Vat rate'),
-            'feed'      => 295,
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Vat rate'),
+            'feed' => 295,
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('Items subtotal'),
-            'feed'      => 470,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('Items subtotal'),
+            'feed' => 470,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('VAT subtotal'),
-            'feed'      => 570,
-            'align'     => 'right',
-            'font'      => 'bold',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('VAT subtotal'),
+            'feed' => 570,
+            'align' => 'right',
+            'font' => 'bold',
+            'font_size' => 8,
         ];
 
         $lines[1][] = [
-            'text'      => $this->getHelper('Module\Translation')->__('(excl. VAT)'),
-            'feed'      => 470,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getHelper('Module\Translation')->__('(excl. VAT)'),
+            'feed' => 470,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lineBlock = [
-            'lines'  => $lines,
-            'height' => 10
+            'lines' => $lines,
+            'height' => 10,
         ];
 
         $page = $this->drawLineBlocks($page, [$lineBlock]);
@@ -723,42 +735,46 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $this->y -= 8;
 
         $lines[0][] = [
-            'text'      => $this->getFormatedVAT($item['item-vat-rate']),
-            'feed'      => 295,
-            'font_size' => 8
+            'text' => $this->getFormatedVAT($item['item-vat-rate']),
+            'feed' => 295,
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getFormatedPrice(array_sum([
-                $item['item-vat-excl-amount'],
-                $item['item-promo-vat-excl-amount'],
-                $item['shipping-vat-excl-amount'],
-                $item['shipping-promo-vat-excl-amount'],
-                $item['gift-wrap-vat-excl-amount'],
-                $item['gift-promo-vat-excl-amount']
-            ])),
-            'feed'      => 470,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getFormatedPrice(
+                array_sum([
+                    $item['item-vat-excl-amount'],
+                    $item['item-promo-vat-excl-amount'],
+                    $item['shipping-vat-excl-amount'],
+                    $item['shipping-promo-vat-excl-amount'],
+                    $item['gift-wrap-vat-excl-amount'],
+                    $item['gift-promo-vat-excl-amount'],
+                ])
+            ),
+            'feed' => 470,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lines[0][] = [
-            'text'      => $this->getFormatedPrice(array_sum([
-                $item['item-vat-amount'],
-                $item['item-promo-vat-amount'],
-                $item['shipping-vat-amount'],
-                $item['shipping-promo-vat-amount'],
-                $item['gift-wrap-vat-amount'],
-                $item['gift-promo-vat-amount']
-            ])),
-            'feed'      => 570,
-            'align'     => 'right',
-            'font_size' => 8
+            'text' => $this->getFormatedPrice(
+                array_sum([
+                    $item['item-vat-amount'],
+                    $item['item-promo-vat-amount'],
+                    $item['shipping-vat-amount'],
+                    $item['shipping-promo-vat-amount'],
+                    $item['gift-wrap-vat-amount'],
+                    $item['gift-promo-vat-amount'],
+                ])
+            ),
+            'feed' => 570,
+            'align' => 'right',
+            'font_size' => 8,
         ];
 
         $lineBlock = [
-            'lines'  => $lines,
-            'height' => 10
+            'lines' => $lines,
+            'height' => 10,
         ];
 
         $page = $this->drawLineBlocks($page, [$lineBlock], ['table_header_method' => 'drawSubtotalHeader']);
@@ -805,7 +821,10 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
             $this->_setFontRegular($page, 8);
 
             $valueSplit = $this->string->split(
-                $documentData['citation-' . $marketplaceCode], 90, true, true
+                $documentData['citation-' . $marketplaceCode],
+                90,
+                true,
+                true
             );
 
             $y = 10 + count($valueSplit) * 8;
@@ -895,6 +914,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
             $viewDir . '/adminhtml/web/fonts/WorkSans/WorkSans-Regular.ttf'
         );
         $object->setFont($font, $size);
+
         return $font;
     }
 
@@ -909,6 +929,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
             $viewDir . '/adminhtml/web/fonts/WorkSans/WorkSans-Bold.ttf'
         );
         $object->setFont($font, $size);
+
         return $font;
     }
 
@@ -1029,6 +1050,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

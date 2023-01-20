@@ -27,12 +27,12 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
     }
+
     protected function _prepareLayout()
     {
         if ($this->getData('category_mode') == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-            $category = $this->__('Magento Attribute') .' > '.
+            $category = $this->__('Magento Attribute') . ' > ' .
                 $this->magentoAttributeHelper->getAttributeLabel($this->getData('category_value'));
-
         } else {
             $category = $this->componentEbayCategoryEbay->getPath(
                 $this->getData('category_value'),
@@ -45,8 +45,8 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
             [
                 [
                     'label' => $this->__('Category'),
-                    'value' => $category
-                ]
+                    'value' => $category,
+                ],
             ]
         );
 

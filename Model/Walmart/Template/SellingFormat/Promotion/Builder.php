@@ -34,35 +34,35 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         if (!empty($this->rawData['from_date']['value'])) {
             $startDate = \Ess\M2ePro\Helper\Date::createDateGmt($this->rawData['from_date']['value'])
-                ->format('Y-m-d H:i');
+                                                ->format('Y-m-d H:i');
         } else {
             $startDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-                ->format('Y-m-d H:i');
+                                                ->format('Y-m-d H:i');
         }
 
         if (!empty($this->rawData['to_date']['value'])) {
             $endDate = \Ess\M2ePro\Helper\Date::createDateGmt($this->rawData['to_date']['value'])
-                ->format('Y-m-d H:i');
+                                              ->format('Y-m-d H:i');
         } else {
             $endDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-                ->format('Y-m-d H:i');
+                                              ->format('Y-m-d H:i');
         }
 
         return [
-            'template_selling_format_id'   => $this->getTemplateSellingFormatId(),
-            'price_mode'                   => $this->rawData['price']['mode'],
-            'price_attribute'              => $this->rawData['price']['attribute'],
-            'price_coefficient'            => $this->rawData['price']['coefficient'],
-            'start_date_mode'              => $this->rawData['from_date']['mode'],
-            'start_date_attribute'         => $this->rawData['from_date']['attribute'],
-            'start_date_value'             => $startDate,
-            'end_date_mode'                => $this->rawData['to_date']['mode'],
-            'end_date_attribute'           => $this->rawData['to_date']['attribute'],
-            'end_date_value'               => $endDate,
-            'comparison_price_mode'        => $this->rawData['comparison_price']['mode'],
-            'comparison_price_attribute'   => $this->rawData['comparison_price']['attribute'],
+            'template_selling_format_id' => $this->getTemplateSellingFormatId(),
+            'price_mode' => $this->rawData['price']['mode'],
+            'price_attribute' => $this->rawData['price']['attribute'],
+            'price_coefficient' => $this->rawData['price']['coefficient'],
+            'start_date_mode' => $this->rawData['from_date']['mode'],
+            'start_date_attribute' => $this->rawData['from_date']['attribute'],
+            'start_date_value' => $startDate,
+            'end_date_mode' => $this->rawData['to_date']['mode'],
+            'end_date_attribute' => $this->rawData['to_date']['attribute'],
+            'end_date_value' => $endDate,
+            'comparison_price_mode' => $this->rawData['comparison_price']['mode'],
+            'comparison_price_attribute' => $this->rawData['comparison_price']['attribute'],
             'comparison_price_coefficient' => $this->rawData['comparison_price']['coefficient'],
-            'type'                         => $this->rawData['type'],
+            'type' => $this->rawData['type'],
         ];
     }
 

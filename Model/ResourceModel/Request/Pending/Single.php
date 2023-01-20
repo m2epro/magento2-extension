@@ -25,10 +25,10 @@ class Single extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     public function getComponentsInProgress()
     {
         $select = $this->getConnection()
-            ->select()
-            ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `component`'))
-            ->where('is_completed = ?', 0)
-            ->distinct(true);
+                       ->select()
+                       ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `component`'))
+                       ->where('is_completed = ?', 0)
+                       ->distinct(true);
 
         return $this->getConnection()->fetchCol($select);
     }

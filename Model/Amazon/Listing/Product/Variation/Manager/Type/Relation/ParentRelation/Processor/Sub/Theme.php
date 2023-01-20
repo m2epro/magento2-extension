@@ -24,19 +24,23 @@ class Theme extends AbstractModel
 
         if (!$this->getProcessor()->isGeneralIdOwner()) {
             $this->getProcessor()->getTypeModel()->resetChannelTheme(false);
+
             return;
         }
 
-        if (!$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate() ||
+        if (
+            !$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate() ||
             !$this->getProcessor()->getAmazonDescriptionTemplate()->isNewAsinAccepted()
         ) {
             $this->getProcessor()->getTypeModel()->resetChannelTheme(false);
+
             return;
         }
 
         $possibleThemes = $this->getProcessor()->getPossibleThemes();
         if (empty($possibleThemes[$currentTheme])) {
             $this->getProcessor()->getTypeModel()->resetChannelTheme(false);
+
             return;
         }
 
@@ -53,7 +57,8 @@ class Theme extends AbstractModel
 
         $possibleThemes = $this->getProcessor()->getPossibleThemes();
 
-        if (!$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate() ||
+        if (
+            !$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate() ||
             !$this->getProcessor()->getAmazonDescriptionTemplate()->isNewAsinAccepted() ||
             empty($possibleThemes)
         ) {
@@ -62,6 +67,7 @@ class Theme extends AbstractModel
 
         if ($this->getProcessor()->isGeneralIdSet()) {
             $this->processExistProduct();
+
             return;
         }
 

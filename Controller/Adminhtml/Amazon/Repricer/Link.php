@@ -30,6 +30,7 @@ class Link extends Account
 
         if ($accountId && $account === null) {
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
+
             return $this->_redirect('*/amazon_account/index');
         }
 
@@ -55,7 +56,7 @@ class Link extends Account
                 [
                     'account_id' => $accountId,
                     'email' => $email,
-                    'token' => $token
+                    'token' => $token,
                 ]
             );
 
@@ -64,9 +65,11 @@ class Link extends Account
             $repricing->setAccount($account);
             $repricing->run();
 
-            return $this->_redirect($this->getUrl('*/amazon_repricer_settings/edit', [
-                'id' => $accountId
-            ]));
+            return $this->_redirect(
+                $this->getUrl('*/amazon_repricer_settings/edit', [
+                    'id' => $accountId,
+                ])
+            );
         }
 
         return $this->_redirect($this->getUrl('*/amazon_repricer_settings/index/'));

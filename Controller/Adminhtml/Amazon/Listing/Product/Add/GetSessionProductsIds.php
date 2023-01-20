@@ -21,7 +21,7 @@ class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Amazon\List
         $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
         $this->setJsonContent([
-            'ids' => $selectedProductsIds
+            'ids' => $selectedProductsIds,
         ]);
 
         return $this->getResult();

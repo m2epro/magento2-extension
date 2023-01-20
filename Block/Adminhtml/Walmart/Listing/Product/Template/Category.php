@@ -42,7 +42,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Templ
 
     The detailed information can be found <a href="%url%" target="_blank">here</a>.',
                 $this->supportHelper->getDocumentationArticleUrl('x/bf1IB')
-            )
+            ),
         ]);
 
         $this->setChild('help_block', $helpBlock);

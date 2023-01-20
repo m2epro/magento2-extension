@@ -19,7 +19,7 @@ class TemporaryTable
     }
 
     /**
-     * @param \Magento\Framework\DB\Select                   $selectQuery
+     * @param \Magento\Framework\DB\Select $selectQuery
      * @param \Magento\Framework\DB\Adapter\AdapterInterface $connection
      *
      * @return string temporary table name

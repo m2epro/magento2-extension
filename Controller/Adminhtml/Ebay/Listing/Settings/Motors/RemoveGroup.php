@@ -25,7 +25,7 @@ class RemoveGroup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Group\Collection $groups */
         $groups = $this->activeRecordFactory->getObject('Ebay_Motor_Group')->getCollection()
-            ->addFieldToFilter('id', ['in' => $groupsIds]);
+                                            ->addFieldToFilter('id', ['in' => $groupsIds]);
 
         foreach ($groups->getItems() as $group) {
             $group->delete();

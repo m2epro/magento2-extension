@@ -138,7 +138,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         $this->processCompleted(
             $responseData,
             [
-                'is_images_upload_error' => $this->isImagesUploadFailed($responseMessages)
+                'is_images_upload_error' => $this->isImagesUploadFailed($responseMessages),
             ]
         );
     }
@@ -176,8 +176,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * eBay internal error. The operation was not completed (code:34) (returned by M2e Pro server)
      */
     protected function isEbayApplicationErrorAppeared(array $messages)
@@ -193,8 +193,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 32704531: Can't upload product image on eBay (returned by M2e Pro server)
      */
     protected function isImagesUploadFailed(array $messages)
@@ -210,8 +210,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 17: This item cannot be accessed because the listing has been deleted, is a Half.com listing,
      *     or you are not the seller.
      */
@@ -228,8 +228,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 21919301: (UPC/EAN/ISBN) is missing a value. Enter a value and try again.
      */
     protected function isProductIdentifierNeeded(array $messages)
@@ -245,8 +245,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 21919303: The item specific Type is missing. Add Type to this listing, enter a valid value, and then try again.
      */
     protected function isNewRequiredSpecificNeeded(array $messages)
@@ -262,8 +262,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 21916587: The multi-variation titles have been changed and were not updated on the eBay.
      * 21916626: Variations Specifics and Item Specifics entered for a Multi-SKU item should be different.
      * 21916603: Variation specifics cannot be changed in restricted revise
@@ -299,8 +299,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 21916884: Condition is required for this category.
      */
     protected function isConditionErrorAppeared(array $messages)
@@ -316,8 +316,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 488: The specified UUID has already been used; ListedByRequestAppId=1, item ID=%item_id%.
      */
     protected function isDuplicateErrorByUUIDAppeared(array $messages)
@@ -333,8 +333,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     * @return Message|bool
      *
+     * @return Message|bool
      * 21919067: This Listing is a duplicate of your item: %item_title% (%item_id%).
      */
     protected function isDuplicateErrorByEbayEngineAppeared(array $messages)
@@ -350,8 +350,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
      *
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
      * 10007: Sorry, Something Went Wrong. Please Wait A Moment And Try Again.
      * 931: The token of eBay account is no longer valid. Please edit your eBay account and get a new token.
      */
@@ -359,7 +359,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     {
         $errorCodes = [
             10007,
-            931
+            931,
         ];
 
         foreach ($messages as $message) {
@@ -379,7 +379,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
      */
     protected function tryToResolveVariationErrors()
     {
-        if (isset($this->params['params']['is_additional_action']) &&
+        if (
+            isset($this->params['params']['is_additional_action']) &&
             $this->params['params']['is_additional_action'] === true
         ) {
             return;
@@ -483,7 +484,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             [
                 'item_id' => $duplicateItemId,
                 'source' => 'uuid',
-                'message' => $message->getText()
+                'message' => $message->getText(),
             ]
         );
         $this->listingProduct->save();
@@ -504,7 +505,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             [
                 'item_id' => $duplicateItemId,
                 'source' => 'ebay_engine',
-                'message' => $message->getText()
+                'message' => $message->getText(),
             ]
         );
         $this->listingProduct->save();
@@ -557,7 +558,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getRequestDataObject()
     {
         if (empty($this->requestDataObject)) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData $requestData */
             $requestData = $this->modelFactory->getObject('Ebay_Listing_Product_Action_RequestData');
 
@@ -606,7 +606,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             [
                 'status_changer' => $this->getStatusChanger(),
                 'is_realtime' => true,
-                'is_additional_action' => true
+                'is_additional_action' => true,
             ]
         );
 
@@ -632,7 +632,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getLogger()
     {
         if ($this->logger === null) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Logger $logger */
 
             $logger = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Logger');

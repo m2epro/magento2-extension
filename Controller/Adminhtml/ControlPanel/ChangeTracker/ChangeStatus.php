@@ -41,7 +41,6 @@ class ChangeStatus extends \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main
 
     /**
      * Execute action based on request and return result
-     *
      * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
      */
     public function execute()
@@ -50,7 +49,7 @@ class ChangeStatus extends \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main
         if ($request === null) {
             $this->setJsonContent([
                 'error' => true,
-                'message' => 'Empty request'
+                'message' => 'Empty request',
             ]);
 
             return $this->getResult();
@@ -65,7 +64,7 @@ class ChangeStatus extends \Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main
         $this->changeTrackerHelper->setLogLevel($logLevel);
         $this->changeTrackerHelper->setInterval($timeout);
         $this->configurationHelper->setConfigValues([
-            'listing_product_inspector_mode' => $directChangesStatus
+            'listing_product_inspector_mode' => $directChangesStatus,
         ]);
 
         $this->setJsonContent([

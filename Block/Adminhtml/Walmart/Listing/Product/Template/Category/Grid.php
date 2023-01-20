@@ -130,25 +130,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'title',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
             'filter_index' => 'title',
-            'sortable'     => true,
+            'sortable' => true,
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('action', [
-            'header'       => $this->__('Action'),
-            'align'        => 'left',
-            'type'         => 'number',
-            'width'        => '55px',
-            'index'        => 'id',
-            'filter'       => false,
-            'sortable'     => false,
-            'frame_callback' => [$this, 'callbackColumnAction']
+            'header' => $this->__('Action'),
+            'align' => 'left',
+            'type' => 'number',
+            'width' => '55px',
+            'index' => 'id',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnAction'],
         ]);
     }
 
@@ -157,12 +157,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setChild(
             'refresh_button',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                ->setData([
-                    'id' => 'category_template_refresh_btn',
-                    'label'     => $this->__('Refresh'),
-                    'class'     => 'action primary',
-                    'onclick'   => $this->getJsObjectName().'.reload()'
-                ])
+                 ->setData([
+                     'id' => 'category_template_refresh_btn',
+                     'label' => $this->__('Refresh'),
+                     'class' => 'action primary',
+                     'onclick' => $this->getJsObjectName() . '.reload()',
+                 ])
         );
 
         return parent::_prepareLayout();
@@ -185,14 +185,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'wizard' => $this->wizardHelper->isActive(
                 \Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK
             ),
-            'close_on_save' => true
+            'close_on_save' => true,
         ]);
 
         $title = $this->dataHelper->escapeHtml($row->getData('title'));
 
         $categoryWord = $this->__('Category');
         $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"
-                                                      : $this->__('N/A');
+            : $this->__('N/A');
 
         return <<<HTML
 <a target="_blank" href="{$templateCategoryEditUrl}">{$title}</a>
@@ -222,7 +222,7 @@ HTML;
 
         $collection->getSelect()->where(
             'title LIKE ? OR category_path LIKE ? OR browsenode_id LIKE ?',
-            '%'.$value.'%'
+            '%' . $value . '%'
         );
     }
 
@@ -239,7 +239,7 @@ HTML;
             '_current' => true,
             '_query' => [
                 'map_to_template_js_fn' => $this->getMapToTemplateJsFn(),
-                'create_new_template_js_fn' => $this->getCreateNewTemplateJsFn()
+                'create_new_template_js_fn' => $this->getCreateNewTemplateJsFn(),
             ],
             'products_ids' => implode(',', $this->getProductsIds()),
             'magento_categories_ids' => implode(',', $this->getMagentoCategoryIds()),
@@ -287,8 +287,8 @@ HTML;
     protected function getNewTemplateCategoryUrl()
     {
         return $this->getUrl('*/walmart_template_category/new', [
-            'marketplace_id'        => $this->getMarketplaceId(),
-            'close_on_save' => 1
+            'marketplace_id' => $this->getMarketplaceId(),
+            'close_on_save' => 1,
         ]);
     }
 }

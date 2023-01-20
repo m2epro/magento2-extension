@@ -22,10 +22,12 @@ class ActualPrice extends AbstractModel
         $productResource = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')->getResource();
         $otherResource = $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource();
 
-        $requestSkus = array_unique(array_merge(
-            $productResource->getSkus($this->getAccount(), $skus, false),
-            $otherResource->getRepricingSkus($this->getAccount(), $skus, false)
-        ));
+        $requestSkus = array_unique(
+            array_merge(
+                $productResource->getSkus($this->getAccount(), $skus, false),
+                $otherResource->getRepricingSkus($this->getAccount(), $skus, false)
+            )
+        );
 
         if (empty($requestSkus)) {
             return false;
@@ -86,7 +88,7 @@ class ActualPrice extends AbstractModel
         $listingProductCollection->getSelect()->joinInner(
             [
                 'alpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                    ->getResource()->getMainTable()
+                                                    ->getResource()->getMainTable(),
             ],
             'alpr.listing_product_id=main_table.id',
             []
@@ -111,12 +113,13 @@ class ActualPrice extends AbstractModel
 
             $offerProductPrice = $offersProductPrices[strtolower($listingProductData['sku'])];
 
-            if ($offerProductPrice !== null &&
+            if (
+                $offerProductPrice !== null &&
                 $listingProductData['online_regular_price'] != $offerProductPrice
             ) {
                 $this->resourceConnection->getConnection()->update(
                     $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_amazon_listing_product'),
+                         ->getTableNameWithPrefix('m2epro_amazon_listing_product'),
                     ['online_regular_price' => $offerProductPrice],
                     ['listing_product_id = ?' => $listingProductId]
                 );
@@ -155,12 +158,13 @@ class ActualPrice extends AbstractModel
 
             $offerProductPrice = $offersProductPrices[strtolower($listingOtherData['sku'])];
 
-            if ($offerProductPrice !== null &&
+            if (
+                $offerProductPrice !== null &&
                 $offerProductPrice != $listingOtherData['online_price']
             ) {
                 $this->resourceConnection->getConnection()->update(
                     $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_amazon_listing_other'),
+                         ->getTableNameWithPrefix('m2epro_amazon_listing_other'),
                     [
                         'online_price' => $offerProductPrice,
                     ],

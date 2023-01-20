@@ -17,9 +17,9 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
  */
 class GmtTime extends IssueType
 {
-    const DIFF_CRITICAL_LEVEL = 30;
-    const DIFF_WARNING_LEVEL  = 15;
-    const REQUEST_TIME_TOOK_TOO_LONG_LEVEL  = 10;
+    public const DIFF_CRITICAL_LEVEL = 30;
+    public const DIFF_WARNING_LEVEL = 15;
+    public const REQUEST_TIME_TOOK_TOO_LONG_LEVEL = 10;
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory */
     private $resultFactory;
@@ -39,6 +39,7 @@ class GmtTime extends IssueType
 
     public function process()
     {
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('server', 'get', 'gmtTime');
 
@@ -64,28 +65,32 @@ class GmtTime extends IssueType
 
         if ($timeDifference >= self::DIFF_WARNING_LEVEL) {
             $result->setTaskResult(TaskResult::STATE_WARNING);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time.
 It is important for the correct data synchronization with Channels.
 Please consult your Server Administrator/Developer to adjust the settings.
 HTML
-                ,
-                $localTime->format('H:i:s')
-            ]));
+                    ,
+                    $localTime->format('H:i:s'),
+                ])
+            );
         }
 
         if ($timeDifference >= self::DIFF_CRITICAL_LEVEL) {
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 Your Server Time <b>%time%</b> (UTC) needs to be updated based on the actual local time.
  It is important for the correct data synchronization with Channels.
 Please consult your Server Administrator/Developer to adjust the settings.
 HTML
-                ,
-                $localTime->format('H:i:s')
-            ]));
+                    ,
+                    $localTime->format('H:i:s'),
+                ])
+            );
         }
 
         return $result;

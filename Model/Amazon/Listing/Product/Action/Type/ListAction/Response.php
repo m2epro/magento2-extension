@@ -24,7 +24,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-            'list_date' => $this->getHelper('Data')->getCurrentGmtDate()
+            'list_date' => $this->getHelper('Data')->getCurrentGmtDate(),
         ];
 
         $data = $this->appendStatusChangerValue($data);
@@ -70,7 +70,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         if (!empty($generalId)) {
-            $data['general_id']         = $generalId;
+            $data['general_id'] = $generalId;
             $data['is_isbn_general_id'] = $this->getHelper('Data')->isISBN($generalId);
         }
 

@@ -23,7 +23,7 @@ class ManagerFactory
         return $this->objectManager->create(
             \Ess\M2ePro\Model\Lock\Item\Manager::class,
             [
-                'nick' => $nick
+                'nick' => $nick,
             ]
         );
     }

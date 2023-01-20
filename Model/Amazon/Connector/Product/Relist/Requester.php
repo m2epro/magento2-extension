@@ -18,7 +18,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     public function getCommand()
     {
-        return ['product','update','entities'];
+        return ['product', 'update', 'entities'];
     }
 
     //########################################
@@ -37,6 +37,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)

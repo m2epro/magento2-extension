@@ -17,18 +17,22 @@ class NoteForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'motors_note'
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'motors_note',
+            ],
+        ]);
 
         $form->addField(
             'filter_form_help_block',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('
+                'content' => $this->__(
+                    '
                     This Option allows you to <strong>Add a Note</strong> to the selected
                     Compatible Vehicle where you can provide Additional Details.
-                ')
+                '
+                ),
             ]
         );
 
@@ -46,7 +50,7 @@ class NoteForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'note',
                 'label' => $this->__('Note'),
                 'title' => $this->__('Note'),
-                'required' => true
+                'required' => true,
             ]
         );
 

@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Item
- */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /**
@@ -27,7 +24,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @var \Ess\M2ePro\Model\Magento\Product
      */
     protected $magentoProductModel = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -72,6 +69,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $temp && $this->accountModel = null;
         $temp && $this->marketplaceModel = null;
         $temp && $this->magentoProductModel = null;
+
         return $temp;
     }
 
@@ -97,7 +95,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function setAccount(\Ess\M2ePro\Model\Account $instance)
     {
-         $this->accountModel = $instance;
+        $this->accountModel = $instance;
     }
 
     // ---------------------------------------
@@ -122,7 +120,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $instance)
     {
-         $this->marketplaceModel = $instance;
+        $this->marketplaceModel = $instance;
     }
 
     // ---------------------------------------
@@ -137,8 +135,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         return $this->magentoProductModel = $this->modelFactory->getObject('Magento\Product')
-                ->setStoreId($this->getStoreId())
-                ->setProductId($this->getProductId());
+                                                               ->setStoreId($this->getStoreId())
+                                                               ->setProductId($this->getProductId());
     }
 
     /**

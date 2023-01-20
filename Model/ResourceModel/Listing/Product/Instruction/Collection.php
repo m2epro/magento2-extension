@@ -27,6 +27,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
     /**
      * @param \DateTime|NULL $dateTime
+     *
      * @return $this
      */
     public function applySkipUntilFilter($dateTime = null)
@@ -47,12 +48,13 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     public function applyNonBlockedFilter()
     {
         $this->getSelect()
-            ->joinLeft(
-                ['pl' => $this->activeRecordFactory->getObject('Processing_Lock')->getResource()->getMainTable()],
-                'pl.object_id = main_table.listing_product_id AND model_name = \'Listing_Product\''
-            );
+             ->joinLeft(
+                 ['pl' => $this->activeRecordFactory->getObject('Processing_Lock')->getResource()->getMainTable()],
+                 'pl.object_id = main_table.listing_product_id AND model_name = \'Listing_Product\''
+             );
 
         $this->addFieldToFilter('pl.id', ['null' => true]);
+
         return $this;
     }
 

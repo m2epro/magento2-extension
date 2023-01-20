@@ -42,10 +42,10 @@ class Change extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'     => 'edit_form',
+                    'id' => 'edit_form',
                     'method' => 'post',
-                    'action' => 'javascript:void(0)'
-                ]
+                    'action' => 'javascript:void(0)',
+                ],
             ]
         );
 
@@ -56,10 +56,10 @@ class Change extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'new_license_key',
             'text',
             [
-                'name'     => 'new_license_key',
-                'label'    => $this->__('New License Key'),
-                'title'    => $this->__('New License Key'),
-                'value'    => $key,
+                'name' => 'new_license_key',
+                'label' => $this->__('New License Key'),
+                'title' => $this->__('New License Key'),
+                'value' => $key,
                 'required' => true,
             ]
         );

@@ -15,7 +15,7 @@ use Ess\M2ePro\Model\Log\AbstractModel as LogAbstractModel;
  */
 class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsResponser
 {
-    const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
+    public const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
 
     /** @var int */
     protected $logsActionId;
@@ -39,7 +39,8 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
     public function __construct(
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
-        \Ess\M2ePro\Helper\Factory $helperFactory, \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -62,9 +63,9 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         );
 
         $this->listingProductHandler = $listingProductHandler;
-        $this->otherListingsHandler  = $otherListingsHandler;
-        $this->resourceConnection    = $resourceConnection;
-        $this->helperData            = $helperData;
+        $this->otherListingsHandler = $otherListingsHandler;
+        $this->resourceConnection = $resourceConnection;
+        $this->helperData = $helperData;
     }
 
     //########################################
@@ -131,6 +132,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
 
     /**
      * @param $messageText
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function failDetected($messageText)
@@ -208,7 +210,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
         }
 
         return $this->logsActionId = (int)$this->activeRecordFactory->getObject('Listing\Log')
-            ->getResource()->getNextActionId();
+                                                                    ->getResource()->getNextActionId();
     }
 
     /**

@@ -23,6 +23,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
 
             if (!$order->getId()) {
                 $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
                 return $this->_redirect('*/*/index');
             }
 
@@ -34,6 +35,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Order
         }
 
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Log\Order::class));
+
         return $this->getResult();
     }
 }

@@ -13,14 +13,18 @@ namespace Ess\M2ePro\Model\Amazon\Order\Action;
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
-    const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
-    const MAX_ITEMS_PER_REQUEST = 10000;
+    public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
+    public const MAX_ITEMS_PER_REQUEST = 10000;
 
+    /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager  */
     protected $amazonThrottlingManager;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Data  */
     protected $helperData;
-
+    /** @var mixed|null  */
     private $actionType = null;
 
     //########################################
@@ -83,10 +87,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        if ($this->amazonThrottlingManager->getAvailableRequestsCount(
-            $merchantId,
-            \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED
-        ) < 1) {
+        if (
+            $this->amazonThrottlingManager->getAvailableRequestsCount(
+                $merchantId,
+                \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED
+            ) < 1
+        ) {
             return;
         }
 
@@ -167,8 +173,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 'expiration_date' => gmdate(
                     'Y-m-d H:i:s',
                     $this->helperData->getCurrentGmtDate(true)
-                        + self::PENDING_REQUEST_MAX_LIFE_TIME
-                )
+                    + self::PENDING_REQUEST_MAX_LIFE_TIME
+                ),
             ]
         );
         $requestPendingSingle->save();
@@ -179,13 +185,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Amazon_Order_Action_Processing')
-            ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
+                                  ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
     }
 
     //########################################
 
     /**
      * @param $merchantId
+     *
      * @return \Ess\M2ePro\Model\Amazon\Order\Action\Processing[]
      */
     protected function getNotProcessedActions($merchantId)
@@ -277,7 +284,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected function removeMissedProcessingActions()
     {
         $actionCollection = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Action_Processing')
-            ->getCollection();
+                                                      ->getCollection();
         $actionCollection->getSelect()->joinLeft(
             ['p' => $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable()],
             'p.id = main_table.processing_id',

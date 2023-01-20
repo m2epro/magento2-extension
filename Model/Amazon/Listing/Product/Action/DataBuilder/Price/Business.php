@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Price;
  */
 class Business extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\AbstractModel
 {
-    const BUSINESS_DISCOUNTS_TYPE_FIXED = 'fixed';
+    public const BUSINESS_DISCOUNTS_TYPE_FIXED = 'fixed';
 
     //########################################
 
@@ -40,8 +40,8 @@ class Business extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuild
             ksort($businessDiscounts);
 
             $data['business_discounts'] = [
-                'type'   => self::BUSINESS_DISCOUNTS_TYPE_FIXED,
-                'values' => $businessDiscounts
+                'type' => self::BUSINESS_DISCOUNTS_TYPE_FIXED,
+                'values' => $businessDiscounts,
             ];
         }
 

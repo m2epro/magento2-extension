@@ -21,7 +21,7 @@ class Boolean extends \Magento\Framework\Data\Form\Element\Select
         $this->setValues([
             ['label' => '', 'value' => ''],
             ['label' => __('No'), 'value' => 0],
-            ['label' => __('Yes'), 'value' => 1]
+            ['label' => __('Yes'), 'value' => 1],
         ]);
     }
 
@@ -42,6 +42,7 @@ class Boolean extends \Magento\Framework\Data\Form\Element\Select
             }
             $html .= '>' . $this->_escape($option['label']) . '</option>' . "\n";
         }
+
         return $html;
     }
 

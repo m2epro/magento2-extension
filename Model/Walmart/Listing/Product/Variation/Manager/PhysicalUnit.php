@@ -67,8 +67,8 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
 
         $currentOptions = array_change_key_case(array_map('strtolower', $currentOptions), CASE_LOWER);
         $magentoVariations = $this->getListingProduct()->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                  ->getVariationInstance()
+                                  ->getVariationsTypeStandard();
 
         foreach ($magentoVariations['variations'] as $magentoVariation) {
             $magentoOptions = [];
@@ -200,8 +200,8 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
         }
 
         $magentoVariation = $this->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationTypeStandard($productOptions);
+                                 ->getVariationInstance()
+                                 ->getVariationTypeStandard($productOptions);
 
         if (!is_array($magentoVariation)) {
             return;
@@ -209,8 +209,10 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
 
         foreach ($currentVariation->getOptions(true) as $currentOption) {
             foreach ($magentoVariation as $magentoOption) {
-                if ($currentOption->getAttribute() != $magentoOption['attribute'] ||
-                    $currentOption->getOption() != $magentoOption['option']) {
+                if (
+                    $currentOption->getAttribute() != $magentoOption['attribute'] ||
+                    $currentOption->getOption() != $magentoOption['option']
+                ) {
                     continue;
                 }
 
@@ -239,20 +241,20 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
         $variationId = $this->walmartFactory
             ->getObject('Listing_Product_Variation')
             ->addData([
-                'listing_product_id' => $this->getListingProduct()->getId()
+                'listing_product_id' => $this->getListingProduct()->getId(),
             ])->save()->getId();
 
         foreach ($variation as $option) {
             $tempData = [
                 'listing_product_variation_id' => $variationId,
-                'product_id'                   => $option['product_id'],
-                'product_type'                 => $option['product_type'],
-                'attribute'                    => $option['attribute'],
-                'option'                       => $option['option']
+                'product_id' => $option['product_id'],
+                'product_type' => $option['product_type'],
+                'attribute' => $option['attribute'],
+                'option' => $option['option'],
             ];
 
             $this->walmartFactory->getObject('Listing_Product_Variation_Option')
-                ->addData($tempData)->save();
+                                 ->addData($tempData)->save();
         }
     }
 
@@ -261,12 +263,12 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     private function removeChannelItems()
     {
         $items = $this->activeRecordFactory->getObject('Walmart\Item')->getCollection()
-            ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
-            ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
-            ->addFieldToFilter('sku', $this->getWalmartListingProduct()->getSku())
-            ->addFieldToFilter('product_id', $this->getListingProduct()->getProductId())
-            ->addFieldToFilter('store_id', $this->getListing()->getStoreId())
-            ->getItems();
+                                           ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
+                                           ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
+                                           ->addFieldToFilter('sku', $this->getWalmartListingProduct()->getSku())
+                                           ->addFieldToFilter('product_id', $this->getListingProduct()->getProductId())
+                                           ->addFieldToFilter('store_id', $this->getListing()->getStoreId())
+                                           ->getItems();
 
         foreach ($items as $item) {
             /** @var \Ess\M2ePro\Model\Walmart\Item $item */
@@ -277,11 +279,11 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     private function createChannelItem(array $options)
     {
         $data = [
-            'account_id'                => (int)$this->getListing()->getAccountId(),
-            'marketplace_id'            => (int)$this->getListing()->getMarketplaceId(),
-            'sku'                       => $this->getWalmartListingProduct()->getSku(),
-            'product_id'                => (int)$this->getListingProduct()->getProductId(),
-            'store_id'                  => (int)$this->getListing()->getStoreId(),
+            'account_id' => (int)$this->getListing()->getAccountId(),
+            'marketplace_id' => (int)$this->getListing()->getMarketplaceId(),
+            'sku' => $this->getWalmartListingProduct()->getSku(),
+            'product_id' => (int)$this->getListingProduct()->getProductId(),
+            'store_id' => (int)$this->getListing()->getStoreId(),
             'variation_product_options' => $this->getHelper('Data')->jsonEncode($options),
         ];
 
@@ -293,9 +295,9 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
     protected function getMagentoAttributes()
     {
         $magentoVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                  ->getMagentoProduct()
+                                  ->getVariationInstance()
+                                  ->getVariationsTypeStandard();
 
         return array_keys($magentoVariations['set']);
     }

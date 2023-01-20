@@ -33,7 +33,7 @@ abstract class Edit extends AbstractContainer
     {
         $this->jsTranslator->addTranslations([
             'Do not show any more' => $this->__('Do not show this message anymore'),
-            'Save Policy' => $this->__('Save Policy')
+            'Save Policy' => $this->__('Save Policy'),
         ]);
 
         return parent::_beforeToHtml();
@@ -50,9 +50,11 @@ abstract class Edit extends AbstractContainer
 
         if ($id) {
             $saveConfirmation = $this->dataHelper->escapeJs(
-                $this->__('<br/>
+                $this->__(
+                    '<br/>
 <b>Note:</b> All changes you have made will be automatically
-applied to all M2E Pro Listings where this Policy is used.')
+applied to all M2E Pro Listings where this Policy is used.'
+                )
             );
         }
 

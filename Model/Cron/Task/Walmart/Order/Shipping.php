@@ -16,9 +16,9 @@ use Ess\M2ePro\Model\Order\Change;
  */
 class Shipping extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/order/shipping';
+    public const NICK = 'walmart/order/shipping';
 
-    const MAX_ORDERS_CHANGES_COUNT = 50;
+    public const MAX_ORDERS_CHANGES_COUNT = 50;
 
     //####################################
 
@@ -35,7 +35,7 @@ class Shipping extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order_Change')->getResource()
-            ->incrementAttemptCount(array_keys($ordersChangesForProcess));
+                                  ->incrementAttemptCount(array_keys($ordersChangesForProcess));
 
         foreach ($ordersChangesForProcess as $orderChange) {
             /** @var \Ess\M2ePro\Model\Order $order */

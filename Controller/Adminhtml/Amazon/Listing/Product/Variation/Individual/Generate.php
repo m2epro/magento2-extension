@@ -24,7 +24,7 @@ class Generate extends Main
                 'type' => 'error',
                 'message' => $this->__(
                     'Listing Product must be specified.'
-                )
+                ),
             ]);
 
             return $this->getResult();
@@ -39,23 +39,25 @@ class Generate extends Main
         if (!$this->getRequest()->getParam('unique', false)) {
             $this->setJsonContent([
                 'type' => 'success',
-                'text' => $magentoVariations
+                'text' => $magentoVariations,
             ]);
 
             return $this->getResult();
         }
 
         $listingProducts = $this->amazonFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('listing_id', $listingProduct->getListingId())
-            ->addFieldToFilter('product_id', $listingProduct->getProductId())
-            ->getItems();
+                                               ->addFieldToFilter('listing_id', $listingProduct->getListingId())
+                                               ->addFieldToFilter('product_id', $listingProduct->getProductId())
+                                               ->getItems();
 
         foreach ($listingProducts as $listingProduct) {
             $variationManager = $listingProduct->getChildObject()->getVariationManager();
 
             if ($listingProduct->isComponentModeAmazon()) {
-                if (!($variationManager->isIndividualType() &&
-                    $variationManager->getTypeModel()->isVariationProductMatched())) {
+                if (
+                    !($variationManager->isIndividualType() &&
+                        $variationManager->getTypeModel()->isVariationProductMatched())
+                ) {
                     continue;
                 }
             } else {
@@ -69,7 +71,7 @@ class Generate extends Main
                 throw new \Ess\M2ePro\Model\Exception(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $listingProduct->getId()
+                        'listing_product_id' => $listingProduct->getId(),
                     ]
                 );
             }
@@ -83,7 +85,7 @@ class Generate extends Main
                     'product_id' => $option['product_id'],
                     'product_type' => $option['product_type'],
                     'attribute' => $option['attribute'],
-                    'option' => $option['option']
+                    'option' => $option['option'],
                 ];
             }
             unset($option);
@@ -98,7 +100,7 @@ class Generate extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'text' => array_values($magentoVariations)
+            'text' => array_values($magentoVariations),
         ]);
 
         return $this->getResult();

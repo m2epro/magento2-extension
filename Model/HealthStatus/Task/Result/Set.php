@@ -65,39 +65,46 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param string $taskType
      * @param bool $skipHiddenResults
+     *
      * @return Result[]
      */
     public function getByType($taskType, $skipHiddenResults = true)
     {
         $affectedKeys = isset($this->keys['type'][$taskType]) ? $this->keys['type'][$taskType] : [];
+
         return $this->getByKeys($affectedKeys, $skipHiddenResults);
     }
 
     /**
      * @param string $tabKey
      * @param bool $skipHiddenResults
+     *
      * @return Result[]
      */
     public function getByTab($tabKey, $skipHiddenResults = true)
     {
         $affectedKeys = isset($this->keys['tab'][$tabKey]) ? $this->keys['tab'][$tabKey] : [];
+
         return $this->getByKeys($affectedKeys, $skipHiddenResults);
     }
 
     /**
      * @param string $fieldSetKey
      * @param bool $skipHiddenResults
+     *
      * @return Result[]
      */
     public function getByFieldSet($fieldSetKey, $skipHiddenResults = true)
     {
         $affectedKeys = isset($this->keys['fieldset'][$fieldSetKey]) ? $this->keys['fieldset'][$fieldSetKey] : [];
+
         return $this->getByKeys($affectedKeys, $skipHiddenResults);
     }
 
     /**
      * @param array|NULL $affectedKeys
      * @param bool $skipHiddenResults
+     *
      * @return Result[]
      */
     public function getByKeys($affectedKeys = null, $skipHiddenResults = true)
@@ -131,6 +138,7 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
         foreach ($this->keys['type'] as $type => $typeKeys) {
             $keys = array_merge($keys, $typeKeys);
         }
+
         return $keys;
     }
 

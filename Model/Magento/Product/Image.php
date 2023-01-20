@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\Magento\Product;
 
 use Ess\M2ePro\Model\AbstractModel;
-use \Magento\Framework\App\Area;
+use Magento\Framework\App\Area;
 
 /**
  * Class \Ess\M2ePro\Model\Magento\Product\Image
@@ -42,10 +42,10 @@ class Image extends AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
-        $this->driverPool          = $driverPool;
-        $this->storeManager        = $storeManager;
-        $this->mediaConfig         = $mediaConfig;
-        $this->filesystem          = $filesystem;
+        $this->driverPool = $driverPool;
+        $this->storeManager = $storeManager;
+        $this->mediaConfig = $mediaConfig;
+        $this->filesystem = $filesystem;
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
@@ -61,11 +61,13 @@ class Image extends AbstractModel
 
     /**
      * @param string $url
+     *
      * @return $this
      */
     public function setUrl($url)
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -85,11 +87,13 @@ class Image extends AbstractModel
 
     /**
      * @param string|null $path
+     *
      * @return $this
      */
     public function setPath($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -105,11 +109,13 @@ class Image extends AbstractModel
 
     /**
      * @param string $area
+     *
      * @return $this
      */
     public function setArea($area)
     {
         $this->area = $area;
+
         return $this;
     }
 
@@ -133,6 +139,7 @@ class Image extends AbstractModel
     public function resetHash()
     {
         $this->hash = null;
+
         return $this;
     }
 
@@ -149,11 +156,13 @@ class Image extends AbstractModel
 
     /**
      * @param int $storeId
+     *
      * @return $this
      */
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId;
+
         return $this;
     }
 
@@ -162,6 +171,7 @@ class Image extends AbstractModel
     public function isSelfHosted()
     {
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
+
         return $this->getPath() && $fileDriver->isFile($this->getPath());
     }
 
@@ -188,7 +198,7 @@ class Image extends AbstractModel
 
     public function getUrlByPath()
     {
-        $baseMediaUrl  = $this->getBaseMediaUrl();
+        $baseMediaUrl = $this->getBaseMediaUrl();
         $baseMediaPath = $this->filesystem
             ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
             ->getAbsolutePath();

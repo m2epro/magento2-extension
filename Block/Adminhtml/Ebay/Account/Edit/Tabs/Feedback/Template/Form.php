@@ -29,18 +29,20 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $template = $this->globalDataHelper->getValue('edit_template');
 
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_feedback_template_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post',
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_feedback_template_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
             'id',
             'hidden',
             [
-                'name' => 'id'
+                'name' => 'id',
             ]
         );
 
@@ -49,7 +51,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'account_id',
-                'value' => $this->getRequest()->getParam('account_id')
+                'value' => $this->getRequest()->getParam('account_id'),
             ]
         );
 
@@ -65,7 +67,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'body',
                 'required' => true,
                 'label' => $this->__('Message'),
-                'field_extra_attributes' => 'style="margin-top: 30px;"'
+                'field_extra_attributes' => 'style="margin-top: 30px;"',
             ]
         );
 

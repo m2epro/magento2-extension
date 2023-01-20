@@ -103,6 +103,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($status == \Ess\M2ePro\Helper\Data::STATUS_ERROR) {
             $this->status = \Ess\M2ePro\Helper\Data::STATUS_ERROR;
+
             return;
         }
 
@@ -112,6 +113,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
 
         if ($status == \Ess\M2ePro\Helper\Data::STATUS_WARNING) {
             $this->status = \Ess\M2ePro\Helper\Data::STATUS_WARNING;
+
             return;
         }
 
@@ -142,16 +144,16 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->getListingLog()
-            ->addProductMessage(
-                $listingProduct->getListingId(),
-                $listingProduct->getProductId(),
-                $listingProduct->getId(),
-                $this->initiator,
-                $this->actionId,
-                $this->action,
-                $message->getText(),
-                $this->initLogType($message)
-            );
+             ->addProductMessage(
+                 $listingProduct->getListingId(),
+                 $listingProduct->getProductId(),
+                 $listingProduct->getId(),
+                 $this->initiator,
+                 $this->actionId,
+                 $this->action,
+                 $message->getText(),
+                 $this->initLogType($message)
+             );
     }
 
     //########################################
@@ -160,21 +162,25 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($message->isError()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
         }
 
         if ($message->isWarning()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_WARNING);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
         }
 
         if ($message->isSuccess()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
         }
 
         if ($message->isNotice()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO;
         }
 
@@ -191,7 +197,6 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     protected function getListingLog()
     {
         if ($this->listingLog === null) {
-
             /** @var \Ess\M2ePro\Model\Listing\Log $listingLog */
             $listingLog = $this->activeRecordFactory->getObject('Listing\Log');
             $listingLog->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);

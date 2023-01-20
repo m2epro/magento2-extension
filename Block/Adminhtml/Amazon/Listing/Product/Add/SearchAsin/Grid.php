@@ -58,7 +58,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('searchAsinForListingProductsGrid'.$this->listing['id']);
+        $this->setId('searchAsinForListingProductsGrid' . $this->listing['id']);
         // ---------------------------------------
 
         // Set default values
@@ -93,12 +93,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ['lp' => $lpTable],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'component_mode'  => 'component_mode',
-                'amazon_status'   => 'status',
-                'additional_data' => 'additional_data'
+                'id' => 'id',
+                'component_mode' => 'component_mode',
+                'amazon_status' => 'status',
+                'additional_data' => 'additional_data',
             ],
-            '{{table}}.listing_id='.(int)$this->listing['id']
+            '{{table}}.listing_id=' . (int)$this->listing['id']
         );
 
         $alpTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
@@ -106,18 +106,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ['alp' => $alpTable],
             'listing_product_id=id',
             [
-                'general_id'                     => 'general_id',
-                'general_id_search_info'         => 'general_id_search_info',
-                'search_settings_status'         => 'search_settings_status',
-                'search_settings_data'           => 'search_settings_data',
-                'variation_child_statuses'       => 'variation_child_statuses',
-                'amazon_sku'                     => 'sku',
-                'online_qty'                     => 'online_qty',
-                'online_regular_price'           => 'online_regular_price',
-                'online_regular_sale_price'      => 'online_regular_sale_price',
-                'is_afn_channel'                 => 'is_afn_channel',
-                'is_general_id_owner'            => 'is_general_id_owner',
-                'is_variation_parent'            => 'is_variation_parent',
+                'general_id' => 'general_id',
+                'general_id_search_info' => 'general_id_search_info',
+                'search_settings_status' => 'search_settings_status',
+                'search_settings_data' => 'search_settings_data',
+                'variation_child_statuses' => 'variation_child_statuses',
+                'amazon_sku' => 'sku',
+                'online_qty' => 'online_qty',
+                'online_regular_price' => 'online_regular_price',
+                'online_regular_sale_price' => 'online_regular_sale_price',
+                'is_afn_channel' => 'is_afn_channel',
+                'is_general_id_owner' => 'is_general_id_owner',
+                'is_variation_parent' => 'is_variation_parent',
             ],
             '{{table}}.variation_parent_id is NULL'
         );
@@ -134,25 +134,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'   => $this->__('Product ID'),
-            'align'    => 'right',
-            'width'    => '100px',
-            'type'     => 'number',
-            'index'    => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
             'filter_index' => 'name',
-            'escape'       => false,
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('general_id', [
@@ -162,7 +162,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type' => 'text',
             'index' => 'general_id',
             'filter_index' => 'general_id',
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
         ]);
 
         if (
@@ -173,11 +173,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'header' => $this->__('Search Settings Values'),
                 'align' => 'left',
                 'width' => '240px',
-                'filter'    => false,
-                'sortable'  => false,
+                'filter' => false,
+                'sortable' => false,
                 'type' => 'text',
                 'index' => 'id',
-                'frame_callback' => [$this, 'callbackColumnSettings']
+                'frame_callback' => [$this, 'callbackColumnSettings'],
             ]);
         }
 
@@ -186,7 +186,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width' => '200px',
             'index' => 'search_settings_status',
             'filter_index' => 'search_settings_status',
-            'sortable'  => false,
+            'sortable' => false,
             'type' => 'options',
             'options' => [
                 self::SEARCH_SETTINGS_STATUS_NONE => $this->__('None'),
@@ -198,10 +198,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     $this->__('Not Found'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED =>
                     $this->__('Action Required'),
-                self::SEARCH_SETTINGS_STATUS_COMPLETED => $this->__('Completed')
+                self::SEARCH_SETTINGS_STATUS_COMPLETED => $this->__('Completed'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
-            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
         ]);
 
         return parent::_prepareColumns();
@@ -214,14 +214,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('assignGeneralId', [
-            'label'    => $this->__('Search ASIN/ISBN automatically'),
-            'url'      => ''
+            'label' => $this->__('Search ASIN/ISBN automatically'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('unassignGeneralId', [
-            'label'    => $this->__('Reset ASIN/ISBN information'),
-            'url'      => ''
+            'label' => $this->__('Reset ASIN/ISBN information'),
+            'url' => '',
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -231,16 +232,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-        $value = '<span>'.$productTitle.'</span>';
+        $value = '<span>' . $productTitle . '</span>';
 
         $tempSku = $row->getData('sku');
         $tempSku === null
         && $tempSku = $this->modelFactory->getObject('Magento\Product')
-            ->setProductId($row->getData('entity_id'))
-            ->getSku();
+                                         ->setProductId($row->getData('entity_id'))
+                                         ->getSku();
 
-        $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->dataHelper->escapeHtml($tempSku) . '<br/>';
+        $value .= '<br/><strong>' . $this->__('SKU') .
+            ':</strong> ' . $this->dataHelper->escapeHtml($tempSku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -351,8 +352,10 @@ HTML;
 
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND:
                 $msg = $this->__('Product was not found');
-                $tip = $this->__('There are no Products found on Amazon after the Automatic Search
-                                                   was performed according to Listing Search Settings.');
+                $tip = $this->__(
+                    'There are no Products found on Amazon after the Automatic Search
+                                                   was performed according to Listing Search Settings.'
+                );
 
                 return <<<HTML
 <span style="color: red; {$style}">{$msg}</span>&nbsp;
@@ -538,8 +541,8 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -555,13 +558,14 @@ HTML;
         if ($value == self::SEARCH_SETTINGS_STATUS_NONE) {
             $collection->addFieldToFilter('general_id', ['null' => null]);
             $collection->addFieldToFilter('search_settings_status', ['null' => null]);
+
             return;
         }
 
         if ($value == self::SEARCH_SETTINGS_STATUS_COMPLETED) {
             $collection->addFieldToFilter(
                 [
-                    ['attribute'=>'general_id', 'notnull' => null]
+                    ['attribute' => 'general_id', 'notnull' => null],
                 ]
             );
 
@@ -570,7 +574,7 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute' => 'search_settings_status', 'eq' => $value]
+                ['attribute' => 'search_settings_status', 'eq' => $value],
             ]
         );
     }
@@ -580,10 +584,10 @@ HTML;
         $listingProductId = $row->getData('id');
         if (!isset($this->lockedDataCache[$listingProductId])) {
             $objectLocks = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId)
-                ->getProcessingLocks();
+                                                     ->getProcessingLocks();
             $tempArray = [
                 'object_locks' => $objectLocks,
-                'in_action'    => !empty($objectLocks),
+                'in_action' => !empty($objectLocks),
             ];
             $this->lockedDataCache[$listingProductId] = $tempArray;
         }
@@ -613,7 +617,8 @@ JS
             $showNotCompletedPopup = 'ListingGridObj.showNotCompletedPopup();';
         }
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Amazon/Listing/Product/Add/SearchAsin/Grid'
     ],function() {
@@ -670,8 +675,8 @@ JS
         }
 
         return '<div id="search_asin_progress_bar"></div>' .
-                '<div id="search_asin_content_container">' .
-                parent::_toHtml() .
-                '</div>';
+            '<div id="search_asin_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 }

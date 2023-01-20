@@ -47,19 +47,19 @@ abstract class AbstractHandler
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->helperFactory       = $helperFactory;
-        $this->modelFactory        = $modelFactory;
-        $this->parentFactory       = $parentFactory;
-        $this->resourceConnection  = $resourceConnection;
+        $this->helperFactory = $helperFactory;
+        $this->modelFactory = $modelFactory;
+        $this->parentFactory = $parentFactory;
+        $this->resourceConnection = $resourceConnection;
     }
 
     //########################################
 
     /**
      * @param array $responseData
+     *
      * @return array|void
      */
     abstract public function handle(array $responseData);
@@ -76,11 +76,13 @@ abstract class AbstractHandler
 
     /**
      * @param array $responserParams
+     *
      * @return $this
      */
     public function setResponserParams(array $responserParams)
     {
         $this->responserParams = $responserParams;
+
         return $this;
     }
 

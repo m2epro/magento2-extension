@@ -10,11 +10,12 @@ namespace Ess\M2ePro\Observer\Shipment;
 
 abstract class AbstractShipment extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\OrderFactory */
     protected $orderFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order */
     protected $orderResource;
+    /** @var \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory */
     protected $shipmentCollectionFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -26,8 +27,8 @@ abstract class AbstractShipment extends \Ess\M2ePro\Observer\AbstractModel
     ) {
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
 
-        $this->orderFactory              = $orderFactory;
-        $this->orderResource             = $orderResource;
+        $this->orderFactory = $orderFactory;
+        $this->orderResource = $orderResource;
         $this->shipmentCollectionFactory = $shipmentCollectionFactory;
     }
 
@@ -35,6 +36,7 @@ abstract class AbstractShipment extends \Ess\M2ePro\Observer\AbstractModel
 
     /**
      * @param \Magento\Sales\Model\Order\Shipment\Item|\Magento\Sales\Model\Order\Shipment\Track $source
+     *
      * @return \Magento\Sales\Model\Order\Shipment|null
      */
     protected function getShipment($source)
@@ -45,7 +47,7 @@ abstract class AbstractShipment extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         $shipmentCollection = $this->shipmentCollectionFactory->create()
-            ->addFieldToFilter('entity_id', $source->getParentId());
+                                                              ->addFieldToFilter('entity_id', $source->getParentId());
 
         /** @var $shipment \Magento\Sales\Model\Order\Shipment */
         $shipment = $shipmentCollection->getFirstItem();

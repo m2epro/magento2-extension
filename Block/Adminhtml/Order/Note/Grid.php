@@ -44,45 +44,45 @@ class Grid extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('id', [
-            'header'       => $this->__('Description'),
-            'align'        => 'left',
-            'width'        => '*',
-            'type'         => 'text',
-            'sortable'     => false,
+            'header' => $this->__('Description'),
+            'align' => 'left',
+            'width' => '*',
+            'type' => 'text',
+            'sortable' => false,
             'filter_index' => 'id',
-            'index'        => 'note'
+            'index' => 'note',
         ]);
 
         $this->addColumn('create_date', [
-            'header'       => $this->__('Create Date'),
-            'align'     => 'left',
-            'width'     => '165px',
-            'type'      => 'datetime',
-            'format'    => \IntlDateFormatter::MEDIUM,
-            'index'     => 'create_date'
+            'header' => $this->__('Create Date'),
+            'align' => 'left',
+            'width' => '165px',
+            'type' => 'datetime',
+            'format' => \IntlDateFormatter::MEDIUM,
+            'index' => 'create_date',
         ]);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'action',
-            'filter'    => false,
-            'sortable'  => false,
-            'getter'    => 'getId',
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'actions'   => [
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'action',
+            'filter' => false,
+            'sortable' => false,
+            'getter' => 'getId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'actions' => [
                 [
-                    'caption'        => $this->__('Edit'),
+                    'caption' => $this->__('Edit'),
                     'onclick_action' => "OrderNoteObj.openEditNotePopup",
-                    'field'          => 'id'
+                    'field' => 'id',
                 ],
                 [
-                    'caption'        => $this->__('Delete'),
+                    'caption' => $this->__('Delete'),
                     'onclick_action' => "OrderNoteObj.deleteNote",
-                    'field'          => 'id'
-                ]
-            ]
+                    'field' => 'id',
+                ],
+            ],
         ]);
 
         return parent::_prepareColumns();

@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Model\Amazon\Account\Repricing;
 
 /**
@@ -12,7 +13,6 @@ namespace Ess\M2ePro\Model\Amazon\Account\Repricing;
  */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-
     protected function prepareData()
     {
         $data = [];

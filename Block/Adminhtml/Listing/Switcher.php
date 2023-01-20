@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing;
 
-use \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
+use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Listing\Switcher

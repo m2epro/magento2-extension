@@ -33,7 +33,7 @@ class Regular extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilde
         }
 
         if (!isset($this->cachedData['regular_sale_price_info'])) {
-            $salePriceInfo                                = $this->getAmazonListingProduct()->getRegularSalePriceInfo();
+            $salePriceInfo = $this->getAmazonListingProduct()->getRegularSalePriceInfo();
             $this->cachedData['regular_sale_price_info'] = $salePriceInfo;
         }
 
@@ -48,9 +48,9 @@ class Regular extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilde
         if ($this->cachedData['regular_sale_price_info'] === false) {
             $data['sale_price'] = 0;
         } else {
-            $data['sale_price']            = $this->cachedData['regular_sale_price_info']['price'];
+            $data['sale_price'] = $this->cachedData['regular_sale_price_info']['price'];
             $data['sale_price_start_date'] = $this->cachedData['regular_sale_price_info']['start_date'];
-            $data['sale_price_end_date']   = $this->cachedData['regular_sale_price_info']['end_date'];
+            $data['sale_price_end_date'] = $this->cachedData['regular_sale_price_info']['end_date'];
         }
 
         return $data;

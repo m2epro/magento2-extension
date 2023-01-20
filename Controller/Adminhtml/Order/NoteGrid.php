@@ -16,6 +16,7 @@ class NoteGrid extends Order
     {
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class);
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

@@ -13,6 +13,6 @@ abstract class General extends \Ess\M2ePro\Controller\Adminhtml\Base
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon');
+            $this->_authorization->isAllowed('Ess_M2ePro::amazon');
     }
 }

@@ -27,11 +27,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -47,11 +49,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated $instance
+     *
      * @return $this
      */
     public function setShippingCalculatedTemplate(\Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated $instance)
     {
         $this->shippingCalculatedTemplateModel = $instance;
+
         return $this;
     }
 
@@ -102,14 +106,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             return [
                 'width' => $widthValue,
                 'length' => $lengthValue,
-                'depth' => $depthValue
+                'depth' => $depthValue,
             ];
         }
 
         return [
-            'width'  => $src['width_value'],
+            'width' => $src['width_value'],
             'length' => $src['length_value'],
-            'depth'  => $src['depth_value']
+            'depth' => $src['depth_value'],
         ];
     }
 
@@ -154,20 +158,20 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
             return [
                 'minor' => (float)$minor,
-                'major' => (int)$major
+                'major' => (int)$major,
             ];
         }
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::WEIGHT_NONE) {
             return [
                 'minor' => 0,
-                'major' => 0
+                'major' => 0,
             ];
         }
 
         return [
             'minor' => (float)$src['minor'],
-            'major' => (int)$src['major']
+            'major' => (int)$src['major'],
         ];
     }
 

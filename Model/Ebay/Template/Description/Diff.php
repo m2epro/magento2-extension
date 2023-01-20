@@ -18,11 +18,11 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDifferent()
     {
         return $this->isTitleDifferent() ||
-               $this->isSubtitleDifferent() ||
-               $this->isDescriptionDifferent() ||
-               $this->isImagesDifferent() ||
-               $this->isVariationImagesDifferent() ||
-               $this->isOtherDifferent();
+            $this->isSubtitleDifferent() ||
+            $this->isDescriptionDifferent() ||
+            $this->isImagesDifferent() ||
+            $this->isVariationImagesDifferent() ||
+            $this->isOtherDifferent();
     }
 
     //########################################
@@ -71,7 +71,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 
             'watermark_mode',
             'watermark_image',
-            'watermark_settings'
+            'watermark_settings',
         ];
 
         return $this->isSettingsDifferent($keys);

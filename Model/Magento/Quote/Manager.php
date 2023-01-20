@@ -63,6 +63,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Quote\Model\Quote $quote
+     *
      * @return \Magento\Framework\Model\AbstractExtensibleModel|\Magento\Sales\Api\Data\OrderInterface|null|object
      * @throws \Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing
      * @throws \Exception
@@ -70,7 +71,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function submit(\Magento\Quote\Model\Quote $quote)
     {
         try {
-
             $order = $this->quoteManagement->submit($quote);
             if ($order === null) {
                 throw new Exception(
@@ -79,7 +79,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             }
 
             return $order;
-
         } catch (\Exception $e) {
             $order = $this->orderFactory
                 ->create()
@@ -103,6 +102,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Quote\Model\Quote $quote
+     *
      * @return \Magento\Quote\Api\Data\CartInterface
      */
     public function save(\Magento\Quote\Model\Quote $quote)

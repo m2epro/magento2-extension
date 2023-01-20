@@ -25,7 +25,7 @@ class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         return $this->_redirect('*/amazon_listing/view', [
             'id' => $listingId,
-            'do_list' => true
+            'do_list' => true,
         ]);
     }
 

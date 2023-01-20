@@ -14,7 +14,7 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 class General extends Command
 {
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
-    protected  $repository;
+    protected $repository;
 
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
@@ -71,8 +71,8 @@ class General extends Command
         $info = $inspector->getBrokenRecordsInfo($tableName);
 
         return '<pre>' .
-               "<span>Broken Records '{$tableName}'<span><br>" .
-               print_r($info, true);
+            "<span>Broken Records '{$tableName}'<span><br>" .
+            print_r($info, true);
     }
 
     /**
@@ -82,7 +82,7 @@ class General extends Command
     public function repairRemovedMagentoStoreAction()
     {
         $replaceIdFrom = $this->getRequest()->getParam('replace_from');
-        $replaceIdTo   = $this->getRequest()->getParam('replace_to');
+        $replaceIdTo = $this->getRequest()->getParam('replace_to');
 
         if (!$replaceIdFrom || !$replaceIdTo) {
             $this->messageManager->addError('Required params are not presented.');

@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
  */
 class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const SHIPPING_TYPE_LOCAL         = 0;
-    const SHIPPING_TYPE_INTERNATIONAL = 1;
+    public const SHIPPING_TYPE_LOCAL = 0;
+    public const SHIPPING_TYPE_INTERNATIONAL = 1;
 
-    const COST_MODE_FREE             = 0;
-    const COST_MODE_CUSTOM_VALUE     = 1;
-    const COST_MODE_CUSTOM_ATTRIBUTE = 2;
-    const COST_MODE_CALCULATED       = 3;
+    public const COST_MODE_FREE = 0;
+    public const COST_MODE_CUSTOM_VALUE = 1;
+    public const COST_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const COST_MODE_CALCULATED = 3;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
@@ -46,6 +46,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $temp = parent::delete();
         $temp && $this->shippingTemplateModel = null;
         $temp && $this->shippingServiceSourceModels = [];
+
         return $temp;
     }
 
@@ -71,13 +72,14 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function setShippingTemplate(\Ess\M2ePro\Model\Ebay\Template\Shipping $instance)
     {
-         $this->shippingTemplateModel = $instance;
+        $this->shippingTemplateModel = $instance;
     }
 
     // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Shipping\Service\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)

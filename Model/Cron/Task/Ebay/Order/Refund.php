@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Order;
  */
 class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/order/refund';
+    public const NICK = 'ebay/order/refund';
 
     //########################################
 
@@ -107,7 +107,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
-            ->incrementAttemptCount(array_keys($relatedChanges));
+                                  ->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
@@ -131,8 +131,8 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             // ---------------------------------------
 
             $cancelParams = [
-                'order_id'  => $change->getOrderId(),
-                'change_id' => $change->getId()
+                'order_id' => $change->getOrderId(),
+                'change_id' => $change->getId(),
             ];
 
             /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Cancellation\Cancel $connectorObj */
@@ -146,19 +146,21 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $cancelResponseData = $connectorObj->getResponseData();
 
-            if (empty($cancelResponseData) ||
-                (!$cancelResponseData['result'] && $cancelResponseData['cancel_id'] === null)) {
+            if (
+                empty($cancelResponseData) ||
+                (!$cancelResponseData['result'] && $cancelResponseData['cancel_id'] === null)
+            ) {
                 continue;
             }
 
             // ---------------------------------------
 
             $refundParams = [
-                'order_id'    => $change->getOrderId(),
-                'change_id'   => $change->getId(),
-                'cancel_id'   => $cancelResponseData['cancel_id'],
+                'order_id' => $change->getOrderId(),
+                'change_id' => $change->getId(),
+                'cancel_id' => $cancelResponseData['cancel_id'],
                 'refund_date' => (new \DateTime($change->getData('create_date'), new \DateTimeZone('UTC')))
-                    ->format('Y-m-d H:i:s')
+                    ->format('Y-m-d H:i:s'),
             ];
 
             $connectorObj = $dispatcherObject->getCustomConnector(
@@ -179,6 +181,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Ess\M2ePro\Model\Order\Change[]
      */
     protected function getRelatedChanges(\Ess\M2ePro\Model\Account $account)

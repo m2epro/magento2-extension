@@ -29,11 +29,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -49,11 +51,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Walmart\Template\Category\Specific $instance
+     *
      * @return $this
      */
     public function setCategorySpecificTemplate(\Ess\M2ePro\Model\Walmart\Template\Category\Specific $instance)
     {
         $this->descriptionSpecificTemplateModel = $instance;
+
         return $this;
     }
 
@@ -156,7 +160,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 : $this->getMagentoProduct()->getAttributeValue($attributeData['custom_attribute']);
 
             $attributes[$index] = [
-                'name'  => str_replace(' ', '', $attributeName),
+                'name' => str_replace(' ', '', $attributeName),
                 'value' => $attributeValue,
             ];
         }

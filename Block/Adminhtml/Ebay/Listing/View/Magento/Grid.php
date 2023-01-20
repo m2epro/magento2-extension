@@ -80,14 +80,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             [
                 'id' => 'id',
                 'ebay_status' => 'status',
-                'additional_data' => 'additional_data'
+                'additional_data' => 'additional_data',
             ],
             '{{table}}.listing_id=' . (int)$this->listing->getId()
         );
         $collection->joinTable(
             [
                 'elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')
-                    ->getResource()->getMainTable()
+                                                   ->getResource()->getMainTable(),
             ],
             'listing_product_id=id',
             [
@@ -173,59 +173,59 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'       => $this->__('ID'),
-            'align'        => 'right',
-            'width'        => '100px',
-            'type'         => 'number',
-            'index'        => 'entity_id',
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
-            'store_id'     => $this->listing->getStoreId(),
-            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'         => $this->__('Title'),
-            'align'          => 'left',
-            'type'           => 'text',
-            'index'          => 'name',
-            'filter_index'   => 'name',
-            'escape'         => false,
-            'frame_callback' => [$this, 'callbackColumnProductTitle']
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
+            'filter_index' => 'name',
+            'escape' => false,
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
         ]);
 
         $this->addColumn('type', [
-            'header'       => $this->__('Type'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'options',
-            'sortable'     => false,
-            'index'        => 'type_id',
+            'header' => $this->__('Type'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'type_id',
             'filter_index' => 'type_id',
-            'options'      => $this->getProductTypes()
+            'options' => $this->getProductTypes(),
         ]);
 
         $this->addColumn('is_in_stock', [
-            'header'       => $this->__('Stock Availability'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'options',
-            'sortable'     => false,
-            'index'        => 'is_in_stock',
+            'header' => $this->__('Stock Availability'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
-            'options'      => [
+            'options' => [
                 '1' => $this->__('In Stock'),
-                '0' => $this->__('Out of Stock')
+                '0' => $this->__('Out of Stock'),
             ],
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('sku', [
-            'header'       => $this->__('SKU'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'text',
-            'index'        => 'sku',
-            'filter_index' => 'sku'
+            'header' => $this->__('SKU'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'text',
+            'index' => 'sku',
+            'filter_index' => 'sku',
         ]);
 
         $store = $this->_getStore();
@@ -236,60 +236,60 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->addColumn($priceAttributeAlias, [
-            'header'         => $this->__('Price'),
-            'align'          => 'right',
-            'width'          => '100px',
-            'type'           => 'price',
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
-            'currency_code'  => $store->getBaseCurrency()->getCode(),
-            'index'          => $priceAttributeAlias,
-            'filter_index'   => $priceAttributeAlias,
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'price',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
+            'currency_code' => $store->getBaseCurrency()->getCode(),
+            'index' => $priceAttributeAlias,
+            'filter_index' => $priceAttributeAlias,
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('qty', [
-            'header'         => $this->__('QTY'),
-            'align'          => 'right',
-            'width'          => '100px',
-            'type'           => 'number',
-            'index'          => 'qty',
-            'filter_index'   => 'qty',
-            'frame_callback' => [$this, 'callbackColumnQty']
+            'header' => $this->__('QTY'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'qty',
+            'filter_index' => 'qty',
+            'frame_callback' => [$this, 'callbackColumnQty'],
         ]);
 
         $this->addColumn('visibility', [
-            'header'       => $this->__('Visibility'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'options',
-            'sortable'     => false,
-            'index'        => 'visibility',
+            'header' => $this->__('Visibility'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'visibility',
             'filter_index' => 'visibility',
-            'options'      => $this->visibility->getOptionArray()
+            'options' => $this->visibility->getOptionArray(),
         ]);
 
         $this->addColumn('status', [
-            'header'         => $this->__('Status'),
-            'align'          => 'left',
-            'width'          => '90px',
-            'type'           => 'options',
-            'sortable'       => false,
-            'index'          => 'status',
-            'filter_index'   => 'status',
-            'options'        => $this->status->getOptionArray(),
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'header' => $this->__('Status'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'status',
+            'filter_index' => 'status',
+            'options' => $this->status->getOptionArray(),
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn('websites', [
-                'header'       => $this->__('Websites'),
-                'align'        => 'left',
-                'width'        => '90px',
-                'type'         => 'options',
-                'sortable'     => false,
-                'index'        => 'websites',
+                'header' => $this->__('Websites'),
+                'align' => 'left',
+                'width' => '90px',
+                'type' => 'options',
+                'sortable' => false,
+                'index' => 'websites',
                 'filter_index' => 'websites',
-                'options'      => $this->websiteFactory->create()->getCollection()->toOptionHash()
+                'options' => $this->websiteFactory->create()->getCollection()->toOptionHash(),
             ]);
         }
 
@@ -302,13 +302,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $rowVal = $row->getData();
 
-        if ($column->getId() == 'magento_price' &&
+        if (
+            $column->getId() == 'magento_price' &&
             (!isset($rowVal['magento_price']) || (float)$rowVal['magento_price'] <= 0)
         ) {
             $value = '<span style="color: red;">0</span>';
         }
 
-        if ($column->getId() == 'price' &&
+        if (
+            $column->getId() == 'price' &&
             (!isset($rowVal['price']) || (float)$rowVal['price'] <= 0)
         ) {
             $value = '<span style="color: red;">0</span>';
@@ -333,6 +335,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 );
             }
         }
+
         return parent::_addColumnFilterToCollection($column);
     }
 
@@ -343,6 +346,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Get store filter
         // ---------------------------------------
         $storeId = $this->listing->getStoreId();
+
         // ---------------------------------------
 
         return $this->_storeManager->getStore((int)$storeId);
@@ -366,7 +370,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // ---------------------------------------
         if ($this->getRequest()->getParam('auto_actions')) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
 require([
     'EbayListingAutoActionInstantiation'
 ], function() {
@@ -375,6 +380,7 @@ require([
 JS
             );
         }
+
         // ---------------------------------------
 
         return parent::_toHtml();

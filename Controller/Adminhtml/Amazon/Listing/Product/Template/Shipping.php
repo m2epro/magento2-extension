@@ -10,14 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\Shipping
- */
 abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template
 {
+    /** @var \Magento\Framework\DB\TransactionFactory  */
     protected $transactionFactory;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
@@ -27,8 +23,6 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
         $this->transactionFactory = $transactionFactory;
         parent::__construct($amazonFactory, $context);
     }
-
-    //########################################
 
     protected function setShippingTemplateForProducts($productsIds, $templateId)
     {
@@ -52,7 +46,7 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
             /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             foreach ($collection->getItems() as $listingProduct) {
                 $oldTemplateIds[$listingProduct->getId()] = $listingProduct->getChildObject()
-                    ->getData('template_shipping_id');
+                                                                           ->getData('template_shipping_id');
                 $listingProduct->getChildObject()->setData('template_shipping_id', $templateId);
                 $transaction->addObject($listingProduct);
             }
@@ -119,6 +113,4 @@ abstract class Shipping extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
             );
         }
     }
-
-    //########################################
 }

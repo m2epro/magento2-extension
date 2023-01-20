@@ -39,7 +39,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Te
         $this->setJsonContent([
             'type' => $msgType,
             'messages' => $messages,
-            'products_ids' => implode(',', $productsIds)
+            'products_ids' => implode(',', $productsIds),
         ]);
 
         return $this->getResult();

@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Plugin\FunctionGetArgsFix;
 
-/**
- * Class \Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation
- */
 class Translation extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    //########################################
-
     protected function canExecute()
     {
         return true;
@@ -36,6 +31,7 @@ class Translation extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return string
      */
     protected function process__($interceptor, \Closure $callback, array $arguments = [])

@@ -24,7 +24,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
     public function getItemsByProductId($productId, array $filters = [])
     {
-        $cacheKey   = __METHOD__.$productId.sha1($this->getHelper('Data')->jsonEncode($filters));
+        $cacheKey = __METHOD__ . $productId . sha1($this->getHelper('Data')->jsonEncode($filters));
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -32,16 +32,16 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
         }
 
         $select = $this->getConnection()
-            ->select()
-            ->from(
-                $this->getMainTable(),
-                ['id','component_mode']
-            )
-            ->where("`product_id` IS NOT NULL AND `product_id` = ?", (int)$productId);
+                       ->select()
+                       ->from(
+                           $this->getMainTable(),
+                           ['id', 'component_mode']
+                       )
+                       ->where("`product_id` IS NOT NULL AND `product_id` = ?", (int)$productId);
 
         if (!empty($filters)) {
             foreach ($filters as $column => $value) {
-                $select->where('`'.$column.'` = ?', $value);
+                $select->where('`' . $column . '` = ?', $value);
             }
         }
 

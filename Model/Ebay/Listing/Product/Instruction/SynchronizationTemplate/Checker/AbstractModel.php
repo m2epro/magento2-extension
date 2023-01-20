@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
-use \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
-use \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as CheckerAbstractModel;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
+use Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as CheckerAbstractModel;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel
@@ -142,7 +142,7 @@ abstract class AbstractModel extends CheckerAbstractModel
             \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
             INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
-            \Ess\M2ePro\Model\Ebay\Template\Description::INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED
+            \Ess\M2ePro\Model\Ebay\Template\Description::INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED,
         ];
     }
 

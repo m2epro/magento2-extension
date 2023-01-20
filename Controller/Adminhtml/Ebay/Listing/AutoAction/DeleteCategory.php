@@ -22,10 +22,10 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoA
 
         /** @var \Ess\M2ePro\Model\Listing\Auto\Category $category */
         $category = $this->activeRecordFactory->getObject('Listing_Auto_Category')
-            ->getCollection()
-            ->addFieldToFilter('group_id', (int)$groupId)
-            ->addFieldToFilter('category_id', (int)$categoryId)
-            ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('group_id', (int)$groupId)
+                                              ->addFieldToFilter('category_id', (int)$categoryId)
+                                              ->getFirstItem();
 
         if (!$category->getId()) {
             return;

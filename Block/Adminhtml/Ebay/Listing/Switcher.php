@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
-use \Ess\M2ePro\Block\Adminhtml\Listing\Switcher as AbstractSwitcher;
+use Ess\M2ePro\Block\Adminhtml\Listing\Switcher as AbstractSwitcher;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Switcher

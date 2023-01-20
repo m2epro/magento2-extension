@@ -81,7 +81,7 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $updatedSkus = $repricingUpdating->process($products);
 
             $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')->getResource()
-                ->resetProcessRequired(array_unique(array_keys($products)));
+                                      ->resetProcessRequired(array_unique(array_keys($products)));
 
             if (empty($updatedSkus)) {
                 continue;
@@ -115,7 +115,8 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $statusListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
         $statusStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
         $statusUnknown = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
-        $listingProductCollection->getSelect()
+        $listingProductCollection
+            ->getSelect()
             ->where(
                 "((is_afn_channel = 0 AND status = $statusListed)"
                 . " OR (is_afn_channel = 1 AND status IN ($statusListed, $statusStopped, $statusUnknown)))"
@@ -124,7 +125,7 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingProductCollection->getSelect()->joinInner(
             [
                 'alpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                ->getResource()->getMainTable()
+                                                    ->getResource()->getMainTable(),
             ],
             'alpr.listing_product_id=main_table.id',
             []
@@ -140,7 +141,7 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $listingProductRepricingCollection = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-            ->getCollection();
+                                                                       ->getCollection();
         $listingProductRepricingCollection->addFieldToFilter(
             'listing_product_id',
             ['in' => $listingProductCollection->getColumnValues('id')]

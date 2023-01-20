@@ -13,10 +13,10 @@ class Relation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /** @var \Ess\M2ePro\Model\ActiveRecord\Relation */
     protected $relationModel;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     //########################################
@@ -69,7 +69,8 @@ class Relation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $primaryKey = $object->getParentObject()->getResource()->getIdFieldName();
         $foreignKey = $object->getRelationKey();
 
-        $field  = $this->getConnection()->quoteIdentifier(sprintf('%s.%s', $parentTable, $field));
+        $field = $this->getConnection()->quoteIdentifier(sprintf('%s.%s', $parentTable, $field));
+
         return $this->getConnection()
                     ->select()
                     ->from($parentTable)
@@ -108,6 +109,7 @@ class Relation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         $this->_afterSave($object);
+
         return $this;
     }
 
@@ -129,6 +131,7 @@ class Relation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * @param \Magento\Framework\Model\AbstractModel $model
      * @param $key
+     *
      * @return bool
      */
     public function isModelContainField(\Magento\Framework\Model\AbstractModel $model, $key)

@@ -94,6 +94,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $chooserBlock->setCategoriesData($converter->getCategoryDataForChooser());
 
         $this->setAjaxContent($chooserBlock);
+
         return $this->getResult();
     }
 

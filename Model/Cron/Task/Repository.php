@@ -8,327 +8,324 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-/**
- * Class Ess\M2ePro\Model\Cron\Task\Repository
- */
 class Repository extends \Ess\M2ePro\Model\AbstractModel
 {
-    const COMPONENT_GENERAL = 'general';
+    public const COMPONENT_GENERAL = 'general';
 
-    const GROUP_SYSTEM  = 'system';
-    const GROUP_EBAY    = 'ebay';
-    const GROUP_AMAZON  = 'amazon';
-    const GROUP_WALMART = 'walmart';
+    public const GROUP_SYSTEM = 'system';
+    public const GROUP_EBAY = 'ebay';
+    public const GROUP_AMAZON = 'amazon';
+    public const GROUP_WALMART = 'walmart';
 
     /** @var array */
     public static $registeredTasks = [
         \Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic\InstructionType::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\HealthStatus::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\ArchiveOldOrders::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\ClearOldLogs::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\ConnectorCommandPending\ProcessPartial::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\ConnectorCommandPending\ProcessSingle::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\RequestPending\ProcessPartial::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\RequestPending\ProcessSingle::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         //todo maybe not!
         \Ess\M2ePro\Model\Cron\Task\System\Processing\ProcessResult::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
-            'can-work-parallel' => true
+            'group' => self::GROUP_SYSTEM,
+            'can-work-parallel' => true,
         ],
         \Ess\M2ePro\Model\Cron\Task\System\Servicing\Synchronize::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectDirectlyAdded::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectDirectlyDeleted::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Magento\Product\BulkWebsiteUpdated::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectSpecialPriceEndDate::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Magento\GlobalNotifications::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Listing\Product\ChangeTracker::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
+            'group' => self::GROUP_SYSTEM,
         ],
         \Ess\M2ePro\Model\Cron\Task\Listing\Product\StopQueue::NICK => [
             'component' => self::COMPONENT_GENERAL,
-            'group'     => self::GROUP_SYSTEM,
-            'can-work-parallel' => true
+            'group' => self::GROUP_SYSTEM,
+            'can-work-parallel' => true,
         ],
 
         //----------------------------------------
 
         \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Feedbacks\DownloadNew::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Feedbacks\SendResponse::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\ResolveNonReceivedData::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\Channel\SynchronizeData::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessInstructions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessScheduledActions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessActions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
-            'can-work-parallel' => true
+            'group' => self::GROUP_EBAY,
+            'can-work-parallel' => true,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\RemovePotentialDuplicates::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\CreateFailed::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Update::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\ReserveCancel::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Cancel::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Refund::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'group'     => self::GROUP_EBAY,
+            'group' => self::GROUP_EBAY,
         ],
 
         //----------------------------------------
 
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Other\ResolveTitle::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\Defected::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\RunVariationParentProcessors::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
-            'can-work-parallel' => true
+            'group' => self::GROUP_AMAZON,
+            'can-work-parallel' => true,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\ProcessInstructions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\ProcessActions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\ProcessActionsResults::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive\Details::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive\InvoiceDataReport::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\CreateFailed::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\UploadByUser::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update\SellerOrderId::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Refund::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Cancel::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\ReserveCancel::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
-            'can-work-parallel' => true
+            'group' => self::GROUP_AMAZON,
+            'can-work-parallel' => true,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action\ProcessUpdate::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action\ProcessRefund::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action\ProcessCancel::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action\ProcessResults::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Repricing\InspectProducts::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Repricing\UpdateSettings::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
+            'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Repricing\Synchronize::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'group'     => self::GROUP_AMAZON,
-            'can-work-parallel' => true
+            'group' => self::GROUP_AMAZON,
+            'can-work-parallel' => true,
         ],
 
         //----------------------------------------
 
-        \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory::NICK    => [
+        \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product\ProcessInstructions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product\ProcessActions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product\ProcessActionsResults::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product\ProcessListActions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Receive::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\ReceiveWithCancellationRequested::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\CreateFailed::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Acknowledge::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Shipping::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Cancel::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\Refund::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'group'     => self::GROUP_WALMART,
+            'group' => self::GROUP_WALMART,
         ],
     ];
 
@@ -349,18 +346,21 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
     public function getTaskComponent($nick)
     {
         $meta = $this->getTaskMetadata($nick);
+
         return $meta['component'];
     }
 
     public function getTaskGroup($nick)
     {
         $meta = $this->getTaskMetadata($nick);
+
         return $meta['group'];
     }
 
     public function getTaskCanWorkInParallel($nick)
     {
         $meta = $this->getTaskMetadata($nick);
+
         return isset($meta['can-work-parallel']) && $meta['can-work-parallel'];
     }
 

@@ -55,19 +55,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $manager = $this->getManager($account);
             $item = new \Magento\Framework\DataObject(
                 [
-                    'title'      => $account->getTitle(),
+                    'title' => $account->getTitle(),
                     'identifier' => $manager->getIdentifier(),
-                    'from_date'  => $manager->getFromDate() ? $manager->getFromDate()->format('Y-m-d H:i:s') : null,
-                    'to_date'    => $manager->getToDate() ? $manager->getToDate()->format('Y-m-d H:i:s') : null,
+                    'from_date' => $manager->getFromDate() ? $manager->getFromDate()->format('Y-m-d H:i:s') : null,
+                    'to_date' => $manager->getToDate() ? $manager->getToDate()->format('Y-m-d H:i:s') : null,
 
                     '_manager_' => $manager,
-                    '_account_' => $account
+                    '_account_' => $account,
                 ]
             );
             $collection->addItem($item);
         }
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -77,12 +78,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $this->addColumn(
                 'title',
                 [
-                    'header'   => $this->__('Title'),
-                    'align'    => 'left',
-                    'width'    => '300px',
-                    'type'     => 'text',
+                    'header' => $this->__('Title'),
+                    'align' => 'left',
+                    'width' => '300px',
+                    'type' => 'text',
                     'sortable' => false,
-                    'index'    => 'title',
+                    'index' => 'title',
                 ]
             );
         }
@@ -90,52 +91,52 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn(
             'identifier',
             [
-                'header'   => $this->getIdentifierTitle(),
-                'align'    => 'left',
-                'width'    => '300px',
-                'type'     => 'text',
+                'header' => $this->getIdentifierTitle(),
+                'align' => 'left',
+                'width' => '300px',
+                'type' => 'text',
                 'sortable' => false,
-                'index'    => 'identifier',
+                'index' => 'identifier',
             ]
         );
 
         $this->addColumn(
             'from_date',
             [
-                'header'   => $this->__('From Date'),
-                'align'    => 'left',
-                'width'    => '200px',
-                'index'    => 'from_date',
+                'header' => $this->__('From Date'),
+                'align' => 'left',
+                'width' => '200px',
+                'index' => 'from_date',
                 'sortable' => false,
-                'type'     => 'datetime',
-                'format'   => \IntlDateFormatter::MEDIUM,
-                'frame_callback' => [$this, 'callbackColumnDate']
+                'type' => 'datetime',
+                'format' => \IntlDateFormatter::MEDIUM,
+                'frame_callback' => [$this, 'callbackColumnDate'],
             ]
         );
 
         $this->addColumn(
             'to_date',
             [
-                'header'   => $this->__('To Date'),
-                'align'    => 'left',
-                'width'    => '200px',
-                'index'    => 'to_date',
-                'type'     => 'datetime',
+                'header' => $this->__('To Date'),
+                'align' => 'left',
+                'width' => '200px',
+                'index' => 'to_date',
+                'type' => 'datetime',
                 'sortable' => false,
-                'format'   => \IntlDateFormatter::MEDIUM,
-                'frame_callback' => [$this, 'callbackColumnDate']
+                'format' => \IntlDateFormatter::MEDIUM,
+                'frame_callback' => [$this, 'callbackColumnDate'],
             ]
         );
 
         $this->addColumn(
             'action',
             [
-                'header'         => $this->__('Action'),
-                'width'          => '80px',
-                'type'           => 'text',
-                'align'          => 'right',
-                'sortable'       => false,
-                'frame_callback' => [$this, 'callbackColumnAction']
+                'header' => $this->__('Action'),
+                'width' => '80px',
+                'type' => 'text',
+                'align' => 'right',
+                'sortable' => false,
+                'frame_callback' => [$this, 'callbackColumnAction'],
             ]
         );
 
@@ -188,7 +189,7 @@ HTML;
         $account = $row['_account_'];
 
         $data = [
-            'label'   => $manager->isEnabled()
+            'label' => $manager->isEnabled()
                 ? $this->__('Cancel')
                 : $this->__('Reimport'),
 
@@ -196,7 +197,7 @@ HTML;
                 ? "UploadByUserObj.resetUpload({$account->getId()})"
                 : "UploadByUserObj.configureUpload({$account->getId()})",
 
-            'class' => 'action primary'
+            'class' => 'action primary',
         ];
 
         $state = '';
@@ -208,6 +209,7 @@ HTML;
         }
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData($data);
+
         return $button->toHtml() . $state;
     }
 
@@ -223,16 +225,19 @@ HTML;
                 $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
                                                   ->getCollection();
                 $collection->getSelect()->group(['second_table.merchant_id']);
+
                 return $collection;
 
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
                 $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Account')
                                                   ->getCollection();
+
                 return $collection;
 
             case \Ess\M2ePro\Helper\Component\Walmart::NICK:
                 $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Walmart::NICK, 'Account')
                                                   ->getCollection();
+
                 return $collection;
         }
 
@@ -273,6 +278,7 @@ HTML;
 
         /** @var AmazonManager|EbayManager|WalmartManager $manager */
         $manager->setIdentifierByAccount($account);
+
         return $manager;
     }
 

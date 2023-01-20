@@ -87,10 +87,10 @@ class Index extends Settings
                 break;
             // ....
             default:
-                return $this->_redirect('*/*/', ['_current' => true,'step' => 1]);
+                return $this->_redirect('*/*/', ['_current' => true, 'step' => 1]);
         }
 
-        $action .= 'Mode'. ucfirst($this->getSessionValue('mode'));
+        $action .= 'Mode' . ucfirst($this->getSessionValue('mode'));
 
         return $this->$action();
     }
@@ -160,7 +160,7 @@ class Index extends Settings
             if ($source) {
                 $this->getListingFromRequest()->setSetting(
                     'additional_data',
-                    ['ebay_category_settings_mode',$source],
+                    ['ebay_category_settings_mode', $source],
                     $mode
                 )->save();
             }
@@ -168,7 +168,7 @@ class Index extends Settings
             return $this->_redirect('*/*/', [
                 'step' => 2,
                 '_current' => true,
-                'skip_get_suggested' => null
+                'skip_get_suggested' => null,
             ]);
         }
 
@@ -189,7 +189,7 @@ class Index extends Settings
             CategoryTemplateBlock::MODE_SAME,
             CategoryTemplateBlock::MODE_CATEGORY,
             CategoryTemplateBlock::MODE_PRODUCT,
-            CategoryTemplateBlock::MODE_MANUALLY
+            CategoryTemplateBlock::MODE_MANUALLY,
         ];
 
         if ($mode) {
@@ -293,9 +293,9 @@ class Index extends Settings
                 );
             } else {
                 $categoriesData[eBayCategory::TYPE_EBAY_MAIN] = [
-                    'mode'  => $sameData['mode'],
+                    'mode' => $sameData['mode'],
                     'value' => $sameData['value'],
-                    'path'  => $sameData['path']
+                    'path' => $sameData['path'],
                 ];
             }
         }
@@ -316,9 +316,9 @@ class Index extends Settings
                 );
             } else {
                 $categoriesData[eBayCategory::TYPE_STORE_MAIN] = [
-                    'mode'  => $sameData['mode'],
+                    'mode' => $sameData['mode'],
                     'value' => $sameData['value'],
-                    'path'  => $sameData['path']
+                    'path' => $sameData['path'],
                 ];
             }
         }
@@ -329,7 +329,7 @@ class Index extends Settings
             \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Same\Chooser::class,
             '',
             [
-            'data' => ['categories_data' => $categoriesData]
+                'data' => ['categories_data' => $categoriesData],
             ]
         );
         $this->addContent($block);
@@ -347,10 +347,12 @@ class Index extends Settings
         );
 
         if (empty($categoriesIds) && !$this->getRequest()->isXmlHttpRequest()) {
-            $this->getMessageManager()->addError($this->__(
-                'Magento Category is not provided for the products you are currently adding.
+            $this->getMessageManager()->addError(
+                $this->__(
+                    'Magento Category is not provided for the products you are currently adding.
                 Please go back and select a different option to assign Channel category to your products. '
-            ));
+                )
+            );
         }
 
         if (!$this->getRequest()->isAjax()) {
@@ -362,7 +364,9 @@ class Index extends Settings
         $this->setWizardStep('categoryStepTwo');
 
         $block = $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Category::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Category::class
+                      );
         $block->getChildBlock('grid')->setStoreId($this->listing->getStoreId());
         $block->getChildBlock('grid')->setCategoriesData($categoriesData);
 
@@ -375,7 +379,7 @@ class Index extends Settings
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()
-            ->prepend($this->__('Set Category (Based On Magento Categories)'));
+             ->prepend($this->__('Set Category (Based On Magento Categories)'));
 
         return $this->getResult();
     }
@@ -399,13 +403,17 @@ class Index extends Settings
 
         if ($getSuggested) {
             $block = $this->getLayout()
-                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Product::class
+                          );
             $this->getResultPage()->getConfig()->getTitle()->prepend(
                 $this->__('Set Category (Suggested Categories)')
             );
         } else {
             $block = $this->getLayout()
-                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Manually::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Manually::class
+                          );
             $this->getResultPage()->getConfig()->getTitle()->prepend(
                 $this->__('Set Category (Manually for each Product)')
             );
@@ -437,12 +445,14 @@ class Index extends Settings
     private function stepThreeModeProduct()
     {
         $this->setWizardStep('categoryStepThree');
+
         return $this->stepThreeSelectSpecifics();
     }
 
     private function stepThreeModeManually()
     {
         $this->setWizardStep('categoryStepThree');
+
         return $this->stepThreeSelectSpecifics();
     }
 
@@ -453,7 +463,8 @@ class Index extends Settings
 
         $sessionData = $this->getSessionValue($this->getSessionDataKey());
         foreach ($sessionData as $id => $categoryData) {
-            if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
+            if (
+                !isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
                 $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] === TemplateCategory::CATEGORY_MODE_NONE
             ) {
                 continue;
@@ -479,7 +490,8 @@ class Index extends Settings
         $listing = $this->getListingFromRequest();
 
         foreach ($sessionData as $id => &$categoryData) {
-            if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
+            if (
+                !isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
                 $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] === TemplateCategory::CATEGORY_MODE_NONE
             ) {
                 continue;
@@ -537,7 +549,7 @@ class Index extends Settings
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()
-            ->prepend($this->__('Set Category Specifics'));
+             ->prepend($this->__('Set Category Specifics'));
 
         return $this->getResult();
     }
@@ -547,7 +559,7 @@ class Index extends Settings
     private function getCategoriesIdsByListingProductsIds($listingProductsIds)
     {
         $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id', ['in' => $listingProductsIds]);
+                                                      ->addFieldToFilter('id', ['in' => $listingProductsIds]);
 
         $productsIds = [];
         foreach ($listingProductCollection->getData() as $item) {

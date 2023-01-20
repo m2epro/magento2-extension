@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Model;
 
-use \Ess\M2ePro\Model\Ebay\Marketplace as EbayMarketplace;
-use \Ess\M2ePro\Model\Amazon\Marketplace as AmazonMarketplace;
-use \Ess\M2ePro\Model\Walmart\Marketplace as WalmartMarketplace;
+use Ess\M2ePro\Model\Ebay\Marketplace as EbayMarketplace;
+use Ess\M2ePro\Model\Amazon\Marketplace as AmazonMarketplace;
+use Ess\M2ePro\Model\Walmart\Marketplace as WalmartMarketplace;
 
 /**
  * @method EbayMarketplace|AmazonMarketplace|WalmartMarketplace getChildObject()
@@ -18,8 +18,8 @@ use \Ess\M2ePro\Model\Walmart\Marketplace as WalmartMarketplace;
  */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    const STATUS_DISABLE = 0;
-    const STATUS_ENABLE = 1;
+    public const STATUS_DISABLE = 0;
+    public const STATUS_ENABLE = 1;
 
     //########################################
 
@@ -44,6 +44,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
     public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
+
         return parent::save($reloadOnCreate);
     }
 

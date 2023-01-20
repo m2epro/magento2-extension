@@ -28,12 +28,13 @@ class Selling extends AbstractModel
         $totalCount = 0;
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
             $walmartListingProduct = $listingProduct->getChildObject();
 
-            if ($listingProduct->isNotListed() ||
-                ($listingProduct->isBlocked() && !$walmartListingProduct->isOnlinePriceInvalid())) {
+            if (
+                $listingProduct->isNotListed() ||
+                ($listingProduct->isBlocked() && !$walmartListingProduct->isOnlinePriceInvalid())
+            ) {
                 continue;
             }
 
@@ -49,7 +50,7 @@ class Selling extends AbstractModel
         }
 
         $this->getProcessor()->getListingProduct()->getChildObject()->addData([
-            'online_qty'   => $qty,
+            'online_qty' => $qty,
             'online_price' => $price,
         ]);
     }

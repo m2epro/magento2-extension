@@ -77,7 +77,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'general[id]',
-                'value' => $this->formData['id']
+                'value' => $this->formData['id'],
             ]
         );
 
@@ -100,7 +100,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/OP8UB')
-                )
+                ),
             ]
         );
 
@@ -111,18 +111,19 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_template_description_edit_general', [
-            'legend' => $this->__('General'), 'collapsable' => false
+            'legend' => $this->__('General'),
+            'collapsable' => false,
         ]);
 
         $additionalData = [];
         if ($this->isMarketplaceLocked() || $this->getRequest()->getParam('marketplace_id')) {
             $additionalData = [
                 'disabled' => true,
-                'after_element_html' => $this->getMarketplaceWarningMessageHtml().
-                                                '<input id="marketplace_hidden_input"
+                'after_element_html' => $this->getMarketplaceWarningMessageHtml() .
+                    '<input id="marketplace_hidden_input"
                                                 type="hidden"
                                                 name="general[marketplace_id]"
-                                                value="'.$this->formData['marketplace_id'].'" />'
+                                                value="' . $this->formData['marketplace_id'] . '" />',
             ];
         }
 
@@ -151,7 +152,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldSet = $form->addFieldset('magento_block_template_description_edit_category', [
             'legend' => $this->__('Category'),
             'collapsable' => false,
-            'tooltip' => $this->__('
+            'tooltip' => $this->__(
+                '
                 You can choose <strong>Amazon Category</strong>, in which your Amazon Products should be shown and the
                 <strong>Product Type</strong>.<br/><br/>
                 Selection of Category is necessary in case you are going to create
@@ -163,7 +165,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 The list of available Specifics on Specifics tab depends on the selected Product Type.<br/><br/>
                 <strong>Note:</strong> Possibility to specify Product Specifics becomes available only when Category
                 and Product Type are selected.
-            ')
+            '
+            ),
         ]);
 
         $fieldSet->addField(
@@ -173,7 +176,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'container_id' => 'category_path_container',
                 'label' => $this->__('Category'),
                 'title' => $this->__('Category'),
-                'text' => $this->getCategoryHtml()
+                'text' => $this->getCategoryHtml(),
             ]
         );
 
@@ -192,7 +195,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'after_element_html' => '<input type="hidden"
                                                 name="general[product_data_nick]"
                                                 id="product_data_nick"
-                                                value="'.$productDataNick.'" />'
+                                                value="' . $productDataNick . '" />',
             ]
         );
 
@@ -215,7 +218,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                  To create New Amazon Product it is necessary to enter a valid value for UPC/EAN.
                  This UPC/EAN should not be used on Amazon at the moment.
                  If UPC/EAN does not exist for your Product you can use Product ID Override feature.'
-            )
+            ),
         ]);
 
         $additionalData = [];
@@ -225,9 +228,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         if ($this->isNewAsinSwitcherLocked() || $this->getRequest()->getParam('is_new_asin_accepted')) {
             $additionalData['after_element_html'] = $this->getNewAsinLockedWarningMessage() .
-                                                            '<input id="new_asin_accepted_hidden_input"
+                '<input id="new_asin_accepted_hidden_input"
                                                             type="hidden" name="general[is_new_asin_accepted]"
-                                                            value="'.$this->formData['is_new_asin_accepted'].'" />';
+                                                            value="' . $this->formData['is_new_asin_accepted'] . '" />';
         }
 
         $fieldSet->addField(
@@ -252,6 +255,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 
@@ -263,7 +267,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             <div class="admin__field-tooltip-content">
                 {$this->__(
             'Marketplace cannot be changed because this Description Policy is assigned to the Product(s) in Listing(s).'
-            )}
+        )}
             </div>
         </div>
 HTML;
@@ -288,11 +292,11 @@ HTML;
 
     public function getCategoryHtml()
     {
-        $html = '<span style="font-style: italic; color: grey;">'.$this->__('Not Selected').'</span>';
+        $html = '<span style="font-style: italic; color: grey;">' . $this->__('Not Selected') . '</span>';
         if (!empty($this->formData['category_path']) && !empty($this->formData['browsenode_id'])) {
-            $html = '<span>'.$this->escapeHtml(
+            $html = '<span>' . $this->escapeHtml(
                 "{$this->formData['category_path']} ({$this->formData['browsenode_id']})"
-            ).'</span>';
+            ) . '</span>';
         }
 
         $html = '<span id="category_path_span">' . $html . '</span>';
@@ -351,12 +355,12 @@ HTML;
     public function getMarketplaceDataOptions()
     {
         $optionsResult = [
-            ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']]
+            ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']],
         ];
         foreach ($this->marketplaceData as $marketplace) {
             $optionsResult[] = [
                 'value' => $marketplace['id'],
-                'label' => $this->__($marketplace['title'])
+                'label' => $this->__($marketplace['title']),
             ];
         }
 
@@ -416,13 +420,13 @@ HTML;
             'Add Description Policy' => $this->__('Add Description Policy'),
 
             'Change Category' => $this->__('Edit Category'),
-            'Not Selected'    => $this->__('Not Selected'),
-            'Select'          => $this->__('Select'),
+            'Not Selected' => $this->__('Not Selected'),
+            'Select' => $this->__('Select'),
 
             'The specified Title is already used for another Policy. Policy Title must be unique.' => $this->__(
                 'The specified Title is already used for another Policy. Policy Title must be unique.'
             ),
-            'Please enter a valid number value in a specified range.'                              => $this->__(
+            'Please enter a valid number value in a specified range.' => $this->__(
                 'Please enter a valid number value in a specified range.'
             ),
 
@@ -432,14 +436,14 @@ HTML;
             ),
 
             'Recommended' => $this->__('Recommended'),
-            'Recent'      => $this->__('Recent'),
+            'Recent' => $this->__('Recent'),
         ]);
 
         $formData = \Ess\M2ePro\Helper\Json::encode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $isCategoryLocked = $this->isCategoryLocked() ? 'true' : 'false';
         $isMarketplaceLocked = $this->isMarketplaceLocked() ? 'true' : 'false';
-        $marketplaceForceSet =  \Ess\M2ePro\Helper\Json::encode(
+        $marketplaceForceSet = \Ess\M2ePro\Helper\Json::encode(
             (bool)(int)$this->getRequest()->getParam('marketplace_id')
         );
         $isLockedNewAsin = $this->isNewAsinSwitcherLocked() ? 'true' : 'false';
@@ -448,7 +452,8 @@ HTML;
         );
         $allAttributes = \Ess\M2ePro\Helper\Json::encode($this->magentoAttributeHelper->getAll());
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'jQuery' => 'jquery',
             'attr' => 'M2ePro/Attribute',
             'description' => 'M2ePro/Amazon/Template/Description/Description',
@@ -467,7 +472,8 @@ HTML;
 
             'addspecificrenderer' => 'M2ePro/Amazon/Template/Description/Category/Specific/Block/AddSpecificRenderer',
             'gridrenderer' => 'M2ePro/Amazon/Template/Description/Category/Specific/Block/GridRenderer',
-        ], <<<JS
+            ],
+            <<<JS
 
         M2ePro.formData = {$formData};
 

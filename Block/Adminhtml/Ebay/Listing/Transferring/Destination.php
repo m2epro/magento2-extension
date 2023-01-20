@@ -104,7 +104,7 @@ HTML
                 $this->supportHelper->getDocumentationArticleUrl('x/o1oJAg')
             ),
             'style' => 'margin-top: 15px;',
-            'title' => $this->__('Sell on Another Marketplace')
+            'title' => $this->__('Sell on Another Marketplace'),
         ]);
 
         $parentHtml = parent::_toHtml();

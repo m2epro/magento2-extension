@@ -45,10 +45,13 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         }
 
         if ($this->getVariationManager()->isIndividualType() && !$this->validateComplexMagentoProductTypes()) {
-            $this->addMessage('You cannot list this Product because for selling Bundle, Simple
+            $this->addMessage(
+                'You cannot list this Product because for selling Bundle, Simple
                                With Custom Options or Downloadable With Separated Links Magento Products
                                on Amazon the ASIN/ISBN has to be found manually.
-                               Please use Manual Search to find the required ASIN/ISBN and try again.');
+                               Please use Manual Search to find the required ASIN/ISBN and try again.'
+            );
+
             return false;
         }
 
@@ -132,6 +135,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             $this->setListType(
                 \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request::LIST_TYPE_NEW
             );
+
             return true;
         }
 
@@ -220,7 +224,6 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         if (!empty($amazonData['parentage']) && $amazonData['parentage'] == 'parent') {
             if (!$this->getVariationManager()->isRelationParentType()) {
-
                 $this->addMessage(
                     $this->log->encodeDescription(
                         'Amazon Parent Product was found using Search by %general_id_type% %general_id%
@@ -248,7 +251,6 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             $amazonDataAttributes = array_keys($amazonData['variations']['set']);
 
             if (count($magentoAttributes) != count($amazonDataAttributes)) {
-
                 $this->addMessage(
                     $this->log->encodeDescription(
                         'The number of Variation Attributes of the Amazon Parent Product found
@@ -265,7 +267,6 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         }
 
         if ($this->getVariationManager()->isRelationParentType()) {
-
             $this->addMessage(
                 $this->log->encodeDescription(
                     'Amazon Simple or Child Product was found using Search by %general_id_type% %general_id%
@@ -357,7 +358,8 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         $amazonData = reset($amazonData);
 
-        if (!empty($amazonData['parentage']) &&
+        if (
+            !empty($amazonData['parentage']) &&
             $amazonData['parentage'] == 'parent' &&
             empty($amazonData['requested_child_id'])
         ) {
@@ -455,12 +457,12 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             return false;
         }
 
-        $generalId       = $amazonData['product_id'];
+        $generalId = $amazonData['product_id'];
         $parentGeneralId = null;
 
         if (!empty($amazonData['requested_child_id'])) {
             $parentGeneralId = $generalId;
-            $generalId       = $amazonData['requested_child_id'];
+            $generalId = $amazonData['requested_child_id'];
         }
 
         if (!$this->getVariationManager()->isRelationChildType()) {
@@ -482,9 +484,9 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $parentAmazonListingProduct */
         $parentAmazonListingProduct = $this->getVariationManager()
-            ->getTypeModel()
-            ->getParentListingProduct()
-            ->getChildObject();
+                                           ->getTypeModel()
+                                           ->getParentListingProduct()
+                                           ->getChildObject();
 
         if ($parentAmazonListingProduct->getGeneralId() != $parentGeneralId) {
             $this->addMessage(
@@ -500,8 +502,8 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         }
 
         $parentChannelVariations = $parentAmazonListingProduct->getVariationManager()
-            ->getTypeModel()
-            ->getChannelVariations();
+                                                              ->getTypeModel()
+                                                              ->getChannelVariations();
 
         if (!isset($parentChannelVariations[$generalId])) {
             $this->addMessage(
@@ -668,7 +670,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         }
 
         $params = [
-            'item'    => $identifier,
+            'item' => $identifier,
             'id_type' => $idType,
             'variation_child_modification' => 'parent',
         ];
@@ -679,6 +681,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             unset($params['id_type']);
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'product',
@@ -746,10 +749,10 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         if ($variationManager->isRelationChildType()) {
             $typeModel = $variationManager->getTypeModel()
-                ->getParentListingProduct()
-                ->getChildObject()
-                ->getVariationManager()
-                ->getTypeModel();
+                                          ->getParentListingProduct()
+                                          ->getChildObject()
+                                          ->getVariationManager()
+                                          ->getTypeModel();
         }
 
         return $typeModel->getChannelTheme();

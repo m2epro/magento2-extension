@@ -22,6 +22,7 @@ class GetAddSpecificsHtml extends Category
         $addBlock->setChild('specifics_grid', $gridBlock);
 
         $this->setAjaxContent($addBlock->toHtml());
+
         return $this->getResult();
     }
 }

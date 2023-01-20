@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 abstract class Template extends Main
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Manager  */
     protected $templateManager;
 
     public function __construct(

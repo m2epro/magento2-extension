@@ -44,11 +44,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -56,11 +58,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $data
+     *
      * @return $this
      */
     public function setCachedData(array $data)
     {
         $this->cachedData = $data;
+
         return $this;
     }
 
@@ -68,11 +72,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $params
+     *
      * @return $this
      */
     public function setParams(array $params = [])
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -81,6 +87,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setIsVariationItem($isVariationItem)
     {
         $this->isVariationItem = $isVariationItem;
+
         return $this;
     }
 
@@ -196,10 +203,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($attributes as $attribute) {
             $attributesTitles[] = $this->getHelper('Magento\Attribute')
-                ->getAttributeLabel(
-                    $attribute,
-                    $this->getListing()->getStoreId()
-                );
+                                       ->getAttributeLabel(
+                                           $attribute,
+                                           $this->getListing()->getStoreId()
+                                       );
         }
 
         $this->addWarningMessage(
@@ -217,6 +224,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected function addWarningMessage($message)
     {
         $this->warningMessages[sha1($message)] = $message;
+
         return $this;
     }
 
@@ -243,6 +251,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setMetaData($value)
     {
         $this->metaData = $value;
+
         return $this;
     }
 

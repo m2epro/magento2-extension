@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -8,18 +8,15 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\System\RequestPending;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\System\RequestPending\ProcessPartial
- */
 class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/request_pending/process_partial';
+    public const NICK = 'system/request_pending/process_partial';
 
-    const STATUS_NOT_FOUND  = 'not_found';
-    const STATUS_COMPLETE   = 'completed';
-    const STATUS_PROCESSING = 'processing';
+    public const STATUS_NOT_FOUND = 'not_found';
+    public const STATUS_COMPLETE = 'completed';
+    public const STATUS_PROCESSING = 'processing';
 
-    const MAX_PARTS_PER_ONE_ITERATION = 5;
+    public const MAX_PARTS_PER_ONE_ITERATION = 5;
 
     //####################################
 
@@ -46,7 +43,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function removeOutdated()
     {
         $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request_Pending_Partial')
-            ->getCollection();
+                                                                     ->getCollection();
         $requestPendingPartialCollection->setOnlyOutdatedItemsFilter();
         $requestPendingPartialCollection->addFieldToFilter('is_completed', 1);
 
@@ -61,7 +58,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function completeExpired()
     {
         $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request_Pending_Partial')
-            ->getCollection();
+                                                                     ->getCollection();
         $requestPendingPartialCollection->setOnlyExpiredItemsFilter();
         $requestPendingPartialCollection->addFieldToFilter('is_completed', 0);
 
@@ -76,7 +73,7 @@ class ProcessPartial extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function executeInProgress()
     {
         $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request_Pending_Partial')
-            ->getCollection();
+                                                                     ->getCollection();
         $requestPendingPartialCollection->addFieldToFilter('is_completed', 0);
 
         /** @var \Ess\M2ePro\Model\Request\Pending\Partial[] $requestPendingPartialObjects */

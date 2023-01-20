@@ -17,7 +17,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getCommand()
     {
-        return ['product','search','byIdentifier'];
+        return ['product', 'search', 'byIdentifier'];
     }
 
     //########################################
@@ -35,7 +35,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         return [
             'item' => $this->getQuery(),
             'id_type' => $this->getQueryType(),
-            'variation_bad_parent_modify_child_to_simple' => $this->getVariationBadParentModifyChildToSimple()
+            'variation_bad_parent_modify_child_to_simple' => $this->getVariationBadParentModifyChildToSimple(),
         ];
     }
 

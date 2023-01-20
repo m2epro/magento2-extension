@@ -35,6 +35,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

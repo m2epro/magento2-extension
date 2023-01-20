@@ -86,14 +86,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
         $collection->joinTable(
             [
-                'lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable()
+                'lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
             ],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'amazon_status'   => 'status',
-                'component_mode'  => 'component_mode',
-                'listing_id'      => 'listing_id',
+                'id' => 'id',
+                'amazon_status' => 'status',
+                'component_mode' => 'component_mode',
+                'listing_id' => 'listing_id',
                 'additional_data' => 'additional_data',
             ]
         );
@@ -106,39 +106,41 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
         $collection->joinTable(
             [
-                'alp' => $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable()
+                'alp' => $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable(),
             ],
             'listing_product_id=id',
             [
-                'listing_product_id'           => 'listing_product_id',
-                'is_general_id_owner'          => 'is_general_id_owner',
-                'general_id'                   => 'general_id',
-                'is_repricing'                 => 'is_repricing',
-                'is_afn_channel'               => 'is_afn_channel',
-                'variation_parent_id'          => 'variation_parent_id',
-                'is_variation_parent'          => 'is_variation_parent',
-                'variation_child_statuses'     => 'variation_child_statuses',
-                'online_sku'                   => 'sku',
-                'online_qty'                   => 'online_qty',
-                'online_afn_qty'               => 'online_afn_qty',
-                'online_regular_price'         => 'online_regular_price',
-                'online_regular_sale_price'    => 'online_regular_sale_price',
+                'listing_product_id' => 'listing_product_id',
+                'is_general_id_owner' => 'is_general_id_owner',
+                'general_id' => 'general_id',
+                'is_repricing' => 'is_repricing',
+                'is_afn_channel' => 'is_afn_channel',
+                'variation_parent_id' => 'variation_parent_id',
+                'is_variation_parent' => 'is_variation_parent',
+                'variation_child_statuses' => 'variation_child_statuses',
+                'online_sku' => 'sku',
+                'online_qty' => 'online_qty',
+                'online_afn_qty' => 'online_afn_qty',
+                'online_regular_price' => 'online_regular_price',
+                'online_regular_sale_price' => 'online_regular_sale_price',
                 'online_regular_sale_price_start_date' => 'online_regular_sale_price_start_date',
-                'online_regular_sale_price_end_date'   => 'online_regular_sale_price_end_date',
+                'online_regular_sale_price_end_date' => 'online_regular_sale_price_end_date',
 
-                'online_business_price'        => 'online_business_price',
+                'online_business_price' => 'online_business_price',
 
-                'variation_parent_afn_state'       => 'variation_parent_afn_state',
+                'variation_parent_afn_state' => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
 
-                'online_current_price' => new \Zend_Db_Expr('IF(
+                'online_current_price' => new \Zend_Db_Expr(
+                    'IF(
                     alp.online_regular_sale_price_start_date IS NOT NULL AND
                     alp.online_regular_sale_price_end_date IS NOT NULL AND
                     alp.online_regular_sale_price_start_date <= CURRENT_DATE() AND
                     alp.online_regular_sale_price_end_date >= CURRENT_DATE(),
                     alp.online_regular_sale_price,
                     alp.online_regular_price
-                )')
+                )'
+                ),
             ],
             'variation_parent_id IS NULL'
         );
@@ -146,16 +148,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
             ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             'id=listing_id',
             [
-                'store_id'       => 'store_id',
-                'account_id'     => 'account_id',
+                'store_id' => 'store_id',
+                'account_id' => 'account_id',
                 'marketplace_id' => 'marketplace_id',
-                'listing_title'  => 'title',
+                'listing_title' => 'title',
             ]
         );
         $collection->joinTable(
             [
                 'malpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                    ->getResource()->getMainTable()
+                                                     ->getResource()->getMainTable(),
             ],
             'listing_product_id=listing_product_id',
             [
@@ -185,8 +187,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
     {
         $collection = $this->amazonFactory->getObject('Listing_Product')->getCollection();
         $collection->getSelect()->join(
-            ['lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-                ->getResource()->getMainTable()],
+            [
+                'lps' => $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
+                                                   ->getResource()->getMainTable(),
+            ],
             'lps.listing_product_id=main_table.id',
             []
         );
@@ -199,7 +203,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         $collection->getSelect()->columns(
             [
                 'variation_parent_id' => 'second_table.variation_parent_id',
-                'count'               => new \Zend_Db_Expr('COUNT(lps.id)')
+                'count' => new \Zend_Db_Expr('COUNT(lps.id)'),
             ]
         );
         $collection->getSelect()->group('variation_parent_id');
@@ -218,7 +222,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         $title = $row->getData('name');
         $title = $this->dataHelper->escapeHtml($title);
 
-        $listingWord  = $this->__('Listing');
+        $listingWord = $this->__('Listing');
         $listingTitle = $this->dataHelper->escapeHtml($row->getData('listing_title'));
         $listingTitle = $this->filterManager->truncate($listingTitle, ['length' => 50]);
 
@@ -238,10 +242,10 @@ HTML;
 
         $value .= '<br/><strong>' . $this->__('Account') . ':</strong>'
             . '&nbsp;' . $account->getTitle() . '<br/>'
-            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '<strong>' . $this->__('Marketplace') . ':</strong>'
             . '&nbsp;' . $marketplace->getTitle();
 
-        $sku     = $this->dataHelper->escapeHtml($row->getData('sku'));
+        $sku = $this->dataHelper->escapeHtml($row->getData('sku'));
         $skuWord = $this->__('SKU');
 
         $value .= <<<HTML
@@ -288,7 +292,8 @@ HTML;
 HTML;
         }
 
-        if ($variationManager->isIndividualType() &&
+        if (
+            $variationManager->isIndividualType() &&
             $variationManager->getTypeModel()->isVariationProductMatched()
         ) {
             $optionsStr = '';
@@ -335,35 +340,35 @@ HTML;
 
         $html = '';
 
-        $sUnknown   = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
+        $sUnknown = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
         $sNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
-        $sListed    = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-        $sStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-        $sBlocked   = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
+        $sListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
+        $sStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+        $sBlocked = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
         $generalId = $listingProduct->getChildObject()->getGeneralId();
         $variationsStatuses = $row->getData('variation_child_statuses');
 
         if (empty($generalId) || empty($variationsStatuses)) {
-            return $this->getProductStatus($sNotListed).$this->getScheduledTag($row).$this->getLockedTag($row);
+            return $this->getProductStatus($sNotListed) . $this->getScheduledTag($row) . $this->getLockedTag($row);
         }
 
-        $sortedStatuses     = [];
+        $sortedStatuses = [];
         $variationsStatuses = $this->dataHelper->jsonDecode($variationsStatuses);
 
-        isset($variationsStatuses[$sUnknown]) && $sortedStatuses[$sUnknown]     = $variationsStatuses[$sUnknown];
+        isset($variationsStatuses[$sUnknown]) && $sortedStatuses[$sUnknown] = $variationsStatuses[$sUnknown];
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
-        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed]       = $variationsStatuses[$sListed];
-        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped]     = $variationsStatuses[$sStopped];
-        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked]     = $variationsStatuses[$sBlocked];
+        isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed] = $variationsStatuses[$sListed];
+        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped] = $variationsStatuses[$sStopped];
+        isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked] = $variationsStatuses[$sBlocked];
 
         foreach ($sortedStatuses as $status => $productsCount) {
             if (empty($productsCount)) {
                 continue;
             }
 
-            $productsCount = '['.$productsCount.']';
-            $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
+            $productsCount = '[' . $productsCount . ']';
+            $html .= $this->getProductStatus($status) . '&nbsp;' . $productsCount . '<br/>';
         }
 
         return $html . $this->getScheduledTag($row) . $this->getLockedTag($row);
@@ -374,8 +379,8 @@ HTML;
         $productId = (int)$row->getData('entity_id');
 
         $urlData = [
-            'id'     => $row->getData('listing_id'),
-            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}")
+            'id' => $row->getData('listing_id'),
+            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}"),
         ];
 
         $searchedChildHtml = '';
@@ -385,10 +390,12 @@ HTML;
             $searchedChildHtml = <<<HTML
 <br/>
 <div class="fix-magento-tooltip searched_child_product" style="margin-top: 4px; padding-left: 10px;">
-    {$this->getTooltipHtml($this->__(
-                'A Product you are searching for is found as part of a Multi-Variational Product.' .
-                ' Click on the arrow icon to manage it individually.'
-            ))}
+    {$this->getTooltipHtml(
+                $this->__(
+                    'A Product you are searching for is found as part of a Multi-Variational Product.' .
+                    ' Click on the arrow icon to manage it individually.'
+                )
+            )}
 </div>
 HTML;
         }
@@ -490,7 +497,7 @@ HTML;
          * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
          */
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
+                                                                ->getCollection();
         $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
 
         /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
@@ -513,8 +520,10 @@ HTML;
                 $reviseParts = [];
 
                 $additionalData = $scheduledAction->getAdditionalData();
-                if (!empty($additionalData['configurator']) &&
-                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                if (
+                    !empty($additionalData['configurator']) &&
+                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])
+                ) {
                     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
                     $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
                     $configurator->setUnserializedData($additionalData['configurator']);
@@ -539,8 +548,8 @@ HTML;
                 }
 
                 if (!empty($reviseParts)) {
-                    $html .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
-                        .' is Scheduled...]</span>';
+                    $html .= '<br/><span style="color: #605fff">[Revise of ' . implode(', ', $reviseParts)
+                        . ' is Scheduled...]</span>';
                 } else {
                     $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
                 }
@@ -580,7 +589,7 @@ HTML;
             'product_id_subQuery.variation_parent_id=lp.id',
             [
                 'product_id_child_listing_product_ids' => 'child_listing_product_ids',
-                'product_id_searched_by_child'         => 'searched_by_child'
+                'product_id_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -601,19 +610,21 @@ HTML;
 
         $childCollection = $this->getMagentoChildProductsCollection();
         $childCollection->getSelect()->joinLeft(
-            ['cpe' => $this->databaseHelper
-                ->getTableNameWithPrefix('catalog_product_entity')],
+            [
+                'cpe' => $this->databaseHelper
+                    ->getTableNameWithPrefix('catalog_product_entity'),
+            ],
             'cpe.entity_id=main_table.product_id',
             []
         );
-        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%'.$value.'%']);
+        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%' . $value . '%']);
 
         $collection->getSelect()->joinLeft(
             ['product_sku_subQuery' => $childCollection->getSelect()],
             'product_sku_subQuery.variation_parent_id=lp.id',
             [
                 'product_sku_child_listing_product_ids' => 'child_listing_product_ids',
-                'product_sku_searched_by_child'         => 'searched_by_child'
+                'product_sku_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -643,7 +654,7 @@ HTML;
             'online_sku_subQuery.variation_parent_id=lp.id',
             [
                 'online_sku_child_listing_product_ids' => 'child_listing_product_ids',
-                'online_sku_searched_by_child'         => 'searched_by_child'
+                'online_sku_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -669,7 +680,7 @@ HTML;
             'asin_subQuery.variation_parent_id=lp.id',
             [
                 'asin_child_listing_product_ids' => 'child_listing_product_ids',
-                'asin_searched_by_child'         => 'searched_by_child'
+                'asin_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -809,6 +820,7 @@ HTML;
                 $collection->setOrder($columnIndex, strtoupper($column->getDir()));
             }
         }
+
         return $this;
     }
 
@@ -818,17 +830,22 @@ HTML;
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection()
-            ->addFieldToSelect('listing_product_variation_id')
-            ->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
+                                                ->addFieldToSelect('listing_product_variation_id')
+                                                ->addFieldToFilter(
+                                                    'main_table.component_mode',
+                                                    \Ess\M2ePro\Helper\Component\Amazon::NICK
+                                                );
 
         $collection->getSelect()->joinLeft(
-            ['lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
-                ->getResource()->getMainTable()],
+            [
+                'lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
+                                                   ->getResource()->getMainTable(),
+            ],
             'lpv.id=main_table.listing_product_variation_id',
             ['listing_product_id']
         );
         $collection->getSelect()->joinLeft(
-            ['alp' =>  $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable()],
+            ['alp' => $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable()],
             'alp.listing_product_id=lpv.listing_product_id',
             ['variation_parent_id']
         );
@@ -838,8 +855,8 @@ HTML;
         $collection->getSelect()->columns(
             [
                 'child_listing_product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(DISTINCT alp.listing_product_id)'),
-                'variation_parent_id'       => 'alp.variation_parent_id',
-                'searched_by_child'         => new \Zend_Db_Expr('1')
+                'variation_parent_id' => 'alp.variation_parent_id',
+                'searched_by_child' => new \Zend_Db_Expr('1'),
             ]
         );
 
@@ -852,15 +869,15 @@ HTML;
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getCollection()
-            ->addFieldToFilter('variation_parent_id', ['notnull' => true])
-            ->addFieldToFilter('is_variation_product', 1);
+                                                ->addFieldToFilter('variation_parent_id', ['notnull' => true])
+                                                ->addFieldToFilter('is_variation_product', 1);
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
                 'child_listing_product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(listing_product_id)'),
-                'variation_parent_id'       => 'variation_parent_id',
-                'searched_by_child'         => new \Zend_Db_Expr('1')
+                'variation_parent_id' => 'variation_parent_id',
+                'searched_by_child' => new \Zend_Db_Expr('1'),
             ]
         );
         $collection->getSelect()->group('variation_parent_id');

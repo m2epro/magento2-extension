@@ -54,8 +54,8 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create([
             'data' => [
                 'method' => 'post',
-                'action' => $this->getUrl('*/*/save')
-            ]
+                'action' => $this->getUrl('*/*/save'),
+            ],
         ]);
 
         $preparedAttributes = $this->getPreparedAttributes();
@@ -122,15 +122,15 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'motors_epids_motor',
             [
-                'legend'      => $this->__('Parts Compatibility [ePIDs Motors]'),
+                'legend' => $this->__('Parts Compatibility [ePIDs Motors]'),
                 'collapsable' => false,
-                'tooltip'     => $this->__(
+                'tooltip' => $this->__(
                     'In this Section, you can provide a Magento Attribute where ePID values for your Products
                          will be saved.
                          <br/>
                          Also you can Add/Update ePID Database manually by clicking <strong>Manage Option</strong>
                          in Database line.'
-                )
+                ),
             ]
         );
 
@@ -138,11 +138,11 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'motors_epids_attribute',
             self::SELECT,
             [
-                'name'    => 'motors_epids_attribute',
-                'label'   => $this->__('Attribute'),
-                'values'  => $preparedAttributes,
-                'value'   => $this->componentEbayConfiguration->getMotorsEpidsAttribute(),
-                'class'   => 'M2ePro-custom-attribute-can-be-created',
+                'name' => 'motors_epids_attribute',
+                'label' => $this->__('Attribute'),
+                'values' => $preparedAttributes,
+                'value' => $this->componentEbayConfiguration->getMotorsEpidsAttribute(),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'tooltip' => $this->__(
                     'Choose the Attribute that contains the Product Reference IDs (ePIDs) of compatible
                          vehicles for the parts.
@@ -150,7 +150,7 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                          necessary compatible Items.
                          <br/>
                          Only Textarea Attributes are shown.'
-                )
+                ),
             ]
         )
                  ->addCustomAttribute('allowed_attribute_types', 'textarea')
@@ -179,6 +179,7 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
 </span>
 HTML
+            ,
             ]
         );
     }
@@ -197,9 +198,9 @@ HTML
         $fieldset = $form->addFieldset(
             'motors_epids_uk',
             [
-                'legend'      => $this->__('Parts Compatibility [ePIDs UK]'),
+                'legend' => $this->__('Parts Compatibility [ePIDs UK]'),
                 'collapsable' => false,
-                'tooltip'     => $this->__(
+                'tooltip' => $this->__(
                     'In this Section, you can provide a Magento Attribute where ePID values for UK marketplace
                         will be saved.
                         <br/>
@@ -209,7 +210,7 @@ HTML
                         You have an ability to choose either ePID or kType values should be used on eBay UK.
                         Specify the appropriate <strong>Parts Compatibility Mode</strong> for your Listing
                         in M2E Pro Listings grid.'
-                )
+                ),
             ]
         );
 
@@ -217,11 +218,11 @@ HTML
             'uk_epids_attribute',
             self::SELECT,
             [
-                'name'    => 'uk_epids_attribute',
-                'label'   => $this->__('Attribute'),
-                'values'  => $preparedAttributes,
-                'value'   => $this->componentEbayConfiguration->getUkEpidsAttribute(),
-                'class'   => 'M2ePro-custom-attribute-can-be-created',
+                'name' => 'uk_epids_attribute',
+                'label' => $this->__('Attribute'),
+                'values' => $preparedAttributes,
+                'value' => $this->componentEbayConfiguration->getUkEpidsAttribute(),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'tooltip' => $this->__(
                     'Choose the Attribute that contains the Product Reference IDs (ePIDs) of compatible vehicles
                          for the parts.
@@ -229,7 +230,7 @@ HTML
                          necessary compatible Items.
                          <br/>
                          Only Textarea Attributes are shown.'
-                )
+                ),
             ]
         )
                  ->addCustomAttribute('allowed_attribute_types', 'textarea')
@@ -258,6 +259,7 @@ HTML
         onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
 </span>
 HTML
+            ,
             ]
         );
     }
@@ -276,9 +278,9 @@ HTML
         $fieldset = $form->addFieldset(
             'motors_epids_de',
             [
-                'legend'      => $this->__('Parts Compatibility [ePIDs DE]'),
+                'legend' => $this->__('Parts Compatibility [ePIDs DE]'),
                 'collapsable' => false,
-                'tooltip'     => $this->__(
+                'tooltip' => $this->__(
                     'In this Section, you can provide a Magento Attribute where ePID values for DE marketplace
                         will be saved.
                         <br/>
@@ -288,7 +290,7 @@ HTML
                         You have an ability to choose either ePID or kType values should be used on eBay DE.
                         Specify the appropriate <strong>Parts Compatibility Mode</strong> for your Listing in M2E Pro
                         Listings grid.'
-                )
+                ),
             ]
         );
 
@@ -296,11 +298,11 @@ HTML
             'de_epids_attribute',
             self::SELECT,
             [
-                'name'    => 'de_epids_attribute',
-                'label'   => $this->__('Attribute'),
-                'values'  => $preparedAttributes,
-                'value'   => $this->componentEbayConfiguration->getDeEpidsAttribute(),
-                'class'   => 'M2ePro-custom-attribute-can-be-created',
+                'name' => 'de_epids_attribute',
+                'label' => $this->__('Attribute'),
+                'values' => $preparedAttributes,
+                'value' => $this->componentEbayConfiguration->getDeEpidsAttribute(),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'tooltip' => $this->__(
                     'Choose the Attribute that contains the Product Reference IDs (ePIDs) of compatible vehicles
                          for the parts.
@@ -308,7 +310,7 @@ HTML
                          necessary compatible Items.
                          <br/>
                          Only Textarea Attributes are shown.'
-                )
+                ),
             ]
         )
                  ->addCustomAttribute('allowed_attribute_types', 'textarea')
@@ -337,6 +339,7 @@ HTML
         onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
 </span>
 HTML
+            ,
             ]
         );
     }
@@ -355,9 +358,9 @@ HTML
         $fieldset = $form->addFieldset(
             'motors_epids_it',
             [
-                'legend'      => $this->__('Parts Compatibility [ePIDs IT]'),
+                'legend' => $this->__('Parts Compatibility [ePIDs IT]'),
                 'collapsable' => false,
-                'tooltip'     => $this->__(
+                'tooltip' => $this->__(
                     'In this Section, you can provide a Magento Attribute where ePID values for IT marketplace
                         will be saved.
                         <br/>
@@ -375,11 +378,11 @@ HTML
             'it_epids_attribute',
             self::SELECT,
             [
-                'name'    => 'it_epids_attribute',
-                'label'   => $this->__('Attribute'),
-                'values'  => $preparedAttributes,
-                'value'   => $this->componentEbayConfiguration->getItEpidsAttribute(),
-                'class'   => 'M2ePro-custom-attribute-can-be-created',
+                'name' => 'it_epids_attribute',
+                'label' => $this->__('Attribute'),
+                'values' => $preparedAttributes,
+                'value' => $this->componentEbayConfiguration->getItEpidsAttribute(),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'tooltip' => $this->__(
                     'Choose the Attribute that contains the Product Reference IDs (ePIDs) of compatible vehicles
                          for the parts.
@@ -416,6 +419,7 @@ HTML
         onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
 </span>
 HTML
+            ,
             ]
         );
     }
@@ -450,11 +454,11 @@ HTML
             'ktypes_attribute',
             self::SELECT,
             [
-                'name'    => 'ktypes_attribute',
-                'label'   => $this->__('Attribute'),
-                'values'  => $preparedAttributes,
-                'value'   => $this->componentEbayConfiguration->getKTypesAttribute(),
-                'class'   => 'M2ePro-custom-attribute-can-be-created',
+                'name' => 'ktypes_attribute',
+                'label' => $this->__('Attribute'),
+                'values' => $preparedAttributes,
+                'value' => $this->componentEbayConfiguration->getKTypesAttribute(),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'tooltip' => $this->__(
                     'Choose the Attribute that contains the kTypes of compatible vehicles for the parts.
                          In the M2E Pro Listing, use the <strong>Add Compatible Vehicles</strong> tool to find
@@ -479,7 +483,7 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'label' => $this->__('Database'),
-                'text'  => <<<HTML
+                'text' => <<<HTML
 <span style="padding-right: 2px;">{$this->__('From eBay')}: </span>
 <span style="font-weight: bold; display: inline-block; width: 40px;">{$count}</span>
 
@@ -491,6 +495,7 @@ HTML
         onclick="EbaySettingsMotorsObj.manageMotorsRecords('{$motorsType}','{$popupTitle}');">{$this->__('manage')}</a>)
 </span>
 HTML
+            ,
             ]
         );
     }

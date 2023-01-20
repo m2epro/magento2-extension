@@ -32,13 +32,14 @@ class RemoveAttribute extends Main
 
         if (empty($magentoAttr) || empty($channelAttr)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
         $this->vocabularyHelper->removeAttributeFromLocalStorage($magentoAttr, $channelAttr);
 
         $this->setJsonContent([
-            'success' => true
+            'success' => true,
         ]);
 
         return $this->getResult();

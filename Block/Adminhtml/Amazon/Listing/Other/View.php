@@ -52,9 +52,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->dataHelper->getBackUrl();
             $this->buttonList->add('back', [
-                'label'   => $this->__('Back'),
+                'label' => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
-                'class'   => 'back'
+                'class' => 'back',
             ]);
         }
         // ---------------------------------------
@@ -72,7 +72,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
                 <p>The list is automatically updated if the import option is enabled in the Account settings.</p>
 HTML
-            )
+            ),
         ]);
 
         return parent::_prepareLayout();
@@ -89,11 +89,14 @@ HTML
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\Other\View\Header::class,
             '',
-            ['data' => [
-                'account' => $this->amazonFactory->getCachedObjectLoaded('Account', $accountId),
-                'marketplace' => $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
-            ]]
+            [
+                'data' => [
+                    'account' => $this->amazonFactory->getCachedObjectLoaded('Account', $accountId),
+                    'marketplace' => $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId),
+                ],
+            ]
         );
+
         // ---------------------------------------
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
@@ -109,8 +112,8 @@ HTML
             'mapProductPopupHtml' => $this->getUrl(
                 '*/listing_other_mapping/mapProductPopupHtml',
                 [
-                    'account_id'     => $this->getRequest()->getParam('account'),
-                    'marketplace_id' => $this->getRequest()->getParam('marketplace')
+                    'account_id' => $this->getRequest()->getParam('account'),
+                    'marketplace_id' => $this->getRequest()->getParam('marketplace'),
                 ]
             ),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
@@ -176,10 +179,11 @@ HTML
             'error_word' => $this->__('Error'),
             'close_word' => $this->__('Close'),
 
-            'task_completed_message' => $this->__('Task completed. Please wait ...')
+            'task_completed_message' => $this->__('Task completed. Please wait ...'),
         ]);
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'jQuery' => 'jquery',
 
             'p' => 'M2ePro/Plugin/ProgressBar',
@@ -191,8 +195,9 @@ HTML
             'lou' => 'M2ePro/Listing/Other/Unmapping',
 
             'alog' => 'M2ePro/Amazon/Listing/Other/Grid',
-            'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price'
-        ], <<<JS
+            'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price',
+            ],
+            <<<JS
 
         M2ePro.customData.componentMode = '{$componentMode}';
         M2ePro.customData.gridId = 'amazonListingOtherGrid';
@@ -215,10 +220,10 @@ JS
         );
 
         return '<div id="listing_other_progress_bar"></div>' .
-               '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
-               '<div id="listing_other_content_container">' .
-               parent::_toHtml() .
-               '</div>';
+            '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
+            '<div id="listing_other_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 
     //########################################

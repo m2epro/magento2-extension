@@ -27,6 +27,7 @@ class DropDown extends \Magento\Backend\Block\Widget\Button\SplitButton
      * @param string $title
      * @param string $classes
      * @param string $disabled
+     *
      * @return array
      */
     protected function _prepareOptionAttributes($option, $title, $classes, $disabled)

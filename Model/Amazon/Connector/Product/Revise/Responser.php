@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\Revise;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as DataBuilderQty;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as DataBuilderQty;
 
 /**
  * @method \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Response getResponseObject()
@@ -86,10 +86,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 
         if (count($sequenceStrings) == 1) {
             $verb = $isPlural ? 'were' : 'was';
-            return $sequenceStrings[0].' '.$verb.' Revised';
+
+            return $sequenceStrings[0] . ' ' . $verb . ' Revised';
         }
 
-        return implode(', ', $sequenceStrings).' were Revised';
+        return implode(', ', $sequenceStrings) . ' were Revised';
     }
 
     //########################################

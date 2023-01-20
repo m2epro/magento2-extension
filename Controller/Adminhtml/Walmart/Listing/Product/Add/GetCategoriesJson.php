@@ -20,13 +20,14 @@ class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree::class,
             '',
             [
-            'data' => [
-                'tree_settings' => [
-                    'show_products_amount' => true,
-                    'hide_products_this_listing' => true
-                ]
+                'data' => [
+                    'tree_settings' => [
+                        'show_products_amount' => true,
+                        'hide_products_this_listing' => true,
+                    ],
+                ],
             ]
-        ]);
+        );
         $treeBlock->setSelectedIds($selectedProductsIds);
 
         $this->setAjaxContent($treeBlock->getCategoryChildrenJson($this->getRequest()->getParam('category')), false);

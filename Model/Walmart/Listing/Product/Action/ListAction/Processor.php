@@ -9,23 +9,23 @@
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\ProcessingRunner as ProcessingRunner;
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processor as ActionProcessor;
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList as ProcessingList;
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing as ActionProcessing;
-use \Ess\M2ePro\Model\Connector\Connection\Response\Message as ResponseMessage;
-use \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection as ProcessingCollection;
-use \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\ProcessingList as ProcessingListResourceModel;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processor as ActionProcessor;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList as ProcessingList;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing as ActionProcessing;
+use Ess\M2ePro\Model\Connector\Connection\Response\Message as ResponseMessage;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection as ProcessingCollection;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\ProcessingList as ProcessingListResourceModel;
 
 /**
  * Class Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\Processor
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
-    const LIST_PRIORITY = 25;
+    public const LIST_PRIORITY = 25;
 
-    const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
+    public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
 
-    const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/walmart/listing/product/action/first_connection_error/date/';
+    public const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/walmart/listing/product/action/first_connection_error/date/';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -49,7 +49,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory  $modelFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -215,17 +215,18 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($requestPendingSingleObjects as $requestId => $requestPendingSingle) {
-
             /** @var ProcessingCollection $actionCollection */
             $actionCollection = $this->activeRecordFactory
-            ->getObject('Walmart_Listing_Product_Action_Processing')->getCollection();
+                ->getObject('Walmart_Listing_Product_Action_Processing')->getCollection();
 
             $actionCollection
                 ->setInProgressFilter()
                 ->addFieldToFilter('type', ActionProcessing::TYPE_ADD)
                 ->getSelect()->distinct()->joinInner(
-                    ['apl' => $this->activeRecordFactory
-                        ->getObject('Walmart_Listing_Product_Action_ProcessingList')->getResource()->getMainTable()],
+                    [
+                        'apl' => $this->activeRecordFactory
+                            ->getObject('Walmart_Listing_Product_Action_ProcessingList')->getResource()->getMainTable(),
+                    ],
                     'apl.listing_product_id = main_table.listing_product_id',
                     []
                 );
@@ -248,7 +249,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             );
 
             $resultMessages = $requestPendingSingle->getResultMessages();
-            $resultData     = $requestPendingSingle->getResultData();
+            $resultData = $requestPendingSingle->getResultData();
 
             foreach ($processingActions as $processingAction) {
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -259,8 +260,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 //worker may return different data structure
                 if (isset($resultData[$processingAction->getListingProductId() . '-id'])) {
                     $resultActionData = $resultData[$processingAction->getListingProductId() . '-id'];
-                } elseif (isset($resultData['data'][$processingAction->getListingProductId().'-id'])) {
-                    $resultActionData = $resultData['data'][$processingAction->getListingProductId().'-id'];
+                } elseif (isset($resultData['data'][$processingAction->getListingProductId() . '-id'])) {
+                    $resultActionData = $resultData['data'][$processingAction->getListingProductId() . '-id'];
                 }
 
                 if (empty($resultActionData['errors'])) {
@@ -279,10 +280,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     );
 
                     $resultActionData['errors'][] = [
-                        ResponseMessage::TYPE_KEY   => \Ess\M2ePro\Model\Response\Message::TYPE_ERROR,
-                        ResponseMessage::TEXT_KEY   => $message,
+                        ResponseMessage::TYPE_KEY => \Ess\M2ePro\Model\Response\Message::TYPE_ERROR,
+                        ResponseMessage::TEXT_KEY => $message,
                         ResponseMessage::SENDER_KEY => ResponseMessage::SENDER_COMPONENT,
-                        ResponseMessage::CODE_KEY   => '',
+                        ResponseMessage::CODE_KEY => '',
                     ];
                 }
 
@@ -342,13 +343,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             /** @var ProcessingCollection $actionCollection */
             $actionCollection = $this->activeRecordFactory
-            ->getObject('Walmart_Listing_Product_Action_Processing')->getCollection();
+                ->getObject('Walmart_Listing_Product_Action_Processing')->getCollection();
             $actionCollection
                 ->setInProgressFilter()
                 ->addFieldToFilter('type', ActionProcessing::TYPE_ADD)
                 ->getSelect()->joinInner(
-                    ['apl' => $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList')
-                                        ->getResource()->getMainTable()],
+                    [
+                        'apl' => $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList')
+                                                           ->getResource()->getMainTable(),
+                    ],
                     'apl.listing_product_id = main_table.listing_product_id',
                     ['processing_list_id' => 'id']
                 );
@@ -380,7 +383,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $itemsRequestData = [];
             foreach ($processingActions as $processingAction) {
-
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
                 $listingProduct = $listingProductCollection->getItemById($processingAction->getListingProductId());
                 $processingAction->setListingProduct($listingProduct);
@@ -398,8 +400,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $listingProduct->setProcessingAction($processingAction);
 
                 $params = $processingAction->getProcessing()->getParams();
+
+                /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
+                $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
                 /** @var \Ess\M2ePro\Model\Walmart\Connector\Product\ListAction\UpdateInventory\Requester $connector */
-                $connector = $this->modelFactory->getObject('Walmart_Connector_Dispatcher')->getCustomConnector(
+                $connector = $dispatcher->getCustomConnector(
                     'Walmart_Connector_Product_ListAction_UpdateInventory_Requester',
                     $params['requester_params']
                 );
@@ -410,9 +415,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 $processingList->addData(
                     [
-                        'relist_request_data'      => $this->helperData->jsonEncode($requestData),
+                        'relist_request_data' => $this->helperData->jsonEncode($requestData),
                         'relist_configurator_data' =>
-                            $this->helperData->jsonEncode($configurator->getSerializedData())
+                            $this->helperData->jsonEncode($configurator->getSerializedData()),
                     ]
                 );
                 $processingList->save();
@@ -450,13 +455,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $requestPendingSingle = $this->activeRecordFactory->getObject('Request_Pending_Single');
             $requestPendingSingle->setData(
                 [
-                    'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                    'server_hash'     => $responseData['processing_id'],
+                    'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                    'server_hash' => $responseData['processing_id'],
                     'expiration_date' => gmdate(
                         'Y-m-d H:i:s',
                         $this->helperData->getCurrentGmtDate(true)
-                            + self::PENDING_REQUEST_MAX_LIFE_TIME
-                    )
+                        + self::PENDING_REQUEST_MAX_LIFE_TIME
+                    ),
                 ]
             );
             $requestPendingSingle->save();
@@ -480,7 +485,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         /** @var ProcessingListResourceModel $processingListResource */
         $processingListResource = $this->activeRecordFactory
-                ->getObject('Walmart_Listing_Product_Action_ProcessingList')->getResource();
+            ->getObject('Walmart_Listing_Product_Action_ProcessingList')->getResource();
         $requestIds = $processingListResource->getUniqueRelistRequestPendingSingleIds();
 
         if (empty($requestIds)) {
@@ -499,16 +504,17 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($requestPendingSingleObjects as $requestId => $requestPendingSingle) {
-
             /** @var ProcessingCollection $actionCollection */
             $actionCollection = $this->activeRecordFactory
-            ->getObject('Walmart_Listing_Product_Action_Processing')->getCollection();
+                ->getObject('Walmart_Listing_Product_Action_Processing')->getCollection();
             $actionCollection
                 ->setInProgressFilter()
                 ->addFieldToFilter('type', ActionProcessing::TYPE_ADD)
                 ->getSelect()->joinInner(
-                    ['apl' => $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList')
-                        ->getResource()->getMainTable()],
+                    [
+                        'apl' => $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList')
+                                                           ->getResource()->getMainTable(),
+                    ],
                     'apl.listing_product_id = main_table.listing_product_id',
                     ['processing_list_id' => 'id']
                 );
@@ -533,7 +539,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $listCollection->addFieldToFilter('id', $actionCollection->getColumnValues('processing_list_id'));
 
             $resultMessages = $requestPendingSingle->getResultMessages();
-            $resultData     = $requestPendingSingle->getResultData();
+            $resultData = $requestPendingSingle->getResultData();
 
             foreach ($processingActions as $processingAction) {
                 /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -548,8 +554,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 //worker may return different data structure
                 if (isset($resultData[$processingAction->getListingProductId() . '-id'])) {
                     $resultActionData = $resultData[$processingAction->getListingProductId() . '-id'];
-                } elseif (isset($resultData['data'][$processingAction->getListingProductId().'-id'])) {
-                    $resultActionData = $resultData['data'][$processingAction->getListingProductId().'-id'];
+                } elseif (isset($resultData['data'][$processingAction->getListingProductId() . '-id'])) {
+                    $resultActionData = $resultData['data'][$processingAction->getListingProductId() . '-id'];
                 }
 
                 if (empty($resultActionData['errors'])) {
@@ -581,6 +587,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $processingActionsIds
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function failedOnRelistAttemptCallback($processingActionsIds)
@@ -600,13 +607,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param ActionProcessing $processingAction
+     *
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function completeListProcessingActionSuccess(ActionProcessing $processingAction)
     {
-        $processing       = $processingAction->getProcessing();
-        $listingProduct   = $processingAction->getListingProduct();
+        $processing = $processingAction->getProcessing();
+        $listingProduct = $processingAction->getListingProduct();
         $processingParams = $processing->getParams();
 
         $linking = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Type_ListAction_Linking');
@@ -631,8 +639,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $walmartListingProduct = $listingProduct->getChildObject();
         if ($walmartListingProduct->getVariationManager()->isRelationChildType()) {
             $parentListingProduct = $walmartListingProduct->getVariationManager()
-                ->getTypeModel()
-                ->getParentListingProduct();
+                                                          ->getTypeModel()
+                                                          ->getParentListingProduct();
 
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartParentListingProduct */
             $walmartParentListingProduct = $parentListingProduct->getChildObject();
@@ -650,13 +658,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param ActionProcessing $processingAction
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Ess\M2ePro\Model\Exception
      */
     protected function completeListProcessingActionFail(ActionProcessing $processingAction)
     {
-        $processing       = $processingAction->getProcessing();
-        $listingProduct   = $processingAction->getListingProduct();
+        $processing = $processingAction->getProcessing();
+        $listingProduct = $processingAction->getListingProduct();
         $processingParams = $processing->getParams();
 
         $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
@@ -707,6 +716,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $feedsPacks
      * @param \Zend_Db_Statement $scheduledActionsDataStatement
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
      */
@@ -741,6 +751,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $accountsActions
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -813,12 +824,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         $linking->setSku($sku);
                         $linking->setProductIdentifiers(
                             [
-                                'wpid'    => $productData['wpid'],
+                                'wpid' => $productData['wpid'],
                                 'item_id' => $productData['item_id'],
-                                'gtin'    => $productData['gtin'],
-                                'upc'     => $productData['upc'] ?? null,
-                                'ean'     => $productData['ean'] ?? null,
-                                'isbn'    => $productData['isbn'] ?? null,
+                                'gtin' => $productData['gtin'],
+                                'upc' => $productData['upc'] ?? null,
+                                'ean' => $productData['ean'] ?? null,
+                                'isbn' => $productData['isbn'] ?? null,
                             ]
                         );
 
@@ -831,8 +842,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                             );
                         } else {
                             $message->initFromPreparedData(
-                                sprintf('Unexpected error during process of linking by SKU %s. The required SKU
-                                         has been found but the data is not sent back. Please try again.', $sku),
+                                sprintf(
+                                    'Unexpected error during process of linking by SKU %s. The required SKU
+                                         has been found but the data is not sent back. Please try again.',
+                                    $sku
+                                ),
                                 ResponseMessage::TYPE_ERROR
                             );
                         }
@@ -846,13 +860,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     } elseif ($walmartListingProduct->getSku()) {
                         $listingProduct->addData(
                             [
-                                'sku'     => null,
-                                'wpid'    => null,
+                                'sku' => null,
+                                'wpid' => null,
                                 'item_id' => null,
-                                'gtin'    => null,
-                                'upc'     => null,
-                                'ean'     => null,
-                                'isbn'    => null,
+                                'gtin' => null,
+                                'upc' => null,
+                                'ean' => null,
+                                'isbn' => null,
                             ]
                         );
                         $listingProduct->save();
@@ -884,6 +898,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $listingsProductsData
+     *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -919,12 +934,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $processingRunner->setParams(
                 [
                     'listing_product_id' => $listingProductId,
-                    'account_id'         => $listingProduct->getAccount()->getId(),
-                    'configurator'       => $configurator->getSerializedData(),
-                    'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
-                    'lock_identifier'    => 'list',
-                    'requester_params'   => $params,
-                    'group_hash'         => $groupHash,
+                    'account_id' => $listingProduct->getAccount()->getId(),
+                    'configurator' => $configurator->getSerializedData(),
+                    'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    'lock_identifier' => 'list',
+                    'requester_params' => $params,
+                    'group_hash' => $groupHash,
                 ]
             );
 
@@ -953,7 +968,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $processingActionColl->getSelect()->order('id ASC');
 
         /** @var ActionProcessing[] $processingActions */
-        $processingActions   = $processingActionColl->getItems();
+        $processingActions = $processingActionColl->getItems();
         $listingsProductsIds = $processingActionColl->getColumnValues('listing_product_id');
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingsProductsCollection */
@@ -1000,6 +1015,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $listingsProductsData
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function prepareScheduledActions(array $listingsProductsData)
@@ -1025,6 +1041,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $processingActions
      * @param array $serverCommand
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function processGroupedProcessingActions(array $processingActions, array $serverCommand)
@@ -1045,7 +1062,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $walmartAccount = $account->getChildObject();
 
         $requestData = [
-            'items'   => $itemsRequestData,
+            'items' => $itemsRequestData,
             'account' => $walmartAccount->getServerHash(),
         ];
 
@@ -1108,13 +1125,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $requestPendingSingle = $this->activeRecordFactory->getObject('Request_Pending_Single');
         $requestPendingSingle->setData(
             [
-                'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'server_hash'     => $responseData['processing_id'],
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'server_hash' => $responseData['processing_id'],
                 'expiration_date' => gmdate(
                     'Y-m-d H:i:s',
                     $this->helperData->getCurrentGmtDate(true)
-                        + self::PENDING_REQUEST_MAX_LIFE_TIME
-                )
+                    + self::PENDING_REQUEST_MAX_LIFE_TIME
+                ),
             ]
         );
         $requestPendingSingle->save();
@@ -1133,6 +1150,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Zend_Db_Statement
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -1142,12 +1160,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::LIST_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("''"))
-            ->addFieldToFilter('l.account_id', $account->getId());
+                   ->getScheduledActionsPreparedCollection(
+                       self::LIST_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_LIST
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("''"))
+                   ->addFieldToFilter('l.account_id', $account->getId());
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -1173,6 +1191,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param array $feedsPacks
      * @param $accountId
+     *
      * @return bool
      */
     protected function canAddToLastExistedPack(array $feedsPacks, $accountId)
@@ -1223,6 +1242,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param string $feedType
+     *
      * @return int
      */
     protected function getMaxPackSize($feedType = null)
@@ -1239,6 +1259,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param int $accountId
      * @param array $skus
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -1257,13 +1278,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $onlyItems = [];
         foreach ($skus as $sku) {
             $onlyItems[] = [
-                'type'  => 'sku',
+                'type' => 'sku',
                 'value' => $sku,
             ];
         }
 
         $requestData = [
-            'account'    => $walmartAccount->getServerHash(),
+            'account' => $walmartAccount->getServerHash(),
             'return_now' => true,
             'only_items' => $onlyItems,
         ];
@@ -1301,6 +1322,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param ActionProcessing $action
      * @param array $data
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function completeProcessingAction(ActionProcessing $action, array $data)
@@ -1320,6 +1342,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $group
      * @param $key
+     *
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -1331,6 +1354,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $statusChanger
      * @param int $logsActionId
+     *
      * @return \Ess\M2ePro\Model\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

@@ -40,6 +40,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     {
         if ($this->isVerifyCall) {
             parent::beforeBuildDataEvent();
+
             return;
         }
 
@@ -72,7 +73,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         $data = array_merge(
             [
-                'sku'       => $this->getEbayListingProduct()->getSku(),
+                'sku' => $this->getEbayListingProduct()->getSku(),
                 'item_uuid' => $uuid,
             ],
             $this->getGeneralData(),
@@ -118,7 +119,6 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         $variations = $this->getListingProduct()->getVariations(true);
 
         foreach ($variations as $variation) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
             $ebayVariation = $variation->getChildObject();
 
@@ -166,8 +166,10 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     protected function replaceVariationSpecificsNames(array $data)
     {
-        if (!$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
-            empty($data['variations_sets']) || !is_array($data['variations_sets'])) {
+        if (
+            !$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
+            empty($data['variations_sets']) || !is_array($data['variations_sets'])
+        ) {
             return $data;
         }
 
@@ -188,7 +190,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
                 continue;
             }
 
-            $attrCode  = trim($specific->getData('value_custom_attribute'));
+            $attrCode = trim($specific->getData('value_custom_attribute'));
             $attrTitle = trim($specific->getData('attribute_title'));
 
             if (!array_key_exists($attrCode, $confAttributes) || $confAttributes[$attrCode] == $attrTitle) {
@@ -224,6 +226,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     public function setIsVerifyCall($value)
     {
         $this->isVerifyCall = $value;
+
         return $this;
     }
 

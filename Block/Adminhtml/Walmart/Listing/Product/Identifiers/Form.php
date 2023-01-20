@@ -18,11 +18,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id'    => 'edit_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $fieldset = $form->addFieldset(
@@ -36,7 +38,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     Product ID.<br>
                     Select a Product ID Type, enter a new Product ID value and click Submit. M2E Pro will automatically
                     submit the new Product ID to Walmart.'
-                )
+                ),
             ]
         );
 
@@ -50,7 +52,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'gtin' => $this->__('GTIN'),
                     'upc' => $this->__('UPC'),
                     'ean' => $this->__('EAN'),
-                    'isbn' => $this->__('ISBN')
+                    'isbn' => $this->__('ISBN'),
                 ],
                 'required' => true,
             ]

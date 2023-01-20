@@ -79,6 +79,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         }
 
         $data['additional_data'][$tempKey] = $requestMetaData[$tempKey];
+
         return $data;
     }
 

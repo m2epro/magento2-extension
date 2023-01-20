@@ -12,16 +12,18 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
 
 class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'magento/product/detect_special_price_end_date';
+    public const NICK = 'magento/product/detect_special_price_end_date';
 
     /** @var int (in seconds) */
     protected $interval = 7200;
 
     /** @var \Ess\M2ePro\PublicServices\Product\SqlChange */
     protected $publicService;
-
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory  */
     protected $listingProductCollectionFactory;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory  */
     protected $catalogProductCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory  */
     protected $listingCollectionFactory;
 
     /** @var \Ess\M2ePro\Helper\Module */
@@ -72,6 +74,7 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         if (!$changedProductsPrice) {
             $this->setLastProcessedProductId(0);
+
             return;
         }
 
@@ -103,11 +106,12 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
     protected function getArrayKeyLast($array)
     {
         if (!is_array($array) || empty($array)) {
-            return NULL;
+            return null;
         }
 
         $arrayKeys = array_keys($array);
-        return $arrayKeys[count($array)-1];
+
+        return $arrayKeys[count($array) - 1];
     }
 
     protected function getCurrentPrice(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -135,7 +139,7 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         $collectionListing->getSelect()->columns(['store_id' => 'store_id']);
         $collectionListing->getSelect()->group('store_id');
 
-        foreach ($collectionListing->getData() as $item){
+        foreach ($collectionListing->getData() as $item) {
             $storeIds[] = $item['store_id'];
         }
 
@@ -168,7 +172,7 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         foreach ($this->getAllStoreIds() as $storeId) {
             foreach ($this->getChangedProductsPrice($storeId) as $magentoProduct) {
                 $changedProductsPrice[$magentoProduct->getId()] = [
-                    'price' => $magentoProduct->getPrice()
+                    'price' => $magentoProduct->getPrice(),
                 ];
             }
         }

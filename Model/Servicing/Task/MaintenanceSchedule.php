@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task;
 
-class MaintenanceSchedule  implements \Ess\M2ePro\Model\Servicing\TaskInterface
+class MaintenanceSchedule implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
     public const NAME = 'maintenance_schedule';
 

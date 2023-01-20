@@ -51,7 +51,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'save_and_next',
             [
                 'label' => $this->__('Next Step'),
-                'class' => 'action-primary forward'
+                'class' => 'action-primary forward',
             ]
         );
     }
@@ -63,7 +63,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         $breadcrumb = $this->getLayout()
                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Breadcrumb::class)
-            ->setSelectedStep(1);
+                           ->setSelectedStep(1);
 
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData(
             [
@@ -75,7 +75,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->supportHelper->getDocumentationArticleUrl('x/hf8UB')
-                )
+                ),
             ]
         );
 

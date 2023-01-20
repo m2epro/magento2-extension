@@ -26,10 +26,11 @@ class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     public function execute()
     {
         $variationsId = $this->getRequest()->getParam('variation_id');
-        $productDetails   = $this->getRequest()->getParam('product_details');
+        $productDetails = $this->getRequest()->getParam('product_details');
 
         if (empty($variationsId) || empty($productDetails)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -51,6 +52,7 @@ class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         )->save();
 
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 }

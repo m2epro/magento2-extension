@@ -19,14 +19,15 @@ class UpdateShippingStatus extends Order
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Order(s).'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Order[] $orders */
         $orders = $this->walmartFactory->getObject('Order')
-            ->getCollection()
-            ->addFieldToFilter('id', ['in' => $ids])
-            ->getItems();
+                                       ->getCollection()
+                                       ->addFieldToFilter('id', ['in' => $ids])
+                                       ->getItems();
 
         $hasFailed = false;
         $hasSucceeded = false;
@@ -47,7 +48,7 @@ class UpdateShippingStatus extends Order
             }
 
             $shipmentsCollection = $magentoOrder->getShipmentsCollection()
-                ->setOrderFilter($order->getMagentoOrderId());
+                                                ->setOrderFilter($order->getMagentoOrderId());
 
             if ($shipmentsCollection->getSize() === 0) {
                 $order->getChildObject()->updateShippingStatus([]) ? $hasSucceeded = true

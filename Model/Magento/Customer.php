@@ -15,7 +15,7 @@ use Ess\M2ePro\Model\AbstractModel;
  */
 class Customer extends AbstractModel
 {
-    const FAKE_EMAIL_POSTFIX = '@dummy.email';
+    public const FAKE_EMAIL_POSTFIX = '@dummy.email';
 
     protected $customerDataFactory;
 
@@ -76,15 +76,15 @@ class Customer extends AbstractModel
          * Customers -> Customer Configuration -> Create new account options -> Automatic Assignment to Customer Group
          */
         $customerData = $this->customerDataFactory->create()
-            ->setPrefix($this->getData('customer_prefix'))
-            ->setFirstname($this->getData('customer_firstname'))
-            ->setMiddlename($this->getData('customer_middlename'))
-            ->setLastname($this->getData('customer_lastname'))
-            ->setSuffix($this->getData('customer_suffix'))
-            ->setWebsiteId($this->getData('website_id'))
-            ->setGroupId($this->getData('group_id'))
-            ->setEmail($this->getData('email'))
-            ->setConfirmation($password);
+                                                  ->setPrefix($this->getData('customer_prefix'))
+                                                  ->setFirstname($this->getData('customer_firstname'))
+                                                  ->setMiddlename($this->getData('customer_middlename'))
+                                                  ->setLastname($this->getData('customer_lastname'))
+                                                  ->setSuffix($this->getData('customer_suffix'))
+                                                  ->setWebsiteId($this->getData('website_id'))
+                                                  ->setGroupId($this->getData('group_id'))
+                                                  ->setEmail($this->getData('email'))
+                                                  ->setConfirmation($password);
 
         $this->customer = $this->customerFactory->create();
         $this->customer->updateData($customerData);
@@ -97,8 +97,8 @@ class Customer extends AbstractModel
         $this->_updateAddress($addressModel);
 
         $addressData = $this->addressDataFactory->create()
-            ->setIsDefaultBilling(true)
-            ->setIsDefaultShipping(true);
+                                                ->setIsDefaultBilling(true)
+                                                ->setIsDefaultShipping(true);
 
         $addressModel->updateData($addressData);
 
@@ -129,23 +129,22 @@ class Customer extends AbstractModel
         }
 
         $addressData = $this->addressDataFactory->create()
-            ->setPrefix($this->getData('prefix'))
-            ->setFirstname($this->getData('firstname'))
-            ->setMiddlename($this->getData('middlename'))
-            ->setLastname($this->getData('lastname'))
-            ->setSuffix($this->getData('suffix'))
-            ->setCountryId($this->getData('country_id'))
-            ->setCity($this->getData('city'))
-            ->setPostcode($this->getData('postcode'))
-            ->setTelephone($this->getData('telephone'))
-            ->setStreet($street)
-            ->setCompany($this->getData('company'));
+                                                ->setPrefix($this->getData('prefix'))
+                                                ->setFirstname($this->getData('firstname'))
+                                                ->setMiddlename($this->getData('middlename'))
+                                                ->setLastname($this->getData('lastname'))
+                                                ->setSuffix($this->getData('suffix'))
+                                                ->setCountryId($this->getData('country_id'))
+                                                ->setCity($this->getData('city'))
+                                                ->setPostcode($this->getData('postcode'))
+                                                ->setTelephone($this->getData('telephone'))
+                                                ->setStreet($street)
+                                                ->setCompany($this->getData('company'));
 
         $addressModel->updateData($addressData);
         /**
          * Updating 'region_id' value to null will be skipped in
          * vendor/magento/framework/Reflection/DataObjectProcessor.php::buildOutputDataArray()
-         *
          * So, we are forced to use separate setter for 'region_id' to bypass this validation
          */
         $addressModel->setRegionId($this->getData('region_id'));
@@ -193,10 +192,10 @@ class Customer extends AbstractModel
         $connWrite = $this->resourceConnection->getConnection();
 
         $data = [
-            'entity_type_id'      => $this->customerFactory->create()->getEntityType()->getId(),
-            'attribute_set_id'    => $attributeSetId,
-            'attribute_group_id'  => $attributeGroupId,
-            'attribute_id'        => $attributeId,
+            'entity_type_id' => $this->customerFactory->create()->getEntityType()->getId(),
+            'attribute_set_id' => $attributeSetId,
+            'attribute_group_id' => $attributeGroupId,
+            'attribute_id' => $attributeId,
         ];
 
         $connWrite->insert(
@@ -210,11 +209,11 @@ class Customer extends AbstractModel
         $connRead = $this->resourceConnection->getConnection();
 
         $select = $connRead->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_entity_type'),
-                'default_attribute_set_id'
-            )
-            ->where('entity_type_id = ?', $this->customerFactory->create()->getEntityType()->getId());
+                           ->from(
+                               $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_entity_type'),
+                               'default_attribute_set_id'
+                           )
+                           ->where('entity_type_id = ?', $this->customerFactory->create()->getEntityType()->getId());
 
         return $connRead->fetchOne($select);
     }
@@ -224,13 +223,15 @@ class Customer extends AbstractModel
         $connRead = $this->resourceConnection->getConnection();
 
         $select = $connRead->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute_group'),
-                'attribute_group_id'
-            )
-            ->where('attribute_set_id = ?', $attributeSetId)
-            ->order(['default_id ' . \Magento\Framework\DB\Select::SQL_DESC, 'sort_order'])
-            ->limit(1);
+                           ->from(
+                               $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                   'eav_attribute_group'
+                               ),
+                               'attribute_group_id'
+                           )
+                           ->where('attribute_set_id = ?', $attributeSetId)
+                           ->order(['default_id ' . \Magento\Framework\DB\Select::SQL_DESC, 'sort_order'])
+                           ->limit(1);
 
         return $connRead->fetchOne($select);
     }

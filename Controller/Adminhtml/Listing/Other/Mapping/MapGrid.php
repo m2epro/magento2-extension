@@ -16,15 +16,16 @@ class MapGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
             \Ess\M2ePro\Block\Adminhtml\Listing\Mapping\Grid::class,
             '',
             [
-               'data' => [
-                   'grid_url' => '*/listing_other_mapping/mapGrid',
-                   'mapping_handler_js' => 'ListingOtherMappingObj',
-                   'mapping_action' => 'map'
-               ]
+                'data' => [
+                    'grid_url' => '*/listing_other_mapping/mapGrid',
+                    'mapping_handler_js' => 'ListingOtherMappingObj',
+                    'mapping_action' => 'map',
+                ],
             ]
         );
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

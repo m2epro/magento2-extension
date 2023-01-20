@@ -13,7 +13,7 @@ class Filters extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     private $group;
     private $groupId;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -85,7 +85,7 @@ class Filters extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $collection->getSelect()->join(
             [
                 'ftg' => $this->databaseHelper
-                    ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group')
+                    ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group'),
             ],
             'ftg.filter_id=main_table.id',
             []

@@ -33,6 +33,7 @@ class SetMagentoCoreSetupValue extends Main
         $version = $this->getRequest()->getParam('version');
         if (!$version) {
             $this->messageManager->addWarning('Version is not provided.');
+
             return $this->_redirect($this->controlPanelHelper->getPageUrl());
         }
 
@@ -44,6 +45,7 @@ class SetMagentoCoreSetupValue extends Main
                     \Ess\M2ePro\Model\Setup\Upgrader::MIN_SUPPORTED_VERSION_FOR_UPGRADE
                 )
             );
+
             return $this->_redirect($this->controlPanelHelper->getPageUrl());
         }
 
@@ -51,6 +53,7 @@ class SetMagentoCoreSetupValue extends Main
         $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
 
         $this->messageManager->addSuccess($this->__('Extension upgrade was completed.'));
+
         return $this->_redirect($this->controlPanelHelper->getPageUrl());
     }
 }

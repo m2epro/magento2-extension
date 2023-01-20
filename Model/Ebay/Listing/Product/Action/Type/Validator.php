@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
+use Ess\M2ePro\Model\Factory;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
@@ -34,7 +35,18 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
      */
     protected $listingProduct = null;
 
-    //########################################
+    private $supportHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        Factory $modelFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->supportHelper = $supportHelper;
+    }
 
     /**
      * @param array $params
@@ -56,11 +68,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Configurator $configurator
+     *
      * @return $this
      */
     public function setConfigurator(Configurator $configurator)
     {
         $this->configurator = $configurator;
+
         return $this;
     }
 
@@ -76,11 +90,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -194,6 +210,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if (!$this->getEbayListingProduct()->isSetCategoryTemplate()) {
             $this->addMessage('Categories Settings are not set');
+
             return false;
         }
 
@@ -256,8 +273,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($qty <= 0) {
-            if (isset($this->params['status_changer']) &&
-                $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
+            if (
+                isset($this->params['status_changer']) &&
+                $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+            ) {
                 $message = 'You are submitting an Item with zero quantity. It contradicts eBay requirements.';
 
                 if ($this->getListingProduct()->isStoppable()) {
@@ -291,18 +310,14 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     protected function validateIsVariationProductWithoutVariations()
     {
-        if ($this->getEbayListingProduct()->isVariationMode() &&
-            !$this->getEbayListingProduct()->isVariationsReady()) {
-            $this->addMessage(
-                'M2E Pro identifies this Product as a Variational one. But no Variations can be obtained from it.
-                The problem could be related to the fact that Product Variations are not assigned to Magento Store
-                View your M2E Pro Listing is created for. In order to be processed, the Product data should be
-                available within Website that M2E Pro appeals to.
-                Another possible reason is an impact of the external plugins. The 3rd party tools override
-                Magento core functionality, therefore, prevent M2E Pro from processing the Product data correctly.
-                Make sure you have selected an appropriate Website in each Associated Product and no 3rd party
-                extension overrides your settings. Otherwise, contact M2E Pro Support Team to resolve the issue.'
-            );
+        if (
+            $this->getEbayListingProduct()->isVariationMode() &&
+            !$this->getEbayListingProduct()->isVariationsReady()
+        ) {
+            $supportLink = $this->supportHelper->getSupportUrl('/support/solutions/articles/9000223366');
+            $msg = "Unable to list the product(s) because product variations are assigned incorrectly
+                or missing for the selected Store View. <a href=\"$supportLink\" target=\"_blank\">Learn more...</a>";
+            $this->addMessage($msg);
 
             return false;
         }
@@ -336,6 +351,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                         That is why, this Product cannot be updated on eBay.
                         Please, decrease the number of Attributes to solve this issue.'
                     );
+
                     return false;
                 }
 
@@ -348,6 +364,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                         That is why, this Product cannot be updated on eBay.
                         Please, decrease the number of Options to solve this issue.'
                     );
+
                     return false;
                 }
             }
@@ -362,6 +379,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                     The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.
                     Please, decrease the number of Variations to solve this issue.'
                 );
+
                 return false;
             }
         }
@@ -374,6 +392,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 At the moment this Product is considered as Simple without any Variations,
                 that does not allow updating eBay Variational Item.'
             );
+
             return false;
         }
 
@@ -382,7 +401,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     protected function validateVariationsFixedPrice()
     {
-        if (!$this->getConfigurator()->isPriceAllowed() ||
+        if (
+            !$this->getConfigurator()->isPriceAllowed() ||
             !$this->getEbayListingProduct()->isListingTypeFixed() ||
             !$this->getEbayListingProduct()->isVariationsReady()
         ) {
@@ -418,7 +438,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     protected function validateFixedPrice()
     {
-        if (!$this->getConfigurator()->isPriceAllowed() ||
+        if (
+            !$this->getConfigurator()->isPriceAllowed() ||
             !$this->getEbayListingProduct()->isListingTypeFixed() ||
             $this->getEbayListingProduct()->isVariationsReady()
         ) {

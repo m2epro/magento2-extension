@@ -23,6 +23,7 @@ class Grid extends Template
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 

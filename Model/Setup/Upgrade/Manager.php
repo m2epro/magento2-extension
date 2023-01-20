@@ -55,7 +55,7 @@ class Manager extends AbstractModel
         $this->installer = $installer;
 
         $this->versionFrom = $versionFrom;
-        $this->versionTo   = $versionTo;
+        $this->versionTo = $versionTo;
 
         $this->configObject = $this->upgradeFactory->getConfigObject($this->versionFrom, $this->versionTo);
 
@@ -76,9 +76,9 @@ class Manager extends AbstractModel
 
         $this->backupObject = $modelFactory->getObject('Setup_Upgrade_Backup', [
             'versionFrom' => $this->versionFrom,
-            'versionTo'   => $this->versionTo,
-            'tablesList'  => $backupTables,
-            'installer'   => $this->installer,
+            'versionTo' => $this->versionTo,
+            'tablesList' => $backupTables,
+            'installer' => $this->installer,
         ]);
 
         parent::__construct($helperFactory, $modelFactory, $data);

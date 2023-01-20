@@ -12,6 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
 class Preview extends Description
 {
+    /** @var array  */
     private $description = [];
 
     protected function getLayoutType()
@@ -25,6 +26,7 @@ class Preview extends Description
 
         if (empty($this->description)) {
             $this->messageManager->addError($this->__('Description Policy data is not specified.'));
+
             return $this->getResult();
         }
 
@@ -32,6 +34,7 @@ class Preview extends Description
 
         if ($productsEntities['magento_product'] === null) {
             $this->messageManager->addError($this->__('Magento Product does not exist.'));
+
             return $this->getResult();
         }
 
@@ -61,10 +64,10 @@ class Preview extends Description
         $previewBlock = $this->getLayout()
                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview::class)
                              ->setData([
-            'title' => $productsEntities['magento_product']->getProduct()->getData('name'),
-            'magento_product_id' => $productsEntities['magento_product']->getProductId(),
-            'description' => $description
-        ]);
+                                 'title' => $productsEntities['magento_product']->getProduct()->getData('name'),
+                                 'magento_product_id' => $productsEntities['magento_product']->getProductId(),
+                                 'description' => $description,
+                             ]);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Preview Description'));
         $this->addContent($previewBlock);
@@ -77,8 +80,8 @@ class Preview extends Description
         \Ess\M2ePro\Model\Listing\Product $listingProduct = null
     ) {
         $descriptionModeProduct = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_PRODUCT;
-        $descriptionModeShort   = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_SHORT;
-        $descriptionModeCustom  = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_CUSTOM;
+        $descriptionModeShort = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_SHORT;
+        $descriptionModeCustom = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_CUSTOM;
 
         if ($this->description['description_mode'] == $descriptionModeProduct) {
             $description = $magentoProduct->getProduct()->getDescription();
@@ -98,7 +101,6 @@ class Preview extends Description
         $description = $renderer->parseTemplate($description, $magentoProduct);
 
         if ($listingProduct !== null) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer $renderer */
             $renderer = $this->modelFactory->getObject('Ebay_Listing_Product_Description_Renderer');
             $renderer->setRenderMode(\Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer::MODE_PREVIEW);
@@ -107,6 +109,7 @@ class Preview extends Description
         }
 
         $this->addWatermarkInfoToDescriptionIfNeed($description);
+
         return $description;
     }
 
@@ -125,12 +128,12 @@ class Preview extends Description
             $tag = $dom->getElementsByTagName('img')->item(0);
 
             $newTag = str_replace(' m2e_watermark="1"', '', $tagsArr[0][$i]);
-            $newTag = '<div class="description-preview-watermark-info">'.$newTag;
+            $newTag = '<div class="description-preview-watermark-info">' . $newTag;
 
             if ($tag->getAttribute('width') == '' || $tag->getAttribute('width') > 100) {
-                $newTag = $newTag.'<p>Watermark will be applied to this picture.</p></div>';
+                $newTag = $newTag . '<p>Watermark will be applied to this picture.</p></div>';
             } else {
-                $newTag = $newTag.'<p>Watermark.</p></div>';
+                $newTag = $newTag . '<p>Watermark.</p></div>';
             }
             $description = str_replace($tagsArr[0][$i], $newTag, $description);
         }
@@ -148,7 +151,7 @@ class Preview extends Description
 
         return [
             'magento_product' => $magentoProduct,
-            'listing_product' => $listingProduct
+            'listing_product' => $listingProduct,
         ];
     }
 
@@ -167,8 +170,8 @@ class Preview extends Description
     private function getListingProductByMagentoProductId($productId, $storeId)
     {
         $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')
-            ->getCollection()
-            ->addFieldToFilter('product_id', $productId);
+                                                      ->getCollection()
+                                                      ->addFieldToFilter('product_id', $productId);
 
         $listingProductCollection->getSelect()->joinLeft(
             ['ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],

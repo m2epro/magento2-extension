@@ -62,7 +62,7 @@ class Destination extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $accountCollection = $this->amazonFactory->getObject('Account')->getCollection();
         $accountCollection->setOrder('title', 'ASC');
         $accountCollection->addFieldToFilter('id', [
-            'neq' => (int)$this->getListing()->getAccount()->getId()
+            'neq' => (int)$this->getListing()->getAccount()->getId(),
         ]);
 
         return $accountCollection;
@@ -94,7 +94,7 @@ HTML
                 $this->supportHelper->getDocumentationArticleUrl('x/sH2bB')
             ),
             'style' => 'margin-top: 15px;',
-            'title' => $this->__('Sell on Another Marketplace')
+            'title' => $this->__('Sell on Another Marketplace'),
         ]);
 
         $parentHtml = parent::_toHtml();

@@ -102,24 +102,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->addColumn('product_id', [
             'header' => $this->__('Product ID'),
-            'align'  => 'left',
-            'width'  => '80px',
-            'type'   => 'number',
-            'index'  => 'product_id',
+            'align' => 'left',
+            'width' => '80px',
+            'type' => 'number',
+            'index' => 'product_id',
             'filter_index' => 'product_id',
             'frame_callback' => [$this, 'callbackColumnProductId'],
             'filter' => \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId::class,
-            'filter_condition_callback' => [$this, 'callbackFilterProductId']
+            'filter_condition_callback' => [$this, 'callbackFilterProductId'],
         ]);
 
         $this->addColumn('title', [
-            'header'    => $this->__('Title / SKU'),
+            'header' => $this->__('Title / SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
             'filter_index' => 'second_table.title',
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('gtin', [
@@ -130,7 +130,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'gtin',
             'filter_index' => 'gtin',
             'frame_callback' => [$this, 'callbackColumnGtin'],
-            'filter_condition_callback' => [$this, 'callbackFilterGtin']
+            'filter_condition_callback' => [$this, 'callbackFilterGtin'],
         ]);
 
         $this->addColumn('online_qty', [
@@ -141,7 +141,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'online_qty',
             'filter_index' => 'online_qty',
             'frame_callback' => [$this, 'callbackColumnAvailableQty'],
-            'filter_condition_callback' => [$this, 'callbackFilterQty']
+            'filter_condition_callback' => [$this, 'callbackFilterQty'],
         ]);
 
         $priceColumn = [
@@ -152,7 +152,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'online_price',
             'filter_index' => 'online_price',
             'frame_callback' => [$this, 'callbackColumnPrice'],
-            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+            'filter_condition_callback' => [$this, 'callbackFilterPrice'],
         ];
 
         $this->addColumn('online_price', $priceColumn);
@@ -167,9 +167,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'options' => [
                 Product::STATUS_LISTED => $this->__('Active'),
                 Product::STATUS_STOPPED => $this->__('Inactive'),
-                Product::STATUS_BLOCKED => $this->__('Incomplete')
+                Product::STATUS_BLOCKED => $this->__('Incomplete'),
             ],
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         return parent::_prepareColumns();
@@ -185,27 +185,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->getMassactionBlock()->setGroups([
             'mapping' => $this->__('Linking'),
-            'other'   => $this->__('Other')
+            'other' => $this->__('Other'),
         ]);
 
         // Set mass-action
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('autoMapping', [
-            'label'   => $this->__('Link Item(s) Automatically'),
-            'url'     => ''
+            'label' => $this->__('Link Item(s) Automatically'),
+            'url' => '',
         ], 'mapping');
         $this->getMassactionBlock()->addItem('moving', [
-            'label'   => $this->__('Move Item(s) to Listing'),
-            'url'     => ''
+            'label' => $this->__('Move Item(s) to Listing'),
+            'url' => '',
         ], 'other');
         $this->getMassactionBlock()->addItem('removing', [
-            'label'   => $this->__('Remove Item(s)'),
-            'url'     => ''
+            'label' => $this->__('Remove Item(s)'),
+            'url' => '',
         ], 'other');
         $this->getMassactionBlock()->addItem('unmapping', [
-            'label'   => $this->__('Unlink Item(s)'),
-            'url'     => ''
+            'label' => $this->__('Unlink Item(s)'),
+            'url' => '',
         ], 'mapping');
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -229,28 +230,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $productTitle = $this->dataHelper->escapeJs($productTitle);
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
                                     onclick="ListingOtherMappingObj.openPopUp(
-                                    '. (int)$row->getId(). ',
-                                    \''. $productTitle. '\'
+                                    ' . (int)$row->getId() . ',
+                                    \'' . $productTitle . '\'
                                     );">' . $this->__('Link') . '</a>';
 
             return $htmlValue;
         }
 
         $htmlValue = '&nbsp<a href="'
-                     .$this->getUrl(
-                         'catalog/product/edit',
-                         ['id' => $row->getData('product_id')]
-                     )
-                     .'" target="_blank">'
-                     .$row->getData('product_id')
-                     .'</a>';
+            . $this->getUrl(
+                'catalog/product/edit',
+                ['id' => $row->getData('product_id')]
+            )
+            . '" target="_blank">'
+            . $row->getData('product_id')
+            . '</a>';
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
-                      .' onclick="WalmartListingOtherGridObj.movingHandler.getGridHtml('
-                      .$this->dataHelper->jsonEncode([(int)$row->getData('id')])
-                      .')">'
-                      .$this->__('Move')
-                      .'</a>';
+            . ' onclick="WalmartListingOtherGridObj.movingHandler.getGridHtml('
+            . $this->dataHelper->jsonEncode([(int)$row->getData('id')])
+            . ')">'
+            . $this->__('Move')
+            . '</a>';
 
         return $htmlValue;
     }
@@ -262,16 +263,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($title === null) {
             $value = '<i style="color:gray;">receiving...</i>';
         } else {
-            $value = '<span>' .$this->escapeHtml($title). '</span>';
+            $value = '<span>' . $this->escapeHtml($title) . '</span>';
         }
 
         $tempSku = $row->getChildObject()->getData('sku');
         empty($tempSku) && $tempSku = $this->__('N/A');
 
         $value .= '<br/><strong>'
-                  .$this->__('SKU')
-                  .':</strong> '
-                  .$this->escapeHtml($tempSku);
+            . $this->__('SKU')
+            . ':</strong> '
+            . $this->escapeHtml($tempSku);
 
         return $value;
     }
@@ -304,11 +305,11 @@ HTML;
 HTML;
 
         $identifiers = [
-            'UPC'        => $childObject->getData('upc'),
-            'EAN'        => $childObject->getData('ean'),
-            'ISBN'       => $childObject->getData('isbn'),
+            'UPC' => $childObject->getData('upc'),
+            'EAN' => $childObject->getData('ean'),
+            'ISBN' => $childObject->getData('isbn'),
             'Walmart ID' => $childObject->getData('wpid'),
-            'Item ID'    => $childObject->getData('item_id')
+            'Item ID' => $childObject->getData('item_id'),
         ];
 
         $htmlAdditional = '';
@@ -317,11 +318,13 @@ HTML;
                 continue;
             }
 
-            if (($childObject->getData('upc') || $childObject->getData('ean') || $childObject->getData('isbn')) &&
-                ($childObject->getData('wpid') || $childObject->getData('item_id')) && $title == 'Walmart ID') {
+            if (
+                ($childObject->getData('upc') || $childObject->getData('ean') || $childObject->getData('isbn')) &&
+                ($childObject->getData('wpid') || $childObject->getData('item_id')) && $title == 'Walmart ID'
+            ) {
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
-            $identifierCode  = $this->__($title);
+            $identifierCode = $this->__($title);
             $identifierValue = $this->escapeHtml($value);
 
             $htmlAdditional .= <<<HTML
@@ -418,11 +421,11 @@ HTML;
 
         /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
         $listingOther = $this->walmartFactory
-                            ->getObjectLoaded('Listing\Other', $row->getData('id'));
+            ->getObjectLoaded('Listing\Other', $row->getData('id'));
 
         $statusChangeReasons = $listingOther->getChildObject()->getStatusChangeReasons();
 
-        return $value.$this->getStatusChangeReasons($statusChangeReasons);
+        return $value . $this->getStatusChangeReasons($statusChangeReasons);
     }
 
     protected function callbackFilterProductId($collection, $column)
@@ -470,7 +473,7 @@ HTML;
             return;
         }
 
-        $collection->getSelect()->where('second_table.title LIKE ? OR second_table.sku LIKE ?', '%'.$value.'%');
+        $collection->getSelect()->where('second_table.title LIKE ? OR second_table.sku LIKE ?', '%' . $value . '%');
     }
 
     protected function callbackFilterQty($collection, $column)
@@ -540,8 +543,8 @@ SQL;
         }
 
         $html = '<li style="margin-bottom: 5px;">'
-                . implode('</li><li style="margin-bottom: 5px;">', $statusChangeReasons)
-                . '</li>';
+            . implode('</li><li style="margin-bottom: 5px;">', $statusChangeReasons)
+            . '</li>';
 
         return <<<HTML
         <div style="display: inline-block; width: 16px; margin-left: 3px;" class="fix-magento-tooltip">
@@ -553,9 +556,11 @@ HTML;
     protected function _beforeToHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest() || $this->getRequest()->getParam('isAjax')) {
-            $this->js->addRequireJs([
-                'jQuery' => 'jquery'
-            ], <<<JS
+            $this->js->addRequireJs(
+                [
+                'jQuery' => 'jquery',
+                ],
+                <<<JS
 
             WalmartListingOtherGridObj.afterInitPage();
 JS

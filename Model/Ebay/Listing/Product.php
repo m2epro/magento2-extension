@@ -14,9 +14,9 @@ namespace Ess\M2ePro\Model\Ebay\Listing;
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
-    const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
-    const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
 
     /** @var \Ess\M2ePro\Model\Ebay\Item */
     protected $ebayItemModel = null;
@@ -102,17 +102,17 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return false;
         }
 
-        $this->ebayItemModel                       = null;
-        $this->categoryTemplateModel               = null;
-        $this->categorySecondaryTemplateModel      = null;
-        $this->storeCategoryTemplateModel          = null;
+        $this->ebayItemModel = null;
+        $this->categoryTemplateModel = null;
+        $this->categorySecondaryTemplateModel = null;
+        $this->storeCategoryTemplateModel = null;
         $this->storeCategorySecondaryTemplateModel = null;
-        $this->templateManagers                    = [];
-        $this->sellingFormatTemplateModel          = null;
-        $this->synchronizationTemplateModel        = null;
-        $this->descriptionTemplateModel            = null;
-        $this->returnTemplateModel                 = null;
-        $this->shippingTemplateModel               = null;
+        $this->templateManagers = [];
+        $this->sellingFormatTemplateModel = null;
+        $this->synchronizationTemplateModel = null;
+        $this->descriptionTemplateModel = null;
+        $this->returnTemplateModel = null;
+        $this->shippingTemplateModel = null;
 
         return parent::delete();
     }
@@ -345,6 +345,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /**
      * @param $template
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Manager
      */
     public function getTemplateManager($template)
@@ -579,6 +580,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      * @param bool $asObjects
      * @param array $filters
      * @param bool $tryToGetFromStorage
+     *
      * @return array
      */
     public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
@@ -912,6 +914,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         if (!$this->isSetCategoryTemplate() || $this->getParentObject()->isGroupedProductModeSet()) {
             $this->setData(__METHOD__, false);
+
             return false;
         }
 
@@ -1127,6 +1130,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /**
      * @param false $magentoMode
+     *
      * @return int|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -1206,12 +1210,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
             case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::BEST_OFFER_ACCEPT_MODE_ATTRIBUTE:
                 $price = (float)$this->getHelper('Magento\Attribute')
-                    ->convertAttributeTypePriceFromStoreToMarketplace(
-                        $this->getMagentoProduct(),
-                        $src['attribute'],
-                        $this->getEbayListing()->getEbayMarketplace()->getCurrency(),
-                        $this->getListing()->getStoreId()
-                    );
+                                     ->convertAttributeTypePriceFromStoreToMarketplace(
+                                         $this->getMagentoProduct(),
+                                         $src['attribute'],
+                                         $this->getEbayListing()->getEbayMarketplace()->getCurrency(),
+                                         $this->getListing()->getStoreId()
+                                     );
                 break;
         }
 
@@ -1245,12 +1249,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
             case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::BEST_OFFER_REJECT_MODE_ATTRIBUTE:
                 $price = (float)$this->getHelper('Magento\Attribute')
-                    ->convertAttributeTypePriceFromStoreToMarketplace(
-                        $this->getMagentoProduct(),
-                        $src['attribute'],
-                        $this->getEbayListing()->getEbayMarketplace()->getCurrency(),
-                        $this->getListing()->getStoreId()
-                    );
+                                     ->convertAttributeTypePriceFromStoreToMarketplace(
+                                         $this->getMagentoProduct(),
+                                         $src['attribute'],
+                                         $this->getEbayListing()->getEbayMarketplace()->getCurrency(),
+                                         $this->getListing()->getStoreId()
+                                     );
                 break;
         }
 

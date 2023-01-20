@@ -55,6 +55,7 @@ abstract class CollectionAbstract extends \Magento\Framework\Model\ResourceModel
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -85,8 +86,10 @@ abstract class CollectionAbstract extends \Magento\Framework\Model\ResourceModel
         /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
         $helper = $this->getHelper('Magento\Staging');
 
-        if ($helper->isInstalled() && $helper->isStagedTable($table) &&
-            strpos($cond, 'entity_id') !== false) {
+        if (
+            $helper->isInstalled() && $helper->isStagedTable($table) &&
+            strpos($cond, 'entity_id') !== false
+        ) {
             $linkField = $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE)
                 ? $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE)
                 : $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE);
@@ -99,6 +102,7 @@ abstract class CollectionAbstract extends \Magento\Framework\Model\ResourceModel
 
     /**
      * @param null|array $columns
+     *
      * @return $this
      */
     public function setColumns($columns = null)

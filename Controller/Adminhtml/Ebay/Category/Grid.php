@@ -18,6 +18,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
     public function execute()
     {
         $this->setAjaxContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\Grid::class));
+
         return $this->getResult();
     }
 

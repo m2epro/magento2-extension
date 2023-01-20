@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -21,8 +22,8 @@ class GetRuleConditionChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Gener
                     [
                         'data' => [
                             'js_form_object' => $request->getParam('form'),
-                            'store' => $request->getParam('store', 0)
-                        ]
+                            'store' => $request->getParam('store', 0),
+                        ],
                     ]
                 );
                 break;
@@ -31,7 +32,7 @@ class GetRuleConditionChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Gener
                 $ids = $request->getParam('selected', []);
                 if (is_array($ids)) {
                     foreach ($ids as $key => &$id) {
-                        $id = (int) $id;
+                        $id = (int)$id;
                         if ($id <= 0) {
                             unset($ids[$key]);
                         }
@@ -47,8 +48,8 @@ class GetRuleConditionChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Gener
                     'promo_widget_chooser_category_ids',
                     [
                         'data' => [
-                            'js_form_object' => $request->getParam('form')
-                        ]
+                            'js_form_object' => $request->getParam('form'),
+                        ],
                     ]
                 )->setCategoryIds($ids);
                 break;

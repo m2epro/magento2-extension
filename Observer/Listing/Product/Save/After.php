@@ -53,7 +53,7 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product\Indexer\VariationParent\Manager $manager */
         $manager = $this->modelFactory->getObject('Listing_Product_Indexer_VariationParent_Manager', [
-            'listing' => $listingProduct->getListing()
+            'listing' => $listingProduct->getListing(),
         ]);
         $manager->markInvalidated();
     }
@@ -74,8 +74,10 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
             \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
         ];
 
-        if (!$listingProduct->isObjectCreatingState() &&
-            ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses))) {
+        if (
+            !$listingProduct->isObjectCreatingState() &&
+            ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses))
+        ) {
             return;
         }
 
@@ -83,7 +85,7 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
         $ebayListingProduct = $listingProduct->getChildObject();
         $ebayListingProduct->addData(
             [
-                'item_uuid' => $ebayListingProduct->generateItemUUID()
+                'item_uuid' => $ebayListingProduct->generateItemUUID(),
             ]
         )->save();
     }

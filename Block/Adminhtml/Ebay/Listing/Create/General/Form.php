@@ -46,18 +46,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'     => 'edit_form',
+                    'id' => 'edit_form',
                     'action' => 'javascript:void(0)',
-                    'method' => 'post'
-                ]
+                    'method' => 'post',
+                ],
             ]
         );
 
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'legend'      => $this->__('General'),
-                'collapsable' => false
+                'legend' => $this->__('General'),
+                'collapsable' => false,
             ]
         );
 
@@ -88,36 +88,36 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'title',
             'text',
             [
-                'name'     => 'title',
-                'label'    => $this->__('Title'),
-                'value'    => $title,
+                'name' => 'title',
+                'label' => $this->__('Title'),
+                'value' => $title,
                 'required' => true,
-                'class'    => 'M2ePro-listing-title',
-                'tooltip'  => $this->__(
+                'class' => 'M2ePro-listing-title',
+                'tooltip' => $this->__(
                     'Create a descriptive and meaningful Title for your M2E Pro Listing. <br/>
                     This is used for reference within M2E Pro and will not appear on your eBay Listings.'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'ebay_settings_fieldset',
             [
-                'legend'      => $this->__('eBay Settings'),
-                'collapsable' => false
+                'legend' => $this->__('eBay Settings'),
+                'collapsable' => false,
             ]
         );
 
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection()
-            ->setOrder('title', 'ASC');
+                                                ->setOrder('title', 'ASC');
 
         $accountsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(
-                [
-                    'value' => 'id',
-                    'label' => 'title'
-                ]
-            );
+                           ->columns(
+                               [
+                                   'value' => 'id',
+                                   'label' => 'title',
+                               ]
+                           );
 
         $accountSelectionDisabled = false;
 
@@ -127,8 +127,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'account_id_hidden',
                 'hidden',
                 [
-                    'name'  => 'account_id',
-                    'value' => $accountId
+                    'name' => 'account_id',
+                    'value' => $accountId,
                 ]
             );
             $accountSelectionDisabled = true;
@@ -139,14 +139,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             self::SELECT,
             [
                 'data' => [
-                    'html_id'  => 'account_id',
-                    'name'     => 'account_id',
-                    'style'    => 'width: 50%;',
-                    'value'    => $accountId,
-                    'values'   => $accounts,
+                    'html_id' => 'account_id',
+                    'name' => 'account_id',
+                    'style' => 'width: 50%;',
+                    'value' => $accountId,
+                    'values' => $accounts,
                     'required' => count($accounts) > 1,
-                    'disabled' => $accountSelectionDisabled
-                ]
+                    'disabled' => $accountSelectionDisabled,
+                ],
             ]
         );
         $accountSelect->setForm($form);
@@ -157,10 +157,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'account_container',
             self::CUSTOM_CONTAINER,
             [
-                'label'    => $this->__('Account'),
-                'style'    => 'line-height: 32px; display: initial;',
+                'label' => $this->__('Account'),
+                'style' => 'line-height: 32px; display: initial;',
                 'required' => count($accounts) > 1,
-                'text'     => <<<HTML
+                'text' => <<<HTML
     <span id="account_label"></span>
     {$accountSelect->toHtml()}
 HTML
@@ -169,15 +169,15 @@ HTML
                 'after_element_html' => $this->getLayout()
                                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                              ->setData(
-                    [
-                        'id'      => 'add_account_button',
-                        'label'   => $this->__('Add Another'),
-                        'style'   => 'margin-left: 5px;' .
-                            ($isAddAccountButtonHidden ? 'display: none;' : ''),
-                        'onclick' => '',
-                        'class'   => 'primary'
-                    ]
-                )->toHtml()
+                                                 [
+                                                     'id' => 'add_account_button',
+                                                     'label' => $this->__('Add Another'),
+                                                     'style' => 'margin-left: 5px;' .
+                                                         ($isAddAccountButtonHidden ? 'display: none;' : ''),
+                                                     'onclick' => '',
+                                                     'class' => 'primary',
+                                                 ]
+                                             )->toHtml(),
             ]
         );
 
@@ -185,21 +185,21 @@ HTML
         $marketplacesCollection->getSelect()->order('main_table.sorder ASC')->order('main_table.title ASC');
 
         $marketplacesCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(
-                [
-                    'value' => 'id',
-                    'label' => 'title',
-                    'url'   => 'url'
-                ]
-            );
+                               ->columns(
+                                   [
+                                       'value' => 'id',
+                                       'label' => 'title',
+                                       'url' => 'url',
+                                   ]
+                               );
 
         if ($this->getRequest()->getParam('marketplace_id', false) !== false) {
             $fieldset->addField(
                 'marketplace_id_hidden',
                 'hidden',
                 [
-                    'name'  => 'marketplace_id',
-                    'value' => $marketplaceId
+                    'name' => 'marketplace_id',
+                    'value' => $marketplaceId,
                 ]
             );
         }
@@ -208,26 +208,26 @@ HTML
             'marketplace_id',
             self::SELECT,
             [
-                'name'     => 'marketplace_id',
-                'label'    => $this->__('Marketplace'),
-                'value'    => $marketplaceId,
-                'values'   => $this->getMarketplaces(),
-                'tooltip'  => $this->__(
+                'name' => 'marketplace_id',
+                'label' => $this->__('Marketplace'),
+                'value' => $marketplaceId,
+                'values' => $this->getMarketplaces(),
+                'tooltip' => $this->__(
                     'Choose the Marketplace you want to list on using this M2E Pro Listing.
                     Currency will be set automatically based on the Marketplace you choose.'
                 ),
                 'disabled' => $marketplaceSelectionDisabled,
-                'note'     => '<span id="marketplace_url_note"></span>',
+                'note' => '<span id="marketplace_url_note"></span>',
 
-                'field_extra_attributes' => 'style="margin-bottom: 0px"'
+                'field_extra_attributes' => 'style="margin-bottom: 0px"',
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_fieldset',
             [
-                'legend'      => $this->__('Magento Settings'),
-                'collapsable' => false
+                'legend' => $this->__('Magento Settings'),
+                'collapsable' => false,
             ]
         );
 
@@ -235,17 +235,17 @@ HTML
             'store_id',
             self::STORE_SWITCHER,
             [
-                'name'             => 'store_id',
-                'label'            => $this->__('Magento Store View'),
-                'value'            => $storeId,
-                'required'         => true,
+                'name' => 'store_id',
+                'label' => $this->__('Magento Store View'),
+                'value' => $storeId,
+                'required' => true,
                 'has_empty_option' => true,
-                'tooltip'          => $this->__(
+                'tooltip' => $this->__(
                     'Choose the Magento Store View you want to use for this M2E Pro Listing.
                      Please remember that Attribute values from the selected Store View will be used in the Listing.'
                 ),
 
-                'display_default_store_mode' => StoreSwitcher::DISPLAY_DEFAULT_STORE_MODE_DOWN
+                'display_default_store_mode' => StoreSwitcher::DISPLAY_DEFAULT_STORE_MODE_DOWN,
             ]
         );
 
@@ -274,7 +274,7 @@ HTML
                 '*/ebay_account/newAction',
                 [
                     'close_on_save' => true,
-                    'wizard'        => (bool)$this->getRequest()->getParam('wizard', false)
+                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
                 ]
             ),
             'ebay_account/newAction'
@@ -284,7 +284,7 @@ HTML
             $this->getUrl(
                 '*/ebay_synchronization_log/index',
                 [
-                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
+                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
                 ]
             ),
             'logViewUrl'
@@ -293,14 +293,14 @@ HTML
         $this->jsTranslator->addTranslations(
             [
                 'The specified Title is already used for other Listing. Listing Title must be unique.'
-                              => $this->__(
+                => $this->__(
                     'The specified Title is already used for other Listing. Listing Title must be unique.'
                 ),
                 'Account not found, please create it.'
-                              => $this->__('Account not found, please create it.'),
+                => $this->__('Account not found, please create it.'),
                 'Add Another' => $this->__('Add Another'),
                 'Please wait while Synchronization is finished.'
-                              => $this->__('Please wait while Synchronization is finished.')
+                => $this->__('Please wait while Synchronization is finished.'),
             ]
         );
 
@@ -325,18 +325,18 @@ JS
     {
         if ($this->marketplaces === null) {
             $marketplacesCollection = $this->ebayFactory->getObject('Marketplace')->getCollection()
-                ->setOrder('sorder', 'ASC')
-                ->setOrder('title', 'ASC');
+                                                        ->setOrder('sorder', 'ASC')
+                                                        ->setOrder('title', 'ASC');
 
             $this->marketplaces = [
-                ['label' => '', 'value' => '', 'attrs' => ['style' => 'display: none;']]
+                ['label' => '', 'value' => '', 'attrs' => ['style' => 'display: none;']],
             ];
 
             foreach ($marketplacesCollection->getItems() as $marketplace) {
                 $this->marketplaces[$marketplace['id']] = [
                     'label' => $marketplace['title'],
                     'value' => $marketplace['id'],
-                    'url'   => $marketplace['url']
+                    'url' => $marketplace['url'],
                 ];
             }
         }

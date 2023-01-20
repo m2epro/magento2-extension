@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -7,16 +8,11 @@
 
 namespace Ess\M2ePro\Observer\Import;
 
-/**
- * Class \Ess\M2ePro\Observer\Import\Bunch
- */
 class Bunch extends \Ess\M2ePro\Observer\AbstractModel
 {
-    //########################################
-
-    /** @var \Ess\M2ePro\PublicServices\Product\SqlChange  */
+    /** @var \Ess\M2ePro\PublicServices\Product\SqlChange */
     private $publicService;
-    /** @var \Magento\Catalog\Model\Product  */
+    /** @var \Magento\Catalog\Model\Product */
     private $magentoProduct;
 
     public function __construct(
@@ -27,7 +23,7 @@ class Bunch extends \Ess\M2ePro\Observer\AbstractModel
         \Magento\Catalog\Model\Product $magentoProduct
     ) {
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
-        $this->publicService  = $publicService;
+        $this->publicService = $publicService;
         $this->magentoProduct = $magentoProduct;
     }
 
@@ -43,7 +39,7 @@ class Bunch extends \Ess\M2ePro\Observer\AbstractModel
             }
 
             $id = $this->magentoProduct->getIdBySku($item['sku']);
-            if (intval($id) > 0) {
+            if ((int)$id > 0) {
                 $productIds[] = $id;
             }
         }

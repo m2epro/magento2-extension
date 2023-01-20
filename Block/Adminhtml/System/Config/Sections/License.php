@@ -64,8 +64,8 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             self::HELP_BLOCK,
             [
                 'no_collapse' => true,
-                'no_hide'     => true,
-                'content'     => $this->__(
+                'no_hide' => true,
+                'content' => $this->__(
                     '<p>To use M2E Pro Extension, the Clients Portal Account and License Key are required.</p><br>
 
                     <p>Clients Portal Account is created automatically based on the email address provided during the
@@ -81,21 +81,21 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
 
                     <p><strong>Note:</strong> If you need some assistance to activate your M2E Pro instance,
                     please contact Support Team at <a href="mailto:support@m2epro.com">support@m2epro.com</a>.</p>'
-                )
+                ),
             ]
         );
 
         $fieldSet = $form->addFieldset(
             'magento_block_configuration_license_data',
             [
-                'legend'      => $this->__('General'),
-                'collapsable' => false
+                'legend' => $this->__('General'),
+                'collapsable' => false,
             ]
         );
 
         $fieldData = [
             'label' => $this->__('License Key'),
-            'text'  => $this->key
+            'text' => $this->key,
         ];
 
         if ($this->key && $this->licenseData['domain'] && $this->licenseData['ip'] && !$this->status) {
@@ -113,14 +113,14 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                 'associated_email',
                 self::NOTE,
                 [
-                    'label'   => $this->__('Associated Email'),
-                    'text'    => $this->licenseData['info']['email'],
+                    'label' => $this->__('Associated Email'),
+                    'text' => $this->licenseData['info']['email'],
                     'tooltip' => $this->__(
                         'That is an e-mail address associated to your License.
                         Also, you can use this e-mail to access a
                         <a href="%url%" target="_blank" class="external-link">clients portal</a>',
                         $this->supportHelper->getClientsPortalUrl()
-                    )
+                    ),
                 ]
             );
         }
@@ -130,11 +130,11 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                 'manage_license',
                 self::LINK,
                 [
-                    'label'  => '',
-                    'value'  => $this->__('Manage License'),
-                    'href'   => $this->supportHelper->getClientsPortalUrl(),
-                    'class'  => 'external-link',
-                    'target' => '_blank'
+                    'label' => '',
+                    'value' => $this->__('Manage License'),
+                    'href' => $this->supportHelper->getClientsPortalUrl(),
+                    'class' => 'external-link',
+                    'target' => '_blank',
                 ]
             );
         }
@@ -143,8 +143,8 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             $fieldSet = $form->addFieldset(
                 'magento_block_configuration_license_valid',
                 [
-                    'legend'      => $this->__('Valid Location'),
-                    'collapsable' => false
+                    'legend' => $this->__('Valid Location'),
+                    'collapsable' => false,
                 ]
             );
 
@@ -165,7 +165,7 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                     self::NOTE,
                     [
                         'label' => $this->__('Domain'),
-                        'text'  => $text
+                        'text' => $text,
                     ]
                 );
             }
@@ -186,9 +186,9 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                     'ip_field',
                     self::NOTE,
                     [
-                        'label'              => $this->__('IP(s)'),
-                        'text'               => $text,
-                        'after_element_html' => $this->getChildHtml('refresh_status')
+                        'label' => $this->__('IP(s)'),
+                        'text' => $text,
+                        'after_element_html' => $this->getChildHtml('refresh_status'),
                     ]
                 );
             }
@@ -197,8 +197,8 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
         $fieldSet = $form->addFieldset(
             'magento_block_configuration_license',
             [
-                'legend'      => $this->__($this->key == '' ? 'General' : 'Additional'),
-                'collapsable' => false
+                'legend' => $this->__($this->key == '' ? 'General' : 'Additional'),
+                'collapsable' => false,
             ]
         );
 
@@ -207,7 +207,7 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'note',
             [
                 'text' => '<span style="padding-right: 10px;">' . $this->getChildHtml('new_license') . '</span>'
-                    . '<span>' . $this->getChildHtml('change_license') . '</span>'
+                    . '<span>' . $this->getChildHtml('change_license') . '</span>',
             ]
         );
 
@@ -223,44 +223,44 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
         $this->status = $this->licenseHelper->getStatus();
 
         $this->licenseData = [
-            'domain'     => $this->dataHelper->escapeHtml($this->licenseHelper->getDomain()),
-            'ip'         => $this->dataHelper->escapeHtml($this->licenseHelper->getIp()),
-            'info'       => [
+            'domain' => $this->dataHelper->escapeHtml($this->licenseHelper->getDomain()),
+            'ip' => $this->dataHelper->escapeHtml($this->licenseHelper->getIp()),
+            'info' => [
                 'email' => $this->dataHelper->escapeHtml($this->licenseHelper->getEmail()),
             ],
-            'valid'      => [
+            'valid' => [
                 'domain' => $this->licenseHelper->isValidDomain(),
-                'ip'     => $this->licenseHelper->isValidIp()
+                'ip' => $this->licenseHelper->isValidIp(),
             ],
             'connection' => [
-                'domain'    => $this->clientHelper->getDomain(),
-                'ip'        => $this->clientHelper->getIp(),
-                'directory' => $this->clientHelper->getBaseDirectory()
-            ]
+                'domain' => $this->clientHelper->getDomain(),
+                'ip' => $this->clientHelper->getIp(),
+                'directory' => $this->clientHelper->getBaseDirectory(),
+            ],
         ];
 
         $data = [
-            'label'   => $this->__('Refresh'),
+            'label' => $this->__('Refresh'),
             'onclick' => 'LicenseObj.refreshStatus();',
-            'class'   => 'refresh_status primary',
-            'style'   => 'margin-left: 2rem'
+            'class' => 'refresh_status primary',
+            'style' => 'margin-left: 2rem',
         ];
         $buttonBlock = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData($data);
+                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                            ->setData($data);
         $this->setChild('refresh_status', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $label = $this->key == '' ? 'Use Existing License' : 'Change License';
         $data = [
-            'label'   => $this->__($label),
+            'label' => $this->__($label),
             'onclick' => 'LicenseObj.changeLicenseKeyPopup();',
-            'class'   => 'change_license primary'
+            'class' => 'change_license primary',
         ];
         $buttonBlock = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData($data);
+                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                            ->setData($data);
         $this->setChild('change_license', $buttonBlock);
     }
 
@@ -276,9 +276,9 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
 
         $this->jsTranslator->addTranslations(
             [
-                'Use Existing License'  => $this->__('Use Existing License'),
-                'Cancel'                => $this->__('Cancel'),
-                'Confirm'               => $this->__('Confirm'),
+                'Use Existing License' => $this->__('Use Existing License'),
+                'Cancel' => $this->__('Cancel'),
+                'Confirm' => $this->__('Confirm'),
                 'Internal Server Error' => $this->__('Internal Server Error'),
             ]
         );
@@ -289,7 +289,7 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
 
         $this->js->addRequireJs(
             [
-                'l' => 'M2ePro/Settings/License'
+                'l' => 'M2ePro/Settings/License',
             ],
             <<<JS
 window.LicenseObj = new License();

@@ -26,6 +26,7 @@ class JsPhpRenderer extends AbstractRenderer
     public function addConstants($constants)
     {
         $this->jsPhp = array_merge($this->jsPhp, $constants);
+
         return $this;
     }
 

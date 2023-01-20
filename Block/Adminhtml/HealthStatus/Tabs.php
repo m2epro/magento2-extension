@@ -11,13 +11,10 @@ namespace Ess\M2ePro\Block\Adminhtml\HealthStatus;
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 use Ess\M2ePro\Model\HealthStatus\Task\InfoType;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
-    const TAB_ID_DASHBOARD     = 'dashboard';
-    const TAB_ID_NOTIFICATIONS = 'notifications';
+    public const TAB_ID_DASHBOARD = 'dashboard';
+    public const TAB_ID_NOTIFICATIONS = 'notifications';
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Set */
     private $resultSet;
@@ -60,14 +57,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
             \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Dashboard::class,
             '',
             [
-            'resultSet' => $resultSet
+                'resultSet' => $resultSet,
             ]
         );
 
         $this->addTab(self::TAB_ID_DASHBOARD, [
-            'label'   => $this->__('Dashboard'),
-            'title'   => $this->__('Dashboard'),
-            'content' => $tabObj->toHtml()
+            'label' => $this->__('Dashboard'),
+            'title' => $this->__('Dashboard'),
+            'content' => $tabObj->toHtml(),
         ]);
         // ---------------------------------------
 
@@ -85,16 +82,18 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
             }
 
             $resultSet = clone $this->resultSet;
-            $resultSet->fill($this->resultSet->getByTab(
-                $this->resultSet->getTabKey($result)
-            ));
+            $resultSet->fill(
+                $this->resultSet->getByTab(
+                    $this->resultSet->getTabKey($result)
+                )
+            );
 
             /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup $tabObj */
             $tabObj = $this->getLayout()->createBlock(
                 \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup::class,
                 '',
                 [
-                'resultSet' => $resultSet
+                    'resultSet' => $resultSet,
                 ]
             );
 
@@ -104,10 +103,10 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
             $resultSet->isNotice() && $tabClass = 'health-status-tab-notice';
 
             $this->addTab('issue_tab_' . $resultSet->getTabKey($result), [
-                'label'   => $this->__($result->getTabName()),
-                'title'   => $this->__($result->getTabName()),
+                'label' => $this->__($result->getTabName()),
+                'title' => $this->__($result->getTabName()),
                 'content' => $tabObj->toHtml(),
-                'class'   => $tabClass
+                'class' => $tabClass,
             ]);
 
             $createdTabs[] = $result->getTabName();
@@ -119,9 +118,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $tabObj = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Notifications::class);
 
         $this->addTab(self::TAB_ID_NOTIFICATIONS, [
-            'label'   => $this->__('Notification Settings'),
-            'title'   => $this->__('Notification Settings'),
-            'content' => $tabObj->toHtml()
+            'label' => $this->__('Notification Settings'),
+            'title' => $this->__('Notification Settings'),
+            'content' => $tabObj->toHtml(),
         ]);
         // ---------------------------------------
 

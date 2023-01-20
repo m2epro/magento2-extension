@@ -68,23 +68,23 @@ class Form extends AbstractContainer
 
         $data = [
             'class' => 'primary',
-            'label'   => $this->__('Edit'),
+            'label' => $this->__('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
         ];
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                         ->setData($data);
+                            ->setData($data);
         $this->setChild('edit_shipping_info', $buttonBlock);
 
         // ---------------------------------------
         if ($magentoOrder !== null && $magentoOrder->hasShipments()) {
             $url = $this->getUrl('*/order/resubmitShippingInfo', ['id' => $this->order->getId()]);
             $data = [
-                'class'   => 'primary',
-                'label'   => $this->__('Resend Shipping Information'),
-                'onclick' => 'setLocation(\''.$url.'\');',
+                'class' => 'primary',
+                'label' => $this->__('Resend Shipping Information'),
+                'onclick' => 'setLocation(\'' . $url . '\');',
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('resubmit_shipping_info', $buttonBlock);
         }
         // ---------------------------------------
@@ -98,13 +98,13 @@ class Form extends AbstractContainer
         $this->shippingAddress['country_name'] = $shippingAddress->getCountryName();
         // ---------------------------------------
         $buttonAddNoteBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'label'   => $this->__('Add Note'),
-                    'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
-                    'class'   => 'order_note_btn',
-                ]
-            );
+                                   ->setData(
+                                       [
+                                           'label' => $this->__('Add Note'),
+                                           'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
+                                           'class' => 'order_note_btn',
+                                       ]
+                                   );
 
         $this->jsUrl->addUrls([
             'order/getDebugInformation' => $this->getUrl(
@@ -125,19 +125,24 @@ class Form extends AbstractContainer
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
-        $this->setChild('shipping_address',
+        $this->setChild(
+            'shipping_address',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\Edit\ShippingAddress::class)
         );
-        $this->setChild('item',
+        $this->setChild(
+            'item',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order\View\Item::class)
         );
-        $this->setChild('item_edit',
+        $this->setChild(
+            'item_edit',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Edit::class)
         );
-        $this->setChild('log',
+        $this->setChild(
+            'log',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid::class)
         );
-        $this->setChild('order_note_grid',
+        $this->setChild(
+            'order_note_grid',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class)
         );
         $this->setChild('add_note_button', $buttonAddNoteBlock);
@@ -198,7 +203,8 @@ class Form extends AbstractContainer
         $orderNoteGridId = $this->getChildBlock('order_note_grid')->getId();
         $this->jsTranslator->add('Custom Note', $this->__('Custom Note'));
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order/Note',
     ], function(){

@@ -43,12 +43,13 @@ class UpdateDiscountProfiles extends Template
                 $profiles[] = [
                     'type' => $this->dataHelper->escapeHtml($profile['type']),
                     'profile_id' => $this->dataHelper->escapeHtml($profile['profile_id']),
-                    'profile_name' => $this->dataHelper->escapeHtml($profile['profile_name'])
+                    'profile_name' => $this->dataHelper->escapeHtml($profile['profile_name']),
                 ];
             }
         }
 
         $this->setJsonContent($profiles);
+
         return $this->getResult();
     }
 }

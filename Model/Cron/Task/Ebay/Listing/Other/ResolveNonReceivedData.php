@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other;
 
 class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/listing/other/resolve_nonReceived_data';
+    public const NICK = 'ebay/listing/other/resolve_nonReceived_data';
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
@@ -76,11 +76,11 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             $this->getOperationHistory()->addTimePoint(
-                __METHOD__.'process'.$account->getId(),
-                'Get and process SKUs for Account '.$account->getTitle()
+                __METHOD__ . 'process' . $account->getId(),
+                'Get and process SKUs for Account ' . $account->getTitle()
             );
 
             try {
@@ -95,7 +95,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $this->processTaskException($exception);
             }
 
-            $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
         }
     }
 
@@ -132,6 +132,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         if (empty($receivedData['items'])) {
             $this->updateNotReceivedItems($listingOthers, null);
+
             return;
         }
 
@@ -145,6 +146,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      * @param \Ess\M2ePro\Model\Listing\Other[] $listingOthers
      * @param \Ess\M2ePro\Model\Account $account
      * @param array $items
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function updateReceivedItems($listingOthers, \Ess\M2ePro\Model\Account $account, array $items)
@@ -161,14 +163,14 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $listingOther = $listingOthers[$item['id']];
 
             $newData = [
-                'sku' => (string)$item['sku']
+                'sku' => (string)$item['sku'],
             ];
 
             if (!empty($item['categories'])) {
                 $categories = [
-                    'category_main_id'            => 0,
-                    'category_secondary_id'       => 0,
-                    'store_category_main_id'      => 0,
+                    'category_main_id' => 0,
+                    'category_secondary_id' => 0,
+                    'store_category_main_id' => 0,
                     'store_category_secondary_id' => 0,
                 ];
 
@@ -185,7 +187,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $listingOther->getMarketplaceId()
                 );
 
-                $newData['online_main_category'] = $categoryPath.' ('.$categories['category_main_id'].')';
+                $newData['online_main_category'] = $categoryPath . ' (' . $categories['category_main_id'] . ')';
                 $newData['online_categories_data'] = $this->helperData->jsonEncode($categories);
             }
 
@@ -216,7 +218,8 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $startDateTimestamp = (int)$this->helperData
                 ->createGmtDateTime($ebayListingOther->getStartDate())
                 ->format('U');
-            if ($toTimeReceived !== null &&
+            if (
+                $toTimeReceived !== null &&
                 $startDateTimestamp >= (int)$this->helperData->createGmtDateTime($toTimeReceived)->format('U')
             ) {
                 continue;
@@ -239,11 +242,12 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $sinceTime = $sinceTime->format('Y-m-d H:i:s');
 
         $inputData = [
-            'since_time'    => $sinceTime,
+            'since_time' => $sinceTime,
             'only_one_page' => true,
-            'realtime'      => true
+            'realtime' => true,
         ];
 
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'inventory',

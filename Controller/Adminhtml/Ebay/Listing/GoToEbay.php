@@ -26,7 +26,7 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_other');
+            $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_other');
     }
 
     public function execute()
@@ -38,12 +38,13 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         if ($itemId === null || $accountId === null || $marketplaceId === null) {
             $this->messageManager->addError($this->__('Requested eBay Item ID is not found.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
         $accountMode = $this->ebayFactory->getObjectLoaded('Account', $accountId)
-            ->getChildObject()
-            ->getMode();
+                                         ->getChildObject()
+                                         ->getMode();
 
         $url = $this->ebayHelper->getItemUrl(
             $itemId,

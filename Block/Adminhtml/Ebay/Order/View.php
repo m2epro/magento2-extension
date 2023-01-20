@@ -34,7 +34,7 @@ class View extends AbstractContainer
 
         $this->setId('ebayOrderView');
         $this->_controller = 'adminhtml_ebay_order';
-        $this->_mode       = 'view';
+        $this->_mode = 'view';
 
         /** @var \Ess\M2ePro\Model\Order $order */
         $order = $this->globalDataHelper->getValue('order');
@@ -48,9 +48,9 @@ class View extends AbstractContainer
 
         $url = $this->dataHelper->getBackUrl('*/ebay_order/index');
         $this->addButton('back', [
-            'label'   => $this->__('Back'),
+            'label' => $this->__('Back'),
             'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
-            'class'   => 'back',
+            'class' => 'back',
         ]);
 
         $isCanceled = $order->getChildObject()->isCanceled();
@@ -58,55 +58,55 @@ class View extends AbstractContainer
         if ($order->getChildObject()->canUpdateShippingStatus() && !$isCanceled) {
             $url = $this->getUrl('*/*/updateShippingStatus', ['id' => $order->getId()]);
             $this->addButton('ship', [
-                'label'   => $this->__('Mark as Shipped'),
+                'label' => $this->__('Mark as Shipped'),
                 'onclick' => "setLocation('" . $url . "');",
-                'class'   => 'primary',
+                'class' => 'primary',
             ]);
         }
 
         if ($order->getChildObject()->canUpdatePaymentStatus() && !$isCanceled) {
             $url = $this->getUrl('*/*/updatePaymentStatus', ['id' => $order->getId()]);
             $this->addButton('pay', [
-                'label'   => $this->__('Mark as Paid'),
+                'label' => $this->__('Mark as Paid'),
                 'onclick' => "setLocation('" . $url . "');",
-                'class'   => 'primary',
+                'class' => 'primary',
             ]);
         }
 
         if ($order->getReserve()->isPlaced()) {
             $url = $this->getUrl('*/order/reservationCancel', ['ids' => $order->getId()]);
             $this->addButton('reservation_cancel', [
-                'label'   => $this->__('Cancel QTY Reserve'),
+                'label' => $this->__('Cancel QTY Reserve'),
                 'onclick' => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '" . $url . "');",
-                'class'   => 'primary',
+                'class' => 'primary',
             ]);
         } elseif ($order->isReservable() && !$isCanceled) {
             $url = $this->getUrl('*/order/reservationPlace', ['ids' => $order->getId()]);
             $this->addButton('reservation_place', [
-                'label'   => $this->__('Reserve QTY'),
+                'label' => $this->__('Reserve QTY'),
                 'onclick' => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '" . $url . "');",
-                'class'   => 'primary',
+                'class' => 'primary',
             ]);
         }
 
         if ($order->getMagentoOrderId() === null && !$isCanceled) {
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $order->getId()]);
             $this->addButton('order', [
-                'label'   => $this->__('Create Magento Order'),
+                'label' => $this->__('Create Magento Order'),
                 'onclick' => "setLocation('" . $url . "');",
-                'class'   => 'primary',
+                'class' => 'primary',
             ]);
         } elseif ($order->getMagentoOrder() === null || $order->getMagentoOrder()->isCanceled()) {
             // ---------------------------------------
-            $url     = $this->getUrl('*/*/createMagentoOrder', ['id' => $order->getId(), 'force' => 'yes']);
+            $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $order->getId(), 'force' => 'yes']);
             $confirm = $this->dataHelper->escapeJs(
                 $this->__('Are you sure that you want to create new Magento Order?')
             );
 
             $this->addButton('order', [
-                'label'   => $this->__('Create Magento Order'),
+                'label' => $this->__('Create Magento Order'),
                 'onclick' => "confirmSetLocation('" . $confirm . "','" . $url . "');",
-                'class'   => 'primary',
+                'class' => 'primary',
             ]);
         }
     }

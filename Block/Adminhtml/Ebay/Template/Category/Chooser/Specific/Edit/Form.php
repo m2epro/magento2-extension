@@ -9,9 +9,9 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary as RendererDictionary;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary as ElementDictionary;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Custom as ElementCustom;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary as RendererDictionary;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary as ElementDictionary;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Custom as ElementCustom;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Edit\Form
@@ -33,11 +33,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $form = $this->_formFactory->create([
             'data' => [
-                'id'      => 'edit_specifics_form',
-                'action'  => '',
-                'method'  => 'post',
-                'enctype' => 'multipart/form-data'
-            ]
+                'id' => 'edit_specifics_form',
+                'action' => '',
+                'method' => 'post',
+                'enctype' => 'multipart/form-data',
+            ],
         ]);
 
         $formData = $this->getData('form_data');
@@ -46,8 +46,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $fieldset = $form->addFieldset(
                 'dictionary',
                 [
-                    'legend'      => $this->__('eBay Specifics'),
-                    'collapsable' => false
+                    'legend' => $this->__('eBay Specifics'),
+                    'collapsable' => false,
                 ]
             );
 
@@ -65,8 +65,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'custom',
             [
-                'legend'      => $this->__('Additional Specifics'),
-                'collapsable' => false
+                'legend' => $this->__('Additional Specifics'),
+                'collapsable' => false,
             ]
         );
 

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Processing;
  */
 abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MAX_LIFETIME = 86400;
+    public const MAX_LIFETIME = 86400;
 
     /** @var \Ess\M2ePro\Model\Processing $processingObject */
     protected $processingObject = null;
@@ -57,6 +57,7 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
     public function setParams(array $params)
     {
         $this->params = $params;
+
         return $this;
     }
 

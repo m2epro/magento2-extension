@@ -29,8 +29,8 @@ class Remap extends \Ess\M2ePro\Controller\Adminhtml\Listing
         if (!$magentoProduct->exists()) {
             $this->setJsonContent(
                 [
-                    'result'  => false,
-                    'message' => $this->__('Product does not exist.')
+                    'result' => false,
+                    'message' => $this->__('Product does not exist.'),
                 ]
             );
 
@@ -46,16 +46,19 @@ class Remap extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->activeRecordFactory->getObject('Listing_Product')->getCollection()
-            ->addFieldToFilter('listing_id', $listingProductInstance->getListingId())
-            ->addFieldToFilter('product_id', $productId);
+                                                              ->addFieldToFilter(
+                                                                  'listing_id',
+                                                                  $listingProductInstance->getListingId()
+                                                              )
+                                                              ->addFieldToFilter('product_id', $productId);
 
         if (!$listingProductCollection->getFirstItem()->isEmpty()) {
             $this->setJsonContent(
                 [
-                    'result'  => false,
+                    'result' => false,
                     'message' => $this->__(
                         'Item cannot be linked to Magento Product that already exists in the Listing.'
-                    )
+                    ),
                 ]
             );
 
@@ -65,10 +68,10 @@ class Remap extends \Ess\M2ePro\Controller\Adminhtml\Listing
         if ($listingProductInstance->isSetProcessingLock()) {
             $this->setJsonContent(
                 [
-                    'result'  => false,
+                    'result' => false,
                     'message' => $this->__(
                         'Another Action is being processed. Please wait until the Action is completed.'
-                    )
+                    ),
                 ]
             );
 
@@ -79,8 +82,8 @@ class Remap extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         $this->setJsonContent(
             [
-                'result'  => true,
-                'message' => $this->__('Product(s) was Linked.')
+                'result' => true,
+                'message' => $this->__('Product(s) was Linked.'),
             ]
         );
 

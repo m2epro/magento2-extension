@@ -17,7 +17,7 @@ class CheckMagentoProductId extends Description
         $productId = $this->getRequest()->getParam('product_id', -1);
 
         $this->setJsonContent([
-            'result' => $this->isMagentoProductExists($productId)
+            'result' => $this->isMagentoProductExists($productId),
         ]);
 
         return $this->getResult();

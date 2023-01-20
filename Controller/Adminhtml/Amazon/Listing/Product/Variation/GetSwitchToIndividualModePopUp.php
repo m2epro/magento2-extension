@@ -18,7 +18,9 @@ class GetSwitchToIndividualModePopUp extends Main
     public function execute()
     {
         $block = $this->getLayout()
-          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\SwitchToIndividualPopup::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\SwitchToIndividualPopup::class
+                      );
 
         $this->setAjaxContent($block);
 

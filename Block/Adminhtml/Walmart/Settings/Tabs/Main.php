@@ -56,7 +56,7 @@ In this section, you can configure the general settings for interaction between
 M2E Pro and Walmart Marketplaces including SKU, Product Identifiers, image URL settings.
 Click <strong>Save</strong> after the changes are made.
 HTML
-                    )
+                    ),
                 ]
             );
         }
@@ -72,8 +72,8 @@ HTML
         $fieldset = $form->addFieldset(
             'sku_settings_fieldset',
             [
-                'legend'      => $this->__('SKU Settings'),
-                'collapsable' => false
+                'legend' => $this->__('SKU Settings'),
+                'collapsable' => false,
             ]
         );
 
@@ -81,16 +81,18 @@ HTML
             'sku_custom_attribute',
             'hidden',
             [
-                'name'  => 'sku_custom_attribute',
-                'value' => $configurationHelper->getSkuCustomAttribute()
+                'name' => 'sku_custom_attribute',
+                'value' => $configurationHelper->getSkuCustomAttribute(),
             ]
         );
 
         $preparedAttributes = [];
         foreach ($textAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($configurationHelper->isSkuModeCustomAttribute() &&
-                $attribute['code'] == $configurationHelper->getSkuCustomAttribute()) {
+            if (
+                $configurationHelper->isSkuModeCustomAttribute() &&
+                $attribute['code'] == $configurationHelper->getSkuCustomAttribute()
+            ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
@@ -104,28 +106,27 @@ HTML
             'sku_mode',
             self::SELECT,
             [
-                'name'                     => 'sku_mode',
-                'label'                    => $this->__('Source'),
-                'values'                   => [
+                'name' => 'sku_mode',
+                'label' => $this->__('Source'),
+                'values' => [
                     ConfigurationHelper::SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
-                    ConfigurationHelper::SKU_MODE_DEFAULT    => $this->__('Product SKU'),
+                    ConfigurationHelper::SKU_MODE_DEFAULT => $this->__('Product SKU'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => !$configurationHelper->isSkuModeCustomAttribute(
-                ) ? $configurationHelper->getSkuMode() : '',
+                'value' => !$configurationHelper->isSkuModeCustomAttribute() ? $configurationHelper->getSkuMode() : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     'SKU is a unique identifier for each Item in your catalog. Select Attribute where the SKU values
                      are stored.<br/>
                      <b>Note:</b> SKU is required when you create a new offer on Walmart.
                      Must be less than 50 characters.'
-                )
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -133,19 +134,20 @@ HTML
             'sku_modification_mode',
             self::SELECT,
             [
-                'label'   => $this->__('Modification'),
-                'name'    => 'sku_modification_mode',
-                'values'  => [
-                    ConfigurationHelper::SKU_MODIFICATION_MODE_NONE     => $this->__('None'),
-                    ConfigurationHelper::SKU_MODIFICATION_MODE_PREFIX   => $this->__('Prefix'),
-                    ConfigurationHelper::SKU_MODIFICATION_MODE_POSTFIX  => $this->__('Postfix'),
+                'label' => $this->__('Modification'),
+                'name' => 'sku_modification_mode',
+                'values' => [
+                    ConfigurationHelper::SKU_MODIFICATION_MODE_NONE => $this->__('None'),
+                    ConfigurationHelper::SKU_MODIFICATION_MODE_PREFIX => $this->__('Prefix'),
+                    ConfigurationHelper::SKU_MODIFICATION_MODE_POSTFIX => $this->__('Postfix'),
                     ConfigurationHelper::SKU_MODIFICATION_MODE_TEMPLATE => $this->__('Template'),
                 ],
-                'value'   => $configurationHelper->getSkuModificationMode(),
-                'tooltip' => $this->__(<<<HTML
+                'value' => $configurationHelper->getSkuModificationMode(),
+                'tooltip' => $this->__(
+                    <<<HTML
     Select one of the available options to modify the SKU value taken from the Source Attribute.
 HTML
-                )
+                ),
             ]
         );
 
@@ -158,14 +160,14 @@ HTML
             'sku_modification_custom_value',
             'text',
             [
-                'container_id'           => 'sku_modification_custom_value_tr',
-                'label'                  => $this->__('Modification Value'),
+                'container_id' => 'sku_modification_custom_value_tr',
+                'label' => $this->__('Modification Value'),
                 'field_extra_attributes' => $fieldStyle,
-                'name'                   => 'sku_modification_custom_value',
-                'value'                  => $configurationHelper->getSkuModificationCustomValue(),
-                'class'                  => 'M2ePro-validate-sku-modification-custom-value
+                'name' => 'sku_modification_custom_value',
+                'value' => $configurationHelper->getSkuModificationCustomValue(),
+                'class' => 'M2ePro-validate-sku-modification-custom-value
                             M2ePro-validate-sku-modification-custom-value-max-length',
-                'required'               => true
+                'required' => true,
             ]
         );
 
@@ -173,17 +175,17 @@ HTML
             'generate_sku_mode',
             self::SELECT,
             [
-                'label'   => $this->__('Generate'),
-                'name'    => 'generate_sku_mode',
-                'values'  => [
+                'label' => $this->__('Generate'),
+                'name' => 'generate_sku_mode',
+                'values' => [
                     0 => $this->__('No'),
-                    1 => $this->__('Yes')
+                    1 => $this->__('Yes'),
                 ],
-                'value'   => $configurationHelper->getGenerateSkuMode(),
+                'value' => $configurationHelper->getGenerateSkuMode(),
                 'tooltip' => $this->__(
                     'Enable to automatically generate another SKU value if Item SKU that you submit to the Channel
                     already exists in your Walmart Inventory.'
-                )
+                ),
             ]
         );
 
@@ -192,8 +194,8 @@ HTML
         $fieldset = $form->addFieldset(
             'identifiers_settings_fieldset',
             [
-                'legend'      => $this->__('Product Identifiers'),
-                'collapsable' => false
+                'legend' => $this->__('Product Identifiers'),
+                'collapsable' => false,
             ]
         );
 
@@ -201,8 +203,8 @@ HTML
             'upc_custom_attribute',
             'hidden',
             [
-                'name'  => 'upc_custom_attribute',
-                'value' => $configurationHelper->getUpcCustomAttribute()
+                'name' => 'upc_custom_attribute',
+                'value' => $configurationHelper->getUpcCustomAttribute(),
             ]
         );
 
@@ -210,11 +212,13 @@ HTML
 
         $warningToolTip = '';
 
-        if ($configurationHelper->isUpcModeCustomAttribute() &&
+        if (
+            $configurationHelper->isUpcModeCustomAttribute() &&
             !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getUpcCustomAttribute(),
                 $textAttributes
-            ) && $this->getData('upc_custom_attribute') != '') {
+            ) && $this->getData('upc_custom_attribute') != ''
+        ) {
             $warningText = $this->__(
                 <<<HTML
     Selected Magento Attribute is invalid.
@@ -238,14 +242,16 @@ HTML
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::UPC_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper
-                    ->getAttributeLabel($configurationHelper->getUpcCustomAttribute())
+                    ->getAttributeLabel($configurationHelper->getUpcCustomAttribute()),
             ];
         }
 
         foreach ($textAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($configurationHelper->isUpcModeCustomAttribute() &&
-                $attribute['code'] == $configurationHelper->getUpcCustomAttribute()) {
+            if (
+                $configurationHelper->isUpcModeCustomAttribute() &&
+                $attribute['code'] == $configurationHelper->getUpcCustomAttribute()
+            ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
@@ -259,29 +265,28 @@ HTML
             'upc_mode',
             self::SELECT,
             [
-                'name'                     => 'upc_mode',
-                'label'                    => $this->__('UPC'),
-                'class'                    => 'M2ePro-walmart-required-identifier-setting',
-                'values'                   => [
+                'name' => 'upc_mode',
+                'label' => $this->__('UPC'),
+                'class' => 'M2ePro-walmart-required-identifier-setting',
+                'values' => [
                     ConfigurationHelper::UPC_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => !$configurationHelper->isUpcModeCustomAttribute(
-                ) ? $configurationHelper->getUpcMode() : '',
+                'value' => !$configurationHelper->isUpcModeCustomAttribute() ? $configurationHelper->getUpcMode() : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     'Walmart uses Product IDs to associate your Item with its catalog. Select Attribute where the UPC
                      values are stored.<br>
                      <strong>Note:</strong> At least one Product ID has to be specified when you create
                      a new offer on Walmart.'
                 ),
-                'after_element_html'       => $warningToolTip
+                'after_element_html' => $warningToolTip,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -290,8 +295,8 @@ HTML
             'ean_custom_attribute',
             'hidden',
             [
-                'name'  => 'ean_custom_attribute',
-                'value' => $configurationHelper->getEanCustomAttribute()
+                'name' => 'ean_custom_attribute',
+                'value' => $configurationHelper->getEanCustomAttribute(),
             ]
         );
 
@@ -299,11 +304,13 @@ HTML
 
         $warningToolTip = '';
 
-        if ($configurationHelper->isEanModeCustomAttribute() &&
+        if (
+            $configurationHelper->isEanModeCustomAttribute() &&
             !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getEanCustomAttribute(),
                 $textAttributes
-            ) && $this->getData('ean_custom_attribute') != '') {
+            ) && $this->getData('ean_custom_attribute') != ''
+        ) {
             $warningText = $this->__(
                 <<<HTML
     Selected Magento Attribute is invalid.
@@ -327,14 +334,16 @@ HTML
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::EAN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper
-                    ->getAttributeLabel($configurationHelper->getEanCustomAttribute())
+                    ->getAttributeLabel($configurationHelper->getEanCustomAttribute()),
             ];
         }
 
         foreach ($textAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($configurationHelper->isEanModeCustomAttribute() &&
-                $attribute['code'] == $configurationHelper->getEanCustomAttribute()) {
+            if (
+                $configurationHelper->isEanModeCustomAttribute() &&
+                $attribute['code'] == $configurationHelper->getEanCustomAttribute()
+            ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
@@ -348,29 +357,28 @@ HTML
             'ean_mode',
             self::SELECT,
             [
-                'name'                     => 'ean_mode',
-                'label'                    => $this->__('EAN'),
-                'class'                    => 'M2ePro-walmart-required-identifier-setting',
-                'values'                   => [
+                'name' => 'ean_mode',
+                'label' => $this->__('EAN'),
+                'class' => 'M2ePro-walmart-required-identifier-setting',
+                'values' => [
                     ConfigurationHelper::EAN_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => !$configurationHelper->isEanModeCustomAttribute(
-                ) ? $configurationHelper->getEanMode() : '',
+                'value' => !$configurationHelper->isEanModeCustomAttribute() ? $configurationHelper->getEanMode() : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     'Walmart uses Product IDs to associate your Item with its catalog. Select Attribute where the EAN
                      values are stored.<br>
                     <strong>Note:</strong> At least one Product ID has to be specified when you create a new
                     offer on Walmart.'
                 ),
-                'after_element_html'       => $warningToolTip
+                'after_element_html' => $warningToolTip,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -379,8 +387,8 @@ HTML
             'gtin_custom_attribute',
             'hidden',
             [
-                'name'  => 'gtin_custom_attribute',
-                'value' => $configurationHelper->getGtinCustomAttribute()
+                'name' => 'gtin_custom_attribute',
+                'value' => $configurationHelper->getGtinCustomAttribute(),
             ]
         );
 
@@ -388,11 +396,13 @@ HTML
 
         $warningToolTip = '';
 
-        if ($configurationHelper->isGtinModeCustomAttribute() &&
+        if (
+            $configurationHelper->isGtinModeCustomAttribute() &&
             !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getGtinCustomAttribute(),
                 $textAttributes
-            ) && $this->getData('gtin_custom_attribute') != '') {
+            ) && $this->getData('gtin_custom_attribute') != ''
+        ) {
             $warningText = $this->__(
                 <<<HTML
     Selected Magento Attribute is invalid.
@@ -416,14 +426,16 @@ HTML
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::GTIN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper
-                    ->getAttributeLabel($configurationHelper->getGtinCustomAttribute())
+                    ->getAttributeLabel($configurationHelper->getGtinCustomAttribute()),
             ];
         }
 
         foreach ($textAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($configurationHelper->isGtinModeCustomAttribute() &&
-                $attribute['code'] == $configurationHelper->getGtinCustomAttribute()) {
+            if (
+                $configurationHelper->isGtinModeCustomAttribute() &&
+                $attribute['code'] == $configurationHelper->getGtinCustomAttribute()
+            ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
@@ -437,29 +449,29 @@ HTML
             'gtin_mode',
             self::SELECT,
             [
-                'name'                     => 'gtin_mode',
-                'label'                    => $this->__('GTIN'),
-                'class'                    => 'M2ePro-walmart-required-identifier-setting',
-                'values'                   => [
+                'name' => 'gtin_mode',
+                'label' => $this->__('GTIN'),
+                'class' => 'M2ePro-walmart-required-identifier-setting',
+                'values' => [
                     ConfigurationHelper::GTIN_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => !$configurationHelper->isGtinModeCustomAttribute() ?
+                'value' => !$configurationHelper->isGtinModeCustomAttribute() ?
                     $configurationHelper->getGtinMode() : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     'Walmart uses Product IDs to associate your Item with its catalog. Select Attribute where the GTIN
                      values are stored.<br>
                     <strong>Note:</strong> At least one Product ID has to be specified when you create a new
                     offer on Walmart.'
                 ),
-                'after_element_html'       => $warningToolTip
+                'after_element_html' => $warningToolTip,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -468,8 +480,8 @@ HTML
             'isbn_custom_attribute',
             'hidden',
             [
-                'name'  => 'isbn_custom_attribute',
-                'value' => $configurationHelper->getIsbnCustomAttribute()
+                'name' => 'isbn_custom_attribute',
+                'value' => $configurationHelper->getIsbnCustomAttribute(),
             ]
         );
 
@@ -477,11 +489,13 @@ HTML
 
         $warningToolTip = '';
 
-        if ($configurationHelper->isIsbnModeCustomAttribute() &&
+        if (
+            $configurationHelper->isIsbnModeCustomAttribute() &&
             !$this->magentoAttributeHelper->isExistInAttributesArray(
                 $configurationHelper->getIsbnCustomAttribute(),
                 $textAttributes
-            ) && $this->getData('isbn_custom_attribute') != '') {
+            ) && $this->getData('isbn_custom_attribute') != ''
+        ) {
             $warningText = $this->__(
                 <<<HTML
     Selected Magento Attribute is invalid.
@@ -505,14 +519,16 @@ HTML
                 'attrs' => $attrs,
                 'value' => ConfigurationHelper::ISBN_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper
-                    ->getAttributeLabel($configurationHelper->getIsbnCustomAttribute())
+                    ->getAttributeLabel($configurationHelper->getIsbnCustomAttribute()),
             ];
         }
 
         foreach ($textAttributes as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($configurationHelper->isIsbnModeCustomAttribute() &&
-                $attribute['code'] == $configurationHelper->getIsbnCustomAttribute()) {
+            if (
+                $configurationHelper->isIsbnModeCustomAttribute() &&
+                $attribute['code'] == $configurationHelper->getIsbnCustomAttribute()
+            ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
@@ -526,29 +542,29 @@ HTML
             'isbn_mode',
             self::SELECT,
             [
-                'name'                     => 'isbn_mode',
-                'label'                    => $this->__('ISBN'),
-                'class'                    => 'M2ePro-walmart-required-identifier-setting',
-                'values'                   => [
+                'name' => 'isbn_mode',
+                'label' => $this->__('ISBN'),
+                'class' => 'M2ePro-walmart-required-identifier-setting',
+                'values' => [
                     ConfigurationHelper::ISBN_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'                    => !$configurationHelper->isIsbnModeCustomAttribute() ?
+                'value' => !$configurationHelper->isIsbnModeCustomAttribute() ?
                     $configurationHelper->getIsbnMode() : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     'Walmart uses Product IDs to associate your Item with its catalog. Select Attribute where the ISBN
                      values are stored.<br>
                      <strong>Note:</strong> At least one Product ID has to be specified when you create a new
                      offer on Walmart.'
                 ),
-                'after_element_html'       => $warningToolTip
+                'after_element_html' => $warningToolTip,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -556,14 +572,14 @@ HTML
             'product_id_override_mode',
             self::SELECT,
             [
-                'name'    => 'product_id_override_mode',
-                'label'   => $this->__('Product ID Override'),
-                'values'  => [
-                    ConfigurationHelper::PRODUCT_ID_OVERRIDE_MODE_NONE              => $this->__('Not Set'),
-                    ConfigurationHelper::PRODUCT_ID_OVERRIDE_MODE_ALL               => $this->__('All products'),
+                'name' => 'product_id_override_mode',
+                'label' => $this->__('Product ID Override'),
+                'values' => [
+                    ConfigurationHelper::PRODUCT_ID_OVERRIDE_MODE_NONE => $this->__('Not Set'),
+                    ConfigurationHelper::PRODUCT_ID_OVERRIDE_MODE_ALL => $this->__('All products'),
                     ConfigurationHelper::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS => $this->__('Specific products'),
                 ],
-                'value'   => $configurationHelper->getProductIdOverrideMode(),
+                'value' => $configurationHelper->getProductIdOverrideMode(),
                 'tooltip' => $this->__(
                     <<<HTML
     <b>None</b> - all products will be listed with the standard Product IDs.<br/>
@@ -573,7 +589,7 @@ HTML
 
     <b>Note:</b> You must apply for Product ID exemption on Walmart first.
 HTML
-                )
+                ),
             ]
         );
 
@@ -581,7 +597,7 @@ HTML
         $fieldset = $form->addFieldset(
             'advanced',
             [
-                'legend' => $this->__('Advanced')
+                'legend' => $this->__('Advanced'),
             ]
         );
 
@@ -589,14 +605,14 @@ HTML
             'option_images_url_mode',
             'select',
             [
-                'name'    => 'option_images_url_mode',
-                'label'   => $this->__('Image(s) URL'),
-                'values'  => [
+                'name' => 'option_images_url_mode',
+                'label' => $this->__('Image(s) URL'),
+                'values' => [
                     ConfigurationHelper::OPTION_IMAGES_URL_MODE_ORIGINAL => $this->__('Original'),
-                    ConfigurationHelper::OPTION_IMAGES_URL_MODE_HTTPS    => $this->__(' Replace with HTTPS'),
-                    ConfigurationHelper::OPTION_IMAGES_URL_MODE_HTTP     => $this->__('Replace with HTTP')
+                    ConfigurationHelper::OPTION_IMAGES_URL_MODE_HTTPS => $this->__(' Replace with HTTPS'),
+                    ConfigurationHelper::OPTION_IMAGES_URL_MODE_HTTP => $this->__('Replace with HTTP'),
                 ],
-                'value'   => $configurationHelper->getOptionImagesURLMode(),
+                'value' => $configurationHelper->getOptionImagesURLMode(),
                 'tooltip' => $this->__(
                     <<<HTML
     <p>Select how to upload images to Walmart:</p><br>
@@ -604,7 +620,7 @@ HTML
     <p><strong>Replace with HTTP</strong> - images will be uploaded using HTTP protocol.</p>
     <p><strong>Replace with HTTPS</strong> - images will be uploaded using HTTPS protocol.</p>
 HTML
-                )
+                ),
             ]
         );
 

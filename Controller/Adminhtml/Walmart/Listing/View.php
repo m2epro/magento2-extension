@@ -46,6 +46,7 @@ class View extends Main
             // ---------------------------------------
 
             $this->setAjaxContent($listingView->getGridHtml());
+
             return $this->getResult();
         }
 
@@ -56,8 +57,8 @@ class View extends Main
             );
 
             return $this->_redirect('*/*/*', [
-                '_current'  => true,
-                'do_list'   => null
+                '_current' => true,
+                'do_list' => null,
             ]);
         }
 
@@ -67,6 +68,7 @@ class View extends Main
             $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $id);
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
             return $this->_redirect('*/walmart_listing/index');
         }
 
@@ -76,7 +78,7 @@ class View extends Main
             return $this->_redirect('*/walmart_listing_product_add/index', [
                 'id' => $id,
                 'not_completed' => 1,
-                'step' => 3
+                'step' => 3,
             ]);
         }
 
@@ -102,6 +104,7 @@ class View extends Main
         // Set rule model
         // ---------------------------------------
         $this->setRuleData('walmart_rule_listing_view');
+
         // ---------------------------------------
 
         return $this->getResult();
@@ -112,7 +115,7 @@ class View extends Main
         $listingData = $this->globalData->getValue('view_listing')->getData();
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
         $this->globalData->setValue('rule_prefix', $prefix);
 
         // ---------------------------------------
@@ -120,8 +123,10 @@ class View extends Main
         $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher::VIEW_MODE_MAGENTO;
         $sessionParamName = 'walmartListingView' . $listingData['id'] . 'view_mode';
 
-        if (($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||
-            $magentoViewMode == $this->sessionHelper->getValue($sessionParamName)) {
+        if (
+            ($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||
+            $magentoViewMode == $this->sessionHelper->getValue($sessionParamName)
+        ) {
             $useCustomOptions = false;
         }
         // ---------------------------------------
@@ -131,7 +136,7 @@ class View extends Main
             [
                 'prefix' => $prefix,
                 'store_id' => $storeId,
-                'use_custom_options' => $useCustomOptions
+                'use_custom_options' => $useCustomOptions,
             ]
         );
 

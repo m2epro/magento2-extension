@@ -54,7 +54,7 @@ class Handler extends AbstractModel implements HandlerInterface
         }
 
         $params = [
-            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH,
         ];
 
         foreach ($this->getAllCheckers() as $checker) {
@@ -82,6 +82,7 @@ class Handler extends AbstractModel implements HandlerInterface
 
     /**
      * @param $checkerNick
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

@@ -13,8 +13,9 @@ namespace Ess\M2ePro\Model\Cron\Task\Magento\Product;
  */
 class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'magento/product/detect_directly_deleted';
+    public const NICK = 'magento/product/detect_directly_deleted';
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory  */
     protected $magentoProductCollectionFactory;
 
     //########################################
@@ -30,7 +31,6 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
     ) {
-
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct(
             $helperData,
@@ -64,10 +64,10 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection->getSelect()->distinct(true);
 
         $entityTableName = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('catalog_product_entity');
+                                ->getTableNameWithPrefix('catalog_product_entity');
 
         $collection->getSelect()->joinLeft(
-            ['cpe'=>$entityTableName],
+            ['cpe' => $entityTableName],
             '(cpe.entity_id = `main_table`.product_id)',
             ['entity_id']
         );
@@ -99,10 +99,10 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection->getSelect()->where('product_id IS NOT NULL');
 
         $entityTableName = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('catalog_product_entity');
+                                ->getTableNameWithPrefix('catalog_product_entity');
 
         $collection->getSelect()->joinLeft(
-            ['cpe'=>$entityTableName],
+            ['cpe' => $entityTableName],
             '(cpe.entity_id = `main_table`.product_id)',
             ['entity_id']
         );
@@ -142,10 +142,10 @@ class DetectDirectlyDeleted extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $collection->getSelect()->where('product_id IS NOT NULL');
 
             $entityTableName = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('catalog_product_entity');
+                                    ->getTableNameWithPrefix('catalog_product_entity');
 
             $collection->getSelect()->joinLeft(
-                ['cpe'=>$entityTableName],
+                ['cpe' => $entityTableName],
                 '(cpe.entity_id = `main_table`.product_id)',
                 ['entity_id']
             );

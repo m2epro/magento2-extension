@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Description;
  */
 class Renderer extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MODE_FULL = 1;
-    const MODE_PREVIEW = 2;
+    public const MODE_FULL = 1;
+    public const MODE_PREVIEW = 2;
 
     protected $renderMode = self::MODE_FULL;
 
@@ -61,11 +61,13 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Ebay\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Ebay\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -74,6 +76,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
     public function parseTemplate($text)
     {
         $text = $this->insertValues($text);
+
         return $text;
     }
 
@@ -81,6 +84,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param string $text
+     *
      * @return string
      */
     protected function insertValues($text)
@@ -93,12 +97,12 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
         $replaces = [];
         foreach ($matches[1] as $i => $attributeCode) {
-            $method = 'get'.implode(array_map('ucfirst', explode('_', $attributeCode)));
+            $method = 'get' . implode(array_map('ucfirst', explode('_', $attributeCode)));
 
             $arg = null;
             if (preg_match('/(?<=\[)(\d+?)(?=\])/', $method, $tempMatch)) {
                 $arg = $tempMatch[0];
-                $method = str_replace('['.$arg.']', '', $method);
+                $method = str_replace('[' . $arg . ']', '', $method);
             }
 
             $value = '';
@@ -227,8 +231,8 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         $helper = $this->getHelper('Module\Translation');
 
         $types = [
-           \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED => $helper->__('Fixed Price'),
-           \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION => $helper->__('Auction'),
+            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED => $helper->__('Fixed Price'),
+            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION => $helper->__('Auction'),
         ];
 
         $type = $this->listingProduct->getSellingFormatTemplateSource()->getListingType();
@@ -264,9 +268,9 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($handlingTime) {
-            $result = $handlingTime.' '.$result;
+            $result = $handlingTime . ' ' . $result;
         } else {
-            $result = $this->getHelper('Module\Translation')->__('Same').' '.$result;
+            $result = $this->getHelper('Module\Translation')->__('Same') . ' ' . $result;
         }
 
         return $result;
@@ -330,24 +334,28 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
     protected function getPrimaryCategoryId()
     {
         $source = $this->listingProduct->getCategoryTemplateSource();
+
         return $source ? $source->getCategoryId() : 'N/A';
     }
 
     protected function getSecondaryCategoryId()
     {
         $source = $this->listingProduct->getCategorySecondaryTemplateSource();
+
         return $source ? $source->getCategoryId() : 'N/A';
     }
 
     protected function getStorePrimaryCategoryId()
     {
         $source = $this->listingProduct->getStoreCategoryTemplateSource();
+
         return $source ? $source->getCategoryId() : 'N/A';
     }
 
     protected function getStoreSecondaryCategoryId()
     {
         $source = $this->listingProduct->getStoreCategorySecondaryTemplateSource();
+
         return $source ? $source->getCategoryId() : 'N/A';
     }
 
@@ -414,7 +422,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         $connection = $this->resourceConnection->getConnection();
 
         $tableDictShipping = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
+                                  ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         // table m2epro_ebay_dictionary_marketplace
         $dbSelect = $connection
@@ -484,7 +492,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
         // ---------------------------------------
         $tableDictShipping = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
+                                  ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
         // ---------------------------------------
 
         // table m2epro_ebay_dictionary_marketplace

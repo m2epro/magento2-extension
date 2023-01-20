@@ -22,8 +22,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
-    )
-    {
+    ) {
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
         $this->dbStructureHelper = $dbStructureHelper;
     }
@@ -41,10 +40,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $groupConfig = '/logs/' . $this->getConfigGroupSuffix() . '/';
 
         $lastActionId = (int)$connection->select()
-            ->from($table, 'value')
-            ->where('`group` = ?', $groupConfig)
-            ->where('`key` = ?', self::ACTION_KEY)
-            ->query()->fetchColumn();
+                                        ->from($table, 'value')
+                                        ->where('`group` = ?', $groupConfig)
+                                        ->where('`key` = ?', self::ACTION_KEY)
+                                        ->query()->fetchColumn();
 
         $nextActionId = $lastActionId + 1;
 
@@ -61,7 +60,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
     {
         $where = [];
         foreach ($filters as $column => $value) {
-            $where[$column.' = ?'] = $value;
+            $where[$column . ' = ?'] = $value;
         }
 
         $this->getConnection()->delete($this->getMainTable(), $where);

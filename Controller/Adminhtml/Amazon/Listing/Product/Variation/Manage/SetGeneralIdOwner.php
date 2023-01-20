@@ -44,12 +44,15 @@ class SetGeneralIdOwner extends Main
 
         if (!$data['success']) {
             $mainBlock = $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description::class);
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description::class
+                              );
             $mainBlock->setMessages([
                 [
                     'type' => 'warning',
-                    'text' => $data['msg']
-                ]]);
+                    'text' => $data['msg'],
+                ],
+            ]);
             $data['html'] = $mainBlock->toHtml();
         } else {
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
@@ -69,6 +72,7 @@ class SetGeneralIdOwner extends Main
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         $sku = $listingProduct->getSku();
+
         return !empty($sku);
     }
 
@@ -119,8 +123,8 @@ class SetGeneralIdOwner extends Main
             }
 
             $productAttributes = $amazonListingProduct->getVariationManager()
-                ->getTypeModel()
-                ->getProductAttributes();
+                                                      ->getTypeModel()
+                                                      ->getProductAttributes();
 
             $isCountEqual = false;
             foreach ($themes as $theme) {

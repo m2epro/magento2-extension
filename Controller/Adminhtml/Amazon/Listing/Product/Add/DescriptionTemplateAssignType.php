@@ -25,6 +25,7 @@ class DescriptionTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Ama
 
         if (empty($listingId) || empty($mode)) {
             $this->_forward('index');
+
             return;
         }
 
@@ -58,7 +59,7 @@ class DescriptionTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Ama
 
                 return $this->_redirect('*/amazon_listing_product_add/index', [
                     '_current' => true,
-                    'step' => 5
+                    'step' => 5,
                 ]);
             }
 

@@ -47,11 +47,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs $tabsBlock */
         $tabsBlock = $this->getLayout()
-                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs::class
+                          );
 
         return parent::_toHtml() .
-               $tabsBlock->toHtml() .
-               '<div id="chooser_tabs_container"></div>';
+            $tabsBlock->toHtml() .
+            '<div id="chooser_tabs_container"></div>';
     }
 
     //########################################
@@ -64,6 +66,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setSelectedCategory(array $selectedCategory)
     {
         $this->_selectedCategory = $selectedCategory;
+
         return $this;
     }
 
@@ -72,6 +75,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setMarketplaceId($value)
     {
         $this->_marketplaceId = $value;
+
         return $this;
     }
 

@@ -60,14 +60,14 @@ class AfterGetToken extends Account
                 '*/*/new',
                 [
                     'is_show_tables' => true,
-                    '_current'       => true
+                    '_current' => true,
                 ]
             );
         }
 
         $data = [
             'mode' => $this->temporaryStorage->getAccountMode(),
-            'token_session' => $sessionId
+            'token_session' => $sessionId,
         ];
 
         try {
@@ -76,10 +76,12 @@ class AfterGetToken extends Account
             $this->temporaryStorage->deleteAllValues();
             $this->helperException->process($exception);
 
-            $this->messageManager->addError($this->__(
-                'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
-                $exception->getMessage()
-            ));
+            $this->messageManager->addError(
+                $this->__(
+                    'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                    $exception->getMessage()
+                )
+            );
 
             return $this->_redirect('*/ebay_account');
         }

@@ -13,13 +13,16 @@ namespace Ess\M2ePro\Model\ActiveRecord;
  */
 abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 {
-    //########################################
-
+    /** @var bool  */
     protected $cacheLoading = false;
+    /** @var bool  */
     protected $isObjectCreatingState = false;
 
+    /** @var \Ess\M2ePro\Model\Factory  */
     protected $modelFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
 
     //########################################
@@ -55,6 +58,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         }
 
         $this->isObjectCreatingState = $value;
+
         return $this->isObjectCreatingState;
     }
 
@@ -63,7 +67,8 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     public function getObjectModelName()
     {
         $className = $this->getHelper('Client')->getClassName($this);
-        return str_replace(['Ess\M2ePro\Model\\','\\'], ['','_'], $className);
+
+        return str_replace(['Ess\M2ePro\Model\\', '\\'], ['', '_'], $className);
     }
 
     //########################################
@@ -71,6 +76,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     /**
      * @param int $modelId
      * @param null|string $field
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -82,9 +88,9 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 'Instance does not exist.',
                 [
-                    'id'    => $modelId,
+                    'id' => $modelId,
                     'field' => $field,
-                    'model' => $this->_resourceName
+                    'model' => $this->_resourceName,
                 ]
             );
         }
@@ -108,6 +114,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         $result = parent::save();
 
         $this->isObjectCreatingState(false);
+
         return $result;
     }
 
@@ -130,6 +137,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         }
 
         $this->deleteProcessingLocks();
+
         return parent::delete();
     }
 
@@ -161,7 +169,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->activeRecordFactory->getObject('Processing')->getCollection();
-        $collection->addFieldToFilter('id', ['in'=>array_unique($processingIds)]);
+        $collection->addFieldToFilter('id', ['in' => array_unique($processingIds)]);
 
         foreach ($collection->getItems() as $processing) {
             /** @var \Ess\M2ePro\Model\Processing $processing */
@@ -191,9 +199,9 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
         $dataForAdd = [
             'processing_id' => $processingId,
-            'model_name'    => $this->getObjectModelName(),
-            'object_id'     => $this->getId(),
-            'tag'           => $tag,
+            'model_name' => $this->getObjectModelName(),
+            'object_id' => $this->getId(),
+            'tag' => $tag,
         ];
 
         $model->setData($dataForAdd)->save();
@@ -224,6 +232,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     /**
      * @param bool|false $tag
      * @param bool|false $processingId
+     *
      * @return \Ess\M2ePro\Model\Processing\Lock[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -239,7 +248,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         $lockedCollection->addFieldToFilter('model_name', $this->getObjectModelName());
         $lockedCollection->addFieldToFilter('object_id', $this->getId());
 
-        $tag === null && $tag = ['null'=>true];
+        $tag === null && $tag = ['null' => true];
         $tag !== false && $lockedCollection->addFieldToFilter('tag', $tag);
         $processingId !== false && $lockedCollection->addFieldToFilter('processing_id', $processingId);
 
@@ -254,6 +263,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @param bool $asObjects
      * @param array $filters
      * @param array $sort
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -283,6 +293,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @param bool $asObjects
      * @param array $filters
      * @param array $sort
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -312,8 +323,10 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
         foreach ($sort as $field => $order) {
             $order = strtoupper(trim($order));
-            if ($order != \Magento\Framework\Data\Collection::SORT_ORDER_ASC &&
-                $order != \Magento\Framework\Data\Collection::SORT_ORDER_DESC) {
+            if (
+                $order != \Magento\Framework\Data\Collection::SORT_ORDER_ASC &&
+                $order != \Magento\Framework\Data\Collection::SORT_ORDER_DESC
+            ) {
                 continue;
             }
             $tempCollection->setOrder($field, $order);
@@ -324,6 +337,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         }
 
         $tempArray = $tempCollection->toArray();
+
         return $tempArray['items'];
     }
 
@@ -333,7 +347,6 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @param string $fieldName
      *
      * @return array
-     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getSettings($fieldName)
@@ -345,13 +358,14 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
         }
 
         $settings = $this->getHelper('Data')->jsonDecode($settings);
+
         return !empty($settings) ? $settings : [];
     }
 
     /**
-     * @param string       $fieldName
+     * @param string $fieldName
      * @param string|array $settingNamePath
-     * @param mixed        $defaultValue
+     * @param mixed $defaultValue
      *
      * @return mixed|null
      */
@@ -387,10 +401,9 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
     /**
      * @param string $fieldName
-     * @param array  $settings
+     * @param array $settings
      *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
-     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function setSettings($fieldName, array $settings = [])
@@ -401,9 +414,9 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     }
 
     /**
-     * @param string       $fieldName
+     * @param string $fieldName
      * @param string|array $settingNamePath
-     * @param mixed        $settingValue
+     * @param mixed $settingValue
      *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
@@ -484,7 +497,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
     public function getCacheLifetime()
     {
-        return 60*60*24;
+        return 60 * 60 * 24;
     }
 
     // ---------------------------------------
@@ -500,7 +513,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $modelNameComponent = substr($modelName, 0, strpos($modelName, '\\'));
 
             if (in_array(strtolower($modelNameComponent), array_map('strtolower', $allComponents))) {
-                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\')+1);
+                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\') + 1);
                 $tags[] = $modelNameComponent;
                 $tags[] = $modelNameOnlyModel;
             }
@@ -518,7 +531,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        return $this->getObjectModelName().'_'.$this->getId();
+        return $this->getObjectModelName() . '_' . $this->getId();
     }
 
     //########################################
@@ -526,6 +539,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

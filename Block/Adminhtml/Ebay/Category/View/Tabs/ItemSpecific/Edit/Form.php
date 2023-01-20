@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Custom;
 use Ess\M2ePro\Model\Ebay\Template\Category\Specific;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Renderer\Dictionary;
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
@@ -38,11 +38,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'    => 'edit_form',
+                    'id' => 'edit_form',
                     'action' => $this->getUrl('*/*/saveTemplateCategorySpecifics'),
                     'method' => 'post',
-                    'enctype' => 'multipart/form-data'
-                ]
+                    'enctype' => 'multipart/form-data',
+                ],
             ]
         );
 
@@ -53,7 +53,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'template_id',
-                'value' => $templateId
+                'value' => $templateId,
             ]
         );
 
@@ -85,7 +85,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'dictionary',
                 [
                     'legend' => $this->__('eBay Specifics'),
-                    'collapsable' => false
+                    'collapsable' => false,
                 ]
             );
 
@@ -112,7 +112,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'custom',
             [
                 'legend' => $this->__('Additional Specifics'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -145,9 +145,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $this->dataHelper->getClassConstants(Specific::class)
         );
 
-        $this->js->addRequireJs([
-            'etcs' => 'M2ePro/Ebay/Template/Category/Specifics'
-        ], <<<JS
+        $this->js->addRequireJs(
+            [
+            'etcs' => 'M2ePro/Ebay/Template/Category/Specifics',
+            ],
+            <<<JS
         window.EbayTemplateCategorySpecificsObj = new EbayTemplateCategorySpecifics();
 JS
         );

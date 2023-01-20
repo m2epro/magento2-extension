@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
 
 class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
@@ -16,13 +16,13 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
     use Traits\BlockTrait;
     use Traits\RendererTrait;
 
-    const MODE_NOT_SELECTED = 0;
-    const MODE_SELECTED     = 1;
-    const MODE_EBAY         = 2;
-    const MODE_ATTRIBUTE    = 3;
-    const MODE_TITLE        = 10;
+    public const MODE_NOT_SELECTED = 0;
+    public const MODE_SELECTED = 1;
+    public const MODE_EBAY = 2;
+    public const MODE_ATTRIBUTE = 3;
+    public const MODE_TITLE = 10;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -66,7 +66,8 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
         $isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isAjax());
         $modeTitle = self::MODE_TITLE;
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     (function() {
 
         var initObservers = function () {
@@ -111,7 +112,8 @@ HTML;
     {
         $value = $this->getData('value');
 
-        if (is_array($value) &&
+        if (
+            is_array($value) &&
             (isset($value['mode']) && $value['mode'] !== null) ||
             (isset($value['title']) && !empty($value['mode']))
         ) {
@@ -126,6 +128,7 @@ HTML;
     protected function _renderOption($option, $value)
     {
         $value = isset($value['mode']) ? $value['mode'] : null;
+
         return parent::_renderOption($option, $value);
     }
 

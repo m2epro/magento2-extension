@@ -33,8 +33,8 @@ class Confirm extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         // ---------------------------------------
         $data = [
-            'class'   => 'ok_button',
-            'label'   => $this->__('Confirm'),
+            'class' => 'ok_button',
+            'label' => $this->__('Confirm'),
             'onclick' => 'Dialog.okCallback();',
         ];
         $buttonBlock = $this->getLayout()

@@ -24,8 +24,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
-    )
-    {
+    ) {
         $this->activeRecordFactory = $activeRecordFactory;
 
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -84,50 +83,50 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'title'               => '',
+            'title' => '',
 
             // list
-            'list_mode'           => 1,
+            'list_mode' => 1,
             'list_status_enabled' => 1,
-            'list_is_in_stock'    => 1,
+            'list_is_in_stock' => 1,
 
-            'list_qty_calculated'       => Synchronization::QTY_MODE_YES,
+            'list_qty_calculated' => Synchronization::QTY_MODE_YES,
             'list_qty_calculated_value' => '1',
 
             'list_advanced_rules_mode' => 0,
             'list_advanced_rules_filters' => null,
 
             // relist
-            'relist_mode'              => 1,
-            'relist_filter_user_lock'  => 1,
-            'relist_status_enabled'    => 1,
-            'relist_is_in_stock'       => 1,
+            'relist_mode' => 1,
+            'relist_filter_user_lock' => 1,
+            'relist_status_enabled' => 1,
+            'relist_is_in_stock' => 1,
 
-            'relist_qty_calculated'           => Synchronization::QTY_MODE_YES,
-            'relist_qty_calculated_value'     => '1',
+            'relist_qty_calculated' => Synchronization::QTY_MODE_YES,
+            'relist_qty_calculated_value' => '1',
 
-            'relist_advanced_rules_mode'                     => 0,
+            'relist_advanced_rules_mode' => 0,
             'relist_advanced_rules_filters' => null,
 
             // revise
-            'revise_update_qty'                              => 1,
-            'revise_update_qty_max_applied_value_mode'       => 1,
-            'revise_update_qty_max_applied_value'            => 5,
-            'revise_update_price'                            => 1,
-            'revise_update_promotions'                       => 0,
-            'revise_update_details'                          => 0,
+            'revise_update_qty' => 1,
+            'revise_update_qty_max_applied_value_mode' => 1,
+            'revise_update_qty_max_applied_value' => 5,
+            'revise_update_price' => 1,
+            'revise_update_promotions' => 0,
+            'revise_update_details' => 0,
 
             // stop
-            'stop_mode'                                      => 1,
+            'stop_mode' => 1,
 
             'stop_status_disabled' => 1,
-            'stop_out_off_stock'   => 1,
+            'stop_out_off_stock' => 1,
 
-            'stop_qty_calculated'           => Synchronization::QTY_MODE_YES,
-            'stop_qty_calculated_value'     => '0',
+            'stop_qty_calculated' => Synchronization::QTY_MODE_YES,
+            'stop_qty_calculated_value' => '0',
 
             'stop_advanced_rules_mode' => 0,
-            'stop_advanced_rules_filters' => null
+            'stop_advanced_rules_filters' => null,
         ];
     }
 

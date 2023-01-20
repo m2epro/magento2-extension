@@ -13,8 +13,11 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 class Magento extends Command
 {
+    /** @var \Magento\Framework\Module\FullModuleList  */
     protected $fullModuleList;
+    /** @var \Magento\Framework\Module\ModuleList  */
     protected $moduleList;
+    /** @var \Magento\Framework\Module\PackageInfo  */
     protected $packageInfo;
     /** @var \Ess\M2ePro\Helper\Magento\Plugin */
     protected $magentoPluginHelper;

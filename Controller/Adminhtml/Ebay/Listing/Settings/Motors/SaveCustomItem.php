@@ -44,25 +44,27 @@ class SaveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         if ($motorsType == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE) {
             if (strlen($insertData['ktype']) > 10) {
                 $this->setJsonContent([
-                    'result'  => false,
-                    'message' => $this->__('kType identifier is to long.')
+                    'result' => false,
+                    'message' => $this->__('kType identifier is to long.'),
                 ]);
+
                 return $this->getResult();
             }
 
             if (!is_numeric($insertData['ktype'])) {
                 $this->setJsonContent([
-                    'result'  => false,
-                    'message' => $this->__('kType identifier should contain only digits.')
+                    'result' => false,
+                    'message' => $this->__('kType identifier should contain only digits.'),
                 ]);
+
                 return $this->getResult();
             }
         }
 
         $selectStmt = $this->resourceConnection->getConnection('core/read')
-            ->select()
-            ->from($tableName)
-            ->where("{$idKey} = ?", $insertData[$idKey]);
+                                               ->select()
+                                               ->from($tableName)
+                                               ->where("{$idKey} = ?", $insertData[$idKey]);
 
         if ($helper->isTypeBasedOnEpids($motorsType)) {
             $selectStmt->where('scope = ?', $helper->getEpidsScopeByType($motorsType));
@@ -72,8 +74,8 @@ class SaveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         if ($existedItem) {
             $this->setJsonContent([
-                'result'  => false,
-                'message' => $this->__('Record with such identifier is already exists.')
+                'result' => false,
+                'message' => $this->__('Record with such identifier is already exists.'),
             ]);
 
             return $this->getResult();

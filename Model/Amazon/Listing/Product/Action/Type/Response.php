@@ -15,8 +15,9 @@ use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as 
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
-    const INSTRUCTION_INITIATOR = 'action_response';
+    public const INSTRUCTION_INITIATOR = 'action_response';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     /**
@@ -139,6 +140,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     public function setRequestMetaData($value)
     {
         $this->requestMetaData = $value;
+
         return $this;
     }
 
@@ -388,36 +390,36 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getConfigurator()->isQtyAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 80
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 80,
             ];
         }
 
         if ($this->getConfigurator()->isRegularPriceAllowed() || $this->getConfigurator()->isBusinessPriceAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 80
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 80,
             ];
         }
 
         if ($this->getConfigurator()->isDetailsAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 60
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 60,
             ];
         }
 
         if ($this->getConfigurator()->isImagesAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 30
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 30,
             ];
         }
 

@@ -18,7 +18,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
     public function execute()
     {
         $listingId = $this->getRequest()->getParam('listing_id');
-        $listing =  $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
+        $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
 
         $productsIds = $this->getRequest()->getParam('products');
         $productsIds = explode(',', $productsIds);
@@ -48,7 +48,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                 'id' => $listingId,
                 'skip_products_steps' => empty($tempProducts),
                 'step' => 3,
-                'wizard' => $this->getRequest()->getParam('wizard')
+                'wizard' => $this->getRequest()->getParam('wizard'),
             ]);
 
             $this->clearSession();

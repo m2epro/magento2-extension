@@ -11,15 +11,13 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 use Ess\M2ePro\Model\Account;
 use Ess\M2ePro\Helper\Component\Amazon as AmazonHelper;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other
- */
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -65,7 +63,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
-            ['sku'  => 'second_table.sku']
+            ['sku' => 'second_table.sku']
         );
 
         return $listingOtherCollection->getColumnValues('sku');
@@ -151,7 +149,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         foreach ($accountsCollection->getItems() as $account) {
             $additionalData = (array)$this->getHelper('Data')
-                ->jsonDecode($account->getAdditionalData());
+                                          ->jsonDecode($account->getAdditionalData());
 
             unset($additionalData['is_amazon_other_listings_full_items_data_already_received']);
 

@@ -28,6 +28,7 @@ class GetDebugInformation extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         if ($id === null) {
             $this->setAjaxContent('', false);
+
             return $this->getResult();
         }
 
@@ -35,6 +36,7 @@ class GetDebugInformation extends \Ess\M2ePro\Controller\Adminhtml\Order
             $order = $this->activeRecordFactory->getObjectLoaded('Order', (int)$id);
         } catch (\Exception $e) {
             $this->setAjaxContent('', false);
+
             return $this->getResult();
         }
 

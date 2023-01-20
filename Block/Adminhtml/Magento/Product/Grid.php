@@ -91,11 +91,12 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         if ($this->getMassactionBlock()->getCount() == 0) {
             $this->getMassactionBlock()->addItem('fake', [
                 'label' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-                'url'   => '#',
+                'url' => '#',
             ]);
-                // Header of grid with massactions is rendering in other way, than with no massaction
-                // so it causes broken layout when the actions are absent
-            $this->css->add(<<<CSS
+            // Header of grid with massactions is rendering in other way, than with no massaction
+            // so it causes broken layout when the actions are absent
+            $this->css->add(
+                <<<CSS
             #{$this->getId()} .admin__data-grid-header {
                 display: -webkit-flex;
                 display: flex;
@@ -113,6 +114,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
 CSS
             );
         }
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -129,7 +131,7 @@ CSS
     public function getMassactionBlockHtml()
     {
         if (!$this->useAdvancedFilter) {
-            return $this->hideMassactionColumn ? '' :  parent::getMassactionBlockHtml();
+            return $this->hideMassactionColumn ? '' : parent::getMassactionBlockHtml();
         }
 
         $advancedFilterBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\Rule::class);
@@ -137,7 +139,7 @@ CSS
         $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
 
         return $advancedFilterBlock->toHtml() . (($this->hideMassactionColumn)
-            ? '' :  parent::getMassactionBlockHtml());
+                ? '' : parent::getMassactionBlockHtml());
     }
 
     //########################################
@@ -166,8 +168,9 @@ CSS
 
         if (!isset($rowVal['price']) || (float)$rowVal['price'] <= 0) {
             $value = 0;
-            $value = '<span style="color: red;">'.$value.'</span>';
+            $value = '<span style="color: red;">' . $value . '</span>';
         }
+
         return $value;
     }
 
@@ -175,7 +178,7 @@ CSS
     {
         if ($value <= 0) {
             $value = 0;
-            $value = '<span style="color: red;">'.$value.'</span>';
+            $value = '<span style="color: red;">' . $value . '</span>';
         }
 
         return $value;
@@ -184,7 +187,7 @@ CSS
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_DISABLED) {
-            $value = '<span style="color: red;">'.$value.'</span>';
+            $value = '<span style="color: red;">' . $value . '</span>';
         }
 
         return $value;
@@ -210,8 +213,8 @@ CSS
     {
         if (!$this->getChild('advanced_filter_button')) {
             $buttonSettings = [
-                'class'   => 'task action-default scalable action-secondary',
-                'id'      => 'advanced_filter_button'
+                'class' => 'task action-default scalable action-secondary',
+                'id' => 'advanced_filter_button',
             ];
 
             if (!$this->isShowRuleBlock()) {
@@ -221,7 +224,7 @@ CSS
                 $buttonSettings['label'] = $this->__('Advanced Filter');
                 $buttonSettings['onclick'] = '';
                 $buttonSettings['class'] = $buttonSettings['class']
-                                           . ' advanced-filter-button-active';
+                    . ' advanced-filter-button-active';
             }
 
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class);
@@ -256,7 +259,8 @@ CSS
         // ---------------------------------------
 
         if ($this->hideMassactionDropDown) {
-            $this->css->add(<<<CSS
+            $this->css->add(
+                <<<CSS
     #{$this->getHtmlId()}_massaction .admin__grid-massaction-form {
         display: none;
     }
@@ -271,7 +275,8 @@ CSS
         // ---------------------------------------
         $isShowRuleBlock = $this->dataHelper->jsonEncode($this->isShowRuleBlock());
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         jQuery(function()
         {
             if ({$isShowRuleBlock}) {
@@ -316,7 +321,7 @@ JS
                 $this->__('Please select the Products you want to perform the Action on.')
             ),
             'Show Advanced Filter' => $this->__('Show Advanced Filter'),
-            'Hide Advanced Filter' => $this->__('Hide Advanced Filter')
+            'Hide Advanced Filter' => $this->__('Hide Advanced Filter'),
         ]);
 
         // ---------------------------------------
@@ -363,6 +368,7 @@ JS
         );
 
         $showHideProductsOption === null && $showHideProductsOption = 1;
+
         return !empty($ruleData) || ($this->showAdvancedFilterProductsOption && $showHideProductsOption);
     }
 

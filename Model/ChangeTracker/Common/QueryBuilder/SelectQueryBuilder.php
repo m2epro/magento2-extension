@@ -43,7 +43,7 @@ class SelectQueryBuilder
     }
 
     /**
-     * @param \Magento\Framework\App\ResourceConnection    $resourceConnection
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
      * @param \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper
      */
     public function __construct(
@@ -106,14 +106,14 @@ class SelectQueryBuilder
 
     /**
      * @param string $tableAlias
-     * @param mixed  $tableName
+     * @param mixed $tableName
      *
      * @return $this
      */
     public function from(string $tableAlias, $tableName): SelectQueryBuilder
     {
         $this->queryParts[self::PART_FROM] = [
-            $tableAlias => $this->getTableName($tableName)
+            $tableAlias => $this->getTableName($tableName),
         ];
 
         return $this;
@@ -121,7 +121,7 @@ class SelectQueryBuilder
 
     /**
      * @param string $tableAlias
-     * @param mixed  $tableName
+     * @param mixed $tableName
      * @param string $onCondition
      *
      * @return $this
@@ -140,7 +140,7 @@ class SelectQueryBuilder
 
     /**
      * @param string $tableAlias
-     * @param mixed  $tableName
+     * @param mixed $tableName
      * @param string $onCondition
      *
      * @return $this
@@ -159,7 +159,7 @@ class SelectQueryBuilder
 
     /**
      * @param string $condition
-     * @param mixed  $params
+     * @param mixed $params
      *
      * @return SelectQueryBuilder
      */

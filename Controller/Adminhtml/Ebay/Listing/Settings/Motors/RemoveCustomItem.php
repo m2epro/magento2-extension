@@ -31,8 +31,8 @@ class RemoveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         if (!$motorsType || !$keyId) {
             $this->setJsonContent([
-                'result'  => false,
-                'message' => $this->__('The some of required fields are not filled up.')
+                'result' => false,
+                'message' => $this->__('The some of required fields are not filled up.'),
             ]);
 
             return $this->getResult();
@@ -53,7 +53,7 @@ class RemoveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $select = $connection->select();
         $select->from(['emg' => $table], ['id'])
-               ->where('items_data REGEXP ?', '"ITEM"\|"'.$keyId.'"');
+               ->where('items_data REGEXP ?', '"ITEM"\|"' . $keyId . '"');
 
         $groupIds = $connection->fetchCol($select);
 
@@ -73,7 +73,7 @@ class RemoveCustomItem extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->setJsonContent([
-            'result' => true
+            'result' => true,
         ]);
 
         return $this->getResult();

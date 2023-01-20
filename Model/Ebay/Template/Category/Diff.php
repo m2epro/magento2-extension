@@ -29,7 +29,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'category_mode',
             'category_path',
             'category_attribute',
-            'specifics'
+            'specifics',
         ];
 
         return $this->isSettingsDifferent($keys);

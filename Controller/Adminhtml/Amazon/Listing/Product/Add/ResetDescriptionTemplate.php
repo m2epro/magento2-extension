@@ -26,10 +26,10 @@ class ResetDescriptionTemplate extends \Ess\M2ePro\Controller\Adminhtml\Amazon\L
             'back_url' => $this->getUrl(
                 '*/amazon_listing_product_add/index',
                 [
-                    'id'   => $listingId,
-                    'step' => 4
+                    'id' => $listingId,
+                    'step' => 4,
                 ]
-            )
+            ),
         ]);
 
         return $this->getResult();

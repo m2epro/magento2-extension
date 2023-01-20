@@ -27,8 +27,8 @@ class ShowNewAsinStep extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Pr
             'redirect' => $this->getUrl('*/*/index', [
                 'id' => $this->getRequest()->getParam('id'),
                 'step' => $showNewAsinStep ? 4 : 5,
-                'wizard' => $this->getRequest()->getParam('wizard')
-            ])
+                'wizard' => $this->getRequest()->getParam('wizard'),
+            ]),
         ]);
 
         return $this->getResult();

@@ -44,12 +44,16 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
     public function getGalleryId()
     {
         if ($this->galleryId === null) {
-            $this->galleryId = substr(sha1(
-                'gallery-'
-                . $this->getData('index_number')
-                . $this->dataHelper->jsonEncode($this->getGalleryImages())
-            ), 20);
+            $this->galleryId = substr(
+                sha1(
+                    'gallery-'
+                    . $this->getData('index_number')
+                    . $this->dataHelper->jsonEncode($this->getGalleryImages())
+                ),
+                20
+            );
         }
+
         return $this->galleryId;
     }
 

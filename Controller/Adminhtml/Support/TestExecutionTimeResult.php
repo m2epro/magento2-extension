@@ -27,6 +27,7 @@ class TestExecutionTimeResult extends Support
     public function execute()
     {
         $this->setJsonContent(['result' => $this->clientHelper->getTestedExecutionTime()]);
+
         return $this->getResult();
     }
 }

@@ -8,21 +8,22 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate\Before;
 
-/**
- * Class \Ess\M2ePro\Observer\Product\AddUpdate\Before\Proxy
- */
 class Proxy
 {
+    /** @var null */
     private $productId = null;
+    /** @var null */
     private $storeId = null;
 
+    /** @var array */
     private $data = [];
+    /** @var array */
     private $attributes = [];
 
+    /** @var array */
     private $websiteIds = [];
+    /** @var array */
     private $categoriesIds = [];
-
-    //########################################
 
     /**
      * @param int $value

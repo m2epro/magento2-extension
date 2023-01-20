@@ -54,7 +54,7 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
             'hidden',
             [
                 'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE
+                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE,
             ]
         );
 
@@ -74,7 +74,7 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
                 'tooltip' => $this->__(
                     'Action which will be applied automatically.'
                 ),
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
@@ -89,7 +89,7 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
                     ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => $this->__('No')],
                     [
                         'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                        'label' => $this->__('Yes')
+                        'label' => $this->__('Yes'),
                     ],
                 ],
                 'value' => $this->formData['auto_website_adding_add_not_visible'],
@@ -101,7 +101,7 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
                     If set to <strong>No</strong>, only Variation (i.e.
                     Parent) Magento Products will be added to the Listing Automatically,
                     excluding Child Products.'
-                )
+                ),
             ]
         );
 
@@ -113,15 +113,21 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
                 'label' => $this->__('Product Deleted from Website'),
                 'title' => $this->__('Product Deleted from Website'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-                        'label' => $this->__('No Action')],
-                    ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP,
-                        'label' => $this->__('Stop on Channel')],
-                    ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                        'label' => $this->__('Stop on Channel and Delete from Listing')],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
+                        'label' => $this->__('No Action'),
+                    ],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP,
+                        'label' => $this->__('Stop on Channel'),
+                    ],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
+                        'label' => $this->__('Stop on Channel and Delete from Listing'),
+                    ],
                 ],
                 'value' => $this->formData['auto_website_deleting_mode'],
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
@@ -141,6 +147,7 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
         $formData = $this->getListing()->getData();
         $formData = array_merge($formData, $this->getListing()->getChildObject()->getData());
         $default = $this->getDefault();
+
         return array_merge($default, $formData);
     }
 
@@ -177,7 +184,8 @@ abstract class AbstractWebsite extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\
 
         $hasFormData = $this->hasFormData() ? 'true' : 'false';
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         $('auto_website_adding_mode')
             .observe('change', ListingAutoActionObj.addingModeChange)
             .simulate('change');
@@ -194,7 +202,7 @@ JS
     protected function _toHtml()
     {
         return '<div id="additional_autoaction_title_text" style="display: none">' . $this->getBlockTitle() . '</div>'
-                . '<div id="block-content-wrapper"><div id="data_container">'.parent::_toHtml().'</div></div>';
+            . '<div id="block-content-wrapper"><div id="data_container">' . parent::_toHtml() . '</div></div>';
     }
 
     protected function getBlockTitle()
@@ -206,6 +214,7 @@ JS
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->globalDataHelper->getValue('listing');
+
         return $this->magentoStoreHelper->getWebsiteName($listing->getStoreId());
     }
 }

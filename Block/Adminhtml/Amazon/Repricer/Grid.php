@@ -83,7 +83,7 @@ class Grid extends AbstractGrid
                 'm' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable(),
             ],
             '(`m`.`id` = `second_table`.`marketplace_id`)',
-            ['marketplace_title'=>'title']
+            ['marketplace_title' => 'title']
         );
 
         $collection->getSelect()->joinLeft(
@@ -93,7 +93,7 @@ class Grid extends AbstractGrid
             '(`r`.`account_id` = `main_table`.`id`)',
             [
                 'linked' => 'r.account_id',
-                'total_products' => 'total_products'
+                'total_products' => 'total_products',
             ]
         );
 
@@ -109,66 +109,66 @@ class Grid extends AbstractGrid
     protected function _prepareColumns(): Grid
     {
         $this->addColumn('id', [
-            'header'    => $this->__('ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'id',
-            'sortable'  => false,
-            'filter'    => false,
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'id',
+            'sortable' => false,
+            'filter' => false,
         ]);
 
         $this->addColumn('title', [
-            'header'    => $this->__('Title / Info'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'title',
-            'escape'    => true,
+            'header' => $this->__('Title / Info'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
+            'escape' => true,
             'frame_callback' => [$this, 'callbackColumnTitle'],
-            'sortable'  => false,
-            'filter'    => false,
+            'sortable' => false,
+            'filter' => false,
         ]);
 
         $this->addColumn('total_products', [
-            'header'    => $this->__('Repricing products'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'total_products',
-            'sortable'  => false,
-            'filter'    => false,
+            'header' => $this->__('Repricing products'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'total_products',
+            'sortable' => false,
+            'filter' => false,
         ]);
 
         $this->addColumn('m2e_products', [
-            'header'    => $this->__('M2E Pro products'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'id',
-            'sortable'  => false,
-            'filter'    => false,
+            'header' => $this->__('M2E Pro products'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'id',
+            'sortable' => false,
+            'filter' => false,
             'frame_callback' => [$this, 'callbackColumnM2eProducts'],
         ]);
 
         $this->addColumn('status', [
-            'header'    => $this->__('Status'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'linked',
-            'sortable'  => false,
-            'filter'    => false,
+            'header' => $this->__('Status'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'linked',
+            'sortable' => false,
+            'filter' => false,
             'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'center',
-            'width'     => '100px',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'getter'    => 'getId',
+            'header' => $this->__('Actions'),
+            'align' => 'center',
+            'width' => '100px',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'getter' => 'getId',
             'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
 
@@ -203,11 +203,12 @@ JS
      */
     public function getGridUrl(): string
     {
-        return $this->getUrl('*/*/accountGrid', ['_current'=>true]);
+        return $this->getUrl('*/*/accountGrid', ['_current' => true]);
     }
 
     /**
      * @param $row
+     *
      * @return string|void
      */
     public function getRowUrl($row)
@@ -222,6 +223,7 @@ JS
      * @param $row
      * @param $column
      * @param $isExport
+     *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -250,6 +252,7 @@ HTML;
     /**
      * @param $collection
      * @param $column
+     *
      * @return void
      */
     protected function callbackFilterTitle($collection, $column): void
@@ -262,7 +265,7 @@ HTML;
 
         $collection->getSelect()->where(
             'main_table.title LIKE ? OR m.title LIKE ? OR second_table.merchant_id LIKE ?',
-            '%'. $value .'%'
+            '%' . $value . '%'
         );
     }
 
@@ -271,6 +274,7 @@ HTML;
      * @param $row
      * @param $column
      * @param $isExport
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -303,6 +307,7 @@ HTML;
      * @param $row
      * @param $column
      * @param $isExport
+     *
      * @return string
      */
     public function callbackColumnStatus($value, $row, $column, $isExport): string
@@ -319,6 +324,7 @@ HTML;
      * @param $row
      * @param $column
      * @param $isExport
+     *
      * @return string
      */
     public function callbackColumnActions($value, $row, $column, $isExport): string
@@ -329,8 +335,7 @@ HTML;
             $onclick = "AmazonRepricerObj.unlinkRepricing('{$id}')";
             $label = 'Disconnect';
             $class = 'action-secondary';
-        }
-        else {
+        } else {
             $onclick = "AmazonRepricerObj.linkOrRegisterRepricing('{$id}')";
             $label = 'Connect';
             $class = 'action-primary';

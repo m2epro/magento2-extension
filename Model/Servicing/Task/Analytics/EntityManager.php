@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task\Analytics;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager
- */
 class EntityManager extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $component;
@@ -41,7 +38,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception('component or entityType was not provided.');
         }
 
-        $this->component  = $params['component'];
+        $this->component = $params['component'];
         $this->entityType = $params['entityType'];
 
         $this->getLastId() === null && $this->initLastEntityId();
@@ -52,7 +49,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
         $lastIdCollection = $this->getCollection();
         $idFieldName = $lastIdCollection->getResource()->getIdFieldName();
 
-        $lastIdCollection->getSelect()->order($idFieldName .' '. \Magento\Framework\DB\Select::SQL_DESC);
+        $lastIdCollection->getSelect()->order($idFieldName . ' ' . \Magento\Framework\DB\Select::SQL_DESC);
         $lastIdCollection->getSelect()->limit(1);
 
         $this->setLastId($lastIdCollection->getFirstItem()->getId());
@@ -65,7 +62,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
         $collection = $this->getCollection();
         $idFieldName = $collection->getResource()->getIdFieldName();
 
-        $collection->getSelect()->order($idFieldName .' '. \Magento\Framework\DB\Select::SQL_ASC);
+        $collection->getSelect()->order($idFieldName . ' ' . \Magento\Framework\DB\Select::SQL_ASC);
         $collection->getSelect()->limit($this->getLimit());
         $collection->addFieldToFilter($idFieldName, ['gt' => (int)$this->getLastProcessedId()]);
 
@@ -102,7 +99,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
 
     public function setLastProcessedId($id)
     {
-        return $this->registry->setProgressData($this->getEntityKey(), 'last_processed_id', (int)$id);
+        $this->registry->setProgressData($this->getEntityKey(), 'last_processed_id', (int)$id);
     }
 
     // ---------------------------------------
@@ -114,7 +111,7 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
 
     public function setLastId($id)
     {
-        return $this->registry->setProgressData($this->getEntityKey(), 'last_id', (int)$id);
+        $this->registry->setProgressData($this->getEntityKey(), 'last_id', (int)$id);
     }
 
     // ---------------------------------------
@@ -140,6 +137,4 @@ class EntityManager extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->component . '::' . $this->entityType;
     }
-
-    //########################################
 }

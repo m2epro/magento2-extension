@@ -13,7 +13,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    /** @var \Magento\Backend\Model\Auth  */
+    /** @var \Magento\Backend\Model\Auth */
     protected $auth;
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -39,11 +39,13 @@ class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         $notificationSettings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
 
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id'     => 'edit_form',
-                'action' => $this->getUrl('*/*/save'),
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'action' => $this->getUrl('*/*/save'),
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
@@ -83,7 +85,7 @@ Also, you can select a minimal Notifications Level:
     </li>
 </ul>
 HTML
-                )
+                ),
             ]
         );
 
@@ -101,26 +103,26 @@ HTML
                 'values' => [
                     [
                         'value' => Settings::MODE_DISABLED,
-                        'label' => $this->__('Do Not Notify')
+                        'label' => $this->__('Do Not Notify'),
                     ],
                     [
                         'value' => Settings::MODE_EXTENSION_PAGES,
-                        'label' => $this->__('On each Extension Page')
+                        'label' => $this->__('On each Extension Page'),
                     ],
                     [
                         'value' => Settings::MODE_MAGENTO_PAGES,
-                        'label' => $this->__('On each Magento Page')
+                        'label' => $this->__('On each Magento Page'),
                     ],
                     [
                         'value' => Settings::MODE_MAGENTO_SYSTEM_NOTIFICATION,
-                        'label' => $this->__('As Magento System Notification')
+                        'label' => $this->__('As Magento System Notification'),
                     ],
                     [
                         'value' => Settings::MODE_EMAIL,
-                        'label' => $this->__('Send me an Email')
+                        'label' => $this->__('Send me an Email'),
                     ],
                 ],
-                'value' => $notificationSettings->getMode()
+                'value' => $notificationSettings->getMode(),
             ]
         );
 
@@ -132,11 +134,11 @@ HTML
             'text',
             [
                 'container_id' => 'notification_email_value_container',
-                'name'         => 'notification_email',
-                'label'        => $this->__('Email'),
-                'value'        => $email,
-                'class'        => 'M2ePro-validate-email',
-                'required'     => true
+                'name' => 'notification_email',
+                'label' => $this->__('Email'),
+                'value' => $email,
+                'class' => 'M2ePro-validate-email',
+                'required' => true,
             ]
         );
 
@@ -149,18 +151,18 @@ HTML
                 'values' => [
                     [
                         'value' => Result::STATE_CRITICAL,
-                        'label' => $this->__('Critical / Error')
+                        'label' => $this->__('Critical / Error'),
                     ],
                     [
                         'value' => Result::STATE_WARNING,
-                        'label' => $this->__('Warning')
+                        'label' => $this->__('Warning'),
                     ],
                     [
                         'value' => Result::STATE_NOTICE,
-                        'label' => $this->__('Notice')
+                        'label' => $this->__('Notice'),
                     ],
                 ],
-                'value' => $notificationSettings->getLevel()
+                'value' => $notificationSettings->getLevel(),
             ]
         );
         //------------------------------------
@@ -168,19 +170,21 @@ HTML
         $button = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Magento\Button::class,
             '',
-            ['data' => [
-            'id'      => 'submit_button',
-            'label'   => $this->__('Save'),
-            'onclick' => 'HealthStatusObj.saveClick()',
-            'class'   => 'action-primary'
-            ]]
+            [
+                'data' => [
+                    'id' => 'submit_button',
+                    'label' => $this->__('Save'),
+                    'onclick' => 'HealthStatusObj.saveClick()',
+                    'class' => 'action-primary',
+                ],
+            ]
         );
 
         $fieldSet->addField(
             'submit_button_container',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $button->toHtml()
+                'text' => $button->toHtml(),
             ]
         );
         //------------------------------------
@@ -201,7 +205,9 @@ HTML
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\HealthStatus\Notification\Settings::class)
         );
 
-        $this->js->addRequireJs(['hS' => 'M2ePro/HealthStatus'], <<<JS
+        $this->js->addRequireJs(
+            ['hS' => 'M2ePro/HealthStatus'],
+            <<<JS
 
         window.HealthStatusObj = new HealthStatus();
 JS

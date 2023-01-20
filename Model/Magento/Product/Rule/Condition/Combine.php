@@ -31,10 +31,10 @@ class Combine extends AbstractModel
         parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
 
         $this->setType('Magento\Product\Rule\Condition\Combine')
-            ->setAggregator('all')
-            ->setValue(true)
-            ->setConditions([])
-            ->setActions([]);
+             ->setAggregator('all')
+             ->setValue(true)
+             ->setConditions([])
+             ->setActions([]);
 
         $this->loadAggregatorOptions();
         if ($options = $this->getAggregatorOptions()) {
@@ -67,21 +67,21 @@ class Combine extends AbstractModel
         $conditions = [
             [
                 'label' => $this->getHelper('Module\Translation')->__('Conditions Combination'),
-                'value' => $this->getConditionCombine()
-            ]
+                'value' => $this->getConditionCombine(),
+            ],
         ];
 
         $customAttribute = $this->getCustomOptionsAttributes();
         if ($this->_useCustomOptions && !empty($customAttribute)) {
             $conditions[] = [
                 'label' => $this->getCustomLabel(),
-                'value' => $this->getCustomOptions()
+                'value' => $this->getCustomOptions(),
             ];
         }
 
         $conditions[] = [
             'label' => $this->getHelper('Module\Translation')->__('Product Attribute'),
-            'value' => $this->getProductOptions()
+            'value' => $this->getProductOptions(),
         ];
 
         return array_merge_recursive(parent::getNewChildSelectOptions(), $conditions);
@@ -116,9 +116,10 @@ class Combine extends AbstractModel
     protected function getProductOptions()
     {
         $attributes = $this->modelFactory->getObject('Magento_Product_Rule_Condition_Product')->getAttributeOption();
-        return  !empty($attributes) ?
-                $this->getOptions('Magento\Product\Rule\Condition\Product', $attributes)
-                : [];
+
+        return !empty($attributes) ?
+            $this->getOptions('Magento\Product\Rule\Condition\Product', $attributes)
+            : [];
     }
 
     // ---------------------------------------
@@ -130,7 +131,7 @@ class Combine extends AbstractModel
         foreach ($optionsAttribute as $code => $label) {
             $options[] = [
                 'value' => $value . $suffix . $code,
-                'label' => $label
+                'label' => $label,
             ];
         }
 
@@ -142,6 +143,7 @@ class Combine extends AbstractModel
     public function setCustomOptionsFlag($flag)
     {
         $this->_useCustomOptions = (bool)$flag;
+
         return $this;
     }
 
@@ -153,6 +155,7 @@ class Combine extends AbstractModel
             'all' => __('ALL'),
             'any' => __('ANY'),
         ]);
+
         return $this;
     }
 
@@ -160,8 +163,9 @@ class Combine extends AbstractModel
     {
         $opt = [];
         foreach ($this->getAggregatorOption() as $k => $v) {
-            $opt[] = ['value'=>$k, 'label'=>$v];
+            $opt[] = ['value' => $k, 'label' => $v];
         }
+
         return $opt;
     }
 
@@ -178,11 +182,12 @@ class Combine extends AbstractModel
                 break;
             }
         }
-        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__aggregator', 'select', [
-            'name'=>'rule['.$this->getPrefix().']['.$this->getId().'][aggregator]',
-            'values'=>$this->getAggregatorSelectOptions(),
-            'value'=>$this->getAggregator(),
-            'value_name'=>$this->getAggregatorName(),
+
+        return $this->getForm()->addField($this->getPrefix() . '__' . $this->getId() . '__aggregator', 'select', [
+            'name' => 'rule[' . $this->getPrefix() . '][' . $this->getId() . '][aggregator]',
+            'values' => $this->getAggregatorSelectOptions(),
+            'value' => $this->getAggregator(),
+            'value_name' => $this->getAggregatorName(),
         ])->setRenderer(
             $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
@@ -196,6 +201,7 @@ class Combine extends AbstractModel
             1 => __('TRUE'),
             0 => __('FALSE'),
         ]);
+
         return $this;
     }
 
@@ -209,10 +215,11 @@ class Combine extends AbstractModel
         $conditions[] = $condition;
 
         if (!$condition->getId()) {
-            $condition->setId($this->getId().'--'.sizeof($conditions));
+            $condition->setId($this->getId() . '--' . count($conditions));
         }
 
         $this->setData($this->getPrefix(), $conditions);
+
         return $this;
     }
 
@@ -229,8 +236,10 @@ class Combine extends AbstractModel
             return true;
         }
 
-        if (!$this->_useCustomOptions &&
-            array_key_exists($condition['attribute'], $this->getCustomOptionsAttributes())) {
+        if (
+            !$this->_useCustomOptions &&
+            array_key_exists($condition['attribute'], $this->getCustomOptionsAttributes())
+        ) {
             return false;
         }
 
@@ -241,10 +250,14 @@ class Combine extends AbstractModel
 
     public function loadArray($arr, $key = 'conditions')
     {
-        $this->setAggregator(isset($arr['aggregator']) ? $arr['aggregator']
-            : (isset($arr['attribute']) ? $arr['attribute'] : null))
-            ->setValue(isset($arr['value']) ? $arr['value']
-                : (isset($arr['operator']) ? $arr['operator'] : null));
+        $this->setAggregator(
+            isset($arr['aggregator']) ? $arr['aggregator']
+                : (isset($arr['attribute']) ? $arr['attribute'] : null)
+        )
+             ->setValue(
+                 isset($arr['value']) ? $arr['value']
+                     : (isset($arr['operator']) ? $arr['operator'] : null)
+             );
 
         if (!empty($arr[$key]) && is_array($arr[$key])) {
             foreach ($arr[$key] as $condArr) {
@@ -268,6 +281,7 @@ class Combine extends AbstractModel
                 }
             }
         }
+
         return $this;
     }
 
@@ -281,6 +295,7 @@ class Combine extends AbstractModel
             $arr['conditions'] = parent::loadXml($condition);
         }
         $this->loadArray($arr);
+
         return $this;
     }
 
@@ -288,13 +303,14 @@ class Combine extends AbstractModel
 
     public function asXml($containerKey = 'conditions', $itemKey = 'condition')
     {
-        $xml = "<aggregator>".$this->getAggregator()."</aggregator>"
-            ."<value>".$this->getValue()."</value>"
-            ."<$containerKey>";
+        $xml = "<aggregator>" . $this->getAggregator() . "</aggregator>"
+            . "<value>" . $this->getValue() . "</value>"
+            . "<$containerKey>";
         foreach ($this->getConditions() as $condition) {
-            $xml .= "<$itemKey>".$condition->asXml()."</$itemKey>";
+            $xml .= "<$itemKey>" . $condition->asXml() . "</$itemKey>";
         }
         $xml .= "</$containerKey>";
+
         return $xml;
     }
 
@@ -312,7 +328,7 @@ class Combine extends AbstractModel
 
     public function asHtml()
     {
-        $html = $this->getTypeElement()->getHtml().
+        $html = $this->getTypeElement()->getHtml() .
             $this->getHelper('Module\Translation')->__(
                 'If %rule% of these Conditions are %value%:',
                 $this->getAggregatorElement()->getHtml(),
@@ -320,19 +336,21 @@ class Combine extends AbstractModel
             );
 
         if ($this->getId() != '1') {
-            $html.= $this->getRemoveLinkHtml();
+            $html .= $this->getRemoveLinkHtml();
         }
+
         return $html;
     }
 
     public function asHtmlRecursive()
     {
-        $html = $this->asHtml().
-                '<ul id="'.$this->getPrefix().'__'.$this->getId().'__children" class="rule-param-children">';
+        $html = $this->asHtml() .
+            '<ul id="' . $this->getPrefix() . '__' . $this->getId() . '__children" class="rule-param-children">';
         foreach ($this->getConditions() as $cond) {
-            $html .= '<li>'.$cond->asHtmlRecursive().'</li>';
+            $html .= '<li>' . $cond->asHtmlRecursive() . '</li>';
         }
-        $html .= '<li>'.$this->getNewChildElement()->getHtml().'</li></ul>';
+        $html .= '<li>' . $this->getNewChildElement()->getHtml() . '</li></ul>';
+
         return $html;
     }
 
@@ -343,6 +361,7 @@ class Combine extends AbstractModel
             $this->getAggregatorName(),
             $this->getValueName()
         );
+
         return $str;
     }
 
@@ -350,8 +369,9 @@ class Combine extends AbstractModel
     {
         $str = parent::asStringRecursive($level);
         foreach ($this->getConditions() as $cond) {
-            $str .= "\n".$cond->asStringRecursive($level+1);
+            $str .= "\n" . $cond->asStringRecursive($level + 1);
         }
+
         return $str;
     }
 
@@ -359,10 +379,10 @@ class Combine extends AbstractModel
 
     public function getNewChildElement()
     {
-        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__new_child', 'select', [
-            'name'=>'rule['.$this->getPrefix().']['.$this->getId().'][new_child]',
-            'values'=>$this->getNewChildSelectOptions(),
-            'value_name'=>$this->getNewChildName(),
+        return $this->getForm()->addField($this->getPrefix() . '__' . $this->getId() . '__new_child', 'select', [
+            'name' => 'rule[' . $this->getPrefix() . '][' . $this->getId() . '][new_child]',
+            'values' => $this->getNewChildSelectOptions(),
+            'value_name' => $this->getNewChildName(),
         ])->setRenderer(
             $this->_layout->getBlockSingleton(\Magento\Rule\Block\Newchild::class)
         );
@@ -374,8 +394,8 @@ class Combine extends AbstractModel
             return true;
         }
 
-        $all    = $this->getAggregator() === 'all';
-        $true   = (bool)$this->getValue();
+        $all = $this->getAggregator() === 'all';
+        $true = (bool)$this->getValue();
 
         foreach ($this->getConditions() as $cond) {
             $validated = $cond->validate($object);
@@ -386,6 +406,7 @@ class Combine extends AbstractModel
                 return true;
             }
         }
+
         return $all ? true : false;
     }
 
@@ -394,6 +415,7 @@ class Combine extends AbstractModel
         foreach ($this->getConditions() as $condition) {
             $condition->collectValidatedAttributes($productCollection);
         }
+
         return $this;
     }
 
@@ -403,18 +425,21 @@ class Combine extends AbstractModel
         foreach ($this->getConditions() as $condition) {
             $condition->setJsFormObject($form);
         }
+
         return $this;
     }
 
     public function getConditions()
     {
         $key = $this->getPrefix() ? $this->getPrefix() : 'conditions';
+
         return (array)$this->getData($key);
     }
 
     public function setConditions($conditions)
     {
         $key = $this->getPrefix() ? $this->getPrefix() : 'conditions';
+
         return $this->setData($key, $conditions);
     }
 
@@ -448,6 +473,7 @@ class Combine extends AbstractModel
         }
 
         $newModel = clone $model;
+
         return $newModel;
     }
 

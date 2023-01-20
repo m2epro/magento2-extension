@@ -46,15 +46,15 @@ class InvoicesAndShipments extends AbstractForm
     <p>Under this tab, you can set M2E Pro to automatically create invoices and shipments in your Magento.
      To do that, keep Magento <i>Invoice/Shipment Creation</i> options enabled.</p>
 HTML
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'invoices',
             [
-                'legend'      => $this->__('Invoices'),
-                'collapsable' => false
+                'legend' => $this->__('Invoices'),
+                'collapsable' => false,
             ]
         );
 
@@ -62,24 +62,24 @@ HTML
             'create_magento_invoice',
             'select',
             [
-                'label'   => $this->__('Magento Invoice Creation'),
-                'title'   => $this->__('Magento Invoice Creation'),
-                'name'    => 'create_magento_invoice',
+                'label' => $this->__('Magento Invoice Creation'),
+                'title' => $this->__('Magento Invoice Creation'),
+                'name' => 'create_magento_invoice',
                 'options' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),
                 ],
                 'tooltip' => $this->__(
                     'Enable to automatically create Magento Invoices when order status is Unshipped/Partially Shipped.'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'shipments',
             [
-                'legend'      => $this->__('Shipments'),
-                'collapsable' => false
+                'legend' => $this->__('Shipments'),
+                'collapsable' => false,
             ]
         );
 
@@ -87,9 +87,9 @@ HTML
             'create_magento_shipment',
             'select',
             [
-                'label'   => $this->__('Magento Shipment Creation'),
-                'title'   => $this->__('Magento Shipment Creation'),
-                'name'    => 'create_magento_shipment',
+                'label' => $this->__('Magento Shipment Creation'),
+                'title' => $this->__('Magento Shipment Creation'),
+                'name' => 'create_magento_shipment',
                 'options' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),
@@ -97,7 +97,7 @@ HTML
                 'tooltip' => $this->__(
                     'Enable to automatically create shipment for the Magento order when the associated order
                     on Channel is shipped.'
-                )
+                ),
             ]
         );
 
@@ -118,11 +118,11 @@ HTML
                 'other_carrier_field_' . $i,
                 self::CUSTOM_CONTAINER,
                 [
-                    'container_class'    => 'other_carrier',
-                    'label'              => $this->__('Other Carrier #%number%:', $i + 1),
-                    'title'              => $this->__('Other Carrier #%number%:', $i + 1),
-                    'style'              => 'vertical-align: unset;',
-                    'text'               => <<<HTML
+                    'container_class' => 'other_carrier',
+                    'label' => $this->__('Other Carrier #%number%:', $i + 1),
+                    'title' => $this->__('Other Carrier #%number%:', $i + 1),
+                    'style' => 'vertical-align: unset;',
+                    'text' => <<<HTML
 <input id="other_carrier_{$i}"
        type="text"
        name="other_carrier[]"
@@ -146,13 +146,13 @@ HTML
 />
 HTML
                     ,
-                    'tooltip'            => $this->__(
+                    'tooltip' => $this->__(
                         <<<TEXT
 If you use Other Carrier option on Walmart,
 enter a carrier code (unique identifier) and their website URL,
 so that your buyers could track shipments.
 TEXT
-                    )
+                    ),
                 ]
             );
         }
@@ -174,6 +174,7 @@ TEXT
    {$this->__('Remove')}
 </a>
 HTML
+            ,
             ]
         );
 

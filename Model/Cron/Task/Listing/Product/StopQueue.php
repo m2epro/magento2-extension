@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Listing\Product\StopQueue
- */
 class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'listing/product/stop_queue';
+    public const NICK = 'listing/product/stop_queue';
 
     /**
      * @var int (in seconds)
@@ -23,13 +20,15 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     /**
      * @var int (30 days)
      */
-    const MAX_PROCESSED_LIFETIME_HOURS_INTERVAL = 720;
+    public const MAX_PROCESSED_LIFETIME_HOURS_INTERVAL = 720;
 
-    const EBAY_REQUEST_MAX_ITEMS_COUNT   = 10;
-    const AMAZON_REQUEST_MAX_ITEMS_COUNT = 10000;
-    const WALMART_REQUEST_MAX_ITEMS_COUNT = 10000;
+    public const EBAY_REQUEST_MAX_ITEMS_COUNT = 10;
+    public const AMAZON_REQUEST_MAX_ITEMS_COUNT = 10000;
+    public const WALMART_REQUEST_MAX_ITEMS_COUNT = 10000;
 
+    /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager  */
     protected $amazonThrottlingManager;
+    /** @var \Ess\M2ePro\Model\Walmart\ThrottlingManager  */
     protected $walmartThrottlingManager;
 
     //########################################
@@ -87,7 +86,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public function removeOldRecords()
     {
         $minDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
-        $minDateTime->modify('- '.self::MAX_PROCESSED_LIFETIME_HOURS_INTERVAL.' hours');
+        $minDateTime->modify('- ' . self::MAX_PROCESSED_LIFETIME_HOURS_INTERVAL . ' hours');
 
         $collection = $this->activeRecordFactory->getObject('StopQueue')->getCollection();
         $collection->addFieldToFilter('is_processed', 1);
@@ -111,7 +110,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return;
         }
 
-        $processedItemsIds               = [];
+        $processedItemsIds = [];
         $accountsMarketplacesRequestData = [];
 
         foreach ($items as $item) {
@@ -125,10 +124,10 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $itemRequestData = $itemAdditionalData['request_data'];
 
             $accountMarketplaceActionType = $itemRequestData['account']
-                                            . '_' .
-                                            $itemRequestData['marketplace']
-                                            . '_' .
-                                            $itemRequestData['action_type'];
+                . '_' .
+                $itemRequestData['marketplace']
+                . '_' .
+                $itemRequestData['action_type'];
 
             $accountsMarketplacesRequestData[$accountMarketplaceActionType][] = [
                 'item_id' => $itemRequestData['item_id'],
@@ -136,7 +135,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($accountsMarketplacesRequestData as $accountMarketplaceActionType => $accountMarketplaceRequestData) {
-            list($account, $marketplace, $actionType) = explode('_', $accountMarketplaceActionType);
+            [$account, $marketplace, $actionType] = explode('_', $accountMarketplaceActionType);
 
             if ((int)$actionType === \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
                 $this->stopItemEbay($account, $marketplace, $accountMarketplaceRequestData);
@@ -156,13 +155,14 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($requestDataPacks as $requestDataPack) {
             $requestData = [
-                'account'     => $account,
+                'account' => $account,
                 'marketplace' => $marketplace,
-                'items'       => $requestDataPack,
+                'items' => $requestDataPack,
             ];
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
-            $connector  = $dispatcher->getVirtualConnector('item', 'update', 'ends', $requestData);
+            $connector = $dispatcher->getVirtualConnector('item', 'update', 'ends', $requestData);
             $dispatcher->process($connector);
         }
     }
@@ -171,12 +171,13 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         foreach ($accountMarketplaceRequestData as $requestData) {
             $requestData = [
-                'account'     => $account,
+                'account' => $account,
                 'marketplace' => $marketplace,
-                'item_id'     => $requestData['item_id'],
-                'qty'         => 0
+                'item_id' => $requestData['item_id'],
+                'qty' => 0,
             ];
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connector = $dispatcher->getVirtualConnector('item', 'update', 'reviseManager', $requestData);
             $dispatcher->process($connector);
@@ -193,7 +194,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return;
         }
 
-        $processedItemsIds   = [];
+        $processedItemsIds = [];
         $accountsRequestData = [];
 
         foreach ($items as $item) {
@@ -209,7 +210,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $account = $itemRequestData['account'];
 
             $accountsRequestData[$account][] = [
-                'id'  => $item->getId(),
+                'id' => $item->getId(),
                 'sku' => $itemRequestData['sku'],
                 'qty' => 0,
             ];
@@ -217,7 +218,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
-            ->getCollection();
+                                                  ->getCollection();
         $accountsCollection->addFieldToFilter('server_hash', array_keys($accountsRequestData));
 
         foreach ($accountsRequestData as $account => $accountRequestData) {
@@ -225,22 +226,25 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $accountObject = $accountsCollection->getItemByColumnValue('server_hash', $account);
 
-            if ($accountObject !== null &&
+            if (
+                $accountObject !== null &&
                 $this->amazonThrottlingManager->getAvailableRequestsCount(
                     $accountObject->getChildObject()->getMerchantId(),
                     \Ess\M2ePro\Model\Amazon\ThrottlingManager::REQUEST_TYPE_FEED
-                ) <= 0) {
+                ) <= 0
+            ) {
                 continue;
             }
 
             foreach ($requestDataPacks as $requestDataPack) {
                 $requestData = [
                     'account' => $account,
-                    'items'   => $requestDataPack,
+                    'items' => $requestDataPack,
                 ];
 
+                /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcher */
                 $dispatcher = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-                $connector  = $dispatcher->getVirtualConnector('product', 'update', 'entities', $requestData);
+                $connector = $dispatcher->getVirtualConnector('product', 'update', 'entities', $requestData);
                 $dispatcher->process($connector);
 
                 if ($accountObject !== null) {
@@ -266,7 +270,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return;
         }
 
-        $processedItemsIds   = [];
+        $processedItemsIds = [];
         $accountsRequestData = [];
 
         foreach ($items as $item) {
@@ -282,17 +286,17 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $account = $itemRequestData['account'];
 
             $accountsRequestData[$account][] = [
-                'id'       => $item->getId(),
-                'sku'      => $itemRequestData['sku'],
-                'wpid'     => $itemRequestData['wpid'],
-                'qty'      => 0,
-                'lag_time' => 0
+                'id' => $item->getId(),
+                'sku' => $itemRequestData['sku'],
+                'wpid' => $itemRequestData['wpid'],
+                'qty' => 0,
+                'lag_time' => 0,
             ];
         }
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Walmart::NICK, 'Account')
-            ->getCollection();
+                                                  ->getCollection();
         $accountsCollection->addFieldToFilter('server_hash', array_keys($accountsRequestData));
 
         foreach ($accountsRequestData as $account => $accountRequestData) {
@@ -300,27 +304,29 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             $accountObject = $accountsCollection->getItemByColumnValue('server_hash', $account);
 
-            if ($accountObject !== null &&
+            if (
+                $accountObject !== null &&
                 ($this->walmartThrottlingManager->getAvailableRequestsCount(
                     $accountObject->getId(),
                     \Ess\M2ePro\Model\Walmart\ThrottlingManager::REQUEST_TYPE_UPDATE_QTY
                 ) <= 0 ||
-                $this->walmartThrottlingManager->getAvailableRequestsCount(
-                    $accountObject->getId(),
-                    \Ess\M2ePro\Model\Walmart\ThrottlingManager::REQUEST_TYPE_UPDATE_LAG_TIME
-                ) <= 0)) {
+                    $this->walmartThrottlingManager->getAvailableRequestsCount(
+                        $accountObject->getId(),
+                        \Ess\M2ePro\Model\Walmart\ThrottlingManager::REQUEST_TYPE_UPDATE_LAG_TIME
+                    ) <= 0)
+            ) {
                 continue;
             }
 
             foreach ($requestDataPacks as $requestDataPack) {
                 $requestData = [
                     'account' => $account,
-                    'items'   => $requestDataPack,
+                    'items' => $requestDataPack,
                 ];
 
                 /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
                 $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
-                $connector  = $dispatcher->getVirtualConnector('product', 'update', 'entities', $requestData);
+                $connector = $dispatcher->getVirtualConnector('product', 'update', 'entities', $requestData);
                 $dispatcher->process($connector);
 
                 if ($accountObject !== null) {

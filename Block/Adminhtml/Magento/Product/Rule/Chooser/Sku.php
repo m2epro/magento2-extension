@@ -45,7 +45,7 @@ class Sku extends AbstractGrid
         if ($this->getRequest()->getParam('current_grid_id')) {
             $this->setId($this->getRequest()->getParam('current_grid_id'));
         } else {
-            $this->setId('skuChooserGrid_'.$this->getId());
+            $this->setId('skuChooserGrid_' . $this->getId());
         }
 
         $form = $this->getJsFormObject();
@@ -85,6 +85,7 @@ class Sku extends AbstractGrid
         } else {
             parent::_addColumnFilterToCollection($column);
         }
+
         return $this;
     }
 
@@ -108,12 +109,12 @@ class Sku extends AbstractGrid
         if (!$this->_cpCollectionInstance) {
             $this->_cpCollectionInstance = $this->_cpCollection->create();
         }
+
         return $this->_cpCollectionInstance;
     }
 
     /**
      * Define Cooser Grid Columns and filters
-     *
      * @return $this
      */
     protected function _prepareColumns()
@@ -127,7 +128,7 @@ class Sku extends AbstractGrid
                 'values' => $this->_getSelectedProducts(),
                 'align' => 'center',
                 'index' => 'sku',
-                'use_index' => true
+                'use_index' => true,
             ]
         );
 
@@ -143,7 +144,7 @@ class Sku extends AbstractGrid
                 'width' => '60px',
                 'index' => 'type_id',
                 'type' => 'options',
-                'options' => $this->_catalogType->getOptionArray()
+                'options' => $this->_catalogType->getOptionArray(),
             ]
         );
 
@@ -158,7 +159,7 @@ class Sku extends AbstractGrid
                 'width' => '100px',
                 'index' => 'attribute_set_id',
                 'type' => 'options',
-                'options' => $sets
+                'options' => $sets,
             ]
         );
 
@@ -177,9 +178,9 @@ class Sku extends AbstractGrid
     public function getGridUrl()
     {
         return $this->getUrl('*/*/getRuleConditionChooserHtml', [
-            '_current'          => true,
-            'current_grid_id'   => $this->getId(),
-            'collapse'          => null
+            '_current' => true,
+            'current_grid_id' => $this->getId(),
+            'collapse' => null,
         ]);
     }
 

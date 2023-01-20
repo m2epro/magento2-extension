@@ -41,18 +41,21 @@ class BlockedProductsHandler extends AbstractBlockedHandler
 
         $collection->addFieldToFilter('l.account_id', (int)$this->getAccount()->getId());
         $collection->addFieldToFilter(
-            'status', ['nin' => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
-            ]]
+            'status',
+            [
+                'nin' => [
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+                ],
+            ]
         );
         $collection->addFieldToFilter('is_variation_parent', ['neq' => 1]);
         $collection->addFieldToFilter('is_missed_on_channel', ['neq' => 1]);
         $collection->addFieldToFilter(
-            new \Zend_Db_Expr('list_date IS NULL OR list_date'), ['lt' => $borderDate->format('Y-m-d H:i:s')]
+            new \Zend_Db_Expr('list_date IS NULL OR list_date'),
+            ['lt' => $borderDate->format('Y-m-d H:i:s')]
         );
         $collection->getSelect()->where('wiw.wpid IS NULL');
-
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
@@ -62,7 +65,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
                 'main_table.product_id',
                 'second_table.wpid',
                 'second_table.is_variation_product',
-                'second_table.variation_parent_id'
+                'second_table.variation_parent_id',
             ]
         );
 
@@ -79,7 +82,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
         $this->resourceConnection->getConnection()->update(
             $this->listingProductChildTable,
             ['is_missed_on_channel' => 1],
-            '`listing_product_id` IN ('.implode(',', $listingProductIds).')'
+            '`listing_product_id` IN (' . implode(',', $listingProductIds) . ')'
         );
     }
 
@@ -100,7 +103,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
      */
     protected function getComponentOtherListingTable()
     {
-        return$this->helperFactory
+        return $this->helperFactory
             ->getObject('Module_Database_Structure')
             ->getTableNameWithPrefix("m2epro_walmart_listing_other");
     }

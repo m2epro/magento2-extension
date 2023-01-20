@@ -19,6 +19,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -35,14 +36,14 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
                 'text' => '<p>' . $this->__(
                     'Shipping Policy cannot be unassigned from some Products
                          because the Products are in Action'
-                ). '</p>'
+                ) . '</p>',
             ];
         }
 
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Shipping Policy was unassigned.')
+                'text' => $this->__('Shipping Policy was unassigned.'),
             ];
 
             $this->setShippingTemplateForProducts($productsIdsLocked, null);

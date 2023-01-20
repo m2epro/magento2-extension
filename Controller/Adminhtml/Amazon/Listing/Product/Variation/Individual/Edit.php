@@ -25,7 +25,7 @@ class Edit extends Main
                 'type' => 'error',
                 'message' => $this->__(
                     'Listing Product and Variation Data must be specified.'
-                )
+                ),
             ]);
 
             return $this->getResult();
@@ -50,7 +50,7 @@ class Edit extends Main
         if (count($magentoVariations) != 1) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Only 1 Variation must leave.')
+                'message' => $this->__('Only 1 Variation must leave.'),
             ]);
 
             return $this->getResult();
@@ -65,7 +65,7 @@ class Edit extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'message' => $this->__('Variation has been edited.')
+            'message' => $this->__('Variation has been edited.'),
         ]);
 
         return $this->getResult();

@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Switcher
- */
 abstract class Switcher extends Magento\AbstractBlock
 {
-    const SIMPLE_STYLE   = 0;
-    const ADVANCED_STYLE = 1;
+    public const SIMPLE_STYLE = 0;
+    public const ADVANCED_STYLE = 1;
 
     protected $items = null;
 
@@ -58,6 +55,7 @@ abstract class Switcher extends Magento\AbstractBlock
     public function getSwitchUrl()
     {
         $controllerName = $this->getData('controller_name') ? $this->getData('controller_name') : '*';
+
         return $this->getUrl(
             "*/{$controllerName}/*",
             ['_current' => true, $this->getParamName() => $this->getParamPlaceHolder()]

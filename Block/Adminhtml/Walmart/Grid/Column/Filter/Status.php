@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter;
+namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Filter;
 
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
 {
@@ -60,9 +60,11 @@ HTML;
     {
         $value = $this->getData('value');
 
-        if (is_array($value) &&
+        if (
+            is_array($value) &&
             (isset($value['value']) && $value['value'] !== null) ||
-            (isset($value['is_reset']) && $value['is_reset'] == 1)) {
+            (isset($value['is_reset']) && $value['is_reset'] == 1)
+        ) {
             return $value;
         }
 
@@ -74,6 +76,7 @@ HTML;
     protected function _renderOption($option, $value)
     {
         $value = isset($value['value']) ? $value['value'] : null;
+
         return parent::_renderOption($option, $value);
     }
 

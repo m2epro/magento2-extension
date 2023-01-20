@@ -25,10 +25,9 @@ class Fill
         $connector = $this->commandFactory->create([
                 'params' => [
                     'account_server_hash' => $account->getServerHash(),
-                    'order_id'            => $order->getEbayOrderId(),
+                    'order_id' => $order->getEbayOrderId(),
                 ],
-            ]
-        );
+            ]);
 
         $connector->process();
 
@@ -58,8 +57,8 @@ class Fill
             'Unable to update final fee.',
             [
                 'response_messages' => $connector->getResponse()->getMessages()->getEntitiesAsArrays(),
-                'account_id'        => $account->getId(),
-                'order_id'          => $order->getId(),
+                'account_id' => $account->getId(),
+                'order_id' => $order->getId(),
             ]
         );
     }

@@ -60,6 +60,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Order\Item\ProxyObject $that
+     *
      * @return bool
      */
     public function equals(\Ess\M2ePro\Model\Order\Item\ProxyObject $that)
@@ -81,7 +82,8 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $thisOptionsValues = array_values($thisOptions);
         $thatOptionsValues = array_values($thatOptions);
 
-        if (count($thisOptions) != count($thatOptions)
+        if (
+            count($thisOptions) != count($thatOptions)
             || count(array_diff($thisOptionsKeys, $thatOptionsKeys)) > 0
             || count(array_diff($thisOptionsValues, $thatOptionsValues)) > 0
         ) {
@@ -92,7 +94,8 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $thisAssociatedProducts = $this->getAssociatedProducts();
         $thatAssociatedProducts = $that->getAssociatedProducts();
 
-        if (count($thisAssociatedProducts) != count($thatAssociatedProducts)
+        if (
+            count($thisAssociatedProducts) != count($thatAssociatedProducts)
             || count(array_diff($thisAssociatedProducts, $thatAssociatedProducts)) > 0
         ) {
             return false;
@@ -166,6 +169,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param float $price
+     *
      * @return $this
      */
     public function setPrice($price)
@@ -207,6 +211,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         if ($this->qty !== null) {
             return $this->qty;
         }
+
         return $this->getOriginalQty();
     }
 

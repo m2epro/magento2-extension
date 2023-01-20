@@ -115,7 +115,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'title' => $item['title'],
                 'image_url' => $item['image_url'],
                 'price' => isset($item['list_price']['amount']) ? $item['list_price']['amount'] : null,
-                'is_variation_product' => $item['is_variation_product']
+                'is_variation_product' => $item['is_variation_product'],
             ];
 
             if ($temp['is_variation_product']) {
@@ -123,7 +123,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     $temp += [
                         'parentage' => $item['parentage'],
                         'variations' => $item['variations'],
-                        'bad_parent' => $item['bad_parent']
+                        'bad_parent' => $item['bad_parent'],
                     ];
                 } else {
                     $temp['bad_parent'] = $item['bad_parent'];
@@ -147,65 +147,65 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('image', [
-            'header'       => $this->__('Image'),
-            'align'        => 'center',
-            'type'         => 'text',
-            'width'        => '80px',
-            'index'        => 'image_url',
-            'filter'       => false,
-            'sortable'     => false,
-            'frame_callback' => [$this, 'callbackColumnImage']
+            'header' => $this->__('Image'),
+            'align' => 'center',
+            'type' => 'text',
+            'width' => '80px',
+            'index' => 'image_url',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnImage'],
         ]);
 
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
             'string_limit' => 10000,
-            'width'        => '375px',
-            'index'        => 'title',
-            'escape'       => false,
-            'filter'       => false,
-            'sortable'     => false,
+            'width' => '375px',
+            'index' => 'title',
+            'escape' => false,
+            'filter' => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('price', [
-            'header'       => $this->__('Price'),
-            'width'        => '60px',
-            'align'        => 'right',
-            'index'        => 'price',
-            'filter'       => false,
-            'sortable'     => false,
-            'type'         => 'number',
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'header' => $this->__('Price'),
+            'width' => '60px',
+            'align' => 'right',
+            'index' => 'price',
+            'filter' => false,
+            'sortable' => false,
+            'type' => 'number',
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('general_id', [
-            'header'       => $this->__('ASIN / ISBN'),
-            'align'        => 'center',
-            'type'         => 'text',
-            'width'        => '75px',
-            'index'        => 'general_id',
-            'filter'       => false,
-            'sortable'     => false,
-            'frame_callback' => [$this, 'callbackColumnGeneralId']
+            'header' => $this->__('ASIN / ISBN'),
+            'align' => 'center',
+            'type' => 'text',
+            'width' => '75px',
+            'index' => 'general_id',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnGeneralId'],
         ]);
 
         $this->addColumn('actions', [
-            'header'       => $this->__('Action'),
-            'align'        => 'center',
-            'type'         => 'text',
-            'width'        => '78px',
-            'filter'       => false,
-            'sortable'     => false,
+            'header' => $this->__('Action'),
+            'align' => 'center',
+            'type' => 'text',
+            'width' => '78px',
+            'filter' => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
     }
 
     public function callbackColumnImage($value, $product, $column, $isExport)
     {
-        return '<img src="'.$value.'" />';
+        return '<img src="' . $value . '" />';
     }
 
     public function callbackColumnGeneralId($value, $product, $column, $isExport)
@@ -225,14 +225,16 @@ HTML;
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<div style="margin-left: 3px; margin-bottom: 3px;">'.
-                        $this->dataHelper->escapeHtml($value)."</div>";
+        $value = '<div style="margin-left: 3px; margin-bottom: 3px;">' .
+            $this->dataHelper->escapeHtml($value) . "</div>";
 
         $id = $row->getId();
         $generalId = $row->getData('general_id');
 
-        if (!$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
-            || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()) {
+        if (
+            !$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
+            || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()
+        ) {
             if (!$row->getData('is_variation_product')) {
                 return $value;
             }
@@ -281,14 +283,14 @@ HTML;
                                             font-size: 11px;
                                             color: #808080;
                                             display: inline-block;
-                                            width: 250px;">'.
-                        ucfirst(strtolower($magentoAttr)).
+                                            width: 250px;">' .
+                        ucfirst(strtolower($magentoAttr)) .
                         '</span>';
                     $magentoProductAttributesHtml .= '<input type="hidden" value="' .
-                                       $this->dataHelper->escapeHtml($magentoAttr) . '"
-                                       id="magento_product_attribute_'.$attributeId.'_'.$id.'">';
+                        $this->dataHelper->escapeHtml($magentoAttr) . '"
+                                       id="magento_product_attribute_' . $attributeId . '_' . $id . '">';
                     $magentoProductAttributesHtml .=
-                    <<<HTML
+                        <<<HTML
 <select
     class="select admin__control-select amazon_product_attribute_{$id}"
     onchange="ListingGridObj.productSearchHandler.attributesChange(this)"
@@ -311,8 +313,8 @@ JS;
                         }
 
                         $attrKey = $this->dataHelper->escapeHtml($attrKey);
-                        $magentoProductAttributesHtml .= '<option value="'.$attrKey.'" '.$selected.'>'
-                            .$attrKey.'</option>';
+                        $magentoProductAttributesHtml .= '<option value="' . $attrKey . '" ' . $selected . '>'
+                            . $attrKey . '</option>';
                     }
                     $magentoProductAttributesHtml .= '</select><br/>';
                     $attributeId++;
@@ -320,8 +322,8 @@ JS;
 
                 $magentoProductAttributesJs .= '</script>';
 
-                $magentoProductAttributesHtml .= '<div id="variations_'.$id.'" style="display: none;">'.
-                    $this->dataHelper->jsonEncode($variations).
+                $magentoProductAttributesHtml .= '<div id="variations_' . $id . '" style="display: none;">' .
+                    $this->dataHelper->jsonEncode($variations) .
                     '</div>';
             } else {
                 $matchedAttributes = json_encode($this->matcherAttributes->getMatchedAttributes(), JSON_FORCE_OBJECT);
@@ -357,13 +359,14 @@ HTML;
 
                 if ($this->matcherAttributes->isSourceAmountGreater()) {
                     $magentoProductVariationsSet = $this->listingProduct->getMagentoProduct()
-                        ->getVariationInstance()->getVariationsTypeStandard();
+                                                                        ->getVariationInstance()
+                                                                        ->getVariationsTypeStandard();
                     $magentoProductVariationsSet = $this->dataHelper->jsonEncode(
                         $magentoProductVariationsSet['set']
                     );
                     $productAttributes = $this->dataHelper->jsonEncode(
                         $this->listingProduct->getChildObject()
-                        ->getVariationManager()->getTypeModel()->getProductAttributes()
+                                             ->getVariationManager()->getTypeModel()->getProductAttributes()
                     );
 
                     $value .= <<<HTML
@@ -401,7 +404,8 @@ HTML;
         $specificsJs = '<script type="text/javascript">';
 
         // match options for individual
-        if ($this->listingProduct->getChildObject()->getVariationManager()->isIndividualType() &&
+        if (
+            $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType() &&
             $this->listingProduct->getChildObject()->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
             $channelVariations = [];
@@ -420,7 +424,7 @@ HTML;
                 $this->matcherOptions->setMatchedAttributes($matchedAttributes);
 
                 $productOptions = $this->listingProduct->getChildObject()->getVariationManager()
-                    ->getTypeModel()->getProductOptions();
+                                                       ->getTypeModel()->getProductOptions();
 
                 $requestedChildAsin = $this->matcherOptions->getMatchedOptionGeneralId($productOptions);
             }
@@ -445,13 +449,13 @@ HTML;
                                 display: inline-block;">';
         $attributeValues = '<span style="margin-left: 5px; display: inline-block;">';
         foreach ($variations['set'] as $specificName => $specific) {
-            $attributesNames .= '<span style="margin-bottom: 15px; display: inline-block;">'.
-                                    ucfirst(strtolower($specificName)).
-                              '</span><br/>';
+            $attributesNames .= '<span style="margin-bottom: 15px; display: inline-block;">' .
+                ucfirst(strtolower($specificName)) .
+                '</span><br/>';
             $attributeValues .= '<input type="hidden" value="' . $this->dataHelper->escapeHtml($specificName) .
-                                '" class="specifics_name_'.$id.'">';
+                '" class="specifics_name_' . $id . '">';
             $attributeValues .=
-            <<<HTML
+                <<<HTML
 <select
     class="select admin__control-select specifics_{$id}"
     onchange="ListingGridObj.productSearchHandler.specificsChange(this)"
@@ -470,7 +474,7 @@ HTML;
                     }
 
                     $option = $this->dataHelper->escapeHtml($option);
-                    $attributeValues .= '<option value="'.$option.'" '.$selected.'>'.$option.'</option>';
+                    $attributeValues .= '<option value="' . $option . '" ' . $selected . '>' . $option . '</option>';
                 }
             }
 
@@ -507,15 +511,17 @@ HTML;
             $value = $this->localeCurrency->getCurrency($this->currency)->toCurrency($value);
         }
 
-        return '<div style="margin-right: 5px;">'.$value.'</div>';
+        return '<div style="margin-right: 5px;">' . $value . '</div>';
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
         $assignText = $this->__('Assign');
 
-        if (!$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
-            || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()) {
+        if (
+            !$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
+            || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()
+        ) {
             if (!$row->getData('is_variation_product')) {
                 return <<<HTML
 <a href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.mapToGeneralId(
@@ -531,7 +537,7 @@ HTML;
                 return <<<HTML
 <span>
     <span id="map_link_{$row->getId()}"><span style="color: #808080">{$assignText}</span></span>&nbsp;
-    {$this->getTooltipHtml($msg, 'map_link_error_icon_'.$row->getId())}
+    {$this->getTooltipHtml($msg, 'map_link_error_icon_' . $row->getId())}
 </span>
 <div id="template_map_link_{$row->getId()}" style="display: none;">
 <a href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.mapToGeneralId(
@@ -570,7 +576,7 @@ HTML;
             return <<<HTML
 <span>
     <div id="map_link_{$row->getId()}"><span style="color: #808080">{$assignText}</span></div>&nbsp;
-    {$this->getTooltipHtml($msg, 'map_link_error_icon_'.$row->getId())}
+    {$this->getTooltipHtml($msg, 'map_link_error_icon_' . $row->getId())}
 </span>
 <div id="template_map_link_{$row->getId()}" style="display: none;">
 <a href="javascript:void(0);" onclick="ListingGridObj.productSearchHandler.mapToGeneralId(
@@ -587,7 +593,7 @@ HTML;
         );
 
         if ($row->getData('is_variation_product') && $row->getData('bad_parent')) {
-            $msg =  $this->__(
+            $msg = $this->__(
                 'This ASIN/ISBN cannot be assigned to selected Magento Product. <br/>
                  Amazon Service (API) does not return all required information about this Amazon Product.'
             );
@@ -596,7 +602,7 @@ HTML;
         return <<<HTML
 <span>
     <span id="map_link_{$row->getId()}"><span style="color: #808080">{$assignText}</span></span>&nbsp;
-    {$this->getTooltipHtml($msg, 'map_link_error_icon_'.$row->getId())}
+    {$this->getTooltipHtml($msg, 'map_link_error_icon_' . $row->getId())}
 </span>
 HTML;
     }
@@ -616,26 +622,38 @@ HTML;
     protected function _toHtml()
     {
         $this->jsTranslator->addTranslations([
-            'help_icon_magento_greater_left' => $this->__('This Amazon Attribute and its Value are virtualized based '.
+            'help_icon_magento_greater_left' => $this->__(
+                'This Amazon Attribute and its Value are virtualized based ' .
                 'on the selected Magento Variational Attribute and its Value as physically this Amazon Attribute ' .
-                'does not exist.'),
-            'help_icon_magento_greater_right' => $this->__('Select a particular Option of the Attribute to fix '.
-                'it for virtualized Amazon Attribute. Please, be thoughtful as only those Variations of '.
-                'Magento Product which contains the selected Option can be sold on Amazon.'),
+                'does not exist.'
+            ),
+            'help_icon_magento_greater_right' => $this->__(
+                'Select a particular Option of the Attribute to fix ' .
+                'it for virtualized Amazon Attribute. Please, be thoughtful as only those Variations of ' .
+                'Magento Product which contains the selected Option can be sold on Amazon.'
+            ),
 
-            'help_icon_amazon_greater_left' => $this->__('This Magento Attribute and its Value are virtualized '.
+            'help_icon_amazon_greater_left' => $this->__(
+                'This Magento Attribute and its Value are virtualized ' .
                 'based on the selected Amazon Variational Attribute and its Value as physically this ' .
-                'Magento Attribute does not exist.'),
-            'help_icon_amazon_greater_right' => $this->__('Select a particular Option of the Attribute to fix ' .
+                'Magento Attribute does not exist.'
+            ),
+            'help_icon_amazon_greater_right' => $this->__(
+                'Select a particular Option of the Attribute to fix ' .
                 'it for virtualized Magento Attribute. Please, be thoughtful as your offer will be available only ' .
-                'for those Buyers who selected the same Option.'),
+                'for those Buyers who selected the same Option.'
+            ),
 
-            'duplicate_magento_attribute_error' => $this->__('The Magento Attributes which you selected in ' .
+            'duplicate_magento_attribute_error' => $this->__(
+                'The Magento Attributes which you selected in ' .
                 'your settings have the same Labels. Such combination is invalid. Please, add the valid combination ' .
-                'of Attributes.'),
-            'duplicate_amazon_attribute_error' => $this->__('The Amazon Attributes which you selected in ' .
+                'of Attributes.'
+            ),
+            'duplicate_amazon_attribute_error' => $this->__(
+                'The Amazon Attributes which you selected in ' .
                 'your settings have the same Labels. Such combination is invalid. Please, add the valid combination ' .
-                'of Attributes.'),
+                'of Attributes.'
+            ),
 
             'change_option' => $this->__('Change option'),
         ]);
@@ -662,7 +680,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/amazon_listing/getSuggestedAsinGrid', ['_current'=>true]);
+        return $this->getUrl('*/amazon_listing/getSuggestedAsinGrid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item;
  */
 abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Requester
 {
-    const DEFAULT_REQUEST_TIMEOUT = 300;
-    const TIMEOUT_INCREMENT_FOR_ONE_IMAGE = 30;
+    public const DEFAULT_REQUEST_TIMEOUT = 300;
+    public const TIMEOUT_INCREMENT_FOR_ONE_IMAGE = 30;
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
@@ -60,6 +60,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     public function setIsRealTime($isRealTime = true)
     {
         $this->isRealTime = $isRealTime;
+
         return $this;
     }
 
@@ -84,7 +85,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
                 'listing_product_id' => $this->listingProduct->getId(),
                 'lock_identifier' => $this->getLockIdentifier(),
                 'action_type' => $this->getActionType(),
-                'request_timeout' => $this->getRequestTimeout()
+                'request_timeout' => $this->getRequestTimeout(),
             ]
         );
     }
@@ -104,15 +105,18 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         $requestDataObject = $this->getRequestDataObject();
         $requestData = $requestDataObject->getData();
 
-        if (!isset($requestData['is_eps_ebay_images_mode']) || !isset($requestData['upload_images_mode']) ||
+        if (
+            !isset($requestData['is_eps_ebay_images_mode']) || !isset($requestData['upload_images_mode']) ||
             $requestData['is_eps_ebay_images_mode'] === false ||
             ($requestData['is_eps_ebay_images_mode'] === null &&
                 $requestData['upload_images_mode'] ==
-                \Ess\M2ePro\Helper\Component\Ebay\Configuration::UPLOAD_IMAGES_MODE_SELF)) {
+                \Ess\M2ePro\Helper\Component\Ebay\Configuration::UPLOAD_IMAGES_MODE_SELF)
+        ) {
             return self::DEFAULT_REQUEST_TIMEOUT;
         }
 
         $imagesTimeout = self::TIMEOUT_INCREMENT_FOR_ONE_IMAGE * $requestDataObject->getTotalImagesCount();
+
         return self::DEFAULT_REQUEST_TIMEOUT + $imagesTimeout;
     }
 
@@ -125,6 +129,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
             if ($this->isListingProductLocked()) {
                 $this->writeStoredLogMessages();
+
                 return;
             }
 
@@ -133,11 +138,13 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
             if (!$this->validateListingProduct() || !$this->validateConfigurator()) {
                 $this->writeStoredLogMessages();
+
                 return;
             }
 
             if ($this->isRealTime()) {
                 $this->processRealTime();
+
                 return;
             }
 
@@ -200,22 +207,22 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
         $metaData['log_messages'] = $logMessages;
 
         $product = [
-            'request'          => $this->getRequestDataObject()->getData(),
+            'request' => $this->getRequestDataObject()->getData(),
             'request_metadata' => $metaData,
-            'configurator'     => $this->listingProduct->getActionConfigurator()->getSerializedData(),
-            'id'               => $this->listingProduct->getId(),
+            'configurator' => $this->listingProduct->getActionConfigurator()->getSerializedData(),
+            'id' => $this->listingProduct->getId(),
         ];
 
         return [
-            'is_realtime'     => $this->isRealTime(),
-            'account_id'      => $this->account->getId(),
-            'action_type'     => $this->getActionType(),
+            'is_realtime' => $this->isRealTime(),
+            'account_id' => $this->account->getId(),
+            'action_type' => $this->getActionType(),
             'lock_identifier' => $this->getLockIdentifier(),
-            'logs_action'     => $this->getLogsAction(),
-            'logs_action_id'  => $this->getLogger()->getActionId(),
-            'status_changer'  => $this->params['status_changer'],
-            'params'          => $this->params,
-            'product'         => $product,
+            'logs_action' => $this->getLogsAction(),
+            'logs_action_id' => $this->getLogger()->getActionId(),
+            'status_changer' => $this->params['status_changer'],
+            'params' => $this->params,
+            'product' => $product,
         ];
     }
 
@@ -392,7 +399,6 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     protected function getValidatorObject()
     {
         if (empty($this->validatorObject)) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator $validator */
             $validator = $this->modelFactory->getObject(
                 'Ebay\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Validator'
@@ -445,6 +451,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     /**
      * @param array $data
+     *
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -459,6 +466,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     /**
      * @param array $data
+     *
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -488,7 +496,6 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     public function getLogger()
     {
         if ($this->logger === null) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Logger $logger */
 
             $logger = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Logger');

@@ -45,7 +45,7 @@ class Category extends AbstractModel
 
         $websitesProductsIds = [
             // website for default store view
-            0 => $changedProductsIds
+            0 => $changedProductsIds,
         ];
 
         if ($websiteId == 0) {
@@ -61,7 +61,6 @@ class Category extends AbstractModel
 
         foreach ($websitesProductsIds as $websiteId => $productIds) {
             foreach ($productIds as $productId) {
-
                 /** @var \Magento\Catalog\Model\Product $product */
                 $product = $this->getHelper('Magento\Product')->getCachedAndLoadedProduct($productId);
                 $categoryAutoAction = $this->listingAutoActionsModeFactory->createCategoryMode($product);

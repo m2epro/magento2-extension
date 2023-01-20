@@ -12,17 +12,18 @@ use Ess\M2ePro\Model\AbstractModel;
 
 class Builder extends AbstractModel
 {
-    const INSTRUCTION_INITIATOR = 'order_builder';
+    public const INSTRUCTION_INITIATOR = 'order_builder';
 
-    const STATUS_NOT_MODIFIED = 0;
-    const STATUS_NEW          = 1;
-    const STATUS_UPDATED      = 2;
+    public const STATUS_NOT_MODIFIED = 0;
+    public const STATUS_NEW = 1;
+    public const STATUS_UPDATED = 2;
 
-    const UPDATE_STATUS = 'status';
-    const UPDATE_EMAIL  = 'email';
+    public const UPDATE_STATUS = 'status';
+    public const UPDATE_EMAIL = 'email';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     /** @var \Ess\M2ePro\Model\Account $order */
@@ -30,11 +31,11 @@ class Builder extends AbstractModel
 
     /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
-
+    /** @var int  */
     protected $status = self::STATUS_NOT_MODIFIED;
-
+    /** @var array  */
     protected $items = [];
-
+    /** @var array  */
     protected $updates = [];
 
     public function __construct(
@@ -82,7 +83,8 @@ class Builder extends AbstractModel
 
         $this->setData('is_buyer_requested_cancel', $data['is_buyer_requested_cancel']);
         $this->setData('buyer_cancel_reason', $data['buyer_cancel_reason']);
-        if ($data['is_buyer_requested_cancel'] &&
+        if (
+            $data['is_buyer_requested_cancel'] &&
             $this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED
         ) {
             $this->setData('status', \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED);
@@ -123,10 +125,10 @@ class Builder extends AbstractModel
         $this->status = self::STATUS_NOT_MODIFIED;
 
         $existOrders = $this->amazonFactory->getObject('Order')->getCollection()
-            ->addFieldToFilter('account_id', $this->account->getId())
-            ->addFieldToFilter('amazon_order_id', $this->getData('amazon_order_id'))
-            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-            ->getItems();
+                                           ->addFieldToFilter('account_id', $this->account->getId())
+                                           ->addFieldToFilter('amazon_order_id', $this->getData('amazon_order_id'))
+                                           ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
+                                           ->getItems();
         $existOrdersNumber = count($existOrders);
 
         // duplicated M2ePro orders. remove m2e order without magento order id or newest order
@@ -197,6 +199,7 @@ class Builder extends AbstractModel
         }
 
         $item = $data['tax_registration_details'][0];
+
         return !empty($item['tax_registration_id']) && is_string($item['tax_registration_id']) ?
             $item['tax_registration_id'] : null;
     }
@@ -230,11 +233,13 @@ class Builder extends AbstractModel
             return false;
         }
 
-        if (!in_array(
-            strtoupper($countryCode),
-            $this->account->getChildObject()->getExcludedCountries(),
-            true
-        )) {
+        if (
+            !in_array(
+                strtoupper($countryCode),
+                $this->account->getChildObject()->getExcludedCountries(),
+                true
+            )
+        ) {
             return false;
         }
 
@@ -252,10 +257,12 @@ class Builder extends AbstractModel
             return true;
         }
 
-        if ($this->account->getChildObject()->isAmazonCollectsTaxForUKShipmentWithCertainPrice()
+        if (
+            $this->account->getChildObject()->isAmazonCollectsTaxForUKShipmentWithCertainPrice()
             && $this->isSumOfItemPriceLessThan135GBP(
                 $data['items']
-            )) {
+            )
+        ) {
             return true;
         }
 
@@ -323,7 +330,8 @@ class Builder extends AbstractModel
         $this->createOrUpdateOrder();
         $this->createOrUpdateItems();
 
-        if ($this->isNew() && !$this->getData('is_afn_channel') &&
+        if (
+            $this->isNew() && !$this->getData('is_afn_channel') &&
             $this->getData('status') != \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED
         ) {
             $this->processListingsProductsUpdates();
@@ -607,10 +615,10 @@ class Builder extends AbstractModel
                 $instruction->setData(
                     [
                         'listing_product_id' => $listingProduct->getId(),
-                        'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                        'type'               => \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                        'initiator'          => self::INSTRUCTION_INITIATOR,
-                        'priority'           => 80,
+                        'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                        'type' => \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                        'initiator' => self::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
                     ]
                 );
                 $instruction->save();
@@ -650,14 +658,16 @@ class Builder extends AbstractModel
                         'Item QTY was changed from %from% to %to% .',
                         empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
                         0
-                    )
+                    ),
                 ];
 
                 if (!$listingProduct->isStopped()) {
                     $statusChangedFrom = $this->getHelper('Component\Amazon')
-                        ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
+                                              ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
                     $statusChangedTo = $this->getHelper('Component\Amazon')
-                        ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
+                                            ->getHumanTitleByListingProductStatus(
+                                                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+                                            );
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         $tempLogMessages[] = $this->helperFactory->getObject('Module\Translation')->__(

@@ -17,7 +17,7 @@ class Order extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
@@ -46,10 +46,10 @@ class Order extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         // Prepare collection
         // ---------------------------------------
         $orderLogsCollection = $this->activeRecordFactory->getObject('Order\Log')->getCollection()
-            ->addFieldToFilter('order_id', $orderId)
-            ->setOrder('id', 'DESC');
+                                                         ->addFieldToFilter('order_id', $orderId)
+                                                         ->setOrder('id', 'DESC');
         $orderLogsCollection->getSelect()
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
+                            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
 
         if (!$orderLogsCollection->getSize()) {
             return '';
@@ -58,12 +58,12 @@ class Order extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         // ---------------------------------------
 
         $summary = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Log\Grid\LastActions::class)
-                                     ->setData([
-            'entity_id' => $orderId,
-            'logs'      => $orderLogsCollection->getItems(),
-            'view_help_handler' => 'OrderObj.viewOrderHelp',
-            'hide_help_handler' => 'OrderObj.hideOrderHelp',
-        ]);
+                        ->setData([
+                            'entity_id' => $orderId,
+                            'logs' => $orderLogsCollection->getItems(),
+                            'view_help_handler' => 'OrderObj.viewOrderHelp',
+                            'hide_help_handler' => 'OrderObj.hideOrderHelp',
+                        ]);
 
         return $summary->toHtml();
     }

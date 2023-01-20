@@ -10,14 +10,10 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode
- */
 abstract class ProductTaxCode extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template
 {
+    /** @var \Magento\Framework\DB\TransactionFactory  */
     protected $transactionFactory;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
@@ -39,9 +35,9 @@ abstract class ProductTaxCode extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
         foreach ($productsIdsParam as $productsIdsParamChunk) {
             $select = $this->resourceConnection->getConnection()->select();
             $select->from(['lo' => $table], ['object_id'])
-                ->where('model_name = "Listing_Product"')
-                ->where('object_id IN (?)', $productsIdsParamChunk)
-                ->where('tag IS NOT NULL');
+                   ->where('model_name = "Listing_Product"')
+                   ->where('object_id IN (?)', $productsIdsParamChunk)
+                   ->where('tag IS NOT NULL');
 
             $lockedProducts = $this->resourceConnection->getConnection()->fetchCol($select);
 
@@ -150,12 +146,12 @@ abstract class ProductTaxCode extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
     protected function runProcessorForParents($productsIds)
     {
         $tableAmazonListingProduct = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
+                                          ->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $select = $this->resourceConnection->getConnection()->select();
         $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('is_variation_parent = ?', 1);
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('is_variation_parent = ?', 1);
 
         $productsIds = $this->resourceConnection->getConnection()->fetchCol($select);
 

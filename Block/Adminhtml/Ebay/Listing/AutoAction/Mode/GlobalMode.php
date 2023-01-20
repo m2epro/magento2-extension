@@ -42,7 +42,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
         $autoGlobalAddingMode->addElementValues([
             \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY => $this->__(
                 'Add to the Listing and Assign eBay Category'
-            )
+            ),
         ]);
 
         return $this;
@@ -75,7 +75,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->supportHelper->getDocumentationArticleUrl('x/uv8UB')
-                )
+                ),
             ]
         );
 

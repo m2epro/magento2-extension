@@ -8,16 +8,14 @@
 
 namespace Ess\M2ePro\Observer;
 
-/**
- * Class \Ess\M2ePro\Observer\Creditmemo
- */
 class Creditmemo extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
+    /** @var \Magento\Framework\UrlInterface */
     protected $urlBuilder;
+    /** @var \Magento\Framework\Message\Manager */
     protected $messageManager;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,

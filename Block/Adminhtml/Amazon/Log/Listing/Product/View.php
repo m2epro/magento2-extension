@@ -45,9 +45,9 @@ class View extends AbstractView
     protected function createMarketplaceSwitcherBlock()
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher::class)
-                                 ->setData([
-            'component_mode' => $this->getComponentMode(),
-        ]);
+                    ->setData([
+                        'component_mode' => $this->getComponentMode(),
+                    ]);
     }
 
     protected function _toHtml()

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeD
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial\Runner
 {
-    const LOCK_ITEM_PREFIX = 'synchronization_amazon_listings_products_update_defected';
+    public const LOCK_ITEM_PREFIX = 'synchronization_amazon_listings_products_update_defected';
 
     //##################################
 
@@ -46,7 +46,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => self::LOCK_ITEM_PREFIX.'_'. $params['account_id']
+            'nick' => self::LOCK_ITEM_PREFIX . '_' . $params['account_id'],
         ]);
         $lockItemManager->create();
 
@@ -71,7 +71,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItem */
         $lockItem = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => self::LOCK_ITEM_PREFIX.'_'. $params['account_id']
+            'nick' => self::LOCK_ITEM_PREFIX . '_' . $params['account_id'],
         ]);
         $lockItem->remove();
 

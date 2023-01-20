@@ -40,9 +40,9 @@ class Order extends AbstractContainer
         $this->addButton(
             'upload_by_user',
             [
-                'label'     => $this->__('Order Reimport'),
-                'onclick'   => 'UploadByUserObj.openPopup()',
-                'class'     => 'action-primary'
+                'label' => $this->__('Order Reimport'),
+                'onclick' => 'UploadByUserObj.openPopup()',
+                'class' => 'action-primary',
             ]
         );
     }
@@ -68,7 +68,7 @@ class Order extends AbstractContainer
                 performed in accordance with the Order settings specified in <br>
                 <strong>Account Settings (Amazon Integration > Configuration > Accounts)</strong>.</p>
 HTML
-            )
+            ),
         ]);
 
         $this->setPageActionsBlock('Amazon_Order_PageActions');
@@ -79,7 +79,7 @@ HTML
     public function getGridHtml()
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Edit::class)->toHtml() .
-               parent::getGridHtml();
+            parent::getGridHtml();
     }
 
     protected function _beforeToHtml()
@@ -88,7 +88,9 @@ HTML
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
-        $this->js->addRequireJs(['upload' => 'M2ePro/Order/UploadByUser'], <<<JS
+        $this->js->addRequireJs(
+            ['upload' => 'M2ePro/Order/UploadByUser'],
+            <<<JS
 UploadByUserObj = new UploadByUser('amazon', 'orderUploadByUserPopupGrid');
 JS
         );
@@ -99,9 +101,9 @@ JS
 
         $this->jsTranslator->addTranslations(
             [
-                'Order Reimport'               => $this->__('Order Reimport'),
+                'Order Reimport' => $this->__('Order Reimport'),
                 'Order importing in progress.' => $this->__('Order importing in progress.'),
-                'Order importing is canceled.' => $this->__('Order importing is canceled.')
+                'Order importing is canceled.' => $this->__('Order importing is canceled.'),
             ]
         );
 

@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\TypeSwitcher
- */
 abstract class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
-    const LISTING_TYPE_M2E_PRO       = 'product';
-    const LISTING_TYPE_LISTING_OTHER = 'other';
+    public const LISTING_TYPE_M2E_PRO = 'product';
+    public const LISTING_TYPE_LISTING_OTHER = 'other';
 
     protected $paramName = 'listing_type';
 
@@ -39,14 +36,14 @@ abstract class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
                 'value' => [
                     [
                         'label' => $this->__('M2E Pro'),
-                        'value' => self::LISTING_TYPE_M2E_PRO
+                        'value' => self::LISTING_TYPE_M2E_PRO,
                     ],
                     [
                         'label' => $this->__('Unmanaged'),
-                        'value' => self::LISTING_TYPE_LISTING_OTHER
+                        'value' => self::LISTING_TYPE_LISTING_OTHER,
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 

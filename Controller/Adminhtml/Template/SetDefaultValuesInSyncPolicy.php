@@ -49,10 +49,10 @@ class SetDefaultValuesInSyncPolicy extends Base
 
             while ($template = $templates->fetch()) {
                 $connection->update($templateTable, [
-                    'relist_qty_calculated'       => \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_YES,
+                    'relist_qty_calculated' => \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_YES,
                     'relist_qty_calculated_value' => '1', // Model/%component%/Template/Synchronization/Builder.php
-                    'stop_qty_calculated'         => \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_YES,
-                    'stop_qty_calculated_value'   => '0' // Model/%component%/Template/Synchronization/Builder.php
+                    'stop_qty_calculated' => \Ess\M2ePro\Model\Template\Synchronization::QTY_MODE_YES,
+                    'stop_qty_calculated_value' => '0', // Model/%component%/Template/Synchronization/Builder.php
                 ], ['template_synchronization_id = ?' => $template['template_synchronization_id']]);
             }
         }
@@ -62,9 +62,11 @@ class SetDefaultValuesInSyncPolicy extends Base
 
         $this->moduleHelper->getRegistry()->setValue('/upgrade/messages/', $messages);
 
-        $this->getMessageManager()->addSuccess($this->__(
-            'Relist and Stop Rules in Synchronization Policies were updated.'
-        ));
+        $this->getMessageManager()->addSuccess(
+            $this->__(
+                'Relist and Stop Rules in Synchronization Policies were updated.'
+            )
+        );
 
         return $this->_redirect($this->redirect->getRefererUrl());
     }

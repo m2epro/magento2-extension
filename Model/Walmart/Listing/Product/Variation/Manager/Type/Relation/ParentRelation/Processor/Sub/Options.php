@@ -30,7 +30,8 @@ class Options extends AbstractModel
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
             $typeModel = $walmartListingProduct->getVariationManager()->getTypeModel();
 
-            if (!$typeModel->isActualProductAttributes() ||
+            if (
+                !$typeModel->isActualProductAttributes() ||
                 !$typeModel->isActualMatchedAttributes() ||
                 ($typeModel->isVariationProductMatched() &&
                     !$typeModel->isActualProductVariation())
@@ -38,7 +39,8 @@ class Options extends AbstractModel
                 $typeModel->resetProductVariation();
             }
 
-            if ($typeModel->isVariationProductMatched() &&
+            if (
+                $typeModel->isVariationProductMatched() &&
                 count($typeModel->getProductOptions()) != count($typeModel->getChannelOptions())
             ) {
                 $this->getProcessor()->tryToRemoveChildListingProduct($listingProduct);
@@ -102,7 +104,8 @@ class Options extends AbstractModel
                 continue;
             }
 
-            if ($childListingProduct->isLocked() || $walmartChildListingProduct->getSku()
+            if (
+                $childListingProduct->isLocked() || $walmartChildListingProduct->getSku()
                 || $childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
             ) {
                 continue;

@@ -33,8 +33,10 @@ class SnapshotBuilder extends \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder
             ? $this->getModel()->getChildObject()->getDefinitionTemplate()->getData() : [];
 
         $ignoredKeys = [
-            'id', 'template_description_id',
-            'update_date', 'create_date',
+            'id',
+            'template_description_id',
+            'update_date',
+            'create_date',
         ];
 
         foreach ($data['specifics'] as &$specificsData) {

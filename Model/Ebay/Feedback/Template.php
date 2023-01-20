@@ -60,6 +60,7 @@ class Template extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $temp = parent::delete();
         $temp && $this->accountModel = null;
+
         return $temp;
     }
 

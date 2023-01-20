@@ -15,7 +15,7 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing as ActionProcessi
  */
 class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/listing/product/process_actions_results';
+    public const NICK = 'walmart/listing/product/process_actions_results';
 
     //####################################
 
@@ -33,13 +33,13 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
          * @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection $actionCollection
          */
         $actionCollection = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_Processing')
-            ->getCollection();
+                                                      ->getCollection();
         $actionCollection->addFieldToFilter('request_pending_single_id', ['notnull' => true]);
         $actionCollection->addFieldToFilter('type', ['neq' => ActionProcessing::TYPE_ADD]);
         $actionCollection->getSelect()->joinLeft(
             [
                 'rps' => $this->activeRecordFactory->getObject('Request_Pending_Single')
-                    ->getResource()->getMainTable()
+                                                   ->getResource()->getMainTable(),
             ],
             'rps.id = main_table.request_pending_single_id',
             []
@@ -64,13 +64,13 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function executeCompletedRequestsPendingSingle()
     {
         $requestIds = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_Processing')->getResource()
-            ->getUniqueRequestPendingSingleIds();
+                                                ->getUniqueRequestPendingSingleIds();
         if (empty($requestIds)) {
             return;
         }
 
         $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-            ->getCollection();
+                                                                    ->getCollection();
         $requestPendingSingleCollection->addFieldToFilter('id', ['in' => $requestIds]);
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 1);
 
@@ -82,7 +82,7 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($requestPendingSingleObjects as $requestId => $requestPendingSingle) {
             $actionCollection = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_Processing')
-                ->getCollection();
+                                                          ->getCollection();
             $actionCollection->setRequestPendingSingleIdFilter($requestId);
             $actionCollection->setInProgressFilter();
             $actionCollection->addFieldToFilter('type', ['neq' => ActionProcessing::TYPE_ADD]);
@@ -93,12 +93,12 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            $resultData     = $requestPendingSingle->getResultData();
+            $resultData = $requestPendingSingle->getResultData();
             $resultMessages = $requestPendingSingle->getResultMessages();
 
             foreach ($actions as $action) {
                 $resultActionData = [
-                    'errors' => []
+                    'errors' => [],
                 ];
 
                 //worker may return different data structure
@@ -135,7 +135,7 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $processing->setData('is_completed', 1);
 
             if ($requestTime !== null) {
-                $processingParams                 = $processing->getParams();
+                $processingParams = $processing->getParams();
                 $processingParams['request_time'] = $requestTime;
                 $processing->setSettings('params', $processingParams);
             }

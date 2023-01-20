@@ -29,11 +29,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'      => 'edit_form',
-                    'action'  => $this->getUrl('*/amazon_listing/save'),
-                    'method'  => 'post',
-                    'enctype' => 'multipart/form-data'
-                ]
+                    'id' => 'edit_form',
+                    'action' => $this->getUrl('*/amazon_listing/save'),
+                    'method' => 'post',
+                    'enctype' => 'multipart/form-data',
+                ],
             ]
         );
 

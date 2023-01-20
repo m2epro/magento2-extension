@@ -32,6 +32,7 @@ class Delete extends Template
         if (!$template->getId()) {
             $this->messageManager->addError($this->__('Policy does not exist.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 

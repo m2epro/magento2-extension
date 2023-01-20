@@ -29,6 +29,7 @@ class GetGridHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         if (empty($productId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -37,6 +38,7 @@ class GetGridHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Variation\Product\Manage\View\Grid::class);
 
         $this->setAjaxContent($view);
+
         return $this->getResult();
     }
 }

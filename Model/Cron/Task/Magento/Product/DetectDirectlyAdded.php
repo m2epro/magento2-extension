@@ -13,8 +13,9 @@ namespace Ess\M2ePro\Model\Cron\Task\Magento\Product;
  */
 class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'magento/product/detect_directly_added';
+    public const NICK = 'magento/product/detect_directly_added';
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory  */
     protected $magentoProductCollectionFactory;
 
     /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
@@ -32,7 +33,6 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
     ) {
-
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
         parent::__construct(
@@ -76,7 +76,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $productCategories = $product->getCategoryIds();
 
         $categoriesByWebsite = [
-            0 => $productCategories // website for admin values
+            0 => $productCategories, // website for admin values
         ];
 
         foreach ($product->getWebsiteIds() as $websiteId) {
@@ -116,6 +116,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->order('entity_id DESC')->limit(1);
+
         return (int)$collection->getLastItem()->getId();
     }
 

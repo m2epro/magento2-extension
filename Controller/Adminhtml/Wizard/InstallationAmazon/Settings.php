@@ -15,6 +15,7 @@ class Settings extends InstallationAmazon
     public function execute()
     {
         $this->init();
+
         return $this->renderSimpleStep();
     }
 }

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
-use \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
+use Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Template\Category;
 
 class ValidateProductsForAssign extends Category
 {
@@ -35,13 +35,13 @@ class ValidateProductsForAssign extends Category
                 'type' => 'warning',
                 'text' => $this->__(
                     'Category Policy cannot be assigned because the Products are in Action.'
-                )
+                ),
             ];
         }
 
         if (empty($productsIdsLocked)) {
             $this->setJsonContent([
-                'messages' => $messages
+                'messages' => $messages,
             ]);
 
             return $this->getResult();
@@ -56,7 +56,7 @@ class ValidateProductsForAssign extends Category
         $this->setJsonContent([
             'html' => $block->toHtml(),
             'messages' => $messages,
-            'products_ids' => implode(',', $productsIdsLocked)
+            'products_ids' => implode(',', $productsIdsLocked),
         ]);
 
         return $this->getResult();

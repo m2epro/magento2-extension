@@ -8,21 +8,22 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection;
 
-/**
- * Class \Ess\M2ePro\Model\Connector\Connection\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    const API_VERSION = 1;
+    public const API_VERSION = 1;
 
+    /** @var null  */
     protected $requestTime = null;
-
+    /** @var null  */
     protected $serverBaseUrl = null;
+    /** @var null  */
     protected $serverHostName = null;
-
+    /** @var bool  */
     protected $tryToResendOnError = true;
+    /** @var bool  */
     protected $tryToSwitchEndpointOnError = true;
-    protected $canIgnoreMaintenance       = false;
+    /** @var bool  */
+    protected $canIgnoreMaintenance = false;
 
     //########################################
 
@@ -53,6 +54,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setServerBaseUrl($value)
     {
         $this->serverBaseUrl = $value;
+
         return $this;
     }
 
@@ -66,6 +68,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setServerHostName($value)
     {
         $this->serverHostName = $value;
+
         return $this;
     }
 
@@ -78,11 +81,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param boolean $tryToResendOnError
+     *
      * @return $this
      */
     public function setTryToResendOnError($tryToResendOnError)
     {
         $this->tryToResendOnError = $tryToResendOnError;
+
         return $this;
     }
 
@@ -98,11 +103,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param boolean $tryToSwitchEndpointOnError
+     *
      * @return $this
      */
     public function setTryToSwitchEndpointOnError($tryToSwitchEndpointOnError)
     {
         $this->tryToSwitchEndpointOnError = $tryToSwitchEndpointOnError;
+
         return $this;
     }
 

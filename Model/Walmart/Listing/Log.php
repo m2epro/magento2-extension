@@ -30,6 +30,7 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
      * @param null $description
      * @param null $type
      * @param array $additionalData
+     *
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -57,7 +58,6 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
         );
 
         if (!empty($listingProductId)) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->parentFactory
                 ->getObjectLoaded(Walmart::NICK, 'Listing\Product', $listingProductId);
@@ -65,7 +65,8 @@ class Log extends \Ess\M2ePro\Model\Listing\Log
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $variationManager */
             $variationManager = $listingProduct->getChildObject()->getVariationManager();
 
-            if ($variationManager->isPhysicalUnit() &&
+            if (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $productOptions = $variationManager->getTypeModel()->getProductOptions();

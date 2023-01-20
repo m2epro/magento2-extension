@@ -8,14 +8,11 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\ItemsRequester
- */
 abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     /** @var string */
     protected $rawPdfDoc;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -70,13 +67,13 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
             $requestPendingSingle = $this->activeRecordFactory->getObject('Request_Pending_Single');
             $requestPendingSingle->setData(
                 [
-                    'component'       => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                    'server_hash'     => $this->processingServerHash,
+                    'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                    'server_hash' => $this->processingServerHash,
                     'expiration_date' => gmdate(
                         'Y-m-d H:i:s',
                         $this->helperData->getCurrentGmtDate(true)
-                            + \Ess\M2ePro\Model\Amazon\Order\Action\Processor::PENDING_REQUEST_MAX_LIFE_TIME
-                    )
+                        + \Ess\M2ePro\Model\Amazon\Order\Action\Processor::PENDING_REQUEST_MAX_LIFE_TIME
+                    ),
                 ]
             );
             $requestPendingSingle->save();
@@ -101,11 +98,11 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
             parent::getProcessingParams(),
             [
                 'request_data' => $this->getRequestData(),
-                'order_id'     => $this->params['order']['order_id'],
-                'change_id'    => $this->params['order']['change_id'],
-                'action_type'  => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_SEND_INVOICE,
-                'lock_name'    => 'send_invoice_order',
-                'start_date'   => $this->helperData->getCurrentGmtDate(),
+                'order_id' => $this->params['order']['order_id'],
+                'change_id' => $this->params['order']['change_id'],
+                'action_type' => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_SEND_INVOICE,
+                'lock_name' => 'send_invoice_order',
+                'start_date' => $this->helperData->getCurrentGmtDate(),
             ]
         );
     }
@@ -125,7 +122,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
         $requestData = [
             'order_id' => $this->params['order']['amazon_order_id'],
             'document_number' => $this->params['order']['document_number'],
-            'document_type' => $this->params['order']['document_type']
+            'document_type' => $this->params['order']['document_type'],
         ];
 
         if (isset($this->params['order']['document_shipping_id'])) {

@@ -13,12 +13,12 @@ namespace Ess\M2ePro\Model\Ebay;
  */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const ADDING_MODE_ADD_AND_ASSIGN_CATEGORY = 2;
+    public const ADDING_MODE_ADD_AND_ASSIGN_CATEGORY = 2;
 
-    const PARTS_COMPATIBILITY_MODE_EPIDS  = 'epids';
-    const PARTS_COMPATIBILITY_MODE_KTYPES = 'ktypes';
+    public const PARTS_COMPATIBILITY_MODE_EPIDS = 'epids';
+    public const PARTS_COMPATIBILITY_MODE_KTYPES = 'ktypes';
 
-    const CREATE_LISTING_SESSION_DATA = 'ebay_listing_create';
+    public const CREATE_LISTING_SESSION_DATA = 'ebay_listing_create';
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
@@ -456,6 +456,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /**
      * @param $template
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Manager
      */
     public function getTemplateManager($template)
@@ -709,6 +710,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
      * @param int $initiator
+     *
      * @return bool|\Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -730,61 +732,69 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $listingProduct = $result;
 
         $collection = $this->activeRecordFactory->getObject('Ebay\Item')->getCollection()
-            ->addFieldToFilter('account_id', $listingOtherProduct->getAccount()->getId())
-            ->addFieldToFilter('item_id', $listingOtherProduct->getChildObject()->getItemId());
+                                                ->addFieldToFilter(
+                                                    'account_id',
+                                                    $listingOtherProduct->getAccount()->getId()
+                                                )
+                                                ->addFieldToFilter(
+                                                    'item_id',
+                                                    $listingOtherProduct->getChildObject()->getItemId()
+                                                );
 
         /** @var \Ess\M2ePro\Model\Ebay\Item $ebayItem */
         $ebayItem = $collection->getLastItem();
         if (!$ebayItem->getId()) {
             $ebayItem->setData(
                 [
-                    'account_id'     => $listingOtherProduct->getAccount()->getId(),
+                    'account_id' => $listingOtherProduct->getAccount()->getId(),
                     'marketplace_id' => $listingOtherProduct->getMarketplace()->getId(),
-                    'item_id'        => $listingOtherProduct->getChildObject()->getItemId(),
-                    'product_id'     => $listingOtherProduct->getProductId(),
+                    'item_id' => $listingOtherProduct->getChildObject()->getItemId(),
+                    'product_id' => $listingOtherProduct->getProductId(),
                 ]
             );
         }
 
-        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+        if (
+            $listingProduct->getMagentoProduct()->isGroupedType() &&
             $this->moduleConfiguration->isGroupedProductModeSet()
         ) {
             $ebayItem->setAdditionalData(json_encode(['grouped_product_mode' => 1]));
         }
 
         $ebayItem->setData('store_id', $this->getParentObject()->getStoreId())
-            ->save();
+                 ->save();
 
         $ebayListingOther = $listingOtherProduct->getChildObject();
 
         $dataForUpdate = [
-            'ebay_item_id'           => $ebayItem->getId(),
-            'online_sku'             => $ebayListingOther->getSku(),
-            'online_title'           => $ebayListingOther->getTitle(),
-            'online_duration'        => $ebayListingOther->getOnlineDuration(),
-            'online_current_price'   => $ebayListingOther->getOnlinePrice(),
-            'online_qty'             => $ebayListingOther->getOnlineQty(),
-            'online_qty_sold'        => $ebayListingOther->getOnlineQtySold(),
-            'online_bids'            => $ebayListingOther->getOnlineBids(),
-            'online_main_category'   => $ebayListingOther->getOnlineMainCategory(),
+            'ebay_item_id' => $ebayItem->getId(),
+            'online_sku' => $ebayListingOther->getSku(),
+            'online_title' => $ebayListingOther->getTitle(),
+            'online_duration' => $ebayListingOther->getOnlineDuration(),
+            'online_current_price' => $ebayListingOther->getOnlinePrice(),
+            'online_qty' => $ebayListingOther->getOnlineQty(),
+            'online_qty_sold' => $ebayListingOther->getOnlineQtySold(),
+            'online_bids' => $ebayListingOther->getOnlineBids(),
+            'online_main_category' => $ebayListingOther->getOnlineMainCategory(),
             'online_categories_data' => $this->getHelper('Data')->jsonEncode(
                 $ebayListingOther->getOnlineCategoriesData()
             ),
 
-            'start_date'     => $ebayListingOther->getStartDate(),
-            'end_date'       => $ebayListingOther->getEndDate(),
-            'status'         => $listingOtherProduct->getStatus(),
-            'status_changer' => $listingOtherProduct->getStatusChanger()
+            'start_date' => $ebayListingOther->getStartDate(),
+            'end_date' => $ebayListingOther->getEndDate(),
+            'status' => $listingOtherProduct->getStatus(),
+            'status_changer' => $listingOtherProduct->getStatusChanger(),
         ];
 
         $listingProduct->addData($dataForUpdate)
-            ->getChildObject()->addData($dataForUpdate);
+                       ->getChildObject()->addData($dataForUpdate);
         $listingProduct->setSetting(
             'additional_data',
             $listingProduct::MOVING_LISTING_OTHER_SOURCE_KEY,
             $listingOtherProduct->getId()
         );
-        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+        if (
+            $listingProduct->getMagentoProduct()->isGroupedType() &&
             $this->moduleConfiguration->isGroupedProductModeSet()
         ) {
             $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
@@ -802,10 +812,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $instruction->setData(
             [
                 'listing_product_id' => $listingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
-                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
-                'priority'           => 20,
+                'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+                'priority' => 20,
             ]
         );
         $instruction->save();

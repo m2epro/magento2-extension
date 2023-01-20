@@ -23,7 +23,7 @@ class DisableModule extends Installation
 
         $wizardUrl = $this->getUrl('m2epro/migrationFromMagento1/prepare');
 
-        $this->updateButton('continue', 'onclick', 'setLocation("'.$wizardUrl.'")');
+        $this->updateButton('continue', 'onclick', 'setLocation("' . $wizardUrl . '")');
     }
 
     protected function getStep()

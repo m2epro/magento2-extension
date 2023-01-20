@@ -24,7 +24,7 @@ class DuplicateProducts extends Main
         if (empty($listingProductsIds)) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Listing Products must be specified.')
+                'message' => $this->__('Listing Products must be specified.'),
             ]);
 
             return $this->getResult();
@@ -55,7 +55,7 @@ class DuplicateProducts extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'message' => $this->__('The Items were duplicated.')
+            'message' => $this->__('The Items were duplicated.'),
         ]);
 
         return $this->getResult();

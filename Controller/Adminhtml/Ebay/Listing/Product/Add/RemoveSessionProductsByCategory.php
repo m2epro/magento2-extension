@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
  */
 class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-
     public function execute()
     {
         $categoriesIds = $this->getRequestIds();

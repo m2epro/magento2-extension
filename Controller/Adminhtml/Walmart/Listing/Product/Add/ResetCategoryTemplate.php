@@ -21,7 +21,7 @@ class ResetCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Lis
 
         return $this->_redirect('*/walmart_listing_product_add/index', [
             '_current' => true,
-            'step' => 3
+            'step' => 3,
         ]);
     }
 }

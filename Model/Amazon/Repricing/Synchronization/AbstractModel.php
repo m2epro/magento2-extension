@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Amazon\Repricing\Synchronization;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 {
-    const MODE_GENERAL      = 'general';
-    const MODE_ACTUAL_PRICE = 'actual_price';
+    public const MODE_GENERAL = 'general';
+    public const MODE_ACTUAL_PRICE = 'actual_price';
 
     //########################################
 
@@ -30,7 +30,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
     {
         $requestData = [
             'account_token' => $this->getAmazonAccountRepricing()->getToken(),
-            'mode'          => $this->getMode()
+            'mode' => $this->getMode(),
         ];
 
         if (!empty($filters)) {
@@ -54,6 +54,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
         }
 
         $this->processErrorMessages($result['response']);
+
         return $result['response'];
     }
 

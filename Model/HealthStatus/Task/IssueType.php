@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\HealthStatus\Task;
  */
 abstract class IssueType extends AbstractModel
 {
-    const TYPE = 'issue';
+    public const TYPE = 'issue';
 
     //########################################
 

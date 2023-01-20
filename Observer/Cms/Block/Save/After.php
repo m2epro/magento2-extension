@@ -10,16 +10,12 @@ namespace Ess\M2ePro\Observer\Cms\Block\Save;
 
 use Ess\M2ePro\Model\Ebay\Template\Description as Description;
 
-/**
- * Class Ess\M2ePro\Observer\Cms\Block\Save\After
- */
 class After extends \Ess\M2ePro\Observer\AbstractModel
 {
-    const INSTRUCTION_INITIATOR = 'magento_static_block_observer';
+    public const INSTRUCTION_INITIATOR = 'magento_static_block_observer';
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -47,11 +43,11 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
         $conditions = [
             $templates->getConnection()->quoteInto(
                 'description_template LIKE ?',
-                '%id="'.$block->getIdentifier().'"%'
+                '%id="' . $block->getIdentifier() . '"%'
             ),
             $templates->getConnection()->quoteInto(
                 'description_template LIKE ?',
-                '%id="'.$block->getId().'"%'
+                '%id="' . $block->getId() . '"%'
             ),
         ];
         $templates->getSelect()->where(implode(' OR ', $conditions));
@@ -69,14 +65,14 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
             foreach ($affectedListingsProducts->getIds() as $listingProductId) {
                 $listingsProductsInstructionsData[] = [
                     'listing_product_id' => $listingProductId,
-                    'type'               => Description::INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED,
-                    'initiator'          => self::INSTRUCTION_INITIATOR,
-                    'priority'           => 30
+                    'type' => Description::INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => 30,
                 ];
             }
 
             $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()
-                ->add($listingsProductsInstructionsData);
+                                      ->add($listingsProductsInstructionsData);
         }
     }
 

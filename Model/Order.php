@@ -17,10 +17,10 @@ use Ess\M2ePro\Model\Log\AbstractModel as Log;
  */
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
-    const ADDITIONAL_DATA_KEY_IN_ORDER = 'm2epro_order';
+    public const ADDITIONAL_DATA_KEY_IN_ORDER = 'm2epro_order';
 
-    const MAGENTO_ORDER_CREATION_FAILED_NO  = 0;
-    const MAGENTO_ORDER_CREATION_FAILED_YES = 1;
+    public const MAGENTO_ORDER_CREATION_FAILED_NO = 0;
+    public const MAGENTO_ORDER_CREATION_FAILED_YES = 1;
 
     private $storeManager;
 
@@ -56,7 +56,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     private $productHelper = null;
 
-    /** @var Magento\Quote\Manager|null  */
+    /** @var Magento\Quote\Manager|null */
     private $quoteManager = null;
 
     //########################################
@@ -117,8 +117,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order\Note')->getCollection()
-            ->addFieldToFilter('order_id', $this->getId())
-            ->walk('delete');
+                                  ->addFieldToFilter('order_id', $this->getId())
+                                  ->walk('delete');
 
         foreach ($this->getItemsCollection()->getItems() as $item) {
             /** @var \Ess\M2ePro\Model\Order\Item $item */
@@ -127,8 +127,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $this->deleteChildInstance();
 
         $this->activeRecordFactory->getObject('Order\Change')->getCollection()
-            ->addFieldToFilter('order_id', $this->getId())
-            ->walk('delete');
+                                  ->addFieldToFilter('order_id', $this->getId())
+                                  ->walk('delete');
 
         $this->account = null;
         $this->magentoOrder = null;
@@ -193,6 +193,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function setStatusUpdateRequired($isRequired = true)
     {
         $this->statusUpdateRequired = $isRequired;
+
         return $this;
     }
 
@@ -205,17 +206,19 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return $this
      */
     public function setAccount(\Ess\M2ePro\Model\Account $account)
     {
         $this->account = $account;
+
         return $this;
     }
 
     /**
-     * @throws \LogicException
      * @return \Ess\M2ePro\Model\Account
+     * @throws \LogicException
      */
     public function getAccount()
     {
@@ -234,17 +237,19 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Marketplace $marketplace
+     *
      * @return $this
      */
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $this->marketplace = $marketplace;
+
         return $this;
     }
 
     /**
-     * @throws \LogicException
      * @return \Ess\M2ePro\Model\Marketplace
+     * @throws \LogicException
      */
     public function getMarketplace()
     {
@@ -278,9 +283,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         if ($this->reserve === null) {
             $this->reserve = $this->modelFactory->getObject('Order\Reserve', [
-                'order' => $this
+                'order' => $this,
             ]);
         }
+
         return $this->reserve;
     }
 
@@ -324,7 +330,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Check whether the order has only single item ordered
-     *
      * @return bool
      */
     public function isSingle()
@@ -334,7 +339,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Check whether the order has multiple items ordered
-     *
      * @return bool
      */
     public function isCombined()
@@ -346,7 +350,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Get instances of the channel items (Ebay\Item, Amazon\Item etc)
-     *
      * @return array
      */
     public function getChannelItems()
@@ -370,7 +373,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Check whether the order has items, listed by M2E Pro (also true for linked Unmanaged listings)
-     *
      * @return bool
      */
     public function hasListingItems()
@@ -382,7 +384,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Check whether the order has items, listed by Unmanaged software
-     *
      * @return bool
      */
     public function hasOtherListingItems()
@@ -445,6 +446,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function setMagentoOrder($order)
     {
         $this->magentoOrder = $order;
+
         return $this;
     }
 
@@ -626,7 +628,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             if ($transactionLevel = $connection->getTransactionLevel()) {
                 $this->getHelper('Module\Logger')->process(
                     [
-                        'transaction_level' => $transactionLevel
+                        'transaction_level' => $transactionLevel,
                     ],
                     'MySql Transaction Level Problem'
                 );
@@ -658,7 +660,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
             $magentoQuoteBuilder = $this->modelFactory->getObject('Magento_Quote_Builder', ['proxyOrder' => $proxy]);
-            $magentoQuote        = $magentoQuoteBuilder->build();
+            $magentoQuote = $magentoQuoteBuilder->build();
 
             $this->getHelper('Data\GlobalData')->unsetValue(self::ADDITIONAL_DATA_KEY_IN_ORDER);
             $this->getHelper('Data\GlobalData')->setValue(self::ADDITIONAL_DATA_KEY_IN_ORDER, $this);
@@ -673,7 +675,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                      Please check the configuration of the ancillary services of your Magento.
                      For more details, read the original Magento warning: %msg%.',
                     [
-                        'msg' => $e->getMessage()
+                        'msg' => $e->getMessage(),
                     ]
                 );
                 $this->magentoOrder = $e->getOrder();
@@ -683,9 +685,9 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
             if (empty($magentoOrderId)) {
                 $this->addData([
-                    'magento_order_id'                           => $this->magentoOrder->getId(),
-                    'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_NO,
-                    'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+                    'magento_order_id' => $this->magentoOrder->getId(),
+                    'magento_order_creation_failure' => self::MAGENTO_ORDER_CREATION_FAILED_NO,
+                    'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate(),
                 ]);
 
                 $this->setMagentoOrder($this->magentoOrder);
@@ -708,8 +710,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 $this->getHelper('Module\Logger')->process(
                     [
                         'transaction_level' => $transactionLevel,
-                        'error'             => $e->getMessage(),
-                        'trace'             => $e->getTraceAsString()
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
                     ],
                     'MySql Transaction Level Problem'
                 );
@@ -722,9 +724,9 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->_eventManager->dispatch('ess_order_place_failure', ['order' => $this]);
 
             $this->addData([
-                'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_YES,
-                'magento_order_creation_fails_count'         => $this->getMagentoOrderCreationFailsCount() + 1,
-                'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+                'magento_order_creation_failure' => self::MAGENTO_ORDER_CREATION_FAILED_YES,
+                'magento_order_creation_fails_count' => $this->getMagentoOrderCreationFailsCount() + 1,
+                'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate(),
             ]);
             $this->save();
 
@@ -757,7 +759,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $this->_eventManager->dispatch('ess_order_place_success', ['order' => $this]);
 
         $this->addSuccessLog('Magento Order #%order_id% was created.', [
-            '!order_id' => $this->getMagentoOrder()->getRealOrderId()
+            '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
         ]);
 
         if (method_exists($this->getChildObject(), 'afterCreateMagentoOrder')) {
@@ -805,7 +807,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 'Magento Order #%order_id% was not canceled. Reason: %msg%',
                 [
                     '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
-                    'msg' => $errorMessage
+                    'msg' => $errorMessage,
                 ],
                 [],
                 true
@@ -814,10 +816,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             return $messageAddedSuccessfully ? $errorMessage : false;
         }
 
-        if ($magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_COMPLETE ||
-            $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED) {
+        if (
+            $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_COMPLETE ||
+            $magentoOrder->getState() === \Magento\Sales\Model\Order::STATE_CLOSED
+        ) {
             return false;
-
         }
 
         $allInvoiced = true;
@@ -833,7 +836,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 'Magento Order #%order_id% was not canceled. Reason: %msg%',
                 [
                     '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
-                    'msg' => $errorMessage
+                    'msg' => $errorMessage,
                 ],
                 [],
                 true
@@ -858,7 +861,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $magentoOrderUpdater->cancel();
 
             $this->addSuccessLog('Magento Order #%order_id% was canceled.', [
-                '!order_id' => $this->getMagentoOrder()->getRealOrderId()
+                '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
             ]);
         } catch (\Exception $exception) {
             $this->helperModuleException->process($exception);
@@ -880,7 +883,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
         if ($invoice !== null) {
             $this->addSuccessLog('Invoice #%invoice_id% was created.', [
-                '!invoice_id' => $invoice->getIncrementId()
+                '!invoice_id' => $invoice->getIncrementId(),
             ]);
         }
 
@@ -914,7 +917,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         if ($shipments !== null) {
             foreach ($shipments as $shipment) {
                 $this->addSuccessLog('Shipment #%shipment_id% was created.', [
-                    '!shipment_id' => $shipment->getIncrementId()
+                    '!shipment_id' => $shipment->getIncrementId(),
                 ]);
 
                 $this->addCreatedMagentoShipment($shipment);

@@ -8,21 +8,19 @@
 
 namespace Ess\M2ePro\Observer;
 
-/**
- * Class \Ess\M2ePro\Observer\AbstractModel
- */
 abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterface
 {
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
 
     /**
      * @var null|\Magento\Framework\Event\Observer
      */
     private $eventObserver = null;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -50,10 +48,12 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
 
     public function execute(\Magento\Framework\Event\Observer $eventObserver)
     {
-        if (!$this->helperFactory->getObject('Magento')->isInstalled() ||
+        if (
+            !$this->helperFactory->getObject('Magento')->isInstalled() ||
             $this->helperFactory->getObject('Module\Maintenance')->isEnabled() ||
             $this->helperFactory->getObject('Module')->isDisabled() ||
-            !$this->helperFactory->getObject('Module')->isReadyToWork()) {
+            !$this->helperFactory->getObject('Module')->isReadyToWork()
+        ) {
             return;
         }
 
@@ -118,6 +118,4 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
     {
         return $this->getEventObserver()->getEvent();
     }
-
-    //########################################
 }

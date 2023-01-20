@@ -36,17 +36,17 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
             $headId = 'walmart-template-category';
             // ---------------------------------------
             $this->buttonList->add('duplicate', [
-                'label'   => $this->__('Duplicate'),
+                'label' => $this->__('Duplicate'),
                 'onclick' => "WalmartTemplateCategoryObj.duplicateClick('{$headId}')",
-                'class'   => 'add M2ePro_duplicate_button primary'
+                'class' => 'add M2ePro_duplicate_button primary',
             ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $this->buttonList->add('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'CommonObj.deleteClick()',
-                'class'     => 'delete M2ePro_delete_button primary'
+                'label' => $this->__('Delete'),
+                'onclick' => 'CommonObj.deleteClick()',
+                'class' => 'delete M2ePro_delete_button primary',
             ]);
             // ---------------------------------------
         }
@@ -71,8 +71,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_CATEGORY . '\''
-                            . ')'
-                    ]
+                            . ')',
+                    ],
                 ],
             ];
             $this->removeButton('back');
@@ -81,7 +81,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
-                'onclick'   => 'WalmartTemplateCategoryObj.saveAndEditClick('
+                'onclick' => 'WalmartTemplateCategoryObj.saveAndEditClick('
                     . '\'\','
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_CATEGORY . '\''
@@ -89,13 +89,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   =>'WalmartTemplateCategoryObj.saveClick('
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'WalmartTemplateCategoryObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_CATEGORY . '\''
                             . ')',
-                    ]
+                    ],
                 ],
             ];
         }
@@ -110,6 +110,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
     private function isEditMode()
     {
         $templateModel = $this->globalDataHelper->getValue('tmp_template');
+
         return $templateModel && $templateModel->getId();
     }
 }

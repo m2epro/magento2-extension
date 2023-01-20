@@ -96,7 +96,7 @@ class TypeId extends AbstractModel
 
             $options[] = [
                 'value' => $type,
-                'label' => $magentoProductTypeLabel
+                'label' => $magentoProductTypeLabel,
             ];
         }
 

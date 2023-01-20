@@ -71,7 +71,7 @@ Policy Templates.</p><br>
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/eP1IB')
-                )
+                ),
             ]
         );
 
@@ -79,7 +79,7 @@ HTML
             'magento_block_walmart_template_synchronization_form_data_revise_products',
             [
                 'legend' => $this->__('Revise Conditions'),
-                'collapsable' => true
+                'collapsable' => true,
             ]
         );
 
@@ -98,7 +98,7 @@ HTML
                     'Automatically revises Item Quantity and Lag Time on Walmart when any changes are made
                     to the Selling Policy settings that define these Item properties or Magento Attribute
                     values used for these Item properties in the Selling Policy.'
-                )
+                ),
             ]
         );
 
@@ -117,9 +117,10 @@ HTML
                 'tooltip' => $this->__(
                     'Set the Item Quantity limit at which the Revise Action should be triggered.
                     It is recommended to keep this value relatively low, between 10 and 20 Items.'
-                )
+                ),
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <input name="revise_update_qty_max_applied_value" id="revise_update_qty_max_applied_value"
        value="{$formData['revise_update_qty_max_applied_value']}" type="text"
        style="width: 72px; margin-left: 10px;"
@@ -148,7 +149,7 @@ HTML
                     'Automatically revises Item Price on Walmart when any changes are made to the
                     Selling Policy settings that define this Item property or Magento Attribute values
                     used for this Item property in the Selling Policy.'
-                )
+                ),
             ]
         );
 
@@ -167,7 +168,7 @@ HTML
                     'Automatically revises Promotions on Walmart when any changes are made to
                     the Selling Policy settings that define Promotion properties or Magento Attribute
                     values used for Promotion properties in the Selling Policy.'
-                )
+                ),
             ]
         );
 
@@ -185,7 +186,7 @@ HTML
                 'tooltip' => $this->__(
                     'Data will be automatically revised on Walmart Listing(s) if changes are made to the
                     Magento Attributes related to Image, Description, or Selling Settings.'
-                )
+                ),
             ]
         );
 
@@ -198,7 +199,7 @@ HTML
              <a href="%url%" target="_blank">this article</a> before using the option.',
                     $this->supportHelper->getSupportUrl('/support/solutions/articles/9000200401')
                 ),
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 

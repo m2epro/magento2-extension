@@ -8,14 +8,14 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Order;
 
-use \Ess\M2ePro\Helper\Component\Ebay;
+use Ess\M2ePro\Helper\Component\Ebay;
 
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser
  */
 class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/order/upload_by_user';
+    public const NICK = 'ebay/order/upload_by_user';
 
     //########################################
 
@@ -56,7 +56,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setValidateAccountCreateDate(false);
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser\Manager $manager */
             $manager = $this->modelFactory->getObject('Cron_Task_Ebay_Order_UploadByUser_Manager');
@@ -80,7 +80,8 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
                 $manager->setCurrentFromDate($ebayData['to_create_date']);
 
-                if (empty($amazonData['job_token']) &&
+                if (
+                    empty($amazonData['job_token']) &&
                     $manager->getCurrentFromDate()->getTimestamp() >= $manager->getToDate()->getTimestamp()
                 ) {
                     $manager->clear();
@@ -103,13 +104,13 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Cron\Task\Ebay\Order\UploadByUser\Manager $manager,
         \Ess\M2ePro\Model\Account $account
     ) {
-        $toTime   = $manager->getToDate();
+        $toTime = $manager->getToDate();
         $fromTime = $manager->getCurrentFromDate();
         $fromTime === null && $fromTime = $manager->getFromDate();
 
         $params = [
             'from_create_date' => $this->getHelper('Component\Ebay')->timeToString($fromTime),
-            'to_create_date'   => $this->getHelper('Component\Ebay')->timeToString($toTime)
+            'to_create_date' => $this->getHelper('Component\Ebay')->timeToString($toTime),
         ];
 
         $jobToken = $manager->getJobToken();
@@ -117,8 +118,9 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $params['job_token'] = $jobToken;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
         $connectorObj = $dispatcherObj->getCustomConnector(
             'Ebay_Connector_Order_Receive_Items',
             $params,
@@ -145,7 +147,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-                                           : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),

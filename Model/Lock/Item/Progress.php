@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Lock\Item;
  */
 class Progress extends \Ess\M2ePro\Model\AbstractModel
 {
-    const CONTENT_DATA_KEY = 'progress_data';
+    public const CONTENT_DATA_KEY = 'progress_data';
 
-    /** @var \Ess\M2ePro\Model\Lock\Item\Manager  */
+    /** @var \Ess\M2ePro\Model\Lock\Item\Manager */
     protected $lockItemManager;
 
     /** @var string */
@@ -31,7 +31,7 @@ class Progress extends \Ess\M2ePro\Model\AbstractModel
         array $data = []
     ) {
         $this->lockItemManager = $lockItemManager;
-        $this->progressNick   = str_replace('/', '-', $progressNick);
+        $this->progressNick = str_replace('/', '-', $progressNick);
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -40,6 +40,7 @@ class Progress extends \Ess\M2ePro\Model\AbstractModel
     public function isInProgress()
     {
         $contentData = $this->lockItemManager->getContentData();
+
         return isset($contentData[self::CONTENT_DATA_KEY][$this->progressNick]);
     }
 

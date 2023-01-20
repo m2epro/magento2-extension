@@ -53,11 +53,11 @@ class Tabs extends AbstractTabs
         $this->addTab(
             self::TAB_ID_GENERAL,
             [
-                'label'   => __('General'),
-                'title'   => __('General'),
+                'label' => __('General'),
+                'title' => __('General'),
                 'content' => $this->getLayout()
                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\General::class)
-                                  ->toHtml()
+                                  ->toHtml(),
             ]
         );
 
@@ -69,11 +69,13 @@ class Tabs extends AbstractTabs
             $this->addTab(
                 self::TAB_ID_LISTING_OTHER,
                 [
-                    'label'   => $this->__('Unmanaged Listings'),
-                    'title'   => $this->__('Unmanaged Listings'),
+                    'label' => $this->__('Unmanaged Listings'),
+                    'title' => $this->__('Unmanaged Listings'),
                     'content' => $this->getLayout()
-                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther::class)
-                                  ->toHtml()
+                                      ->createBlock(
+                                          \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther::class
+                                      )
+                                      ->toHtml(),
                 ]
             );
         }
@@ -82,11 +84,11 @@ class Tabs extends AbstractTabs
             $this->addTab(
                 self::TAB_ID_STORE,
                 [
-                    'label'   => $this->__('eBay Store'),
-                    'title'   => $this->__('eBay Store'),
+                    'label' => $this->__('eBay Store'),
+                    'title' => $this->__('eBay Store'),
                     'content' => $this->getLayout()
                                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store::class)
-                                      ->toHtml()
+                                      ->toHtml(),
                 ]
             );
         }
@@ -95,11 +97,11 @@ class Tabs extends AbstractTabs
             $this->addTab(
                 self::TAB_ID_ORDER,
                 [
-                    'label'   => $this->__('Orders'),
-                    'title'   => $this->__('Orders'),
+                    'label' => $this->__('Orders'),
+                    'title' => $this->__('Orders'),
                     'content' => $this->getLayout()
                                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order::class)
-                                      ->toHtml()
+                                      ->toHtml(),
                 ]
             );
         }
@@ -108,11 +110,13 @@ class Tabs extends AbstractTabs
             $this->addTab(
                 self::TAB_ID_INVOICES_AND_SHIPMENTS,
                 [
-                    'label'   => $this->__('Invoices & Shipments'),
-                    'title'   => $this->__('Invoices & Shipments'),
+                    'label' => $this->__('Invoices & Shipments'),
+                    'title' => $this->__('Invoices & Shipments'),
                     'content' => $this->getLayout()
-                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\InvoicesAndShipments::class)
-                          ->toHtml(),
+                                      ->createBlock(
+                                          \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\InvoicesAndShipments::class
+                                      )
+                                      ->toHtml(),
                 ]
             );
         }
@@ -121,11 +125,11 @@ class Tabs extends AbstractTabs
             $this->addTab(
                 self::TAB_ID_FEEDBACK,
                 [
-                    'label'   => $this->__('Feedback'),
-                    'title'   => $this->__('Feedback'),
+                    'label' => $this->__('Feedback'),
+                    'title' => $this->__('Feedback'),
                     'content' => $this->getLayout()
                                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback::class)
-                                      ->toHtml()
+                                      ->toHtml(),
                 ]
             );
         }
@@ -138,7 +142,7 @@ class Tabs extends AbstractTabs
             $this->dataHelper->getControllerActions(
                 'Ebay_Account_Feedback_Template',
                 [
-                    'account_id' => $this->getRequest()->getParam('id')
+                    'account_id' => $this->getRequest()->getParam('id'),
                 ]
             )
         );
@@ -152,11 +156,11 @@ class Tabs extends AbstractTabs
         );
         $this->jsUrl->addUrls(
             [
-                'formSubmit'   => $this->getUrl(
+                'formSubmit' => $this->getUrl(
                     '*/ebay_account/save',
                     ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
                 ),
-                'deleteAction' => $this->getUrl('*/ebay_account/delete', ['id' => $this->getRequest()->getParam('id')])
+                'deleteAction' => $this->getUrl('*/ebay_account/delete', ['id' => $this->getRequest()->getParam('id')]),
             ]
         );
 
@@ -175,22 +179,22 @@ class Tabs extends AbstractTabs
                     'The specified Title is already used for other Account. Account Title must be unique.'
                 ),
                 'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
-                . 'This will cause inappropriate work of all Accounts\' copies.'                       => $this->__(
+                . 'This will cause inappropriate work of all Accounts\' copies.' => $this->__(
                     'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
                     . 'This will cause inappropriate work of all Accounts\' copies.'
                 ),
-                'No Customer entry is found for specified ID.'                                         => $this->__(
+                'No Customer entry is found for specified ID.' => $this->__(
                     'No Customer entry is found for specified ID.'
                 ),
-                'If Yes is chosen, you must select at least one Attribute for Product Linking.'        => $this->__(
+                'If Yes is chosen, you must select at least one Attribute for Product Linking.' => $this->__(
                     'If Yes is chosen, you must select at least one Attribute for Product Linking.'
                 ),
-                'You should create at least one Response Template.'                                    => $this->__(
+                'You should create at least one Response Template.' => $this->__(
                     'You should create at least one Response Template.'
                 ),
-                'You must get token.'                                                                  => $this->__(
+                'You must get token.' => $this->__(
                     'You must get token.'
-                )
+                ),
             ]
         );
 

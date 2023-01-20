@@ -41,6 +41,7 @@ class Rule extends AbstractForm
     public function setShowHideProductsOption($isShow = true)
     {
         $this->_isShowHideProductsOption = $isShow;
+
         return $this;
     }
 
@@ -51,7 +52,8 @@ class Rule extends AbstractForm
 
     protected function _prepareLayout()
     {
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 
         #rule_form .field-advanced_filter .admin__field-control:first-child {
             width: calc( 100% - 30px );
@@ -111,12 +113,12 @@ CSS
     {
         $form = $this->_formFactory->create([
             'data' => [
-                'id'      => 'rule_form',
-                'action'  => 'javascript:void(0)',
-                'method'  => 'post',
+                'id' => 'rule_form',
+                'action' => 'javascript:void(0)',
+                'method' => 'post',
                 'enctype' => 'multipart/form-data',
-                'onsubmit' => $this->getGridJsObjectName() . '.doFilter(event)'
-            ]
+                'onsubmit' => $this->getGridJsObjectName() . '.doFilter(event)',
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
@@ -124,19 +126,19 @@ CSS
             [
                 'legend' => '',
                 'collapsable' => false,
-                'class' => 'advanced-filter-fieldset'
+                'class' => 'advanced-filter-fieldset',
             ]
         );
 
         $ruleModel = $this->globalDataHelper->getValue('rule_model');
         $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
-            ->setData(['rule_model' => $ruleModel]);
+                          ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $ruleBlock->toHtml()
+                'text' => $ruleBlock->toHtml(),
             ]
         );
 

@@ -25,6 +25,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setSourceOption(array $options)
@@ -37,6 +38,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setDestinationOptions(array $options)
@@ -51,11 +53,13 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $matchedAttributes
+     *
      * @return $this
      */
     public function setMatchedAttributes(array $matchedAttributes)
     {
         $this->matchedAttributes = $matchedAttributes;
+
         return $this;
     }
 

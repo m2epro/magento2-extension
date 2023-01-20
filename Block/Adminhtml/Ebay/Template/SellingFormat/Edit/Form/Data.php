@@ -116,7 +116,7 @@ class Data extends AbstractForm
             'selling_format_id',
             'hidden',
             [
-                'name'  => 'selling_format[id]',
+                'name' => 'selling_format[id]',
                 'value' => (!$this->isCustom() && isset($formData['id'])) ? (int)$formData['id'] : '',
             ]
         );
@@ -125,7 +125,7 @@ class Data extends AbstractForm
             'selling_format_title',
             'hidden',
             [
-                'name'  => 'selling_format[title]',
+                'name' => 'selling_format[title]',
                 'value' => $this->getTitle(),
             ]
         );
@@ -134,7 +134,7 @@ class Data extends AbstractForm
             'selling_format_is_custom_template',
             'hidden',
             [
-                'name'  => 'selling_format[is_custom_template]',
+                'name' => 'selling_format[is_custom_template]',
                 'value' => $this->isCustom() ? 1 : 0,
             ]
         );
@@ -142,7 +142,7 @@ class Data extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_general',
             [
-                'legend'      => $this->__('How You Want To Sell Your Item'),
+                'legend' => $this->__('How You Want To Sell Your Item'),
                 'collapsable' => true,
             ]
         );
@@ -157,7 +157,7 @@ class Data extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => [
                     'attribute_code' => $formData['listing_type_attribute'],
-                    'selected'       => 'selected',
+                    'selected' => 'selected',
                 ],
                 'value' => SellingFormat::LISTING_TYPE_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper->getAttributeLabel($formData['listing_type_attribute']),
@@ -183,11 +183,11 @@ class Data extends AbstractForm
             'listing_type',
             self::SELECT,
             [
-                'name'                     => 'selling_format[listing_type]',
-                'label'                    => $this->__('Listing Type'),
-                'values'                   => [
+                'name' => 'selling_format[listing_type]',
+                'label' => $this->__('Listing Type'),
+                'values' => [
                     SellingFormat::LISTING_TYPE_AUCTION => $this->__('Auction'),
-                    SellingFormat::LISTING_TYPE_FIXED   => $this->__('Fixed Price'),
+                    SellingFormat::LISTING_TYPE_FIXED => $this->__('Fixed Price'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
@@ -196,10 +196,10 @@ class Data extends AbstractForm
                         ],
                     ],
                 ],
-                'value'                    => $formData['listing_type'] != SellingFormat::LISTING_TYPE_ATTRIBUTE
+                'value' => $formData['listing_type'] != SellingFormat::LISTING_TYPE_ATTRIBUTE
                     ? $formData['listing_type'] : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     '<b>Auction</b> - your listings will have a starting price and last for the selected listing
                     duration or until you accept a buyer bid.
                     To set Auction listing type via Magento Attribute,
@@ -227,13 +227,13 @@ class Data extends AbstractForm
             'listing_is_private',
             self::SELECT,
             [
-                'label'   => $this->__('Private Listing'),
-                'name'    => 'selling_format[listing_is_private]',
-                'values'  => [
-                    SellingFormat::LISTING_IS_PRIVATE_NO  => $this->__('No'),
+                'label' => $this->__('Private Listing'),
+                'name' => 'selling_format[listing_is_private]',
+                'values' => [
+                    SellingFormat::LISTING_IS_PRIVATE_NO => $this->__('No'),
                     SellingFormat::LISTING_IS_PRIVATE_YES => $this->__('Yes'),
                 ],
-                'value'   => $formData['listing_is_private'],
+                'value' => $formData['listing_is_private'],
                 'tooltip' => $this->__(
                     'Making your Listing Private means that the details of the Listing won\'t be shown on the
                     Feedback Profile Page for you or the Buyer.<br/><br/>
@@ -249,13 +249,13 @@ class Data extends AbstractForm
             'restricted_to_business',
             self::SELECT,
             [
-                'label'   => $this->__('For Business Users Only'),
-                'name'    => 'selling_format[restricted_to_business]',
-                'values'  => [
+                'label' => $this->__('For Business Users Only'),
+                'name' => 'selling_format[restricted_to_business]',
+                'values' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),
                 ],
-                'value'   => $formData['restricted_to_business'],
+                'value' => $formData['restricted_to_business'],
                 'tooltip' => $this->__(
                     'If <strong>Yes</strong>, this indicates that you elect to offer the
                      Item exclusively to business users. <br/>
@@ -272,7 +272,7 @@ class Data extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_qty_and_duration',
             [
-                'legend'      => $this->__('Quantity And Duration'),
+                'legend' => $this->__('Quantity And Duration'),
                 'collapsable' => true,
             ]
         );
@@ -310,11 +310,11 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'duration_mode_container',
-                'label'        => $this->__('Listing Duration'),
-                'name'         => 'selling_format[duration_mode]',
-                'values'       => $preparedAttributes,
-                'value'        => $formData['duration_mode'],
-                'tooltip'      => $durationTooltip,
+                'label' => $this->__('Listing Duration'),
+                'name' => 'selling_format[duration_mode]',
+                'values' => $preparedAttributes,
+                'value' => $formData['duration_mode'],
+                'tooltip' => $durationTooltip,
             ]
         );
 
@@ -328,7 +328,7 @@ class Data extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => [
                     'attribute_code' => $formData['duration_attribute'],
-                    'selected'       => 'selected',
+                    'selected' => 'selected',
                 ],
                 'value' => SellingFormat::LISTING_TYPE_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper->getAttributeLabel($formData['duration_attribute']),
@@ -354,9 +354,9 @@ class Data extends AbstractForm
             'duration_attribute',
             self::SELECT,
             [
-                'container_id'             => 'duration_attribute_container',
-                'label'                    => $this->__('Listing Duration'),
-                'values'                   => [
+                'container_id' => 'duration_attribute_container',
+                'label' => $this->__('Listing Duration'),
+                'values' => [
                     [
                         'label' => '',
                         'value' => '',
@@ -371,8 +371,8 @@ class Data extends AbstractForm
                     ],
                 ],
                 'create_magento_attribute' => true,
-                'required'                 => true,
-                'tooltip'                  => $durationTooltip,
+                'required' => true,
+                'tooltip' => $durationTooltip,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -380,7 +380,7 @@ class Data extends AbstractForm
             'listing_duration_attribute_value',
             'hidden',
             [
-                'name'  => 'selling_format[duration_attribute]',
+                'name' => 'selling_format[duration_attribute]',
                 'value' => $formData['duration_attribute'],
             ]
         );
@@ -401,7 +401,7 @@ class Data extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => [
                     'attribute_code' => $formData['qty_custom_attribute'],
-                    'selected'       => 'selected',
+                    'selected' => 'selected',
                 ],
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper->getAttributeLabel($formData['qty_custom_attribute']),
@@ -427,25 +427,25 @@ class Data extends AbstractForm
             'qty_mode',
             self::SELECT,
             [
-                'container_id'             => 'qty_mode_tr',
-                'name'                     => 'selling_format[qty_mode]',
-                'label'                    => $this->__('Quantity'),
-                'values'                   => [
+                'container_id' => 'qty_mode_tr',
+                'name' => 'selling_format[qty_mode]',
+                'label' => $this->__('Quantity'),
+                'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => $this->__('Product Quantity'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER  => $this->__('Custom Value'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER => $this->__('Custom Value'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
-                            'new_option_value'     => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
+                            'new_option_value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
                         ],
                     ],
                 ],
-                'value'                    => $formData['qty_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
+                'value' => $formData['qty_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
                     ? $formData['qty_mode'] : '',
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__(
+                'tooltip' => $this->__(
                     'The number of Items you want to sell on eBay.<br/><br/>
                     <b>Product Quantity:</b> the number of Items on eBay will be the same as in Magento.<br/>
                     <b>Custom Value:</b> set a Quantity in the Policy here.<br/>
@@ -467,11 +467,11 @@ class Data extends AbstractForm
             'text',
             [
                 'container_id' => 'qty_mode_cv_tr',
-                'label'        => $this->__('Quantity Value'),
-                'name'         => 'selling_format[qty_custom_value]',
-                'value'        => $formData['qty_custom_value'],
-                'class'        => 'validate-digits',
-                'required'     => true,
+                'label' => $this->__('Quantity Value'),
+                'name' => 'selling_format[qty_custom_value]',
+                'value' => $formData['qty_custom_value'],
+                'class' => 'validate-digits',
+                'required' => true,
             ]
         );
 
@@ -488,11 +488,11 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'qty_percentage_tr',
-                'label'        => $this->__('Quantity Percentage'),
-                'name'         => 'selling_format[qty_percentage]',
-                'values'       => $preparedAttributes,
-                'value'        => $formData['qty_percentage'],
-                'tooltip'      => $this->__(
+                'label' => $this->__('Quantity Percentage'),
+                'name' => 'selling_format[qty_percentage]',
+                'values' => $preparedAttributes,
+                'value' => $formData['qty_percentage'],
+                'tooltip' => $this->__(
                     'Sets the percentage for calculation of Items number to be Listed on eBay basing on
                     Product Quantity or Magento Attribute. E.g., if Quantity Percentage is set to 10% and
                     Product Quantity is 100, the Quantity to be Listed on
@@ -506,14 +506,14 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'qty_modification_mode_tr',
-                'label'        => $this->__('Conditional Quantity'),
-                'name'         => 'selling_format[qty_modification_mode]',
-                'values'       => [
+                'label' => $this->__('Conditional Quantity'),
+                'name' => 'selling_format[qty_modification_mode]',
+                'values' => [
                     SellingFormat::QTY_MODIFICATION_MODE_OFF => $this->__('Disabled'),
-                    SellingFormat::QTY_MODIFICATION_MODE_ON  => $this->__('Enabled'),
+                    SellingFormat::QTY_MODIFICATION_MODE_ON => $this->__('Enabled'),
                 ],
-                'value'        => $formData['qty_modification_mode'],
-                'tooltip'      => $this->__(
+                'value' => $formData['qty_modification_mode'],
+                'tooltip' => $this->__(
                     'Choose whether to limit the amount of Stock you list on eBay, eg because you want to set
                     some Stock aside for sales off eBay.<br/><br/>
                     If this Setting is <b>Enabled</b> you can specify the maximum Quantity to be Listed.
@@ -527,12 +527,12 @@ class Data extends AbstractForm
             'text',
             [
                 'container_id' => 'qty_min_posted_value_tr',
-                'label'        => $this->__('Minimum Quantity to Be Listed'),
-                'name'         => 'selling_format[qty_min_posted_value]',
-                'value'        => $formData['qty_min_posted_value'],
-                'class'        => 'M2ePro-validate-qty',
-                'required'     => true,
-                'tooltip'      => $this->__(
+                'label' => $this->__('Minimum Quantity to Be Listed'),
+                'name' => 'selling_format[qty_min_posted_value]',
+                'value' => $formData['qty_min_posted_value'],
+                'class' => 'M2ePro-validate-qty',
+                'required' => true,
+                'tooltip' => $this->__(
                     'If you have 2 pieces in Stock but set a Minimum Quantity to Be Listed of 5,
                     Item will not be Listed on eBay.<br/>
                     Otherwise, the Item will be Listed with Quantity according to the Settings in the Selling Policy'
@@ -545,12 +545,12 @@ class Data extends AbstractForm
             'text',
             [
                 'container_id' => 'qty_max_posted_value_tr',
-                'label'        => $this->__('Maximum Quantity to Be Listed'),
-                'name'         => 'selling_format[qty_max_posted_value]',
-                'value'        => $formData['qty_max_posted_value'],
-                'class'        => 'M2ePro-validate-qty',
-                'required'     => true,
-                'tooltip'      => $this->__(
+                'label' => $this->__('Maximum Quantity to Be Listed'),
+                'name' => 'selling_format[qty_max_posted_value]',
+                'value' => $formData['qty_max_posted_value'],
+                'class' => 'M2ePro-validate-qty',
+                'required' => true,
+                'tooltip' => $this->__(
                     'Set a maximum number to sell on eBay, e.g. if you have 10 Items in Stock but want
                     to keep 2 Items back, set a Maximum Quantity of 8.'
                 ),
@@ -578,23 +578,23 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'lot_size_mode_tr',
-                'label'        => $this->__('Specify Lot Size'),
-                'name'         => 'selling_format[lot_size_mode]',
-                'values'       => [
-                    SellingFormat::LOT_SIZE_MODE_DISABLED     => $this->__('No'),
+                'label' => $this->__('Specify Lot Size'),
+                'name' => 'selling_format[lot_size_mode]',
+                'values' => [
+                    SellingFormat::LOT_SIZE_MODE_DISABLED => $this->__('No'),
                     SellingFormat::LOT_SIZE_MODE_CUSTOM_VALUE => $this->__('Custom Value'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
-                            'new_option_value'     => SellingFormat::LOT_SIZE_MODE_ATTRIBUTE,
+                            'new_option_value' => SellingFormat::LOT_SIZE_MODE_ATTRIBUTE,
                         ],
                     ],
                 ],
-                'value'        => $formData['lot_size_mode'] != SellingFormat::LOT_SIZE_MODE_ATTRIBUTE
+                'value' => $formData['lot_size_mode'] != SellingFormat::LOT_SIZE_MODE_ATTRIBUTE
                     ? $formData['lot_size_mode'] : '',
-                'tooltip'      => $this->__(
+                'tooltip' => $this->__(
                     'Select <b>Custom Value</b> to specify the number
                     of identical Items you are selling together as Lot.'
                 ),
@@ -614,11 +614,11 @@ class Data extends AbstractForm
             'text',
             [
                 'container_id' => 'lot_size_cv_tr',
-                'label'        => $this->__('Items in Lot'),
-                'name'         => 'selling_format[lot_size_custom_value]',
-                'value'        => $formData['lot_size_custom_value'],
-                'class'        => 'M2ePro-lot-size',
-                'required'     => true,
+                'label' => $this->__('Items in Lot'),
+                'name' => 'selling_format[lot_size_custom_value]',
+                'value' => $formData['lot_size_custom_value'],
+                'class' => 'M2ePro-lot-size',
+                'required' => true,
             ]
         );
 
@@ -627,14 +627,14 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'ignore_variations_value_tr',
-                'label'        => $this->__('Ignore Variations'),
-                'name'         => 'selling_format[ignore_variations]',
-                'values'       => [
+                'label' => $this->__('Ignore Variations'),
+                'name' => 'selling_format[ignore_variations]',
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value'        => $formData['ignore_variations'],
-                'tooltip'      => $this->__(
+                'value' => $formData['ignore_variations'],
+                'tooltip' => $this->__(
                     'Choose how you want to list Configurable, Grouped, Bundle, Simple With Custom Options
                     and Downloadable with Separated Links Products.
                     Choosing <b>Yes</b> will list these types of Products as
@@ -646,7 +646,7 @@ class Data extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_taxation',
             [
-                'legend'      => $this->__('Taxation'),
+                'legend' => $this->__('Taxation'),
                 'collapsable' => true,
             ]
         );
@@ -656,11 +656,11 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'vat_mode_tr',
-                'label'        => $this->__('Add VAT Rate'),
-                'name'         => 'selling_format[vat_mode]',
-                'value'        => $formData['vat_mode'],
-                'values'       => [
-                    SellingFormat::VAT_MODE_NO  => $this->__('No'),
+                'label' => $this->__('Add VAT Rate'),
+                'name' => 'selling_format[vat_mode]',
+                'value' => $formData['vat_mode'],
+                'values' => [
+                    SellingFormat::VAT_MODE_NO => $this->__('No'),
                     SellingFormat::VAT_MODE_YES => $this->__('Yes'),
                 ],
             ]
@@ -671,10 +671,10 @@ class Data extends AbstractForm
             'text',
             [
                 'container_id' => 'vat_percent_tr',
-                'label'        => $this->__('VAT Rate, %'),
-                'name'         => 'selling_format[vat_percent]',
-                'value'        => $formData['vat_percent'],
-                'class'        => 'M2ePro-validate-vat',
+                'label' => $this->__('VAT Rate, %'),
+                'name' => 'selling_format[vat_percent]',
+                'value' => $formData['vat_percent'],
+                'class' => 'M2ePro-validate-vat',
             ]
         );
 
@@ -683,14 +683,14 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'tax_table_mode_tr',
-                'label'        => $this->__('Use eBay Tax Table'),
-                'name'         => 'selling_format[tax_table_mode]',
-                'value'        => $formData['tax_table_mode'],
-                'values'       => [
+                'label' => $this->__('Use eBay Tax Table'),
+                'name' => 'selling_format[tax_table_mode]',
+                'value' => $formData['tax_table_mode'],
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'tooltip'      => $this->__(
+                'tooltip' => $this->__(
                     'Tax Tables are set up directly in your eBay Seller Central and are available only for Canada,
                     Canada (Fr), USA, and eBay Motors.'
                 ),
@@ -753,12 +753,12 @@ class Data extends AbstractForm
                 'tax_category_mode',
                 self::SELECT,
                 [
-                    'label'                    => $this->__('Tax Category'),
-                    'values'                   => array_merge(
+                    'label' => $this->__('Tax Category'),
+                    'values' => array_merge(
                         [SellingFormat::TAX_CATEGORY_MODE_NONE => $this->__('None')],
                         $preparedValues
                     ),
-                    'value'                    => $formData['tax_category_mode'] != SellingFormat::TAX_CATEGORY_MODE_VALUE
+                    'value' => $formData['tax_category_mode'] != SellingFormat::TAX_CATEGORY_MODE_VALUE
                     && $formData['tax_category_mode'] != SellingFormat::TAX_CATEGORY_MODE_ATTRIBUTE
                         ? $formData['tax_category_mode'] : '',
                     'create_magento_attribute' => true,
@@ -769,7 +769,7 @@ class Data extends AbstractForm
                 'tax_category_value',
                 'hidden',
                 [
-                    'name'  => 'selling_format[tax_category_value]',
+                    'name' => 'selling_format[tax_category_value]',
                     'value' => $formData['tax_category_value'],
                 ]
             );
@@ -778,7 +778,7 @@ class Data extends AbstractForm
                 'tax_category_attribute',
                 'hidden',
                 [
-                    'name'  => 'selling_format[tax_category_attribute]',
+                    'name' => 'selling_format[tax_category_attribute]',
                     'value' => $formData['tax_category_attribute'],
                 ]
             );
@@ -787,7 +787,7 @@ class Data extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_prices',
             [
-                'legend'      => $this->__('Price'),
+                'legend' => $this->__('Price'),
                 'collapsable' => true,
             ]
         );
@@ -797,7 +797,7 @@ class Data extends AbstractForm
             'template_selling_format_messages',
             self::CUSTOM_CONTAINER,
             [
-                'text'      => $currencyAvailabilityMessage,
+                'text' => $currencyAvailabilityMessage,
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom',
             ]
         );
@@ -806,14 +806,14 @@ class Data extends AbstractForm
             'price_increase_vat_percent',
             self::SELECT,
             [
-                'label'     => $this->__('Add VAT% on top of Price'),
-                'name'      => 'selling_format[price_increase_vat_percent]',
-                'values'    => [
+                'label' => $this->__('Add VAT% on top of Price'),
+                'name' => 'selling_format[price_increase_vat_percent]',
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value'     => $formData['price_increase_vat_percent'],
-                'tooltip'   => $this->__(
+                'value' => $formData['price_increase_vat_percent'],
+                'tooltip' => $this->__(
                     "Choose whether you want to add VAT Rate to the price when an item is listed on eBay:
                     <br/>
                     <br/>
@@ -835,7 +835,7 @@ class Data extends AbstractForm
             'price_table_container',
             self::CUSTOM_CONTAINER,
             [
-                'text'      => $this->getPriceTableHtml(),
+                'text' => $this->getPriceTableHtml(),
                 'css_class' => 'm2epro-fieldset-table',
             ]
         );
@@ -843,23 +843,25 @@ class Data extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_charity',
             [
-                'legend'      => $this->__('Donations'),
+                'legend' => $this->__('Donations'),
                 'collapsable' => true,
             ]
         );
 
         $charityBlock = $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity::class)
-                      ->addData([
-            'form_data'   => $formData,
-            'marketplace' => $this->getMarketplace(),
-        ]);
+                             ->createBlock(
+                                 \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity::class
+                             )
+                             ->addData([
+                                 'form_data' => $formData,
+                                 'marketplace' => $this->getMarketplace(),
+                             ]);
 
         $fieldset->addField(
             'charity_table_container',
             self::CUSTOM_CONTAINER,
             [
-                'text'      => $charityBlock->toHtml(),
+                'text' => $charityBlock->toHtml(),
                 'css_class' => 'm2epro-fieldset-table',
             ]
         );
@@ -867,7 +869,7 @@ class Data extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_best_offer',
             [
-                'legend'      => $this->__('Best Offer'),
+                'legend' => $this->__('Best Offer'),
                 'collapsable' => true,
             ]
         );
@@ -884,13 +886,13 @@ class Data extends AbstractForm
             'best_offer_mode',
             self::SELECT,
             [
-                'label'   => $this->__('Allow Best Offer'),
-                'name'    => 'selling_format[best_offer_mode]',
-                'values'  => [
+                'label' => $this->__('Allow Best Offer'),
+                'name' => 'selling_format[best_offer_mode]',
+                'values' => [
                     SellingFormat::BEST_OFFER_MODE_YES => $this->__('Yes'),
-                    SellingFormat::BEST_OFFER_MODE_NO  => $this->__('No'),
+                    SellingFormat::BEST_OFFER_MODE_NO => $this->__('No'),
                 ],
-                'value'   => $formData['best_offer_mode'],
+                'value' => $formData['best_offer_mode'],
                 'tooltip' => $this->__(
                     'The Best Offer Option allows you to accept offers from Buyers and negotiate a Price.
                     You can accept Best Offers on fixed Price and Classified Ads in certain Categories,
@@ -901,10 +903,10 @@ class Data extends AbstractForm
 
         $bestOfferAcceptValue = $this->elementFactory->create('text', [
             'data' => [
-                'html_id'            => 'best_offer_accept_value',
-                'name'               => 'selling_format[best_offer_accept_value]',
-                'value'              => $formData['best_offer_accept_value'],
-                'class'              => 'coef validate-digits M2ePro-required-when-visible',
+                'html_id' => 'best_offer_accept_value',
+                'name' => 'selling_format[best_offer_accept_value]',
+                'value' => $formData['best_offer_accept_value'],
+                'class' => 'coef validate-digits M2ePro-required-when-visible',
                 'after_element_html' => '%',
             ],
         ]);
@@ -921,7 +923,7 @@ class Data extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => [
                     'attribute_code' => $formData['best_offer_accept_attribute'],
-                    'selected'       => 'selected',
+                    'selected' => 'selected',
                 ],
                 'value' => SellingFormat::BEST_OFFER_ACCEPT_MODE_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper
@@ -948,10 +950,10 @@ class Data extends AbstractForm
             'best_offer_accept_mode',
             self::SELECT,
             [
-                'css_class'                => 'best_offer_respond_table_container',
-                'label'                    => $this->__('Accept Offers of at Least'),
-                'name'                     => 'selling_format[best_offer_accept_mode]',
-                'values'                   => [
+                'css_class' => 'best_offer_respond_table_container',
+                'label' => $this->__('Accept Offers of at Least'),
+                'name' => 'selling_format[best_offer_accept_mode]',
+                'values' => [
                     SellingFormat::BEST_OFFER_ACCEPT_MODE_NO => $this->__('No'),
                     [
                         'label' => '#',
@@ -968,12 +970,12 @@ class Data extends AbstractForm
                         ],
                     ],
                 ],
-                'value'                    => $formData['best_offer_accept_mode'] != SellingFormat::BEST_OFFER_ACCEPT_MODE_ATTRIBUTE
+                'value' => $formData['best_offer_accept_mode'] != SellingFormat::BEST_OFFER_ACCEPT_MODE_ATTRIBUTE
                     ? $formData['best_offer_accept_mode'] : '',
                 'create_magento_attribute' => true,
-                'note'                     => $this->getCurrency() !== null ?
+                'note' => $this->getCurrency() !== null ?
                     $this->__('Currency') . ': ' . $this->getCurrency() : '',
-                'after_element_html'       => '<span id="best_offer_accept_value_tr">'
+                'after_element_html' => '<span id="best_offer_accept_value_tr">'
                     . $bestOfferAcceptValue->toHtml() . '</span>',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
@@ -990,10 +992,10 @@ class Data extends AbstractForm
 
         $bestOfferRejectValue = $this->elementFactory->create('text', [
             'data' => [
-                'html_id'            => 'best_offer_reject_value',
-                'name'               => 'selling_format[best_offer_reject_value]',
-                'value'              => $formData['best_offer_reject_value'],
-                'class'              => 'coef validate-digits M2ePro-required-when-visible',
+                'html_id' => 'best_offer_reject_value',
+                'name' => 'selling_format[best_offer_reject_value]',
+                'value' => $formData['best_offer_reject_value'],
+                'class' => 'coef validate-digits M2ePro-required-when-visible',
                 'after_element_html' => '%',
             ],
         ]);
@@ -1010,7 +1012,7 @@ class Data extends AbstractForm
             $preparedAttributes[] = [
                 'attrs' => [
                     'attribute_code' => $formData['best_offer_reject_attribute'],
-                    'selected'       => 'selected',
+                    'selected' => 'selected',
                 ],
                 'value' => SellingFormat::BEST_OFFER_REJECT_MODE_ATTRIBUTE,
                 'label' => $this->magentoAttributeHelper
@@ -1037,10 +1039,10 @@ class Data extends AbstractForm
             'best_offer_reject_mode',
             self::SELECT,
             [
-                'css_class'                => 'best_offer_respond_table_container',
-                'label'                    => $this->__('Decline Offers Less than'),
-                'name'                     => 'selling_format[best_offer_reject_mode]',
-                'values'                   => [
+                'css_class' => 'best_offer_respond_table_container',
+                'label' => $this->__('Decline Offers Less than'),
+                'name' => 'selling_format[best_offer_reject_mode]',
+                'values' => [
                     SellingFormat::BEST_OFFER_REJECT_MODE_NO => $this->__('No'),
                     [
                         'label' => '#',
@@ -1057,12 +1059,12 @@ class Data extends AbstractForm
                         ],
                     ],
                 ],
-                'value'                    => $formData['best_offer_reject_mode'] != SellingFormat::BEST_OFFER_REJECT_MODE_ATTRIBUTE
+                'value' => $formData['best_offer_reject_mode'] != SellingFormat::BEST_OFFER_REJECT_MODE_ATTRIBUTE
                     ? $formData['best_offer_reject_mode'] : '',
                 'create_magento_attribute' => true,
-                'note'                     => $this->getCurrency() !== null ?
+                'note' => $this->getCurrency() !== null ?
                     $this->__('Currency') . ': ' . $this->getCurrency() : '',
-                'after_element_html'       => '<span id="best_offer_reject_value_tr">'
+                'after_element_html' => '<span id="best_offer_reject_value_tr">'
                     . $bestOfferRejectValue->toHtml() . '</span>',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
@@ -1093,8 +1095,8 @@ class Data extends AbstractForm
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Template_SellingFormat'));
 
         $this->jsTranslator->addTranslations([
-            'Search For Charities'                                    => $this->__('Search For Charities'),
-            'Please select a percentage of donation'                  => $this->__(
+            'Search For Charities' => $this->__('Search For Charities'),
+            'Please select a percentage of donation' => $this->__(
                 'Please select a percentage of donation'
             ),
             'If you do not see the organization you were looking for, ' .
@@ -1103,21 +1105,21 @@ class Data extends AbstractForm
                     'If you do not see the organization you were looking for,
                 try to enter another keywords and run the Search again.'
                 ),
-            'Please, enter the organization name or ID.'              => $this->__(
+            'Please, enter the organization name or ID.' => $this->__(
                 'Please, enter the organization name or ID.'
             ),
-            'wrong_value_more_than_30'                                => $this->__(
+            'wrong_value_more_than_30' => $this->__(
                 'Wrong value. Must be no more than 30. Max applicable length is 6 characters,
                  including the decimal (e.g., 12.345).'
             ),
 
-            'Price Change is not valid.'         => $this->__('Price Change is not valid.'),
+            'Price Change is not valid.' => $this->__('Price Change is not valid.'),
             'Wrong value. Only integer numbers.' => $this->__('Wrong value. Only integer numbers.'),
 
-            'Price'       => $this->__('Price'),
+            'Price' => $this->__('Price'),
             'Fixed Price' => $this->__('Fixed Price'),
 
-            'The Price for Fixed Price Items.'                                              => $this->__(
+            'The Price for Fixed Price Items.' => $this->__(
                 'The Price for Fixed Price Items.'
             ),
             'The Fixed Price for immediate purchase.<br/>Find out more about
@@ -1129,9 +1131,9 @@ class Data extends AbstractForm
                     target="_blank">adding a Buy It Now Price</a> to your Listing.'
                 ),
 
-            '% of Price'                                            => $this->__('% of Price'),
-            '% of Fixed Price'                                      => $this->__('% of Fixed Price'),
-            'Search for Charity Organization'                       => $this->__('Search for Charity Organization'),
+            '% of Price' => $this->__('% of Price'),
+            '% of Fixed Price' => $this->__('% of Fixed Price'),
+            'Search for Charity Organization' => $this->__('Search for Charity Organization'),
             'Wrong value. Lot Size must be from 2 to 100000 Items.' => $this->__(
                 'Wrong value. Lot Size must be from 2 to 100000 Items.'
             ),
@@ -1237,9 +1239,9 @@ JS
         $attributes = $this->globalDataHelper->getValue('ebay_attributes');
 
         return [
-            'text'        => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text']),
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text']),
             'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
-            'text_price'  => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'price']),
+            'text_price' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'price']),
         ];
     }
 
@@ -1385,11 +1387,11 @@ JS
         return $this->getLayout()
                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\PriceTable::class)
                     ->addData([
-            'currency'                  => $this->getCurrency(),
-            'form_data'                 => $this->getFormData(),
-            'default'                   => $this->getDefault(),
-            'attributes_by_input_types' => $this->getAttributesByInputTypes(),
-        ])->toHtml();
+                        'currency' => $this->getCurrency(),
+                        'form_data' => $this->getFormData(),
+                        'default' => $this->getDefault(),
+                        'attributes_by_input_types' => $this->getAttributesByInputTypes(),
+                    ])->toHtml();
     }
 
     //########################################

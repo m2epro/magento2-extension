@@ -55,6 +55,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
     public function save()
     {
         $this->init();
+
         return $this->saveRelation();
     }
 
@@ -93,7 +94,7 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
 
         $groupId = $this->getGroupId();
         $sortOrder = !empty($this->params['sorder']) ? $this->params['sorder']
-                                                     : $this->getMaxSortOrderByGroup($groupId) + 1;
+            : $this->getMaxSortOrderByGroup($groupId) + 1;
 
         !empty($this->params['sorder_ofset']) && $sortOrder += $this->params['sorder_ofset'];
 
@@ -120,8 +121,11 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
     {
         /** @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $collection */
         $collection = $this->attributeFactory->create()->getResourceCollection()
-              ->setAttributeSetFilter($this->setId)
-              ->addFieldToFilter('entity_attribute.attribute_id', $this->attributeObj->getId());
+                                             ->setAttributeSetFilter($this->setId)
+                                             ->addFieldToFilter(
+                                                 'entity_attribute.attribute_id',
+                                                 $this->attributeObj->getId()
+                                             );
 
         return $collection->getSize() > 0;
     }
@@ -166,30 +170,35 @@ class Relation extends \Ess\M2ePro\Model\AbstractModel
     public function setCode($value)
     {
         $this->code = $value;
+
         return $this;
     }
 
     public function setAttributeSetId($value)
     {
         $this->setId = $value;
+
         return $this;
     }
 
     public function setGroupName($value)
     {
         $this->groupName = $value;
+
         return $this;
     }
 
     public function setParams(array $value = [])
     {
         $this->params = $value;
+
         return $this;
     }
 
     public function setEntityTypeId($value)
     {
         $this->entityTypeId = $value;
+
         return $this;
     }
 

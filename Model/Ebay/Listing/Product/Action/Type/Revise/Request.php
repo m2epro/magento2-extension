@@ -17,7 +17,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     {
         $data = array_merge(
             [
-                'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal()
+                'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal(),
             ],
             $this->getGeneralData(),
             $this->getQtyData(),
@@ -43,6 +43,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     /**
      * @param array $data
+     *
      * @return array
      */
     protected function prepareFinalData(array $data)
@@ -78,7 +79,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         switch ($replacedAction) {
             case \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST:
                 $this->addWarningMessage(
-                    'Revise was executed instead of Relist because \'Out Of Stock Control\' Option is enabled '.
+                    'Revise was executed instead of Relist because \'Out Of Stock Control\' Option is enabled ' .
                     'for this item.'
                 );
 
@@ -86,7 +87,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
             case \Ess\M2ePro\Model\Listing\Product::ACTION_STOP:
                 $this->addWarningMessage(
-                    'Revise was executed instead of Stop because \'Out Of Stock Control\' Option is enabled '.
+                    'Revise was executed instead of Stop because \'Out Of Stock Control\' Option is enabled ' .
                     'for this item.'
                 );
 
@@ -102,6 +103,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         if (!$this->getIsVariationItem()) {
             $data['qty'] = 0;
+
             return $data;
         }
 
@@ -126,7 +128,6 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         foreach ($data['variation'] as &$variation) {
             if (!empty($variation['delete']) && isset($variation['qty']) && (int)$variation['qty'] <= 0) {
-
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
                 $ebayVariation = $variation['_instance_']->getChildObject();
 
@@ -141,16 +142,18 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     protected function removeNodesIfItemHasTheSaleOrBid(array $data)
     {
-        if (!isset($data['title']) && !isset($data['subtitle']) &&
-            !isset($data['duration']) && !isset($data['is_private'])) {
+        if (
+            !isset($data['title']) && !isset($data['subtitle']) &&
+            !isset($data['duration']) && !isset($data['is_private'])
+        ) {
             return $data;
         }
 
         $deleteByAuctionFlag = $this->getEbayListingProduct()->isListingTypeAuction() &&
-                               $this->getEbayListingProduct()->getOnlineBids() > 0;
+            $this->getEbayListingProduct()->getOnlineBids() > 0;
 
         $deleteByFixedFlag = $this->getEbayListingProduct()->isListingTypeFixed() &&
-                             $this->getEbayListingProduct()->getOnlineQtySold() > 0;
+            $this->getEbayListingProduct()->getOnlineQtySold() > 0;
 
         if (isset($data['title']) && $deleteByAuctionFlag) {
             $warningMessageReasons[] = $this->getHelper('Module\Translation')->__('Title');

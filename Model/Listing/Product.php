@@ -8,53 +8,49 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
-use \Ess\M2ePro\Model\Ebay\Listing\Product as EbayListingProduct;
-use \Ess\M2ePro\Model\Walmart\Listing\Product as WalmartListingProduct;
-
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Processing as AmazonActionProcessing;
-use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing as EbayActionProcessing;
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing as WalmartActionProcessing;
+use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
+use Ess\M2ePro\Model\Ebay\Listing\Product as EbayListingProduct;
+use Ess\M2ePro\Model\Walmart\Listing\Product as WalmartListingProduct;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Processing as AmazonActionProcessing;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processing as EbayActionProcessing;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing as WalmartActionProcessing;
 
 /**
  * Class \Ess\M2ePro\Model\Listing\Product\Product
- *
  * @method \Ess\M2ePro\Model\ResourceModel\Listing\Product getResource()
  * @method AmazonListingProduct|EbayListingProduct|WalmartListingProduct getChildObject()
- *
  * @method \Ess\M2ePro\Model\Listing\Product\Action\Configurator getActionConfigurator()
  * @method setActionConfigurator(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
- *
  * @method AmazonActionProcessing|EbayActionProcessing|WalmartActionProcessing getProcessingAction()
  * @method setProcessingAction(AmazonActionProcessing|EbayActionProcessing|WalmartActionProcessing $action)
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    const ACTION_LIST    = 1;
-    const ACTION_RELIST  = 2;
-    const ACTION_REVISE  = 3;
-    const ACTION_STOP    = 4;
-    const ACTION_DELETE  = 5;
+    public const ACTION_LIST = 1;
+    public const ACTION_RELIST = 2;
+    public const ACTION_REVISE = 3;
+    public const ACTION_STOP = 4;
+    public const ACTION_DELETE = 5;
 
-    const STATUS_NOT_LISTED = 0;
-    const STATUS_SOLD = 1;
-    const STATUS_LISTED = 2;
-    const STATUS_STOPPED = 3;
-    const STATUS_FINISHED = 4;
-    const STATUS_UNKNOWN = 5;
-    const STATUS_BLOCKED = 6;
-    const STATUS_HIDDEN = 7;
+    public const STATUS_NOT_LISTED = 0;
+    public const STATUS_SOLD = 1;
+    public const STATUS_LISTED = 2;
+    public const STATUS_STOPPED = 3;
+    public const STATUS_FINISHED = 4;
+    public const STATUS_UNKNOWN = 5;
+    public const STATUS_BLOCKED = 6;
+    public const STATUS_HIDDEN = 7;
 
-    const STATUS_CHANGER_UNKNOWN = 0;
-    const STATUS_CHANGER_SYNCH = 1;
-    const STATUS_CHANGER_USER = 2;
-    const STATUS_CHANGER_COMPONENT = 3;
-    const STATUS_CHANGER_OBSERVER = 4;
+    public const STATUS_CHANGER_UNKNOWN = 0;
+    public const STATUS_CHANGER_SYNCH = 1;
+    public const STATUS_CHANGER_USER = 2;
+    public const STATUS_CHANGER_COMPONENT = 3;
+    public const STATUS_CHANGER_OBSERVER = 4;
 
-    const MOVING_LISTING_OTHER_SOURCE_KEY = 'moved_from_listing_other_id';
+    public const MOVING_LISTING_OTHER_SOURCE_KEY = 'moved_from_listing_other_id';
 
-    const GROUPED_PRODUCT_MODE_OPTIONS = 0;
-    const GROUPED_PRODUCT_MODE_SET     = 1;
+    public const GROUPED_PRODUCT_MODE_OPTIONS = 0;
+    public const GROUPED_PRODUCT_MODE_SET = 1;
 
     /**
      * It allows to delete an object without checking if it is isLocked()
@@ -219,7 +215,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      */
     public function setListing(\Ess\M2ePro\Model\Listing $instance)
     {
-         $this->listingModel = $instance;
+        $this->listingModel = $instance;
     }
 
     // ---------------------------------------
@@ -285,12 +281,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
      * @param bool $asObjects
      * @param array $filters
      * @param bool $tryToGetFromStorage
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\Variation[]
      */
     public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
         $storageKey = "listing_product_{$this->getId()}_variations_" .
-                       sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
+            sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
 
         if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data_Cache_Runtime')->getValue($storageKey))) {
             return $cacheData;
@@ -313,7 +310,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->getHelper('Data_Cache_Runtime')->setValue($storageKey, $variations, [
             'listing_product',
             "listing_product_{$this->getId()}",
-            "listing_product_{$this->getId()}_variations"
+            "listing_product_{$this->getId()}_variations",
         ]);
 
         return $variations;
@@ -470,7 +467,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return ($this->isNotListed() || $this->isSold() ||
                 $this->isStopped() || $this->isFinished() ||
                 $this->isHidden() || $this->isUnknown()) &&
-                !$this->isBlocked();
+            !$this->isBlocked();
     }
 
     /**
@@ -480,7 +477,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     {
         return ($this->isSold() || $this->isStopped() ||
                 $this->isFinished() || $this->isUnknown()) &&
-                !$this->isBlocked();
+            !$this->isBlocked();
     }
 
     /**
@@ -489,7 +486,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function isRevisable()
     {
         return ($this->isListed() || $this->isHidden() || $this->isUnknown()) &&
-                !$this->isBlocked();
+            !$this->isBlocked();
     }
 
     /**
@@ -498,7 +495,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function isStoppable()
     {
         return ($this->isListed() || $this->isHidden() || $this->isUnknown()) &&
-                !$this->isBlocked();
+            !$this->isBlocked();
     }
 
     //########################################
@@ -509,8 +506,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $newMagentoProductId = $magentoProduct->getProductId();
         $data = ['product_id' => $newMagentoProductId];
 
-        if ($this->getMagentoProduct()->isStrictVariationProduct()
-            && $magentoProduct->isSimpleTypeWithoutCustomOptions()) {
+        if (
+            $this->getMagentoProduct()->isStrictVariationProduct()
+            && $magentoProduct->isSimpleTypeWithoutCustomOptions()
+        ) {
             $data['is_variation_product'] = 0;
             $data['is_variation_parent'] = 0;
             $data['variation_parent_id'] = null;
@@ -524,10 +523,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $instruction->setData(
             [
                 'listing_product_id' => $this->getId(),
-                'component'          => $this->getComponentMode(),
-                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
-                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING,
-                'priority'           => 50,
+                'component' => $this->getComponentMode(),
+                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING,
+                'priority' => 50,
             ]
         );
 
@@ -554,6 +553,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         }
 
         $this->canBeForceDeleted = $value;
+
         return $this;
     }
 

@@ -31,8 +31,10 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('List Rules'),
                 'title' => __('List Rules'),
                 'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ListRules::class)
-              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ListRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
@@ -42,8 +44,10 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('Revise Rules'),
                 'title' => __('Revise Rules'),
                 'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ReviseRules::class)
-              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\ReviseRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
@@ -53,8 +57,10 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('Relist Rules'),
                 'title' => __('Relist Rules'),
                 'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\RelistRules::class)
-              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\RelistRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
@@ -64,8 +70,10 @@ class Tabs extends AbstractVerticalTabs
                 'label' => __('Stop Rules'),
                 'title' => __('Stop Rules'),
                 'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\StopRules::class)
-              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs\StopRules::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 

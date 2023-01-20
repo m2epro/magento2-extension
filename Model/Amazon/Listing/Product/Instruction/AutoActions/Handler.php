@@ -8,16 +8,12 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\AutoActions;
 
-use \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
+use Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\AutoActions\Handler
- */
 class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterface
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -29,8 +25,6 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    //########################################
-
     protected function getAffectedInstructionTypes()
     {
         return [
@@ -38,8 +32,6 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
             \Ess\M2ePro\Model\Listing\Auto\Actions\Listing::INSTRUCTION_TYPE_STOP_AND_REMOVE,
         ];
     }
-
-    //########################################
 
     public function process(\Ess\M2ePro\Model\Listing\Product\Instruction\Handler\Input $input)
     {
@@ -49,6 +41,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
 
         $listingProduct = $input->getListingProduct();
 
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionCollection */
         $scheduledActionCollection = $this->activeRecordFactory
             ->getObject('Listing_Product_ScheduledAction')->getCollection();
         $scheduledActionCollection->addFieldToFilter('listing_product_id', $listingProduct->getId());
@@ -58,9 +51,11 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
 
         $params = [];
 
-        if ($input->hasInstructionWithType(
-            \Ess\M2ePro\Model\Listing\Auto\Actions\Listing::INSTRUCTION_TYPE_STOP_AND_REMOVE
-        )) {
+        if (
+            $input->hasInstructionWithType(
+                \Ess\M2ePro\Model\Listing\Auto\Actions\Listing::INSTRUCTION_TYPE_STOP_AND_REMOVE
+            )
+        ) {
             if (!$input->getListingProduct()->isStoppable()) {
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\RemoveHandler $removeHandler */
                 $removeHandler = $this->modelFactory->getObject('Amazon_Listing_Product_RemoveHandler');
@@ -75,10 +70,10 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
 
         $scheduledActionData = [
             'listing_product_id' => $listingProduct->getId(),
-            'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-            'is_force'           => true,
-            'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+            'is_force' => true,
+            'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
         ];
 
         $scheduledAction->addData($scheduledActionData);
@@ -92,6 +87,4 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
             $scheduledActionManager->addAction($scheduledAction);
         }
     }
-
-    //########################################
 }

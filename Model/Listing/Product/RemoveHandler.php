@@ -14,9 +14,10 @@ class RemoveHandler extends \Ess\M2ePro\Model\AbstractModel
     private $listingProduct;
 
     /**
-     * @deprecated use factory
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
+     * @deprecated use factory
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): self
     {

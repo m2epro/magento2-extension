@@ -20,17 +20,18 @@ class Config extends AbstractModifier
     /**
      * @param string $group
      * @param string $key
+     *
      * @return mixed
      */
     public function getRow($group, $key)
     {
         $group = $this->prepareGroup($group);
-        $key   = $this->prepareKey($key);
+        $key = $this->prepareKey($key);
 
         $query = $this->connection
-                      ->select()
-                      ->from($this->tableName)
-                      ->where('`key` = ?', $key);
+            ->select()
+            ->from($this->tableName)
+            ->where('`key` = ?', $key);
 
         if ($group === null) {
             $query->where('`group` IS NULL');
@@ -44,14 +45,15 @@ class Config extends AbstractModifier
     /**
      * @param string $group
      * @param string $key
+     *
      * @return Entity
      */
     public function getEntity($group, $key)
     {
         return $this->modelFactory->getObject('Setup_Database_Modifier_Config_Entity', [
             'configModifier' => $this,
-            'group'          => $group,
-            'key'            => $key,
+            'group' => $group,
+            'key' => $key,
         ]);
     }
 
@@ -60,16 +62,17 @@ class Config extends AbstractModifier
     /**
      * @param string $group
      * @param string|null $key
+     *
      * @return bool
      */
     public function isExists($group, $key = null)
     {
         $group = $this->prepareGroup($group);
-        $key   = $this->prepareKey($key);
+        $key = $this->prepareKey($key);
 
         $query = $this->connection
-                      ->select()
-                      ->from($this->tableName);
+            ->select()
+            ->from($this->tableName);
 
         if ($group === null) {
             $query->where('`group` IS NULL');
@@ -91,6 +94,7 @@ class Config extends AbstractModifier
      * @param string $key
      * @param string|null $value
      * @param NULL $notice is not supported. left for backward compatibility
+     *
      * @return $this|int
      */
     public function insert($group, $key, $value = null, $notice = null)
@@ -101,7 +105,7 @@ class Config extends AbstractModifier
 
         $preparedData = [
             'group' => $this->prepareGroup($group),
-            'key'   => $this->prepareKey($key),
+            'key' => $this->prepareKey($key),
         ];
 
         $value !== null && $preparedData['value'] = $value;
@@ -116,6 +120,7 @@ class Config extends AbstractModifier
      * @param string $field
      * @param string $value
      * @param string|array $where
+     *
      * @return int
      */
     public function update($field, $value, $where)
@@ -124,8 +129,8 @@ class Config extends AbstractModifier
         $field == 'key' && $value = $this->prepareKey($value);
 
         $preparedData = [
-            $field        => $value,
-            'update_date' => $this->getCurrentDateTime()
+            $field => $value,
+            'update_date' => $this->getCurrentDateTime(),
         ];
 
         return $this->connection->update($this->tableName, $preparedData, $where);
@@ -134,6 +139,7 @@ class Config extends AbstractModifier
     /**
      * @param string $group
      * @param string|null $key
+     *
      * @return $this|int
      */
     public function delete($group, $key = null)
@@ -143,7 +149,7 @@ class Config extends AbstractModifier
         }
 
         $group = $this->prepareGroup($group);
-        $key   = $this->prepareKey($key);
+        $key = $this->prepareKey($key);
 
         if ($group === null) {
             $where = ['`group` IS NULL'];
@@ -163,6 +169,7 @@ class Config extends AbstractModifier
     /**
      * @param string $value
      * @param string|array $where
+     *
      * @return int
      */
     public function updateGroup($value, $where)
@@ -173,6 +180,7 @@ class Config extends AbstractModifier
     /**
      * @param string $value
      * @param string|array $where
+     *
      * @return int
      */
     public function updateKey($value, $where)
@@ -183,6 +191,7 @@ class Config extends AbstractModifier
     /**
      * @param string $value
      * @param string|array $where
+     *
      * @return int
      */
     public function updateValue($value, $where)
@@ -198,13 +207,15 @@ class Config extends AbstractModifier
         $deleteData = [];
 
         $configRows = $this->connection
-                           ->query("SELECT `id`, `group`, `key`
+            ->query(
+                "SELECT `id`, `group`, `key`
                                     FROM `{$this->tableName}`
-                                    ORDER BY `id` ASC")
-                           ->fetchAll();
+                                    ORDER BY `id` ASC"
+            )
+            ->fetchAll();
 
         foreach ($configRows as $configRow) {
-            $tempName = strtolower($configRow['group'] .'|'. $configRow['key']);
+            $tempName = strtolower($configRow['group'] . '|' . $configRow['key']);
 
             if (in_array($tempName, $tempData)) {
                 $deleteData[] = (int)$configRow['id'];
@@ -215,8 +226,10 @@ class Config extends AbstractModifier
 
         if (!empty($deleteData)) {
             $this->connection
-                 ->query("DELETE FROM `{$this->tableName}`
-                          WHERE `id` IN (".implode(',', $deleteData).')');
+                ->query(
+                    "DELETE FROM `{$this->tableName}`
+                          WHERE `id` IN (" . implode(',', $deleteData) . ')'
+                );
         }
     }
 

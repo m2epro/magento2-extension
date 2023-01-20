@@ -21,6 +21,7 @@ class ViewGrid extends ProductTaxCode
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.');
+
             return $this->getResult();
         }
 
@@ -29,10 +30,13 @@ class ViewGrid extends ProductTaxCode
         }
 
         $grid = $this->getLayout()
-                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode\Grid::class);
+                     ->createBlock(
+                         \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode\Grid::class
+                     );
         $grid->setProductsIds($productsIds);
 
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

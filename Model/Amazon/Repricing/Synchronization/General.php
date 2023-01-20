@@ -13,9 +13,10 @@ namespace Ess\M2ePro\Model\Amazon\Repricing\Synchronization;
  */
 class General extends AbstractModel
 {
-    const INSTRUCTION_TYPE_STATUS_CHANGED = 'repricing_status_changed';
-    const INSTRUCTION_INITIATOR           = 'repricing_general_synchronization';
+    public const INSTRUCTION_TYPE_STATUS_CHANGED = 'repricing_status_changed';
+    public const INSTRUCTION_INITIATOR = 'repricing_general_synchronization';
 
+    /** @var array  */
     private $parentProductsIds = [];
 
     //########################################
@@ -54,10 +55,12 @@ class General extends AbstractModel
         $productResource = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')->getResource();
         $otherResource = $this->activeRecordFactory->getObject('Amazon_Listing_Other')->getResource();
 
-        $existedSkus = array_unique(array_merge(
-            $productResource->getSkus($this->getAccount(), $skus),
-            $otherResource->getRepricingSkus($this->getAccount(), $skus)
-        ));
+        $existedSkus = array_unique(
+            array_merge(
+                $productResource->getSkus($this->getAccount(), $skus),
+                $otherResource->getRepricingSkus($this->getAccount(), $skus)
+            )
+        );
         $existedSkus = array_map('strtolower', $existedSkus);
 
         $skuIndexedResultOffersData = [];
@@ -173,24 +176,25 @@ class General extends AbstractModel
         $insertData = [];
 
         foreach ($listingsProductsData as $listingProductData) {
-            $listingProductId       = (int)$listingProductData['listing_product_id'];
+            $listingProductId = (int)$listingProductData['listing_product_id'];
             $parentListingProductId = (int)$listingProductData['variation_parent_id'];
 
             $offerData = $newOffersData[strtolower($listingProductData['sku'])];
 
             $insertData[$listingProductId] = [
-                'listing_product_id'        => $listingProductId,
-                'online_regular_price'      => $offerData['regular_product_price'],
-                'online_min_price'          => $offerData['minimal_product_price'],
-                'online_max_price'          => $offerData['maximal_product_price'],
-                'is_online_disabled'        => $offerData['is_calculation_disabled'],
-                'is_online_inactive'        => $offerData['is_offer_inactive'],
+                'listing_product_id' => $listingProductId,
+                'online_regular_price' => $offerData['regular_product_price'],
+                'online_min_price' => $offerData['minimal_product_price'],
+                'online_max_price' => $offerData['maximal_product_price'],
+                'is_online_disabled' => $offerData['is_calculation_disabled'],
+                'is_online_inactive' => $offerData['is_offer_inactive'],
                 'last_synchronization_date' => $this->getHelper('Data')->getCurrentGmtDate(),
-                'update_date'               => $this->getHelper('Data')->getCurrentGmtDate(),
-                'create_date'               => $this->getHelper('Data')->getCurrentGmtDate(),
+                'update_date' => $this->getHelper('Data')->getCurrentGmtDate(),
+                'create_date' => $this->getHelper('Data')->getCurrentGmtDate(),
             ];
 
-            if ($offerData['product_price'] !== null &&
+            if (
+                $offerData['product_price'] !== null &&
                 $offerData['product_price'] != $listingProductData['online_regular_price']
             ) {
                 $this->resourceConnection->getConnection()->update(
@@ -216,10 +220,10 @@ class General extends AbstractModel
             $this->resourceConnection->getConnection()->update(
                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_listing_product'),
                 [
-                    'is_repricing'                         => 1,
-                    'online_regular_sale_price'            => 0,
+                    'is_repricing' => 1,
+                    'online_regular_sale_price' => 0,
                     'online_regular_sale_price_start_date' => null,
-                    'online_regular_sale_price_end_date'   => null,
+                    'online_regular_sale_price_end_date' => null,
                 ],
                 ['listing_product_id IN (?)' => array_keys($insertDataPack)]
             );
@@ -238,7 +242,7 @@ class General extends AbstractModel
             [
                 'second_table.listing_other_id',
                 'second_table.sku',
-                'second_table.online_price'
+                'second_table.online_price',
             ]
         );
 
@@ -246,24 +250,25 @@ class General extends AbstractModel
             return;
         }
 
-        $disabledListingOthersIds  = [];
-        $enabledListingOthersIds   = [];
-        $activeListingOthersIds    = [];
-        $inactiveListingOthersIds  = [];
+        $disabledListingOthersIds = [];
+        $enabledListingOthersIds = [];
+        $activeListingOthersIds = [];
+        $inactiveListingOthersIds = [];
 
         foreach ($listingsOthersData as $listingOtherData) {
             $listingOtherId = (int)$listingOtherData['listing_other_id'];
             $offerData = $newOffersData[strtolower($listingOtherData['sku'])];
 
-            if ($offerData['product_price'] !== null &&
+            if (
+                $offerData['product_price'] !== null &&
                 $offerData['product_price'] != $listingOtherData['online_price']
             ) {
                 $this->resourceConnection->getConnection()->update(
                     $this->getHelper('Module_Database_Structure')
                          ->getTableNameWithPrefix('m2epro_amazon_listing_other'),
                     [
-                        'online_price'          => $offerData['product_price'],
-                        'is_repricing'          => 1,
+                        'online_price' => $offerData['product_price'],
+                        'is_repricing' => 1,
                         'is_repricing_disabled' => $offerData['is_calculation_disabled'],
                         'is_repricing_inactive' => $offerData['is_offer_inactive'],
                     ],
@@ -339,7 +344,7 @@ class General extends AbstractModel
         $listingProductCollection->getSelect()->joinInner(
             [
                 'alpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                    ->getResource()->getMainTable()
+                                                    ->getResource()->getMainTable(),
             ],
             'alpr.listing_product_id=main_table.id',
             []
@@ -358,7 +363,7 @@ class General extends AbstractModel
                 'alpr.is_online_inactive',
                 'alpr.online_regular_price',
                 'alpr.online_min_price',
-                'alpr.online_max_price'
+                'alpr.online_max_price',
             ]
         );
 
@@ -366,20 +371,21 @@ class General extends AbstractModel
 
         $notManagedListingsProductsIds = [];
 
-        $enabledListingsProductsIds    = [];
-        $disabledListingsProductsIds   = [];
+        $enabledListingsProductsIds = [];
+        $disabledListingsProductsIds = [];
 
-        $activeListingsProductsIds     = [];
-        $inactiveListingsProductsIds   = [];
+        $activeListingsProductsIds = [];
+        $inactiveListingsProductsIds = [];
 
         foreach ($listingsProductsData as $listingProductData) {
             $listingProductId = (int)$listingProductData['listing_product_id'];
 
             $offerData = $updatedOffersData[strtolower($listingProductData['sku'])];
 
-            if ($offerData['product_price'] !== null &&
+            if (
+                $offerData['product_price'] !== null &&
                 !$offerData['is_calculation_disabled'] && !$offerData['is_offer_inactive'] &&
-                 $listingProductData['online_regular_price'] != $offerData['product_price']
+                $listingProductData['online_regular_price'] != $offerData['product_price']
             ) {
                 $this->resourceConnection->getConnection()->update(
                     $this->getHelper('Module_Database_Structure')
@@ -389,7 +395,8 @@ class General extends AbstractModel
                 );
             }
 
-            if ($listingProductData['online_regular_price'] != $offerData['regular_product_price'] ||
+            if (
+                $listingProductData['online_regular_price'] != $offerData['regular_product_price'] ||
                 $listingProductData['online_min_price'] != $offerData['minimal_product_price'] ||
                 $listingProductData['online_max_price'] != $offerData['maximal_product_price']
             ) {
@@ -397,13 +404,13 @@ class General extends AbstractModel
                     $this->getHelper('Module_Database_Structure')
                          ->getTableNameWithPrefix('m2epro_amazon_listing_product_repricing'),
                     [
-                        'online_regular_price'      => $offerData['regular_product_price'],
-                        'online_min_price'          => $offerData['minimal_product_price'],
-                        'online_max_price'          => $offerData['maximal_product_price'],
-                        'is_online_disabled'        => $offerData['is_calculation_disabled'],
-                        'is_online_inactive'        => $offerData['is_offer_inactive'],
+                        'online_regular_price' => $offerData['regular_product_price'],
+                        'online_min_price' => $offerData['minimal_product_price'],
+                        'online_max_price' => $offerData['maximal_product_price'],
+                        'is_online_disabled' => $offerData['is_calculation_disabled'],
+                        'is_online_inactive' => $offerData['is_offer_inactive'],
                         'last_synchronization_date' => $this->getHelper('Data')->getCurrentGmtDate(),
-                        'update_date'               => $this->getHelper('Data')->getCurrentGmtDate(),
+                        'update_date' => $this->getHelper('Data')->getCurrentGmtDate(),
                     ],
                     ['listing_product_id = ?' => $listingProductId]
                 );
@@ -429,8 +436,10 @@ class General extends AbstractModel
 
             // we try to catch an event when the product becomes not managed for some reason
             // but it had the managed state before
-            if ($listingProductData['is_online_disabled'] != $offerData['is_calculation_disabled'] ||
-                $listingProductData['is_online_inactive'] != $offerData['is_offer_inactive']) {
+            if (
+                $listingProductData['is_online_disabled'] != $offerData['is_calculation_disabled'] ||
+                $listingProductData['is_online_inactive'] != $offerData['is_offer_inactive']
+            ) {
                 if (!$listingProductData['is_online_disabled'] && !$listingProductData['is_online_inactive']) {
                     $notManagedListingsProductsIds[] = $listingProductId;
                 }
@@ -443,19 +452,19 @@ class General extends AbstractModel
             foreach ($notManagedListingsProductsIds as $notManagedListingProductId) {
                 $instructionsData[] = [
                     'listing_product_id' => $notManagedListingProductId,
-                    'type'               => self::INSTRUCTION_TYPE_STATUS_CHANGED,
-                    'initiator'          => self::INSTRUCTION_INITIATOR,
-                    'priority'           => 50,
+                    'type' => self::INSTRUCTION_TYPE_STATUS_CHANGED,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => 50,
                 ];
             }
 
             $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()
-                ->add($instructionsData);
+                                      ->add($instructionsData);
         }
 
         $defaultParams = [
             'last_synchronization_date' => $this->getHelper('Data')->getCurrentGmtDate(),
-            'update_date'               => $this->getHelper('Data')->getCurrentGmtDate()
+            'update_date' => $this->getHelper('Data')->getCurrentGmtDate(),
         ];
 
         if (!empty($enabledListingsProductsIds)) {
@@ -531,9 +540,9 @@ class General extends AbstractModel
             return;
         }
 
-        $enabledListingOthersIds  = [];
+        $enabledListingOthersIds = [];
         $disabledListingOthersIds = [];
-        $activeListingOthersIds   = [];
+        $activeListingOthersIds = [];
         $inactiveListingOthersIds = [];
 
         foreach ($listingsOthersData as $listingOtherData) {
@@ -541,7 +550,8 @@ class General extends AbstractModel
 
             $offerData = $updatedOffersData[strtolower($listingOtherData['sku'])];
 
-            if ($offerData['product_price'] !== null &&
+            if (
+                $offerData['product_price'] !== null &&
                 !$offerData['is_calculation_disabled'] && !$offerData['is_offer_inactive'] &&
                 $offerData['product_price'] != $listingOtherData['online_price']
             ) {
@@ -549,7 +559,7 @@ class General extends AbstractModel
                     $this->getHelper('Module_Database_Structure')
                          ->getTableNameWithPrefix('m2epro_amazon_listing_other'),
                     [
-                        'online_price'          => $offerData['product_price'],
+                        'online_price' => $offerData['product_price'],
                         'is_repricing_disabled' => $offerData['is_calculation_disabled'],
                         'is_repricing_inactive' => $offerData['is_offer_inactive'],
                     ],
@@ -663,10 +673,10 @@ class General extends AbstractModel
         $listingsOthersData = $resourceModel->getProductsDataBySkus(
             $removedOffersSkus,
             [
-                'account_id' => $this->getAccount()->getId()
+                'account_id' => $this->getAccount()->getId(),
             ],
             [
-                'main_table.id'
+                'main_table.id',
             ]
         );
 
@@ -683,9 +693,9 @@ class General extends AbstractModel
             $this->resourceConnection->getConnection()->update(
                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_listing_other'),
                 [
-                    'is_repricing'          => 0,
+                    'is_repricing' => 0,
                     'is_repricing_disabled' => 0,
-                    'is_repricing_inactive' => 0
+                    'is_repricing_inactive' => 0,
                 ],
                 ['listing_other_id IN (?)' => $listingOtherIdsPack]
             );

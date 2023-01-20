@@ -15,9 +15,9 @@ use Ess\M2ePro\Model\Order\Change;
  */
 class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/order/update';
+    public const NICK = 'ebay/order/update';
 
-    const MAX_UPDATES_PER_TIME = 200;
+    public const MAX_UPDATES_PER_TIME = 200;
 
     //########################################
 
@@ -58,9 +58,9 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($permittedAccounts as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
             try {
                 $this->processAccount($account);
@@ -85,6 +85,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'Account'
         )->getCollection();
+
         return $accountsCollection->getItems();
     }
 
@@ -110,8 +111,12 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $changesCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
         $changesCollection->addAccountFilter($account->getId());
         $changesCollection->addProcessingAttemptDateFilter();
-        $changesCollection->addFieldToFilter('action', ['in' => [Change::ACTION_UPDATE_SHIPPING,
-                                                                 Change::ACTION_UPDATE_PAYMENT]]);
+        $changesCollection->addFieldToFilter('action', [
+            'in' => [
+                Change::ACTION_UPDATE_SHIPPING,
+                Change::ACTION_UPDATE_PAYMENT,
+            ],
+        ]);
         $changesCollection->setPageSize(self::MAX_UPDATES_PER_TIME);
         $changesCollection->getSelect()->group(['order_id']);
 
@@ -123,11 +128,10 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function processChange(\Ess\M2ePro\Model\Order\Change $change)
     {
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
-            ->incrementAttemptCount([$change->getId()]);
+                                  ->incrementAttemptCount([$change->getId()]);
         $connectorData = ['change_id' => $change->getId()];
 
         if ($change->isPaymentUpdateAction()) {
-
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->parentFactory->getObjectLoaded(
                 \Ess\M2ePro\Helper\Component\Ebay::NICK,
@@ -160,11 +164,10 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                  * two parameters.
                  */
                 $connectorData['tracking_number'] = $changeParams['tracking_number'];
-                $connectorData['carrier_code']    = $changeParams['carrier_title'];
+                $connectorData['carrier_code'] = $changeParams['carrier_title'];
             }
 
             if (!empty($changeParams['item_id'])) {
-
                 /** @var \Ess\M2ePro\Model\Order\Item $item */
                 $item = $this->parentFactory->getObjectLoaded(
                     \Ess\M2ePro\Helper\Component\Ebay::NICK,
@@ -177,7 +180,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $dispatcher->process($action, [$item], $connectorData);
                 }
             } else {
-
                 /** @var \Ess\M2ePro\Model\Order $order */
                 $order = $this->parentFactory->getObjectLoaded(
                     \Ess\M2ePro\Helper\Component\Ebay::NICK,

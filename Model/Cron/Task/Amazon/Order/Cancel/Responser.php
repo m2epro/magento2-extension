@@ -50,6 +50,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsRe
 
     /**
      * @param $messageText
+     *
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -79,6 +80,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Cancel\ItemsRe
 
     /**
      * @param array $messages
+     *
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

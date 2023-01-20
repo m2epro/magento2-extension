@@ -15,11 +15,12 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
 {
     public function execute()
     {
-        $productsIds   = $this->getRequest()->getParam('products_ids');
+        $productsIds = $this->getRequest()->getParam('products_ids');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
         if (empty($productsIds) && empty($marketplaceId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 

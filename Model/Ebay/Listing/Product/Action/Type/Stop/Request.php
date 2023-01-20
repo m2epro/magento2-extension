@@ -21,7 +21,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     public function getActionData()
     {
         return [
-            'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal()
+            'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal(),
         ];
     }
 

@@ -21,6 +21,7 @@ class Product
 
     public const SKU_MAX_LENGTH = 64;
 
+    /** @var array */
     private $cacheLoadedProducts = [];
 
     /** @var \Magento\Catalog\Model\ProductFactory */
@@ -108,14 +109,14 @@ class Product
         }
 
         $associatedTypes = [
-            self::TYPE_SIMPLE       => [
+            self::TYPE_SIMPLE => [
                 ProductModel::TYPE_SIMPLE_ORIGIN,
                 ProductModel::TYPE_VIRTUAL_ORIGIN,
             ],
             self::TYPE_DOWNLOADABLE => [ProductModel::TYPE_DOWNLOADABLE_ORIGIN],
             self::TYPE_CONFIGURABLE => [ProductModel::TYPE_CONFIGURABLE_ORIGIN],
-            self::TYPE_BUNDLE       => [ProductModel::TYPE_BUNDLE_ORIGIN],
-            self::TYPE_GROUPED      => [ProductModel::TYPE_GROUPED_ORIGIN],
+            self::TYPE_BUNDLE => [ProductModel::TYPE_BUNDLE_ORIGIN],
+            self::TYPE_GROUPED => [ProductModel::TYPE_GROUPED_ORIGIN],
         ];
 
         $originTypes = array_unique(

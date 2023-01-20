@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive
@@ -65,7 +65,8 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if (!$this->input->hasInstructionWithTypes($this->getRelistInstructionTypes()) &&
+        if (
+            !$this->input->hasInstructionWithTypes($this->getRelistInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {
             return false;
@@ -137,7 +138,7 @@ class Inactive extends AbstractModel
                         'params' => $params,
                         'configurator' => $configurator->getSerializedData(),
                     ]
-                )
+                ),
             ]
         );
 
@@ -165,7 +166,8 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if ($listingProduct->isStopped() &&
+        if (
+            $listingProduct->isStopped() &&
             $ebaySynchronizationTemplate->isRelistFilterUserLock() &&
             $listingProduct->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
         ) {
@@ -237,7 +239,7 @@ class Inactive extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix' => \Ess\M2ePro\Model\Ebay\Template\Synchronization::RELIST_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Ebay\Template\Synchronization::RELIST_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($ebaySynchronizationTemplate->getRelistAdvancedRulesFilters());

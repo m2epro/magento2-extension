@@ -13,14 +13,13 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
  */
 class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
         $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
         $this->setJsonContent([
-            'ids' => $selectedProductsIds
+            'ids' => $selectedProductsIds,
         ]);
 
         return $this->getResult();

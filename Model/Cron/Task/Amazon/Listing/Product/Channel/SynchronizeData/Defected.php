@@ -8,21 +8,16 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData;
 
-use \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\Defected\ProcessingRunner as Runner;
+use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\Defected\ProcessingRunner as Runner;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\Defected
- */
 class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/listing/product/channel/synchronize_data/defected';
+    public const NICK = 'amazon/listing/product/channel/synchronize_data/defected';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 259200;
-
-    //####################################
 
     public function isPossibleToRun()
     {
@@ -32,8 +27,6 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return parent::isPossibleToRun();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -48,27 +41,25 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function performActions()
     {
+        /** @var \Ess\M2ePro\Model\Account[] $accounts */
         $accounts = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Account')
-            ->getCollection()->getItems();
+                                        ->getCollection()->getItems();
 
         if (empty($accounts)) {
             return;
         }
 
         foreach ($accounts as $account) {
-
-            /** @var \Ess\M2ePro\Model\Account $account **/
-
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
             if (!$this->isLockedAccount($account)) {
                 $this->getOperationHistory()->addTimePoint(
-                    __METHOD__.'process'.$account->getId(),
-                    'Process Account '.$account->getTitle()
+                    __METHOD__ . 'process' . $account->getId(),
+                    'Process Account ' . $account->getTitle()
                 );
 
                 try {
@@ -82,12 +73,10 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $this->processTaskException($exception);
                 }
 
-                $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+                $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
             }
         }
     }
-
-    //########################################
 
     protected function processAccount(\Ess\M2ePro\Model\Account $account)
     {
@@ -97,8 +86,9 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection->addFieldToFilter('account_id', (int)$account->getId());
 
         if ($collection->getSize()) {
-
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+            /** @var Defected\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Amazon_Listing_Product_Channel_SynchronizeData_Defected_Requester',
                 [],
@@ -110,11 +100,11 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $lockItemNick = Runner::LOCK_ITEM_PREFIX.'_'.$account->getId();
+        $lockItemNick = Runner::LOCK_ITEM_PREFIX . '_' . $account->getId();
 
         /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => $lockItemNick
+            'nick' => $lockItemNick,
         ]);
         if (!$lockItemManager->isExist()) {
             return false;
@@ -122,11 +112,10 @@ class Defected extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         if ($lockItemManager->isInactiveMoreThanSeconds(\Ess\M2ePro\Model\Processing\Runner::MAX_LIFETIME)) {
             $lockItemManager->remove();
+
             return false;
         }
 
         return true;
     }
-
-    //########################################
 }

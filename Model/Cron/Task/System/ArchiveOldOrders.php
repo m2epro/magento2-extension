@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -8,22 +8,19 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\System;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\System\ArchiveOldOrders
- */
 class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/archive_old_orders';
+    public const NICK = 'system/archive_old_orders';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 3600;
 
-    const MAX_ENTITIES_COUNT_FOR_ONE_TIME = 1000;
+    public const MAX_ENTITIES_COUNT_FOR_ONE_TIME = 1000;
 
-    const COUNT_EXCEEDS_TRIGGER = 100000;
-    const DAYS_EXCEEDS_TRIGGER  = 180;
+    public const COUNT_EXCEEDS_TRIGGER = 100000;
+    public const DAYS_EXCEEDS_TRIGGER = 180;
 
     //########################################
 
@@ -46,32 +43,36 @@ class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function getAffectedOrdersGroupedByComponent()
     {
-        $connection = $this->resource->getConnection() ;
+        $connection = $this->resource->getConnection();
         $firstAffectedId = $connection->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_order'),
-                ['id']
-            )
-            ->order('id DESC')
-            ->limit(1, self::COUNT_EXCEEDS_TRIGGER)
-            ->query()->fetchColumn();
+                                      ->from(
+                                          $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                              'm2epro_order'
+                                          ),
+                                          ['id']
+                                      )
+                                      ->order('id DESC')
+                                      ->limit(1, self::COUNT_EXCEEDS_TRIGGER)
+                                      ->query()->fetchColumn();
 
         if ($firstAffectedId === false) {
             return [];
         }
 
         $archiveFromDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $archiveFromDate->modify('- ' .self::DAYS_EXCEEDS_TRIGGER. ' days');
+        $archiveFromDate->modify('- ' . self::DAYS_EXCEEDS_TRIGGER . ' days');
 
         $queryStmt = $connection->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_order'),
-                ['id', 'component_mode']
-            )
-            ->where('id <= ?', (int)$firstAffectedId)
-            ->where('create_date <= ?', $archiveFromDate->format('Y-m-d H:i:s'))
-            ->limit(self::MAX_ENTITIES_COUNT_FOR_ONE_TIME)
-            ->query();
+                                ->from(
+                                    $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                        'm2epro_order'
+                                    ),
+                                    ['id', 'component_mode']
+                                )
+                                ->where('id <= ?', (int)$firstAffectedId)
+                                ->where('create_date <= ?', $archiveFromDate->format('Y-m-d H:i:s'))
+                                ->limit(self::MAX_ENTITIES_COUNT_FOR_ONE_TIME)
+                                ->query();
 
         $orders = [];
         while ($row = $queryStmt->fetch()) {
@@ -91,13 +92,13 @@ class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $componentOrderTable = $dbHelper->getTableNameWithPrefix('m2epro_' . $componentName . '_order');
 
         $queryStmt = $connection->select()
-            ->from(['main_table' => $mainOrderTable])
-            ->joinInner(
-                ['second_table' => $componentOrderTable],
-                'second_table.order_id = main_table.id'
-            )
-            ->where('main_table.id IN (?)', $componentOrdersIds)
-            ->query();
+                                ->from(['main_table' => $mainOrderTable])
+                                ->joinInner(
+                                    ['second_table' => $componentOrderTable],
+                                    'second_table.order_id = main_table.id'
+                                )
+                                ->where('main_table.id IN (?)', $componentOrdersIds)
+                                ->query();
 
         $insertsData = [];
 
@@ -106,9 +107,9 @@ class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 'name' => 'Order',
                 'origin_id' => $orderRow['id'],
                 'data' => [
-                    'order_data' => $orderRow
+                    'order_data' => $orderRow,
                 ],
-                'create_date' => $this->getHelper('Data')->getCurrentGmtDate()
+                'create_date' => $this->getHelper('Data')->getCurrentGmtDate(),
             ];
         }
 
@@ -116,13 +117,13 @@ class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $componentOrderItemTable = $dbHelper->getTableNameWithPrefix('m2epro_' . $componentName . '_order_item');
 
         $queryStmt = $connection->select()
-            ->from(['main_table' => $mainOrderItemTable])
-            ->joinInner(
-                ['second_table' => $componentOrderItemTable],
-                'second_table.order_item_id = main_table.id'
-            )
-            ->where('main_table.order_id IN (?)', $componentOrdersIds)
-            ->query();
+                                ->from(['main_table' => $mainOrderItemTable])
+                                ->joinInner(
+                                    ['second_table' => $componentOrderItemTable],
+                                    'second_table.order_item_id = main_table.id'
+                                )
+                                ->where('main_table.order_id IN (?)', $componentOrdersIds)
+                                ->query();
 
         $orderItemsIds = [];
 

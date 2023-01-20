@@ -16,6 +16,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 
         if (!$productIds) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -23,6 +24,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
 
         if (empty($productArray)) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -40,6 +42,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Other
         }
 
         $this->setAjaxContent('1', false);
+
         return $this->getResult();
     }
 }

@@ -45,12 +45,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setOrder(\Ess\M2ePro\Model\Order $order)
     {
         $this->order = $order;
+
         return $this;
     }
 
     public function setOrderChange(\Ess\M2ePro\Model\Order\Change $orderChange)
     {
         $this->orderChange = $orderChange;
+
         return $this;
     }
 
@@ -94,6 +96,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($responseData)) {
             $this->processError($connector->getResponse()->getMessages()->getEntities());
+
             return;
         }
 

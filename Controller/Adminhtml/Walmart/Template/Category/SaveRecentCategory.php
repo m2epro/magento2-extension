@@ -28,11 +28,12 @@ class SaveRecentCategory extends Category
     public function execute()
     {
         $marketplaceId = $this->getRequest()->getPost('marketplace_id');
-        $browseNodeId  = $this->getRequest()->getPost('browsenode_id');
-        $categoryPath  = $this->getRequest()->getPost('category_path');
+        $browseNodeId = $this->getRequest()->getPost('browsenode_id');
+        $categoryPath = $this->getRequest()->getPost('category_path');
 
         if (!$marketplaceId || !$browseNodeId || !$categoryPath) {
             $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
@@ -43,6 +44,7 @@ class SaveRecentCategory extends Category
         );
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 }

@@ -22,7 +22,7 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
 
     public function getCommand()
     {
-        return ['inventory','get','defectedItems'];
+        return ['inventory', 'get', 'defectedItems'];
     }
 
     //########################################

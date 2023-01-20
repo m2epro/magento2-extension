@@ -10,8 +10,9 @@ namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing;
 
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
@@ -62,14 +63,14 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $walmartItemTable = $this->activeRecordFactory->getObject('Walmart\Item')->getResource()->getMainTable();
 
         $existedRelation = $this->getConnection()
-            ->select()
-            ->from(['ei' => $walmartItemTable])
-            ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
-            ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
-            ->where('`sku` = ?', $listingProduct->getSku())
-            ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
-            ->query()
-            ->fetchColumn();
+                                ->select()
+                                ->from(['ei' => $walmartItemTable])
+                                ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
+                                ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
+                                ->where('`sku` = ?', $listingProduct->getSku())
+                                ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
+                                ->query()
+                                ->fetchColumn();
 
         if ($existedRelation) {
             return;
@@ -82,7 +83,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
                 'account_id = ?' => $listingProduct->getListing()->getAccountId(),
                 'marketplace_id = ?' => $listingProduct->getListing()->getMarketplaceId(),
                 'sku = ?' => $listingProduct->getSku(),
-                'product_id = ?' => $listingProduct->getParentObject()->getOrigData('product_id')
+                'product_id = ?' => $listingProduct->getParentObject()->getOrigData('product_id'),
             ]
         );
     }

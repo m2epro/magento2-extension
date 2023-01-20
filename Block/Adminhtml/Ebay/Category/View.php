@@ -35,11 +35,14 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     protected function _prepareLayout()
     {
-        $this->setChild('info', $this->getLayout()->createBlock(
-            \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Info::class,
-            '',
-            ['data' => ['template_id' => $this->getRequest()->getParam('template_id')]]
-        ));
+        $this->setChild(
+            'info',
+            $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Info::class,
+                '',
+                ['data' => ['template_id' => $this->getRequest()->getParam('template_id')]]
+            )
+        );
 
         $this->setChild(
             'tabs',

@@ -38,7 +38,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'accepted',
             'option',
             'within',
-            'shipping_cost'
+            'shipping_cost',
         ];
         foreach ($domesticKeys as $keyName) {
             isset($this->rawData[$keyName]) && $data[$keyName] = $this->rawData[$keyName];
@@ -48,7 +48,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'international_accepted',
             'international_option',
             'international_within',
-            'international_shipping_cost'
+            'international_shipping_cost',
         ];
         foreach ($internationalKeys as $keyName) {
             isset($this->rawData[$keyName]) && $data[$keyName] = $this->rawData[$keyName];
@@ -64,17 +64,17 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'accepted'      => ReturnPolicy::RETURNS_ACCEPTED,
-            'option'        => '',
-            'within'        => '',
+            'accepted' => ReturnPolicy::RETURNS_ACCEPTED,
+            'option' => '',
+            'within' => '',
             'shipping_cost' => '',
 
-            'international_accepted'      => ReturnPolicy::RETURNS_NOT_ACCEPTED,
-            'international_option'        => '',
-            'international_within'        => '',
+            'international_accepted' => ReturnPolicy::RETURNS_NOT_ACCEPTED,
+            'international_option' => '',
+            'international_within' => '',
             'international_shipping_cost' => '',
 
-            'description' => ''
+            'description' => '',
         ];
     }
 

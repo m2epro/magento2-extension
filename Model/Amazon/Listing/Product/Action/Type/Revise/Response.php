@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as DataBuilderQty;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as DataBuilderQty;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Response
@@ -24,7 +24,8 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     {
         $data = [];
 
-        if ($this->getConfigurator()->isDetailsAllowed() ||
+        if (
+            $this->getConfigurator()->isDetailsAllowed() ||
             $this->getConfigurator()->isImagesAllowed()
         ) {
             $data['defected_messages'] = null;
@@ -86,7 +87,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $additionalData = $this->getListingProduct()->getAdditionalData();
 
         $additionalData['last_synchronization_dates']['fulfillment_switching']
-                = $this->getHelper('Data')->getCurrentGmtDate();
+            = $this->getHelper('Data')->getCurrentGmtDate();
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
     }

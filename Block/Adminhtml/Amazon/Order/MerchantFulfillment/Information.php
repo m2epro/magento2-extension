@@ -50,7 +50,7 @@ class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'data' => [
                     'id' => 'information_form',
-                ]
+                ],
             ]
         );
 
@@ -61,17 +61,17 @@ class Information extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 [
                     'messages' => [
                         [
-                            'type'    => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                            'content' => $this->getData('error_message')
-                        ]
-                    ]
+                            'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                            'content' => $this->getData('error_message'),
+                        ],
+                    ],
                 ]
             );
         } else {
             $fieldset = $form->addFieldset(
                 'general_fieldset',
                 [
-                    'legend' => $this->__('General')
+                    'legend' => $this->__('General'),
                 ]
             );
 
@@ -92,29 +92,28 @@ HTML;
                 case MerchantFulfillment::STATUS_REFUND_REJECTED:
                     $statusHtml = $this->__('Refund Rejected');
                     break;
-
             }
 
             $statusBtnHtml = '';
 
             if ($fulfillmentData['status'] == MerchantFulfillment::STATUS_PURCHASED) {
                 $statusBtnHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                                   ->setData(
-                    [
-                        'label'   => $this->__('Cancel'),
-                        'onclick' => 'AmazonOrderMerchantFulfillmentObj.cancelShippingOfferAction()',
-                        'class'   => 'action-primary'
-                    ]
-                )->toHtml();
+                                      ->setData(
+                                          [
+                                              'label' => $this->__('Cancel'),
+                                              'onclick' => 'AmazonOrderMerchantFulfillmentObj.cancelShippingOfferAction()',
+                                              'class' => 'action-primary',
+                                          ]
+                                      )->toHtml();
             } elseif ($this->getData('fulfillment_not_wizard') !== null) {
                 $statusBtnHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                                   ->setData(
-                    [
-                        'label'   => $this->__('Refresh'),
-                        'onclick' => 'AmazonOrderMerchantFulfillmentObj.refreshDataAction()',
-                        'class'   => 'action-primary'
-                    ]
-                )->toHtml();
+                                      ->setData(
+                                          [
+                                              'label' => $this->__('Refresh'),
+                                              'onclick' => 'AmazonOrderMerchantFulfillmentObj.refreshDataAction()',
+                                              'class' => 'action-primary',
+                                          ]
+                                      )->toHtml();
             }
 
             $fieldset->addField(
@@ -122,9 +121,10 @@ HTML;
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Status'),
-                    'text'  => <<<HTML
+                    'text' => <<<HTML
 <strong>{$statusHtml}</strong>&nbsp;{$statusBtnHtml}
 HTML
+                ,
                 ]
             );
 
@@ -133,7 +133,7 @@ HTML
                 'label',
                 [
                     'label' => $this->__('Carrier'),
-                    'value' => $fulfillmentData['shipping_service']['carrier_name']
+                    'value' => $fulfillmentData['shipping_service']['carrier_name'],
                 ]
             );
 
@@ -142,7 +142,7 @@ HTML
                 'label',
                 [
                     'label' => $this->__('Service'),
-                    'value' => $fulfillmentData['shipping_service']['name']
+                    'value' => $fulfillmentData['shipping_service']['name'],
                 ]
             );
 
@@ -151,7 +151,7 @@ HTML
                 'label',
                 [
                     'label' => $this->__('Tracking Number'),
-                    'value' => $fulfillmentData['tracking_id']
+                    'value' => $fulfillmentData['tracking_id'],
                 ]
             );
 
@@ -162,7 +162,7 @@ HTML
                     'label' => $this->__('Rate'),
                     'value' => $this->localeCurrency
                         ->getCurrency($fulfillmentData['shipping_service']['rate']['currency_code'])
-                        ->toCurrency($fulfillmentData['shipping_service']['rate']['amount'])
+                        ->toCurrency($fulfillmentData['shipping_service']['rate']['amount']),
                 ]
             );
 
@@ -175,7 +175,7 @@ HTML
                         $fulfillmentData['shipping_service']['date']['ship'],
                         \IntlDateFormatter::MEDIUM,
                         true
-                    )
+                    ),
                 ]
             );
 
@@ -189,7 +189,7 @@ HTML
                             $fulfillmentData['shipping_service']['date']['estimated_delivery']['latest'],
                             \IntlDateFormatter::MEDIUM,
                             true
-                        )
+                        ),
                     ]
                 );
             }
@@ -201,7 +201,7 @@ HTML
                     'label' => $this->__('Insurance'),
                     'value' => $this->localeCurrency
                         ->getCurrency($fulfillmentData['insurance']['currency_code'])
-                        ->toCurrency($fulfillmentData['insurance']['amount'])
+                        ->toCurrency($fulfillmentData['insurance']['amount']),
                 ]
             );
 
@@ -214,14 +214,14 @@ HTML
                         $fulfillmentData['date']['created'],
                         \IntlDateFormatter::MEDIUM,
                         true
-                    )
+                    ),
                 ]
             );
 
             $fieldset = $form->addFieldset(
                 'package_fieldset',
                 [
-                    'legend' => $this->__('Package')
+                    'legend' => $this->__('Package'),
                 ]
             );
 
@@ -230,8 +230,9 @@ HTML
             if ($fulfillmentData['package']['predefined_dimensions']) {
                 $predefinedPackageDimensions = $this->merchantFulfillment->getPredefinedPackageDimensions();
                 foreach ($predefinedPackageDimensions as $predefinedPackageDimensionGroup) {
-                    foreach ($predefinedPackageDimensionGroup as $predefinedPackageDimensionCode =>
-                             $predefinedPackageDimensionTitle) {
+                    foreach (
+                        $predefinedPackageDimensionGroup as $predefinedPackageDimensionCode => $predefinedPackageDimensionTitle
+                    ) {
                         if ($fulfillmentData['package']['predefined_dimensions'] == $predefinedPackageDimensionCode) {
                             $dimensionValue = $predefinedPackageDimensionTitle;
                         }
@@ -243,11 +244,15 @@ HTML
 {$fulfillmentData['package']['dimensions']['width']} x
 {$fulfillmentData['package']['dimensions']['height']}
 HTML;
-                if ($fulfillmentData['package']['dimensions']['unit_of_measure'] ==
-                    MerchantFulfillment::DIMENSION_MEASURE_INCHES) {
+                if (
+                    $fulfillmentData['package']['dimensions']['unit_of_measure'] ==
+                    MerchantFulfillment::DIMENSION_MEASURE_INCHES
+                ) {
                     $dimensionValue .= $this->__('in');
-                } elseif ($fulfillmentData['package']['dimensions']['DIMENSION_MEASURE_CENTIMETERS'] ==
-                    MerchantFulfillment::DIMENSION_MEASURE_INCHES) {
+                } elseif (
+                    $fulfillmentData['package']['dimensions']['DIMENSION_MEASURE_CENTIMETERS'] ==
+                    MerchantFulfillment::DIMENSION_MEASURE_INCHES
+                ) {
                     $dimensionValue .= $this->__('cm');
                 } else {
                     $dimensionValue .= $fulfillmentData['package']['dimensions']['unit_of_measure'];
@@ -259,17 +264,21 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Dimension'),
-                    'value' => $dimensionValue
+                    'value' => $dimensionValue,
                 ]
             );
 
             $weightValue = $fulfillmentData['package']['weight']['value'];
 
-            if ($fulfillmentData['package']['weight']['unit_of_measure'] ==
-                MerchantFulfillment::WEIGHT_MEASURE_OUNCES) {
+            if (
+                $fulfillmentData['package']['weight']['unit_of_measure'] ==
+                MerchantFulfillment::WEIGHT_MEASURE_OUNCES
+            ) {
                 $weightValue .= $this->__('oz');
-            } elseif ($fulfillmentData['package']['weight']['unit_of_measure'] ==
-                MerchantFulfillment::WEIGHT_MEASURE_GRAMS) {
+            } elseif (
+                $fulfillmentData['package']['weight']['unit_of_measure'] ==
+                MerchantFulfillment::WEIGHT_MEASURE_GRAMS
+            ) {
                 $weightValue .= $this->__('g');
             } else {
                 $weightValue .= $fulfillmentData['package']['weight']['unit_of_measure'];
@@ -280,19 +289,19 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Weight'),
-                    'value' => $weightValue
+                    'value' => $weightValue,
                 ]
             );
 
             if (!empty($fulfillmentData['label'])) {
                 $labelHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                               ->setData(
-                    [
-                        'label'   => $this->__('Print'),
-                        'onclick' => 'AmazonOrderMerchantFulfillmentObj.getShippingLabelAction()',
-                        'class'   => 'action-primary'
-                    ]
-                )->toHtml();
+                                  ->setData(
+                                      [
+                                          'label' => $this->__('Print'),
+                                          'onclick' => 'AmazonOrderMerchantFulfillmentObj.getShippingLabelAction()',
+                                          'class' => 'action-primary',
+                                      ]
+                                  )->toHtml();
             } else {
                 $labelHtml = $this->__('Label is Not Available');
             }
@@ -302,14 +311,14 @@ HTML;
                 self::CUSTOM_CONTAINER,
                 [
                     'label' => $this->__('Label'),
-                    'text'  => $labelHtml
+                    'text' => $labelHtml,
                 ]
             );
 
             $fieldset = $form->addFieldset(
                 'products_fieldset',
                 [
-                    'legend' => $this->__('Products')
+                    'legend' => $this->__('Products'),
                 ]
             );
 
@@ -348,15 +357,15 @@ HTML;
                 'products_grid',
                 self::CUSTOM_CONTAINER,
                 [
-                    'text'      => $html,
-                    'css_class' => 'm2epro-custom-container-full-width'
+                    'text' => $html,
+                    'css_class' => 'm2epro-custom-container-full-width',
                 ]
             );
 
             $fieldset = $form->addFieldset(
                 'ship_to_address_fieldset',
                 [
-                    'legend' => $this->__('Ship To Address')
+                    'legend' => $this->__('Ship To Address'),
                 ]
             );
 
@@ -365,7 +374,7 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Name'),
-                    'value' => $fulfillmentData['address']['to']['info']['name']
+                    'value' => $fulfillmentData['address']['to']['info']['name'],
                 ]
             );
 
@@ -376,11 +385,12 @@ HTML;
                     'label' => $this->__('Country'),
                     'value' => $this->magentoHelper->getTranslatedCountryName(
                         $fulfillmentData['address']['to']['physical']['country']
-                    )
+                    ),
                 ]
             );
 
-            if ($fulfillmentData['address']['to']['physical']['state'] !== null
+            if (
+                $fulfillmentData['address']['to']['physical']['state'] !== null
                 || $fulfillmentData['address']['to']['physical']['region'] !== null
             ) {
                 $regionState = '';
@@ -395,7 +405,7 @@ HTML;
                     'label',
                     [
                         'label' => $this->__('Region/State'),
-                        'value' => $regionState
+                        'value' => $regionState,
                     ]
                 );
             }
@@ -405,7 +415,7 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('City'),
-                    'value' => $fulfillmentData['address']['to']['physical']['city']
+                    'value' => $fulfillmentData['address']['to']['physical']['city'],
                 ]
             );
 
@@ -414,7 +424,7 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Street Address'),
-                    'value' => $fulfillmentData['address']['to']['physical']['address_1']
+                    'value' => $fulfillmentData['address']['to']['physical']['address_1'],
                 ]
             );
 
@@ -424,7 +434,7 @@ HTML;
                     'label',
                     [
                         'label' => '',
-                        'value' => $fulfillmentData['address']['to']['physical']['address_2']
+                        'value' => $fulfillmentData['address']['to']['physical']['address_2'],
                     ]
                 );
             }
@@ -434,14 +444,14 @@ HTML;
                 'label',
                 [
                     'label' => 'Postal Code',
-                    'value' => $fulfillmentData['address']['to']['physical']['postal_code']
+                    'value' => $fulfillmentData['address']['to']['physical']['postal_code'],
                 ]
             );
 
             $fieldset = $form->addFieldset(
                 'shipping_origin_fieldset',
                 [
-                    'legend' => $this->__('Shipping Origin')
+                    'legend' => $this->__('Shipping Origin'),
                 ]
             );
 
@@ -450,7 +460,7 @@ HTML;
                 'label',
                 [
                     'label' => 'Name',
-                    'value' => $fulfillmentData['address']['from']['info']['name']
+                    'value' => $fulfillmentData['address']['from']['info']['name'],
                 ]
             );
 
@@ -460,7 +470,7 @@ HTML;
                     'label',
                     [
                         'label' => 'Email',
-                        'value' => $fulfillmentData['address']['from']['info']['email']
+                        'value' => $fulfillmentData['address']['from']['info']['email'],
                     ]
                 );
             }
@@ -470,7 +480,7 @@ HTML;
                 'label',
                 [
                     'label' => 'Phone',
-                    'value' => $fulfillmentData['address']['from']['info']['phone']
+                    'value' => $fulfillmentData['address']['from']['info']['phone'],
                 ]
             );
 
@@ -481,11 +491,12 @@ HTML;
                     'label' => $this->__('Country'),
                     'value' => $this->magentoHelper->getTranslatedCountryName(
                         $fulfillmentData['address']['from']['physical']['country']
-                    )
+                    ),
                 ]
             );
 
-            if ($fulfillmentData['address']['from']['physical']['state'] !== null
+            if (
+                $fulfillmentData['address']['from']['physical']['state'] !== null
                 || $fulfillmentData['address']['from']['physical']['region'] !== null
             ) {
                 $regionState = '';
@@ -500,7 +511,7 @@ HTML;
                     'label',
                     [
                         'label' => $this->__('Region/State'),
-                        'value' => $regionState
+                        'value' => $regionState,
                     ]
                 );
             }
@@ -510,7 +521,7 @@ HTML;
                 'label',
                 [
                     'label' => 'City',
-                    'value' => $fulfillmentData['address']['from']['physical']['city']
+                    'value' => $fulfillmentData['address']['from']['physical']['city'],
                 ]
             );
 
@@ -519,7 +530,7 @@ HTML;
                 'label',
                 [
                     'label' => $this->__('Street Address'),
-                    'value' => $fulfillmentData['address']['from']['physical']['address_1']
+                    'value' => $fulfillmentData['address']['from']['physical']['address_1'],
                 ]
             );
 
@@ -529,7 +540,7 @@ HTML;
                     'label',
                     [
                         'label' => '',
-                        'value' => $fulfillmentData['address']['from']['physical']['address_2']
+                        'value' => $fulfillmentData['address']['from']['physical']['address_2'],
                     ]
                 );
             }
@@ -539,7 +550,7 @@ HTML;
                 'label',
                 [
                     'label' => 'Postal Code',
-                    'value' => $fulfillmentData['address']['from']['physical']['postal_code']
+                    'value' => $fulfillmentData['address']['from']['physical']['postal_code'],
                 ]
             );
         }
@@ -562,7 +573,7 @@ HTML;
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
-                'title'   => $this->__('Amazon\'s Shipping Services'),
+                'title' => $this->__('Amazon\'s Shipping Services'),
                 'content' => $this->__(
                     <<<HTML
 Below you can find Amazon’s Shipping Service information, such as e.g. Status, Carrier, Package Information,
@@ -572,7 +583,7 @@ Please, note you can repeat the action again after the Shipping Settings are can
 To <strong>update</strong> the Status you should press '<strong>Refresh</strong>' button.<br/>
 Also, you can <strong>print the label</strong> by pressing '<strong>Print</strong>' button.
 HTML
-                )
+                ),
             ]
         );
 
@@ -580,8 +591,10 @@ HTML
 
         if ($this->getData('fulfillment_not_wizard') === null) {
             $breadcrumb = $this->getLayout()
-                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Breadcrumb::class)
-                       ->setSelectedStep(3);
+                               ->createBlock(
+                                   \Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Breadcrumb::class
+                               )
+                               ->setSelectedStep(3);
 
             $html .= $breadcrumb->toHtml();
         }
@@ -600,11 +613,11 @@ HTML
             $orderItem = $parentOrderItem->getChildObject();
 
             $data[] = [
-                'title'    => $orderItem->getTitle(),
-                'sku'      => $orderItem->getSku(),
-                'asin'     => $orderItem->getGeneralId(),
-                'qty'      => $orderItem->getQtyPurchased(),
-                'price'    => $orderItem->getPrice(),
+                'title' => $orderItem->getTitle(),
+                'sku' => $orderItem->getSku(),
+                'asin' => $orderItem->getGeneralId(),
+                'qty' => $orderItem->getQtyPurchased(),
+                'price' => $orderItem->getPrice(),
                 'currency' => $orderItem->getCurrency(),
             ];
         }

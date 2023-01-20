@@ -43,6 +43,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         // listing product can be removed during processing action
         if ($this->getListingProduct()->getId() === null) {
             $this->getProcessingObject()->delete();
+
             return;
         }
 
@@ -63,7 +64,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
                 'processing_id' => $this->getProcessingObject()->getId(),
                 'type' => $this->getProcessingActionType(),
                 'request_timeout' => $params['request_timeout'],
-                'request_data' => $this->getHelper('Data')->jsonEncode($params['request_data'])
+                'request_data' => $this->getHelper('Data')->jsonEncode($params['request_data']),
             ]
         );
         $processingAction->save();
@@ -135,7 +136,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Listing\Product')
-            ->getCollection();
+                                          ->getCollection();
         $collection->addFieldToFilter('id', $params['listing_product_id']);
 
         return $this->listingProduct = $collection->getFirstItem();

@@ -13,14 +13,15 @@ namespace Ess\M2ePro\Model\Config;
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
-    const SORT_NONE = 0;
-    const SORT_KEY_ASC = 1;
-    const SORT_KEY_DESC = 2;
-    const SORT_VALUE_ASC = 3;
-    const SORT_VALUE_DESC = 4;
+    public const SORT_NONE = 0;
+    public const SORT_KEY_ASC = 1;
+    public const SORT_KEY_DESC = 2;
+    public const SORT_VALUE_ASC = 3;
+    public const SORT_VALUE_DESC = 4;
 
-    const CACHE_LIFETIME = 3600; // 1 hour
+    public const CACHE_LIFETIME = 3600; // 1 hour
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -92,7 +93,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         $cacheData = [];
         foreach ($dbData['items'] as $item) {
             $item['group'] = $this->prepareGroup($item['group']);
-            $item['key']   = $this->prepareKey($item['key']);
+            $item['key'] = $this->prepareKey($item['key']);
 
             if (!isset($cacheData[$item['group']])) {
                 $cacheData[$item['group']] = [];
@@ -122,13 +123,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             $existItem = reset($dbData['items']);
 
             $this->activeRecordFactory->getObject('Config')
-                ->load($existItem['id'])
-                ->addData(['value'=>$value])
-                ->save();
+                                      ->load($existItem['id'])
+                                      ->addData(['value' => $value])
+                                      ->save();
         } else {
             $this->activeRecordFactory->getObject('Config')
-                ->setData(['group' => $group, 'key' => $key, 'value' => $value])
-                ->save();
+                                      ->setData(['group' => $group, 'key' => $key, 'value' => $value])
+                                      ->save();
         }
 
         $this->removeCacheData();
@@ -211,6 +212,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getAllConfigData()
     {
         $collection = $this->activeRecordFactory->getObject('Config')->getCollection()->toArray();
+
         return $collection['items'];
     }
 
@@ -257,7 +259,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return $group;
         }
 
-        return '/'.strtolower(trim($group, '/')).'/';
+        return '/' . strtolower(trim($group, '/')) . '/';
     }
 
     /**

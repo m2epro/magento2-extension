@@ -48,7 +48,7 @@ class ShowM2eProLoggers implements InspectorInterface
     {
         $recursiveIteratorIterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
-                $this->helperFactory->getObject('Client')->getBaseDirectory().'vendor',
+                $this->helperFactory->getObject('Client')->getBaseDirectory() . 'vendor',
                 \FilesystemIterator::FOLLOW_SYMLINKS
             )
         );
@@ -56,13 +56,17 @@ class ShowM2eProLoggers implements InspectorInterface
         foreach ($recursiveIteratorIterator as $splFileInfo) {
             /**@var \SplFileInfo $splFileInfo */
 
-            if (!$splFileInfo->isFile() ||
-                !in_array($splFileInfo->getExtension(), ['php', 'phtml'])) {
+            if (
+                !$splFileInfo->isFile() ||
+                !in_array($splFileInfo->getExtension(), ['php', 'phtml'])
+            ) {
                 continue;
             }
 
-            if (strpos($splFileInfo->getRealPath(), 'Ess'.DIRECTORY_SEPARATOR.'M2ePro') !== false ||
-                strpos($splFileInfo->getRealPath(), 'm2e'.DIRECTORY_SEPARATOR.'ebay-amazon-magento2') !== false) {
+            if (
+                strpos($splFileInfo->getRealPath(), 'Ess' . DIRECTORY_SEPARATOR . 'M2ePro') !== false ||
+                strpos($splFileInfo->getRealPath(), 'm2e' . DIRECTORY_SEPARATOR . 'ebay-amazon-magento2') !== false
+            ) {
                 continue;
             }
 

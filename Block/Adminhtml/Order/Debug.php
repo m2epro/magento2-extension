@@ -76,7 +76,7 @@ class Debug extends AbstractContainer
 
             // ---------------------------------------
             $request = new \Magento\Framework\DataObject([
-                'product_class_id' => $store->getConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS)
+                'product_class_id' => $store->getConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS),
             ]);
 
             $this->setData('store_shipping_tax_rate', $this->taxCalculator->getStoreRate($request, $store));

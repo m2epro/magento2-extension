@@ -10,17 +10,14 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
 use Magento\Framework\DB\Select;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing
- */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var \Magento\Catalog\Model\Product\Action  */
     protected $catalogProductAction;
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     protected $productFactory;
-
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
-    //########################################
 
     public function _construct()
     {
@@ -56,7 +53,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             ['lp' => $lpTable],
             'product_id=entity_id',
             ['id' => 'id'],
-            '{{table}}.listing_id='.(int)$listingId
+            '{{table}}.listing_id=' . (int)$listingId
         );
 
         $collection->joinTable(
@@ -101,6 +98,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
                 [$attribute => $data],
                 $storeId
             );
+
             return;
         }
 
@@ -138,7 +136,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $collection->getSelect()->joinLeft(
             [
                 'lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
-                                                    ->getResource()->getMainTable()
+                                                   ->getResource()->getMainTable(),
             ],
             'lpv.listing_product_id = main_table.id',
             []
@@ -146,7 +144,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $collection->getSelect()->joinLeft(
             [
                 'lpvo' => $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
-                                                    ->getResource()->getMainTable()
+                                                    ->getResource()->getMainTable(),
             ],
             'lpvo.listing_product_variation_id = lpv.id',
             ['variation_product_id' => 'product_id']

@@ -13,17 +13,16 @@ namespace Ess\M2ePro\Model\Cron\Runner;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MAX_INACTIVE_TIME = 300;
-    const MAX_MEMORY_LIMIT  = 2048;
+    public const MAX_INACTIVE_TIME = 300;
+    public const MAX_MEMORY_LIMIT = 2048;
 
-    //########################################
-
+    /** @var \Magento\Store\Model\StoreManagerInterface  */
     protected $storeManager;
-
+    /** @var \Magento\Config\Model\Config  */
     protected $magentoConfig;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
-
+    /** @var null  */
     protected $previousStoreId = null;
 
     /** @var \Ess\M2ePro\Model\Cron\OperationHistory $operationHistory */
@@ -44,7 +43,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->storeManager  = $storeManager;
+        $this->storeManager = $storeManager;
         $this->magentoConfig = $magentoConfig;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
@@ -63,7 +62,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Lock\Transactional\Manager $transactionalManager */
         $transactionalManager = $this->modelFactory->getObject('Lock_Transactional_Manager', [
-            'nick' => 'cron_runner'
+            'nick' => 'cron_runner',
         ]);
 
         $transactionalManager->lock();
@@ -88,7 +87,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $transactionalManager->unlock();
 
         try {
-
             /** @var \Ess\M2ePro\Model\Cron\Strategy\AbstractModel $strategyObject */
             $strategyObject = $this->getStrategyObject();
 
@@ -96,18 +94,16 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             $strategyObject->setParentOperationHistory($this->getOperationHistory());
 
             $result = $strategyObject->process();
-
         } catch (\Exception $exception) {
-
             $result = false;
 
             $this->getOperationHistory()->addContentData(
                 'exceptions',
                 [
                     'message' => $exception->getMessage(),
-                    'file'    => $exception->getFile(),
-                    'line'    => $exception->getLine(),
-                    'trace'   => $exception->getTraceAsString(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'trace' => $exception->getTraceAsString(),
                 ]
             );
 
@@ -141,7 +137,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        if ($this->getHelper('Module')->getConfig()->getGroupValue('/cron/'.$this->getNick().'/', 'disabled')) {
+        if ($this->getHelper('Module')->getConfig()->getGroupValue('/cron/' . $this->getNick() . '/', 'disabled')) {
             return false;
         }
 

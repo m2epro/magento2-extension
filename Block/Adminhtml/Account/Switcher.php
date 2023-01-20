@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Account;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Account\Switcher
- */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
 {
+    /** @var string  */
     protected $paramName = 'account';
 
     //########################################
@@ -25,8 +23,8 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
     protected function loadItems()
     {
         $collection = $this->activeRecordFactory->getObject('Account')->getCollection()
-            ->setOrder('component_mode', 'ASC')
-            ->setOrder('title', 'ASC');
+                                                ->setOrder('component_mode', 'ASC')
+                                                ->setOrder('title', 'ASC');
 
         if ($this->getData('component_mode') !== null) {
             $collection->addFieldToFilter('component_mode', $this->getData('component_mode'));
@@ -34,6 +32,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
 
         if (!$collection->getSize()) {
             $this->items = [];
+
             return;
         }
 
@@ -53,7 +52,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             /** @var \Ess\M2ePro\Model\Account $account */
             $items[$account->getComponentMode()]['value'][] = [
                 'value' => $account->getId(),
-                'label' => $accountTitle
+                'label' => $accountTitle,
             ];
         }
 

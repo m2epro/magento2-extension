@@ -33,6 +33,7 @@ class AmazonGeneralId extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abst
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return string
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)

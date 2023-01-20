@@ -14,7 +14,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 class SystemLogs extends IssueType
 {
     private const COUNT_CRITICAL_LEVEL = 1500;
-    private const COUNT_WARNING_LEVEL  = 500;
+    private const COUNT_WARNING_LEVEL = 500;
     private const SEE_TO_BACK_INTERVAL = 3600;
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory */
@@ -54,28 +54,32 @@ class SystemLogs extends IssueType
 
         if ($exceptionsCount >= self::COUNT_WARNING_LEVEL) {
             $result->setTaskResult(TaskResult::STATE_WARNING);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-                <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 M2E Pro has recorded <b>%exceptions%</b>
 messages to the System Log during the last hour. <a target="_blank" href="%url%">Click here</a> for the details.
 HTML
-                ,
-                $exceptionsCount,
-                $this->urlBuilder->getUrl('m2epro/synchronization_log/index')
-            ]));
+                    ,
+                    $exceptionsCount,
+                    $this->urlBuilder->getUrl('m2epro/synchronization_log/index'),
+                ])
+            );
         }
 
         if ($exceptionsCount >= self::COUNT_CRITICAL_LEVEL) {
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-                <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 M2E Pro has recorded <b>%exceptions%</b> messages to the System Log during the last hour.
 <a href="%url%">Click here</a> for the details.
 HTML
-                ,
-                $exceptionsCount,
-                $this->urlBuilder->getUrl('m2epro/synchronization_log/index')
-            ]));
+                    ,
+                    $exceptionsCount,
+                    $this->urlBuilder->getUrl('m2epro/synchronization_log/index'),
+                ])
+            );
         }
 
         return $result;

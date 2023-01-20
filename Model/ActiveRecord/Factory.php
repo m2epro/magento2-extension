@@ -27,6 +27,7 @@ class Factory
 
     /**
      * @param string $modelName
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -35,9 +36,10 @@ class Factory
         // fix for Magento2 sniffs that forcing to use ::class
         $modelName = str_replace('_', '\\', $modelName);
 
-        $model = $this->objectManager->create('\Ess\M2ePro\Model\\'.$modelName);
+        $model = $this->objectManager->create('\Ess\M2ePro\Model\\' . $modelName);
 
-        if (!$model instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel &&
+        if (
+            !$model instanceof \Ess\M2ePro\Model\ActiveRecord\AbstractModel &&
             !$model instanceof \Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract
         ) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
@@ -64,6 +66,7 @@ class Factory
      * @param mixed $value
      * @param null|string $field
      * @param boolean $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel|NULL
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -85,6 +88,7 @@ class Factory
      * @param mixed $value
      * @param null|string $field
      * @param boolean $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -102,7 +106,7 @@ class Factory
             );
         }
 
-        $cacheKey = strtoupper($modelName.'_data_'.$field.'_'.$value);
+        $cacheKey = strtoupper($modelName . '_data_' . $field . '_' . $value);
 
         $cacheData = $this->helperFactory->getObject('Data_Cache_Permanent')->getValue($cacheKey);
         if (!empty($cacheData) && is_array($cacheData)) {

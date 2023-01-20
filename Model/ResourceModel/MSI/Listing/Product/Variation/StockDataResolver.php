@@ -49,7 +49,8 @@ class StockDataResolver extends \Ess\M2ePro\Model\ResourceModel\Listing\Product\
 
         $stockId = $this->stockResolver->execute($website->getId())->getStockId();
 
-        $salableData = $this->resourceConnection->getConnection()
+        $salableData = $this->resourceConnection
+            ->getConnection()
             ->select()
             ->from(
                 ['it' => $this->indexNameResolver->execute($stockId)],
@@ -58,7 +59,7 @@ class StockDataResolver extends \Ess\M2ePro\Model\ResourceModel\Listing\Product\
             ->join(
                 [
                     'cpe' => $this->getHelper('Module_Database_Structure')
-                                        ->getTableNameWithPrefix('catalog_product_entity')
+                                  ->getTableNameWithPrefix('catalog_product_entity'),
                 ],
                 'cpe.sku = it.sku',
                 ['product_id' => 'entity_id']

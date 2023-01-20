@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Amazon;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
@@ -34,15 +34,15 @@ class Marketplace extends AbstractContainer
         $this->addButton('run_update_all', [
             'label' => $this->__('Update All Now'),
             'onclick' => 'MarketplaceObj.updateAction()',
-            'class' => 'save update_all_marketplace primary'
+            'class' => 'save update_all_marketplace primary',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('run_synch_now', [
-            'label'     => $this->__('Save'),
-            'onclick'   => 'MarketplaceObj.saveAction();',
-            'class'     => 'save save_and_update_marketplaces primary'
+            'label' => $this->__('Save'),
+            'onclick' => 'MarketplaceObj.saveAction();',
+            'class' => 'save save_and_update_marketplaces primary',
         ]);
         // ---------------------------------------
     }
@@ -57,7 +57,7 @@ class Marketplace extends AbstractContainer
                 where you can sell your Items.</p><br>
                 <p><strong>Enable</strong> only those Marketplaces that you want to sell on.
                 High number of enabled Marketplaces will take longer to process the necessary data.</p>'
-            )
+            ),
         ]);
 
         return parent::_prepareLayout();
@@ -66,10 +66,10 @@ class Marketplace extends AbstractContainer
     protected function _toHtml()
     {
         return
-                '<div id="marketplaces_progress_bar"></div>' .
-                '<div id="marketplaces_content_container">' .
-                parent::_toHtml() .
-                '</div>';
+            '<div id="marketplaces_progress_bar"></div>' .
+            '<div id="marketplaces_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 
     //########################################

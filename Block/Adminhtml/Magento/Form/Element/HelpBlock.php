@@ -36,14 +36,14 @@ class HelpBlock extends AbstractElement
     public function getElementHtml()
     {
         return $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->addData([
-            'id'            => $this->getId(),
-            'title'         => $this->getData('title'),
-            'content'       => $this->getData('content'),
-            'class'         => $this->getClass(),
-            'tooltiped'     => $this->getData('tooltiped'),
-            'no_hide'       => $this->getData('no_hide'),
-            'no_collapse'   => $this->getData('no_collapse'),
-            'style'         => $this->getData('style'),
+            'id' => $this->getId(),
+            'title' => $this->getData('title'),
+            'content' => $this->getData('content'),
+            'class' => $this->getClass(),
+            'tooltiped' => $this->getData('tooltiped'),
+            'no_hide' => $this->getData('no_hide'),
+            'no_collapse' => $this->getData('no_collapse'),
+            'style' => $this->getData('style'),
         ])->toHtml();
     }
 }

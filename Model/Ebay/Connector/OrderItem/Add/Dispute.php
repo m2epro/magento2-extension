@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem\Add;
  */
 class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
-    const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
+    public const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
 
     /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
     private $orderItem;
@@ -59,10 +59,10 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
     public function getRequestData()
     {
         $requestData = [
-            'item_id'        => $this->orderItem->getChildObject()->getItemId(),
+            'item_id' => $this->orderItem->getChildObject()->getItemId(),
             'transaction_id' => $this->orderItem->getChildObject()->getTransactionId(),
-            'explanation'    => $this->params['explanation'],
-            'reason'         => $this->params['reason']
+            'explanation' => $this->params['explanation'],
+            'reason' => $this->params['reason'],
         ];
 
         return $requestData;
@@ -90,7 +90,7 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
                 'Unpaid Item Process was not open for Item #%id%. Reason: %msg%',
                 [
                     '!id' => $this->orderItem->getChildObject()->getItemId(),
-                    'msg' => $message->getText()
+                    'msg' => $message->getText(),
                 ]
             );
 
@@ -115,8 +115,9 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         if (empty($responseData['dispute_id'])) {
             $log = 'Unpaid Item Process was not open for Item #%id%. Reason: eBay failure. Please try again later.';
             $this->orderItem->getOrder()->addErrorLog($log, [
-                '!id' => $this->orderItem->getChildObject()->getItemId()
+                '!id' => $this->orderItem->getChildObject()->getItemId(),
             ]);
+
             return;
         }
 
@@ -127,7 +128,7 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
         $this->orderItem->getChildObject()->save();
 
         $this->orderItem->getOrder()->addSuccessLog('Unpaid Item Process for Item #%id% has been initiated.', [
-            '!id' => $this->orderItem->getChildObject()->getItemId()
+            '!id' => $this->orderItem->getChildObject()->getItemId(),
         ]);
     }
 

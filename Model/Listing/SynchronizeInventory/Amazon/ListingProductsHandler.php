@@ -24,6 +24,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
 
     /**
      * @param array $responseData
+     *
      * @return array|void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
@@ -46,7 +47,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
 
-        $dataHelper      = $this->helperFactory->getObject('Data');
+        $dataHelper = $this->helperFactory->getObject('Data');
         $componentHelper = $this->helperFactory->getObject('Component\Amazon');
 
         $parentIdsForProcessing = [];
@@ -64,21 +65,21 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 unset($this->responseData[$existingItem['sku']]);
 
                 $existingData = [
-                    'general_id'           => (string)$existingItem['general_id'],
+                    'general_id' => (string)$existingItem['general_id'],
                     'online_regular_price' => !empty($existingItem['online_regular_price'])
                         ? (float)$existingItem['online_regular_price'] : null,
-                    'online_qty'           => (int)$existingItem['online_qty'],
-                    'is_afn_channel'       => (bool)$existingItem['is_afn_channel'],
-                    'is_isbn_general_id'   => (bool)$existingItem['is_isbn_general_id'],
-                    'status'               => (int)$existingItem['status']
+                    'online_qty' => (int)$existingItem['online_qty'],
+                    'is_afn_channel' => (bool)$existingItem['is_afn_channel'],
+                    'is_isbn_general_id' => (bool)$existingItem['is_isbn_general_id'],
+                    'status' => (int)$existingItem['status'],
                 ];
 
                 $newData = [
-                    'general_id'           => (string)$receivedItem['identifiers']['general_id'],
+                    'general_id' => (string)$receivedItem['identifiers']['general_id'],
                     'online_regular_price' => !empty($receivedItem['price']) ? (float)$receivedItem['price'] : null,
-                    'online_qty'           => (int)$receivedItem['qty'],
-                    'is_afn_channel'       => (bool)$receivedItem['channel']['is_afn'],
-                    'is_isbn_general_id'   => (bool)$receivedItem['identifiers']['is_isbn']
+                    'online_qty' => (int)$receivedItem['qty'],
+                    'is_afn_channel' => (bool)$receivedItem['channel']['is_afn'],
+                    'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn'],
                 ];
 
                 if ($newData['is_afn_channel']) {
@@ -123,7 +124,8 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     }
                 }
 
-                if ($existingItem['is_repricing'] &&
+                if (
+                    $existingItem['is_repricing'] &&
                     !$existingItem['is_online_disabled'] &&
                     !$existingItem['is_online_inactive']
                 ) {
@@ -139,15 +141,15 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 if ($this->isDataChanged($existingData, $newData, 'status')) {
                     $instructionsData[] = [
                         'listing_product_id' => (int)$existingItem['listing_product_id'],
-                        'type'               => Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-                        'initiator'          => Responser::INSTRUCTION_INITIATOR,
-                        'priority'           => 80,
+                        'type' => Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
+                        'initiator' => Responser::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
                     ];
 
                     $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
 
                     $statusChangedFrom = $componentHelper->getHumanTitleByListingProductStatus($existingData['status']);
-                    $statusChangedTo   = $componentHelper->getHumanTitleByListingProductStatus($newData['status']);
+                    $statusChangedTo = $componentHelper->getHumanTitleByListingProductStatus($newData['status']);
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
@@ -168,9 +170,9 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     } else {
                         $instructionsData[] = [
                             'listing_product_id' => (int)$existingItem['listing_product_id'],
-                            'type'               => Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                            'initiator'          => Responser::INSTRUCTION_INITIATOR,
-                            'priority'           => 80,
+                            'type' => Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                            'initiator' => Responser::INSTRUCTION_INITIATOR,
+                            'priority' => 80,
                         ];
 
                         $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
@@ -179,7 +181,8 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                             (int)$newData['online_qty']
                         );
 
-                        if (!empty($existingItem['is_variation_product']) &&
+                        if (
+                            !empty($existingItem['is_variation_product']) &&
                             !empty($existingItem['variation_parent_id'])
                         ) {
                             $parentIdsForProcessing[] = (int)$existingItem['variation_parent_id'];
@@ -190,9 +193,9 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 if ($this->isDataChanged($existingData, $newData, 'online_regular_price')) {
                     $instructionsData[] = [
                         'listing_product_id' => (int)$existingItem['listing_product_id'],
-                        'type'               => Product::INSTRUCTION_TYPE_CHANNEL_REGULAR_PRICE_CHANGED,
-                        'initiator'          => Responser::INSTRUCTION_INITIATOR,
-                        'priority'           => 60,
+                        'type' => Product::INSTRUCTION_TYPE_CHANNEL_REGULAR_PRICE_CHANGED,
+                        'initiator' => Responser::INSTRUCTION_INITIATOR,
+                        'priority' => 60,
                     ];
 
                     $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
@@ -256,7 +259,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $collection->getSelect()->joinLeft(
             [
                 'repricing' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                                    ->getResource()->getMainTable()
+                                                         ->getResource()->getMainTable(),
             ],
             'second_table.listing_product_id = repricing.listing_product_id',
             ['is_online_disabled', 'is_online_inactive']
@@ -280,7 +283,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 'second_table.variation_parent_id',
                 'second_table.is_repricing',
                 'repricing.is_online_disabled',
-                'repricing.is_online_inactive'
+                'repricing.is_online_inactive',
             ]
         );
 
@@ -289,6 +292,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
 
     /**
      * @param $lastDate
+     *
      * @return bool
      * @throws \Exception
      */
@@ -312,6 +316,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
      *
      * @param $existData
      * @param $newData
+     *
      * @return bool
      */
     protected function isNeedSkipQTYChange($existData, $newData)

@@ -74,7 +74,7 @@ abstract class Account extends Main
 
             $dataForUpdate = [
                 'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
-                'token_expired_date' => $responseData['token_expired_date']
+                'token_expired_date' => $responseData['token_expired_date'],
             ];
 
             isset($responseData['hash']) && $dataForUpdate['server_hash'] = $responseData['hash'];
@@ -101,7 +101,7 @@ abstract class Account extends Main
 
             $this->messageManager->addWarning(
                 $this->__(
-                    'Some eBay Store Categories were deleted from eBay. Click '.
+                    'Some eBay Store Categories were deleted from eBay. Click ' .
                     '<a target="_blank" href="%url%" class="external-link">here</a> to check.',
                     $url
                 )
@@ -156,7 +156,7 @@ abstract class Account extends Main
 
             $dataForUpdate = [
                 'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
-                'token_expired_date' => $responseData['token_expired_date']
+                'token_expired_date' => $responseData['token_expired_date'],
             ];
 
             isset($responseData['info']['UserID']) && $dataForUpdate['user_id'] = $responseData['info']['UserID'];
@@ -183,7 +183,7 @@ abstract class Account extends Main
 
                 $this->messageManager->addWarning(
                     $this->__(
-                        'Some eBay Store Categories were deleted from eBay. Click '.
+                        'Some eBay Store Categories were deleted from eBay. Click ' .
                         '<a target="_blank" href="%url%" class="external-link">here</a> to check.',
                         $url
                     )
@@ -202,7 +202,7 @@ abstract class Account extends Main
     {
         $params = [
             'mode' => $data['mode'] == EbayAccount::MODE_PRODUCTION ? 'production' : 'sandbox',
-            'token_session' => $data['token_session']
+            'token_session' => $data['token_session'],
         ];
 
         if (isset($data['sell_api_token_session'])) {

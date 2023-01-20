@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Order;
  */
 class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const NOT_PAYPAL_TRANSACTION = 'SIS';
+    public const NOT_PAYPAL_TRANSACTION = 'SIS';
 
     /** @var \Ess\M2ePro\Model\Order $order */
     protected $order = null;
@@ -62,11 +62,13 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
+     *
      * @return $this
      */
     public function setOrder(\Ess\M2ePro\Model\Order $order)
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -132,7 +134,7 @@ class ExternalTransaction extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $params = [
             'cmd' => '_view-a-trans',
-            'id'  => $this->getData('transaction_id')
+            'id' => $this->getData('transaction_id'),
         ];
 
         $modePrefix = $this->getOrder()->getAccount()->getChildObject()->isModeSandbox() ? 'sandbox.' : '';

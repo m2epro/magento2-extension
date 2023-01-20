@@ -14,11 +14,11 @@ use Ess\M2ePro\Helper\View\Walmart\Controller as WalmartControllerHelper;
 
 class View
 {
-    const LISTING_CREATION_MODE_FULL = 0;
-    const LISTING_CREATION_MODE_LISTING_ONLY = 1;
+    public const LISTING_CREATION_MODE_FULL = 0;
+    public const LISTING_CREATION_MODE_LISTING_ONLY = 1;
 
-    const MOVING_LISTING_OTHER_SELECTED_SESSION_KEY = 'moving_listing_other_selected';
-    const MOVING_LISTING_PRODUCTS_SELECTED_SESSION_KEY = 'moving_listing_products_selected';
+    public const MOVING_LISTING_OTHER_SELECTED_SESSION_KEY = 'moving_listing_other_selected';
+    public const MOVING_LISTING_PRODUCTS_SELECTED_SESSION_KEY = 'moving_listing_products_selected';
 
     /** @var \Magento\Backend\Model\UrlInterface */
     private $urlBuilder;

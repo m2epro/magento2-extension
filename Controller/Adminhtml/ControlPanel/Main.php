@@ -32,7 +32,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
         $this->addCss('control_panel.css');
 
         $title = $this->__('Control Panel')
-                 .' (M2E Pro '.$this->getHelper('Module')->getPublicVersion().')';
+            . ' (M2E Pro ' . $this->getHelper('Module')->getPublicVersion() . ')';
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($title);
     }
@@ -41,7 +41,9 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
 
     /**
      * It will allow to use control panel features even if extension is disabled, etc.
+     *
      * @param \Magento\Framework\App\RequestInterface $request
+     *
      * @return bool
      */
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)

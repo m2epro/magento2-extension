@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Item\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper
 {
+    /** @var int */
     protected $scope;
 
     //########################################

@@ -51,30 +51,30 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             '*/amazon_listing_create/index',
             [
                 '_current' => true,
-                'step'     => '1'
+                'step' => '1',
             ]
         );
         $this->addButton(
             'back',
             [
-                'label'   => $this->__('Previous Step'),
+                'label' => $this->__('Previous Step'),
                 'onclick' => 'AmazonListingSettingsObj.backClick(\'' . $url . '\')',
-                'class'   => 'action-primary back'
+                'class' => 'action-primary back',
             ]
         );
 
         $url = $this->getUrl(
             '*/amazon_listing_create/index',
             [
-                '_current' => true
+                '_current' => true,
             ]
         );
         $this->addButton(
             'save_and_next',
             [
-                'label'   => $this->__('Next Step'),
+                'label' => $this->__('Next Step'),
                 'onclick' => 'AmazonListingSettingsObj.saveClick(\'' . $url . '\')',
-                'class'   => 'action-primary forward'
+                'class' => 'action-primary forward',
             ]
         );
     }
@@ -105,7 +105,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/h-8UB')
-                )
+                ),
             ]
         );
 

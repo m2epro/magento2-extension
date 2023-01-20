@@ -9,7 +9,8 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
 /**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\MatchedAttributes
+ * Class
+ * \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\MatchedAttributes
  */
 class MatchedAttributes extends AbstractModel
 {
@@ -24,17 +25,20 @@ class MatchedAttributes extends AbstractModel
         $productAttributes = $this->getProcessor()->getTypeModel()->getProductAttributes();
         $matchedAttributes = $this->getProcessor()->getTypeModel()->getMatchedAttributes();
 
-        if (count($productAttributes) != count($matchedAttributes) ||
+        if (
+            count($productAttributes) != count($matchedAttributes) ||
             array_diff($productAttributes, array_keys($matchedAttributes))
         ) {
             $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
+
             return;
         }
 
         if ($this->getProcessor()->isGeneralIdSet()) {
             $channelAttributes = $this->getProcessor()->getTypeModel()->getChannelAttributes();
 
-            if (count($channelAttributes) != count($matchedAttributes) ||
+            if (
+                count($channelAttributes) != count($matchedAttributes) ||
                 array_diff($channelAttributes, array_values($matchedAttributes))
             ) {
                 $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
@@ -45,12 +49,14 @@ class MatchedAttributes extends AbstractModel
 
         if (!$this->getProcessor()->isGeneralIdOwner()) {
             $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
+
             return;
         }
 
         $channelTheme = $this->getProcessor()->getTypeModel()->getChannelTheme();
         if (!$channelTheme) {
             $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
+
             return;
         }
 
@@ -87,6 +93,7 @@ class MatchedAttributes extends AbstractModel
 
         if ($this->getProcessor()->isGeneralIdSet()) {
             $this->processExistProduct();
+
             return;
         }
 
@@ -100,8 +107,8 @@ class MatchedAttributes extends AbstractModel
         $channelAttributes = $this->getProcessor()->getTypeModel()->getChannelAttributes();
 
         $this->getProcessor()
-            ->getTypeModel()
-            ->setMatchedAttributes($this->matchAttributes($channelAttributes), false);
+             ->getTypeModel()
+             ->setMatchedAttributes($this->matchAttributes($channelAttributes), false);
     }
 
     private function processNewProduct()
@@ -110,8 +117,8 @@ class MatchedAttributes extends AbstractModel
         $themeAttributes = $channelThemes[$this->getProcessor()->getTypeModel()->getChannelTheme()]['attributes'];
 
         $this->getProcessor()
-            ->getTypeModel()
-            ->setMatchedAttributes($this->matchAttributes($themeAttributes), true);
+             ->getTypeModel()
+             ->setMatchedAttributes($this->matchAttributes($themeAttributes), true);
     }
 
     // ---------------------------------------

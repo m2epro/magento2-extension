@@ -28,8 +28,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         array $data = []
     ) {
         $this->customCollectionFactory = $customCollectionFactory;
-        $this->resourceConnection      = $resourceConnection;
-        $this->componentEbayMotors     = $componentEbayMotors;
+        $this->resourceConnection = $resourceConnection;
+        $this->componentEbayMotors = $componentEbayMotors;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -61,12 +61,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $typeIdentifier = $this->getMotorsHelper()->getIdentifierKey($this->getMotorsType());
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                $this->getMotorsHelper()->getDictionaryTable($this->getMotorsType()),
-                [$typeIdentifier]
-            )
-            ->where('`'.$typeIdentifier.'` IN (?)', $ids);
+                                           ->select()
+                                           ->from(
+                                               $this->getMotorsHelper()->getDictionaryTable($this->getMotorsType()),
+                                               [$typeIdentifier]
+                                           )
+                                           ->where('`' . $typeIdentifier . '` IN (?)', $ids);
 
         if ($this->getMotorsHelper()->isTypeBasedOnEpids($this->getMotorsType())) {
             $select->where('scope = ?', $this->getMotorsHelper()->getEpidsScopeByType($this->getMotorsType()));
@@ -95,8 +95,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             }
 
             $itemData = [
-                'id'       => $id,
-                'note'     => $item['note']
+                'id' => $id,
+                'note' => $item['note'],
             ];
 
             $items[$id] = new \Magento\Framework\DataObject($itemData);
@@ -125,22 +125,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->addColumn('item', [
             'header' => $this->__($this->getItemsColumnTitle()),
-            'align'  => 'left',
-            'type'   => 'text',
-            'index'  => 'id',
-            'width'  => '50px',
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'id',
+            'width' => '50px',
             'frame_callback' => [$this, 'callbackColumnIdentifier'],
-            'filter_condition_callback' => [$this, 'customColumnFilter']
+            'filter_condition_callback' => [$this, 'customColumnFilter'],
         ]);
 
         $this->addColumn('note', [
-            'header'       => $this->__('Note'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'note',
-            'width'        => '350px',
+            'header' => $this->__('Note'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'note',
+            'width' => '350px',
             'filter_index' => 'note',
-            'filter_condition_callback' => [$this, 'customColumnFilter']
+            'filter_condition_callback' => [$this, 'customColumnFilter'],
         ]);
     }
 
@@ -153,9 +153,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set mass-action
         //--------------------------------
         $this->getMassactionBlock()->addItem('removeItem', [
-            'label'   => $this->__('Remove'),
-            'url'     => ''
+            'label' => $this->__('Remove'),
+            'url' => '',
         ]);
+
         //--------------------------------
 
         return parent::_prepareMassaction();
@@ -180,6 +181,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($this->getCollection() && $column->getFilterConditionCallback()) {
             call_user_func($column->getFilterConditionCallback(), $this->getCollection(), $column);
         }
+
         return $this;
     }
 
@@ -205,7 +207,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Custom $filteredCollection */
         $filteredCollection = $this->customCollectionFactory->create();
 
-        $value = str_replace([' ','%','\\','\''], '', $value);
+        $value = str_replace([' ', '%', '\\', '\''], '', $value);
 
         foreach ($this->getCollection()->getItems() as $item) {
             if (strpos($item->getData($field), $value) !== false) {
@@ -259,9 +261,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _toHtml()
     {
-
         if (!$this->canDisplayContainer()) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
     EbayListingViewSettingsMotorsViewItemGridObj.afterInitPage();
 JS
             );
@@ -269,7 +271,8 @@ JS
             return parent::_toHtml();
         }
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Listing/View/Settings/Motors/View/Item/Grid'
     ], function() {
@@ -290,7 +293,7 @@ JS
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_settings_motors/viewItemGrid', [
-            '_current' => true
+            '_current' => true,
         ]);
     }
 

@@ -43,12 +43,12 @@ class Info extends \Magento\Payment\Block\Info
     /**
      * Magento has forcibly set FRONTEND area
      * vendor/magento/module-payment/Helper/Data.php::getInfoBlockHtm()
-     *
      * @return string
      */
     protected function _toHtml()
     {
         $this->setData('area', \Magento\Framework\App\Area::AREA_ADMINHTML);
+
         return parent::_toHtml();
     }
 
@@ -98,7 +98,7 @@ class Info extends \Magento\Payment\Block\Info
         }
 
         return $this->getUrl('m2epro/amazon_order/goToAmazon', [
-            'magento_order_id' => $this->getOrder()->getId()
+            'magento_order_id' => $this->getOrder()->getId(),
         ]);
     }
 
@@ -116,6 +116,7 @@ class Info extends \Magento\Payment\Block\Info
     public function getChannelTitle()
     {
         $component = $this->getInfo()->getAdditionalInformation('component_mode');
+
         return $this->helperFactory->getObject('Component\\' . ucfirst($component))->getChannelTitle();
     }
 

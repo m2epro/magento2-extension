@@ -29,9 +29,10 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\LockManager */
     protected $lockManager;
-
+    /** @var bool  */
     protected $isCacheEnabled = false;
-    protected $cacheLifetime  = 86400;
+    /** @var int  */
+    protected $cacheLifetime = 86400;
 
     //########################################
 
@@ -67,7 +68,8 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
     public function getObjectModelName()
     {
         $className = $this->getHelper('Client')->getClassName($this);
-        return str_replace(['Ess\M2ePro\Model\\','\\'], ['','_'], $className);
+
+        return str_replace(['Ess\M2ePro\Model\\', '\\'], ['', '_'], $className);
     }
 
     //########################################
@@ -83,6 +85,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
 
     /**
      * @param mixed $tag
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -98,6 +101,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
 
     /**
      * @param mixed $tag
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -116,6 +120,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
     /**
      * @param int $id
      * @param null|string $field
+     *
      * @return ActiveRecordAbstract
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -127,9 +132,9 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 'Instance does not exist.',
                 [
-                    'id'    => $id,
+                    'id' => $id,
                     'field' => $field,
-                    'model' => $this->_resourceName
+                    'model' => $this->_resourceName,
                 ]
             );
         }
@@ -152,6 +157,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
         }
 
         parent::delete();
+
         return $this;
     }
 
@@ -167,7 +173,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
 
         /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->activeRecordFactory->getObject('Processing')->getCollection();
-        $collection->addFieldToFilter('id', ['in'=>array_unique($processingIds)]);
+        $collection->addFieldToFilter('id', ['in' => array_unique($processingIds)]);
 
         foreach ($collection->getItems() as $processing) {
             /** @var \Ess\M2ePro\Model\Processing $processing */
@@ -235,7 +241,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
         $defaultValue = null,
         $encodeType = Serializer::SETTING_FIELD_TYPE_JSON
     ) {
-       return $this->getSerializer()->getSetting($fieldName, $settingNamePath, $defaultValue, $encodeType);
+        return $this->getSerializer()->getSetting($fieldName, $settingNamePath, $defaultValue, $encodeType);
     }
 
     /**
@@ -247,6 +253,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
         $encodeType = Serializer::SETTING_FIELD_TYPE_JSON
     ) {
         $this->getSerializer()->setSettings($fieldName, $settings, $encodeType);
+
         return $this;
     }
 
@@ -260,6 +267,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
         $encodeType = Serializer::SETTING_FIELD_TYPE_JSON
     ) {
         $this->getSerializer()->setSetting($fieldName, $settingNamePath, $settingValue, $encodeType);
+
         return $this;
     }
 
@@ -308,6 +316,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -347,7 +356,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\AbstractMod
             $modelNameComponent = substr($modelName, 0, strpos($modelName, '\\'));
 
             if (in_array(strtolower($modelNameComponent), array_map('strtolower', $allComponents))) {
-                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\')+1);
+                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\') + 1);
                 $tags[] = $modelNameComponent;
                 $tags[] = $modelNameOnlyModel;
             }

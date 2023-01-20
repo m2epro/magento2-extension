@@ -17,7 +17,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 {
     /**
      * Defines which operators will be available for this condition
-     *
      * @var string
      */
     protected $_inputType = null;
@@ -80,50 +79,50 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 
     /**
      * Default operator input by type map getter
-     *
      * @return array
      */
     public function getDefaultOperatorInputByType()
     {
         if (null === $this->_defaultOperatorInputByType) {
             $this->_defaultOperatorInputByType = [
-                'string'      => ['==', '!=', '>=', '>', '<=', '<', '{}', '!{}', '()', '!()', '??', '!??'],
-                'numeric'     => ['==', '!=', '>=', '>', '<=', '<', '()', '!()'],
-                'date'        => ['==', '>=', '<='],
-                'select'      => ['==', '!='],
-                'boolean'     => ['==', '!='],
+                'string' => ['==', '!=', '>=', '>', '<=', '<', '{}', '!{}', '()', '!()', '??', '!??'],
+                'numeric' => ['==', '!=', '>=', '>', '<=', '<', '()', '!()'],
+                'date' => ['==', '>=', '<='],
+                'select' => ['==', '!='],
+                'boolean' => ['==', '!='],
                 'multiselect' => ['{}', '!{}', '()', '!()'],
-                'grid'        => ['()', '!()'],
+                'grid' => ['()', '!()'],
             ];
             $this->_arrayInputTypes = ['multiselect', 'grid'];
         }
+
         return $this->_defaultOperatorInputByType;
     }
 
     /**
      * Default operator options getter
      * Provides all possible operator options
-     *
      * @return array
      */
     public function getDefaultOperatorOptions()
     {
         if (null === $this->_defaultOperatorOptions) {
             $this->_defaultOperatorOptions = [
-                '=='  => __('is'),
-                '!='  => __('is not'),
-                '>='  => __('equals or greater than'),
-                '<='  => __('equals or less than'),
-                '>'   => __('greater than'),
-                '<'   => __('less than'),
-                '{}'  => __('contains'),
+                '==' => __('is'),
+                '!=' => __('is not'),
+                '>=' => __('equals or greater than'),
+                '<=' => __('equals or less than'),
+                '>' => __('greater than'),
+                '<' => __('less than'),
+                '{}' => __('contains'),
                 '!{}' => __('does not contain'),
-                '()'  => __('is one of'),
+                '()' => __('is one of'),
                 '!()' => __('is not one of'),
-                '??'  => __('is empty'),
-                '!??' => __('is not empty')
+                '??' => __('is empty'),
+                '!??' => __('is not empty'),
             ];
         }
+
         return $this->_defaultOperatorOptions;
     }
 
@@ -134,17 +133,19 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 
     /**
      * @param array $arrAttributes
+     *
      * @return array
      */
     public function asArray(array $arrAttributes = [])
     {
         $out = [
-            'type'=>$this->getType(),
-            'attribute'=>$this->getAttribute(),
-            'operator'=>$this->getOperator(),
-            'value'=>$this->getValue(),
-            'is_value_processed'=>$this->getIsValueParsed(),
+            'type' => $this->getType(),
+            'attribute' => $this->getAttribute(),
+            'operator' => $this->getOperator(),
+            'value' => $this->getValue(),
+            'is_value_processed' => $this->getIsValueParsed(),
         ];
+
         return $out;
     }
 
@@ -168,10 +169,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
      */
     public function asXml()
     {
-        $xml = "<type>".$this->getType()."</type>"
-            ."<attribute>".$this->getAttribute()."</attribute>"
-            ."<operator>".$this->getOperator()."</operator>"
-            ."<value>".$this->getValue()."</value>";
+        $xml = "<type>" . $this->getType() . "</type>"
+            . "<attribute>" . $this->getAttribute() . "</attribute>"
+            . "<operator>" . $this->getOperator() . "</operator>"
+            . "<value>" . $this->getValue() . "</value>";
+
         return $xml;
     }
 
@@ -193,6 +195,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         }
         $arr = (array)$xml;
         $this->loadArray($arr);
+
         return $this;
     }
 
@@ -213,8 +216,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     {
         $opt = [];
         foreach ($this->getAttributeOption() as $k => $v) {
-            $opt[] = ['value'=>$k, 'label'=>$v];
+            $opt[] = ['value' => $k, 'label' => $v];
         }
+
         return $opt;
     }
 
@@ -227,14 +231,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     {
         $this->setOperatorOption($this->getDefaultOperatorOptions());
         $this->setOperatorByInputType($this->getDefaultOperatorInputByType());
+
         return $this;
     }
 
     /**
      * This value will define which operators will be available for this condition.
-     *
      * Possible values are: string, numeric, date, select, multiselect, grid, boolean
-     *
      * @return string
      */
     public function getInputType()
@@ -242,6 +245,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         if (null === $this->_inputType) {
             return 'string';
         }
+
         return $this->_inputType;
     }
 
@@ -258,6 +262,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
                 $opt[] = ['value' => $k, 'label' => $v];
             }
         }
+
         return $opt;
     }
 
@@ -269,6 +274,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     public function loadValueOptions()
     {
         $this->setValueOption([]);
+
         return $this;
     }
 
@@ -276,17 +282,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     {
         $valueOption = $opt = [];
         if ($this->hasValueOption()) {
-            $valueOption = (array) $this->getValueOption();
+            $valueOption = (array)$this->getValueOption();
         }
         foreach ($valueOption as $k => $v) {
             $opt[] = ['value' => $k, 'label' => $v];
         }
+
         return $opt;
     }
 
     /**
      * Retrieve parsed value
-     *
      * @return array|string|int|float
      */
     public function getValueParsed()
@@ -298,19 +304,19 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             }
             $this->setValueParsed($value);
         }
+
         return $this->getData('value_parsed');
     }
 
     /**
      * Check if value should be array
-     *
      * Depends on operator input type
-     *
      * @return bool
      */
     public function isArrayOperatorType()
     {
         $op = $this->getOperator();
+
         return $op === '()' || $op === '!()' || in_array($this->getInputType(), $this->_arrayInputTypes);
     }
 
@@ -327,6 +333,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             );
             $this->setIsValueParsed(true);
         }
+
         return $this->getData('value');
     }
 
@@ -348,7 +355,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
                 } else {
                     if (is_array($o['value'])) {
                         foreach ($o['value'] as $v) {
-                            if ($v['value']==$value) {
+                            if ($v['value'] == $value) {
                                 return $v['label'];
                             }
                         }
@@ -362,18 +369,18 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         if (!empty($valueArr)) {
             $value = implode(', ', $valueArr);
         }
+
         return $value;
     }
 
     /**
      * Get inherited conditions selectors
-     *
      * @return array
      */
     public function getNewChildSelectOptions()
     {
         return [
-            ['value'=>'', 'label'=>__('Please choose a Condition to add...')],
+            ['value' => '', 'label' => __('Please choose a Condition to add...')],
         ];
     }
 
@@ -385,17 +392,19 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     public function asHtml()
     {
         $html = $this->getTypeElementHtml()
-            .$this->getAttributeElementHtml()
-            .$this->getOperatorElementHtml()
-            .$this->getValueElementHtml()
-            .$this->getRemoveLinkHtml()
-            .$this->getChooserContainerHtml();
+            . $this->getAttributeElementHtml()
+            . $this->getOperatorElementHtml()
+            . $this->getValueElementHtml()
+            . $this->getRemoveLinkHtml()
+            . $this->getChooserContainerHtml();
+
         return $html;
     }
 
     public function asHtmlRecursive()
     {
         $html = $this->asHtml();
+
         return $html;
     }
 
@@ -405,10 +414,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             $this->getPrefix() . '__' . $this->getId() . '__type',
             'hidden',
             [
-                'name'    => 'rule[' . $this->getPrefix() . '][' . $this->getId() . '][type]',
-                'value'   => $this->getType(),
+                'name' => 'rule[' . $this->getPrefix() . '][' . $this->getId() . '][type]',
+                'value' => $this->getType(),
                 'no_span' => true,
-                'class'   => 'hidden',
+                'class' => 'hidden',
             ]
         );
     }
@@ -426,11 +435,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
                 break;
             }
         }
-        return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__attribute', 'select', [
-            'name'=>'rule['.$this->getPrefix().']['.$this->getId().'][attribute]',
-            'values'=>$this->getAttributeSelectOptions(),
-            'value'=>$this->getAttribute(),
-            'value_name'=>$this->getAttributeName(),
+
+        return $this->getForm()->addField($this->getPrefix() . '__' . $this->getId() . '__attribute', 'select', [
+            'name' => 'rule[' . $this->getPrefix() . '][' . $this->getId() . '][attribute]',
+            'values' => $this->getAttributeSelectOptions(),
+            'value' => $this->getAttribute(),
+            'value_name' => $this->getAttributeName(),
         ])->setRenderer(
             $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class)
         );
@@ -444,7 +454,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     /**
      * Retrieve Condition Operator element Instance
      * If the operator value is empty - define first available operator value as default
-     *
      * @return \Magento\Framework\Data\Form\Element\Select
      */
     public function getOperatorElement()
@@ -457,13 +466,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             }
         }
 
-        $elementId   = sprintf('%s__%s__operator', $this->getPrefix(), $this->getId());
+        $elementId = sprintf('%s__%s__operator', $this->getPrefix(), $this->getId());
         $elementName = sprintf('rule[%s][%s][operator]', $this->getPrefix(), $this->getId());
-        $element     = $this->getForm()->addField($elementId, 'select', [
-            'name'          => $elementName,
-            'values'        => $options,
-            'value'         => $this->getOperator(),
-            'value_name'    => $this->getOperatorName(),
+        $element = $this->getForm()->addField($elementId, 'select', [
+            'name' => $elementName,
+            'values' => $options,
+            'value' => $this->getOperator(),
+            'value_name' => $this->getOperatorName(),
         ]);
         $element->setRenderer($this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class));
 
@@ -477,9 +486,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 
     /**
      * Value element type will define renderer for condition value element
-     *
-     * @see Varien_Data_Form_Element
      * @return string
+     * @see Varien_Data_Form_Element
      */
     public function getValueElementType()
     {
@@ -491,26 +499,28 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         if (strpos($this->getValueElementType(), '/') !== false) {
             return $this->_layout->getBlockSingleton($this->getValueElementType());
         }
+
         return $this->_layout->getBlockSingleton(\Magento\Rule\Block\Editable::class);
     }
 
     public function getValueElement()
     {
         $elementParams = [
-            'name'               => 'rule['.$this->getPrefix().']['.$this->getId().'][value]',
-            'value'              => $this->getValue(),
-            'values'             => $this->getValueSelectOptions(),
-            'value_name'         => $this->getValueName(),
+            'name' => 'rule[' . $this->getPrefix() . '][' . $this->getId() . '][value]',
+            'value' => $this->getValue(),
+            'values' => $this->getValueSelectOptions(),
+            'value_name' => $this->getValueName(),
             'after_element_html' => $this->getValueAfterElementHtml(),
-            'explicit_apply'     => $this->getExplicitApply(),
+            'explicit_apply' => $this->getExplicitApply(),
         ];
-        if ($this->getInputType()=='date') {
+        if ($this->getInputType() == 'date') {
             // date format intentionally hard-coded
             $elementParams['date_format'] = $this->_localeDate->getDateFormat(\IntlDateFormatter::MEDIUM);
             $elementParams['time_format'] = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
         }
+
         return $this->getForm()->addField(
-            $this->getPrefix().'__'.$this->getId().'__value',
+            $this->getPrefix() . '__' . $this->getId() . '__value',
             $this->getValueElementType(),
             $elementParams
         )->setRenderer($this->getValueElementRenderer());
@@ -526,6 +536,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         $src = $this->_assetRepo->getUrl('images/rule_component_add.gif');
         $html = '<img src="' . $src . '" class="rule-param-add v-middle" alt=""
                                          title="' . __('Add') . '"/>';
+
         return $html;
     }
 
@@ -549,25 +560,29 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
         if ($url) {
             $html = '<div class="rule-chooser" url="' . $url . '"></div>';
         }
+
         return $html;
     }
 
     public function asString($format = '')
     {
         $str = $this->getAttributeName() . ' ' . $this->getOperatorName() . ' ' . $this->getValueName();
+
         return $str;
     }
 
     public function asStringRecursive($level = 0)
     {
         $str = str_pad('', $level * 3, ' ', STR_PAD_LEFT) . $this->asString();
+
         return $str;
     }
 
     /**
      * Validate product attrbute value for condition
      *
-     * @param   mixed $validatedValue product attribute value
+     * @param mixed $validatedValue product attribute value
+     *
      * @return  bool
      */
     public function validateAttribute($validatedValue)
@@ -646,7 +661,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             case '!{}':
                 if (is_scalar($validatedValue) && is_array($value)) {
                     foreach ($value as $item) {
-                        if (stripos($validatedValue, $item)!==false) {
+                        if (stripos($validatedValue, $item) !== false) {
                             $result = true;
                             break;
                         }
@@ -670,7 +685,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             case '()':
             case '!()':
                 if (is_array($validatedValue)) {
-                    $result = count(array_intersect($validatedValue, (array)$value))>0;
+                    $result = count(array_intersect($validatedValue, (array)$value)) > 0;
                 } else {
                     $value = (array)$value;
                     foreach ($value as $item) {
@@ -681,7 +696,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
                     }
                 }
                 break;
-            case '??':case '!??':
+            case '??':
+            case '!??':
                 $result = empty($validatedValue);
                 break;
         }
@@ -696,9 +712,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     /**
      * Case and type insensitive comparison of values
      *
-     * @param  string|int|float $validatedValue
-     * @param  string|int|float $value
-     * @param  bool $strict
+     * @param string|int|float $validatedValue
+     * @param string|int|float $value
+     * @param bool $strict
+     *
      * @return bool
      */
     protected function _compareValues($validatedValue, $value, $strict = true)
@@ -716,6 +733,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             } catch (\Exception $e) {
                 return false;
             }
+
             return $result;
         }
     }
@@ -727,7 +745,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 
     /**
      * Retrieve operator for php validation
-     *
      * @return string
      */
     public function getOperatorForValidate()
@@ -740,6 +757,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

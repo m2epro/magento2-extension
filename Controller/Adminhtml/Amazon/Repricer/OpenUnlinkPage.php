@@ -43,6 +43,7 @@ class OpenUnlinkPage extends Account
 
         if ($accountId && $account === null) {
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
+
             return $this->_redirect('*/amazon_account/index');
         }
 
@@ -54,9 +55,12 @@ class OpenUnlinkPage extends Account
         $serverRequestToken = $repricingAction->sendUnlinkActionData($backUrl);
 
         if ($serverRequestToken === false) {
-            $this->getMessageManager()->addError($this->__(
-                'M2E Pro cannot to connect to the Amazon Repricing Service. Please try again later.'
-            ));
+            $this->getMessageManager()->addError(
+                $this->__(
+                    'M2E Pro cannot to connect to the Amazon Repricing Service. Please try again later.'
+                )
+            );
+
             return $this->_redirect($this->getUrl('*/amazon_repricer_settings/index/'));
         }
 

@@ -18,22 +18,22 @@ use Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConvert
  */
 class Product extends \Ess\M2ePro\Model\AbstractModel
 {
-    const TYPE_SIMPLE_ORIGIN       = 'simple';
-    const TYPE_CONFIGURABLE_ORIGIN = 'configurable';
-    const TYPE_BUNDLE_ORIGIN       = 'bundle';
-    const TYPE_GROUPED_ORIGIN      = 'grouped';
-    const TYPE_DOWNLOADABLE_ORIGIN = 'downloadable';
-    const TYPE_VIRTUAL_ORIGIN      = 'virtual';
+    public const TYPE_SIMPLE_ORIGIN = 'simple';
+    public const TYPE_CONFIGURABLE_ORIGIN = 'configurable';
+    public const TYPE_BUNDLE_ORIGIN = 'bundle';
+    public const TYPE_GROUPED_ORIGIN = 'grouped';
+    public const TYPE_DOWNLOADABLE_ORIGIN = 'downloadable';
+    public const TYPE_VIRTUAL_ORIGIN = 'virtual';
 
-    const BUNDLE_PRICE_TYPE_DYNAMIC = 0;
-    const BUNDLE_PRICE_TYPE_FIXED   = 1;
+    public const BUNDLE_PRICE_TYPE_DYNAMIC = 0;
+    public const BUNDLE_PRICE_TYPE_FIXED = 1;
 
-    const THUMBNAIL_IMAGE_CACHE_TIME = 604800;
+    public const THUMBNAIL_IMAGE_CACHE_TIME = 604800;
 
-    const TAX_CLASS_ID_NONE = 0;
+    public const TAX_CLASS_ID_NONE = 0;
 
-    const FORCING_QTY_TYPE_MANAGE_STOCK_NO = 1;
-    const FORCING_QTY_TYPE_BACKORDERS      = 2;
+    public const FORCING_QTY_TYPE_MANAGE_STOCK_NO = 1;
+    public const FORCING_QTY_TYPE_BACKORDERS = 2;
 
     /**
      *  $statistics = array(
@@ -53,6 +53,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      *  )
      */
 
+    /** @var array  */
     public static $statistics = [];
 
     protected $inventoryFactory;
@@ -79,7 +80,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Catalog\Model\Product */
     protected $_productModel = null;
 
-    /** @var \Magento\Catalog\Model\ResourceModel\Product  */
+    /** @var \Magento\Catalog\Model\ResourceModel\Product */
     protected $resourceProduct;
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -160,9 +161,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $table = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity');
         $dbSelect = $this->resourceModel->getConnection()
-            ->select()
-            ->from($table, new \Zend_Db_Expr('COUNT(*)'))
-            ->where('`entity_id` = ?', (int)$this->_productId);
+                                        ->select()
+                                        ->from($table, new \Zend_Db_Expr('COUNT(*)'))
+                                        ->where('`entity_id` = ?', (int)$this->_productId);
 
         $count = $this->resourceModel->getConnection()->fetchOne($dbSelect);
 
@@ -172,6 +173,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param int|null $productId
      * @param int|null $storeId
+     *
      * @return \Ess\M2ePro\Model\Magento\Product | \Ess\M2ePro\Model\Magento\Product\Cache
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -201,6 +203,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param int $productId
+     *
      * @return \Ess\M2ePro\Model\Magento\Product
      */
     public function setProductId($productId)
@@ -222,6 +225,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param int $storeId
+     *
      * @return \Ess\M2ePro\Model\Magento\Product
      */
     public function setStoreId($storeId)
@@ -265,12 +269,14 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     public function getWebsiteIds()
     {
         $select = $this->resourceModel->getConnection()
-            ->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_website'),
-                'website_id'
-            )
-            ->where('product_id = ?', (int)$this->getProductId());
+                                      ->select()
+                                      ->from(
+                                          $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                              'catalog_product_website'
+                                          ),
+                                          'website_id'
+                                      )
+                                      ->where('product_id = ?', (int)$this->getProductId());
 
         $websiteIds = $this->resourceModel->getConnection()->fetchCol($select);
 
@@ -300,6 +306,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Catalog\Model\Product $productModel
+     *
      * @return \Ess\M2ePro\Model\Magento\Product
      */
     public function setProduct(\Magento\Catalog\Model\Product $productModel)
@@ -316,6 +323,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param int $isGroupedProductMode
+     *
      * @return \Ess\M2ePro\Model\Magento\Product
      */
     public function setGroupedProductMode($isGroupedProductMode)
@@ -378,6 +386,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function setVariationVirtualAttributes(array $attributes)
@@ -397,6 +406,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $isIgnore
+     *
      * @return $this
      */
     public function setIgnoreVariationVirtualAttributes($isIgnore = true)
@@ -418,6 +428,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function setVariationFilterAttributes(array $attributes)
@@ -437,6 +448,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $isIgnore
+     *
      * @return $this
      */
     public function setIgnoreVariationFilterAttributes($isIgnore = true)
@@ -461,14 +473,16 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $resource = $this->resourceModel;
 
         $typeId = $resource->getConnection()
-            ->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity'),
-                ['type_id']
-            )
-            ->where('`entity_id` = ?', (int)$productId)
-            ->query()
-            ->fetchColumn();
+                           ->select()
+                           ->from(
+                               $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                   'catalog_product_entity'
+                               ),
+                               ['type_id']
+                           )
+                           ->where('`entity_id` = ?', (int)$productId)
+                           ->query()
+                           ->fetchColumn();
 
         $this->helperFactory->getObject('Data\GlobalData')->setValue($tempKey, $typeId);
 
@@ -491,19 +505,21 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         if (($attributeId = $cacheHelper->getValue(__METHOD__)) === null) {
             $attributeId = $resource->getConnection()
-                ->select()
-                ->from(
-                    $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute'),
-                    ['attribute_id']
-                )
-                ->where('attribute_code = ?', 'name')
-                ->where(
-                    'entity_type_id = ?',
-                    $this->productFactory
-                        ->create()->getResource()->getTypeId()
-                )
-                ->query()
-                ->fetchColumn();
+                                    ->select()
+                                    ->from(
+                                        $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                            'eav_attribute'
+                                        ),
+                                        ['attribute_id']
+                                    )
+                                    ->where('attribute_code = ?', 'name')
+                                    ->where(
+                                        'entity_type_id = ?',
+                                        $this->productFactory
+                                            ->create()->getResource()->getTypeId()
+                                    )
+                                    ->query()
+                                    ->fetchColumn();
 
             $cacheHelper->setValue(__METHOD__, $attributeId);
         }
@@ -517,18 +533,18 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $collection->joinTable(
             [
                 'cpev' => $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('catalog_product_entity_varchar'),
+                               ->getTableNameWithPrefix('catalog_product_entity_varchar'),
             ],
             'entity_id = entity_id',
             ['value' => 'value']
         );
         $queryStmt = $collection->getSelect()
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(['value' => 'cpev.value'])
-            ->where('cpev.store_id IN (?)', $storeIds)
-            ->where('cpev.attribute_id = ?', (int)$attributeId)
-            ->order('cpev.store_id DESC')
-            ->query();
+                                ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                                ->columns(['value' => 'cpev.value'])
+                                ->where('cpev.store_id IN (?)', $storeIds)
+                                ->where('cpev.attribute_id = ?', (int)$attributeId)
+                                ->order('cpev.store_id DESC')
+                                ->query();
 
         $nameValue = '';
         while ($tempValue = $queryStmt->fetchColumn()) {
@@ -556,14 +572,16 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $resource = $this->resourceModel;
 
         $sku = $resource->getConnection()
-            ->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('catalog_product_entity'),
-                ['sku']
-            )
-            ->where('`entity_id` = ?', (int)$productId)
-            ->query()
-            ->fetchColumn();
+                        ->select()
+                        ->from(
+                            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                'catalog_product_entity'
+                            ),
+                            ['sku']
+                        )
+                        ->where('`entity_id` = ?', (int)$productId)
+                        ->query()
+                        ->fetchColumn();
 
         $this->helperFactory->getObject('Data\GlobalData')->setValue($tempKey, $sku);
 
@@ -605,8 +623,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($this->getProduct()->getOptions() as $option) {
-            if ((int)$option->getData('is_require') &&
-                in_array($option->getData('type'), ['drop_down', 'radio', 'multiple', 'checkbox'])) {
+            if (
+                (int)$option->getData('is_require') &&
+                in_array($option->getData('type'), ['drop_down', 'radio', 'multiple', 'checkbox'])
+            ) {
                 return true;
             }
         }
@@ -923,13 +943,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     public function isSpecialPriceActual()
     {
         $fromDate = (int)\Ess\M2ePro\Helper\Date::createDateGmt($this->getSpecialPriceFromDate())
-            ->format('U');
+                                                ->format('U');
         $toDate = (int)\Ess\M2ePro\Helper\Date::createDateGmt($this->getSpecialPriceToDate())
-            ->format('U');
+                                              ->format('U');
         $currentTimeStamp = \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp();
 
         return $currentTimeStamp >= $fromDate && $currentTimeStamp < $toDate &&
-           (float)$this->getProduct()->getSpecialPrice() > 0;
+            (float)$this->getProduct()->getSpecialPrice() > 0;
     }
 
     // ---------------------------------------
@@ -940,10 +960,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         if ($fromDate === null || $fromDate === false || $fromDate == '') {
             $fromDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-                ->format('Y-01-01 00:00:00');
+                                               ->format('Y-01-01 00:00:00');
         } else {
             $fromDate = \Ess\M2ePro\Helper\Date::createDateGmt($fromDate)
-                ->format('Y-m-d 00:00:00');
+                                               ->format('Y-m-d 00:00:00');
         }
 
         return $fromDate;
@@ -959,7 +979,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $toDate = $toDate->format('Y-01-01 00:00:00');
         } else {
             $toDate = \Ess\M2ePro\Helper\Date::createDateGmt($toDate)
-                ->format('Y-m-d 00:00:00');
+                                             ->format('Y-m-d 00:00:00');
 
             $toDate = \Ess\M2ePro\Helper\Date::createDateGmt($toDate);
             $toDate->modify('+1 day');
@@ -974,6 +994,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param null $websiteId
      * @param null $customerGroupId
+     *
      * @return array
      */
     public function getTierPrice($websiteId = null, $customerGroupId = null)
@@ -993,7 +1014,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            if ($customerGroupId !== null &&
+            if (
+                $customerGroupId !== null &&
                 $priceValue['cust_group'] != \Magento\Customer\Model\Group::CUST_GROUP_ALL &&
                 $customerGroupId != $priceValue['cust_group']
             ) {
@@ -1010,6 +1032,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $lifeMode
+     *
      * @return int
      */
     public function getQty($lifeMode = false)
@@ -1066,8 +1089,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $backOrdersGlobal = $this->catalogInventoryConfiguration->getBackorders();
-        if (($useConfigBackorders && $backOrdersGlobal != \Magento\CatalogInventory\Model\Stock::BACKORDERS_NO) ||
-            (!$useConfigBackorders && $backorders != \Magento\CatalogInventory\Model\Stock::BACKORDERS_NO)) {
+        if (
+            ($useConfigBackorders && $backOrdersGlobal != \Magento\CatalogInventory\Model\Stock::BACKORDERS_NO) ||
+            (!$useConfigBackorders && $backorders != \Magento\CatalogInventory\Model\Stock::BACKORDERS_NO)
+        ) {
             if ($forceQtyValue > $qty) {
                 self::$statistics[$this->getStatisticId()]
                 [$this->getProductId()]
@@ -1086,6 +1111,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $lifeMode
+     *
      * @return int
      */
     protected function getConfigurableQty($lifeMode = false)
@@ -1171,6 +1197,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param bool $lifeMode
+     *
      * @return int
      */
     protected function getBundleQty($lifeMode = false)
@@ -1311,8 +1338,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         // SELECT and MULTISELECT
         if ($attribute->getFrontendInput() === 'select' || $attribute->getFrontendInput() === 'multiselect') {
-            if ($attribute->getSource() instanceof \Magento\Eav\Model\Entity\Attribute\Source\SourceInterface &&
-                $attribute->getSource()->getAllOptions()) {
+            if (
+                $attribute->getSource() instanceof \Magento\Eav\Model\Entity\Attribute\Source\SourceInterface &&
+                $attribute->getSource()->getAllOptions()
+            ) {
                 $attribute->setStoreId($this->getStoreId());
 
                 /* This value is htmlEscaped::getOptionText()
@@ -1323,12 +1352,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
                 $value = is_array($value) ? implode(',', $value) : (string)$value;
             }
-
             // DATE
         } elseif ($attribute->getFrontendInput() == 'date') {
             $temp = explode(' ', $value);
             isset($temp[0]) && $value = (string)$temp[0];
-
             // YES NO
         } elseif ($attribute->getFrontendInput() == 'boolean') {
             if ($convertBoolean) {
@@ -1337,11 +1364,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             } else {
                 (bool)$value ? $value = 'true' : $value = 'false';
             }
-
             // PRICE
         } elseif ($attribute->getFrontendInput() == 'price') {
             $value = (string)number_format($value, 2, '.', '');
-
             // MEDIA IMAGE
         } elseif ($attribute->getFrontendInput() == 'media_image') {
             if ($value == 'no_selection') {
@@ -1349,11 +1374,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             } else {
                 if (!preg_match('((mailto\:|(news|(ht|f)tp(s?))\://){1}\S+)', $value)) {
                     $value = $this->storeFactory->create()
-                            ->load($this->getStoreId())
-                            ->getBaseUrl(
-                                \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                                $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
-                            )
+                                                ->load($this->getStoreId())
+                                                ->getBaseUrl(
+                                                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                                                    $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
+                                                )
                         . 'catalog/product/' . ltrim($value, '/');
                 }
             }
@@ -1373,8 +1398,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $productObject = $this->getProduct();
 
             $productObject->setData($attributeCode, $value)
-                ->getResource()
-                ->saveAttribute($productObject, $attributeCode);
+                          ->getResource()
+                          ->saveAttribute($productObject, $attributeCode);
         }
 
         return $this;
@@ -1390,19 +1415,21 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         if (($attributeId = $cacheHelper->getValue(__METHOD__)) === null) {
             $attributeId = $resource->getConnection()
-                ->select()
-                ->from(
-                    $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('eav_attribute'),
-                    ['attribute_id']
-                )
-                ->where('attribute_code = ?', 'thumbnail')
-                ->where(
-                    'entity_type_id = ?',
-                    $this->productFactory
-                        ->create()->getResource()->getTypeId()
-                )
-                ->query()
-                ->fetchColumn();
+                                    ->select()
+                                    ->from(
+                                        $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
+                                            'eav_attribute'
+                                        ),
+                                        ['attribute_id']
+                                    )
+                                    ->where('attribute_code = ?', 'thumbnail')
+                                    ->where(
+                                        'entity_type_id = ?',
+                                        $this->productFactory
+                                            ->create()->getResource()->getTypeId()
+                                    )
+                                    ->query()
+                                    ->fetchColumn();
 
             $cacheHelper->setValue(__METHOD__, $attributeId);
         }
@@ -1416,18 +1443,18 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $collection->joinTable(
             [
                 'cpev' => $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('catalog_product_entity_varchar')
+                               ->getTableNameWithPrefix('catalog_product_entity_varchar'),
             ],
             'entity_id = entity_id',
             ['value' => 'value']
         );
         $queryStmt = $collection->getSelect()
-            ->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(['value' => 'cpev.value'])
-            ->where('cpev.store_id IN (?)', $storeIds)
-            ->where('cpev.attribute_id = ?', (int)$attributeId)
-            ->order('cpev.store_id DESC')
-            ->query();
+                                ->reset(\Magento\Framework\DB\Select::COLUMNS)
+                                ->columns(['value' => 'cpev.value'])
+                                ->where('cpev.store_id IN (?)', $storeIds)
+                                ->where('cpev.attribute_id = ?', (int)$attributeId)
+                                ->order('cpev.store_id DESC')
+                                ->query();
 
         $thumbnailTempPath = null;
         while ($tempPath = $queryStmt->fetchColumn()) {
@@ -1442,7 +1469,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $thumbnailTempPath = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
-                ->getAbsolutePath() . 'catalog/product/' . ltrim($thumbnailTempPath, '/');
+                                              ->getAbsolutePath() . 'catalog/product/' . ltrim($thumbnailTempPath, '/');
 
         /** @var Image $image */
         $image = $this->modelFactory->getObject('Magento_Product_Image');
@@ -1469,8 +1496,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
             if (filemtime($imagePathResized) + self::THUMBNAIL_IMAGE_CACHE_TIME > $currentTime) {
                 $image->setPath($imagePathResized)
-                    ->setUrl($image->getUrlByPath())
-                    ->resetHash();
+                      ->setUrl($image->getUrlByPath())
+                      ->resetHash();
 
                 return $image;
             }
@@ -1482,7 +1509,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $imageObj = $this->objectManager->create(
                 \Magento\Framework\Image::class,
                 [
-                    'fileName' => $image->getPath()
+                    'fileName' => $image->getPath(),
                 ]
             );
             $imageObj->constrainOnly(true);
@@ -1499,14 +1526,15 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $image->setPath($imagePathResized)
-            ->setUrl($image->getUrlByPath())
-            ->resetHash();
+              ->setUrl($image->getUrlByPath())
+              ->resetHash();
 
         return $image;
     }
 
     /**
      * @param string $attribute
+     *
      * @return Image|null
      */
     public function getImage($attribute = 'image')
@@ -1532,6 +1560,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param int $limitImages
+     *
      * @return Image[]
      */
     public function getGalleryImages($limitImages = 0)
@@ -1564,18 +1593,19 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            if (isset($galleryImage['media_type']) &&
+            if (
+                isset($galleryImage['media_type']) &&
                 $galleryImage['media_type'] === ExternalVideoEntryConverter::MEDIA_TYPE_CODE
             ) {
                 continue;
             }
 
             $imageUrl = $this->storeFactory->create()
-                ->load($this->getStoreId())
-                ->getBaseUrl(
-                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                    $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
-                );
+                                           ->load($this->getStoreId())
+                                           ->getBaseUrl(
+                                               \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                                               $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
+                                           );
             $imageUrl .= 'catalog/product/' . ltrim($galleryImage['file'], '/');
             $imageUrl = $this->prepareImageUrl($imageUrl);
 
@@ -1597,6 +1627,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param int $position
+     *
      * @return Image|null
      */
     public function getGalleryImageByPosition($position = 1)
@@ -1634,11 +1665,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $imagePath = 'catalog/product/' . ltrim($galleryImage['file'], '/');
         $imageUrl = $this->storeFactory->create()
-                ->load($this->getStoreId())
-                ->getBaseUrl(
-                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                    $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
-                ) . $imagePath;
+                                       ->load($this->getStoreId())
+                                       ->getBaseUrl(
+                                           \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                                           $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
+                                       ) . $imagePath;
 
         $imageUrl = $this->prepareImageUrl($imageUrl);
 

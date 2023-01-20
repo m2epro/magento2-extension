@@ -14,20 +14,21 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
     private const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
 
-    private const INCREASE_SINCE_TIME_MAX_ATTEMPTS     = 10;
-    private const INCREASE_SINCE_TIME_BY               = 2;
+    private const INCREASE_SINCE_TIME_MAX_ATTEMPTS = 10;
+    private const INCREASE_SINCE_TIME_BY = 2;
     private const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
 
-    private const MESSAGE_CODE_RESULT_SET_TOO_LARGE    = 21917062;
-
+    private const MESSAGE_CODE_RESULT_SET_TOO_LARGE = 21917062;
+    /** @var null|int  */
     protected $logsActionId = null;
 
     /** @var \Ess\M2ePro\Model\Synchronization\ */
     protected $synchronizationLog = null;
-
+    /** @var null|string  */
     protected $receiveChangesToDate = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
     protected $ebayFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     /** @var bool */
@@ -63,17 +64,20 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     public function setSynchronizationLog(\Ess\M2ePro\Model\Synchronization\Log $log)
     {
         $this->synchronizationLog = $log;
+
         return $this;
     }
 
     public function setReceiveChangesToDate($toDate)
     {
         $this->receiveChangesToDate = $toDate;
+
         return $this;
     }
 
     public function process()
     {
+        /** @var \Ess\M2ePro\Model\Account[] $accounts */
         $accounts = $this->ebayFactory->getObject('Account')->getCollection()->getItems();
 
         foreach ($accounts as $account) {
@@ -101,7 +105,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach (array_chunk(array_keys($changesPerEbayItemId), 500) as $ebayItemIds) {
-
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
             $collection = $this->ebayFactory->getObject('Listing_Product')->getCollection();
             $collection->getSelect()->join(
@@ -187,6 +190,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return array
      * @throws \Exception
      */
@@ -195,7 +199,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
         $sinceTime = $this->prepareSinceTime($account->getChildObject()->getData('inventory_last_synchronization'));
-        $toTime    = clone $now;
+        $toTime = clone $now;
 
         if ($this->receiveChangesToDate !== null) {
             $toTime = $this->receiveChangesToDate;
@@ -213,7 +217,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $account,
             [
                 'since_time' => $sinceTime->format('Y-m-d H:i:s'),
-                'to_time'    => $toTime->format('Y-m-d H:i:s')
+                'to_time' => $toTime->format('Y-m-d H:i:s'),
             ]
         );
 
@@ -235,7 +239,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 $account,
                 [
                     'since_time' => $sinceTime->format('Y-m-d H:i:s'),
-                    'to_time'    => $toTime->format('Y-m-d H:i:s')
+                    'to_time' => $toTime->format('Y-m-d H:i:s'),
                 ]
             );
 
@@ -260,8 +264,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
             $currentInterval = $toTime->getTimestamp() - $sinceTime->getTimestamp();
 
-            if ($currentInterval < self::INCREASE_SINCE_TIME_MIN_INTERVAL_SEC ||
-                $iteration > self::INCREASE_SINCE_TIME_MAX_ATTEMPTS) {
+            if (
+                $currentInterval < self::INCREASE_SINCE_TIME_MIN_INTERVAL_SEC ||
+                $iteration > self::INCREASE_SINCE_TIME_MAX_ATTEMPTS
+            ) {
                 $sinceTime = clone $now;
                 $sinceTime->modify('-5 seconds');
 
@@ -272,7 +278,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 $account,
                 [
                     'since_time' => $sinceTime->format('Y-m-d H:i:s'),
-                    'to_time'    => $toTime->format('Y-m-d H:i:s')
+                    'to_time' => $toTime->format('Y-m-d H:i:s'),
                 ]
             );
 
@@ -302,9 +308,9 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Account $account
      * @param \DateTime $toTime
+     *
      * @return \DateTime
      * @throws \Exception
-     *
      * Do not download inventory events until order will be imported to avoid excessive relist action
      */
     protected function modifyToTimeConsideringOrderLastSynch(\Ess\M2ePro\Model\Account $account, \DateTime $toTime)
@@ -325,6 +331,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Account $account,
         array $paramsConnector = []
     ) {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'inventory',
@@ -382,7 +389,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             'start_date' => $this->ebayHelper->timeToString($change['startTime']),
-            'end_date' => $this->ebayHelper->timeToString($change['endTime'])
+            'end_date' => $this->ebayHelper->timeToString($change['endTime']),
         ];
     }
 
@@ -453,8 +460,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $data['online_bids'] = (int)$change['bidCount'] < 0 ? 0 : (int)$change['bidCount'];
         }
 
-        if ($ebayListingProduct->getOnlineQty() != $data['online_qty'] ||
-            $ebayListingProduct->getOnlineQtySold() != $data['online_qty_sold']) {
+        if (
+            $ebayListingProduct->getOnlineQty() != $data['online_qty'] ||
+            $ebayListingProduct->getOnlineQtySold() != $data['online_qty_sold']
+        ) {
             $this->logReportChange(
                 $listingProduct,
                 $this->translationHelper->__(
@@ -516,6 +525,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @param \Ess\M2ePro\Model\Listing\Product\Variation[] $variations
+     *
      * @return array
      */
     protected function getVariationProductPriceChanges(
@@ -527,10 +537,9 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         $calculateWithEmptyQty = $ebayListingProduct->isOutOfStockControlEnabled();
 
-        $onlineCurrentPrice  = null;
+        $onlineCurrentPrice = null;
 
         foreach ($variations as $variation) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
             $ebayVariation = $variation->getChildObject();
 
@@ -559,7 +568,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $hasVariationPriceChanges = false;
-        $hasVariationQtyChanges   = false;
+        $hasVariationQtyChanges = false;
 
         foreach ($changeVariations as $changeVariation) {
             foreach ($variationsSnapshot as $variationSnapshot) {
@@ -571,7 +580,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                     'online_price' => (float)$changeVariation['price'] < 0 ? 0 : (float)$changeVariation['price'],
                     'online_qty' => (int)$changeVariation['quantity'] < 0 ? 0 : (int)$changeVariation['quantity'],
                     'online_qty_sold' => (int)$changeVariation['quantitySold'] < 0 ?
-                        0 : (int)$changeVariation['quantitySold']
+                        0 : (int)$changeVariation['quantitySold'],
                 ];
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
@@ -581,13 +590,15 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
                 if ($ebayVariation->getOnlinePrice() != $updateData['online_price']) {
                     $hasVariationPriceChanges = true;
-                    $isVariationChanged       = true;
+                    $isVariationChanged = true;
                 }
 
-                if ($ebayVariation->getOnlineQty() != $updateData['online_qty'] ||
-                    $ebayVariation->getOnlineQtySold() != $updateData['online_qty_sold']) {
+                if (
+                    $ebayVariation->getOnlineQty() != $updateData['online_qty'] ||
+                    $ebayVariation->getOnlineQtySold() != $updateData['online_qty_sold']
+                ) {
                     $hasVariationQtyChanges = true;
-                    $isVariationChanged     = true;
+                    $isVariationChanged = true;
                 }
 
                 if ($isVariationChanged) {
@@ -633,6 +644,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Variation[] $variations
+     *
      * @return array
      */
     protected function getVariationsSnapshot(array $variations)
@@ -657,7 +669,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
             $snapshot[] = [
                 'variation' => $variation,
-                'options'   => $options
+                'options' => $options,
             ];
         }
 
@@ -680,7 +692,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         foreach ($variationSnapshot['options'] as $variationSnapshotOption) {
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $variationSnapshotOption */
 
-            $variationSnapshotOptionName  = trim($variationSnapshotOption->getData('attribute'));
+            $variationSnapshotOptionName = trim($variationSnapshotOption->getData('attribute'));
             $variationSnapshotOptionValue = trim($variationSnapshotOption->getData('option'));
 
             if (array_key_exists($variationSnapshotOptionName, $specificsReplacements)) {
@@ -690,8 +702,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $haveOption = false;
 
             foreach ($changeVariation['specifics'] as $changeVariationOption => $changeVariationValue) {
-                if ($variationSnapshotOptionName === trim($changeVariationOption) &&
-                    $variationSnapshotOptionValue === trim($changeVariationValue)) {
+                if (
+                    $variationSnapshotOptionName === trim($changeVariationOption) &&
+                    $variationSnapshotOptionValue === trim($changeVariationValue)
+                ) {
                     $haveOption = true;
                     break;
                 }
@@ -737,7 +751,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->logsActionId === null) {
             $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
-                ->getResource()->getNextActionId();
+                                                            ->getResource()->getNextActionId();
         }
 
         return $this->logsActionId;
@@ -747,7 +761,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     {
         $validEbayValues = [
             \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::LISTING_TYPE_AUCTION,
-            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::LISTING_TYPE_FIXED
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::LISTING_TYPE_FIXED,
         ];
 
         if (isset($change['listingType']) && in_array($change['listingType'], $validEbayValues)) {
@@ -772,10 +786,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $instruction->setData(
             [
                 'listing_product_id' => $listingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-                'type'               => $type,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => $priority,
+                'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'type' => $type,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => $priority,
             ]
         );
         $instruction->save();

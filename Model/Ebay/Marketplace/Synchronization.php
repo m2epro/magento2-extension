@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Ebay\Marketplace;
 
 class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 {
-    const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
+    public const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
 
     /** @var \Ess\M2ePro\Model\Marketplace */
     protected $marketplace = null;
@@ -18,7 +18,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     protected $lockItemManager = null;
     /** @var \Ess\M2ePro\Model\Lock\Item\Progress */
     protected $progressManager = null;
-    /** @var \Ess\M2ePro\Model\Synchronization\Log  */
+    /** @var \Ess\M2ePro\Model\Synchronization\Log */
     protected $synchronizationLog = null;
     protected $activeRecordFactory;
     protected $resourceConnection;
@@ -39,10 +39,10 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
-        $this->activeRecordFactory   = $activeRecordFactory;
-        $this->resourceConnection    = $resourceConnection;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->resourceConnection = $resourceConnection;
         $this->componentEbayCategory = $componentEbayCategory;
-        $this->componentEbayMotors   = $componentEbayMotors;
+        $this->componentEbayMotors = $componentEbayMotors;
     }
 
     //########################################
@@ -50,6 +50,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $this->marketplace = $marketplace;
+
         return $this;
     }
 
@@ -63,6 +64,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getLockItemManager()->isInactiveMoreThanSeconds(self::LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME)) {
             $this->getLockItemManager()->remove();
+
             return false;
         }
 
@@ -106,6 +108,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
     protected function processDetails()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector(
             'marketplace',
@@ -179,7 +182,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             ];
             $connection->insert($tableShipping, $insertData);
         }
-
         // ---------------------------------------
     }
 
@@ -197,6 +199,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         $partNumber = 1;
 
         for ($i = 0; $i < 100; $i++) {
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
             $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObj->getVirtualConnector(
                 'marketplace',
@@ -216,7 +219,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
             $connection = $this->resourceConnection->getConnection();
             $tableCategories = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
+                                    ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
             $categoriesCount = count($response['data']);
             $insertData = [];
@@ -233,7 +236,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                     'title' => $data['title'],
                     'path' => $data['path'],
                     'is_leaf' => $data['is_leaf'],
-                    'features' => ($data['is_leaf'] ? $helper->jsonEncode($data['features']) : null)
+                    'features' => ($data['is_leaf'] ? $helper->jsonEncode($data['features']) : null),
                 ];
 
                 if (count($insertData) >= 100 || $categoryIndex >= ($categoriesCount - 1)) {
@@ -268,13 +271,14 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             $tableMotorsEpids,
             [
                 'is_custom = ?' => 0,
-                'scope = ?' => $scope
+                'scope = ?' => $scope,
             ]
         );
 
         $partNumber = 1;
 
         for ($i = 0; $i < 100; $i++) {
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
             $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObj->getVirtualConnector(
                 'marketplace',
@@ -282,7 +286,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                 'motorsEpids',
                 [
                     'marketplace' => $this->marketplace->getNativeId(),
-                    'part_number' => $partNumber
+                    'part_number' => $partNumber,
                 ]
             );
 
@@ -300,7 +304,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
             $connection = $this->resourceConnection->getConnection();
             $tableMotorsEpids = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_epid');
+                                     ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_epid');
 
             $temporaryIds = [];
             $itemsForInsert = [];
@@ -325,8 +329,8 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                     'trim' => (isset($item['Trim']) ? $item['Trim'] : null),
                     'engine' => (isset($item['Engine']) ? $item['Engine'] : null),
                     'submodel' => (isset($item['Submodel']) ? $item['Submodel'] : null),
-                    'street_name'  => (isset($item['StreetName']) ? $item['StreetName'] : null),
-                    'scope' => $scope
+                    'street_name' => (isset($item['StreetName']) ? $item['StreetName'] : null),
+                    'scope' => $scope,
                 ];
 
                 if (count($itemsForInsert) >= 100 || $epidIndex >= ($totalCountItems - 1)) {
@@ -335,7 +339,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                         $tableMotorsEpids,
                         [
                             'is_custom = ?' => 1,
-                            'epid IN (?)' => $temporaryIds
+                            'epid IN (?)' => $temporaryIds,
                         ]
                     );
                     $itemsForInsert = $temporaryIds = [];
@@ -354,13 +358,14 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     {
         $connection = $this->resourceConnection->getConnection();
         $tableMotorsKtypes = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
+                                  ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $connection->delete($tableMotorsKtypes, '`is_custom` = 0');
 
         $partNumber = 1;
 
         for ($i = 0; $i < 100; $i++) {
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
             $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObj->getVirtualConnector(
                 'marketplace',
@@ -413,7 +418,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                         $tableMotorsKtype,
                         [
                             'is_custom = ?' => 1,
-                            'ktype IN (?)' => $temporaryIds
+                            'ktype IN (?)' => $temporaryIds,
                         ]
                     );
                     $itemsForInsert = $temporaryIds = [];
@@ -447,7 +452,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK
+            'nick' => \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK,
         ]);
     }
 
@@ -459,7 +464,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->progressManager = $this->modelFactory->getObject('Lock_Item_Progress', [
             'lockItemManager' => $this->getLockItemManager(),
-            'progressNick'    => $this->marketplace->getTitle() . ' Marketplace'
+            'progressNick' => $this->marketplace->getTitle() . ' Marketplace',
         ]);
     }
 

@@ -35,6 +35,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setInput(Input $input)
     {
         $this->input = $input;
+
         return $this;
     }
 

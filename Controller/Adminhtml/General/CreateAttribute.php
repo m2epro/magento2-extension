@@ -28,20 +28,20 @@ class CreateAttribute extends \Ess\M2ePro\Controller\Adminhtml\General
         $model = $this->modelFactory->getObject('Magento_Attribute_Builder');
 
         $model->setLabel($this->getRequest()->getParam('store_label'))
-            ->setCode($this->getRequest()->getParam('code'))
-            ->setInputType($this->getRequest()->getParam('input_type'))
-            ->setDefaultValue($this->getRequest()->getParam('default_value'))
-            ->setScope($this->getRequest()->getParam('scope'));
+              ->setCode($this->getRequest()->getParam('code'))
+              ->setInputType($this->getRequest()->getParam('input_type'))
+              ->setDefaultValue($this->getRequest()->getParam('default_value'))
+              ->setScope($this->getRequest()->getParam('scope'));
 
         $attributeResult = $model->save();
 
         if (!isset($attributeResult['result']) || !$attributeResult['result']) {
             $this->setJsonContent($attributeResult);
+
             return $this->getResult();
         }
 
         foreach ($this->getRequest()->getParam('attribute_sets', []) as $seId) {
-
             /** @var \Magento\Eav\Model\Entity\Attribute\Set $set */
             $set = $this->entityAttributeSetFactory->create()->load($seId);
 
@@ -52,18 +52,20 @@ class CreateAttribute extends \Ess\M2ePro\Controller\Adminhtml\General
             /** @var \Ess\M2ePro\Model\Magento\Attribute\Relation $model */
             $model = $this->modelFactory->getObject('Magento_Attribute_Relation');
             $model->setAttributeObj($attributeResult['obj'])
-                ->setAttributeSetObj($set);
+                  ->setAttributeSetObj($set);
 
             $setResult = $model->save();
 
             if (!isset($setResult['result']) || !$setResult['result']) {
                 $this->setJsonContent($setResult);
+
                 return $this->getResult();
             }
         }
 
         unset($attributeResult['obj']);
         $this->setJsonContent($attributeResult);
+
         return $this->getResult();
     }
 }

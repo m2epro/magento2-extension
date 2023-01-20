@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
  */
 class ProcessingList extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const STAGE_LIST_DETAILS                    = 1;
-    const STAGE_RELIST_INVENTORY_READY          = 2;
-    const STAGE_RELIST_INVENTORY_WAITING_RESULT = 3;
+    public const STAGE_LIST_DETAILS = 1;
+    public const STAGE_RELIST_INVENTORY_READY = 2;
+    public const STAGE_RELIST_INVENTORY_WAITING_RESULT = 3;
 
     //####################################
 

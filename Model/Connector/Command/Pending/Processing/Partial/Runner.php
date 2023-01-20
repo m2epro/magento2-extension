@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial;
  */
 class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner
 {
-    const MAX_PARTS_PER_RUN = 5;
+    public const MAX_PARTS_PER_RUN = 5;
 
     /** @var \Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial */
     protected $requestPendingPartial;
@@ -69,6 +69,7 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
             }
         } catch (\Exception $exception) {
             $this->getResponser()->failDetected($exception->getMessage());
+
             return true;
         }
 
@@ -99,7 +100,7 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         $params = $this->getParams();
 
         $requestPendingPartialCollection = $this->activeRecordFactory->getObject('Request_Pending_Partial')
-            ->getCollection();
+                                                                     ->getCollection();
         $requestPendingPartialCollection->addFieldToFilter('component', $params['component']);
         $requestPendingPartialCollection->addFieldToFilter('server_hash', $params['server_hash']);
 
@@ -109,14 +110,14 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         if (!$requestPendingPartial->getId()) {
             $requestPendingPartial->setData(
                 [
-                    'component'       => $params['component'],
-                    'server_hash'     => $params['server_hash'],
-                    'next_part'       => 1,
+                    'component' => $params['component'],
+                    'server_hash' => $params['server_hash'],
+                    'next_part' => 1,
                     'expiration_date' => gmdate(
                         'Y-m-d H:i:s',
                         $this->helperData->getCurrentGmtDate(true)
-                            + self::PENDING_REQUEST_MAX_LIFE_TIME
-                    )
+                        + self::PENDING_REQUEST_MAX_LIFE_TIME
+                    ),
                 ]
             );
 
@@ -126,9 +127,9 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         $requesterPartial = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Partial');
         $requesterPartial->setData(
             [
-                'processing_id'              => $this->getProcessingObject()->getId(),
+                'processing_id' => $this->getProcessingObject()->getId(),
                 'request_pending_partial_id' => $requestPendingPartial->getId(),
-                'next_data_part_number'      => 1,
+                'next_data_part_number' => 1,
             ]
         );
 

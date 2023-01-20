@@ -43,15 +43,16 @@ class Edit extends Template
         // ---------------------------------------
         $manager = $this->templateManager->setTemplate($nick);
         $template = $manager->getTemplateModel()
-            ->getCollection()
-            ->addFieldToFilter('id', $id)
-            ->addFieldToFilter('is_custom_template', 0)
-            ->getFirstItem();
+                            ->getCollection()
+                            ->addFieldToFilter('id', $id)
+                            ->addFieldToFilter('is_custom_template', 0)
+                            ->getFirstItem();
         // ---------------------------------------
 
         // ---------------------------------------
         if (!$template->getId() && $id) {
             $this->getMessageManager()->addError($this->__('Policy does not exist.'));
+
             return $this->_redirect('*/*/index');
         }
         // ---------------------------------------
@@ -65,9 +66,11 @@ class Edit extends Template
         $content = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Edit::class,
             '',
-            ['data' => [
-                'template_nick' => $nick
-            ]]
+            [
+                'data' => [
+                    'template_nick' => $nick,
+                ],
+            ]
         );
 
         switch ($nick) {
@@ -108,6 +111,7 @@ class Edit extends Template
 
         $this->getResult()->getConfig()->getTitle()->prepend($headerText);
         $this->addContent($content);
+
         return $this->getResult();
     }
 

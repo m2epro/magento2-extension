@@ -33,11 +33,13 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
 
         if (!empty($responseData['unavailable'])) {
             $this->preparedResponseData = false;
+
             return;
         }
 
         if (empty($responseData['item'])) {
             $this->preparedResponseData = null;
+
             return;
         }
 
@@ -45,18 +47,18 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
 
         $product = [
             'general_id' => $responseItem['product_id'],
-            'brand'      => isset($responseItem['brand']) ? $responseItem['brand'] : '',
-            'title'      => $responseItem['title'],
-            'image_url'  => $responseItem['image_url'],
+            'brand' => isset($responseItem['brand']) ? $responseItem['brand'] : '',
+            'title' => $responseItem['title'],
+            'image_url' => $responseItem['image_url'],
             'is_variation_product' => $responseItem['is_variation_product'],
         ];
 
         if ($product['is_variation_product']) {
             if (empty($responseItem['bad_parent'])) {
                 $product += [
-                    'parentage'  => $responseItem['parentage'],
+                    'parentage' => $responseItem['parentage'],
                     'variations' => $responseItem['variations'],
-                    'bad_parent' => false
+                    'bad_parent' => false,
                 ];
             } else {
                 $product['bad_parent'] = (bool)$responseItem['bad_parent'];
@@ -65,7 +67,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
 
         if (!empty($responseItem['list_price'])) {
             $product['list_price'] = [
-                'amount'   => $responseItem['list_price']['amount'],
+                'amount' => $responseItem['list_price']['amount'],
                 'currency' => $responseItem['list_price']['currency'],
             ];
         }

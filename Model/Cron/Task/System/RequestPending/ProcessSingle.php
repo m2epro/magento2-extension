@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -8,18 +8,15 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\System\RequestPending;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\System\RequestPending\ProcessSingle
- */
 class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/request_pending/process_single';
+    public const NICK = 'system/request_pending/process_single';
 
-    const STATUS_NOT_FOUND  = 'not_found';
-    const STATUS_COMPLETE   = 'completed';
-    const STATUS_PROCESSING = 'processing';
+    public const STATUS_NOT_FOUND = 'not_found';
+    public const STATUS_COMPLETE = 'completed';
+    public const STATUS_PROCESSING = 'processing';
 
-    const MAX_HASHES_PER_REQUEST = 100;
+    public const MAX_HASHES_PER_REQUEST = 100;
 
     //####################################
 
@@ -46,7 +43,7 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function removeOutdated()
     {
         $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-            ->getCollection();
+                                                                    ->getCollection();
         $requestPendingSingleCollection->setOnlyOutdatedItemsFilter();
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 1);
 
@@ -61,7 +58,7 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function completeExpired()
     {
         $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-            ->getCollection();
+                                                                    ->getCollection();
         $requestPendingSingleCollection->setOnlyExpiredItemsFilter();
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 0);
 
@@ -76,11 +73,11 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function executeInProgress()
     {
         $componentsInProgress = $this->activeRecordFactory->getObject('Request_Pending_Single')->getResource()
-            ->getComponentsInProgress();
+                                                          ->getComponentsInProgress();
 
         foreach ($componentsInProgress as $component) {
             $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-                ->getCollection();
+                                                                        ->getCollection();
             $requestPendingSingleCollection->addFieldToFilter('component', $component);
             $requestPendingSingleCollection->addFieldToFilter('is_completed', 0);
 
@@ -97,7 +94,8 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                         $serverHash
                     );
 
-                    if (!isset($results[$serverHash]['status']) ||
+                    if (
+                        !isset($results[$serverHash]['status']) ||
                         $results[$serverHash]['status'] == self::STATUS_NOT_FOUND
                     ) {
                         $this->completeRequest(

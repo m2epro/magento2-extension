@@ -31,6 +31,7 @@ class ViewLogGrid extends \Ess\M2ePro\Controller\Adminhtml\Order
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

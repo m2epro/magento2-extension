@@ -27,6 +27,7 @@ class GetCreateAttributeHtmlPopup extends \Ess\M2ePro\Controller\Adminhtml\Gener
         }
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

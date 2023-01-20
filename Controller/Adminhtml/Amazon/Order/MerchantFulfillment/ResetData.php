@@ -35,20 +35,22 @@ class ResetData extends Order
             return $this->getResponse()->setBody('You should create shipment first');
         }
 
-        if ($orderFulfillmentData['status']
-            == \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment::STATUS_PURCHASED) {
+        if (
+            $orderFulfillmentData['status']
+            == \Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment::STATUS_PURCHASED
+        ) {
             return $this->getResponse()->setBody('Shipment status should not be Purchased');
         }
 
         $order->addData(
             [
-                'merchant_fulfillment_data'  => null,
-                'merchant_fulfillment_label' => null
+                'merchant_fulfillment_data' => null,
+                'merchant_fulfillment_label' => null,
             ]
         )->save();
 
         $responseData = [
-            'success' => true
+            'success' => true,
         ];
 
         $this->setJsonContent($responseData);

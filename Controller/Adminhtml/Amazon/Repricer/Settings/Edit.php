@@ -52,12 +52,15 @@ class Edit extends Repricer
 
         if ($id && !$account->getId()) {
             $this->messageManager->addError($this->__('Account does not exist.'));
+
             return $this->_redirect('*/amazon_account');
         }
 
         $this->helperDataGlobalData->setValue('edit_account', $account);
 
-        $headerText = $this->__('Additional Settings').' "'.$this->helperData->escapeHtml($account->getTitle()).'"';
+        $headerText = $this->__('Additional Settings') . ' "' . $this->helperData->escapeHtml(
+            $account->getTitle()
+        ) . '"';
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 

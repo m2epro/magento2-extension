@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
@@ -14,7 +14,7 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -48,8 +48,8 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $objectRow = $row;
 
         $isVariationGrid = ($this->getColumn()->getData('is_variation_grid') !== null)
-                            ? $this->getColumn()->getData('is_variation_grid')
-                            : false;
+            ? $this->getColumn()->getData('is_variation_grid')
+            : false;
         if ($isVariationGrid) {
             $objectRow = $row->getChildObject();
             $gtin = $objectRow->getData('gtin');
@@ -63,8 +63,8 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $gtinHtml = $this->dataHelper->escapeHtml($gtin);
 
         $marketplaceId = ($this->getColumn()->getData('marketplace_id') !== null)
-                              ? $this->getColumn()->getData('marketplace_id')
-                              : $row->getData('marketplace_id');
+            ? $this->getColumn()->getData('marketplace_id')
+            : $row->getData('marketplace_id');
 
         $channelUrl = $this->walmartHelper->getItemUrl(
             $objectRow->getData($this->walmartHelper->getIdentifierForItemUrl($marketplaceId)),
@@ -80,8 +80,8 @@ HTML;
         $html = '<div class="walmart-identifiers-gtin">' . $gtinHtml;
 
         $showEditIdentifier = ($this->getColumn()->getData('show_edit_identifier') !== null)
-                              ? $this->getColumn()->getData('show_edit_identifier')
-                              : true;
+            ? $this->getColumn()->getData('show_edit_identifier')
+            : true;
 
         if ($showEditIdentifier) {
             $isVariationParent = $row->getData('is_variation_parent');
@@ -97,11 +97,11 @@ HTML;
         $html .= '</div>';
 
         $identifiers = [
-            'UPC'        => $objectRow->getData('upc'),
-            'EAN'        => $objectRow->getData('ean'),
-            'ISBN'       => $objectRow->getData('isbn'),
+            'UPC' => $objectRow->getData('upc'),
+            'EAN' => $objectRow->getData('ean'),
+            'ISBN' => $objectRow->getData('isbn'),
             'Walmart ID' => $objectRow->getData('wpid'),
-            'Item ID'    => $objectRow->getData('item_id')
+            'Item ID' => $objectRow->getData('item_id'),
         ];
 
         $htmlAdditional = '';
@@ -110,12 +110,14 @@ HTML;
                 continue;
             }
 
-            if (($objectRow->getData('upc') || $objectRow->getData('ean') || $objectRow->getData('isbn')) &&
-                ($objectRow->getData('wpid') || $objectRow->getData('item_id')) && $title == 'Walmart ID') {
+            if (
+                ($objectRow->getData('upc') || $objectRow->getData('ean') || $objectRow->getData('isbn')) &&
+                ($objectRow->getData('wpid') || $objectRow->getData('item_id')) && $title == 'Walmart ID'
+            ) {
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
 
-            $identifierCode  = $this->translationHelper->__($title);
+            $identifierCode = $this->translationHelper->__($title);
             $identifierValue = $this->dataHelper->escapeHtml($value);
 
             $htmlAdditional .= <<<HTML

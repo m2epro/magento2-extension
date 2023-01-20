@@ -27,7 +27,7 @@ class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
         array $data = []
     ) {
         $this->helperFactory = $context->getHelperFactory();
-        $this->activeRecordFactory  = $context->getActiveRecordFactory();
+        $this->activeRecordFactory = $context->getActiveRecordFactory();
 
         parent::__construct($context, $resourceHelper, $data);
     }
@@ -40,10 +40,10 @@ class Select extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Select
         $htmlName = $this->_getHtmlName();
 
         $colOptions = $this->activeRecordFactory->getObject($modelName)
-            ->getCollection()
-            ->getSelect()
-            ->group($htmlName)
-            ->query();
+                                                ->getCollection()
+                                                ->getSelect()
+                                                ->group($htmlName)
+                                                ->query();
 
         if (!empty($colOptions)) {
             $options = [['value' => null, 'label' => '']];

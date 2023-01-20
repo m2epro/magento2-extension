@@ -135,6 +135,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function validateResponse()
     {
         $responseData = $this->getResponse()->getResponseData();
+
         return isset($responseData['sku']) || isset($responseData['errors']);
     }
 
@@ -226,7 +227,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getLogger()
     {
         if ($this->logger === null) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Logger $logger */
 
             $logger = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Logger');
@@ -284,8 +284,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             $response->setConfigurator($this->getConfigurator());
             $response->setRequestData($this->getRequestDataObject());
 
-             $requestMetaData = !empty($this->params['product']['request_metadata'])
-                 ? $this->params['product']['request_metadata'] : [];
+            $requestMetaData = !empty($this->params['product']['request_metadata'])
+                ? $this->params['product']['request_metadata'] : [];
 
             $response->setRequestMetaData($requestMetaData);
 
@@ -302,7 +302,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getRequestDataObject()
     {
         if ($this->requestDataObject === null) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\RequestData $requestData */
             $requestData = $this->modelFactory->getObject('Walmart_Listing_Product_Action_RequestData');
 
@@ -378,8 +377,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
      *
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
      * TODO ERROR CODEs
      */
     protected function isTemporaryErrorAppeared(array $messages)

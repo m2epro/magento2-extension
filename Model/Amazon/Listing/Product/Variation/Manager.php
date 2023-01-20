@@ -88,8 +88,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function isIndividualType()
     {
         return $this->isVariationProduct() &&
-               !$this->isVariationParent() &&
-               !$this->getVariationParentId();
+            !$this->isVariationParent() &&
+            !$this->getVariationParentId();
     }
 
     /**
@@ -98,8 +98,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function isRelationParentType()
     {
         return $this->isVariationProduct() &&
-               $this->isVariationParent() &&
-               !$this->getVariationParentId();
+            $this->isVariationParent() &&
+            !$this->getVariationParentId();
     }
 
     /**
@@ -108,8 +108,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function isRelationChildType()
     {
         return $this->isVariationProduct() &&
-               !$this->isVariationParent() &&
-               $this->getVariationParentId();
+            !$this->isVariationParent() &&
+            $this->getVariationParentId();
     }
 
     // ---------------------------------------
@@ -117,13 +117,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function setSimpleType()
     {
         $this->getAmazonListingProduct()->setData('is_variation_product', 0)
-            ->setData('is_variation_parent', 0)
-            ->setData('variation_parent_id', null);
+             ->setData('is_variation_parent', 0)
+             ->setData('variation_parent_id', null);
 
         if ($this->getListingProduct()->isGroupedProductModeSet()) {
             $this->getAmazonListingProduct()
-                ->setData('general_id', null)
-                ->setData('is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO);
+                 ->setData('general_id', null)
+                 ->setData('is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO);
         }
 
         $this->getAmazonListingProduct()->save();
@@ -132,22 +132,22 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function setIndividualType()
     {
         $this->getAmazonListingProduct()->setData('is_variation_parent', 0)
-                                  ->setData('variation_parent_id', null)
-                                  ->save();
+             ->setData('variation_parent_id', null)
+             ->save();
     }
 
     public function setRelationParentType()
     {
         $this->getAmazonListingProduct()->setData('is_variation_parent', 1)
-                                  ->setData('variation_parent_id', null)
-                                  ->save();
+             ->setData('variation_parent_id', null)
+             ->save();
     }
 
     public function setRelationChildType($variationParentId)
     {
         $this->getAmazonListingProduct()->setData('is_variation_parent', 0)
-                                  ->setData('variation_parent_id', $variationParentId)
-                                  ->save();
+             ->setData('variation_parent_id', $variationParentId)
+             ->save();
     }
 
     //########################################
@@ -222,8 +222,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function modeCanBeSwitched()
     {
         return ($this->isIndividualType() || $this->isRelationParentType()) &&
-               !$this->getAmazonListingProduct()->getGeneralId() &&
-               !$this->getAmazonListingProduct()->isGeneralIdOwner();
+            !$this->getAmazonListingProduct()->getGeneralId() &&
+            !$this->getAmazonListingProduct()->isGeneralIdOwner();
     }
 
     public function switchModeToAnother()

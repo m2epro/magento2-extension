@@ -57,6 +57,7 @@ HTML;
     public function getReal()
     {
         $color = $this->getCheckObject()->isMeet() ? 'green' : 'red';
+
         return <<<HTML
 <span style="color: {$color};">
     <span>{$this->getCheckObject()->getReal()}</span>&nbsp;
@@ -73,9 +74,9 @@ HTML;
         $knowledgeBaseUrl = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200884');
 
         $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
-            'label'   => $helper->__('Check'),
-            'class'   => 'delete',
-            'onclick' => "memoryLimitTest();"
+            'label' => $helper->__('Check'),
+            'class' => 'delete',
+            'onclick' => "memoryLimitTest();",
         ]);
 
         return <<<HTML

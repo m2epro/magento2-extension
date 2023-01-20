@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\View;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Log\Listing\View\Switcher
- */
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
-    const VIEW_MODE_SEPARATED = 'separated';
-    const VIEW_MODE_GROUPED   = 'grouped';
+    public const VIEW_MODE_SEPARATED = 'separated';
+    public const VIEW_MODE_GROUPED = 'grouped';
 
     protected $paramName = 'view_mode';
     protected $viewMode = null;
@@ -87,14 +84,14 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
                 'value' => [
                     [
                         'label' => $this->__('Separated'),
-                        'value' => self::VIEW_MODE_SEPARATED
+                        'value' => self::VIEW_MODE_SEPARATED,
                     ],
                     [
                         'label' => $this->__('Grouped'),
-                        'value' => self::VIEW_MODE_GROUPED
+                        'value' => self::VIEW_MODE_GROUPED,
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 

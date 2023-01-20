@@ -28,6 +28,7 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Form::class);
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 

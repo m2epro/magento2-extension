@@ -51,7 +51,7 @@ abstract class Account extends Main
             $account->getChildObject()->addData(
                 [
                     'server_hash' => $responseData['hash'],
-                    'info'        => $this->getHelper('Data')->jsonEncode($responseData['info'])
+                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
                 ]
             );
             $account->getChildObject()->save();
@@ -96,7 +96,7 @@ abstract class Account extends Main
 
             $account->getChildObject()->addData(
                 [
-                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info'])
+                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
                 ]
             );
             $account->getChildObject()->save();
@@ -112,7 +112,7 @@ abstract class Account extends Main
     protected function getDataForServer($data)
     {
         $params = [
-            'marketplace_id' => (int)$data['marketplace_id']
+            'marketplace_id' => (int)$data['marketplace_id'],
         ];
 
         if ($data['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
@@ -135,7 +135,7 @@ abstract class Account extends Main
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $collection */
         $collection = $this->walmartFactory->getObject('Account')->getCollection()
-            ->addFieldToFilter($search, $value);
+                                           ->addFieldToFilter($search, $value);
 
         return $collection->getSize();
     }

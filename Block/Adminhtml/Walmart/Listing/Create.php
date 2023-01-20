@@ -30,7 +30,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
         $this->setId('walmartListingCreateStepOne');
         $this->_controller = 'adminhtml_walmart_listing';
-        $this->_mode       = 'create';
+        $this->_mode = 'create';
         // ---------------------------------------
 
         // Set header text
@@ -50,7 +50,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'save_and_next',
             [
                 'label' => $this->__('Next Step'),
-                'class' => 'action-primary forward'
+                'class' => 'action-primary forward',
             ]
         );
 
@@ -58,7 +58,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->getUrl(
                 '*/walmart_listing_create/index',
                 [
-                    '_current' => true
+                    '_current' => true,
                 ]
             ),
             'walmart_listing_create/index'
@@ -79,7 +79,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 Magento Store View.<br/><br/>
                 <p>The detailed information can be found <a href="%url%" target="_blank">here</a></p>',
                     $this->supportHelper->getDocumentationArticleUrl('x/Xf1IB')
-                )
+                ),
             ]
         );
 

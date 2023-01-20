@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Log;
  */
 class Clearing extends \Ess\M2ePro\Model\AbstractModel
 {
-    const LOG_LISTINGS          = 'listings';
-    const LOG_SYNCHRONIZATIONS  = 'synchronizations';
-    const LOG_ORDERS            = 'orders';
+    public const LOG_LISTINGS = 'listings';
+    public const LOG_SYNCHRONIZATIONS = 'synchronizations';
+    public const LOG_ORDERS = 'orders';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -46,8 +46,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
 
         $config = $this->getHelper('Module')->getConfig();
 
-        $mode = $config->getGroupValue('/logs/clearing/'.$log.'/', 'mode');
-        $days = $config->getGroupValue('/logs/clearing/'.$log.'/', 'days');
+        $mode = $config->getGroupValue('/logs/clearing/' . $log . '/', 'mode');
+        $days = $config->getGroupValue('/logs/clearing/' . $log . '/', 'days');
 
         $mode = (int)$mode;
         $days = (int)$days;
@@ -69,7 +69,7 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $timestamp = $this->helperData->getCurrentGmtDate(true);
-        $minTime = gmdate('Y-m-d H:i:s', $timestamp+60*60*24*365*10);
+        $minTime = gmdate('Y-m-d H:i:s', $timestamp + 60 * 60 * 24 * 365 * 10);
 
         $this->clearLogByMinTime($log, $minTime);
 
@@ -97,8 +97,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
 
         $config = $this->getHelper('Module')->getConfig();
 
-        $config->setGroupValue('/logs/clearing/'.$log.'/', 'mode', $mode);
-        $config->setGroupValue('/logs/clearing/'.$log.'/', 'days', $days);
+        $config->setGroupValue('/logs/clearing/' . $log . '/', 'mode', $mode);
+        $config->setGroupValue('/logs/clearing/' . $log . '/', 'days', $days);
 
         return true;
     }
@@ -108,8 +108,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
     private function isValidLogType($log)
     {
         return $log == self::LOG_LISTINGS ||
-               $log == self::LOG_SYNCHRONIZATIONS ||
-               $log == self::LOG_ORDERS;
+            $log == self::LOG_SYNCHRONIZATIONS ||
+            $log == self::LOG_ORDERS;
     }
 
     private function getMinTimeByDays($days)
@@ -137,18 +137,18 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         switch ($log) {
             case self::LOG_LISTINGS:
                 $resourceModel = $this->activeRecordFactory
-                              ->getObject('Listing\Log')
-                              ->getResource();
+                    ->getObject('Listing\Log')
+                    ->getResource();
                 break;
             case self::LOG_SYNCHRONIZATIONS:
                 $resourceModel = $this->activeRecordFactory
-                              ->getObject('Synchronization\Log')
-                              ->getResource();
+                    ->getObject('Synchronization\Log')
+                    ->getResource();
                 break;
             case self::LOG_ORDERS:
                 $resourceModel = $this->activeRecordFactory
-                              ->getObject('Order\Log')
-                              ->getResource();
+                    ->getObject('Order\Log')
+                    ->getResource();
                 break;
         }
 
@@ -160,7 +160,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connection->delete($table, [
-            ' `create_date` < ? OR `create_date` IS NULL ' => (string)$minTime]);
+            ' `create_date` < ? OR `create_date` IS NULL ' => (string)$minTime,
+        ]);
     }
 
     //########################################

@@ -23,6 +23,7 @@ class AccountGrid extends Account
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 

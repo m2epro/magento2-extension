@@ -13,16 +13,21 @@ namespace Ess\M2ePro\Model\Cron\Task;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    const NICK = null;
+    public const NICK = null;
 
+    /** @var int  */
     protected $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
     /** @var int */
     protected $interval = 60; // in seconds
 
+    /** @var \Magento\Framework\Event\Manager  */
     protected $eventManager;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
     protected $parentFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resource;
 
     /** @var \Ess\M2ePro\Model\Lock\Item\Manager */
@@ -72,7 +77,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->beforeStart();
 
         try {
-
             $this->eventManager->dispatch(
                 \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_START_EVENT_NAME,
                 ['progress_nick' => $this->getNick()]
@@ -123,11 +127,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager
+     *
      * @return $this
      */
     public function setLockItemManager(\Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager)
     {
         $this->lockItemManager = $lockItemManager;
+
         return $this;
     }
 
@@ -143,11 +149,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Cron\OperationHistory $object
+     *
      * @return $this
      */
     public function setParentOperationHistory(\Ess\M2ePro\Model\Cron\OperationHistory $object)
     {
         $this->parentOperationHistory = $object;
+
         return $this;
     }
 
@@ -229,7 +237,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $parentId = $this->getParentOperationHistory()
             ? $this->getParentOperationHistory()->getObject()->getId() : null;
         $nick = str_replace("/", "_", $this->getNick());
-        $this->getOperationHistory()->start('cron_task_'.$nick, $parentId, $this->getInitiator());
+        $this->getOperationHistory()->start('cron_task_' . $nick, $parentId, $this->getInitiator());
         $this->getOperationHistory()->makeShutdownFunction();
     }
 
@@ -284,12 +292,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $lastRunTimestamp = (int)$this->helperData
             ->createGmtDateTime($lastRun)
             ->format('U');
+
         return $currentTimeStamp > $lastRunTimestamp + $this->getInterval();
     }
 
     public function getInterval()
     {
         $interval = $this->getConfigValue('interval');
+
         return $interval === null ? $this->interval : (int)$interval;
     }
 
@@ -314,9 +324,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             'exceptions',
             [
                 'message' => $exception->getMessage(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine(),
-                'trace'   => $exception->getTraceAsString(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString(),
             ]
         );
 
@@ -331,9 +341,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             'exceptions',
             [
                 'message' => $message,
-                'file'    => $file,
-                'line'    => $line,
-                'trace'   => $trace,
+                'file' => $file,
+                'line' => $line,
+                'trace' => $trace,
             ]
         );
 
@@ -352,7 +362,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getConfigGroup()
     {
-        return '/cron/task/'.$this->getNick().'/';
+        return '/cron/task/' . $this->getNick() . '/';
     }
 
     // ---------------------------------------

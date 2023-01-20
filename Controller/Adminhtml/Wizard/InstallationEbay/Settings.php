@@ -15,6 +15,7 @@ class Settings extends InstallationEbay
     public function execute()
     {
         $this->init();
+
         return $this->renderSimpleStep();
     }
 }

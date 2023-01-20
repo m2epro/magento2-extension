@@ -39,6 +39,7 @@ class Dispatcher
     {
         $query = $this->customSearchFactory->createQuery($queryValue);
         $customSearch = $this->customSearchFactory->createHandler($query, $listingProduct);
+
         return $customSearch->process();
     }
 
@@ -76,6 +77,7 @@ class Dispatcher
             }
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
+
             return false;
         }
 

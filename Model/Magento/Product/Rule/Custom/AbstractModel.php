@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface  */
+    /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface */
     protected $localeDate;
 
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
 
-    protected $filterOperator  = null;
+    protected $filterOperator = null;
     protected $filterCondition = null;
 
     //########################################
@@ -33,10 +33,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->localeDate      = $localeDate;
-        $this->filterOperator  = $filterOperator;
+        $this->localeDate = $localeDate;
+        $this->filterOperator = $filterOperator;
         $this->filterCondition = $filterCondition;
-        $this->helperData      = $helperData;
+        $this->helperData = $helperData;
 
         parent::__construct($helperFactory, $modelFactory);
     }

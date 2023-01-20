@@ -56,7 +56,7 @@ class Repair
     {
         $horizontalTables = $this->databaseHelper->getHorizontalTables();
 
-        $brokenParentTables   = [];
+        $brokenParentTables = [];
         $brokenChildrenTables = [];
         $totalBrokenTables = 0;
 
@@ -75,9 +75,9 @@ class Repair
         }
 
         return [
-            'parent'      => $brokenParentTables,
-            'children'    => $brokenChildrenTables,
-            'total_count' => $totalBrokenTables
+            'parent' => $brokenParentTables,
+            'children' => $brokenChildrenTables,
+            'total_count' => $totalBrokenTables,
         ];
     }
 
@@ -103,46 +103,46 @@ class Repair
 
                 $parentTablePrefix = $this->databaseHelper
                     ->getTableNameWithPrefix($parentTable);
-                $childTablePrefix  = $this->databaseHelper
+                $childTablePrefix = $this->databaseHelper
                     ->getTableNameWithPrefix($childTable);
 
                 $parentIdColumn = $this->databaseHelper->getIdColumn($parentTable);
-                $childIdColumn  = $this->databaseHelper->getIdColumn($childTable);
+                $childIdColumn = $this->databaseHelper->getIdColumn($childTable);
 
                 if ($table == $parentTable) {
                     $stmtQuery = $connection->select()
-                        ->from(
-                            ['parent' => $parentTablePrefix],
-                            $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
-                            : ['id' => $parentIdColumn]
-                        )
-                        ->joinLeft(
-                            ['child' => $childTablePrefix],
-                            '`parent`.`'.$parentIdColumn.'` = `child`.`'.$childIdColumn.'`',
-                            []
-                        )
-                        ->where(
-                            '`parent`.`component_mode` = \''.$component.'\' OR
+                                            ->from(
+                                                ['parent' => $parentTablePrefix],
+                                                $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
+                                                    : ['id' => $parentIdColumn]
+                                            )
+                                            ->joinLeft(
+                                                ['child' => $childTablePrefix],
+                                                '`parent`.`' . $parentIdColumn . '` = `child`.`' . $childIdColumn . '`',
+                                                []
+                                            )
+                                            ->where(
+                                                '`parent`.`component_mode` = \'' . $component . '\' OR
                                 (`parent`.`component_mode` NOT IN (?) OR `parent`.`component_mode` IS NULL)',
-                            $this->componentHelper->getComponents()
-                        )
-                        ->where('`child`.`'.$childIdColumn.'` IS NULL')
-                        ->query();
+                                                $this->componentHelper->getComponents()
+                                            )
+                                            ->where('`child`.`' . $childIdColumn . '` IS NULL')
+                                            ->query();
                 } elseif ($table == $childTable) {
                     $stmtQuery = $connection->select()
-                        ->from(
-                            ['child' => $childTablePrefix],
-                            $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
-                            : ['id' => $childIdColumn]
-                        )
-                        ->joinLeft(
-                            ['parent' => $parentTablePrefix],
-                            "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
+                                            ->from(
+                                                ['child' => $childTablePrefix],
+                                                $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
+                                                    : ['id' => $childIdColumn]
+                                            )
+                                            ->joinLeft(
+                                                ['parent' => $parentTablePrefix],
+                                                "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
                                    `parent`.`component_mode` = '{$component}'",
-                            []
-                        )
-                        ->where('`parent`.`'.$parentIdColumn.'` IS NULL')
-                        ->query();
+                                                []
+                                            )
+                                            ->where('`parent`.`' . $parentIdColumn . '` IS NULL')
+                                            ->query();
                 }
 
                 if ($returnOnlyCount) {
@@ -193,11 +193,11 @@ class Repair
 
                 $connection->delete(
                     $tableWithPrefix,
-                    '`'.$idColumnName.'` IN ('.implode(',', $brokenIdsPart).')'
+                    '`' . $idColumnName . '` IN (' . implode(',', $brokenIdsPart) . ')'
                 );
             }
 
-            $logData[] = "Table: {$table} ## Amount: ".count($brokenIds);
+            $logData[] = "Table: {$table} ## Amount: " . count($brokenIds);
         }
 
         $this->moduleHelper->getRegistry()->setValue('/database/repair/log_data/', implode('', $logData));
@@ -220,6 +220,7 @@ class Repair
 
         if (empty($columnInfo['key'])) {
             $writeConnection->dropIndex($tableName, $columnInfo['name']);
+
             return;
         }
 
@@ -258,7 +259,9 @@ class Repair
         if ($writeConnection->tableColumnExists($tableName, $columnInfo['name']) === false) {
             if ($isConvertColumnDefinitionToArray) {
                 $writeConnection->addColumn(
-                    $tableName, $columnInfo['name'], $this->convertColumnDefinitionToArray($definition)
+                    $tableName,
+                    $columnInfo['name'],
+                    $this->convertColumnDefinitionToArray($definition)
                 );
             } else {
                 $writeConnection->addColumn($tableName, $columnInfo['name'], $definition);
@@ -269,7 +272,10 @@ class Repair
 
         if ($isConvertColumnDefinitionToArray) {
             $writeConnection->changeColumn(
-                $tableName, $columnInfo['name'], $columnInfo['name'], $this->convertColumnDefinitionToArray($definition)
+                $tableName,
+                $columnInfo['name'],
+                $columnInfo['name'],
+                $this->convertColumnDefinitionToArray($definition)
             );
         } else {
             $writeConnection->changeColumn($tableName, $columnInfo['name'], $columnInfo['name'], $definition);
@@ -347,8 +353,10 @@ class Repair
                 $definitionData['length'] = $size;
             }
 
-            if (($ddlType == DdlTable::TYPE_FLOAT || $ddlType == DdlTable::TYPE_DECIMAL) &&
-                strpos($size, ',') !== false) {
+            if (
+                ($ddlType == DdlTable::TYPE_FLOAT || $ddlType == DdlTable::TYPE_DECIMAL) &&
+                strpos($size, ',') !== false
+            ) {
                 [$precision, $scale] = array_map('trim', explode(',', $size, 2));
                 $definitionData['precision'] = (int)$precision;
                 $definitionData['scale'] = (int)$scale;
@@ -364,12 +372,13 @@ class Repair
 
         if (!empty($matches['nullable'])) {
             $definitionData['nullable'] = strpos(
-                strtolower($matches['nullable']), 'not null'
-            ) ==! false  ? false : true;
+                strtolower($matches['nullable']),
+                'not null'
+            ) == !false ? false : true;
         }
 
         if (!empty($matches['default'])) {
-            [,$defaultData] = explode(' ', trim($matches['default']), 2);
+            [, $defaultData] = explode(' ', trim($matches['default']), 2);
             $defaultData = trim($defaultData);
             $definitionData['default'] = strtolower($defaultData) == 'null' ? null : $defaultData;
         }
@@ -383,7 +392,7 @@ class Repair
         }
 
         if (!empty($matches['after'])) {
-            [,$afterColumn] = explode(' ', trim($matches['after']), 2);
+            [, $afterColumn] = explode(' ', trim($matches['after']), 2);
             $definitionData['after'] = trim($afterColumn, " \t\n\r\0\x0B`");
         }
 

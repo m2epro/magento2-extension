@@ -18,6 +18,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
         $this->setAjaxContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Other\View\Grid::class)
         );
+
         return $this->getResult();
     }
 }

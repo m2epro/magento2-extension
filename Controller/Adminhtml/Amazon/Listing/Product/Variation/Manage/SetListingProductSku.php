@@ -23,6 +23,7 @@ class SetListingProductSku extends Main
 
         if (empty($listingProductId) || $sku === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -55,7 +56,7 @@ class SetListingProductSku extends Main
         if (!empty($msg)) {
             $this->setJsonContent([
                 'success' => false,
-                'msg' => $msg
+                'msg' => $msg,
             ]);
 
             return $this->getResult();
@@ -74,7 +75,7 @@ class SetListingProductSku extends Main
 
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->join(
-            ['l'=>$listingTable],
+            ['l' => $listingTable],
             '`main_table`.`listing_id` = `l`.`id`',
             []
         );
@@ -98,16 +99,17 @@ class SetListingProductSku extends Main
     private function getSkuInfo($listingProduct, $sku)
     {
         try {
-
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'product',
                 'search',
                 'asinBySkus',
-                ['include_info'  => true,
+                [
+                    'include_info' => true,
                     'only_realtime' => true,
-                    'items'         => [$sku]],
+                    'items' => [$sku],
+                ],
                 'items',
                 $listingProduct->getAccount()->getId()
             );

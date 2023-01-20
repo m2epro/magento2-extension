@@ -13,7 +13,9 @@ namespace Ess\M2ePro\Model\Cron\Runner\Service;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
 {
+    /** @var string */
     protected $requestAuthKey;
+    /** @var string */
     protected $requestConnectionId;
 
     //########################################
@@ -66,8 +68,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
     protected function getOperationHistoryData()
     {
         return array_merge(parent::getOperationHistoryData(), [
-            'auth_key'      => $this->requestAuthKey,
-            'connection_id' => $this->requestConnectionId
+            'auth_key' => $this->requestAuthKey,
+            'connection_id' => $this->requestConnectionId,
         ]);
     }
 
@@ -83,10 +85,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Cron\Runner\AbstractModel
         $config = $this->getHelper('Module')->getConfig();
 
         $startDate = new \DateTime($this->getHelper('Data')->getCurrentGmtDate(), new \DateTimeZone('UTC'));
-        $shift = 60 + rand(0, (int)$config->getGroupValue('/cron/task/'.$taskName.'/', 'interval'));
-        $startDate->modify('+'.$shift.' seconds');
+        $shift = 60 + rand(0, (int)$config->getGroupValue('/cron/task/' . $taskName . '/', 'interval'));
+        $startDate->modify('+' . $shift . ' seconds');
 
-        $config->setGroupValue('/cron/task/'.$taskName.'/', 'start_from', $startDate->format('Y-m-d H:i:s'));
+        $config->setGroupValue('/cron/task/' . $taskName . '/', 'start_from', $startDate->format('Y-m-d H:i:s'));
     }
 
     //########################################

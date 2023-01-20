@@ -64,10 +64,12 @@ class Details extends AbstractModel
 
             $variationManager = $this->getAmazonListingProduct()->getVariationManager();
 
-            if (($variationManager->isRelationChildType() || $variationManager->isIndividualType()) &&
+            if (
+                ($variationManager->isRelationChildType() || $variationManager->isIndividualType()) &&
                 ($this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
                     $this->getMagentoProduct()->isBundleType() ||
-                    $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())) {
+                    $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())
+            ) {
                 break;
             }
 
@@ -77,8 +79,8 @@ class Details extends AbstractModel
         if (!$isUseDescriptionTemplate) {
             if (isset($data['gift_wrap']) || isset($data['gift_message']) || isset($data['shipping_data'])) {
                 $data['description_data']['title'] = $this->getAmazonListingProduct()
-                    ->getMagentoProduct()
-                    ->getName();
+                                                          ->getMagentoProduct()
+                                                          ->getName();
             }
 
             return $data;
@@ -86,7 +88,7 @@ class Details extends AbstractModel
 
         $data = array_merge($data, $this->getDescriptionData());
 
-        $data['number_of_items']       = $this->getDefinitionSource()->getNumberOfItems();
+        $data['number_of_items'] = $this->getDefinitionSource()->getNumberOfItems();
         $data['item_package_quantity'] = $this->getDefinitionSource()->getItemPackageQuantity();
 
         $browsenodeId = $this->getDescriptionTemplate()->getBrowsenodeId();
@@ -132,11 +134,13 @@ class Details extends AbstractModel
      */
     protected function getGiftData()
     {
-        $giftWrap    = $this->getAmazonListingProduct()->getListingSource()->getGiftWrap();
+        $giftWrap = $this->getAmazonListingProduct()->getListingSource()->getGiftWrap();
         $giftMessage = $this->getAmazonListingProduct()->getListingSource()->getGiftMessage();
 
         $isOnlineGiftSettingsDisabled = $this->getListingProduct()->getSetting(
-            'additional_data', 'online_gift_settings_disabled', true
+            'additional_data',
+            'online_gift_settings_disabled',
+            true
         );
 
         if ($isOnlineGiftSettingsDisabled && $giftWrap === false && $giftMessage === false) {
@@ -168,8 +172,8 @@ class Details extends AbstractModel
         $source = $this->getDefinitionSource();
 
         $data = [
-            'brand'                    => $source->getBrand(),
-            'manufacturer'             => $source->getManufacturer(),
+            'brand' => $source->getBrand(),
+            'manufacturer' => $source->getManufacturer(),
             'manufacturer_part_number' => $source->getManufacturerPartNumber(),
         ];
 
@@ -237,7 +241,8 @@ class Details extends AbstractModel
         $data['shipping_weight_unit_of_measure'] = $source->getShippingWeightUnitOfMeasure();
         $this->processNotFoundAttributes('Shipping Weight Units');
 
-        if ($data['package_weight'] === null || $data['package_weight'] === '' ||
+        if (
+            $data['package_weight'] === null || $data['package_weight'] === '' ||
             $data['package_weight_unit_of_measure'] === ''
         ) {
             unset(
@@ -246,7 +251,8 @@ class Details extends AbstractModel
             );
         }
 
-        if ($data['shipping_weight'] === null || $data['shipping_weight'] === '' ||
+        if (
+            $data['shipping_weight'] === null || $data['shipping_weight'] === '' ||
             $data['shipping_weight_unit_of_measure'] === ''
         ) {
             unset(
@@ -273,7 +279,8 @@ class Details extends AbstractModel
             );
         }
 
-        if (in_array('', $data['package_dimensions_volume']) ||
+        if (
+            in_array('', $data['package_dimensions_volume']) ||
             $data['package_dimensions_volume_unit_of_measure'] === ''
         ) {
             unset(
@@ -301,8 +308,10 @@ class Details extends AbstractModel
         foreach ($this->getDescriptionTemplate()->getSpecifics(true) as $specific) {
             $source = $specific->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
 
-            if (!$specific->isRequired() && !$specific->isModeNone()
-                && ($source->getValue() === null || $source->getValue() === '' || $source->getValue() === [])) {
+            if (
+                !$specific->isRequired() && !$specific->isModeNone()
+                && ($source->getValue() === null || $source->getValue() === '' || $source->getValue() === [])
+            ) {
                 continue;
             }
 
@@ -315,7 +324,7 @@ class Details extends AbstractModel
         $this->processNotFoundAttributes('Product Specifics');
 
         return [
-            'product_data'      => $data,
+            'product_data' => $data,
             'product_data_nick' => $this->getDescriptionTemplate()->getProductDataNick(),
         ];
     }
@@ -326,7 +335,8 @@ class Details extends AbstractModel
      */
     protected function getShippingData()
     {
-        if ($this->getAmazonListingProduct()->isAfnChannel() ||
+        if (
+            $this->getAmazonListingProduct()->isAfnChannel() ||
             !$this->getAmazonListingProduct()->isExistShippingTemplate() &&
             !$this->getAmazonListing()->isExistShippingTemplate()
         ) {
@@ -339,14 +349,14 @@ class Details extends AbstractModel
                     'template_name' => $this->getAmazonListing()->getShippingTemplateSource(
                         $this->getAmazonListingProduct()->getActualMagentoProduct()
                     )->getTemplateName(),
-                ]
+                ],
             ];
         }
 
         return [
             'shipping_data' => [
                 'template_name' => $this->getAmazonListingProduct()->getShippingTemplateSource()->getTemplateName(),
-            ]
+            ],
         ];
     }
 
@@ -356,7 +366,8 @@ class Details extends AbstractModel
      */
     protected function getTaxCodeData()
     {
-        if (!$this->getAmazonMarketplace()->isProductTaxCodePolicyAvailable() ||
+        if (
+            !$this->getAmazonMarketplace()->isProductTaxCodePolicyAvailable() ||
             !$this->getAmazonAccount()->isVatCalculationServiceEnabled()
         ) {
             return [];
@@ -416,7 +427,7 @@ class Details extends AbstractModel
     {
         if ($this->definitionSource === null) {
             $this->definitionSource = $this->getDefinitionTemplate()
-                ->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
+                                           ->getSource($this->getAmazonListingProduct()->getActualMagentoProduct());
         }
 
         return $this->definitionSource;

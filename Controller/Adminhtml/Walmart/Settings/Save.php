@@ -17,11 +17,13 @@ class Save extends Settings
         $post = $this->getRequest()->getPostValue();
         if (!$post) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
         $this->getHelper('Component_Walmart_Configuration')->setConfigValues($this->getRequest()->getParams());
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 }

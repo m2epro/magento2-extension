@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Relist;
  */
 class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
 {
-    const INSTRUCTION_TYPE_CHECK_QTY        = 'success_relist_check_qty';
-    const INSTRUCTION_TYPE_CHECK_LAG_TIME   = 'success_relist_check_lag_time';
-    const INSTRUCTION_TYPE_CHECK_PRICE      = 'success_relist_check_price';
-    const INSTRUCTION_TYPE_CHECK_PROMOTIONS = 'success_relist_check_promotions';
-    const INSTRUCTION_TYPE_CHECK_DETAILS    = 'success_relist_check_details';
+    public const INSTRUCTION_TYPE_CHECK_QTY = 'success_relist_check_qty';
+    public const INSTRUCTION_TYPE_CHECK_LAG_TIME = 'success_relist_check_lag_time';
+    public const INSTRUCTION_TYPE_CHECK_PRICE = 'success_relist_check_price';
+    public const INSTRUCTION_TYPE_CHECK_PROMOTIONS = 'success_relist_check_promotions';
+    public const INSTRUCTION_TYPE_CHECK_DETAILS = 'success_relist_check_details';
 
     //########################################
 
@@ -67,32 +67,32 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $instructionsData = [];
 
         foreach ($data['additional_data']['recheck_properties'] as $property) {
-            $instructionType     = null;
+            $instructionType = null;
             $instructionPriority = 0;
 
             switch ($property) {
                 case 'qty':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_QTY;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_QTY;
                     $instructionPriority = 80;
                     break;
 
                 case 'lag_time':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_LAG_TIME;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_LAG_TIME;
                     $instructionPriority = 60;
                     break;
 
                 case 'price':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_PRICE;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_PRICE;
                     $instructionPriority = 60;
                     break;
 
                 case 'promotions':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_PROMOTIONS;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_PROMOTIONS;
                     $instructionPriority = 30;
                     break;
 
                 case 'details':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_DETAILS;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_DETAILS;
                     $instructionPriority = 30;
                     break;
             }
@@ -103,9 +103,9 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
 
             $instructionsData[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => $instructionType,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => $instructionPriority,
+                'type' => $instructionType,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => $instructionPriority,
             ];
         }
 

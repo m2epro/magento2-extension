@@ -13,12 +13,12 @@ use Ess\M2ePro\Model\Listing\Product;
 
 abstract class Listing
 {
-    public const INSTRUCTION_TYPE_STOP            = 'auto_actions_stop';
+    public const INSTRUCTION_TYPE_STOP = 'auto_actions_stop';
     public const INSTRUCTION_TYPE_STOP_AND_REMOVE = 'auto_actions_stop_and_remove';
 
     public const INSTRUCTION_INITIATOR = 'auto_actions';
 
-    /** @var \Ess\M2ePro\Model\Listing*/
+    /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
@@ -74,10 +74,10 @@ abstract class Listing
                 $instruction->setData(
                     [
                         'listing_product_id' => $listingProduct->getId(),
-                        'component'          => $listingProduct->getComponentMode(),
-                        'type'               => $instructionType,
-                        'initiator'          => self::INSTRUCTION_INITIATOR,
-                        'priority'           => $listingProduct->isStoppable() ? 60 : 0,
+                        'component' => $listingProduct->getComponentMode(),
+                        'type' => $instructionType,
+                        'initiator' => self::INSTRUCTION_INITIATOR,
+                        'priority' => $listingProduct->isStoppable() ? 60 : 0,
                     ]
                 );
                 $instruction->save();
@@ -122,6 +122,7 @@ abstract class Listing
 
     /**
      * @param Product $listingProduct
+     *
      * @throws Logic
      */
     protected function logAddedToMagentoProduct(Product $listingProduct)

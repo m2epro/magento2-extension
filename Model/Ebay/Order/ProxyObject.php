@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Order;
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
-    const USER_ID_ATTRIBUTE_CODE = 'ebay_user_id';
+    public const USER_ID_ATTRIBUTE_CODE = 'ebay_user_id';
 
     /** @var \Magento\Tax\Model\Calculation */
     private $taxCalculation;
@@ -115,12 +115,16 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $customerInfo = $this->getAddressData();
 
             $customerObject = $this->customerFactory->create()->getCollection()
-                ->addAttributeToSelect(self::USER_ID_ATTRIBUTE_CODE)
-                ->addAttributeToFilter(
-                    'website_id',
-                    $this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId()
-                )
-                ->addAttributeToFilter(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId())->getFirstItem();
+                                                    ->addAttributeToSelect(self::USER_ID_ATTRIBUTE_CODE)
+                                                    ->addAttributeToFilter(
+                                                        'website_id',
+                                                        $this->order->getEbayAccount()
+                                                                    ->getMagentoOrdersCustomerNewWebsiteId()
+                                                    )
+                                                    ->addAttributeToFilter(
+                                                        self::USER_ID_ATTRIBUTE_CODE,
+                                                        $this->order->getBuyerUserId()
+                                                    )->getFirstItem();
 
             if (!empty($customerObject) && $customerObject->getId() !== null) {
                 $customerBuilder->setData($customerInfo);
@@ -237,7 +241,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return parent::getAddressData();
         }
 
-        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
+        if (
+            $this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
             $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
         ) {
             return parent::getAddressData();
@@ -246,18 +251,18 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $customerNameParts = $this->getNameParts($this->order->getBuyerName());
 
         return [
-            'prefix'     => $customerNameParts['prefix'],
-            'firstname'  => $customerNameParts['firstname'],
+            'prefix' => $customerNameParts['prefix'],
+            'firstname' => $customerNameParts['firstname'],
             'middlename' => $customerNameParts['middlename'],
-            'lastname'   => $customerNameParts['lastname'],
-            'suffix'     => $customerNameParts['suffix'],
+            'lastname' => $customerNameParts['lastname'],
+            'suffix' => $customerNameParts['suffix'],
             'country_id' => '',
-            'region'     => '',
-            'region_id'  => '',
-            'city'       => 'eBay does not supply the complete billing Buyer information.',
-            'postcode'   => '',
-            'street'     => [],
-            'company'    => ''
+            'region' => '',
+            'region_id' => '',
+            'city' => 'eBay does not supply the complete billing Buyer information.',
+            'postcode' => '',
+            'street' => [],
+            'company' => '',
         ];
     }
 
@@ -270,7 +275,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return false;
         }
 
-        if ($this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
+        if (
+            $this->order->getEbayAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
             $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
         ) {
             return false;
@@ -292,14 +298,14 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         );
 
         $paymentData = [
-            'method'                => $this->payment->getCode(),
-            'component_mode'        => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'payment_method'        => $paymentMethodTitle,
-            'channel_order_id'      => $this->order->getEbayOrderId(),
-            'channel_final_fee'     => $this->convertPrice($this->order->getApproximatelyFinalFee()),
+            'method' => $this->payment->getCode(),
+            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'payment_method' => $paymentMethodTitle,
+            'channel_order_id' => $this->order->getEbayOrderId(),
+            'channel_final_fee' => $this->convertPrice($this->order->getApproximatelyFinalFee()),
             'cash_on_delivery_cost' => $this->convertPrice($this->order->getCashOnDeliveryCost()),
-            'transactions'          => $this->getPaymentTransactions(),
-            'tax_id'                => $this->order->getBuyerTaxId(),
+            'transactions' => $this->getPaymentTransactions(),
+            'tax_id' => $this->order->getBuyerTaxId(),
         ];
 
         return $paymentData;
@@ -316,9 +322,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $paymentTransactions = [];
         foreach ($externalTransactions as $externalTransaction) {
             $paymentTransactions[] = [
-                'transaction_id'   => $externalTransaction->getTransactionId(),
-                'sum'              => $externalTransaction->getSum(),
-                'fee'              => $externalTransaction->getFee(),
+                'transaction_id' => $externalTransaction->getTransactionId(),
+                'sum' => $externalTransaction->getSum(),
+                'fee' => $externalTransaction->getFee(),
                 'transaction_date' => $externalTransaction->getTransactionDate(),
             ];
         }
@@ -386,9 +392,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return [
-            'carrier_title'   => $this->getHelper('Module\Translation')->__('eBay Shipping'),
+            'carrier_title' => $this->getHelper('Module\Translation')->__('eBay Shipping'),
             'shipping_method' => $shippingMethod . $additionalData,
-            'shipping_price'  => $this->getBaseShippingPrice()
+            'shipping_price' => $this->getBaseShippingPrice(),
         ];
     }
 

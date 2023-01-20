@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Order;
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    const ACTION_PAY        = 1;
-    const ACTION_SHIP       = 2;
-    const ACTION_SHIP_TRACK = 3;
+    public const ACTION_PAY = 1;
+    public const ACTION_SHIP = 2;
+    public const ACTION_SHIP_TRACK = 3;
 
     protected $ebayFactory;
 

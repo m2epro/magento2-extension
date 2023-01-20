@@ -16,6 +16,7 @@ class GetCategoryGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\List
     {
         $grid = $this->getLayout()->createBlock(Grid::class);
         $this->setAjaxContent($grid);
+
         return $this->getResult();
     }
 }

@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart;
 
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
 
     public function __construct(

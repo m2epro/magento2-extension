@@ -68,8 +68,8 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $fieldSet = $form->addFieldset(
                 'fieldset_' . strtolower($resultItem->getFieldSetName()),
                 [
-                    'legend'      => $this->__($resultItem->getFieldSetName()),
-                    'collapsable' => false
+                    'legend' => $this->__($resultItem->getFieldSetName()),
+                    'collapsable' => false,
                 ]
             );
 
@@ -79,7 +79,7 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'note',
                     [
                         'label' => $this->__($byFieldSet->getFieldName()),
-                        'text'  => $byFieldSet->getTaskMessage()
+                        'text' => $byFieldSet->getTaskMessage(),
                     ]
                 );
             }
@@ -92,8 +92,8 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldSet = $form->addFieldset(
             'version_info',
             [
-                'legend'      => $this->__('Version Info'),
-                'collapsable' => true
+                'legend' => $this->__('Version Info'),
+                'collapsable' => true,
             ]
         );
 
@@ -102,7 +102,7 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'note',
             [
                 'label' => $this->__('Current Version'),
-                'text'  => $this->currentVersion
+                'text' => $this->currentVersion,
             ]
         );
 
@@ -115,10 +115,11 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'note',
                 [
                     'label' => $this->__('Latest Public Version'),
-                    'text'  => <<<HTML
+                    'text' => <<<HTML
 {$this->latestPublicVersion}
 <a href="$documentationArticleUrl" target="_blank">{$this->__('[release notes]')}</a>
 HTML
+                ,
                 ]
             );
         }
@@ -128,8 +129,8 @@ HTML
         $fieldSet = $form->addFieldset(
             'cron_info',
             [
-                'legend'      => $this->__('Cron Info'),
-                'collapsable' => true
+                'legend' => $this->__('Cron Info'),
+                'collapsable' => true,
             ]
         );
 
@@ -138,7 +139,7 @@ HTML
             'note',
             [
                 'label' => $this->__('Type'),
-                'text'  => ucwords(str_replace('_', ' ', $this->cronHelper->getRunner()))
+                'text' => ucwords(str_replace('_', ' ', $this->cronHelper->getRunner())),
             ]
         );
 
@@ -156,13 +157,14 @@ HTML
                 'label' => $this->__('Last Run'),
                 'text' => "<span>{$cronLastRunTime}</span>" .
                     ($this->cronIsNotWorking ? ' (' . $this->__('not working') . ')' : ''),
-                'style' => $this->cronIsNotWorking ? 'color: red' : ''
+                'style' => $this->cronIsNotWorking ? 'color: red' : '',
             ]
         );
 
         // ---------------------------------------
 
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 

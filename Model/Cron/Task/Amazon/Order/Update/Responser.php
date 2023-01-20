@@ -50,6 +50,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
 
     /**
      * @param $messageText
+     *
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -79,6 +80,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
 
     /**
      * @param array $messages
+     *
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -140,7 +142,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
             'Tracking number "%num%" for "%code%" has been sent to Amazon.',
             [
                 '!num' => $this->params['order']['tracking_number'],
-                'code' => $this->params['order']['carrier_name']
+                'code' => $this->params['order']['carrier_name'],
             ]
         );
     }

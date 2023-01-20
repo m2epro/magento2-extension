@@ -8,8 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form;
 
-use \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm as Form;
-use \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
+use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm as Form;
+use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Template\SellingFormat\Edit\Form\Promotions
@@ -43,12 +43,14 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function setParentForm($form)
     {
         $this->parentForm = $form;
+
         return $this;
     }
 
     public function setAttributesByInputType($type, array $attributes)
     {
         $this->attributesByInputTypes[$type] = $attributes;
+
         return $this;
     }
 
@@ -71,10 +73,10 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         // ---------------------------------------
 
         $addPromotionPriceButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->addData([
-                'onclick' => 'WalmartTemplateSellingFormatObj.addPromotionsPriceRow();',
-                'class'   => 'add add_promotion_price_button primary'
-            ]);
+                                        ->addData([
+                                            'onclick' => 'WalmartTemplateSellingFormatObj.addPromotionsPriceRow();',
+                                            'class' => 'add add_promotion_price_button primary',
+                                        ]);
         $this->setData('add_promotion_price_button', $addPromotionPriceButton);
 
         // ---------------------------------------
@@ -82,8 +84,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsFromDateCustomAttribute = $this->createElement(
             'hidden',
             [
-                'html_id'  => 'promotions_from_date_custom_attribute_temp-i',
-                'name'     => 'promotions[temp-i][from_date][attribute]',
+                'html_id' => 'promotions_from_date_custom_attribute_temp-i',
+                'name' => 'promotions[temp-i][from_date][attribute]',
                 'disabled' => true,
             ]
         );
@@ -92,11 +94,11 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsFromDateMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'promotions_from_date_mode_temp-i',
-                'name'     => 'promotions[temp-i][from_date][mode]',
-                'values'   => $this->getPromotionsFromDateModeOptions(),
-                'value'    => '',
-                'class'    => 'promotions_from_date_mode',
+                'html_id' => 'promotions_from_date_mode_temp-i',
+                'name' => 'promotions[temp-i][from_date][mode]',
+                'values' => $this->getPromotionsFromDateModeOptions(),
+                'value' => '',
+                'class' => 'promotions_from_date_mode',
                 'disabled' => true,
             ]
         );
@@ -108,11 +110,11 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsFromDateValue = $this->createElement(
             'text',
             [
-                'html_id'     => 'promotions_from_date_value_temp-i',
-                'name'        => 'promotions[temp-i][from_date][value]',
-                'value'       => '',
-                'class'       => 'M2ePro-required-when-visible M2ePro-input-datetime M2ePro-correct-date-range',
-                'disabled'    => true,
+                'html_id' => 'promotions_from_date_value_temp-i',
+                'name' => 'promotions[temp-i][from_date][value]',
+                'value' => '',
+                'class' => 'M2ePro-required-when-visible M2ePro-input-datetime M2ePro-correct-date-range',
+                'disabled' => true,
                 'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
             ]
         );
@@ -123,8 +125,8 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsToDateCustomAttribute = $this->createElement(
             'hidden',
             [
-                'html_id'  => 'promotions_to_date_custom_attribute_temp-i',
-                'name'     => 'promotions[temp-i][to_date][attribute]',
+                'html_id' => 'promotions_to_date_custom_attribute_temp-i',
+                'name' => 'promotions[temp-i][to_date][attribute]',
                 'disabled' => true,
             ]
         );
@@ -134,11 +136,11 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsToDateMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'promotions_to_date_mode_temp-i',
-                'name'     => 'promotions[temp-i][to_date][mode]',
-                'values'   => $this->getPromotionsToDateModeOptions(),
-                'value'    => '',
-                'class'    => 'promotions_to_date_mode',
+                'html_id' => 'promotions_to_date_mode_temp-i',
+                'name' => 'promotions[temp-i][to_date][mode]',
+                'values' => $this->getPromotionsToDateModeOptions(),
+                'value' => '',
+                'class' => 'promotions_to_date_mode',
                 'disabled' => true,
             ]
         );
@@ -154,11 +156,11 @@ HTML;
         $promotionsToDateValue = $this->createElement(
             'text',
             [
-                'html_id'     => 'promotions_to_date_value_temp-i',
-                'name'        => 'promotions[temp-i][to_date][value]',
-                'value'       => '',
-                'class'       => 'M2ePro-required-when-visible M2ePro-input-datetime',
-                'disabled'    => true,
+                'html_id' => 'promotions_to_date_value_temp-i',
+                'name' => 'promotions[temp-i][to_date][value]',
+                'value' => '',
+                'class' => 'M2ePro-required-when-visible M2ePro-input-datetime',
+                'disabled' => true,
                 'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
                 'tooltip' => $toDateTooltip,
             ]
@@ -170,8 +172,8 @@ HTML;
         $promotionsPriceCustomAttribute = $this->createElement(
             'hidden',
             [
-                'html_id'  => 'promotions_price_custom_attribute_temp-i',
-                'name'     => 'promotions[temp-i][price][attribute]',
+                'html_id' => 'promotions_price_custom_attribute_temp-i',
+                'name' => 'promotions[temp-i][price][attribute]',
                 'disabled' => true,
             ]
         );
@@ -180,12 +182,12 @@ HTML;
         $promotionsPriceMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'promotions_price_mode_temp-i',
-                'name'     => 'promotions[temp-i][price][mode]',
+                'html_id' => 'promotions_price_mode_temp-i',
+                'name' => 'promotions[temp-i][price][mode]',
                 'required' => true,
-                'values'   => $this->getPromotionsPriceModeOptions(),
-                'value'    => '',
-                'class'    => 'promotions_price_mode',
+                'values' => $this->getPromotionsPriceModeOptions(),
+                'value' => '',
+                'class' => 'promotions_price_mode',
                 'disabled' => true,
             ]
         );
@@ -197,12 +199,12 @@ HTML;
         $promotionsPriceCoefficient = $this->createElement(
             'text',
             [
-                'html_id'  => 'promotions_price_coefficient_temp-i',
-                'name'     => 'promotions[temp-i][price][coefficient]',
-                'value'    => '',
-                'class'    => 'M2ePro-validate-price-coefficient',
+                'html_id' => 'promotions_price_coefficient_temp-i',
+                'name' => 'promotions[temp-i][price][coefficient]',
+                'value' => '',
+                'class' => 'M2ePro-validate-price-coefficient',
                 'disabled' => true,
-                'tooltip'  => $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
+                'tooltip' => $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)'),
             ]
         );
         $this->setData('promotions_price_coefficient', $promotionsPriceCoefficient);
@@ -212,8 +214,8 @@ HTML;
         $promotionsComparisonPriceCustomAttribute = $this->createElement(
             'hidden',
             [
-                'html_id'  => 'promotions_comparison_price_custom_attribute_temp-i',
-                'name'     => 'promotions[temp-i][comparison_price][attribute]',
+                'html_id' => 'promotions_comparison_price_custom_attribute_temp-i',
+                'name' => 'promotions[temp-i][comparison_price][attribute]',
                 'disabled' => true,
             ]
         );
@@ -222,12 +224,12 @@ HTML;
         $promotionsComparisonPriceMode = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'promotions_comparison_price_mode_temp-i',
-                'name'     => 'promotions[temp-i][comparison_price][mode]',
+                'html_id' => 'promotions_comparison_price_mode_temp-i',
+                'name' => 'promotions[temp-i][comparison_price][mode]',
                 'required' => true,
-                'values'   => $this->getPromotionsComparisonPriceModeOptions(),
-                'value'    => '',
-                'class'    => 'promotions_comparison_price_mode',
+                'values' => $this->getPromotionsComparisonPriceModeOptions(),
+                'value' => '',
+                'class' => 'promotions_comparison_price_mode',
                 'disabled' => true,
             ]
         );
@@ -239,12 +241,12 @@ HTML;
         $promotionsPriceCoefficient = $this->createElement(
             'text',
             [
-                'html_id'  => 'promotions_comparison_price_coefficient_temp-i',
-                'name'     => 'promotions[temp-i][comparison_price][coefficient]',
-                'value'    => '',
-                'class'    => 'M2ePro-validate-price-coefficient',
+                'html_id' => 'promotions_comparison_price_coefficient_temp-i',
+                'name' => 'promotions[temp-i][comparison_price][coefficient]',
+                'value' => '',
+                'class' => 'M2ePro-validate-price-coefficient',
                 'disabled' => true,
-                'tooltip'  => $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
+                'tooltip' => $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)'),
             ]
         );
         $this->setData('promotions_comparison_price_coefficient', $promotionsPriceCoefficient);
@@ -254,19 +256,19 @@ HTML;
         $promotionsType = $this->createElement(
             Form::SELECT,
             [
-                'html_id'  => 'promotions_type_temp-i',
-                'name'     => 'promotions[temp-i][type]',
-                'values'   => [
+                'html_id' => 'promotions_type_temp-i',
+                'name' => 'promotions[temp-i][type]',
+                'values' => [
                     [
                         'value' => Promotion::TYPE_REDUCED,
-                        'label' => $this->__('Reduced')
+                        'label' => $this->__('Reduced'),
                     ],
                     [
                         'value' => Promotion::TYPE_CLEARANCE,
-                        'label' => $this->__('Clearance')
-                    ]
+                        'label' => $this->__('Clearance'),
+                    ],
                 ],
-                'value'    => '',
+                'value' => '',
                 'disabled' => true,
             ]
         );
@@ -275,10 +277,10 @@ HTML;
         // ---------------------------------------
 
         $removePromotionPriceButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->addData([
-                'label'   => $this->__('Remove'),
-                'class'   => 'delete icon-btn remove_promotion_price_button'
-            ]);
+                                           ->addData([
+                                               'label' => $this->__('Remove'),
+                                               'class' => 'delete icon-btn remove_promotion_price_button',
+                                           ]);
         $this->setData('remove_promotion_price_button', $removePromotionPriceButton);
 
         // ---------------------------------------
@@ -293,14 +295,17 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::START_DATE_MODE_VALUE,
-                'label' => $this->__('Custom Value')
-            ]
+                'label' => $this->__('Custom Value'),
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date',
-            Promotion::START_DATE_MODE_ATTRIBUTE
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getMagentoAttributesOptions(
+                'text_date',
+                Promotion::START_DATE_MODE_ATTRIBUTE
+            )
+        );
     }
 
     public function getPromotionsToDateModeOptions()
@@ -308,14 +313,17 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::END_DATE_MODE_VALUE,
-                'label' => $this->__('Custom Value')
-            ]
+                'label' => $this->__('Custom Value'),
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_date',
-            Promotion::END_DATE_MODE_ATTRIBUTE
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getMagentoAttributesOptions(
+                'text_date',
+                Promotion::END_DATE_MODE_ATTRIBUTE
+            )
+        );
     }
 
     public function getPromotionsPriceModeOptions()
@@ -323,18 +331,21 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::PRICE_MODE_PRODUCT,
-                'label' => $this->__('Product Price')
+                'label' => $this->__('Product Price'),
             ],
             [
                 'value' => Promotion::PRICE_MODE_SPECIAL,
-                'label' => $this->__('Special Price')
+                'label' => $this->__('Special Price'),
             ],
         ];
 
-        return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_price',
-            Promotion::PRICE_MODE_ATTRIBUTE
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getMagentoAttributesOptions(
+                'text_price',
+                Promotion::PRICE_MODE_ATTRIBUTE
+            )
+        );
     }
 
     public function getPromotionsComparisonPriceModeOptions()
@@ -342,18 +353,21 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::COMPARISON_PRICE_MODE_PRODUCT,
-                'label' => $this->__('Product Price')
+                'label' => $this->__('Product Price'),
             ],
             [
                 'value' => Promotion::COMPARISON_PRICE_MODE_SPECIAL,
-                'label' => $this->__('Special Price')
+                'label' => $this->__('Special Price'),
             ],
         ];
 
-        return array_merge($optionsResult, $this->getMagentoAttributesOptions(
-            'text_price',
-            Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getMagentoAttributesOptions(
+                'text_price',
+                Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE
+            )
+        );
     }
 
     //########################################
@@ -370,17 +384,16 @@ HTML;
             $optionsResult[] = [
                 'value' => $value,
                 'label' => $this->escapeHtml($attribute['label']),
-                'attrs' => ['attribute_code' => $attribute['code']]
+                'attrs' => ['attribute_code' => $attribute['code']],
             ];
-            ;
         }
 
         return [
             [
                 'value' => $optionsResult,
                 'label' => 'Magento Attribute',
-                'attrs' => ['is_magento_attribute' => true]
-            ]
+                'attrs' => ['is_magento_attribute' => true],
+            ],
         ];
     }
 
@@ -391,7 +404,7 @@ HTML;
         $element = $this->elementFactory->create(
             $type,
             [
-                'data' => $data
+                'data' => $data,
             ]
         );
         $element->setForm($this->parentForm);
@@ -402,6 +415,7 @@ HTML;
         }
 
         $element->setRenderer($this->renderer);
+
         return $element;
     }
 

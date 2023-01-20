@@ -59,7 +59,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'return_policy[id]',
-                'value' => (!$this->isCustom() && isset($this->formData['id'])) ? (int)$this->formData['id'] : ''
+                'value' => (!$this->isCustom() && isset($this->formData['id'])) ? (int)$this->formData['id'] : '',
             ]
         );
 
@@ -68,7 +68,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'return_policy[title]',
-                'value' => $this->getTitle()
+                'value' => $this->getTitle(),
             ]
         );
 
@@ -77,7 +77,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'return_policy[marketplace_id]',
-                'value' => $this->marketplaceData['id']
+                'value' => $this->marketplaceData['id'],
             ]
         );
 
@@ -86,7 +86,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'return_policy[is_custom_template]',
-                'value' => $this->isCustom() ? 1 : 0
+                'value' => $this->isCustom() ? 1 : 0,
             ]
         );
 
@@ -104,7 +104,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Return Policy'),
                     'title' => __('Return Policy'),
                     'values' => $this->getMarketplaceDataToOptions('returns_accepted'),
-                    'value' => $this->formData['accepted']
+                    'value' => $this->formData['accepted'],
                 ]
             );
         }
@@ -153,7 +153,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Return Shipping Will Be Paid By'),
                     'title' => __('Return Shipping Will Be Paid By'),
                     'values' => $this->getMarketplaceDataToOptions('shipping_cost_paid_by'),
-                    'value' => $this->formData['shipping_cost']
+                    'value' => $this->formData['shipping_cost'],
                 ]
             );
         }
@@ -172,7 +172,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Return Policy'),
                     'title' => __('Return Policy'),
                     'values' => $this->getMarketplaceDataToOptions('international_returns_accepted'),
-                    'value' => $this->formData['international_accepted']
+                    'value' => $this->formData['international_accepted'],
                 ]
             );
         }
@@ -186,7 +186,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Refund Will Be Given As'),
                     'title' => __('Refund Will Be Given As'),
                     'values' => $this->getMarketplaceDataToOptions('international_refund'),
-                    'value' => $this->formData['international_option']
+                    'value' => $this->formData['international_option'],
                 ]
             );
         }
@@ -222,7 +222,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Return Shipping Will Be Paid By'),
                     'title' => __('Return Shipping Will Be Paid By'),
                     'values' => $this->getMarketplaceDataToOptions('international_shipping_cost_paid_by'),
-                    'value' => $this->formData['international_shipping_cost']
+                    'value' => $this->formData['international_shipping_cost'],
                 ]
             );
         }
@@ -241,12 +241,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'label' => __('Refund Description'),
                     'title' => __('Refund Description'),
                     'value' => $this->formData['description'],
-                    'class' => 'input-text'
+                    'class' => 'input-text',
                 ]
             );
         }
 
         $this->setForm($form);
+
         return $this;
     }
 
@@ -261,7 +262,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         foreach ($this->marketplaceData['info'][$key] as $value) {
             $optionsData[] = [
                 'value' => $value['ebay_id'],
-                'label' => $helper->escapeHtml($value['title'])
+                'label' => $helper->escapeHtml($value['title']),
             ];
         }
 
@@ -319,7 +320,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $data = [
             'id' => $marketplace->getId(),
-            'info' => $marketplace->getChildObject()->getReturnPolicyInfo()
+            'info' => $marketplace->getChildObject()->getReturnPolicyInfo(),
         ];
 
         foreach ($this->getDictionaryInfo('returns_within', $marketplace) as $key => $item) {
@@ -377,6 +378,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function getDictionaryInfo($key, \Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $returnPolicyInfo = $marketplace->getChildObject()->getReturnPolicyInfo();
+
         return !empty($returnPolicyInfo[$key]) ? $returnPolicyInfo[$key] : [];
     }
 
@@ -397,9 +399,11 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\ReturnPolicy::class)
         );
 
-        $this->js->addRequireJs([
-            'form' => 'M2ePro/Ebay/Template/ReturnPolicy'
-        ], <<<JS
+        $this->js->addRequireJs(
+            [
+            'form' => 'M2ePro/Ebay/Template/ReturnPolicy',
+            ],
+            <<<JS
 
         window.ebayTemplateReturnPolicyObj = new EbayTemplateReturnPolicy();
         ebayTemplateReturnPolicyObj.initObservers();
@@ -416,6 +420,10 @@ JS
      */
     private function getDefaultDaysValueForReturnPolicy(array $options)
     {
+        if (empty($options)) {
+            return '';
+        }
+
         $result = null;
         foreach ($options as $option) {
             if ($option['value'] === self::RETURNS_WITHIN_DEFAULT_VALUE) {

@@ -17,6 +17,7 @@ class DeleteNote extends Order
         $noteId = $this->getRequest()->getParam('note_id');
         if ($noteId === null) {
             $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
@@ -25,6 +26,7 @@ class DeleteNote extends Order
         $noteModel->delete();
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 }

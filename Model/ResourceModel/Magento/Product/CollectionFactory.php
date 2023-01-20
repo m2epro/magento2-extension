@@ -28,6 +28,7 @@ class CollectionFactory
 
     /**
      * @param array $data
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection
      */
     public function create(array $data = [])

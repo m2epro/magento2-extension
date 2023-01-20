@@ -67,10 +67,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
             ['lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable()],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'status'          => 'status',
-                'component_mode'  => 'component_mode',
-                'listing_id'      => 'listing_id',
+                'id' => 'id',
+                'status' => 'status',
+                'component_mode' => 'component_mode',
+                'listing_id' => 'listing_id',
                 'additional_data' => 'additional_data',
             ]
         );
@@ -78,29 +78,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
             ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=id',
             [
-                'listing_product_id'    => 'listing_product_id',
-                'ebay_item_id'          => 'ebay_item_id',
-                'online_title'          => 'online_title',
-                'online_sku'            => 'online_sku',
-                'online_qty'            => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
-                'online_qty_sold'       => 'online_qty_sold',
-                'online_bids'           => 'online_bids',
-                'online_start_price'    => 'online_start_price',
-                'online_current_price'  => 'online_current_price',
-                'online_reserve_price'  => 'online_reserve_price',
+                'listing_product_id' => 'listing_product_id',
+                'ebay_item_id' => 'ebay_item_id',
+                'online_title' => 'online_title',
+                'online_sku' => 'online_sku',
+                'online_qty' => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
+                'online_qty_sold' => 'online_qty_sold',
+                'online_bids' => 'online_bids',
+                'online_start_price' => 'online_start_price',
+                'online_current_price' => 'online_current_price',
+                'online_reserve_price' => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
 
-                'is_duplicate'          => 'is_duplicate',
+                'is_duplicate' => 'is_duplicate',
             ]
         );
         $collection->joinTable(
             ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             'id=listing_id',
             [
-                'store_id'              => 'store_id',
-                'account_id'            => 'account_id',
-                'marketplace_id'        => 'marketplace_id',
-                'listing_title'         => 'title',
+                'store_id' => 'store_id',
+                'account_id' => 'account_id',
+                'marketplace_id' => 'marketplace_id',
+                'listing_title' => 'title',
             ]
         );
         $collection->joinTable(
@@ -132,6 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
         }
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -139,8 +140,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
     protected function getColumnProductTitleAdditionalHtml($row)
     {
-        $listingWord  = $this->__('Listing');
-        $listingUrl   = $this->getUrl('*/ebay_listing/view', ['id' => $row->getData('listing_id')]);
+        $listingWord = $this->__('Listing');
+        $listingUrl = $this->getUrl('*/ebay_listing/view', ['id' => $row->getData('listing_id')]);
 
         $listingTitle = $this->dataHelper->escapeHtml($row->getData('listing_title'));
         $listingTitle = $this->filterManager->truncate($listingTitle, ['length' => 50]);
@@ -155,7 +156,7 @@ HTML;
 
         $html .= '<br/><strong>' . $this->__('Account') . ':</strong>'
             . '&nbsp;' . $account->getTitle() . '<br/>'
-            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '<strong>' . $this->__('Marketplace') . ':</strong>'
             . '&nbsp;' . $marketplace->getTitle();
 
         $sku = $row->getData('sku');
@@ -174,7 +175,7 @@ HTML;
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
-            $additionalData    = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
             $productAttributes = array_keys($additionalData['variations_sets']);
             $productAttributes = implode(', ', $productAttributes);
 
@@ -195,9 +196,9 @@ HTML;
         $productId = (int)$row->getData('entity_id');
 
         $urlData = [
-            'id'        => $row->getData('listing_id'),
+            'id' => $row->getData('listing_id'),
             'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::VIEW_MODE_EBAY,
-            'filter'    => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}")
+            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}"),
         ];
 
         $searchedChildHtml = '';
@@ -207,10 +208,12 @@ HTML;
             $searchedChildHtml = <<<HTML
 <br/>
 <div class="fix-magento-tooltip searched_child_product" style="margin-top: 4px; padding-left: 10px;">
-    {$this->getTooltipHtml($this->__(
-                'A Product you are searching for is found as part of a Multi-Variational Product.' .
-                ' Click on the arrow icon to manage it individually.'
-            ))}
+    {$this->getTooltipHtml(
+                $this->__(
+                    'A Product you are searching for is found as part of a Multi-Variational Product.' .
+                    ' Click on the arrow icon to manage it individually.'
+                )
+            )}
 </div>
 HTML;
         }
@@ -222,6 +225,7 @@ HTML;
     <img src="{$this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png')}" /></a>
 </div>
 HTML;
+
         return $searchedChildHtml . $html;
     }
 
@@ -244,13 +248,13 @@ HTML;
             'product_id_subQuery.listing_product_id=lp.id',
             [
                 'product_id_child_variation_ids' => 'child_variation_ids',
-                'product_id_searched_by_child'   => 'searched_by_child'
+                'product_id_searched_by_child' => 'searched_by_child',
             ]
         );
 
         $collection->addFieldToFilter([
             ['attribute' => 'entity_id', $cond],
-            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true]
+            ['attribute' => 'product_id_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
         ]);
     }
 
@@ -265,19 +269,21 @@ HTML;
 
         $childCollection = $this->getMagentoChildProductsCollection();
         $childCollection->getSelect()->joinLeft(
-            ['cpe' => $this->databaseHelper
-                ->getTableNameWithPrefix('catalog_product_entity')],
+            [
+                'cpe' => $this->databaseHelper
+                    ->getTableNameWithPrefix('catalog_product_entity'),
+            ],
             'cpe.entity_id=main_table.product_id',
             []
         );
-        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%'.$value.'%']);
+        $childCollection->addFieldToFilter('cpe.sku', ['like' => '%' . $value . '%']);
 
         $collection->getSelect()->joinLeft(
             ['product_sku_subQuery' => $childCollection->getSelect()],
             'product_sku_subQuery.listing_product_id=lp.id',
             [
                 'product_sku_child_variation_ids' => 'child_variation_ids',
-                'product_sku_searched_by_child'   => 'searched_by_child'
+                'product_sku_searched_by_child' => 'searched_by_child',
             ]
         );
 
@@ -384,6 +390,7 @@ HTML;
                 $collection->setOrder($columnIndex, strtoupper($column->getDir()));
             }
         }
+
         return $this;
     }
 
@@ -393,12 +400,17 @@ HTML;
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection()
-            ->addFieldToSelect('listing_product_variation_id')
-            ->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
+                                                ->addFieldToSelect('listing_product_variation_id')
+                                                ->addFieldToFilter(
+                                                    'main_table.component_mode',
+                                                    \Ess\M2ePro\Helper\Component\Ebay::NICK
+                                                );
 
         $collection->getSelect()->joinLeft(
-            ['lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
-                ->getResource()->getMainTable()],
+            [
+                'lpv' => $this->activeRecordFactory->getObject('Listing_Product_Variation')
+                                                   ->getResource()->getMainTable(),
+            ],
             'lpv.id=main_table.listing_product_variation_id',
             ['listing_product_id']
         );
@@ -407,8 +419,8 @@ HTML;
         $collection->getSelect()->columns(
             [
                 'child_variation_ids' => new \Zend_Db_Expr('GROUP_CONCAT(lpv.id)'),
-                'listing_product_id'  => 'lpv.listing_product_id',
-                'searched_by_child'   => new \Zend_Db_Expr(1)
+                'listing_product_id' => 'lpv.listing_product_id',
+                'searched_by_child' => new \Zend_Db_Expr(1),
             ]
         );
 

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action;
  */
 class ProcessRefund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/action/process_refund';
+    public const NICK = 'amazon/order/action/process_refund';
 
     /**
      * @var int (in seconds)
@@ -27,7 +27,7 @@ class ProcessRefund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $actionsProcessor = $this->modelFactory->getObject(
             'Amazon_Order_Action_Processor',
             [
-                'params' => ['action_type' => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_REFUND]
+                'params' => ['action_type' => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_REFUND],
             ]
         );
         $actionsProcessor->process();

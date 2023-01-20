@@ -22,9 +22,9 @@ abstract class Template extends Main
         foreach ($productsIdsParam as $productsIdsParamChunk) {
             $select = $connection->select();
             $select->from(['lo' => $table], ['object_id'])
-                ->where('model_name = "Listing_Product"')
-                ->where('object_id IN (?)', $productsIdsParamChunk)
-                ->where('tag IS NOT NULL');
+                   ->where('model_name = "Listing_Product"')
+                   ->where('object_id IN (?)', $productsIdsParamChunk)
+                   ->where('tag IS NOT NULL');
 
             $lockedProducts = $connection->fetchCol($select);
 
@@ -45,12 +45,12 @@ abstract class Template extends Main
     {
         $connection = $this->resourceConnection->getConnection();
         $tableWalmartListingProduct = $this->activeRecordFactory->getObject('Walmart_Listing_Product')
-            ->getResource()->getMainTable();
+                                                                ->getResource()->getMainTable();
 
         $select = $connection->select();
         $select->from(['alp' => $tableWalmartListingProduct], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('is_variation_parent = ?', 1);
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('is_variation_parent = ?', 1);
 
         $productsIds = $connection->fetchCol($select);
 

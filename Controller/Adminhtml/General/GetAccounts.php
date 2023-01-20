@@ -16,8 +16,7 @@ class GetAccounts extends \Ess\M2ePro\Controller\Adminhtml\General
     public function __construct(
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
-    )
-    {
+    ) {
         parent::__construct($context);
 
         $this->dataHelper = $dataHelper;
@@ -33,11 +32,13 @@ class GetAccounts extends \Ess\M2ePro\Controller\Adminhtml\General
         foreach ($collection->getItems() as $account) {
             $data = [
                 'id' => $account->getId(),
-                'title' => $this->dataHelper->escapeHtml($account->getTitle())
+                'title' => $this->dataHelper->escapeHtml($account->getTitle()),
             ];
 
-            if ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK ||
-                $component == \Ess\M2ePro\Helper\Component\Walmart::NICK) {
+            if (
+                $component == \Ess\M2ePro\Helper\Component\Amazon::NICK ||
+                $component == \Ess\M2ePro\Helper\Component\Walmart::NICK
+            ) {
                 $marketplace = $account->getChildObject()->getMarketplace();
                 $data['marketplace_id'] = $marketplace->getId();
                 $data['marketplace_title'] = $marketplace->getTitle();
@@ -48,6 +49,7 @@ class GetAccounts extends \Ess\M2ePro\Controller\Adminhtml\General
         }
 
         $this->setJsonContent($accounts);
+
         return $this->getResult();
     }
 }

@@ -76,13 +76,14 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActio
         // Get last messages
         // ---------------------------------------
         $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable()
-            )
-            ->where('params REGEXP \'"logs_action_id":'.$actionId.'\'')
-            ->limit(1);
+                               ->from(
+                                   $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable()
+                               )
+                               ->where('params REGEXP \'"logs_action_id":' . $actionId . '\'')
+                               ->limit(1);
 
         $result = $connection->query($dbSelect)->fetch();
+
         return $result !== false;
     }
 

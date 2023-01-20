@@ -39,8 +39,8 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
             }
 
             $tempChildListingsProducts = $amazonListingProduct->getVariationManager()
-                ->getTypeModel()
-                ->getChildListingsProducts();
+                                                              ->getTypeModel()
+                                                              ->getChildListingsProducts();
 
             if (empty($tempChildListingsProducts)) {
                 continue;
@@ -60,6 +60,7 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
         $this->checkLocking($listingsProducts, $logsActionId, $action);
         if (empty($listingsProducts)) {
             $this->setJsonContent(['result' => 'error', 'action_id' => $logsActionId]);
+
             return $this->getResult();
         }
 
@@ -71,15 +72,19 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
 
         if (isset($params['switch_to'])) {
             $this->setJsonContent([
-                'messages' => [[
-                    'type' => 'success',
-                    'text' => $this->__('Fulfillment switching is in progress now. Please wait.')
-                ]]
+                'messages' => [
+                    [
+                        'type' => 'success',
+                        'text' => $this->__('Fulfillment switching is in progress now. Please wait.'),
+                    ],
+                ],
             ]);
+
             return $this->getResult();
         }
 
         $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
+
         return $this->getResult();
     }
 
@@ -105,6 +110,7 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
      * @param int $action
      * @param array $params
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function createUpdateScheduledActions(&$listingsProducts, $action, array $params)
@@ -146,13 +152,13 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Ma
 
         return [
             'listing_product_id' => $listingProduct->getId(),
-            'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'action_type'        => $action,
-            'is_force'           => true,
-            'tag'                => null,
-            'additional_data'    => $this->getHelper('Data')->jsonEncode(
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'action_type' => $action,
+            'is_force' => true,
+            'tag' => null,
+            'additional_data' => $this->getHelper('Data')->jsonEncode(
                 [
-                    'params' => $params
+                    'params' => $params,
                 ]
             ),
         ];

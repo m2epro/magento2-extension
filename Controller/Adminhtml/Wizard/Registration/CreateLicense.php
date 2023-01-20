@@ -8,7 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\Registration;
 
-
 class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
 {
     /** @var \Ess\M2ePro\Helper\Server\Maintenance */
@@ -51,7 +50,7 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
             $message .= ' Please try again later.';
 
             $this->setJsonContent([
-                'status'  => false,
+                'status' => false,
                 'message' => $message,
             ]);
 
@@ -78,7 +77,7 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
             }
 
             $response = [
-                'status'  => false,
+                'status' => false,
                 'message' => $this->__('You should fill all required fields.'),
             ];
             $this->setJsonContent($response);
@@ -87,12 +86,12 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
         }
 
         $info = $this->infoFactory->create([
-            'email'       => $licenseData['email'],
-            'firstname'   => $licenseData['firstname'],
-            'lastname'    => $licenseData['lastname'],
-            'phone'       => $licenseData['phone'],
-            'country'     => $licenseData['country'],
-            'city'        => $licenseData['city'],
+            'email' => $licenseData['email'],
+            'firstname' => $licenseData['firstname'],
+            'lastname' => $licenseData['lastname'],
+            'phone' => $licenseData['phone'],
+            'country' => $licenseData['country'],
+            'city' => $licenseData['city'],
             'postal_code' => $licenseData['postal_code'],
         ]);
 
@@ -120,7 +119,7 @@ class CreateLicense extends \Ess\M2ePro\Controller\Adminhtml\Wizard\Registration
             }
 
             $this->setJsonContent([
-                'status'  => $licenseResult,
+                'status' => $licenseResult,
                 'message' => $message,
             ]);
 

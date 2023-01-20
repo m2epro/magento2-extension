@@ -26,9 +26,9 @@ class Status extends AbstractModel
 
         if (!$this->getProcessor()->isGeneralIdSet() || empty($childListingProducts)) {
             $this->getProcessor()->getListingProduct()->addData([
-                'status'                   => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             ])->getChildObject()->addData([
-                'variation_child_statuses' => null
+                'variation_child_statuses' => null,
             ]);
 
             return;
@@ -40,11 +40,11 @@ class Status extends AbstractModel
         $resultStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
 
         $childStatuses = [
-            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => 0,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => 0,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED    => 0,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => 0,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN    => 0,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => 0,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 0,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => 0,
         ];
 
         foreach ($childListingProducts as $childListingProduct) {
@@ -73,7 +73,8 @@ class Status extends AbstractModel
             }
         }
 
-        if ($isStatusSame && $sameStatus !== null &&
+        if (
+            $isStatusSame && $sameStatus !== null &&
             $sameStatus != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
         ) {
             $resultStatus = $sameStatus;

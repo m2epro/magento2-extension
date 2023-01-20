@@ -13,7 +13,9 @@ namespace Ess\M2ePro\Model\Connector\Connection\Multiple;
  */
 class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var null  */
     private $request = null;
+    /** @var null  */
     private $timeout = null;
 
     //########################################
@@ -28,11 +30,13 @@ class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Request $request
+     *
      * @return $this
      */
     public function setRequest(\Ess\M2ePro\Model\Connector\Connection\Request $request)
     {
         $this->request = $request;
+
         return $this;
     }
 
@@ -48,11 +52,13 @@ class RequestContainer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $timeout
+     *
      * @return $this
      */
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
+
         return $this;
     }
 

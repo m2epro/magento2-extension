@@ -14,16 +14,16 @@ use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
 class NonexistentTemplates implements InspectorInterface, FixerInterface
 {
-    const FIX_ACTION_SET_NULL     = 'set_null';
-    const FIX_ACTION_SET_PARENT   = 'set_parent';
-    const FIX_ACTION_SET_TEMPLATE = 'set_template';
+    public const FIX_ACTION_SET_NULL = 'set_null';
+    public const FIX_ACTION_SET_PARENT = 'set_parent';
+    public const FIX_ACTION_SET_TEMPLATE = 'set_template';
 
     /**@var array */
     private $_simpleTemplates = [
         'template_category_id' => 'category',
         'template_category_secondary_id' => 'category',
         'template_store_category_id' => 'store_category',
-        'template_store_category_secondary_id' => 'store_category'
+        'template_store_category_secondary_id' => 'store_category',
     ];
 
     /** @var array */
@@ -35,7 +35,7 @@ class NonexistentTemplates implements InspectorInterface, FixerInterface
         \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY,
     ];
 
-    /** @var HelperFactory  */
+    /** @var HelperFactory */
     private $helperFactory;
 
     /** @var ModelFactory */
@@ -63,12 +63,12 @@ class NonexistentTemplates implements InspectorInterface, FixerInterface
         ParentFactory $parentFactory,
         IssueFactory $issueFactory
     ) {
-        $this->helperFactory      = $helperFactory;
-        $this->modelFactory       = $modelFactory;
-        $this->urlBuilder         = $urlBuilder;
+        $this->helperFactory = $helperFactory;
+        $this->modelFactory = $modelFactory;
+        $this->urlBuilder = $urlBuilder;
         $this->resourceConnection = $resourceConnection;
-        $this->parentFactory      = $parentFactory;
-        $this->issueFactory       = $issueFactory;
+        $this->parentFactory = $parentFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -125,10 +125,10 @@ HTML;
                 $parentModeWord = '--';
                 $actionsHtml = '';
                 $params = [
-                    'template'    => $templateName,
+                    'template' => $templateName,
                     'field_value' => $itemInfo['my_needed_id'],
-                    'field'       => $itemInfo['my_needed_id_field'],
-                    'action'      => 'repairNonexistentTemplates'
+                    'field' => $itemInfo['my_needed_id_field'],
+                    'action' => 'repairNonexistentTemplates',
                 ];
 
                 if (!isset($itemInfo['my_mode']) && !isset($itemInfo['parent_mode'])) {
@@ -238,6 +238,7 @@ HTML;
             {$tableContent}
         </table>
 HTML;
+
         return $html;
     }
 
@@ -248,41 +249,47 @@ HTML;
         $databaseHelper = $this->helperFactory->getObject('Module_Database_Structure');
 
         $subSelect = $this->resourceConnection->getConnection()->select()
-            ->from(
-                [
-                    'melp' => $databaseHelper->getTableNameWithPrefix('m2epro_ebay_listing_product')
-                ],
-                [
-                    'my_id' => 'listing_product_id',
-                    'my_mode' => "template_{$templateCode}_mode",
-                    'my_template_id' => "template_{$templateCode}_id",
+                                              ->from(
+                                                  [
+                                                      'melp' => $databaseHelper->getTableNameWithPrefix(
+                                                          'm2epro_ebay_listing_product'
+                                                      ),
+                                                  ],
+                                                  [
+                                                      'my_id' => 'listing_product_id',
+                                                      'my_mode' => "template_{$templateCode}_mode",
+                                                      'my_template_id' => "template_{$templateCode}_id",
 
-                    'my_needed_id' => new \Zend_Db_Expr(
-                        "CASE
+                                                      'my_needed_id' => new \Zend_Db_Expr(
+                                                          "CASE
                         WHEN melp.template_{$templateCode}_mode = 2 THEN melp.template_{$templateCode}_id
                         WHEN melp.template_{$templateCode}_mode = 1 THEN melp.template_{$templateCode}_id
                         WHEN melp.template_{$templateCode}_mode = 0 THEN mel.template_{$templateCode}_id
                         END"
-                    ),
-                    'my_needed_id_field' => "template_{$templateCode}_id"
-                ]
-            )
-            ->joinLeft(
-                [
-                    'mlp' => $databaseHelper->getTableNameWithPrefix('m2epro_listing_product')
-                ],
-                'melp.listing_product_id = mlp.id',
-                ['listing_id' => 'listing_id']
-            )
-            ->joinLeft(
-                [
-                    'mel' => $databaseHelper->getTableNameWithPrefix('m2epro_ebay_listing')
-                ],
-                'mlp.listing_id = mel.listing_id',
-                [
-                    'parent_template_id' => "template_{$templateCode}_id"
-                ]
-            );
+                                                      ),
+                                                      'my_needed_id_field' => "template_{$templateCode}_id",
+                                                  ]
+                                              )
+                                              ->joinLeft(
+                                                  [
+                                                      'mlp' => $databaseHelper->getTableNameWithPrefix(
+                                                          'm2epro_listing_product'
+                                                      ),
+                                                  ],
+                                                  'melp.listing_product_id = mlp.id',
+                                                  ['listing_id' => 'listing_id']
+                                              )
+                                              ->joinLeft(
+                                                  [
+                                                      'mel' => $databaseHelper->getTableNameWithPrefix(
+                                                          'm2epro_ebay_listing'
+                                                      ),
+                                                  ],
+                                                  'mlp.listing_id = mel.listing_id',
+                                                  [
+                                                      'parent_template_id' => "template_{$templateCode}_id",
+                                                  ]
+                                              );
 
         $templateIdName = 'id';
 
@@ -293,30 +300,32 @@ HTML;
         }
 
         $result = $this->resourceConnection->getConnection()->select()
-            ->from(
-                [
-                    'subselect' => new \Zend_Db_Expr(
-                        '(' . $subSelect->__toString() . ')'
-                    )
-                ],
-                [
-                    'subselect.my_id',
-                    'subselect.listing_id',
-                    'subselect.my_mode',
-                    'subselect.my_needed_id',
-                    'subselect.my_needed_id_field'
-                ]
-            )
-            ->joinLeft(
-                [
-                    'template' => $databaseHelper->getTableNameWithPrefix("m2epro_ebay_template_{$templateCode}")
-                ],
-                "subselect.my_needed_id = template.{$templateIdName}",
-                []
-            )
-            ->where("template.{$templateIdName} IS NULL")
-            ->query()
-            ->fetchAll();
+                                           ->from(
+                                               [
+                                                   'subselect' => new \Zend_Db_Expr(
+                                                       '(' . $subSelect->__toString() . ')'
+                                                   ),
+                                               ],
+                                               [
+                                                   'subselect.my_id',
+                                                   'subselect.listing_id',
+                                                   'subselect.my_mode',
+                                                   'subselect.my_needed_id',
+                                                   'subselect.my_needed_id_field',
+                                               ]
+                                           )
+                                           ->joinLeft(
+                                               [
+                                                   'template' => $databaseHelper->getTableNameWithPrefix(
+                                                       "m2epro_ebay_template_{$templateCode}"
+                                                   ),
+                                               ],
+                                               "subselect.my_needed_id = template.{$templateIdName}",
+                                               []
+                                           )
+                                           ->where("template.{$templateIdName} IS NULL")
+                                           ->query()
+                                           ->fetchAll();
 
         return $result;
     }
@@ -326,32 +335,38 @@ HTML;
         $databaseHelper = $this->helperFactory->getObject('Module_Database_Structure');
 
         $select = $this->resourceConnection->getConnection()->select()
-            ->from(
-                [
-                    'melp' => $databaseHelper->getTableNameWithPrefix('m2epro_ebay_listing_product')
-                ],
-                [
-                    'my_id' => 'listing_product_id',
-                    'my_needed_id' => $templateIdField,
-                    'my_needed_id_field' => new \Zend_Db_Expr("'{$templateIdField}'")
-                ]
-            )
-            ->joinLeft(
-                [
-                    'mlp' => $databaseHelper->getTableNameWithPrefix('m2epro_listing_product')
-                ],
-                'melp.listing_product_id = mlp.id',
-                ['listing_id' => 'listing_id']
-            )
-            ->joinLeft(
-                [
-                    'template' => $databaseHelper->getTableNameWithPrefix("m2epro_ebay_template_{$templateCode}")
-                ],
-                "melp.{$templateIdField} = template.id",
-                []
-            )
-            ->where("melp.{$templateIdField} IS NOT NULL")
-            ->where("template.id IS NULL");
+                                           ->from(
+                                               [
+                                                   'melp' => $databaseHelper->getTableNameWithPrefix(
+                                                       'm2epro_ebay_listing_product'
+                                                   ),
+                                               ],
+                                               [
+                                                   'my_id' => 'listing_product_id',
+                                                   'my_needed_id' => $templateIdField,
+                                                   'my_needed_id_field' => new \Zend_Db_Expr("'{$templateIdField}'"),
+                                               ]
+                                           )
+                                           ->joinLeft(
+                                               [
+                                                   'mlp' => $databaseHelper->getTableNameWithPrefix(
+                                                       'm2epro_listing_product'
+                                                   ),
+                                               ],
+                                               'melp.listing_product_id = mlp.id',
+                                               ['listing_id' => 'listing_id']
+                                           )
+                                           ->joinLeft(
+                                               [
+                                                   'template' => $databaseHelper->getTableNameWithPrefix(
+                                                       "m2epro_ebay_template_{$templateCode}"
+                                                   ),
+                                               ],
+                                               "melp.{$templateIdField} = template.id",
+                                               []
+                                           )
+                                           ->where("melp.{$templateIdField} IS NOT NULL")
+                                           ->where("template.id IS NULL");
 
         return $select->query()->fetchAll();
     }
@@ -385,9 +400,10 @@ HTML;
             }
         }
 
-        if ($data['action'] === self::FIX_ACTION_SET_TEMPLATE &&
-            $data['template_id']) {
-
+        if (
+            $data['action'] === self::FIX_ACTION_SET_TEMPLATE &&
+            $data['template_id']
+        ) {
             $collection = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Product')->getCollection();
             $collection->addFieldToFilter($data['field'], $data['field_value']);
 

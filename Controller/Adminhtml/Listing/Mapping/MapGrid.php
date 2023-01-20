@@ -19,12 +19,13 @@ class MapGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
                 'data' => [
                     'grid_url' => '*/listing_mapping/mapGrid',
                     'mapping_handler_js' => $this->getMovingHandlerJs(),
-                    'mapping_action' => 'remap'
-                ]
+                    'mapping_action' => 'remap',
+                ],
             ]
         );
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 

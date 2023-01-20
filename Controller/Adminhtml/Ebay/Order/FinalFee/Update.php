@@ -32,10 +32,10 @@ class Update extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
     ) {
         parent::__construct($ebayFactory, $context);
 
-        $this->fillFee           = $fillFee;
-        $this->logger            = $logger;
+        $this->fillFee = $fillFee;
+        $this->logger = $logger;
         $this->resultJsonFactory = $resultJsonFactory;
-        $this->currency          = $currency;
+        $this->currency = $currency;
     }
 
     public function execute()
@@ -65,7 +65,7 @@ class Update extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
             return $this->resultJsonFactory->create()->setData(
                 [
                     'sell_api_disabled' => true,
-                    'error'             => $this->__('Sell Api token is missing.'),
+                    'error' => $this->__('Sell Api token is missing.'),
                 ]
             );
         }

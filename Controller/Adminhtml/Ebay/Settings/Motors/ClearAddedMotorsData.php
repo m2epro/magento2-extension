@@ -30,6 +30,7 @@ class ClearAddedMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Setting
 
         if (!$motorsType) {
             $this->getMessageManager()->addError($this->__('Some of required fields are not filled up.'));
+
             return $this->_redirect('*/ebay_settings/index');
         }
 
@@ -45,6 +46,7 @@ class ClearAddedMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Setting
         );
 
         $this->getMessageManager()->addSuccess($this->__('Added compatibility data has been cleared.'));
+
         return $this->_redirect('*/ebay_settings/index');
     }
 

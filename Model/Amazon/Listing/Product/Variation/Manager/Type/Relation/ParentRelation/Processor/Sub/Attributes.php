@@ -9,7 +9,8 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
 /**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\Attributes
+ * Class
+ * \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\Attributes
  */
 class Attributes extends AbstractModel
 {
@@ -34,7 +35,8 @@ class Attributes extends AbstractModel
             $this->getProcessor()->getTypeModel()->setChannelAttributesSets([], false);
         }
 
-        if (count($this->getProcessor()->getTypeModel()->getRealChannelAttributes()) ==
+        if (
+            count($this->getProcessor()->getTypeModel()->getRealChannelAttributes()) ==
             count($this->getProcessor()->getTypeModel()->getRealProductAttributes())
         ) {
             $this->getProcessor()->getTypeModel()->setVirtualProductAttributes([], false);

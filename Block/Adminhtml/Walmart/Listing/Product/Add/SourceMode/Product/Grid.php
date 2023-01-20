@@ -66,9 +66,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('type_id');
+                                                            ->addAttributeToSelect('sku')
+                                                            ->addAttributeToSelect('name')
+                                                            ->addAttributeToSelect('type_id');
 
         $collection->setStoreId($this->listing->getStoreId());
         $collection->joinStockItem();
@@ -165,10 +165,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $collection->addFieldToFilter(
-            [[
-                'attribute' => 'type_id',
-                'in' => $this->magentoProductHelper->getOriginKnownTypes()
-            ]]
+            [
+                [
+                    'attribute' => 'type_id',
+                    'in' => $this->magentoProductHelper->getOriginKnownTypes(),
+                ],
+            ]
         );
 
         $this->setCollection($collection);
@@ -181,118 +183,118 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'       => $this->__('ID'),
-            'align'        => 'right',
-            'width'        => '100px',
-            'type'         => 'number',
-            'index'        => 'entity_id',
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
-            'store_id'     => $this->listing->getStoreId(),
-            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'store_id' => $this->listing->getStoreId(),
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'         => $this->__('Title'),
-            'align'          => 'left',
-            'type'           => 'text',
-            'index'          => 'name',
-            'filter_index'   => 'name',
-            'escape'         => false,
-            'frame_callback' => [$this, 'callbackColumnProductTitle']
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
+            'filter_index' => 'name',
+            'escape' => false,
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
         ]);
 
         $this->addColumn('type', [
-            'header'       => $this->__('Type'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'options',
-            'sortable'     => false,
-            'index'        => 'type_id',
+            'header' => $this->__('Type'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'type_id',
             'filter_index' => 'type_id',
-            'options'      => $this->getProductTypes()
+            'options' => $this->getProductTypes(),
         ]);
 
         $this->addColumn('is_in_stock', [
-            'header'       => $this->__('Stock Availability'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'options',
-            'sortable'     => false,
-            'index'        => 'is_in_stock',
+            'header' => $this->__('Stock Availability'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
             'options' => [
                 '1' => $this->__('In Stock'),
-                '0' => $this->__('Out of Stock')
+                '0' => $this->__('Out of Stock'),
             ],
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('sku', [
-            'header'       => $this->__('SKU'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'text',
-            'index'        => 'sku',
-            'filter_index' => 'sku'
+            'header' => $this->__('SKU'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'text',
+            'index' => 'sku',
+            'filter_index' => 'sku',
         ]);
 
         $store = $this->_getStore();
 
         $this->addColumn('price', [
-            'header'         => $this->__('Price'),
-            'align'          => 'right',
-            'width'          => '100px',
-            'type'           => 'price',
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
-            'currency_code'  => $store->getBaseCurrency()->getCode(),
-            'index'          => 'price',
-            'filter_index'   => 'price',
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'price',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price::class,
+            'currency_code' => $store->getBaseCurrency()->getCode(),
+            'index' => 'price',
+            'filter_index' => 'price',
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('qty', [
-            'header'         => $this->__('QTY'),
-            'align'          => 'right',
-            'width'          => '100px',
-            'type'           => 'number',
-            'index'          => 'qty',
-            'filter_index'   => 'qty',
-            'frame_callback' => [$this, 'callbackColumnQty']
+            'header' => $this->__('QTY'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'qty',
+            'filter_index' => 'qty',
+            'frame_callback' => [$this, 'callbackColumnQty'],
         ]);
 
         $this->addColumn('visibility', [
-            'header'       => $this->__('Visibility'),
-            'align'        => 'left',
-            'width'        => '90px',
-            'type'         => 'options',
-            'sortable'     => false,
-            'index'        => 'visibility',
+            'header' => $this->__('Visibility'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'visibility',
             'filter_index' => 'visibility',
-            'options'      => \Magento\Catalog\Model\Product\Visibility::getOptionArray()
+            'options' => \Magento\Catalog\Model\Product\Visibility::getOptionArray(),
         ]);
 
         $this->addColumn('status', [
-            'header'         => $this->__('Status'),
-            'align'          => 'left',
-            'width'          => '90px',
-            'type'           => 'options',
-            'sortable'       => false,
-            'index'          => 'status',
-            'filter_index'   => 'status',
-            'options'        => \Magento\Catalog\Model\Product\Attribute\Source\Status::getOptionArray(),
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'header' => $this->__('Status'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'status',
+            'filter_index' => 'status',
+            'options' => \Magento\Catalog\Model\Product\Attribute\Source\Status::getOptionArray(),
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn('websites', [
-                'header'       => $this->__('Websites'),
-                'align'        => 'left',
-                'width'        => '90px',
-                'type'         => 'options',
-                'sortable'     => false,
-                'index'        => 'websites',
+                'header' => $this->__('Websites'),
+                'align' => 'left',
+                'width' => '90px',
+                'type' => 'options',
+                'sortable' => false,
+                'index' => 'websites',
                 'filter_index' => 'websites',
-                'options'      => $this->websiteFactory->create()->getCollection()->toOptionHash()
+                'options' => $this->websiteFactory->create()->getCollection()->toOptionHash(),
             ]);
         }
 
@@ -320,6 +322,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 );
             }
         }
+
         return parent::_addColumnFilterToCollection($column);
     }
 
@@ -334,6 +337,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         if (isset($this->listing['store_id'])) {
             $storeId = (int)$this->listing['store_id'];
         }
+
         // ---------------------------------------
 
         return $this->_storeManager->getStore($storeId);
@@ -343,6 +347,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->massactionMassSelectStyleFix();
+
             return parent::_toHtml();
         }
 
@@ -357,7 +362,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             $selectItemsMessage => $this->__($selectItemsMessage),
             $createEmptyListingMessage => $this->__($createEmptyListingMessage),
             $showAdvancedFilterButtonText => $this->__($showAdvancedFilterButtonText),
-            $hideAdvancedFilterButtonText => $this->__($hideAdvancedFilterButtonText)
+            $hideAdvancedFilterButtonText => $this->__($hideAdvancedFilterButtonText),
         ]);
         // ---------------------------------------
 
@@ -397,7 +402,8 @@ JS
 
     protected function massactionMassSelectStyleFix()
     {
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         require([
         'M2ePro/General/PhpFunctions',
     ], function(){

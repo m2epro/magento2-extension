@@ -35,6 +35,7 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Walmart\L
                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Category\Form::class);
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

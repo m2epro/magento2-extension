@@ -17,7 +17,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing;
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const EMPTY_TITLE_PLACEHOLDER = '--';
+    public const EMPTY_TITLE_PLACEHOLDER = '--';
 
     protected $resourceConnection;
 
@@ -216,11 +216,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function afterMapProduct()
     {
         $dataForAdd = [
-            'account_id'     => $this->getParentObject()->getAccountId(),
+            'account_id' => $this->getParentObject()->getAccountId(),
             'marketplace_id' => $this->getParentObject()->getMarketplaceId(),
-            'sku'            => $this->getSku(),
-            'product_id'     => $this->getParentObject()->getProductId(),
-            'store_id'       => $this->getRelatedStoreId()
+            'sku' => $this->getSku(),
+            'product_id' => $this->getParentObject()->getProductId(),
+            'store_id' => $this->getRelatedStoreId(),
         ];
 
         $this->activeRecordFactory->getObject('Walmart\Item')->setData($dataForAdd)->save();
@@ -229,37 +229,55 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function beforeUnmapProduct()
     {
         $existedRelation = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['ai' => $this->activeRecordFactory->getObject('Walmart\Item')->getResource()->getMainTable()],
-                []
-            )
-            ->join(
-                ['alp' => $this->activeRecordFactory->getObject('Walmart_Listing_Product')
-                ->getResource()->getMainTable()],
-                '(`alp`.`sku` = `ai`.`sku`)',
-                ['alp.listing_product_id']
-            )
-            ->where('`ai`.`sku` = ?', $this->getSku())
-            ->where('`ai`.`account_id` = ?', $this->getParentObject()->getAccountId())
-            ->where('`ai`.`marketplace_id` = ?', $this->getParentObject()->getMarketplaceId())
-            ->query()
-            ->fetchColumn();
+                                                    ->select()
+                                                    ->from(
+                                                        [
+                                                            'ai' => $this->activeRecordFactory->getObject(
+                                                                'Walmart\Item'
+                                                            )
+                                                                                              ->getResource()
+                                                                                              ->getMainTable(),
+                                                        ],
+                                                        []
+                                                    )
+                                                    ->join(
+                                                        [
+                                                            'alp' => $this->activeRecordFactory->getObject(
+                                                                'Walmart_Listing_Product'
+                                                            )
+                                                                                               ->getResource()
+                                                                                               ->getMainTable(),
+                                                        ],
+                                                        '(`alp`.`sku` = `ai`.`sku`)',
+                                                        ['alp.listing_product_id']
+                                                    )
+                                                    ->where('`ai`.`sku` = ?', $this->getSku())
+                                                    ->where(
+                                                        '`ai`.`account_id` = ?',
+                                                        $this->getParentObject()->getAccountId()
+                                                    )
+                                                    ->where(
+                                                        '`ai`.`marketplace_id` = ?',
+                                                        $this->getParentObject()->getMarketplaceId()
+                                                    )
+                                                    ->query()
+                                                    ->fetchColumn();
 
         if ($existedRelation) {
             return;
         }
 
         $this->resourceConnection->getConnection()
-            ->delete(
-                $this->activeRecordFactory->getObject('Walmart\Item')->getResource()->getMainTable(),
-                [
-                    '`account_id` = ?'     => $this->getParentObject()->getAccountId(),
-                    '`marketplace_id` = ?' => $this->getParentObject()->getMarketplaceId(),
-                    '`sku` = ?'            => $this->getSku(),
-                    '`product_id` = ?'     => $this->getParentObject()->getProductId()
-                ]
-            );
+                                 ->delete(
+                                     $this->activeRecordFactory->getObject('Walmart\Item')->getResource()->getMainTable(
+                                     ),
+                                     [
+                                         '`account_id` = ?' => $this->getParentObject()->getAccountId(),
+                                         '`marketplace_id` = ?' => $this->getParentObject()->getMarketplaceId(),
+                                         '`sku` = ?' => $this->getSku(),
+                                         '`product_id` = ?' => $this->getParentObject()->getProductId(),
+                                     ]
+                                 );
     }
 
     //########################################

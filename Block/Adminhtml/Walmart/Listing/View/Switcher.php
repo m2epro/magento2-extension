@@ -10,9 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View;
 
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 {
-    const VIEW_MODE_WALMART         = 'walmart';
-    const VIEW_MODE_MAGENTO         = 'magento';
-    const VIEW_MODE_SETTINGS        = 'settings';
+    public const VIEW_MODE_WALMART = 'walmart';
+    public const VIEW_MODE_MAGENTO = 'magento';
+    public const VIEW_MODE_SETTINGS = 'settings';
 
     /** @var \Ess\M2ePro\Helper\Component\Walmart */
     private $walmartHelper;
@@ -34,7 +34,8 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 
     public function getTooltip()
     {
-        return $this->__(<<<HTML
+        return $this->__(
+            <<<HTML
     Switch between 3 View Modes to manage the related Item data:
     <ul class="list">
         <li>
@@ -70,18 +71,18 @@ HTML
                 'value' => [
                     [
                         'value' => self::VIEW_MODE_WALMART,
-                        'label' => $this->walmartHelper->getTitle()
+                        'label' => $this->walmartHelper->getTitle(),
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
-                        'label' => $this->__('Settings')
+                        'label' => $this->__('Settings'),
                     ],
                     [
                         'value' => self::VIEW_MODE_MAGENTO,
-                        'label' => $this->__('Magento')
+                        'label' => $this->__('Magento'),
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

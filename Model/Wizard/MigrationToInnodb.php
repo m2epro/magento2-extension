@@ -16,7 +16,7 @@ use Ess\M2ePro\Model\Wizard;
 class MigrationToInnodb extends Wizard
 {
     protected $steps = [
-        'marketplacesSynchronization'
+        'marketplacesSynchronization',
     ];
 
     //########################################

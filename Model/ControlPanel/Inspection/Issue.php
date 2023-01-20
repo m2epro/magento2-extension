@@ -36,15 +36,15 @@ class Issue
     public function getMetadata()
     {
         if (empty($this->metadata)) {
-            return  '';
+            return '';
         }
 
         if (is_array($this->metadata)) {
             if (is_int(key($this->metadata))) {
-                return '<pre>' . implode(PHP_EOL, $this->metadata) .' </pre>';
+                return '<pre>' . implode(PHP_EOL, $this->metadata) . ' </pre>';
             }
 
-            return '<pre>' . str_replace('Array', '', print_r($this->metadata, true)) .'</pre>';
+            return '<pre>' . str_replace('Array', '', print_r($this->metadata, true)) . '</pre>';
         }
 
         return $this->metadata;

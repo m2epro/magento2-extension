@@ -8,10 +8,10 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
-use \Ess\M2ePro\Model\Listing as Listing;
-use \Ess\M2ePro\Model\Ebay\Listing as eBayListing;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter;
+use Ess\M2ePro\Model\Listing as Listing;
+use Ess\M2ePro\Model\Ebay\Listing as eBayListing;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
@@ -83,6 +83,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 
         if ($requestData === null) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
@@ -97,6 +98,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         $this->saveListing($requestData, $listing);
 
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 
@@ -135,38 +137,40 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
     private function buildTemplateCategory(array $rawData)
     {
         $builder = $this->categoryBuilderFactory->create();
+
         return $builder->build($this->categoryFactory->create(), $rawData);
     }
 
     private function buildStoreTemplateCategory(array $rawData)
     {
         $builder = $this->storeCategoryBuilderFactory->create();
+
         return $builder->build($this->storeCategoryFactory->create(), $rawData);
     }
 
     private function saveListing($requestData, \Ess\M2ePro\Model\Listing $listing)
     {
         $listingData = [
-            'auto_mode'                                      => Listing::AUTO_MODE_NONE,
-            'auto_global_adding_mode'                        => Listing::ADDING_MODE_NONE,
-            'auto_global_adding_add_not_visible'             => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_global_adding_template_category_id'                 => null,
-            'auto_global_adding_template_category_secondary_id'       => null,
-            'auto_global_adding_template_store_category_id'           => null,
+            'auto_mode' => Listing::AUTO_MODE_NONE,
+            'auto_global_adding_mode' => Listing::ADDING_MODE_NONE,
+            'auto_global_adding_add_not_visible' => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
+            'auto_global_adding_template_category_id' => null,
+            'auto_global_adding_template_category_secondary_id' => null,
+            'auto_global_adding_template_store_category_id' => null,
             'auto_global_adding_template_store_category_secondary_id' => null,
 
-            'auto_website_adding_mode'            => Listing::ADDING_MODE_NONE,
+            'auto_website_adding_mode' => Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_website_adding_template_category_id'                 => null,
-            'auto_website_adding_template_category_secondary_id'       => null,
-            'auto_website_adding_template_store_category_id'           => null,
+            'auto_website_adding_template_category_id' => null,
+            'auto_website_adding_template_category_secondary_id' => null,
+            'auto_website_adding_template_store_category_id' => null,
             'auto_website_adding_template_store_category_secondary_id' => null,
 
-            'auto_website_deleting_mode' => Listing::DELETING_MODE_NONE
+            'auto_website_deleting_mode' => Listing::DELETING_MODE_NONE,
         ];
 
         if ($requestData['auto_mode'] == Listing::AUTO_MODE_GLOBAL) {
-            $listingData['auto_mode']               = Listing::AUTO_MODE_GLOBAL;
+            $listingData['auto_mode'] = Listing::AUTO_MODE_GLOBAL;
             $listingData['auto_global_adding_mode'] = $requestData['auto_global_adding_mode'];
 
             if ($requestData['auto_global_adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
@@ -183,14 +187,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         }
 
         if ($requestData['auto_mode'] == Listing::AUTO_MODE_WEBSITE) {
-            $listingData['auto_mode']                  = Listing::AUTO_MODE_WEBSITE;
-            $listingData['auto_website_adding_mode']   = $requestData['auto_website_adding_mode'];
+            $listingData['auto_mode'] = Listing::AUTO_MODE_WEBSITE;
+            $listingData['auto_website_adding_mode'] = $requestData['auto_website_adding_mode'];
             $listingData['auto_website_deleting_mode'] = $requestData['auto_website_deleting_mode'];
 
             if ($requestData['auto_website_adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
                 $listingData['auto_website_adding_template_category_id'] = $this->tmpltCategory->getId();
                 $listingData['auto_website_adding_template_category_secondary_id'] = $this->secTmpltCategory->getId();
-                $listingData['auto_website_adding_template_store_category_id']  = $this->storeTmpltCategory->getId();
+                $listingData['auto_website_adding_template_store_category_id'] = $this->storeTmpltCategory->getId();
                 $listingData['auto_website_adding_template_store_category_secondary_id']
                     = $this->secStoreTmpltCategory->getId();
             }
@@ -214,21 +218,21 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
     private function saveAutoCategory($requestData, $listingId)
     {
         $groupData = [
-            'id'                     => null,
-            'category'               => null,
-            'title'                  => null,
-            'auto_mode'              => Listing::AUTO_MODE_NONE,
-            'adding_mode'            => Listing::ADDING_MODE_NONE,
+            'id' => null,
+            'category' => null,
+            'title' => null,
+            'auto_mode' => Listing::AUTO_MODE_NONE,
+            'adding_mode' => Listing::ADDING_MODE_NONE,
             'adding_add_not_visible' => Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'deleting_mode'          => Listing::DELETING_MODE_NONE
+            'deleting_mode' => Listing::DELETING_MODE_NONE,
         ];
         $groupData = array_merge($groupData, $requestData);
 
         $ebayGroupData = [
-            'adding_template_category_id'                 => null,
-            'adding_template_category_secondary_id'       => null,
-            'adding_template_store_category_id'           => null,
-            'adding_template_store_category_secondary_id' => null
+            'adding_template_category_id' => null,
+            'adding_template_category_secondary_id' => null,
+            'adding_template_store_category_id' => null,
+            'adding_template_store_category_secondary_id' => null,
         ];
 
         if ($requestData['adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {

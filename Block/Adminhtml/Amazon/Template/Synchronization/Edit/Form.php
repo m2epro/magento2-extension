@@ -30,17 +30,17 @@ class Form extends AbstractForm
     {
         $template = $this->globalDataHelper->getValue('tmp_template');
         $formData = $template !== null
-                    ? array_merge($template->getData(), $template->getChildObject()->getData())
-                    : ['title' => ''];
+            ? array_merge($template->getData(), $template->getChildObject()->getData())
+            : ['title' => ''];
 
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'      => 'edit_form',
-                    'method'  => 'post',
-                    'action'  => $this->getUrl('*/*/save'),
-                    'enctype' => 'multipart/form-data'
-                ]
+                    'id' => 'edit_form',
+                    'method' => 'post',
+                    'action' => $this->getUrl('*/*/save'),
+                    'enctype' => 'multipart/form-data',
+                ],
             ]
         );
 
@@ -48,7 +48,7 @@ class Form extends AbstractForm
             'magento_block_amazon_template_synchronization_general_general',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -71,7 +71,7 @@ class Form extends AbstractForm
             'container_html',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $dataBlock->toHtml()
+                'text' => $dataBlock->toHtml(),
             ]
         );
 

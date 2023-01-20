@@ -40,10 +40,10 @@ class Tabs extends AbstractTabs
                     '',
                     [
                         'data' => [
-                            'controller_name' => Command::CONTROLLER_TOOLS_MAGENTO
-                        ]
+                            'controller_name' => Command::CONTROLLER_TOOLS_MAGENTO,
+                        ],
                     ]
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -57,10 +57,10 @@ class Tabs extends AbstractTabs
                     '',
                     [
                         'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION
-                        ]
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION,
+                        ],
                     ]
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -74,10 +74,10 @@ class Tabs extends AbstractTabs
                     '',
                     [
                         'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_EBAY
-                        ]
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_EBAY,
+                        ],
                     ]
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -91,10 +91,10 @@ class Tabs extends AbstractTabs
                     '',
                     [
                         'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_AMAZON
-                        ]
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_AMAZON,
+                        ],
                     ]
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -108,10 +108,10 @@ class Tabs extends AbstractTabs
                     '',
                     [
                         'data' => [
-                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_WALMART
-                        ]
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_WALMART,
+                        ],
                     ]
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 

@@ -8,8 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary\Multiselect as Multi;
+use Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary\Multiselect as Multi;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
@@ -66,10 +66,10 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
     {
         $element = $this->_factoryElement->create('hidden', [
             'data' => [
-                'name'  => 'specific[dictionary_' . $index . '][attribute_title]',
+                'name' => 'specific[dictionary_' . $index . '][attribute_title]',
                 'class' => 'M2ePro-dictionary-specific-attribute-title',
-                'value' => $specific['title']
-            ]
+                'value' => $specific['title'],
+            ],
         ]);
         $element->setForm($this->getForm());
         $element->setId('specific_dictionary_attribute_title_' . $index);
@@ -81,10 +81,10 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
     {
         $element = $this->_factoryElement->create('hidden', [
             'data' => [
-                'name'  => 'specific[dictionary_' . $index . '][mode]',
+                'name' => 'specific[dictionary_' . $index . '][mode]',
                 'class' => 'specific_mode',
-                'value' => Specific::MODE_ITEM_SPECIFICS
-            ]
+                'value' => Specific::MODE_ITEM_SPECIFICS,
+            ],
         ]);
 
         $element->setForm($this->getForm());
@@ -108,7 +108,7 @@ HTML;
     public function getValueModeSelectHtml($index, $specific)
     {
         $values = [
-            Specific::VALUE_MODE_NONE             => [
+            Specific::VALUE_MODE_NONE => [
                 'value' => Specific::VALUE_MODE_NONE,
                 'label' => $this->translationHelper->__('None'),
             ],
@@ -116,7 +116,7 @@ HTML;
                 'value' => Specific::VALUE_MODE_EBAY_RECOMMENDED,
                 'label' => $this->translationHelper->__('eBay Recommended'),
             ],
-            Specific::VALUE_MODE_CUSTOM_VALUE     => [
+            Specific::VALUE_MODE_CUSTOM_VALUE => [
                 'value' => Specific::VALUE_MODE_CUSTOM_VALUE,
                 'label' => $this->translationHelper->__('Custom Value'),
             ],
@@ -130,7 +130,7 @@ HTML;
             $values[Specific::VALUE_MODE_NONE] = [
                 'label' => '',
                 'value' => '',
-                'style' => 'display: none'
+                'style' => 'display: none',
             ];
         }
 
@@ -138,14 +138,16 @@ HTML;
             unset($values[Specific::VALUE_MODE_EBAY_RECOMMENDED]);
         }
 
-        if ($specific['type'] == Specific::RENDER_TYPE_SELECT_ONE ||
+        if (
+            $specific['type'] == Specific::RENDER_TYPE_SELECT_ONE ||
             $specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE
         ) {
             unset($values[Specific::VALUE_MODE_CUSTOM_VALUE]);
         }
 
         if (empty($specific['values'])) {
-            if ($specific['type'] == Specific::RENDER_TYPE_SELECT_ONE_OR_TEXT ||
+            if (
+                $specific['type'] == Specific::RENDER_TYPE_SELECT_ONE_OR_TEXT ||
                 $specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT
             ) {
                 unset($values[Specific::VALUE_MODE_EBAY_RECOMMENDED]);
@@ -155,14 +157,14 @@ HTML;
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
         $element = $this->_factoryElement->create('select', [
             'data' => [
-                'name'     => 'specific[dictionary_' . $index . '][value_mode]',
-                'class'    => 'specific-value-mode',
-                'style'    => 'width: 100%',
+                'name' => 'specific[dictionary_' . $index . '][value_mode]',
+                'class' => 'specific-value-mode',
+                'style' => 'width: 100%',
                 'onchange' => "EbayTemplateCategorySpecificsObj.dictionarySpecificModeChange('{$index}', this);",
-                'value'    => !empty($specific['template_specific']) ?
+                'value' => !empty($specific['template_specific']) ?
                     $specific['template_specific']['value_mode'] : null,
-                'values'   => $values
-            ]
+                'values' => $values,
+            ],
         ]);
 
         $element->setNoSpan(true);
@@ -179,19 +181,22 @@ HTML;
         foreach ($specific['values'] as $value) {
             $values[] = [
                 'label' => $value['value'],
-                'value' => $value['value']
+                'value' => $value['value'],
             ];
         }
 
         $display = 'display: none;';
         $disabled = true;
-        if (isset($specific['template_specific']['value_mode']) &&
-            $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_EBAY_RECOMMENDED) {
+        if (
+            isset($specific['template_specific']['value_mode']) &&
+            $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_EBAY_RECOMMENDED
+        ) {
             $display = '';
             $disabled = false;
         }
 
-        if ($specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE ||
+        if (
+            $specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE ||
             $specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT
         ) {
             /** @var \Magento\Framework\Data\Form\Element\Select $element */
@@ -199,18 +204,18 @@ HTML;
                 Multi::class,
                 [
                     'data' => [
-                        'name'            => 'specific[dictionary_' . $index . '][value_ebay_recommended][]',
-                        'style'           => 'width: 100%;' . $display,
-                        'value'           => empty($specific['template_specific']['value_ebay_recommended'])
+                        'name' => 'specific[dictionary_' . $index . '][value_ebay_recommended][]',
+                        'style' => 'width: 100%;' . $display,
+                        'value' => empty($specific['template_specific']['value_ebay_recommended'])
                             ? []
                             : $this->dataHelper->jsonDecode(
                                 $specific['template_specific']['value_ebay_recommended']
                             ),
-                        'values'          => $values,
+                        'values' => $values,
                         'data-min_values' => $specific['min_values'],
                         'data-max_values' => $specific['max_values'],
-                        'disabled'        => $disabled
-                    ]
+                        'disabled' => $disabled,
+                    ],
                 ]
             );
         } else {
@@ -219,21 +224,21 @@ HTML;
                 [
                     'label' => '',
                     'value' => '',
-                    'style' => 'display: none'
+                    'style' => 'display: none',
                 ]
             );
 
             /** @var \Magento\Framework\Data\Form\Element\Select $element */
             $element = $this->_factoryElement->create('select', [
                 'data' => [
-                    'name'     => 'specific[dictionary_' . $index . '][value_ebay_recommended]',
-                    'style'    => 'width: 100%;' . $display,
-                    'value'    => empty($specific['template_specific']['value_ebay_recommended'])
+                    'name' => 'specific[dictionary_' . $index . '][value_ebay_recommended]',
+                    'style' => 'width: 100%;' . $display,
+                    'value' => empty($specific['template_specific']['value_ebay_recommended'])
                         ? ''
                         : $this->dataHelper->jsonDecode($specific['template_specific']['value_ebay_recommended']),
-                    'values'   => $values,
-                    'disabled' => $disabled
-                ]
+                    'values' => $values,
+                    'disabled' => $disabled,
+                ],
             ]);
         }
 
@@ -263,8 +268,10 @@ HTML;
 
         $display = 'display: none;';
         $disabled = true;
-        if (isset($specific['template_specific']['value_mode']) &&
-            $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_CUSTOM_VALUE) {
+        if (
+            isset($specific['template_specific']['value_mode']) &&
+            $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_CUSTOM_VALUE
+        ) {
             $display = '';
             $disabled = false;
         }
@@ -278,24 +285,24 @@ HTML;
         foreach ($customValues as $value) {
             /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $removeCustomValueBtn */
             $removeCustomValueBtn = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                ->setData(
-                    [
-                        'label'   => $this->translationHelper->__('Remove'),
-                        'onclick' => 'EbayTemplateCategorySpecificsObj.removeItemSpecificsCustomValue(this);',
-                        'class'   => 'action remove_item_specifics_custom_value_button',
-                        'style'   => 'margin-left: 3px;'
-                    ]
-                );
+                                                 ->setData(
+                                                     [
+                                                         'label' => $this->translationHelper->__('Remove'),
+                                                         'onclick' => 'EbayTemplateCategorySpecificsObj.removeItemSpecificsCustomValue(this);',
+                                                         'class' => 'action remove_item_specifics_custom_value_button',
+                                                         'style' => 'margin-left: 3px;',
+                                                     ]
+                                                 );
 
             /** @var \Magento\Framework\Data\Form\Element\Text $element */
             $element = $this->_factoryElement->create('text', [
                 'data' => [
-                    'name'     => 'specific[dictionary_' . $index . '][value_custom_value][]',
-                    'style'    => 'width: 100%;',
-                    'class'    => 'M2ePro-required-when-visible item-specific',
-                    'value'    => $value,
-                    'disabled' => $disabled
-                ]
+                    'name' => 'specific[dictionary_' . $index . '][value_custom_value][]',
+                    'style' => 'width: 100%;',
+                    'class' => 'M2ePro-required-when-visible item-specific',
+                    'value' => $value,
+                    'disabled' => $disabled,
+                ],
             ]);
             $element->setNoSpan(true);
             $element->setForm($this->getForm());
@@ -349,8 +356,10 @@ HTML;
 
         $display = 'display: none;';
         $disabled = true;
-        if (isset($specific['template_specific']['value_mode']) &&
-            $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_CUSTOM_ATTRIBUTE) {
+        if (
+            isset($specific['template_specific']['value_mode']) &&
+            $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_CUSTOM_ATTRIBUTE
+        ) {
             $display = '';
             $disabled = false;
         }
@@ -358,16 +367,16 @@ HTML;
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
         $element = $this->_factoryElement->create('select', [
             'data' => [
-                'name'                        => 'specific[dictionary_' . $index . '][value_custom_attribute]',
-                'style'                       => 'width: 100%;' . $display,
-                'class'                       => 'M2ePro-custom-attribute-can-be-created',
-                'value'                       => empty($specific['template_specific']['value_custom_attribute']) ?
+                'name' => 'specific[dictionary_' . $index . '][value_custom_attribute]',
+                'style' => 'width: 100%;' . $display,
+                'class' => 'M2ePro-custom-attribute-can-be-created',
+                'value' => empty($specific['template_specific']['value_custom_attribute']) ?
                     '' :
                     $specific['template_specific']['value_custom_attribute'],
-                'values'                      => $attributes,
+                'values' => $attributes,
                 'apply_to_all_attribute_sets' => 0,
-                'disabled'                    => $disabled
-            ]
+                'disabled' => $disabled,
+            ],
         ]);
 
         $element->setNoSpan(true);

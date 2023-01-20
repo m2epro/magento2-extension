@@ -49,6 +49,7 @@ class Edit extends Category
         if ($marketplaces->getSize() <= 0) {
             $message = 'You should select and update at least one Walmart Marketplace.';
             $this->messageManager->addError($this->__($message));
+
             return $this->_redirect('*/*/index');
         }
 
@@ -61,9 +62,9 @@ class Edit extends Category
 
         if ($templateModel->getId()) {
             $headerText = $this->__("Edit Category Policy");
-            $headerText .= ' "'.$this->dataHelper->escapeHtml(
+            $headerText .= ' "' . $this->dataHelper->escapeHtml(
                 $templateModel->getTitle()
-            ).'"';
+            ) . '"';
         } else {
             $headerText = $this->__("Add Category Policy");
         }

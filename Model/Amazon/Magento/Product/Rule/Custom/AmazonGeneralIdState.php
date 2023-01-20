@@ -33,6 +33,7 @@ class AmazonGeneralIdState extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return int
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
@@ -85,6 +86,7 @@ class AmazonGeneralIdState extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             [
                 'value' => \Ess\M2ePro\Model\Amazon\Listing\Product::GENERAL_ID_STATE_SET,

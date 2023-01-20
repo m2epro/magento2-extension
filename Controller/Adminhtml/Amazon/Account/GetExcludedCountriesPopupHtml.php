@@ -16,10 +16,13 @@ class GetExcludedCountriesPopupHtml extends Account
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedCountries $block */
         $block = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedCountries::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order\ExcludedCountries::class
+                      );
         $block->setData('selected_countries', explode(',', $this->getRequest()->getParam('selected_countries')));
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

@@ -57,8 +57,8 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 
         $this->getConnection()->update(
             $this->getMainTable(),
-            ['listing_title'=>$title],
-            ['listing_id = ?'=>(int)$listingId]
+            ['listing_title' => $title],
+            ['listing_id = ?' => (int)$listingId]
         );
 
         return true;
@@ -72,8 +72,8 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 
         $this->getConnection()->update(
             $this->getMainTable(),
-            ['product_title'=>$title],
-            ['product_id = ?'=>(int)$productId]
+            ['product_title' => $title],
+            ['product_id = ?' => (int)$productId]
         );
 
         return true;
@@ -81,7 +81,7 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
 
     public function getStatusByActionId($listingLog, $actionId)
     {
-        /** @var \Ess\M2ePro\Model\Listing\Log $listingLog*/
+        /** @var \Ess\M2ePro\Model\Listing\Log $listingLog */
         $collection = $listingLog->getCollection();
         $collection->addFieldToFilter('action_id', $actionId);
         $collection->addOrder('type');

@@ -2,8 +2,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
-use \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
-use \Ess\M2ePro\Helper\Module\Wizard;
+use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
+use Ess\M2ePro\Helper\Module\Wizard;
 
 class Skip extends InstallationAmazon
 {

@@ -40,6 +40,7 @@ class Multiselect extends AbstractElement
         if (strpos($name, '[]') === false) {
             $name .= '[]';
         }
+
         return $name;
     }
 
@@ -101,7 +102,7 @@ class Multiselect extends AbstractElement
             'data-role',
             'data-action',
             'data-min_values',
-            'data-max_values'
+            'data-max_values',
         ];
     }
 
@@ -162,6 +163,7 @@ class Multiselect extends AbstractElement
             $html .= ' selected="selected"';
         }
         $html .= '>' . $this->_escape($option['label']) . '</option>' . "\n";
+
         return $html;
     }
 

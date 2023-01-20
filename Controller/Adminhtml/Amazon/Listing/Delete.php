@@ -29,6 +29,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         if (count($ids) == 0) {
             $this->getMessageManager()->addError($this->__('Please select Item(s) to remove.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 

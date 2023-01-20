@@ -58,9 +58,9 @@ class View extends AbstractContainer
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('*/*/index');
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'CommonObj.backClick(\''.$url.'\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
@@ -68,18 +68,18 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/order/reservationCancel', ['ids' => $this->order->getId()]);
             $this->addButton('reservation_cancel', [
-                'label'     => $this->__('Cancel QTY Reserve'),
-                'onclick'   => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '".$url."');",
-                'class'     => 'primary'
+                'label' => $this->__('Cancel QTY Reserve'),
+                'onclick' => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '" . $url . "');",
+                'class' => 'primary',
             ]);
             // ---------------------------------------
         } elseif ($this->order->isReservable()) {
             // ---------------------------------------
             $url = $this->getUrl('*/order/reservationPlace', ['ids' => $this->order->getId()]);
             $this->addButton('reservation_place', [
-                'label'     => $this->__('Reserve QTY'),
-                'onclick'   => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '".$url."');",
-                'class'     => 'primary'
+                'label' => $this->__('Reserve QTY'),
+                'onclick' => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '" . $url . "');",
+                'class' => 'primary',
             ]);
             // ---------------------------------------
         }
@@ -88,9 +88,9 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $this->order->getId()]);
             $this->addButton('order', [
-                'label'     => $this->__('Create Magento Order'),
-                'onclick'   => "setLocation('".$url."');",
-                'class'     => 'primary'
+                'label' => $this->__('Create Magento Order'),
+                'onclick' => "setLocation('" . $url . "');",
+                'class' => 'primary',
             ]);
             // ---------------------------------------
         } elseif ($this->order->getMagentoOrder() === null || $this->order->getMagentoOrder()->isCanceled()) {
@@ -101,9 +101,9 @@ class View extends AbstractContainer
             );
 
             $this->addButton('order', [
-                'label'     => $this->__('Create Magento Order'),
-                'onclick'   => "confirmSetLocation('".$confirm."','".$url."');",
-                'class'     => 'primary'
+                'label' => $this->__('Create Magento Order'),
+                'onclick' => "confirmSetLocation('" . $confirm . "','" . $url . "');",
+                'class' => 'primary',
             ]);
             // ---------------------------------------
         }

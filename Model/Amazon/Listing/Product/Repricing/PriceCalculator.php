@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Repricing;
 
-use \Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
+use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 use Ess\M2ePro\Model\Listing\Product\Variation;
 
 /**

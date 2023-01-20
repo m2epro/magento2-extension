@@ -43,7 +43,7 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
         $category .= ' (' . $template->getData('category_id') . ')';
 
         if ($template->getCategoryMode() == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-            $category = $this->__('Magento Attribute') .' > '.
+            $category = $this->__('Magento Attribute') . ' > ' .
                 $this->magentoAttributeHelper->getAttributeLabel($template->getData('category_attribute'));
         }
 
@@ -51,12 +51,12 @@ class Info extends \Ess\M2ePro\Block\Adminhtml\Widget\Info
             [
                 [
                     'label' => $this->__('Marketplace'),
-                    'value' => $template->getMarketplace()->getTitle()
+                    'value' => $template->getMarketplace()->getTitle(),
                 ],
                 [
                     'label' => $this->__('Category'),
-                    'value' => $category
-                ]
+                    'value' => $category,
+                ],
             ]
         );
 

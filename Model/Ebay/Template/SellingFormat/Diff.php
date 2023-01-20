@@ -18,8 +18,8 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDifferent()
     {
         return $this->isQtyDifferent() ||
-               $this->isPriceDifferent() ||
-               $this->isOtherDifferent();
+            $this->isPriceDifferent() ||
+            $this->isOtherDifferent();
     }
 
     //########################################
@@ -86,7 +86,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'tax_category_attribute',
             'lot_size_mode',
             'lot_size_custom_value',
-            'lot_size_attribute'
+            'lot_size_attribute',
         ];
 
         return $this->isSettingsDifferent($keys);

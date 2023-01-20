@@ -39,6 +39,7 @@ class Edit extends Template
 
         if ($template === null && $id) {
             $this->messageManager->addError($this->__('Policy does not exist'));
+
             return $this->_redirect('*/walmart_template/index');
         }
 
@@ -47,11 +48,12 @@ class Edit extends Template
         $headerTextEdit = $this->__("Edit Synchronization Policy");
         $headerTextAdd = $this->__("Add Synchronization Policy");
 
-        if ($template !== null
+        if (
+            $template !== null
             && $template->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->dataHelper->escapeHtml($template->getTitle()).'"';
+            $headerText .= ' "' . $this->dataHelper->escapeHtml($template->getTitle()) . '"';
         } else {
             $headerText = $headerTextAdd;
         }

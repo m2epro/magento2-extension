@@ -20,7 +20,7 @@ class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Numbe
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
@@ -35,8 +35,8 @@ class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Numbe
     ) {
         parent::__construct($context, $data);
 
-        $this->modelFactory        = $modelFactory;
-        $this->helperFactory       = $helperFactory;
+        $this->modelFactory = $modelFactory;
+        $this->helperFactory = $helperFactory;
         $this->moduleConfiguration = $moduleConfiguration;
     }
 

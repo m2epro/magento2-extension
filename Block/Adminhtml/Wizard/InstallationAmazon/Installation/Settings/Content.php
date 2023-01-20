@@ -26,8 +26,8 @@ class Content extends AbstractForm
         $form = $settings->getForm();
 
         $form->setData([
-            'id'     => 'edit_form',
-            'method' => 'post'
+            'id' => 'edit_form',
+            'method' => 'post',
         ]);
 
         $form->setUseContainer(true);

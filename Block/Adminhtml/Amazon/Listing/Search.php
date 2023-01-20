@@ -65,7 +65,7 @@ HTML
         );
 
         $this->appendHelpBlock([
-            'content' => $content
+            'content' => $content,
         ]);
 
         return parent::_prepareLayout();
@@ -78,22 +78,22 @@ HTML
         $marketplaceSwitcherBlock = $this->getLayout()
                                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher::class)
                                          ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
-            'controller_name' => $this->getRequest()->getControllerName()
-        ]);
+                                             'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
+                                             'controller_name' => $this->getRequest()->getControllerName(),
+                                         ]);
 
         $accountSwitcherBlock = $this->getLayout()
                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Switcher::class)
                                      ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
-            'controller_name' => $this->getRequest()->getControllerName()
-        ]);
+                                         'component_mode' => \Ess\M2ePro\Helper\View\Amazon::NICK,
+                                         'controller_name' => $this->getRequest()->getControllerName(),
+                                     ]);
 
         $listingTypeSwitcherBlock = $this->getLayout()
                                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::class)
                                          ->setData([
-            'controller_name' => $this->getRequest()->getControllerName()
-        ]);
+                                             'controller_name' => $this->getRequest()->getControllerName(),
+                                         ]);
 
         $filterBlockHtml = <<<HTML
 <div class="page-main-actions">

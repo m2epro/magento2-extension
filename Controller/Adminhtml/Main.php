@@ -15,6 +15,7 @@ use Ess\M2ePro\Model\Servicing\Dispatcher;
 
 abstract class Main extends Base
 {
+    /** @var bool  */
     private $systemRequirementsChecked = false;
 
     //########################################
@@ -69,9 +70,11 @@ abstract class Main extends Base
 
     protected function addLeft(\Magento\Framework\View\Element\AbstractBlock $block)
     {
-        if ($this->getRequest()->isGet() &&
+        if (
+            $this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
-            !$this->getRequest()->isXmlHttpRequest()) {
+            !$this->getRequest()->isXmlHttpRequest()
+        ) {
             if ($this->isContentLocked()) {
                 return $this;
             }
@@ -82,9 +85,11 @@ abstract class Main extends Base
 
     protected function addContent(\Magento\Framework\View\Element\AbstractBlock $block)
     {
-        if ($this->getRequest()->isGet() &&
+        if (
+            $this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
-            !$this->getRequest()->isXmlHttpRequest()) {
+            !$this->getRequest()->isXmlHttpRequest()
+        ) {
             if ($this->isContentLocked()) {
                 return $this;
             }
@@ -148,6 +153,7 @@ abstract class Main extends Base
         $wizardHelper = $this->getHelper('Module\Wizard');
         $activeWizard = $wizardHelper->getActiveBlockerWizard($this->getCustomViewNick());
         $activeWizardNick = $wizardHelper->getNick($activeWizard);
+
         return $this->_redirect('*/wizard_' . $activeWizardNick, ['referrer' => $this->getCustomViewNick()]);
     }
 
@@ -167,7 +173,8 @@ abstract class Main extends Base
 
     protected function addNotificationMessages()
     {
-        if ($this->getRequest()->isGet() &&
+        if (
+            $this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()
         ) {
@@ -309,6 +316,7 @@ abstract class Main extends Base
         if (!empty($message['title'])) {
             return "<strong>{$this->__($message['title'])}</strong><br/>{$this->__($message['text'])}";
         }
+
         return $this->__($message['text']);
     }
 
@@ -356,12 +364,13 @@ abstract class Main extends Base
             );
         }
 
-        if ($this->getHelper('Module')->isReadyToWork() &&
+        if (
+            $this->getHelper('Module')->isReadyToWork() &&
             $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true)
         ) {
             $url = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200402');
 
-            $message  = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
+            $message = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
             $message .= ' It does not allow M2E Pro to work correctly.';
             $message .= '<br/>Please check this <a href="%url%" target="_blank" class="external-link">article</a>';
             $message .= ' for the details on how to resolve the problem.';
@@ -392,6 +401,7 @@ abstract class Main extends Base
             );
 
             $this->getMessageManager()->addError($message, self::GLOBAL_MESSAGES_GROUP);
+
             return true;
         }
 
@@ -471,8 +481,10 @@ abstract class Main extends Base
             '/global/notification/static_content/skip_for_version/'
         );
 
-        if ($skipMessageForVersion !== null &&
-            version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
+        if (
+            $skipMessageForVersion !== null &&
+            version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')
+        ) {
             return false;
         }
 
@@ -498,7 +510,7 @@ abstract class Main extends Base
             '*/general/skipStaticContentValidationMessage',
             [
                 'skip_message' => true,
-                'back' => base64_encode($this->getUrl('*/*/*', ['_current' => true]))
+                'back' => base64_encode($this->getUrl('*/*/*', ['_current' => true])),
             ]
         );
 
@@ -525,7 +537,7 @@ abstract class Main extends Base
     private function isContentLocked()
     {
         return $this->getHelper('Magento')->isProduction() &&
-               !$this->getHelper('Module')->isStaticContentDeployed();
+            !$this->getHelper('Module')->isStaticContentDeployed();
     }
 
     private function isContentLockedByWizard()
@@ -543,8 +555,10 @@ abstract class Main extends Base
 
         $activeWizardNick = $wizardHelper->getNick($activeWizard);
 
-        if ((bool)$this->getRequest()->getParam('wizard', false) ||
-            $this->getRequest()->getControllerName() == 'wizard_'.$activeWizardNick) {
+        if (
+            (bool)$this->getRequest()->getParam('wizard', false) ||
+            $this->getRequest()->getControllerName() == 'wizard_' . $activeWizardNick
+        ) {
             return false;
         }
 

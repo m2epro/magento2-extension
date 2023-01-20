@@ -104,7 +104,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->getSelect()->joinLeft(
                 [
                     'account_table' => $this->activeRecordFactory->getObject('Account')
-                        ->getResource()->getMainTable()
+                                                                 ->getResource()->getMainTable(),
                 ],
                 'main_table.account_id = account_table.id',
                 ['real_account_id' => 'account_table.id']
@@ -118,7 +118,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->getSelect()->joinLeft(
                 [
                     'marketplace_table' => $this->activeRecordFactory->getObject('Marketplace')
-                        ->getResource()->getMainTable()
+                                                                     ->getResource()->getMainTable(),
                 ],
                 'main_table.marketplace_id = marketplace_table.id',
                 ['marketplace_status' => 'marketplace_table.status']
@@ -162,13 +162,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('create_date', [
-            'header'       => $this->__('Creation Date'),
-            'align'        => 'left',
-            'type'         => 'datetime',
-            'filter'       => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'filter_time'  => true,
-            'index'        => 'create_date',
-            'filter_index' => 'main_table.create_date'
+            'header' => $this->__('Creation Date'),
+            'align' => 'left',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'filter_time' => true,
+            'index' => 'create_date',
+            'filter_index' => 'main_table.create_date',
         ]);
 
         $componentNick = $this->componentHelper->getComponentTitle(
@@ -176,47 +176,47 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         );
 
         $this->addColumn('channel_order_id', [
-            'header'    => $this->__('%1% Order #', $componentNick),
-            'align'     => 'left',
-            'sortable'  => false,
-            'index'     => 'channel_order_id',
+            'header' => $this->__('%1% Order #', $componentNick),
+            'align' => 'left',
+            'sortable' => false,
+            'index' => 'channel_order_id',
             'frame_callback' => [$this, 'callbackColumnChannelOrderId'],
-            'filter_condition_callback' => [$this, 'callbackFilterChannelOrderId']
+            'filter_condition_callback' => [$this, 'callbackFilterChannelOrderId'],
         ]);
 
         $this->addColumn('magento_order_number', [
-            'header'    => $this->__('Magento Order #'),
-            'align'     => 'left',
-            'index'     => 'so.increment_id',
-            'sortable'      => false,
-            'frame_callback' => [$this, 'callbackColumnMagentoOrderNumber']
+            'header' => $this->__('Magento Order #'),
+            'align' => 'left',
+            'index' => 'so.increment_id',
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnMagentoOrderNumber'],
         ]);
 
         $this->addColumn('description', [
-            'header'    => $this->__('Message'),
-            'align'     => 'left',
-            'index'     => 'description',
-            'frame_callback' => [$this, 'callbackColumnDescription']
+            'header' => $this->__('Message'),
+            'align' => 'left',
+            'index' => 'description',
+            'frame_callback' => [$this, 'callbackColumnDescription'],
         ]);
 
         $this->addColumn('initiator', [
-            'header'    => $this->__('Run Mode'),
-            'align'     => 'right',
-            'index'     => 'initiator',
-            'sortable'  => false,
-            'type'      => 'options',
-            'options'   => $this->_getLogInitiatorList(),
-            'frame_callback' => [$this, 'callbackColumnInitiator']
+            'header' => $this->__('Run Mode'),
+            'align' => 'right',
+            'index' => 'initiator',
+            'sortable' => false,
+            'type' => 'options',
+            'options' => $this->_getLogInitiatorList(),
+            'frame_callback' => [$this, 'callbackColumnInitiator'],
         ]);
 
         $this->addColumn('type', [
-            'header'    => $this->__('Type'),
-            'align'     => 'right',
-            'index'     => 'type',
-            'type'      => 'options',
-            'sortable'  => false,
-            'options'   => $this->_getLogTypeList(),
-            'frame_callback' => [$this, 'callbackColumnType']
+            'header' => $this->__('Type'),
+            'align' => 'right',
+            'index' => 'type',
+            'type' => 'options',
+            'sortable' => false,
+            'options' => $this->_getLogTypeList(),
+            'frame_callback' => [$this, 'callbackColumnType'],
         ]);
 
         return parent::_prepareColumns();
@@ -265,7 +265,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         } else {
             $url = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
             $result = '<a href="' . $url . '" target="_blank">'
-                        . $this->dataHelper->escapeHtml($magentoOrderNumber) . '</a>';
+                . $this->dataHelper->escapeHtml($magentoOrderNumber) . '</a>';
         }
 
         return "<span style='min-width: 110px; display: block;'>{$result}</span>";
@@ -282,25 +282,34 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         if ($this->ebayHelper->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Ebay\Order')
-                ->getCollection()
-                ->addFieldToFilter('ebay_order_id', ['like' => '%' . $value . '%'])
-                ->getColumnValues('order_id');
+                                                       ->getCollection()
+                                                       ->addFieldToFilter(
+                                                           'ebay_order_id',
+                                                           ['like' => '%' . $value . '%']
+                                                       )
+                                                       ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 
         if ($this->amazonHelper->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Amazon\Order')
-                ->getCollection()
-                ->addFieldToFilter('amazon_order_id', ['like' => '%' . $value . '%'])
-                ->getColumnValues('order_id');
+                                                       ->getCollection()
+                                                       ->addFieldToFilter(
+                                                           'amazon_order_id',
+                                                           ['like' => '%' . $value . '%']
+                                                       )
+                                                       ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 
         if ($this->walmartHelper->isEnabled()) {
             $tempOrdersIds = $this->activeRecordFactory->getObject('Walmart\Order')
-                ->getCollection()
-                ->addFieldToFilter('walmart_order_id', ['like' => '%' . $value . '%'])
-                ->getColumnValues('order_id');
+                                                       ->getCollection()
+                                                       ->addFieldToFilter(
+                                                           'walmart_order_id',
+                                                           ['like' => '%' . $value . '%']
+                                                       )
+                                                       ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
 

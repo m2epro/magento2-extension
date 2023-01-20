@@ -30,7 +30,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $form = $this->_formFactory->create([
             'data' => [
-                'id'     => 'edit_form',
+                'id' => 'edit_form',
                 'method' => 'post',
             ],
         ]);
@@ -45,11 +45,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'magento_1_url',
                 'text',
                 [
-                    'name'     => 'magento_1_url',
-                    'label'    => $this->__('M1 Website Address'),
-                    'title'    => $this->__('M1 Website Address'),
+                    'name' => 'magento_1_url',
+                    'label' => $this->__('M1 Website Address'),
+                    'title' => $this->__('M1 Website Address'),
                     'required' => true,
-                    'value'    => $wizard->getPossibleM1Domain(),
+                    'value' => $wizard->getPossibleM1Domain(),
                 ]
             );
         }
@@ -58,13 +58,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'disable_m1_module',
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Boolean::class,
             [
-                'name'     => 'disable_m1_module',
-                'label'    => $this->__('Disable M1 Synchronization'),
-                'title'    => $this->__('Disable M1 synchronization'),
-                'class'    => 'M2ePro-required-when-visible',
+                'name' => 'disable_m1_module',
+                'label' => $this->__('Disable M1 Synchronization'),
+                'title' => $this->__('Disable M1 synchronization'),
+                'class' => 'M2ePro-required-when-visible',
                 'required' => true,
-                'value'    => '',
-                'tooltip'  => $this->__(
+                'value' => '',
+                'tooltip' => $this->__(
                     '<p style="color: #41362f">If your Magento v2.x is staging yet,
                     it is recommended to keep synchronization on Magento v1.x running. It can be disabled later under
                     <i>System > Configuration > M2E Pro > Module & Channels > Module

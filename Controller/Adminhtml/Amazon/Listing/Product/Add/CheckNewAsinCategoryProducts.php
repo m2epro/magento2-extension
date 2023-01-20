@@ -26,7 +26,7 @@ class CheckNewAsinCategoryProducts extends \Ess\M2ePro\Controller\Adminhtml\Amaz
             if (empty($descriptionTemplateId)) {
                 $this->setJsonContent([
                     'type' => 'error',
-                    'text' => $this->__('You have not selected the Description Policy for some Magento Categories.')
+                    'text' => $this->__('You have not selected the Description Policy for some Magento Categories.'),
                 ]);
 
                 return $this->getResult();

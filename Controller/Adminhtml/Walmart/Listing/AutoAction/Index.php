@@ -25,7 +25,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 
     public function execute()
     {
-        $listing   = $this->walmartFactory->getCachedObjectLoaded(
+        $listing = $this->walmartFactory->getCachedObjectLoaded(
             'Listing',
             $this->getRequest()->getParam('listing_id')
         );
@@ -52,8 +52,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 
         $this->setJsonContent([
             'mode' => $autoMode,
-            'html' => $this->getLayout()->createBlock($blockName)->toHtml()
+            'html' => $this->getLayout()->createBlock($blockName)->toHtml(),
         ]);
+
         return $this->getResult();
     }
 }

@@ -42,8 +42,8 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
         $marketplaceSwitcher = $this->getLayout()
                                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher::class)
                                     ->setData([
-            'component_mode' => $this->getData('component_mode')
-        ]);
+                                        'component_mode' => $this->getData('component_mode'),
+                                    ]);
 
         return <<<JS
 var switchUrl = '{$this->getSwitchUrl()}';

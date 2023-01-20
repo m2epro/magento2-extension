@@ -18,6 +18,7 @@ class Delete extends Order
 
         if ($id === null) {
             $this->messageManager->addError($this->__('Order ID is not defined.'));
+
             return $this->_redirect('*/*/index');
         }
 
@@ -27,12 +28,14 @@ class Delete extends Order
 
         if ($order->getId() === null) {
             $this->messageManager->addError($this->__('Order with such ID does not exist.'));
+
             return $this->_redirect('*/*/index');
         }
 
         $order->delete();
 
         $this->messageManager->addSuccess($this->__('Order was deleted.'));
+
         return $this->_redirect('*/*/index');
     }
 }

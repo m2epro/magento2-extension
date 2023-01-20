@@ -18,8 +18,7 @@ class Ebay extends AbstractPriceCondition
             ->addSelect('vat', 'vat_percent')
             ->addSelect('modifier', 'fixed_price_modifier')
             ->addSelect('mode', 'fixed_price_mode')
-            ->addSelect('mode_attribute', 'fixed_price_custom_attribute')
-        ;
+            ->addSelect('mode_attribute', 'fixed_price_custom_attribute');
 
         $sellingPolicyQuery->from('t', 'm2epro_ebay_template_selling_format');
 

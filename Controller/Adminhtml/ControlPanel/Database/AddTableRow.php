@@ -16,7 +16,7 @@ class AddTableRow extends Table
     public function execute()
     {
         $modelInstance = $this->getTableModel();
-        $cellsValues   = $this->prepareCellsValuesArray();
+        $cellsValues = $this->prepareCellsValuesArray();
 
         if (empty($cellsValues)) {
             return;

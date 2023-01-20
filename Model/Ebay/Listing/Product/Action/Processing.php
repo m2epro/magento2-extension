@@ -15,10 +15,10 @@ use Ess\M2ePro\Model\ActiveRecord\AbstractModel;
  */
 class Processing extends AbstractModel
 {
-    const TYPE_LIST   = 'list';
-    const TYPE_RELIST = 'relist';
-    const TYPE_REVISE = 'revise';
-    const TYPE_STOP   = 'stop';
+    public const TYPE_LIST = 'list';
+    public const TYPE_RELIST = 'relist';
+    public const TYPE_REVISE = 'revise';
+    public const TYPE_STOP = 'stop';
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
@@ -65,6 +65,7 @@ class Processing extends AbstractModel
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -89,6 +90,7 @@ class Processing extends AbstractModel
     public function setProcessing(\Ess\M2ePro\Model\Processing $processing)
     {
         $this->processing = $processing;
+
         return $this;
     }
 

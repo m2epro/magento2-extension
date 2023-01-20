@@ -22,7 +22,7 @@ class Subtitle extends AbstractModel
         $this->processNotFoundAttributes('Subtitle');
 
         return [
-            'subtitle' => $data
+            'subtitle' => $data,
         ];
     }
 

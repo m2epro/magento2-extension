@@ -45,9 +45,9 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
     protected function createMarketplaceSwitcherBlock()
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher::class)
-                                 ->setData([
-            'component_mode' => $this->getComponentMode(),
-        ]);
+                    ->setData([
+                        'component_mode' => $this->getComponentMode(),
+                    ]);
     }
 
     //########################################

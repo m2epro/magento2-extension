@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Settings;
 
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
-    const TAB_ID_SYNCHRONIZATION   = 'synchronization';
+    public const TAB_ID_SYNCHRONIZATION = 'synchronization';
 
     protected function _construct()
     {
@@ -39,9 +39,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
             'Settings saved' => $this->__('Settings saved'),
             'Error' => $this->__('Error'),
         ]);
-        $this->js->addRequireJs([
-            's' => 'M2ePro/Settings'
-        ], <<<JS
+        $this->js->addRequireJs(
+            [
+            's' => 'M2ePro/Settings',
+            ],
+            <<<JS
 
         window.SettingsObj = new Settings();
 JS

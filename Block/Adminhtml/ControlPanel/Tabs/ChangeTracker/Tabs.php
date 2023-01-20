@@ -37,7 +37,7 @@ class Tabs extends AbstractTabs
                 'title' => __('Settings'),
                 'content' => $this->getLayout()->createBlock(
                     \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker\SettingsForm::class
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -48,7 +48,7 @@ class Tabs extends AbstractTabs
                 'title' => __('Executed Time'),
                 'content' => $this->getLayout()->createBlock(
                     \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker\ExecutedTime::class
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -59,7 +59,7 @@ class Tabs extends AbstractTabs
                 'title' => __('Logs'),
                 'content' => $this->getLayout()->createBlock(
                     \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker\Logs::class
-                )->toHtml()
+                )->toHtml(),
             ]
         );
 
@@ -73,7 +73,8 @@ class Tabs extends AbstractTabs
      */
     private function initCss(): void
     {
-        $this->css->add("
+        $this->css->add(
+            "
             .executed_time_table table {
                 width: 100%;
                 border: 1px solid #adadad;
@@ -115,6 +116,7 @@ class Tabs extends AbstractTabs
             .log-level {
                 font-weight: 600;
             }
-        ");
+        "
+        );
     }
 }

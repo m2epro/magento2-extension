@@ -13,6 +13,6 @@ abstract class Listing extends \Ess\M2ePro\Controller\Adminhtml\Base
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon_listings');
+            $this->_authorization->isAllowed('Ess_M2ePro::amazon_listings');
     }
 }

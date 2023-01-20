@@ -17,7 +17,7 @@ class Index extends Settings
         // Remove when Magento fix Horizontal Tabs bug
         if ($this->getRequest()->isXmlHttpRequest()) {
             $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Synchronization::class)
-                                       ->toHtml();
+                          ->toHtml();
             $this->setAjaxContent($block);
 
             return $this->getResult();

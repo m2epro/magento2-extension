@@ -8,26 +8,21 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass
- */
 class Mass extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MAX_PROCESSORS_COUNT_PER_ONE_TIME = 1000;
-
-    //########################################
+    public const MAX_PROCESSORS_COUNT_PER_ONE_TIME = 1000;
 
     /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
     private $listingsProducts = [];
-
+    /** @var bool  */
     private $forceExecuting = true;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
@@ -39,21 +34,25 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $listingsProducts
+     *
      * @return $this
      */
     public function setListingsProducts(array $listingsProducts)
     {
         $this->listingsProducts = $listingsProducts;
+
         return $this;
     }
 
     /**
      * @param bool $forceExecuting
+     *
      * @return $this
      */
     public function setForceExecuting($forceExecuting = true)
     {
         $this->forceExecuting = $forceExecuting;
+
         return $this;
     }
 
@@ -85,14 +84,14 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
 
         $notProcessedListingProductIds = array_unique(array_diff(array_keys($uniqueProcessors), $alreadyProcessed));
 
-        $resource  = $this->amazonFactory->getObject('Listing\Product')->getResource();
+        $resource = $this->amazonFactory->getObject('Listing\Product')->getResource();
         $connWrite = $resource->getConnection();
 
         $connWrite->update(
             $resource->getChildTable(\Ess\M2ePro\Helper\Component\Amazon::NICK),
             ['variation_parent_need_processor' => 1],
             [
-                'is_variation_parent = ?'   => 1,
+                'is_variation_parent = ?' => 1,
                 'listing_product_id IN (?)' => $notProcessedListingProductIds,
             ]
         );

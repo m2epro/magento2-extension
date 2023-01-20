@@ -17,7 +17,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     public function getCommand()
     {
-        return ['product','search','byAsin'];
+        return ['product', 'search', 'byAsin'];
     }
 
     //########################################
@@ -32,7 +32,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
     {
         return [
             'item' => $this->getQuery(),
-            'variation_bad_parent_modify_child_to_simple' => $this->getVariationBadParentModifyChildToSimple()
+            'variation_bad_parent_modify_child_to_simple' => $this->getVariationBadParentModifyChildToSimple(),
         ];
     }
 

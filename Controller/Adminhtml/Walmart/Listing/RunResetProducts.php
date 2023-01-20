@@ -15,6 +15,7 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
         $productsIds = $this->getRequest()->getParam('selected_products');
         if (empty($productsIds)) {
             $this->setAjaxContent($this->__('You should select Products'));
+
             return $this->getResult();
         }
 
@@ -33,10 +34,11 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
 
         if ($listingsProducts->getSize() === 0) {
             $this->setAjaxContent($this->__('No products provided.'));
+
             return $this->getResult();
         }
 
-        $result       = 'success';
+        $result = 'success';
         $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
                                                   ->getResource()
                                                   ->getNextActionId();
@@ -55,10 +57,11 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $isVariationParent = (bool)$listingProduct->getChildObject()->getData('is_variation_parent');
-            if (!$isVariationParent && ($listingProduct->getChildObject()->isOnlinePriceInvalid() ||
+            if (
+                !$isVariationParent && ($listingProduct->getChildObject()->isOnlinePriceInvalid() ||
                     $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
             ) {
-                $result  = 'error';
+                $result = 'error';
 
                 $message->initFromPreparedData(
                     'Item cannot be reset. Most probably it is not blocked or requires a price adjusting.',
@@ -83,21 +86,21 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
 
             $instructionsData[] = [
                 'listing_product_id' => $index,
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
-                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
-                'priority'           => 30,
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                'priority' => 30,
             ];
 
             $listingProduct->addData([
-                'status'                  => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-                'online_qty'              => null,
-                'online_price'            => null,
-                'online_promotions'       => null,
-                'online_details'          => null,
+                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+                'online_qty' => null,
+                'online_price' => null,
+                'online_promotions' => null,
+                'online_details' => null,
                 'is_online_price_invalid' => 0,
-                'status_change_reasons'   => null,
-                'is_missed_on_channel'    => 0
+                'status_change_reasons' => null,
+                'is_missed_on_channel' => 0,
             ]);
 
             $message->initFromPreparedData(
@@ -122,9 +125,10 @@ class RunResetProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructionsData);
 
         $this->setJsonContent([
-            'result'    => $result,
-            'action_id' => $logsActionId
+            'result' => $result,
+            'action_id' => $logsActionId,
         ]);
+
         return $this->getResult();
     }
 }

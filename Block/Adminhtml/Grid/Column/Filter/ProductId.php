@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter;
+namespace Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId
@@ -21,10 +21,10 @@ class ProductId extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\R
         $filterValue = (string)$this->getValue('is_mapped');
 
         $filterValue === '' && $anySelected = ' selected="selected" ';
-        $filterValue === '0' && $noSelected  = ' selected="selected" ';
+        $filterValue === '0' && $noSelected = ' selected="selected" ';
         $filterValue === '1' && $yesSelected = ' selected="selected" ';
 
-        $isEnabled  = 1;
+        $isEnabled = 1;
         $isDisabled = 0;
 
         $html = <<<HTML
@@ -57,9 +57,11 @@ HTML;
         }
 
         $value = $this->getData('value');
-        if ((isset($value['from']) && strlen($value['from']) > 0) ||
+        if (
+            (isset($value['from']) && strlen($value['from']) > 0) ||
             (isset($value['to']) && strlen($value['to']) > 0) ||
-            (isset($value['is_mapped']) && $value['is_mapped'] !== '')) {
+            (isset($value['is_mapped']) && $value['is_mapped'] !== '')
+        ) {
             return $value;
         }
 

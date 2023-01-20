@@ -37,11 +37,11 @@ class RemovedStores implements InspectorInterface, FixerInterface
         StoreManager $storeManager,
         IssueFactory $issueFactory
     ) {
-        $this->helperFactory      = $helperFactory;
-        $this->urlBuilder         = $urlBuilder;
+        $this->helperFactory = $helperFactory;
+        $this->urlBuilder = $urlBuilder;
         $this->resourceConnection = $resourceConnection;
-        $this->storeManager       = $storeManager;
-        $this->issueFactory       = $issueFactory;
+        $this->storeManager = $storeManager;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -56,16 +56,16 @@ class RemovedStores implements InspectorInterface, FixerInterface
         foreach ($storeRelatedColumns as $tableName => $columnsInfo) {
             foreach ($columnsInfo as $columnInfo) {
                 $tempResult = $this->resourceConnection->getConnection()->select()
-                    ->distinct()
-                    ->from(
-                        $this->helperFactory
-                            ->getObject('Module_Database_Structure')
-                            ->getTableNameWithPrefix($tableName),
-                        [$columnInfo['name']]
-                    )
-                    ->where("{$columnInfo['name']} IS NOT NULL")
-                    ->query()
-                    ->fetchAll(\Zend_Db::FETCH_COLUMN);
+                                                       ->distinct()
+                                                       ->from(
+                                                           $this->helperFactory
+                                                               ->getObject('Module_Database_Structure')
+                                                               ->getTableNameWithPrefix($tableName),
+                                                           [$columnInfo['name']]
+                                                       )
+                                                       ->where("{$columnInfo['name']} IS NOT NULL")
+                                                       ->query()
+                                                       ->fetchAll(\Zend_Db::FETCH_COLUMN);
 
                 if ($columnInfo['type'] == 'int') {
                     $usedStoresIds = array_merge($usedStoresIds, $tempResult);
@@ -83,11 +83,12 @@ class RemovedStores implements InspectorInterface, FixerInterface
         $usedStoresIds = array_values(array_unique(array_map('intval', $usedStoresIds)));
         $this->removedStoresId = array_diff($usedStoresIds, $existsStoreIds);
     }
+
     //########################################
 
     public function process()
     {
-        $issues =[];
+        $issues = [];
         $this->getRemovedStores();
 
         if (!empty($this->removedStoresId)) {
@@ -114,6 +115,7 @@ class RemovedStores implements InspectorInterface, FixerInterface
     <button type="submit">Repair</button>
 </form>
 HTML;
+
         return $html;
     }
 
@@ -142,8 +144,9 @@ HTML;
                 }
 
                 // json ("store_id":"10" | "store_id":10, | "store_id":10})
-                $bind = [$columnInfo['name'] => new \Zend_Db_Expr(
-                    "REPLACE(
+                $bind = [
+                    $columnInfo['name'] => new \Zend_Db_Expr(
+                        "REPLACE(
                         REPLACE(
                             REPLACE(
                                 `{$columnInfo['name']}`,
@@ -156,7 +159,8 @@ HTML;
                         'store_id\":{$replaceIdFrom}}',
                         'store_id\":{$replaceIdTo}}'
                     )"
-                )];
+                    ),
+                ];
 
                 $this->resourceConnection->getConnection()->update(
                     $this->helperFactory->getObject('Module_Database_Structure')->getTableNameWithPrefix($tableName),

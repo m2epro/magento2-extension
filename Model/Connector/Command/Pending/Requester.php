@@ -15,12 +15,12 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
 {
     /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Single\Runner $processingRunner */
     protected $processingRunner = null;
-
+    /** @var null|string  */
     protected $processingServerHash = null;
 
     /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Responser $responser */
     protected $responser = null;
-
+    /** @var null|array  */
     protected $preparedResponseData = null;
 
     //########################################
@@ -49,7 +49,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
 
         return $this->responser = $this->modelFactory->getObject($this->getResponserModelName(), [
             'params' => $this->getResponserParams(),
-            'response' => $this->getResponse()
+            'response' => $this->getResponse(),
         ]);
     }
 
@@ -64,8 +64,10 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromException($exception);
 
-            if ($this->getConnection()->getResponse() === null ||
-                $this->getConnection()->getResponse()->getMessages() === null) {
+            if (
+                $this->getConnection()->getResponse() === null ||
+                $this->getConnection()->getResponse()->getMessages() === null
+            ) {
                 $response = $this->modelFactory->getObject('Connector_Connection_Response');
                 $response->initFromPreparedResponse([], []);
 
@@ -127,7 +129,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
     protected function getProcessingParams()
     {
         return [
-            'component'   => $this->getProtocol()->getComponent(),
+            'component' => $this->getProtocol()->getComponent(),
             'server_hash' => $this->processingServerHash,
         ];
     }
@@ -138,7 +140,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
     {
         $className = $this->getHelper('Client')->getClassName($this);
 
-        $responserModelName = preg_replace('/Requester$/', '', $className).'Responser';
+        $responserModelName = preg_replace('/Requester$/', '', $className) . 'Responser';
         $responserModelName = str_replace('Ess\M2ePro\Model\\', '', $responserModelName);
 
         return $responserModelName;

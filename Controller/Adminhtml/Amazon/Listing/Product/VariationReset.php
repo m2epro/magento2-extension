@@ -25,8 +25,9 @@ class VariationReset extends Main
                 'message' => $this->__(
                     'For changing the Mode of working with Magento Variational Product
                      you have to choose the Specific Product.'
-                )
+                ),
             ]);
+
             return $this->getResult();
         }
 
@@ -48,7 +49,7 @@ class VariationReset extends Main
             'type' => 'success',
             'message' => $this->__(
                 'Mode of working with Magento Variational Product has been switched to work with Parent-Child Product.'
-            )
+            ),
         ]);
 
         return $this->getResult();

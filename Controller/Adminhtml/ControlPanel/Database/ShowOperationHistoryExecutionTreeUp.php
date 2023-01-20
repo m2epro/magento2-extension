@@ -18,6 +18,7 @@ class ShowOperationHistoryExecutionTreeUp extends Table
         $operationHistoryId = $this->getRequest()->getParam('operation_history_id');
         if (empty($operationHistoryId)) {
             $this->getMessageManager()->addErrorMessage("Operation history ID is not presented.");
+
             return $this->redirectToTablePage('m2epro_operation_history');
         }
 
@@ -25,7 +26,7 @@ class ShowOperationHistoryExecutionTreeUp extends Table
         $operationHistory->setObject($operationHistoryId);
 
         $this->getResponse()->setBody(
-            '<pre>'.$operationHistory->getExecutionTreeUpInfo().'</pre>'
+            '<pre>' . $operationHistory->getExecutionTreeUpInfo() . '</pre>'
         );
     }
 }

@@ -17,11 +17,11 @@ use Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector;
  */
 class WasteRecyclingFee extends AbstractTotal
 {
-    const TITLE                 = 'Waste Recycling Fee';
-    const CODE                  = 'waste_recycling_fee';
+    public const TITLE = 'Waste Recycling Fee';
+    public const CODE = 'waste_recycling_fee';
 
-    const ITEM_CODE_WEEE_PREFIX = 'weee';
-    const ITEM_TYPE             = 'weee';
+    public const ITEM_CODE_WEEE_PREFIX = 'weee';
+    public const ITEM_TYPE = 'weee';
 
     /**
      * @var \Magento\Weee\Helper\Data
@@ -35,21 +35,18 @@ class WasteRecyclingFee extends AbstractTotal
 
     /**
      * Array to keep track of weee taxable item code to quote item
-     *
      * @var array
      */
     protected $weeeCodeToItemMap;
 
     /**
      * Accumulates totals for Weee excluding tax
-     *
      * @var int
      */
     protected $weeeTotalExclTax;
 
     /**
      * Accumulates totals for Weee base excluding tax
-     *
      * @var int
      */
     protected $weeeBaseTotalExclTax;
@@ -79,6 +76,7 @@ class WasteRecyclingFee extends AbstractTotal
      * @param \Magento\Quote\Model\Quote $quote
      * @param \Magento\Quote\Api\Data\ShippingAssignmentInterface $shippingAssignment
      * @param \Magento\Quote\Model\Quote\Address\Total $total
+     *
      * @return $this
      */
     public function collect(
@@ -132,9 +130,10 @@ class WasteRecyclingFee extends AbstractTotal
     //########################################
 
     /**
-     * @param   \Magento\Quote\Model\Quote\Address $address
-     * @param   \Magento\Quote\Model\Quote\Address\Total $total
-     * @param   \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     * @param \Magento\Quote\Model\Quote\Address $address
+     * @param \Magento\Quote\Model\Quote\Address\Total $total
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     *
      * @return  void|$this
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
@@ -213,11 +212,12 @@ class WasteRecyclingFee extends AbstractTotal
     }
 
     /**
-     * @param   \Magento\Quote\Model\Quote\Address\Total $total
-     * @param   float $rowValueExclTax
-     * @param   float $baseRowValueExclTax
-     * @param   float $rowValueInclTax
-     * @param   float $baseRowValueInclTax
+     * @param \Magento\Quote\Model\Quote\Address\Total $total
+     * @param float $rowValueExclTax
+     * @param float $baseRowValueExclTax
+     * @param float $rowValueInclTax
+     * @param float $baseRowValueInclTax
+     *
      * @return  $this
      */
     protected function processTotalAmount(
@@ -238,15 +238,16 @@ class WasteRecyclingFee extends AbstractTotal
         $total->setBaseSubtotalInclTax(
             $total->getBaseSubtotalInclTax() + round((float)$baseRowValueInclTax, 2)
         );
+
         return $this;
     }
 
     /**
      * Recalculate parent item amounts based on children results
      *
-     * @param   \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @return  void
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
      *
+     * @return  void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function recalculateParent(\Magento\Quote\Model\Quote\Item\AbstractItem $item)
@@ -261,7 +262,8 @@ class WasteRecyclingFee extends AbstractTotal
     /**
      * Reset information about Tax and Wee on FPT for shopping cart item
      *
-     * @param   \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
+     *
      * @return  void
      */
     protected function resetItemData($item)

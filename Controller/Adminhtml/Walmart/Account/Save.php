@@ -59,7 +59,7 @@ class Save extends Account
             if ($this->isAjax()) {
                 $this->setJsonContent([
                     'success' => false,
-                    'message' => $message
+                    'message' => $message,
                 ]);
 
                 return $this->getResult();
@@ -72,7 +72,7 @@ class Save extends Account
 
         if ($this->isAjax()) {
             $this->setJsonContent([
-                'success' => true
+                'success' => true,
             ]);
 
             return $this->getResult();
@@ -81,15 +81,17 @@ class Save extends Account
         $this->messageManager->addSuccess($this->__('Account was saved'));
 
         $routerParams = [
-            'id'       => $account->getId(),
-            '_current' => true
+            'id' => $account->getId(),
+            '_current' => true,
         ];
 
-        if ($this->helperWizard->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) &&
-            $this->helperWizard->getStep(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) == 'account') {
+        if (
+            $this->helperWizard->isActive(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) &&
+            $this->helperWizard->getStep(\Ess\M2ePro\Helper\View\Walmart::WIZARD_INSTALLATION_NICK) == 'account'
+        ) {
             $routerParams['wizard'] = true;
         }
 
-        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit'=>$routerParams]));
+        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit' => $routerParams]));
     }
 }

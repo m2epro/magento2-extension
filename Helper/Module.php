@@ -339,10 +339,12 @@ class Module
 
         $moduleDir = \Ess\M2ePro\Helper\Module::IDENTIFIER . DIRECTORY_SEPARATOR;
 
-        if (!$this->magentoHelper->isStaticContentExists($moduleDir . 'css') ||
+        if (
+            !$this->magentoHelper->isStaticContentExists($moduleDir . 'css') ||
             !$this->magentoHelper->isStaticContentExists($moduleDir . 'fonts') ||
             !$this->magentoHelper->isStaticContentExists($moduleDir . 'images') ||
-            !$this->magentoHelper->isStaticContentExists($moduleDir . 'js')) {
+            !$this->magentoHelper->isStaticContentExists($moduleDir . 'js')
+        ) {
             $result = false;
         }
 
@@ -375,7 +377,6 @@ class Module
         !is_array($messages) && $messages = [];
 
         foreach ($messages as &$message) {
-
             preg_match_all('/%[\w\d]+%/', $message['text'], $placeholders);
             $placeholders = array_unique($placeholders[0]);
 

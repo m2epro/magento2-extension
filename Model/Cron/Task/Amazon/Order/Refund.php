@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
  */
 class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/refund';
-    const ORDER_CHANGES_PER_ACCOUNT = 300;
+    public const NICK = 'amazon/order/refund';
+    public const ORDER_CHANGES_PER_ACCOUNT = 300;
 
     //####################################
 
@@ -56,17 +56,16 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($permittedAccounts as $account) {
             /** @var \Ess\M2ePro\Model\Account $account */
 
-            $this->getOperationHistory()->addText('Starting account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting account "' . $account->getTitle() . '"');
 
             $this->getOperationHistory()->addTimePoint(
-                __METHOD__.'process'.$account->getId(),
-                'Process account '.$account->getTitle()
+                __METHOD__ . 'process' . $account->getId(),
+                'Process account ' . $account->getTitle()
             );
 
             try {
                 $this->processAccount($account);
             } catch (\Exception $exception) {
-
                 $message = $this->getHelper('Module\Translation')->__(
                     'The "Refund" Action for Amazon Account "%account%" was completed with error.',
                     $account->getTitle()
@@ -76,7 +75,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $this->processTaskException($exception);
             }
 
-            $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
         }
     }
 
@@ -89,6 +88,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
         )->getCollection();
+
         return $accountsCollection->getItems();
     }
 
@@ -102,7 +102,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order\Change')
-            ->getResource()->incrementAttemptCount(array_keys($relatedChanges));
+                                  ->getResource()->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
@@ -133,13 +133,14 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $connectorData = [
-                'order_id'        => $change->getOrderId(),
-                'change_id'       => $change->getId(),
+                'order_id' => $change->getOrderId(),
+                'change_id' => $change->getId(),
                 'amazon_order_id' => $changeParams['order_id'],
-                'currency'        => $changeParams['currency'],
-                'items'           => $changeParams['items'],
+                'currency' => $changeParams['currency'],
+                'items' => $changeParams['items'],
             ];
 
+            /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Refund\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Amazon_Order_Refund_Requester',
                 ['order' => $connectorData],
@@ -157,6 +158,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Ess\M2ePro\Model\Order\Change[]
      */
     protected function getRelatedChanges(\Ess\M2ePro\Model\Account $account)

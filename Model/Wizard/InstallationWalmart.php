@@ -15,11 +15,12 @@ use Ess\M2ePro\Model\Wizard;
  */
 class InstallationWalmart extends Wizard
 {
+    /** @var string[] */
     protected $steps = [
         'registration',
         'account',
         'settings',
-        'listingTutorial'
+        'listingTutorial',
     ];
 
     //########################################

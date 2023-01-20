@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Model\ActiveRecord\Relation;
 
-use \Ess\M2ePro\Model\ActiveRecord\Relation\Amazon\Factory as AmazonFactory;
-use \Ess\M2ePro\Model\ActiveRecord\Relation\Ebay\Factory as EbayFactory;
-use \Ess\M2ePro\Model\ActiveRecord\Relation\Walmart\Factory as WalmartFactory;
+use Ess\M2ePro\Model\ActiveRecord\Relation\Amazon\Factory as AmazonFactory;
+use Ess\M2ePro\Model\ActiveRecord\Relation\Ebay\Factory as EbayFactory;
+use Ess\M2ePro\Model\ActiveRecord\Relation\Walmart\Factory as WalmartFactory;
 
 /**
  * Class \Ess\M2ePro\Model\ActiveRecord\Relation\ChildAbstract
@@ -18,16 +18,16 @@ use \Ess\M2ePro\Model\ActiveRecord\Relation\Walmart\Factory as WalmartFactory;
  */
 abstract class ChildAbstract extends \Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Factory */
     protected $relationFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Amazon\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Amazon\Factory */
     protected $amazonRelationFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Walmart\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Walmart\Factory */
     protected $walmartRelationFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Relation\Ebay\Factory */
     protected $ebayRelationFactory;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Relation */
@@ -116,6 +116,7 @@ abstract class ChildAbstract extends \Ess\M2ePro\Model\ActiveRecord\ActiveRecord
         }
 
         $this->relationObject = $relationObject;
+
         return $this;
     }
 

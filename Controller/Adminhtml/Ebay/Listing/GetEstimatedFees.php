@@ -34,6 +34,7 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         if (empty($listingProductId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -44,7 +45,7 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         $params = [
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
-            'logs_action_id' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId()
+            'logs_action_id' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId(),
         ];
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
@@ -87,9 +88,10 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                         'Estimated Fee Details For Product: "%title%"',
                         $listingProduct->getMagentoProduct()->getName()
                     ),
-                    'html' => $errorsBlock->toHtml()
+                    'html' => $errorsBlock->toHtml(),
                 ]);
             }
+
             return $this->getResult();
         }
         // ---------------------------------------
@@ -104,8 +106,9 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                 'Estimated Fee Details For Product: "%title%"',
                 $listingProduct->getMagentoProduct()->getName()
             ),
-            'html' => $details->toHtml()
+            'html' => $details->toHtml(),
         ]);
+
         return $this->getResult();
     }
 }

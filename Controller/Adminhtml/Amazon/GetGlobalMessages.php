@@ -35,6 +35,7 @@ class GetGlobalMessages extends Main
         }
 
         $this->setJsonContent($messages);
+
         return $this->getResult();
     }
 

@@ -33,7 +33,7 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     {
         $data = array_merge(
             [
-                'sku'  => $this->getWalmartListingProduct()->getSku(),
+                'sku' => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
             ],
             $this->getQtyData(),

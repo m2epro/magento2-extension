@@ -21,7 +21,7 @@ class TemplateCheck extends Account
         $model = $this->ebayFactory->getCachedObjectLoaded('Account', $id);
 
         $this->setJsonContent([
-            'ok' => (bool)$model->getChildObject()->hasFeedbackTemplate()
+            'ok' => (bool)$model->getChildObject()->hasFeedbackTemplate(),
         ]);
 
         return $this->getResult();

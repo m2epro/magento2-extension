@@ -45,6 +45,7 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
     public function save()
     {
         $this->init();
+
         return $this->saveGroup();
     }
 
@@ -56,8 +57,11 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $tempCollection = $this->entityAttributeGroupFactory->create()->getCollection()
-              ->addFieldToFilter('attribute_group_name', $this->name)
-              ->addFieldToFilter('attribute_set_id', $this->attributeSetId);
+                                                            ->addFieldToFilter('attribute_group_name', $this->name)
+                                                            ->addFieldToFilter(
+                                                                'attribute_set_id',
+                                                                $this->attributeSetId
+                                                            );
 
         $tempCollection->getSelect()->limit(1);
         $this->groupObj = $tempCollection->getFirstItem();
@@ -92,18 +96,21 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
     public function setGroupName($value)
     {
         $this->name = $value;
+
         return $this;
     }
 
     public function setAttributeSetId($value)
     {
         $this->attributeSetId = $value;
+
         return $this;
     }
 
     public function setParams(array $value = [])
     {
         $this->params = $value;
+
         return $this;
     }
 
@@ -111,6 +118,7 @@ class Group extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Eav\Model\Entity\Attribute\Set $obj
+     *
      * @return $this
      */
     public function setAttributeSetObj(\Magento\Eav\Model\Entity\Attribute\Set $obj)

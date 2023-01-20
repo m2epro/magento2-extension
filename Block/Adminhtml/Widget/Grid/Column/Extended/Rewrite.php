@@ -72,7 +72,6 @@ class Rewrite extends \Magento\Backend\Block\Widget\Grid\Column\Extended
 
     /**
      * @param array $callback
-     *
      * Copied from \Magento\Backend\Block\Widget\Grid\Column\Extended as method is private
      */
     private function validateFrameCallback(array $callback)

@@ -22,6 +22,7 @@ class SetSwatchImagesAttribute extends Main
 
         if (empty($listingProductId) || $attribute === null) {
             $this->setAjaxContent('You should provide correct parameters.');
+
             return $this->getResult();
         }
 
@@ -41,10 +42,10 @@ class SetSwatchImagesAttribute extends Main
             $instruction->setData(
                 [
                     'listing_product_id' => $childListingProduct->getId(),
-                    'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                    'type'               => ChangeProcessorAbstract::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
-                    'initiator'          => ChangeProcessor::INSTRUCTION_INITIATOR,
-                    'priority'           => 10,
+                    'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                    'type' => ChangeProcessorAbstract::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                    'initiator' => ChangeProcessor::INSTRUCTION_INITIATOR,
+                    'priority' => 10,
                 ]
             );
             $instruction->save();

@@ -60,7 +60,6 @@ class ChangeHolder
         $instructions = [];
         $instructionCounter = 0;
         while ($row = $statement->fetch()) {
-
             $initiator = "{$tracker->getType()}_{$tracker->getChannel()}";
 
             $instructions[] = [
@@ -73,7 +72,7 @@ class ChangeHolder
             ];
             $instructionCounter++;
 
-            if ($instructionCounter%1000 === 0) {
+            if ($instructionCounter % 1000 === 0) {
                 $this->instruction->add($instructions);
                 $instructions = [];
             }

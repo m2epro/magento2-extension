@@ -60,6 +60,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
 
     /**
      * @param $messageText
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function failDetected($messageText)
@@ -80,7 +81,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Inventory\Get\ItemsResp
     protected function processResponseData()
     {
         try {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Other\Updating $updatingModel */
             $updatingModel = $this->modelFactory->getObject('Ebay_Listing_Other_Updating');
             $updatingModel->initialize(

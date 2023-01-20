@@ -93,9 +93,9 @@ HTML;
         $knowledgeBaseUrl = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200884');
 
         $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
-            'label'   => $helper->__('Check'),
-            'class'   => 'delete',
-            'onclick' => "openExecutionTimeTestPopup();"
+            'label' => $helper->__('Check'),
+            'class' => 'delete',
+            'onclick' => "openExecutionTimeTestPopup();",
         ]);
 
         return <<<HTML
@@ -187,14 +187,15 @@ HTML;
     {
         $helper = $this->getHelper('Module\Translation');
 
-        return $this->getHelper('Data')->escapeJs(<<<HTML
+        return $this->getHelper('Data')->escapeJs(
+            <<<HTML
 <div style="margin-top: 10px;">
     {$helper->__(
-        'Enter the time you want to test. The minimum required value is %min% sec.<br><br>
+                'Enter the time you want to test. The minimum required value is %min% sec.<br><br>
         <strong>Note:</strong> Module interface will be unavailable during the check.
         Synchronization processes won’t be affected.\'',
-        $this->getCheckObject()->getMin()
-    )}
+                $this->getCheckObject()->getMin()
+            )}
     <br><br>
     <label>{$helper->__('Seconds')}</label>:&nbsp;
     <input type="text" id="execution_time_value" value="{$this->getCheckObject()->getMin()}"

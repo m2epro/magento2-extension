@@ -24,6 +24,7 @@ class GoToAmazon extends Order
 
         if ($order->getId() === null) {
             $this->messageManager->addError($this->__('Order does not exist.'));
+
             return $this->_redirect('*/amazon_order/index');
         }
 

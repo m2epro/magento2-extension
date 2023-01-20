@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Create;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
+    /** @var string  */
     protected $sessionKey = 'walmart_listing_create';
 
     protected function _isAllowed()
@@ -32,7 +33,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
                 '*/walmart_listing_product_add/index',
                 [
                     'id' => $listing->getId(),
-                    'new_listing' => 1
+                    'new_listing' => 1,
                 ]
             );
         }
@@ -59,8 +60,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
         $post['marketplace_id'] = $account->getChildObject()->getMarketplaceId();
 
         $listing = $this->walmartFactory->getObject('Listing')
-            ->addData($post)
-            ->save();
+                                        ->addData($post)
+                                        ->save();
 
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($listing->getComponentMode());

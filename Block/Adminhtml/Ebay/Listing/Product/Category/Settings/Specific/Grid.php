@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific;
 
 use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 /**
  * @method setCategoriesData()
@@ -94,60 +94,61 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $row['id'] = $hash;
             $row['specifics_mode'] = $spMode;
-            $row['full_path'] = $row['path'] .' '. $row['value'];
+            $row['full_path'] = $row['path'] . ' ' . $row['value'];
 
             $collection->addItem(new \Magento\Framework\DataObject($row));
         }
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
     {
         $this->addColumn('category', [
-            'header'   => $this->__('eBay Primary Category'),
-            'align'    => 'left',
-            'width'    => '*',
-            'index'    => 'full_path',
+            'header' => $this->__('eBay Primary Category'),
+            'align' => 'left',
+            'width' => '*',
+            'index' => 'full_path',
             'filter_condition_callback' => [$this, 'callbackFilterCategory'],
-            'frame_callback'            => [$this, 'callbackColumnCategory']
+            'frame_callback' => [$this, 'callbackColumnCategory'],
         ]);
 
         $this->addColumn('specifics', [
-            'header'    => $this->__('Item Specifics'),
-            'align'     => 'left',
-            'width'     => '400',
-            'type'      => 'options',
-            'index'     => 'specifics_mode',
-            'options'   => [
-                self::SPECIFICS_MODE_NOT_SET_REQUIRED     => $this->__('Not Set (required)'),
+            'header' => $this->__('Item Specifics'),
+            'align' => 'left',
+            'width' => '400',
+            'type' => 'options',
+            'index' => 'specifics_mode',
+            'options' => [
+                self::SPECIFICS_MODE_NOT_SET_REQUIRED => $this->__('Not Set (required)'),
                 self::SPECIFICS_MODE_NOT_SET_NOT_REQUIRED => $this->__('Not Set (not required)'),
-                self::SPECIFICS_MODE_DEFAULT              => $this->__('Default'),
-                self::SPECIFICS_MODE_CUSTOM               => $this->__('Custom'),
+                self::SPECIFICS_MODE_DEFAULT => $this->__('Default'),
+                self::SPECIFICS_MODE_CUSTOM => $this->__('Custom'),
             ],
             'filter_condition_callback' => [$this, 'callbackFilterSpecifics'],
-            'frame_callback' => [$this, 'callbackColumnSpecifics']
+            'frame_callback' => [$this, 'callbackColumnSpecifics'],
         ]);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'center',
-            'width'     => '150px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'sortable'  => false,
-            'filter'    => false,
-            'no_link'   => true,
-            'actions'   => [
+            'header' => $this->__('Actions'),
+            'align' => 'center',
+            'width' => '150px',
+            'type' => 'action',
+            'index' => 'actions',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'sortable' => false,
+            'filter' => false,
+            'no_link' => true,
+            'actions' => [
                 'editSpecifics' => [
-                    'caption'        => $this->__('Edit'),
-                    'field'          => 'id',
+                    'caption' => $this->__('Edit'),
+                    'field' => 'id',
                     'onclick_action' => "EbayListingProductCategorySettingsSpecificGridObj."
-                                        ."actions['editSpecificsAction']"
+                        . "actions['editSpecificsAction']",
                 ],
-            ]
+            ],
         ]);
 
         return parent::_prepareColumns();
@@ -247,10 +248,12 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Ebay_Listing_Product_Category_Settings',
-            ['_current' => true]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Ebay_Listing_Product_Category_Settings',
+                ['_current' => true]
+            )
+        );
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
@@ -262,14 +265,19 @@ JS
 
         // ---------------------------------------
         $this->jsTranslator->add('Specifics', $this->__('Specifics'));
-        $this->jsTranslator->add('select_relevant_category', $this->__(
-            'To proceed, Category data must be specified.
+        $this->jsTranslator->add(
+            'select_relevant_category',
+            $this->__(
+                'To proceed, Category data must be specified.
              Ensure you set Item Specifics for all assigned Categories.'
-        ));
+            )
+        );
         // ---------------------------------------
 
-        $this->jsPhp->addConstants($this->dataHelper
-            ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Category::class));
+        $this->jsPhp->addConstants(
+            $this->dataHelper
+                ->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay\Category::class)
+        );
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
             $this->js->addOnReadyJs(

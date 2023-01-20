@@ -59,9 +59,11 @@ class Handler extends AbstractModel implements \Ess\M2ePro\Model\Listing\Product
 
         $params = [];
 
-        if ($input->hasInstructionWithType(
-            \Ess\M2ePro\Model\Listing\Auto\Actions\Listing::INSTRUCTION_TYPE_STOP_AND_REMOVE
-        )) {
+        if (
+            $input->hasInstructionWithType(
+                \Ess\M2ePro\Model\Listing\Auto\Actions\Listing::INSTRUCTION_TYPE_STOP_AND_REMOVE
+            )
+        ) {
             if (!$input->getListingProduct()->isStoppable()) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\RemoveHandler $removeHandler */
                 $removeHandler = $this->modelFactory->getObject('Listing_Product_RemoveHandler');
@@ -76,10 +78,10 @@ class Handler extends AbstractModel implements \Ess\M2ePro\Model\Listing\Product
 
         $scheduledActionData = [
             'listing_product_id' => $listingProduct->getId(),
-            'component'          => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-            'is_force'           => true,
-            'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+            'is_force' => true,
+            'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
         ];
 
         $scheduledAction->addData($scheduledActionData);

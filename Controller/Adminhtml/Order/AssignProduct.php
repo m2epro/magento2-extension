@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 class AssignProduct extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory  */
     protected $magentoProductCollectionFactory;
 
     public function __construct(
@@ -32,8 +33,9 @@ class AssignProduct extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         if ((!$productId && !$sku) || !$orderItem->getId()) {
             $this->setJsonContent([
-                'error' => $this->__('Please specify Required Options.')
+                'error' => $this->__('Please specify Required Options.'),
             ]);
+
             return $this->getResult();
         }
 
@@ -49,8 +51,9 @@ class AssignProduct extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         if (!$productData) {
             $this->setJsonContent([
-                'error' => $this->__('Product does not exist.')
+                'error' => $this->__('Product does not exist.'),
             ]);
+
             return $this->getResult();
         }
 
@@ -65,14 +68,16 @@ class AssignProduct extends \Ess\M2ePro\Controller\Adminhtml\Order
         );
 
         $isPretendedToBeSimple = false;
-        if ($orderItem->getMagentoProduct()->isGroupedType() &&
-            $orderItem->getChildObject()->getChannelItem() !== null) {
+        if (
+            $orderItem->getMagentoProduct()->isGroupedType() &&
+            $orderItem->getChildObject()->getChannelItem() !== null
+        ) {
             $isPretendedToBeSimple = $orderItem->getChildObject()->getChannelItem()->isGroupedProductModeSet();
         }
 
         $this->setJsonContent([
-            'success'  => $this->__('Order Item was Linked.'),
-            'continue' => $orderItem->getMagentoProduct()->isProductWithVariations() && !$isPretendedToBeSimple
+            'success' => $this->__('Order Item was Linked.'),
+            'continue' => $orderItem->getMagentoProduct()->isProductWithVariations() && !$isPretendedToBeSimple,
         ]);
 
         return $this->getResult();

@@ -15,22 +15,23 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct = null;
-
+    /** @var array  */
     private $sourceAttributes = [];
-
+    /** @var array  */
     private $themes = [];
-
+    /** @var null  */
     private $matchedTheme = null;
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $product
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $product)
     {
-        $this->magentoProduct   = $product;
+        $this->magentoProduct = $product;
         $this->sourceAttributes = [];
 
         return $this;
@@ -40,12 +41,13 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function setSourceAttributes(array $attributes)
     {
         $this->sourceAttributes = $attributes;
-        $this->magentoProduct   = null;
+        $this->magentoProduct = null;
 
         return $this;
     }
@@ -54,11 +56,13 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $themes
+     *
      * @return $this
      */
     public function setThemes(array $themes)
     {
         $this->themes = $themes;
+
         return $this;
     }
 
@@ -88,6 +92,7 @@ class Theme extends \Ess\M2ePro\Model\AbstractModel
         if ($this->magentoProduct !== null) {
             if ($this->magentoProduct->isGroupedType()) {
                 $this->matchedTheme = null;
+
                 return $this;
             }
 

@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\IssueGroup
- */
 class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    const NOTE_ELEMENT = \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element\Note::class;
+    public const NOTE_ELEMENT = \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs\Element\Note::class;
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Set */
     private $resultSet;
@@ -46,8 +43,8 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $fieldSet = $form->addFieldset(
                 'fieldset_' . strtolower($resultItem->getFieldSetName()),
                 [
-                    'legend'      => $this->__($resultItem->getFieldSetName()),
-                    'collapsable' => false
+                    'legend' => $this->__($resultItem->getFieldSetName()),
+                    'collapsable' => false,
                 ]
             );
 
@@ -56,8 +53,8 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     strtolower($byFieldSet->getTaskHash()),
                     self::NOTE_ELEMENT,
                     [
-                        'label'       => $this->__($byFieldSet->getFieldName()),
-                        'text'        => $byFieldSet->getTaskMessage(),
+                        'label' => $this->__($byFieldSet->getFieldName()),
+                        'text' => $byFieldSet->getTaskMessage(),
                         'task_result' => $byFieldSet,
                     ]
                 );
@@ -67,6 +64,7 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 

@@ -22,6 +22,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     /**
      * Items constructor.
+     *
      * @param \Ess\M2ePro\Helper\Factory $helperFactory
      * @param \Ess\M2ePro\Model\Factory $modelFactory
      * @param \Ess\M2ePro\Model\Account|NULL $account

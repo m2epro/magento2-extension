@@ -16,6 +16,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
     protected function validateResponse(): bool
     {
         $responseData = $this->getResponse()->getResponseData();
+
         return isset($responseData['data']);
     }
 }

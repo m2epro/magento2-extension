@@ -54,8 +54,8 @@ class Log extends AbstractContainer
                         'content' => $this->__(
                             'The Log includes information about synchronization of
                              M2E Pro Listings, Orders, Marketplaces, Unmanaged Listings.'
-                        )
-                    ]
+                        ),
+                    ],
                 ]
             );
 

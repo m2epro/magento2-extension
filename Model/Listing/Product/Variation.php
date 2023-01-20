@@ -89,7 +89,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $instance)
     {
-         $this->listingProductModel = $instance;
+        $this->listingProductModel = $instance;
     }
 
     //########################################
@@ -127,6 +127,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
      * @param array $filters
      * @param bool $tryToGetFromStorage
      * @param bool $throwExceptionIfNoOptions
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\Variation\Option[]
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -137,7 +138,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
         $throwExceptionIfNoOptions = true
     ) {
         $storageKey = "listing_product_{$this->getListingProductId()}_variation_{$this->getId()}_options_" .
-                      sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
+            sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
 
         if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data_Cache_Runtime')->getValue($storageKey))) {
             return $cacheData;
@@ -155,8 +156,8 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
             throw new Exception\Logic(
                 'There are no options for a variation product.',
                 [
-                    'variation_id'       => $this->getId(),
-                    'listing_product_id' => $this->getListingProductId()
+                    'variation_id' => $this->getId(),
+                    'listing_product_id' => $this->getListingProductId(),
                 ]
             );
         }
@@ -171,7 +172,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
             'listing_product',
             "listing_product_{$this->getListingProductId()}",
             "listing_product_{$this->getListingProductId()}_variation_{$this->getId()}",
-            "listing_product_{$this->getListingProductId()}_variation_{$this->getId()}_options"
+            "listing_product_{$this->getListingProductId()}_variation_{$this->getId()}_options",
         ]);
 
         return $options;
@@ -187,7 +188,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
         return (int)$this->getData('listing_product_id');
     }
 
-     //########################################
+    //########################################
 
     /**
      * @return array
@@ -198,5 +199,5 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
         return $this->getSettings('additional_data');
     }
 
-     //########################################
+    //########################################
 }

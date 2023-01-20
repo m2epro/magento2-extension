@@ -40,7 +40,9 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
     protected function prepareGroupsGrid()
     {
         $groupGrid = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Category\Group\Grid::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Category\Group\Grid::class
+                          );
         $groupGrid->prepareGrid();
         $this->setChild('group_grid', $groupGrid);
 
@@ -76,7 +78,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                 $this->supportHelper->getDocumentationArticleUrl('x/af1IB')
-            )
+            ),
         ]);
 
         return $helpBlock->toHtml() . parent::_toHtml();

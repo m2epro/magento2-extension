@@ -38,6 +38,7 @@ class RunSynchNow extends Marketplace
 
         if ($this->amazonHelper->isMarketplacesWithoutData($marketplace->getId())) {
             $this->setJsonContent(['result' => 'success']);
+
             return $this->getResult();
         }
 
@@ -55,6 +56,7 @@ class RunSynchNow extends Marketplace
             );
 
             $this->setJsonContent(['result' => 'error']);
+
             return $this->getResult();
         }
 
@@ -70,11 +72,12 @@ class RunSynchNow extends Marketplace
             );
 
             $this->setJsonContent(['result' => 'error']);
+
             return $this->getResult();
         }
 
         $this->setJsonContent(['result' => 'success']);
+
         return $this->getResult();
     }
-
 }

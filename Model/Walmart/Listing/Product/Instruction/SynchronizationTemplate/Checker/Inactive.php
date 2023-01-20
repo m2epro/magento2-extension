@@ -8,12 +8,10 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Walmart\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Walmart\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract as TemplateChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive
- */
 class Inactive extends AbstractModel
 {
     //########################################
@@ -34,7 +32,7 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Response::INSTRUCTION_TYPE_CHECK_QTY,
-            \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -53,7 +51,8 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if (!$this->input->hasInstructionWithTypes($this->getRelistInstructionTypes()) &&
+        if (
+            !$this->input->hasInstructionWithTypes($this->getRelistInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {
             return false;
@@ -117,7 +116,8 @@ class Inactive extends AbstractModel
 
         $tags = ['qty'];
 
-        if ($walmartSynchronizationTemplate->isReviseUpdatePrice() ||
+        if (
+            $walmartSynchronizationTemplate->isReviseUpdatePrice() ||
             ($this->input->getListingProduct()->isBlocked() && $walmartListingProduct->isOnlinePriceInvalid())
         ) {
             $configurator->allowPrice();
@@ -144,12 +144,12 @@ class Inactive extends AbstractModel
         $scheduledAction->addData(
             [
                 'listing_product_id' => $this->input->getListingProduct()->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
-                'tag'                => '/' . implode('/', $tags) . '/',
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                'tag' => '/' . implode('/', $tags) . '/',
+                'additional_data' => $this->getHelper('Data')->jsonEncode(
                     [
-                        'params'       => $params,
+                        'params' => $params,
                         'configurator' => $configurator->getSerializedData(),
                     ]
                 ),
@@ -179,8 +179,10 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if ($walmartSynchronizationTemplate->isRelistFilterUserLock() &&
-            $listingProduct->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
+        if (
+            $walmartSynchronizationTemplate->isRelistFilterUserLock() &&
+            $listingProduct->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+        ) {
             return false;
         }
 
@@ -193,7 +195,8 @@ class Inactive extends AbstractModel
         if ($walmartSynchronizationTemplate->isRelistStatusEnabled()) {
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
                 return false;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
@@ -210,7 +213,8 @@ class Inactive extends AbstractModel
         if ($walmartSynchronizationTemplate->isRelistIsInStock()) {
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
                 return false;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -242,7 +246,7 @@ class Inactive extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix'   => \Ess\M2ePro\Model\Walmart\Template\Synchronization::RELIST_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Walmart\Template\Synchronization::RELIST_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($walmartSynchronizationTemplate->getRelistAdvancedRulesFilters());

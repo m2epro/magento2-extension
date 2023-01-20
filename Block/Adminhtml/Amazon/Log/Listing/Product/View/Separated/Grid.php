@@ -25,7 +25,7 @@ class Grid extends AbstractGrid
     protected function getExcludedActionTitles()
     {
         return [
-            \Ess\M2ePro\Model\Listing\Log::ACTION_RESET_BLOCKED_PRODUCT => ''
+            \Ess\M2ePro\Model\Listing\Log::ACTION_RESET_BLOCKED_PRODUCT => '',
         ];
     }
 

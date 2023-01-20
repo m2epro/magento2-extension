@@ -56,9 +56,10 @@ class SearchAsinManual extends Main
                 $this->setJsonContent(
                     [
                         'result' => 'error',
-                        'text'   => $this->__('Invalid Product ID format.'),
+                        'text' => $this->__('Invalid Product ID format.'),
                     ]
                 );
+
                 return $this->getResult();
             }
 
@@ -66,16 +67,17 @@ class SearchAsinManual extends Main
                 $this->setJsonContent(
                     [
                         'result' => 'error',
-                        'text'   => $this->__('Server is currently unavailable. Please try again later.'),
+                        'text' => $this->__('Server is currently unavailable. Please try again later.'),
                     ]
                 );
+
                 return $this->getResult();
             }
 
             $searchData = [
-                'type'  => $result->getType(),
+                'type' => $result->getType(),
                 'value' => $result->getValue(),
-                'data'  => $result->isIdentifierNotFound() ? [] : $result->getResponseData()
+                'data' => $result->isIdentifierNotFound() ? [] : $result->getResponseData(),
             ];
 
             $this->helperDataGlobalData->setValue('search_data', $searchData);
@@ -88,11 +90,12 @@ class SearchAsinManual extends Main
         $this->setJsonContent(
             [
                 'result' => 'success',
-                'html'   => $this->getLayout()
-                                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Grid::class)
-                                 ->toHtml(),
+                'html' => $this->getLayout()
+                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Grid::class)
+                               ->toHtml(),
             ]
         );
+
         return $this->getResult();
     }
 }

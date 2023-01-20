@@ -29,7 +29,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'content' => $this->__(
                     'From the list below you should select a Magento Product to which you would like the Item
                  to be linked. Click on Link To This Product link to set accordance.'
-                )
+                ),
             ]
         );
         $this->setChild('help_block', $helpBlock);
@@ -40,10 +40,10 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             '',
             [
                 'data' => [
-                    'grid_url'           => $this->getData('grid_url'),
+                    'grid_url' => $this->getData('grid_url'),
                     'mapping_handler_js' => $this->getData('mapping_handler_js'),
-                    'mapping_action'     => $this->getData('mapping_action')
-                ]
+                    'mapping_action' => $this->getData('mapping_action'),
+                ],
             ]
         );
 

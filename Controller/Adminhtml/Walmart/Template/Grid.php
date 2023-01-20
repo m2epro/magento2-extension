@@ -18,6 +18,7 @@ class Grid extends Template
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

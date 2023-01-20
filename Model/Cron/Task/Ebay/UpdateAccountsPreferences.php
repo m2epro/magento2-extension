@@ -15,7 +15,7 @@ use Ess\M2ePro\Helper\Component\Ebay;
  */
 class UpdateAccountsPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/update_accounts_preferences';
+    public const NICK = 'ebay/update_accounts_preferences';
 
     /**
      * @var int (in seconds)

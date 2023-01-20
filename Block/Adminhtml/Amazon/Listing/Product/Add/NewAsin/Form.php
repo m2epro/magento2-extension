@@ -46,11 +46,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_form',
-                'action' => $this->getUrl('*/*/descriptionTemplateAssignType', ['_current' => true]),
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'action' => $this->getUrl('*/*/descriptionTemplateAssignType', ['_current' => true]),
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $fieldset = $form->addFieldset(
@@ -65,7 +67,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'value' => $this->__('Description Policy is required to Create New ASIN/ISBN'),
                 'field_extra_attributes' =>
-                    'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"'
+                    'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
         );
         $this->css->add(
@@ -94,8 +96,8 @@ CSS
                 'values' => [
                     [
                         'value' => 'same',
-                        'label' => 'All Products same Description Policy'
-                    ]
+                        'label' => 'All Products same Description Policy',
+                    ],
                 ],
                 'note' => <<<HTML
 <div style="padding-top: 3px; padding-left: 26px; font-weight: normal">
@@ -112,6 +114,7 @@ CSS
     {$this->__('Please select Description Policy.')}
 </label>
 HTML
+            ,
             ]
         );
 
@@ -124,13 +127,13 @@ HTML
                 'values' => [
                     [
                         'value' => 'category',
-                        'label' => 'Based on Magento Categories'
-                    ]
+                        'label' => 'Based on Magento Categories',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     $this->__(
                         'Products will have Description Policies set according to the Magento Categories.'
-                    ).'</div>'
+                    ) . '</div>',
             ]
         );
 
@@ -143,11 +146,11 @@ HTML
                 'values' => [
                     [
                         'value' => 'manually',
-                        'label' => 'Set Manually for each Product'
-                    ]
+                        'label' => 'Set Manually for each Product',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Set Description Policies for each Product (or a group of Products) manually.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Set Description Policies for each Product (or a group of Products) manually.') . '</div>',
             ]
         );
 
@@ -224,7 +227,8 @@ HTML
         loadTemplateDescriptionGrid = function() {
 
             new Ajax.Request(
-                '{$this->getUrl('*/amazon_listing_product_template_description/viewGrid'
+                '{$this->getUrl(
+                '*/amazon_listing_product_template_description/viewGrid'
             )}', {
                 method: 'post',
                 parameters: {
@@ -292,8 +296,8 @@ HTML
 
                     modal({
                         title: '{$this->__(
-                                   'Please select the Description Policy for the process of New ASIN/ISBN creation'
-                                 )}',
+                'Please select the Description Policy for the process of New ASIN/ISBN creation'
+            )}',
                         type: 'slide',
                         buttons: [{
                             text: '{$this->__('Add New Description Policy')}',

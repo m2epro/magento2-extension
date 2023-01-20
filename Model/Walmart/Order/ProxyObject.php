@@ -34,13 +34,13 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function getPaymentData()
     {
         $paymentData = [
-            'method'                => $this->payment->getCode(),
-            'component_mode'        => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'payment_method'        => '',
-            'channel_order_id'      => $this->order->getWalmartOrderId(),
-            'channel_final_fee'     => 0,
+            'method' => $this->payment->getCode(),
+            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'payment_method' => '',
+            'channel_order_id' => $this->order->getWalmartOrderId(),
+            'channel_final_fee' => 0,
             'cash_on_delivery_cost' => 0,
-            'transactions'          => []
+            'transactions' => [],
         ];
 
         return $paymentData;
@@ -74,9 +74,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return [
-            'carrier_title'   => $this->getHelper('Module\Translation')->__('Walmart Shipping'),
+            'carrier_title' => $this->getHelper('Module\Translation')->__('Walmart Shipping'),
             'shipping_method' => $this->order->getShippingService() . $additionalData,
-            'shipping_price'  => $this->getBaseShippingPrice(),
+            'shipping_price' => $this->getBaseShippingPrice(),
         ];
     }
 
@@ -122,6 +122,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
             $comments[] = $comment . implode('<br/>,', $zeroItems);
         }
+
         // ---------------------------------------
 
         return $comments;

@@ -16,6 +16,7 @@ class GetPopupHtml extends \Ess\M2ePro\Controller\Adminhtml\Order
         $block = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\UploadByUser\Popup::class);
         $block->setComponent($this->getRequest()->getParam('component'));
         $this->setAjaxContent($block->toHtml());
+
         return $this->getResult();
     }
 }

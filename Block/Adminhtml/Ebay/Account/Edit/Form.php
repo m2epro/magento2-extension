@@ -20,10 +20,10 @@ class Form extends AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'    => 'edit_form',
+                    'id' => 'edit_form',
                     'action' => 'javascript:void(0)',
-                    'method' => 'post'
-                ]
+                    'method' => 'post',
+                ],
             ]
         );
         $form->setUseContainer(true);

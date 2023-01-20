@@ -13,15 +13,16 @@ namespace Ess\M2ePro\Model\Amazon\Order\Creditmemo;
  */
 class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 {
-    const AMAZON_REFUND_REASON_CUSTOMER_RETURN = 'CustomerReturn';
-    const AMAZON_REFUND_REASON_NO_INVENTORY    = 'NoInventory';
-    const AMAZON_REFUND_REASON_BUYER_CANCELED  = 'BuyerCanceled';
+    public const AMAZON_REFUND_REASON_CUSTOMER_RETURN = 'CustomerReturn';
+    public const AMAZON_REFUND_REASON_NO_INVENTORY = 'NoInventory';
+    public const AMAZON_REFUND_REASON_BUYER_CANCELED = 'BuyerCanceled';
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -58,8 +59,10 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 
             $additionalData = $this->getHelper('Data')->unserialize($additionalData);
 
-            if (!isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
-                !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])) {
+            if (
+                !isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
+                !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])
+            ) {
                 continue;
             }
 
@@ -77,8 +80,8 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 
                 /** @var \Ess\M2ePro\Model\Order\Item $item */
                 $item = $order->getItemsCollection()
-                    ->addFieldToFilter('amazon_order_item_id', $orderItemId)
-                    ->getFirstItem();
+                              ->addFieldToFilter('amazon_order_item_id', $orderItemId)
+                              ->getFirstItem();
                 if (!$item->getId()) {
                     continue;
                 }
@@ -110,12 +113,12 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 
                 $itemForRefund = [
                     'item_id' => $orderItemId,
-                    'reason'  => $refundReason,
-                    'qty'     => $itemQty,
-                    'prices'  => [
+                    'reason' => $refundReason,
+                    'qty' => $itemQty,
+                    'prices' => [
                         'product' => $price,
                     ],
-                    'taxes'   => [
+                    'taxes' => [
                         'product' => $tax,
                     ],
                 ];
@@ -155,6 +158,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

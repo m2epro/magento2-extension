@@ -12,11 +12,9 @@ use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Model\Listing\Product;
 use Magento\Framework\DB\Select;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing
- */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool */
     protected $_isPkAutoIncrement = false;
 
     //########################################

@@ -8,14 +8,13 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher
- */
+use Ess\M2ePro\Model\Ebay\Connector\OrderItem;
+
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    const ACTION_ADD_DISPUTE   = 1;
-    const ACTION_UPDATE_STATUS = 2;
-    const ACTION_UPDATE_TRACK  = 3;
+    public const ACTION_ADD_DISPUTE = 1;
+    public const ACTION_UPDATE_STATUS = 2;
+    public const ACTION_UPDATE_TRACK = 3;
 
     protected $ebayFactory;
 
@@ -74,6 +73,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
                 $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
+                /** @var OrderItem\Add\Dispute|OrderItem\Update\Status $connector */
                 $connector = $dispatcher->getCustomConnector($connectorName, $params);
                 $connector->setOrderItem($item);
 
@@ -83,8 +83,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                     'Action was not completed (Item: %item_id%, Transaction: %trn_id%). Reason: %msg%',
                     [
                         '!item_id' => $item->getChildObject()->getItemId(),
-                        '!trn_id'  => $item->getChildObject()->getTransactionId(),
-                        'msg'      => $e->getMessage()
+                        '!trn_id' => $item->getChildObject()->getTransactionId(),
+                        'msg' => $e->getMessage(),
                     ]
                 );
 

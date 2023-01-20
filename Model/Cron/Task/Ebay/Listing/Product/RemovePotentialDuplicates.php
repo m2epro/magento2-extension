@@ -13,12 +13,13 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product;
  */
 class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/listing/product/remove_potential_duplicates';
+    public const NICK = 'ebay/listing/product/remove_potential_duplicates';
 
-    const BLOCKED_PRODUCTS_PER_SYNCH      = 10;
-    const MAX_ALLOWED_BLOCKED_PRODUCTS    = 100;
-    const MIN_SECONDS_FROM_FAILED_REQUEST = 300;
+    public const BLOCKED_PRODUCTS_PER_SYNCH = 10;
+    public const MAX_ALLOWED_BLOCKED_PRODUCTS = 100;
+    public const MIN_SECONDS_FROM_FAILED_REQUEST = 300;
 
+    /** @var array  */
     private $duplicatedItems = [];
 
     //####################################
@@ -55,7 +56,6 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         $collection->getSelect()->limit($blockedCount - self::MAX_ALLOWED_BLOCKED_PRODUCTS);
 
         foreach ($collection->getItems() as $product) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $product */
 
             $productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
@@ -82,7 +82,6 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         }
 
         foreach ($products as $product) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $product */
 
             $productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
@@ -180,6 +179,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
                 foreach ($itemsParts as $itemsPart) {
                     try {
+                        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
                         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
                         $connectorObj = $dispatcherObj->getVirtualConnector(
                             'item',
@@ -206,15 +206,15 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Listing\Product')
-            ->getCollection();
+                                          ->getCollection();
 
         $collection->addFieldToFilter('main_table.component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
-            ->join(
-                ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
-                'l.id=main_table.listing_id',
-                ['l.account_id', 'l.marketplace_id']
-            );
+                   ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED)
+                   ->join(
+                       ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
+                       'l.id=main_table.listing_id',
+                       ['l.account_id', 'l.marketplace_id']
+                   );
 
         return $collection;
     }
@@ -248,8 +248,8 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         $inputData = [
             'since_time' => $timeFrom,
-            'to_time'    => $timeTo,
-            'realtime'   => true
+            'to_time' => $timeTo,
+            'realtime' => true,
         ];
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
@@ -331,8 +331,8 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
         $listingProduct->addData(
             [
-                'status'          => $status,
-                'status_changer'  => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
+                'status' => $status,
+                'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
                 'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
             ]
         )->save();
@@ -365,9 +365,9 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
         $message = '';
 
         $statusChangedFrom = $this->getHelper('Component\Ebay')
-            ->getHumanTitleByListingProductStatus($statusFrom);
+                                  ->getHumanTitleByListingProductStatus($statusFrom);
         $statusChangedTo = $this->getHelper('Component\Ebay')
-            ->getHumanTitleByListingProductStatus($statusTo);
+                                ->getHumanTitleByListingProductStatus($statusTo);
 
         if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
             $message = $this->getHelper('Module\Translation')->__(

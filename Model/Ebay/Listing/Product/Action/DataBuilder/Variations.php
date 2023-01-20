@@ -38,7 +38,7 @@ class Variations extends AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->componentEbayConfiguration = $componentEbayConfiguration;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->dataHelper = $dataHelper;
         $this->translation = $translation;
     }
@@ -46,7 +46,7 @@ class Variations extends AbstractModel
     public function getBuilderData()
     {
         $data = [
-            'is_variation_item' => $this->isVariationItem
+            'is_variation_item' => $this->isVariationItem,
         ];
 
         $this->logLimitationsAndReasons();
@@ -93,11 +93,13 @@ class Variations extends AbstractModel
                 'sku' => $this->getSku($variation),
                 'add' => $ebayVariation->isAdd(),
                 'delete' => $ebayVariation->isDelete(),
-                'specifics' => []
+                'specifics' => [],
             ];
             if ($ebayVariation->isDelete()) {
-                if ($ebayVariation->getOnlineQtySold() === 0 &&
-                    ($ebayVariation->isStopped() || $ebayVariation->isHidden())) {
+                if (
+                    $ebayVariation->getOnlineQtySold() === 0 &&
+                    ($ebayVariation->isStopped() || $ebayVariation->isHidden())
+                ) {
                     $ebayVariation->getParentObject()->delete();
                     continue;
                 }
@@ -108,8 +110,10 @@ class Variations extends AbstractModel
             // @codingStandardsIgnoreLine
             $item = array_merge($item, $this->getVariationPriceData($variation));
 
-            if (($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
-                    $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) && !$item['delete']) {
+            if (
+                ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
+                    $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) && !$item['delete']
+            ) {
                 foreach ($variation->getOptions(true) as $option) {
                     $productsIds[] = $option->getProductId();
                 }
@@ -128,17 +132,19 @@ class Variations extends AbstractModel
             }
 
             //-- MPN Specific has been changed
-            if (!empty($item['details']['mpn_previous']) && !empty($item['details']['mpn']) &&
-                $item['details']['mpn_previous'] != $item['details']['mpn']) {
+            if (
+                !empty($item['details']['mpn_previous']) && !empty($item['details']['mpn']) &&
+                $item['details']['mpn_previous'] != $item['details']['mpn']
+            ) {
                 $oneMoreVariation = [
-                    'qty'       => 0,
-                    'price'     => $item['price'],
-                    'sku'       => 'del-' . sha1(microtime(1) . $item['sku']),
-                    'add'       => 0,
-                    'delete'    => 1,
+                    'qty' => 0,
+                    'price' => $item['price'],
+                    'sku' => 'del-' . sha1(microtime(1) . $item['sku']),
+                    'add' => 0,
+                    'delete' => 1,
                     'specifics' => $item['specifics'],
                     'has_sales' => true,
-                    'details'   => $item['details']
+                    'details' => $item['details'],
                 ];
                 $oneMoreVariation['details']['mpn'] = $item['details']['mpn_previous'];
 
@@ -170,9 +176,9 @@ class Variations extends AbstractModel
             $data[] = $item;
             $variationMetaData[$variation->getId()] = [
                 // @codingStandardsIgnoreLine
-                'index'        => count($data) - 1,
-                'online_qty'   => $variation->getChildObject()->getOnlineQty(),
-                'online_price' => $variation->getChildObject()->getOnlinePrice()
+                'index' => count($data) - 1,
+                'online_qty' => $variation->getChildObject()->getOnlineQty(),
+                'online_price' => $variation->getChildObject()->getOnlinePrice(),
             ];
         }
 
@@ -245,14 +251,14 @@ class Variations extends AbstractModel
 
         if ($this->getEbayListingProduct()->isPriceDiscountStp()) {
             $priceDiscountData = [
-                'original_retail_price' => $ebayVariation->getPriceDiscountStp()
+                'original_retail_price' => $ebayVariation->getPriceDiscountStp(),
             ];
 
             if ($this->getEbayMarketplace()->isStpAdvancedEnabled()) {
                 $priceDiscountData = array_merge(
                     $priceDiscountData,
                     $this->getEbayListingProduct()->getEbaySellingFormatTemplate()
-                        ->getPriceDiscountStpAdditionalFlags()
+                         ->getPriceDiscountStpAdditionalFlags()
                 );
             }
 
@@ -288,6 +294,7 @@ class Variations extends AbstractModel
                     'Reason: Marketplace allows to list only Simple Items.'
                 )
             );
+
             return;
         }
 
@@ -303,6 +310,7 @@ class Variations extends AbstractModel
                     'Reason: eBay Primary Category allows to list only Simple Items.'
                 )
             );
+
             return;
         }
 
@@ -313,6 +321,7 @@ class Variations extends AbstractModel
                     'Reason: ignore Variation Option is enabled in Selling Policy.'
                 )
             );
+
             return;
         }
 
@@ -337,8 +346,10 @@ class Variations extends AbstractModel
     public function checkQtyWarnings($productsIds)
     {
         $qtyMode = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getQtyMode();
-        if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
-            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
+        if (
+            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
+            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
+        ) {
             $productsIds = array_unique($productsIds);
             $qtyWarnings = [];
 
@@ -346,10 +357,12 @@ class Variations extends AbstractModel
             $storeId = $this->getListing()->getStoreId();
 
             foreach ($productsIds as $productId) {
-                if (!empty(
-                    \Ess\M2ePro\Model\Magento\Product::$statistics
-                    [$listingProductId][$productId][$storeId]['qty']
-                )) {
+                if (
+                    !empty(
+                        \Ess\M2ePro\Model\Magento\Product::$statistics
+                        [$listingProductId][$productId][$storeId]['qty']
+                    )
+                ) {
                     $qtys = \Ess\M2ePro\Model\Magento\Product::$statistics
                             [$listingProductId][$productId][$storeId]['qty'];
                     $qtyWarnings = array_unique(array_merge($qtyWarnings, array_keys($qtys)));
@@ -401,12 +414,10 @@ class Variations extends AbstractModel
         $additionalData = $variation->getAdditionalData();
 
         foreach (['isbn', 'upc', 'ean', 'epid'] as $identifier) {
-
             if (isset($additionalData['product_details'][$identifier])) {
                 $data[$identifier] = $additionalData['product_details'][$identifier];
                 continue;
             }
-
 
             if ($this->componentEbayConfiguration->isProductIdModeNone($identifier)) {
                 continue;
@@ -418,8 +429,10 @@ class Variations extends AbstractModel
                 continue;
             }
 
-            if (!$this->getMagentoProduct()->isConfigurableType() &&
-                !$this->getMagentoProduct()->isGroupedType()) {
+            if (
+                !$this->getMagentoProduct()->isConfigurableType() &&
+                !$this->getMagentoProduct()->isGroupedType()
+            ) {
                 continue;
             }
 
@@ -509,23 +522,31 @@ class Variations extends AbstractModel
 
         if (isset($additionalData['product_details']['mpn'])) {
             $data['mpn'] = $additionalData['product_details']['mpn'];
+
             return $data;
         }
 
-        if ($ebayDescriptionTemplate->isProductDetailsModeNone('mpn') ||
-            $ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
+        if (
+            $ebayDescriptionTemplate->isProductDetailsModeNone('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeNone('brand')
+        ) {
             return $data;
         }
 
-        if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('mpn') ||
-            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
+        if (
+            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')
+        ) {
             $data['mpn'] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::
             PRODUCT_DETAILS_DOES_NOT_APPLY;
+
             return $data;
         }
 
-        if (!$this->getMagentoProduct()->isConfigurableType() &&
-            !$this->getMagentoProduct()->isGroupedType()) {
+        if (
+            !$this->getMagentoProduct()->isConfigurableType() &&
+            !$this->getMagentoProduct()->isGroupedType()
+        ) {
             return $data;
         }
 

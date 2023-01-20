@@ -28,7 +28,9 @@ class GetSearchAsinMenu extends Main
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
         $productSearchMenuBlock = $this->getLayout()
-                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Menu::class);
+                                       ->createBlock(
+                                           \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Menu::class
+                                       );
         $productSearchMenuBlock->setListingProduct($listingProduct);
 
         $this->setAjaxContent($productSearchMenuBlock);

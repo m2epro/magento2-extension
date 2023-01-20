@@ -123,6 +123,7 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setMetaData($value)
     {
         $this->metaData = $value;
+
         return $this;
     }
 

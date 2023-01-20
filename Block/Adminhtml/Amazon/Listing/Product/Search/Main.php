@@ -26,12 +26,12 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     {
         // ---------------------------------------
         $data = [
-            'id'    => 'productSearch_submit_button',
+            'id' => 'productSearch_submit_button',
             'label' => $this->__('Search'),
-            'class' => 'productSearch_submit_button submit action primary'
+            'class' => 'productSearch_submit_button submit action primary',
         ];
         $buttonSubmitBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                               ->setData($data);
+                                  ->setData($data);
         $this->setChild('productSearch_submit_button', $buttonSubmitBlock);
         // ---------------------------------------
 

@@ -91,7 +91,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             Configuration::INTERFACE_AND_MAGENTO_INVENTORY_SECTION_COMPONENT,
             Configuration::LOGS_CLEARING_SECTION_COMPONENT,
             Configuration::EXTENSION_KEY_SECTION_COMPONENT,
-            Configuration::MIGRATION_SECTION_COMPONENT
+            Configuration::MIGRATION_SECTION_COMPONENT,
         ];
 
         if (

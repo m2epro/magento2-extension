@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing;
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $_groupedActions = [];
-    protected $_actions        = [];
+    protected $_actions = [];
 
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
@@ -71,10 +71,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'url' => $this->getUrl(
                     '*/listing/clearLog',
                     [
-                        'back' => $this->dataHelper->makeBackUrlParam("*/{$currentView}_listing/index")
+                        'back' => $this->dataHelper->makeBackUrlParam("*/{$currentView}_listing/index"),
                     ]
                 ),
-                'confirm' => $this->__('Are you sure?')
+                'confirm' => $this->__('Are you sure?'),
             ]
         );
         // ---------------------------------------
@@ -86,9 +86,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'label' => $this->__('Delete Listing(s)'),
                 'url' => $this->getUrl("*/{$currentView}_listing/delete"),
-                'confirm' => $this->__('Are you sure?')
+                'confirm' => $this->__('Are you sure?'),
             ]
         );
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -103,64 +104,64 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'header' => $this->__('ID'),
                 'align' => 'left',
-                'type'  => 'number',
+                'type' => 'number',
                 'index' => 'id',
-                'filter_index' => 'main_table.id'
+                'filter_index' => 'main_table.id',
             ]
         );
 
         $this->addColumn('title', [
-            'header'    => $this->__('Title / Info'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'title',
-            'escape'    => false,
+            'header' => $this->__('Title / Info'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
+            'escape' => false,
             'filter_index' => 'main_table.title',
             'frame_callback' => [$this, 'callbackColumnTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('products_total_count', [
-            'header'    => $this->__('Total Items'),
-            'align'     => 'right',
-            'type'      => 'number',
-            'index'     => 'products_total_count',
+            'header' => $this->__('Total Items'),
+            'align' => 'right',
+            'type' => 'number',
+            'index' => 'products_total_count',
             'filter_index' => 't.products_total_count',
-            'frame_callback' => [$this, 'callbackColumnProductsCount']
+            'frame_callback' => [$this, 'callbackColumnProductsCount'],
         ]);
 
         $this->addColumn('products_active_count', [
-            'header'    => $this->__('Active Items'),
-            'align'     => 'right',
-            'type'      => 'number',
-            'index'     => 'products_active_count',
+            'header' => $this->__('Active Items'),
+            'align' => 'right',
+            'type' => 'number',
+            'index' => 'products_active_count',
             'filter_index' => 't.products_active_count',
-            'frame_callback' => [$this, 'callbackColumnProductsCount']
+            'frame_callback' => [$this, 'callbackColumnProductsCount'],
         ]);
 
         $this->addColumn('products_inactive_count', [
-            'header'    => $this->__('Inactive Items'),
-            'align'     => 'right',
-            'width'     => 100,
-            'type'      => 'number',
-            'index'     => 'products_inactive_count',
+            'header' => $this->__('Inactive Items'),
+            'align' => 'right',
+            'width' => 100,
+            'type' => 'number',
+            'index' => 'products_inactive_count',
             'filter_index' => 't.products_inactive_count',
-            'frame_callback' => [$this, 'callbackColumnProductsCount']
+            'frame_callback' => [$this, 'callbackColumnProductsCount'],
         ]);
 
         $this->setColumns();
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'getter'    => 'getId',
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'getter' => 'getId',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'group_order' => $this->getGroupOrder(),
-            'actions'     => $this->getColumnActionsItems()
+            'actions' => $this->getColumnActionsItems(),
         ]);
 
         return parent::_prepareColumns();
@@ -202,8 +203,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         return [
             'products_actions' => $this->__('Products'),
-            'edit_actions'     => $this->__('Edit Settings'),
-            'other'            => $this->__('Other'),
+            'edit_actions' => $this->__('Edit Settings'),
+            'other' => $this->__('Other'),
         ];
     }
 

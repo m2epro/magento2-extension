@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
@@ -58,6 +58,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         $chooserBlock->setCategoriesData($converter->getCategoryDataForChooser());
 
         $this->setAjaxContent($chooserBlock->toHtml());
+
         return $this->getResult();
     }
 

@@ -18,6 +18,7 @@ class TemplateGrid extends Template
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Grid::class);
 
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

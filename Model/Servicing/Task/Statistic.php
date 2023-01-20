@@ -19,7 +19,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
     public const NAME = 'statistic';
 
-    const RUN_INTERVAL = 604800; // 1 week
+    public const RUN_INTERVAL = 604800; // 1 week
 
     /** @var \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory */
     private $transactionCollectionFactory;
@@ -70,32 +70,6 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
     /** @var \Ess\M2ePro\Helper\Magento\Store */
     private $helperMagentoStore;
 
-    /**
-     * @param \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory $transactionCollectionFactory
-     * @param \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory $creditmemoCollectionFactory
-     * @param \Magento\Sales\Model\ResourceModel\Order\Shipment\CollectionFactory $shipmentCollectionFactory
-     * @param \Magento\Sales\Model\ResourceModel\Order\Invoice\CollectionFactory $invoiceCollectionFactory
-     * @param \Magento\Catalog\Model\CategoryFactory $categoryFactory
-     * @param \Magento\Eav\Model\Entity\Attribute\SetFactory $attributeSetFactory
-     * @param \Magento\Catalog\Model\ProductFactory $productFactory
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeCollection
-     * @param \Magento\Framework\Module\ModuleListInterface $moduleList
-     * @param \Magento\Framework\Module\Manager $moduleManager
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
-     * @param \Magento\Framework\App\ResourceConnection $resource
-     * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
-     * @param \Ess\M2ePro\Helper\Module\Exception $helperException
-     * @param \Ess\M2ePro\Helper\Client $helperClient
-     * @param \Ess\M2ePro\Helper\Magento $helperMagento
-     * @param \Ess\M2ePro\Helper\Module $helperModule
-     * @param \Ess\M2ePro\Helper\Module\Database\Structure $helperDatabaseStructure
-     * @param \Ess\M2ePro\Helper\Component $helperComponent
-     * @param \Ess\M2ePro\Helper\Magento\Store $helperMagentoStore
-     */
     public function __construct(
         \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory $transactionCollectionFactory,
         \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory $creditmemoCollectionFactory,
@@ -193,8 +167,8 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
     {
         return [
             'statistics' => [
-                'server'    => $this->getServerRequestPart(),
-                'magento'   => $this->getMagentoRequestPart(),
+                'server' => $this->getServerRequestPart(),
+                'magento' => $this->getMagentoRequestPart(),
                 'extension' => $this->getExtensionRequestPart(),
             ],
         ];
@@ -381,7 +355,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                 $data['stocks'][$stockData['name']]['sources'][] = [
                     'source_name' => $source->getName(),
                     'source_code' => $source->getSourceCode(),
-                    'is_enabled'  => (int)$source->isEnabled(),
+                    'is_enabled' => (int)$source->isEnabled(),
                 ];
             }
 
@@ -430,7 +404,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                         ),
                                         [
                                             'count' => new \Zend_Db_Expr('COUNT(*)'),
-                                            'type'  => 'type_id',
+                                            'type' => 'type_id',
                                         ]
                                     )
                                     ->group('type_id')
@@ -453,10 +427,10 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                                 ->getTableNameWithPrefix('cataloginventory_stock_item'),
                                         ],
                                         [
-                                            'min_qty'     => new \Zend_Db_Expr('MIN(stock_item.qty)'),
-                                            'max_qty'     => new \Zend_Db_Expr('MAX(stock_item.qty)'),
-                                            'avg_qty'     => new \Zend_Db_Expr('AVG(stock_item.qty)'),
-                                            'count'       => new \Zend_Db_Expr('COUNT(*)'),
+                                            'min_qty' => new \Zend_Db_Expr('MIN(stock_item.qty)'),
+                                            'max_qty' => new \Zend_Db_Expr('MAX(stock_item.qty)'),
+                                            'avg_qty' => new \Zend_Db_Expr('AVG(stock_item.qty)'),
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
                                             'is_in_stock' => 'stock_item.is_in_stock',
                                         ]
                                     )
@@ -524,7 +498,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->from(
                                         $this->helperDatabaseStructure->getTableNameWithPrefix('sales_order'),
                                         [
-                                            'count'  => new \Zend_Db_Expr('COUNT(*)'),
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
                                             'status' => 'status',
                                         ]
                                     )
@@ -629,7 +603,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
 
         foreach ($helper->getModuleTables() as $tableName) {
             $data['info']['tables'][$tableName] = [
-                'size'   => $helper->getDataLength($tableName),
+                'size' => $helper->getDataLength($tableName),
                 'amount' => $helper->getCountOfRecords($tableName),
             ];
         }
@@ -809,11 +783,11 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         $onlyAmazonIds = array_diff($amazonIds, $ebayIds);
 
         return [
-            'on-ebay'     => count($ebayIds),
-            'on-amazon'   => count($amazonIds),
-            'only-ebay'   => count($onlyEbayIds),
+            'on-ebay' => count($ebayIds),
+            'on-amazon' => count($amazonIds),
+            'only-ebay' => count($onlyEbayIds),
             'only-amazon' => count($onlyAmazonIds),
-            'both'        => count($bothIds),
+            'both' => count($bothIds),
         ];
     }
 
@@ -874,11 +848,11 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->from(
                                         $this->helperDatabaseStructure->getTableNameWithPrefix('m2epro_listing'),
                                         [
-                                            'count'          => new \Zend_Db_Expr('COUNT(*)'),
-                                            'component'      => 'component_mode',
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
+                                            'component' => 'component_mode',
                                             'marketplace_id' => 'marketplace_id',
-                                            'account_id'     => 'account_id',
-                                            'store_id'       => 'store_id',
+                                            'account_id' => 'account_id',
+                                            'store_id' => 'store_id',
                                         ]
                                     )
                                     ->group([
@@ -1092,10 +1066,10 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->from(
                                         $this->helperDatabaseStructure->getTableNameWithPrefix('m2epro_listing_other'),
                                         [
-                                            'count'          => new \Zend_Db_Expr('COUNT(*)'),
-                                            'component'      => 'component_mode',
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
+                                            'component' => 'component_mode',
                                             'marketplace_id' => 'marketplace_id',
-                                            'account_id'     => 'account_id',
+                                            'account_id' => 'account_id',
                                         ]
                                     )
                                     ->group([
@@ -1181,10 +1155,10 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->from(
                                         $this->helperDatabaseStructure->getTableNameWithPrefix('m2epro_order'),
                                         [
-                                            'count'          => new \Zend_Db_Expr('COUNT(*)'),
-                                            'component'      => 'component_mode',
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
+                                            'component' => 'component_mode',
                                             'marketplace_id' => 'marketplace_id',
-                                            'account_id'     => 'account_id',
+                                            'account_id' => 'account_id',
                                         ]
                                     )
                                     ->group([
@@ -1280,7 +1254,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->from(
                                         $this->helperDatabaseStructure->getTableNameWithPrefix('m2epro_amazon_order'),
                                         [
-                                            'count'  => new \Zend_Db_Expr('COUNT(*)'),
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
                                             'status' => 'status',
                                         ]
                                     )
@@ -1288,13 +1262,13 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->query();
 
         $statuses = [
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING                => 'pending',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED              => 'unshipped',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY      => 'shipped_partially',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED                => 'shipped',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE          => 'unfulfillable',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED               => 'canceled',
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED    => 'invoice_uncorfirmed',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING => 'pending',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED => 'unshipped',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY => 'shipped_partially',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED => 'shipped',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE => 'unfulfillable',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED => 'canceled',
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => 'invoice_uncorfirmed',
             \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED => 'unshipped_cancellation_requested',
         ];
 
@@ -1344,7 +1318,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                                     ->from(
                                         $this->helperDatabaseStructure->getTableNameWithPrefix($tableName),
                                         [
-                                            'count'     => new \Zend_Db_Expr('COUNT(*)'),
+                                            'count' => new \Zend_Db_Expr('COUNT(*)'),
                                             'component' => 'component_mode',
                                         ]
                                     )

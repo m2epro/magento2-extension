@@ -55,17 +55,17 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
         $this->appendHelpBlock(
             [
-                'content' => $content
+                'content' => $content,
             ]
         );
 
         $addButtonProps = [
-            'id'           => 'add_policy',
-            'label'        => __('Add Policy'),
-            'class'        => 'add',
+            'id' => 'add_policy',
+            'label' => __('Add Policy'),
+            'class' => 'add',
             'button_class' => '',
-            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
-            'options'      => $this->_getAddTemplateButtonOptions(),
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
+            'options' => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
 
@@ -77,26 +77,26 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Grid::TEMPLATE_CATEGORY        => [
-                'label'   => $this->__('Category'),
-                'id'      => 'category',
+            Grid::TEMPLATE_CATEGORY => [
+                'label' => $this->__('Category'),
+                'id' => 'category',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_CATEGORY) . "')",
             ],
-            Grid::TEMPLATE_DESCRIPTION     => [
-                'label'   => $this->__('Description'),
-                'id'      => 'description',
+            Grid::TEMPLATE_DESCRIPTION => [
+                'label' => $this->__('Description'),
+                'id' => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_DESCRIPTION) . "')",
             ],
-            Grid::TEMPLATE_SELLING_FORMAT  => [
-                'label'   => $this->__('Selling'),
-                'id'      => 'selling',
+            Grid::TEMPLATE_SELLING_FORMAT => [
+                'label' => $this->__('Selling'),
+                'id' => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
             Grid::TEMPLATE_SYNCHRONIZATION => [
-                'label'   => $this->__('Synchronization'),
-                'id'      => 'synchronization',
+                'label' => $this->__('Synchronization'),
+                'id' => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
-            ]
+            ],
         ];
 
         return $data;

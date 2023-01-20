@@ -54,9 +54,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         if ($this->getRequest()->getParam('back') !== null) {
             $url = $this->dataHelper->getBackUrl();
             $this->buttonList->add('back', [
-                'label'   => $this->__('Back'),
+                'label' => $this->__('Back'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
-                'class'   => 'back'
+                'class' => 'back',
             ]);
         }
         // ---------------------------------------
@@ -74,7 +74,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
                 <p>The list is automatically updated if the import option is enabled in the Account settings.</p>
 HTML
-            )
+            ),
         ]);
 
         return parent::_prepareLayout();
@@ -91,11 +91,14 @@ HTML
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\Other\View\Header::class,
             '',
-            ['data' => [
-                'account' => $this->ebayFactory->getCachedObjectLoaded('Account', $accountId),
-                'marketplace' => $this->ebayFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
-            ]]
+            [
+                'data' => [
+                    'account' => $this->ebayFactory->getCachedObjectLoaded('Account', $accountId),
+                    'marketplace' => $this->ebayFactory->getCachedObjectLoaded('Marketplace', $marketplaceId),
+                ],
+            ]
         );
+
         // ---------------------------------------
 
         return $viewHeaderBlock->toHtml() . parent::getGridHtml();
@@ -120,8 +123,8 @@ HTML
             'mapProductPopupHtml' => $this->getUrl(
                 '*/listing_other_mapping/mapProductPopupHtml',
                 [
-                    'account_id'     => $this->getRequest()->getParam('account'),
-                    'marketplace_id' => $this->getRequest()->getParam('marketplace')
+                    'account_id' => $this->getRequest()->getParam('account'),
+                    'marketplace_id' => $this->getRequest()->getParam('marketplace'),
                 ]
             ),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
@@ -134,7 +137,7 @@ HTML
             'categorySettings' => $this->getUrl('*/ebay_listing_product_category_settings/otherCategories'),
 
             'removingProducts' => $this->getUrl('*/ebay_listing_other/removing'),
-            'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping')
+            'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping'),
 
         ]);
 
@@ -167,7 +170,8 @@ HTML
             'select_action_message' => $this->__('Please select Action.'),
         ]);
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'jQuery' => 'jquery',
 
             'p' => 'M2ePro/Plugin/ProgressBar',
@@ -178,8 +182,9 @@ HTML
             'lor' => 'M2ePro/Listing/Other/Removing',
             'lou' => 'M2ePro/Listing/Other/Unmapping',
 
-            'elog' => 'M2ePro/Ebay/Listing/Other/Grid'
-        ], <<<JS
+            'elog' => 'M2ePro/Ebay/Listing/Other/Grid',
+            ],
+            <<<JS
 
         M2ePro.customData.componentMode = '{$component}';
         M2ePro.customData.gridId = 'ebayListingOtherGrid';
@@ -200,10 +205,10 @@ JS
         );
 
         return '<div id="listing_other_progress_bar"></div>' .
-                '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
-                '<div id="listing_other_content_container">' .
-                parent::_toHtml() .
-                '</div>';
+            '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .
+            '<div id="listing_other_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 
     //########################################

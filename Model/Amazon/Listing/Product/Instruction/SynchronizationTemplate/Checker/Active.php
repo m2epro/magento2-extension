@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as AmazonChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active
- */
 class Active extends AbstractModel
 {
     //########################################
@@ -31,7 +29,7 @@ class Active extends AbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            AmazonChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -49,7 +47,8 @@ class Active extends AbstractModel
             return false;
         }
 
-        if (!$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
+        if (
+            !$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {
             return false;
@@ -96,9 +95,9 @@ class Active extends AbstractModel
                 $scheduledAction->addData(
                     [
                         'listing_product_id' => $this->input->getListingProduct()->getId(),
-                        'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                        'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-                        'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params,]),
+                        'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                        'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+                        'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params,]),
                     ]
                 );
 
@@ -142,7 +141,8 @@ class Active extends AbstractModel
 
         $tags = array_flip($tags);
 
-        if ($variationManager->isRelationParentType() &&
+        if (
+            $variationManager->isRelationParentType() &&
             $this->input->getListingProduct()->getChildObject()->getSku() === null
         ) {
             return false;
@@ -203,13 +203,13 @@ class Active extends AbstractModel
         $scheduledAction->addData(
             [
                 'listing_product_id' => $this->input->getListingProduct()->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
-                'tag'                => '/'.implode('/', $tags).'/',
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(
+                'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                'tag' => '/' . implode('/', $tags) . '/',
+                'additional_data' => $this->getHelper('Data')->jsonEncode(
                     [
-                        'params'       => $params,
-                        'configurator' => $configurator->getSerializedData()
+                        'params' => $params,
+                        'configurator' => $configurator->getSerializedData(),
                     ]
                 ),
             ]
@@ -252,7 +252,8 @@ class Active extends AbstractModel
         if ($amazonSynchronizationTemplate->isStopStatusDisabled()) {
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
                 return true;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
@@ -269,7 +270,8 @@ class Active extends AbstractModel
         if ($amazonSynchronizationTemplate->isStopOutOfStock()) {
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
                 return true;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -297,7 +299,7 @@ class Active extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix'   => \Ess\M2ePro\Model\Amazon\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($amazonSynchronizationTemplate->getStopAdvancedRulesFilters());
@@ -329,14 +331,14 @@ class Active extends AbstractModel
         }
 
         $currentHandlingTime = $amazonListingProduct->getListingSource()->getHandlingTime();
-        $onlineHandlingTime  = $amazonListingProduct->getOnlineHandlingTime();
+        $onlineHandlingTime = $amazonListingProduct->getOnlineHandlingTime();
 
         if ($currentHandlingTime != $onlineHandlingTime) {
             return true;
         }
 
         $currentRestockDate = $amazonListingProduct->getListingSource()->getRestockDate();
-        $onlineRestockDate  = $amazonListingProduct->getOnlineRestockDate();
+        $onlineRestockDate = $amazonListingProduct->getOnlineRestockDate();
 
         if ($currentRestockDate != $onlineRestockDate) {
             return true;
@@ -387,7 +389,7 @@ class Active extends AbstractModel
         }
 
         $currentPrice = $amazonListingProduct->getRegularPrice();
-        $onlinePrice  = $amazonListingProduct->getOnlineRegularPrice();
+        $onlinePrice = $amazonListingProduct->getOnlineRegularPrice();
 
         if ($currentPrice != $onlinePrice) {
             return true;
@@ -395,13 +397,13 @@ class Active extends AbstractModel
 
         $currentSalePriceInfo = $amazonListingProduct->getRegularSalePriceInfo();
         if ($currentSalePriceInfo !== false) {
-            $currentSalePrice          = $currentSalePriceInfo['price'];
+            $currentSalePrice = $currentSalePriceInfo['price'];
             $currentSalePriceStartDate = $currentSalePriceInfo['start_date'];
-            $currentSalePriceEndDate   = $currentSalePriceInfo['end_date'];
+            $currentSalePriceEndDate = $currentSalePriceInfo['end_date'];
         } else {
-            $currentSalePrice          = 0;
+            $currentSalePrice = 0;
             $currentSalePriceStartDate = null;
-            $currentSalePriceEndDate   = null;
+            $currentSalePriceEndDate = null;
         }
 
         $onlineSalePrice = $amazonListingProduct->getOnlineRegularSalePrice();
@@ -410,7 +412,8 @@ class Active extends AbstractModel
             return false;
         }
 
-        if (($currentSalePrice === null && $onlineSalePrice !== null) ||
+        if (
+            ($currentSalePrice === null && $onlineSalePrice !== null) ||
             ($currentSalePrice !== null && $onlineSalePrice === null)
         ) {
             return true;
@@ -421,10 +424,11 @@ class Active extends AbstractModel
         }
 
         $onlineSalePriceStartDate = $amazonListingProduct->getOnlineRegularSalePriceStartDate();
-        $onlineSalePriceEndDate   = $amazonListingProduct->getOnlineRegularSalePriceEndDate();
+        $onlineSalePriceEndDate = $amazonListingProduct->getOnlineRegularSalePriceEndDate();
 
-        if ($currentSalePriceStartDate != $onlineSalePriceStartDate ||
-            $currentSalePriceEndDate   != $onlineSalePriceEndDate
+        if (
+            $currentSalePriceStartDate != $onlineSalePriceStartDate ||
+            $currentSalePriceEndDate != $onlineSalePriceEndDate
         ) {
             return true;
         }
@@ -443,7 +447,7 @@ class Active extends AbstractModel
             return false;
         }
 
-        $onlinePrice  = $amazonListingProduct->getOnlineBusinessPrice();
+        $onlinePrice = $amazonListingProduct->getOnlineBusinessPrice();
         $isAllowedForBusinessCustomers = $amazonListingProduct->isAllowedForBusinessCustomers();
 
         if ($isAllowedForBusinessCustomers === false && $onlinePrice > 0) {
@@ -466,7 +470,7 @@ class Active extends AbstractModel
         }
 
         $currentDiscounts = $amazonListingProduct->getBusinessDiscounts();
-        $onlineDiscounts  = $amazonListingProduct->getOnlineBusinessDiscounts();
+        $onlineDiscounts = $amazonListingProduct->getOnlineBusinessDiscounts();
 
         // amazon does not support disabling discounts, so revise should not be allowed
         if (empty($currentDiscounts)) {

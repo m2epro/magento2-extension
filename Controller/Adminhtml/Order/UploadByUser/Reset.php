@@ -21,15 +21,16 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Order
         if (empty($component) || empty($accountId)) {
             $this->setJsonContent(
                 [
-                    'result'   => false,
+                    'result' => false,
                     'messages' => [
                         [
                             'type' => 'error',
-                            'text' => $this->__('Account must be specified.')
-                        ]
-                    ]
+                            'text' => $this->__('Account must be specified.'),
+                        ],
+                    ],
                 ]
             );
+
             return $this->getResult();
         }
 
@@ -40,6 +41,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Order
         $manager->clear();
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 
@@ -61,6 +63,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         /** @var AmazonManager|EbayManager|WalmartManager $manager */
         $manager->setIdentifierByAccount($account);
+
         return $manager;
     }
 }

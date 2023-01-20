@@ -66,7 +66,7 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         $connection = $this->getResource()->getConnection();
         $filterGroupRelation = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+                                    ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
         $connection->delete($filterGroupRelation, ['filter_id = ?' => $this->getId()]);
 
         return true;
@@ -97,7 +97,7 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
-            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT,
         ]);
     }
 
@@ -114,6 +114,7 @@ class Filter extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         if ($asObject) {
             return $this->getSettings('conditions');
         }
+
         return $this->getData('conditions');
     }
 

@@ -32,6 +32,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->setAjaxContent(
                 $this->getLayout()->createBlock($gridBlock)
             );
+
             return $this->getResult();
         }
 

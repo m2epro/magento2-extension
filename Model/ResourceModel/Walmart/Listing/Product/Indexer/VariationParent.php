@@ -52,7 +52,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
 
         $select->columns([
             new \Zend_Db_Expr($this->getConnection()->quote($listing->getId())),
-            new \Zend_Db_Expr($this->getConnection()->quote($createDate))
+            new \Zend_Db_Expr($this->getConnection()->quote($createDate)),
         ]);
 
         $query = $this->getConnection()->insertFromSelect(
@@ -63,7 +63,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
                 'min_price',
                 'max_price',
                 'listing_id',
-                'create_date'
+                'create_date',
             ],
             \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_IGNORE
         );
@@ -80,34 +80,34 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
             ->getObject('Walmart_Listing_Product')->getResource()->getMainTable();
 
         $select = $this->getConnection()->select()
-            ->from(
-                [
-                    'mwlp' => $walmartListingProductTable
-                ],
-                [
-                    'variation_parent_id',
-                    new \Zend_Db_Expr(
-                        "MIN(mwlp.online_price) as variation_min_price"
-                    ),
-                    new \Zend_Db_Expr(
-                        "MAX(mwlp.online_price) as variation_max_price"
-                    ),
-                ]
-            )
-            ->joinInner(
-                [
-                    'mlp' => $listingProductTable
-                ],
-                'mwlp.listing_product_id = mlp.id',
-                []
-            )
-            ->where('mlp.status IN (?)', [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-            ])
-            ->where('mlp.listing_id = ?', (int)$listing->getId())
-            ->where('mwlp.variation_parent_id IS NOT NULL')
-            ->group('mwlp.variation_parent_id');
+                       ->from(
+                           [
+                               'mwlp' => $walmartListingProductTable,
+                           ],
+                           [
+                               'variation_parent_id',
+                               new \Zend_Db_Expr(
+                                   "MIN(mwlp.online_price) as variation_min_price"
+                               ),
+                               new \Zend_Db_Expr(
+                                   "MAX(mwlp.online_price) as variation_max_price"
+                               ),
+                           ]
+                       )
+                       ->joinInner(
+                           [
+                               'mlp' => $listingProductTable,
+                           ],
+                           'mwlp.listing_product_id = mlp.id',
+                           []
+                       )
+                       ->where('mlp.status IN (?)', [
+                           \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+                           \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                       ])
+                       ->where('mlp.listing_id = ?', (int)$listing->getId())
+                       ->where('mwlp.variation_parent_id IS NOT NULL')
+                       ->group('mwlp.variation_parent_id');
 
         return $select;
     }

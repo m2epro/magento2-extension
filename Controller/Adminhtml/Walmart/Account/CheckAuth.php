@@ -32,15 +32,15 @@ class CheckAuth extends Account
 
     public function execute()
     {
-        $consumerId    = $this->getRequest()->getParam('consumer_id', false);
-        $privateKey    = $this->getRequest()->getParam('private_key', false);
-        $clientId      = $this->getRequest()->getParam('client_id', false);
-        $clientSecret  = $this->getRequest()->getParam('client_secret', false);
+        $consumerId = $this->getRequest()->getParam('consumer_id', false);
+        $privateKey = $this->getRequest()->getParam('private_key', false);
+        $clientId = $this->getRequest()->getParam('client_id', false);
+        $clientSecret = $this->getRequest()->getParam('client_secret', false);
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', false);
 
-        $result =  [
+        $result = [
             'result' => false,
-            'reason' => null
+            'reason' => null,
         ];
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObject */
@@ -49,33 +49,39 @@ class CheckAuth extends Account
             $marketplaceId
         );
 
-        if ($marketplaceId == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
-            $consumerId && $privateKey) {
+        if (
+            $marketplaceId == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
+            $consumerId && $privateKey
+        ) {
             $requestData = [
                 'marketplace' => $marketplaceObject->getNativeId(),
                 'consumer_id' => $consumerId,
                 'private_key' => $privateKey,
             ];
-        } elseif ($marketplaceId != \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
-            $clientId && $clientSecret) {
+        } elseif (
+            $marketplaceId != \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA &&
+            $clientId && $clientSecret
+        ) {
             $requestData = [
-                'marketplace'   => $marketplaceObject->getNativeId(),
-                'client_id'     => $clientId,
+                'marketplace' => $marketplaceObject->getNativeId(),
+                'client_id' => $clientId,
                 'client_secret' => $clientSecret,
             ];
         } else {
             $this->setJsonContent($result);
+
             return $this->getResult();
         }
 
         try {
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account', 'check', 'access', $requestData);
             $dispatcherObject->process($connectorObj);
 
             $response = $connectorObj->getResponseData();
 
-            $result['result'] = isset($response['status']) ? $response['status']  : null;
+            $result['result'] = isset($response['status']) ? $response['status'] : null;
 
             if (!empty($response['reason'])) {
                 $result['reason'] = $this->helperData->escapeJs($response['reason']);

@@ -43,15 +43,18 @@ class Form extends AbstractForm
         $this->allowedTypes($this->getParentBlock()->getData('allowed_types'));
         $this->applyToAll($this->getParentBlock()->getData('apply_to_all'));
 
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'edit_form'
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+            ],
+        ]);
 
         $form->addField(
             'create_attribute_help_block',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('
+                'content' => $this->__(
+                    '
                 This Tool allows you to quickly <strong>Create</strong> a new <strong>Magento Attribute</strong>
                 for the selected Option. In order to Create an Attribute, you have to fill in the Attribute Label,
                 Attribute Code, Catalog Input Type, Scope, Default Value and Attribute Sets fields.<br/><br/>
@@ -60,12 +63,14 @@ class Form extends AbstractForm
                 depends on the Option for which the Attribute is being created.<br/>
                 <strong>Note:</strong> This Option does not imply automatic Product Attribute Value set up.
                 After the Attribute
-                becomes available in Magento, you should Manually provide the Value for the Product.')
+                becomes available in Magento, you should Manually provide the Value for the Product.'
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset('magento_create_custom_attribute', [
-            'legend' => ' ', 'collapsable' => false
+            'legend' => ' ',
+            'collapsable' => false,
         ]);
 
         $fieldset->addField(
@@ -74,11 +79,11 @@ class Form extends AbstractForm
             [
                 'name' => 'store_label',
                 'label' => $this->__('Default Label'),
-                'required' => true
+                'required' => true,
             ]
         );
 
-        $classes  = 'validate-length maximum-length-30 M2ePro-validate-attribute-code ';
+        $classes = 'validate-length maximum-length-30 M2ePro-validate-attribute-code ';
         $classes .= 'M2ePro-validate-attribute-code-to-be-unique';
 
         $fieldset->addField(
@@ -88,7 +93,7 @@ class Form extends AbstractForm
                 'name' => 'code',
                 'label' => $this->__('Attribute Code'),
                 'class' => $classes,
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -96,7 +101,7 @@ class Form extends AbstractForm
         foreach ($this->allowedTypes() as $type) {
             $inputTypes[] = [
                 'value' => $type,
-                'label' => $this->getTitleByType($type)
+                'label' => $this->getTitleByType($type),
             ];
         }
 
@@ -108,7 +113,7 @@ class Form extends AbstractForm
                 'label' => $this->__('Catalog Input Type'),
                 'values' => $inputTypes,
                 'value' => '',
-                'disabled' => $this->isOneOnlyTypeAllowed()
+                'disabled' => $this->isOneOnlyTypeAllowed(),
             ]
         );
 
@@ -118,7 +123,7 @@ class Form extends AbstractForm
                 'hidden',
                 [
                     'name' => 'input_type',
-                    'value' => $this->allowedTypes()[0]
+                    'value' => $this->allowedTypes()[0],
                 ]
             );
         }
@@ -130,15 +135,21 @@ class Form extends AbstractForm
                 'name' => 'scope',
                 'label' => $this->__('Scope'),
                 'values' => [
-                    ['value' => AttributeBuilder::SCOPE_STORE,
-                     'label' => $this->__('Store View')],
-                    ['value' => AttributeBuilder::SCOPE_WEBSITE,
-                     'label' => $this->__('Website')],
-                    ['value' => AttributeBuilder::SCOPE_GLOBAL,
-                     'label' => $this->__('Global')],
+                    [
+                        'value' => AttributeBuilder::SCOPE_STORE,
+                        'label' => $this->__('Store View'),
+                    ],
+                    [
+                        'value' => AttributeBuilder::SCOPE_WEBSITE,
+                        'label' => $this->__('Website'),
+                    ],
+                    [
+                        'value' => AttributeBuilder::SCOPE_GLOBAL,
+                        'label' => $this->__('Global'),
+                    ],
 
                 ],
-                'value' => ''
+                'value' => '',
             ]
         );
 
@@ -147,7 +158,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'default_value',
-                'label' => $this->__('Default Value')
+                'label' => $this->__('Default Value'),
             ]
         );
 
@@ -156,7 +167,7 @@ class Form extends AbstractForm
         foreach ($this->magentoAttributeSetHelper->getAll() as $item) {
             $attributeSets[] = [
                 'value' => $item['attribute_set_id'],
-                'label' => $item['attribute_set_name']
+                'label' => $item['attribute_set_name'],
             ];
             $values[] = $item['attribute_set_id'];
         }
@@ -171,7 +182,7 @@ class Form extends AbstractForm
                 'value' => $values,
                 'required' => true,
                 'style' => 'width: 70%',
-                'field_extra_attributes' => $this->applyToAll() ? 'style="display: none;"' : ''
+                'field_extra_attributes' => $this->applyToAll() ? 'style="display: none;"' : '',
             ]
         );
 
@@ -181,14 +192,15 @@ class Form extends AbstractForm
                 'note',
                 [
                     'label' => $this->__('Attribute Sets'),
-                    'text' => '<strong>'. $this->__('Will be added to the all Attribute Sets.')
-                              . '</strong>'
+                    'text' => '<strong>' . $this->__('Will be added to the all Attribute Sets.')
+                        . '</strong>',
                 ]
             );
         }
 
         $form->setUseContainer(true);
         $this->setForm($form);
+
         return $this;
     }
 
@@ -197,13 +209,13 @@ class Form extends AbstractForm
     protected function _toHtml()
     {
         $this->jsTranslator->addTranslations([
-            'Invalid attribute code'                      => $this->__(
+            'Invalid attribute code' => $this->__(
                 'Please use only letters (a-z),
                 numbers (0-9) or underscore(_) in this field, first character should be a letter.'
             ),
             'Attribute with the same code already exists' => $this->__('Attribute with the same code already exists.'),
-            'Attribute has been created.'                 => $this->__('Attribute has been created.'),
-            'Please enter a valid date.'                  => $this->__('Please enter a valid date.'),
+            'Attribute has been created.' => $this->__('Attribute has been created.'),
+            'Please enter a valid date.' => $this->__('Please enter a valid date.'),
         ]);
 
         $this->jsPhp->addConstants(
@@ -216,7 +228,9 @@ class Form extends AbstractForm
             'general/createAttribute' => $this->getUrl('general/createAttribute'),
         ]);
 
-        $this->js->addRequireJs(['jQuery' => 'jquery'], <<<JS
+        $this->js->addRequireJs(
+            ['jQuery' => 'jquery'],
+            <<<JS
 
         var handler = window['{$this->handlerId()}'];
 
@@ -242,6 +256,7 @@ JS
         }
 
         $this->handlerId = $value;
+
         return $this->handlerId;
     }
 
@@ -252,6 +267,7 @@ JS
         }
 
         $this->applyToAllAttributeSets = $value;
+
         return $this->applyToAllAttributeSets;
     }
 
@@ -262,6 +278,7 @@ JS
         }
 
         $this->allowedTypes = $value;
+
         return $this->allowedTypes;
     }
 
@@ -269,14 +286,14 @@ JS
 
     public function getTitleByType($type)
     {
-        $titles =  [
-            AttributeBuilder::TYPE_TEXT            => $this->__('Text Field'),
-            AttributeBuilder::TYPE_TEXTAREA        => $this->__('Text Area'),
-            AttributeBuilder::TYPE_PRICE           => $this->__('Price'),
-            AttributeBuilder::TYPE_SELECT          => $this->__('Select'),
+        $titles = [
+            AttributeBuilder::TYPE_TEXT => $this->__('Text Field'),
+            AttributeBuilder::TYPE_TEXTAREA => $this->__('Text Area'),
+            AttributeBuilder::TYPE_PRICE => $this->__('Price'),
+            AttributeBuilder::TYPE_SELECT => $this->__('Select'),
             AttributeBuilder::TYPE_MULTIPLE_SELECT => $this->__('Multiple Select'),
-            AttributeBuilder::TYPE_DATE            => $this->__('Date'),
-            AttributeBuilder::TYPE_BOOLEAN         => $this->__('Yes/No')
+            AttributeBuilder::TYPE_DATE => $this->__('Date'),
+            AttributeBuilder::TYPE_BOOLEAN => $this->__('Yes/No'),
         ];
 
         return isset($titles[$type]) ? $titles[$type] : $this->__('N/A');
@@ -291,7 +308,7 @@ JS
             AttributeBuilder::TYPE_SELECT,
             AttributeBuilder::TYPE_MULTIPLE_SELECT,
             AttributeBuilder::TYPE_DATE,
-            AttributeBuilder::TYPE_BOOLEAN
+            AttributeBuilder::TYPE_BOOLEAN,
         ];
     }
 

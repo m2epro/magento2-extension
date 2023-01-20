@@ -30,6 +30,7 @@ class GetVariationThemeAttributes extends Category
         }
 
         $this->setJsonContent($attributes);
+
         return $this->getResult();
     }
 }

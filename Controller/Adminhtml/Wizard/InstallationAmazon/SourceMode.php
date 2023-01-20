@@ -22,7 +22,7 @@ class SourceMode extends InstallationAmazon
                 'step' => 1,
                 'id' => $listingId,
                 'new_listing' => true,
-                'wizard' => true
+                'wizard' => true,
             ]
         );
     }

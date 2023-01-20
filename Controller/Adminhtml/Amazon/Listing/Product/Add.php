@@ -12,7 +12,9 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 abstract class Add extends Main
 {
+    /** @var string  */
     protected $sessionKey = 'amazon_listing_product_add';
+    /** @var null  */
     protected $listing = null;
 
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
@@ -88,13 +90,13 @@ abstract class Add extends Main
     {
         $connWrite = $this->resourceConnection->getConnection();
         $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
-            ->getResource()->getMainTable();
+                                                               ->getResource()->getMainTable();
 
         $productsIds = array_chunk($productsIds, 1000);
         foreach ($productsIds as $productsIdsChunk) {
             $connWrite->update($tableAmazonListingProduct, [
-                'template_description_id' => $templateId
-            ], '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')');
+                'template_description_id' => $templateId,
+            ], '`listing_product_id` IN (' . implode(',', $productsIdsChunk) . ')');
         }
     }
 

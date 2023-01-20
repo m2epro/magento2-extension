@@ -75,6 +75,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $temp && $this->accountModel = null;
         $temp && $this->marketplaceModel = null;
         $temp && $this->magentoProductModel = null;
+
         return $temp;
     }
 
@@ -140,8 +141,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         return $this->magentoProductModel = $this->modelFactory->getObject('Magento\Product')
-                ->setStoreId($this->getStoreId())
-                ->setProductId($this->getProductId());
+                                                               ->setStoreId($this->getStoreId())
+                                                               ->setProductId($this->getProductId());
     }
 
     /**

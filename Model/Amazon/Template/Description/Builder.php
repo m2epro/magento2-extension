@@ -30,15 +30,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'id'             => '',
-            'title'          => '',
+            'id' => '',
+            'title' => '',
             'marketplace_id' => '',
 
             'is_new_asin_accepted' => 0,
 
-            'category_path'     => '',
+            'category_path' => '',
             'product_data_nick' => '',
-            'browsenode_id'     => '',
+            'browsenode_id' => '',
         ];
     }
 }

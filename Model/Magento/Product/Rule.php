@@ -59,8 +59,8 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * Create rule instance from serialized array
      *
      * @param string $serialized
-     * @throws \Ess\M2ePro\Model\Exception
      *
+     * @throws \Ess\M2ePro\Model\Exception
      */
     public function loadFromSerialized($serialized)
     {
@@ -83,8 +83,8 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * Create rule instance form post array
      *
      * @param array $post
-     * @throws \Ess\M2ePro\Model\Exception
      *
+     * @throws \Ess\M2ePro\Model\Exception
      */
     public function loadFromPost(array $post)
     {
@@ -102,9 +102,9 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * Get serialized array from post array
      *
      * @param array $post
+     *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception
-     *
      */
     public function getSerializedFromPost(array $post)
     {
@@ -161,11 +161,13 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function setCollectedAttributes(array $attributes)
     {
         $this->_collectedAttributes = $attributes;
+
         return $this;
     }
 
@@ -187,10 +189,8 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     /**
      * Get condition instance
-     *
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
      * @throws \Ess\M2ePro\Model\Exception
-     *
      */
     public function getConditions()
     {
@@ -271,7 +271,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
                 'attributes' => $this->getCollectedAttributes(),
                 'product' => $this->productFactory->create(),
                 'store_id' => $collection->getStoreId(),
-                'id_field_name' => $idFieldName
+                'id_field_name' => $idFieldName,
             ]
         );
 
@@ -302,11 +302,11 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     protected function getConditionInstance($prefix)
     {
         $conditionInstance = $this->modelFactory->getObject($this->getConditionClassName())
-            ->setRule($this)
-            ->setPrefix($prefix)
-            ->setValue(true)
-            ->setId(1)
-            ->setData($prefix, []);
+                                                ->setRule($this)
+                                                ->setPrefix($prefix)
+                                                ->setValue(true)
+                                                ->setId(1)
+                                                ->setData($prefix, []);
 
         if ($this->getCustomOptionsFlag() !== null) {
             $conditionInstance->setCustomOptionsFlag($this->getCustomOptionsFlag());
@@ -321,7 +321,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         foreach ($data as $id => $value) {
             $path = explode('--', $id);
             $node =& $arr;
-            for ($i=0, $l=sizeof($path); $i<$l; $i++) {
+            for ($i = 0, $l = count($path); $i < $l; $i++) {
                 if (!isset($node[$prefix][$path[$i]])) {
                     $node[$prefix][$path[$i]] = [];
                 }
@@ -354,35 +354,26 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      *          'prefix'   => 'your_prefix'
      *      ]
      * );
-     *
      *   get serialized data for saving to database ($serializedData):
      *   $serializedData = $ruleModel->getSerializedFromPost($post);
-     *
      *  set model to block for view rules from database ($serializedData):
      *      $ruleModel->loadFromSerialized($serializedData);
      *      $ruleBlock = $this->getLayout()
      *                        ->createBlock('M2ePro/adminhtml_magento_product_rule')
      *                        ->setData('rule_model', $ruleModel);
-     *
      * Using model for check magento product with rule
-     *
      *      using serialized data:
      *          $ruleModel->loadFromSerialized($serializedData);
      *          $checkingResult = $ruleModel->validate($magentoProductInstance);
-     *
      *      using post array data:
      *          $ruleModel->loadFromPost($post);
      *          $checkingResult = $ruleModel->validate($magentoProductInstance);
-     *
      * Using model for filter magento product collection with rule
-     *
      *      using serialized data:
      *          $ruleModel->loadFromSerialized($serializedData);
      *          $ruleModel->setAttributesFilterToCollection($magentoProductCollection);
-     *
      *      using post array data:
      *          $ruleModel->loadFromPost($post);
      *          $ruleModel->setAttributesFilterToCollection($magentoProductCollection);
-     *
      */
 }

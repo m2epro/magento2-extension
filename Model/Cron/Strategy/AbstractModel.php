@@ -10,22 +10,22 @@ namespace Ess\M2ePro\Model\Cron\Strategy;
 
 use Ess\M2ePro\Model\Lock\Item\Manager as LockManager;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Strategy\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    const INITIALIZATION_TRANSACTIONAL_LOCK_NICK = 'cron_strategy_initialization';
+    public const INITIALIZATION_TRANSACTIONAL_LOCK_NICK = 'cron_strategy_initialization';
 
-    const PROGRESS_START_EVENT_NAME           = 'ess_cron_progress_start';
-    const PROGRESS_SET_PERCENTAGE_EVENT_NAME  = 'ess_cron_progress_set_percentage';
-    const PROGRESS_SET_DETAILS_EVENT_NAME     = 'ess_cron_progress_set_details';
-    const PROGRESS_STOP_EVENT_NAME            = 'ess_cron_progress_stop';
+    public const PROGRESS_START_EVENT_NAME = 'ess_cron_progress_start';
+    public const PROGRESS_SET_PERCENTAGE_EVENT_NAME = 'ess_cron_progress_set_percentage';
+    public const PROGRESS_SET_DETAILS_EVENT_NAME = 'ess_cron_progress_set_details';
+    public const PROGRESS_STOP_EVENT_NAME = 'ess_cron_progress_stop';
 
+    /** @var \Ess\M2ePro\Model\Cron\Strategy\Observer\KeepAlive  */
     protected $observerKeepAlive;
+    /** @var \Ess\M2ePro\Model\Cron\Strategy\Observer\Progress  */
     protected $observerProgress;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
-
+    /** @var null|int  */
     protected $initiator = null;
 
     /**
@@ -70,6 +70,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setInitiator($initiator)
     {
         $this->initiator = $initiator;
+
         return $this;
     }
 
@@ -82,11 +83,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Cron\OperationHistory $operationHistory
+     *
      * @return $this
      */
     public function setParentOperationHistory(\Ess\M2ePro\Model\Cron\OperationHistory $operationHistory)
     {
         $this->parentOperationHistory = $operationHistory;
+
         return $this;
     }
 
@@ -121,6 +124,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $taskNick
+     *
      * @return \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function getTaskObject($taskNick)
@@ -143,8 +147,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         $taskNick = ucfirst($taskNick);
 
-        /** @var \Ess\M2ePro\Model\Cron\Task\AbstractModel $task **/
-        $task = $this->modelFactory->getObject('Cron\Task\\'.trim($taskNick));
+        /** @var \Ess\M2ePro\Model\Cron\Task\AbstractModel $task * */
+        $task = $this->modelFactory->getObject('Cron\Task\\' . trim($taskNick));
 
         $task->setInitiator($this->getInitiator());
         $task->setParentOperationHistory($this->getOperationHistory());
@@ -173,7 +177,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     {
         $parentId = $this->getParentOperationHistory()
             ? $this->getParentOperationHistory()->getObject()->getId() : null;
-        $this->getOperationHistory()->start('cron_strategy_'.$this->getNick(), $parentId, $this->getInitiator());
+        $this->getOperationHistory()->start('cron_strategy_' . $this->getNick(), $parentId, $this->getInitiator());
         $this->getOperationHistory()->makeShutdownFunction();
     }
 
@@ -263,7 +267,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->initializationLockManager = $this->modelFactory->getObject(
             'Lock_Transactional_Manager',
             [
-               'nick' => self::INITIALIZATION_TRANSACTIONAL_LOCK_NICK
+                'nick' => self::INITIALIZATION_TRANSACTIONAL_LOCK_NICK,
             ]
         );
 
@@ -277,7 +281,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     {
         for ($i = 1; $i <= Parallel::MAX_PARALLEL_EXECUTED_CRONS_COUNT; $i++) {
             $lockManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-                'nick' => Parallel::GENERAL_LOCK_ITEM_PREFIX.$i
+                'nick' => Parallel::GENERAL_LOCK_ITEM_PREFIX . $i,
             ]);
 
             if ($lockManager->isExist()) {
@@ -305,6 +309,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         if ($lockManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
             $lockManager->remove();
+
             return false;
         }
 
@@ -319,9 +324,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             'exceptions',
             [
                 'message' => $exception->getMessage(),
-                'file'    => $exception->getFile(),
-                'line'    => $exception->getLine(),
-                'trace'   => $exception->getTraceAsString(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTraceAsString(),
             ]
         );
 

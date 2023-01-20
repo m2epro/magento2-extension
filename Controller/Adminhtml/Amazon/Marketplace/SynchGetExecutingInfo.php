@@ -23,6 +23,7 @@ class SynchGetExecutingInfo extends Marketplace
         $synchronization = $this->modelFactory->getObject('Amazon_Marketplace_Synchronization');
         if (!$synchronization->isLocked()) {
             $this->setJsonContent(['mode' => 'inactive']);
+
             return $this->getResult();
         }
 
@@ -38,6 +39,7 @@ class SynchGetExecutingInfo extends Marketplace
         }
 
         $this->setJsonContent($response);
+
         return $this->getResult();
     }
 

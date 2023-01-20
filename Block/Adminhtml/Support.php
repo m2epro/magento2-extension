@@ -50,7 +50,7 @@ HTML
                 $this->moduleSupportHelper->getDocumentationArticleUrl('x/O310B'),
                 $this->moduleSupportHelper->getSupportUrl('/support/solutions/9000117126'),
                 $this->moduleSupportHelper->getYoutubeChannelUrl()
-            )
+            ),
         ]);
 
         parent::_prepareLayout();

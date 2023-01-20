@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\CatalogInventory\Model\Indexer\Stock\Processor
- */
 class Processor extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    const PRODUCTS_FOR_REINDEX_REGISTRY_KEY = 'msi_products_for_reindex';
+    public const PRODUCTS_FOR_REINDEX_REGISTRY_KEY = 'msi_products_for_reindex';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
@@ -21,8 +18,6 @@ class Processor extends \Ess\M2ePro\Plugin\AbstractPlugin
     private $productResource;
     /** @var \Magento\Framework\Indexer\IndexerRegistry */
     protected $indexerRegistry;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -52,6 +47,7 @@ class Processor extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param mixed ...$arguments
+     *
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -64,6 +60,7 @@ class Processor extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

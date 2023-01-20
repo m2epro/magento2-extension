@@ -8,13 +8,11 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product
- */
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -103,40 +101,42 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         // Get child products ids
         // ---------------------------------------
         $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable(),
-                ['listing_product_id', 'sku']
-            )
-            ->where('`variation_parent_id` = ?', $listingProduct->getId());
+                               ->from(
+                                   $this->activeRecordFactory->getObject('Amazon_Listing_Product')
+                                                             ->getResource()
+                                                             ->getMainTable(),
+                                   ['listing_product_id', 'sku']
+                               )
+                               ->where('`variation_parent_id` = ?', $listingProduct->getId());
         $products = $connection->fetchPairs($dbSelect);
 
         if (!empty($products)) {
             $connection->update(
                 $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
                 [
-                    'listing_id' => $listingProduct->getListing()->getId()
+                    'listing_id' => $listingProduct->getListing()->getId(),
                 ],
                 '`id` IN (' . implode(',', array_keys($products)) . ')'
             );
         }
 
         $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
-                ['id']
-            )
-            ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
-            ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
-            ->where('`sku` IN (?)', implode(',', array_values($products)));
+                               ->from(
+                                   $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
+                                   ['id']
+                               )
+                               ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
+                               ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
+                               ->where('`sku` IN (?)', implode(',', array_values($products)));
         $items = $connection->fetchCol($dbSelect);
 
         if (!empty($items)) {
             $connection->update(
                 $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable(),
                 [
-                    'store_id' => $listingProduct->getListing()->getStoreId()
+                    'store_id' => $listingProduct->getListing()->getStoreId(),
                 ],
-                '`id` IN ('.implode(',', $items).')'
+                '`id` IN (' . implode(',', $items) . ')'
             );
         }
     }
@@ -147,14 +147,14 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     {
         $amazonItemTable = $this->activeRecordFactory->getObject('Amazon\Item')->getResource()->getMainTable();
         $existedRelation = $this->getConnection()
-            ->select()
-            ->from(['ei' => $amazonItemTable])
-            ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
-            ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
-            ->where('`sku` = ?', $listingProduct->getSku())
-            ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
-            ->query()
-            ->fetchColumn();
+                                ->select()
+                                ->from(['ei' => $amazonItemTable])
+                                ->where('`account_id` = ?', $listingProduct->getListing()->getAccountId())
+                                ->where('`marketplace_id` = ?', $listingProduct->getListing()->getMarketplaceId())
+                                ->where('`sku` = ?', $listingProduct->getSku())
+                                ->where('`product_id` = ?', $listingProduct->getParentObject()->getProductId())
+                                ->query()
+                                ->fetchColumn();
 
         if ($existedRelation) {
             return;
@@ -167,7 +167,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
                 'account_id = ?' => $listingProduct->getListing()->getAccountId(),
                 'marketplace_id = ?' => $listingProduct->getListing()->getMarketplaceId(),
                 'sku = ?' => $listingProduct->getSku(),
-                'product_id = ?' => $listingProduct->getParentObject()->getOrigData('product_id')
+                'product_id = ?' => $listingProduct->getParentObject()->getOrigData('product_id'),
             ]
         );
     }

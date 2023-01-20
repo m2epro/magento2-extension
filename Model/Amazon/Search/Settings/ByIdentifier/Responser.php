@@ -28,6 +28,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Search\ByIdentifier\I
 
     /**
      * @param $messageText
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function failDetected($messageText)

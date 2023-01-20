@@ -49,7 +49,7 @@ class CrashedTables extends IssueType
                ->setTaskMessage($this->getTaskMessage($crashedTables));
 
         empty($crashedTables) ? $result->setTaskResult(TaskResult::STATE_SUCCESS)
-                              : $result->setTaskResult(TaskResult::STATE_CRITICAL);
+            : $result->setTaskResult(TaskResult::STATE_CRITICAL);
 
         return $result;
     }

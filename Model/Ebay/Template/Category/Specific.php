@@ -13,20 +13,20 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
  */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const MODE_ITEM_SPECIFICS = 1;
-    const MODE_CUSTOM_ITEM_SPECIFICS = 3;
+    public const MODE_ITEM_SPECIFICS = 1;
+    public const MODE_CUSTOM_ITEM_SPECIFICS = 3;
 
-    const VALUE_MODE_NONE = 0;
-    const VALUE_MODE_EBAY_RECOMMENDED = 1;
-    const VALUE_MODE_CUSTOM_VALUE = 2;
-    const VALUE_MODE_CUSTOM_ATTRIBUTE = 3;
-    const VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE = 4;
+    public const VALUE_MODE_NONE = 0;
+    public const VALUE_MODE_EBAY_RECOMMENDED = 1;
+    public const VALUE_MODE_CUSTOM_VALUE = 2;
+    public const VALUE_MODE_CUSTOM_ATTRIBUTE = 3;
+    public const VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE = 4;
 
-    const RENDER_TYPE_TEXT = 'text';
-    const RENDER_TYPE_SELECT_ONE = 'select_one';
-    const RENDER_TYPE_SELECT_MULTIPLE = 'select_multiple';
-    const RENDER_TYPE_SELECT_ONE_OR_TEXT = 'select_one_or_text';
-    const RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT = 'select_multiple_or_text';
+    public const RENDER_TYPE_TEXT = 'text';
+    public const RENDER_TYPE_SELECT_ONE = 'select_one';
+    public const RENDER_TYPE_SELECT_MULTIPLE = 'select_multiple';
+    public const RENDER_TYPE_SELECT_ONE_OR_TEXT = 'select_one_or_text';
+    public const RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT = 'select_multiple_or_text';
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
@@ -53,6 +53,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $temp = parent::delete();
         $temp && $this->categoryTemplateModel = null;
         $temp && $this->categorySpecificSourceModels = [];
+
         return $temp;
     }
 
@@ -78,13 +79,14 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function setCategoryTemplate(\Ess\M2ePro\Model\Ebay\Template\Category $instance)
     {
-         $this->categoryTemplateModel = $instance;
+        $this->categoryTemplateModel = $instance;
     }
 
     // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Category\Specific\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)

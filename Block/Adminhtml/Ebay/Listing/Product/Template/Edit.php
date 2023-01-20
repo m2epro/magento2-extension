@@ -65,7 +65,7 @@ HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/_v4UB')
                 ),
-                'style'   => 'margin-top: 30px'
+                'style' => 'margin-top: 30px',
             ]
         );
 

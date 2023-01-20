@@ -26,6 +26,7 @@ class RequirementsPopupClose extends \Ess\M2ePro\Controller\Adminhtml\Base
     {
         $this->moduleHelper->getRegistry()->setValue('/view/requirements/popup/closed/', 1);
         $this->setJsonContent(['status' => true]);
+
         return $this->getResult();
     }
 }

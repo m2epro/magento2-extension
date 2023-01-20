@@ -29,7 +29,7 @@ abstract class Wizard extends Main
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon');
+            $this->_authorization->isAllowed('Ess_M2ePro::amazon');
     }
 
     //########################################
@@ -71,6 +71,7 @@ abstract class Wizard extends Main
     {
         if ($this->isNotStarted() || $this->isActive()) {
             $this->installationAction();
+
             return;
         }
 
@@ -106,6 +107,7 @@ abstract class Wizard extends Main
 
         if ($manager->isExistInfo() && !empty($key)) {
             $this->setStep($this->getNextStep());
+
             return $this->renderSimpleStep();
         }
 
@@ -128,6 +130,7 @@ abstract class Wizard extends Main
     protected function setStatus($status)
     {
         $this->getWizardHelper()->setStatus($this->getNick(), $status);
+
         return $this;
     }
 
@@ -141,6 +144,7 @@ abstract class Wizard extends Main
     protected function setStep($step)
     {
         $this->getWizardHelper()->setStep($this->getNick(), $step);
+
         return $this;
     }
 
@@ -205,7 +209,7 @@ abstract class Wizard extends Main
         if ($step === null) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Step is invalid')
+                'message' => $this->__('Step is invalid'),
             ]);
 
             return $this->getResult();
@@ -214,7 +218,7 @@ abstract class Wizard extends Main
         $this->setStep($step);
 
         $this->setJsonContent([
-            'type' => 'success'
+            'type' => 'success',
         ]);
 
         return $this->getResult();
@@ -227,7 +231,7 @@ abstract class Wizard extends Main
         if ($status === null) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Status is invalid')
+                'message' => $this->__('Status is invalid'),
             ]);
 
             return $this->getResult();
@@ -236,7 +240,7 @@ abstract class Wizard extends Main
         $this->setStatus($status);
 
         $this->setJsonContent([
-            'type' => 'success'
+            'type' => 'success',
         ]);
 
         return $this->getResult();
@@ -252,10 +256,10 @@ abstract class Wizard extends Main
                     '\Ess\M2ePro\Block\Adminhtml\Wizard',
                     $this->getNick(),
                     'Installation',
-                    $this->getCurrentStep()
+                    $this->getCurrentStep(),
                 ])
             )->setData([
-                'nick' => $this->getNick()
+                'nick' => $this->getNick(),
             ])
         );
 

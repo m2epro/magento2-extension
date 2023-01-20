@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
+use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Category\Grid as CategoryGrid;
+
 class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
@@ -29,6 +31,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
 
         if (empty($listingProductsIds)) {
             $this->_forward('index');
+
             return;
         }
 
@@ -37,8 +40,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
         $this->globalData->setValue('listing_for_products_add', $listing);
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $grid = $this->getLayout()
-        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Category\Grid::class);
+            $grid = $this->getLayout()->createBlock(CategoryGrid::class);
             $this->setAjaxContent($grid);
 
             return $this->getResult();
@@ -51,7 +53,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
 
         $this->addContent(
             $this->getLayout()
-                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Category::class)
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Category::class)
         );
 
         return $this->getResult();

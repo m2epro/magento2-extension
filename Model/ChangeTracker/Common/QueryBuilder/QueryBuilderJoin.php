@@ -47,7 +47,7 @@ class QueryBuilderJoin
         $joinArgs = [
             [$this->tableAlias => $this->tableName],
             $this->condition,
-            null
+            null,
         ];
 
         if ($this->type === self::JOIN_LEFT) {

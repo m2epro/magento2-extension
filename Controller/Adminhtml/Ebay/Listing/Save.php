@@ -89,12 +89,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                     $templateModelName,
                     $newData[$templateManager->getTemplateIdColumnName()]
                 )
-                    ->getChildObject();
+                                                 ->getChildObject();
                 $oldTemplate = $this->ebayFactory->getCachedObjectLoaded(
                     $templateModelName,
                     $oldData[$templateManager->getTemplateIdColumnName()]
                 )
-                    ->getChildObject();
+                                                 ->getChildObject();
                 $snapshotBuilder = $this->modelFactory->getObject(
                     'Ebay_' . $templateModelName . '_SnapshotBuilder'
                 );

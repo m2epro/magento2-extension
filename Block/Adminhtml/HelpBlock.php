@@ -25,6 +25,7 @@ class HelpBlock extends Magento\AbstractBlock
         if (null === $this->getData('id') && $this->getContent()) {
             $this->setData('id', 'block_notice_' . crc32($this->getContent()));
         }
+
         return $this->getData('id');
     }
 

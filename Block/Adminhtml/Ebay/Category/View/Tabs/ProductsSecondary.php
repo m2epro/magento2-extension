@@ -32,9 +32,9 @@ class ProductsSecondary extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abstrac
         $this->removeButton('edit');
 
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'class'     => 'back',
-            'onclick'   => 'setLocation(\'' . $this->getUrl('*/*/index') . '\');'
+            'label' => $this->__('Back'),
+            'class' => 'back',
+            'onclick' => 'setLocation(\'' . $this->getUrl('*/*/index') . '\');',
         ]);
     }
 

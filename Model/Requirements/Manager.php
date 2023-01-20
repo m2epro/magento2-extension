@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Requirements;
  */
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
-    const CACHE_KEY = 'is_meet_requirements';
+    public const CACHE_KEY = 'is_meet_requirements';
 
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
@@ -45,7 +45,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        $this->getHelper('Data_Cache_Permanent')->setValue(self::CACHE_KEY, (int)$isMeetRequirements, [], 60*60);
+        $this->getHelper('Data_Cache_Permanent')->setValue(self::CACHE_KEY, (int)$isMeetRequirements, [], 60 * 60);
+
         return (bool)$isMeetRequirements;
     }
 
@@ -66,10 +67,12 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         foreach ($checks as $check) {
             /** @var Checks\AbstractCheck $checkObj */
             $checkObj = $this->objectManager->create($check);
-            $checkObj->setRenderer($this->objectManager->create(
-                str_replace('Checks', 'Renderer', $check),
-                ['checkObject' => $checkObj]
-            ));
+            $checkObj->setRenderer(
+                $this->objectManager->create(
+                    str_replace('Checks', 'Renderer', $check),
+                    ['checkObject' => $checkObj]
+                )
+            );
 
             yield $checkObj;
         }

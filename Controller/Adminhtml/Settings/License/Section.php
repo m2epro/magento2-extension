@@ -13,7 +13,7 @@ class Section extends \Ess\M2ePro\Controller\Adminhtml\Base
     public function execute()
     {
         $content = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Sections\License::class);
+                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Sections\License::class);
         $this->setAjaxContent($content);
 
         return $this->getResult();

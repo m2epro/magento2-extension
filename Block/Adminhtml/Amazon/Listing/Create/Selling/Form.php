@@ -53,22 +53,22 @@ class Form extends AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'      => 'edit_form',
-                    'method'  => 'post',
-                    'action'  => 'javascript:void(0)',
+                    'id' => 'edit_form',
+                    'method' => 'post',
+                    'action' => 'javascript:void(0)',
                     'enctype' => 'multipart/form-data',
-                    'class'   => 'admin__scope-old'
-                ]
+                    'class' => 'admin__scope-old',
+                ],
             ]
         );
 
         $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByTypes = [
-            'boolean'       => $this->magentoAttributeHelper->filterByInputTypes(
+            'boolean' => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['boolean']
             ),
-            'text'          => $this->magentoAttributeHelper->filterByInputTypes(
+            'text' => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text']
             ),
@@ -76,18 +76,18 @@ class Form extends AbstractForm
                 $attributes,
                 ['text', 'textarea']
             ),
-            'text_date'     => $this->magentoAttributeHelper->filterByInputTypes(
+            'text_date' => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'date', 'datetime']
             ),
-            'text_select'   => $this->magentoAttributeHelper->filterByInputTypes(
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'select']
             ),
-            'text_images'   => $this->magentoAttributeHelper->filterByInputTypes(
+            'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
                 $attributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
-            )
+            ),
         ];
 
         $formData = $this->getListingData();
@@ -96,7 +96,7 @@ class Form extends AbstractForm
             'marketplace_id',
             'hidden',
             [
-                'value' => $formData['marketplace_id']
+                'value' => $formData['marketplace_id'],
             ]
         );
 
@@ -104,7 +104,7 @@ class Form extends AbstractForm
             'store_id',
             'hidden',
             [
-                'value' => $formData['store_id']
+                'value' => $formData['store_id'],
             ]
         );
 
@@ -112,8 +112,8 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'sku_settings_fieldset',
             [
-                'legend'      => $this->__('SKU Settings'),
-                'collapsable' => true
+                'legend' => $this->__('SKU Settings'),
+                'collapsable' => true,
             ]
         );
 
@@ -121,15 +121,16 @@ class Form extends AbstractForm
             'sku_custom_attribute',
             'hidden',
             [
-                'name'  => 'sku_custom_attribute',
-                'value' => $formData['sku_custom_attribute']
+                'name' => 'sku_custom_attribute',
+                'value' => $formData['sku_custom_attribute'],
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['sku_mode'] == AmazonListing::SKU_MODE_CUSTOM_ATTRIBUTE
+            if (
+                $formData['sku_mode'] == AmazonListing::SKU_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['sku_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -145,20 +146,20 @@ class Form extends AbstractForm
             'sku_mode',
             self::SELECT,
             [
-                'name'    => 'sku_mode',
-                'label'   => $this->__('Source'),
-                'values'  => [
+                'name' => 'sku_mode',
+                'label' => $this->__('Source'),
+                'values' => [
                     AmazonListing::SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
-                    AmazonListing::SKU_MODE_DEFAULT    => $this->__('Product SKU'),
+                    AmazonListing::SKU_MODE_DEFAULT => $this->__('Product SKU'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'   => $formData['sku_mode'] != AmazonListing::SKU_MODE_CUSTOM_ATTRIBUTE ?
+                'value' => $formData['sku_mode'] != AmazonListing::SKU_MODE_CUSTOM_ATTRIBUTE ?
                     $formData['sku_mode'] : '',
                 'tooltip' => $this->__(
                     'Is used to identify Amazon Items, which you list, in Amazon Seller Central Inventory.
@@ -168,7 +169,7 @@ class Form extends AbstractForm
                     <i>Merchant SKU</i> in Amazon Inventory, they will be Mapped.'
                 ),
 
-                'create_magento_attribute' => true
+                'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -176,19 +177,19 @@ class Form extends AbstractForm
             'sku_modification_mode',
             self::SELECT,
             [
-                'label'   => $this->__('Modification'),
-                'name'    => 'sku_modification_mode',
-                'values'  => [
-                    AmazonListing::SKU_MODIFICATION_MODE_NONE     => $this->__('None'),
-                    AmazonListing::SKU_MODIFICATION_MODE_PREFIX   => $this->__('Prefix'),
-                    AmazonListing::SKU_MODIFICATION_MODE_POSTFIX  => $this->__('Postfix'),
+                'label' => $this->__('Modification'),
+                'name' => 'sku_modification_mode',
+                'values' => [
+                    AmazonListing::SKU_MODIFICATION_MODE_NONE => $this->__('None'),
+                    AmazonListing::SKU_MODIFICATION_MODE_PREFIX => $this->__('Prefix'),
+                    AmazonListing::SKU_MODIFICATION_MODE_POSTFIX => $this->__('Postfix'),
                     AmazonListing::SKU_MODIFICATION_MODE_TEMPLATE => $this->__('Template'),
                 ],
-                'value'   => $formData['sku_modification_mode'],
+                'value' => $formData['sku_modification_mode'],
                 'tooltip' => $this->__(
                     'Select one of the available variants to modify Amazon Item SKU
                     that was formed based on the Source you provided.'
-                )
+                ),
             ]
         );
 
@@ -201,12 +202,12 @@ class Form extends AbstractForm
             'sku_modification_custom_value',
             'text',
             [
-                'container_id'           => 'sku_modification_custom_value_tr',
-                'label'                  => $this->__('Modification Value'),
-                'name'                   => 'sku_modification_custom_value',
-                'required'               => true,
-                'value'                  => $formData['sku_modification_custom_value'],
-                'class'                  => 'M2ePro-validate-sku-modification-custom-value
+                'container_id' => 'sku_modification_custom_value_tr',
+                'label' => $this->__('Modification Value'),
+                'name' => 'sku_modification_custom_value',
+                'required' => true,
+                'value' => $formData['sku_modification_custom_value'],
+                'class' => 'M2ePro-validate-sku-modification-custom-value
                     M2ePro-validate-sku-modification-custom-value-max-length',
                 'field_extra_attributes' => $fieldStyle,
             ]
@@ -216,13 +217,13 @@ class Form extends AbstractForm
             'generate_sku_mode',
             self::SELECT,
             [
-                'label'   => $this->__('Generate'),
-                'name'    => 'generate_sku_mode',
-                'values'  => [
-                    AmazonListing::GENERATE_SKU_MODE_NO  => $this->__('No'),
-                    AmazonListing::GENERATE_SKU_MODE_YES => $this->__('Yes')
+                'label' => $this->__('Generate'),
+                'name' => 'generate_sku_mode',
+                'values' => [
+                    AmazonListing::GENERATE_SKU_MODE_NO => $this->__('No'),
+                    AmazonListing::GENERATE_SKU_MODE_YES => $this->__('Yes'),
                 ],
-                'value'   => $formData['generate_sku_mode'],
+                'value' => $formData['generate_sku_mode'],
                 'tooltip' => $this->__(
                     'If <strong>Yes</strong>, then if Merchant SKU of the Amazon Item you list is found in the
                     Unmanaged Listings,
@@ -230,7 +231,7 @@ class Form extends AbstractForm
                     another SKU will be automatically created and the Amazon Item will be Listed.<br/><br/>
                     Has to be set to <strong>Yes</strong> if you are going to use the same
                     Magento Product under different ASIN(s)/ISBN(s)'
-                )
+                ),
             ]
         );
 
@@ -238,8 +239,8 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'policies_fieldset',
             [
-                'legend'      => $this->__('Policies'),
-                'collapsable' => true
+                'legend' => $this->__('Policies'),
+                'collapsable' => true,
             ]
         );
 
@@ -247,8 +248,8 @@ class Form extends AbstractForm
             'template_selling_format_messages',
             self::CUSTOM_CONTAINER,
             [
-                'style'     => 'display: block;',
-                'css_class' => 'm2epro-fieldset-table no-margin-bottom'
+                'style' => 'display: block;',
+                'css_class' => 'm2epro-fieldset-table no-margin-bottom',
             ]
         );
 
@@ -259,19 +260,19 @@ class Form extends AbstractForm
             'select',
             [
                 'data' => [
-                    'html_id'  => 'template_selling_format_id',
-                    'name'     => 'template_selling_format_id',
-                    'style'    => 'width: 50%;' . $style,
-                    'no_span'  => true,
-                    'values'   => array_merge(
+                    'html_id' => 'template_selling_format_id',
+                    'name' => 'template_selling_format_id',
+                    'style' => 'width: 50%;' . $style,
+                    'no_span' => true,
+                    'values' => array_merge(
                         [
-                            '' => ''
+                            '' => '',
                         ],
                         $sellingFormatTemplates
                     ),
-                    'value'    => $formData['template_selling_format_id'],
-                    'required' => true
-                ]
+                    'value' => $formData['template_selling_format_id'],
+                    'required' => true,
+                ],
             ]
         );
         $templateSellingFormat->setForm($form);
@@ -288,18 +289,18 @@ class Form extends AbstractForm
             'template_selling_format_container',
             self::CUSTOM_CONTAINER,
             [
-                'label'                  => $this->__('Selling Policy'),
-                'style'                  => 'line-height: 34px; display: initial;',
+                'label' => $this->__('Selling Policy'),
+                'style' => 'line-height: 34px; display: initial;',
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
-                'required'               => true,
-                'text'                   => <<<HTML
+                'required' => true,
+                'text' => <<<HTML
     <span id="template_selling_format_label" style="padding-right: 25px; {$style}">
         {$this->__('No Policies available.')}
     </span>
     {$templateSellingFormat->toHtml()}
 HTML
                 ,
-                'after_element_html'     => <<<HTML
+                'after_element_html' => <<<HTML
 &nbsp;
 <span style="line-height: 30px;">
     <span id="edit_selling_format_template_link" style="color:#41362f">
@@ -326,6 +327,7 @@ HTML
     );">{$this->__('Add New')}</a>
 </span>
 HTML
+            ,
             ]
         );
 
@@ -336,19 +338,19 @@ HTML
             'select',
             [
                 'data' => [
-                    'html_id'  => 'template_synchronization_id',
-                    'name'     => 'template_synchronization_id',
-                    'style'    => 'width: 50%;' . $style,
-                    'no_span'  => true,
-                    'values'   => array_merge(
+                    'html_id' => 'template_synchronization_id',
+                    'name' => 'template_synchronization_id',
+                    'style' => 'width: 50%;' . $style,
+                    'no_span' => true,
+                    'values' => array_merge(
                         [
-                            '' => ''
+                            '' => '',
                         ],
                         $synchronizationTemplates
                     ),
-                    'value'    => $formData['template_synchronization_id'],
-                    'required' => true
-                ]
+                    'value' => $formData['template_synchronization_id'],
+                    'required' => true,
+                ],
             ]
         );
         $templateSynchronization->setForm($form);
@@ -358,18 +360,18 @@ HTML
             'template_synchronization_container',
             self::CUSTOM_CONTAINER,
             [
-                'label'                  => $this->__('Synchronization Policy'),
-                'style'                  => 'line-height: 34px;display: initial;',
+                'label' => $this->__('Synchronization Policy'),
+                'style' => 'line-height: 34px;display: initial;',
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
-                'required'               => true,
-                'text'                   => <<<HTML
+                'required' => true,
+                'text' => <<<HTML
     <span id="template_synchronization_label" style="padding-right: 25px; {$style}">
         {$this->__('No Policies available.')}
     </span>
     {$templateSynchronization->toHtml()}
 HTML
                 ,
-                'after_element_html'     => <<<HTML
+                'after_element_html' => <<<HTML
 &nbsp;
 <span style="line-height: 30px;">
     <span id="edit_synchronization_template_link" style="color:#41362f">
@@ -396,6 +398,7 @@ HTML
     );">{$this->__('Add New')}</a>
 </span>
 HTML
+            ,
             ]
         );
 
@@ -406,14 +409,14 @@ HTML
             'select',
             [
                 'data' => [
-                    'html_id'  => 'template_shipping_id',
-                    'name'     => 'template_shipping_id',
-                    'style'    => 'width: 50%;' . $style,
-                    'no_span'  => true,
-                    'values'   => array_merge(['' => ' '], $shippingTemplates),
-                    'value'    => $formData['template_shipping_id'],
-                    'required' => false
-                ]
+                    'html_id' => 'template_shipping_id',
+                    'name' => 'template_shipping_id',
+                    'style' => 'width: 50%;' . $style,
+                    'no_span' => true,
+                    'values' => array_merge(['' => ' '], $shippingTemplates),
+                    'value' => $formData['template_shipping_id'],
+                    'required' => false,
+                ],
             ]
         );
         $templateShipping->setForm($form);
@@ -423,18 +426,18 @@ HTML
             'template_shipping_container',
             self::CUSTOM_CONTAINER,
             [
-                'label'                  => $this->__('Shipping Policy'),
-                'style'                  => 'line-height: 34px;display: initial;',
+                'label' => $this->__('Shipping Policy'),
+                'style' => 'line-height: 34px;display: initial;',
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
-                'required'               => false,
-                'text'                   => <<<HTML
+                'required' => false,
+                'text' => <<<HTML
     <span id="template_shipping_label" style="padding-right: 25px; {$style}">
         {$this->__('No Policies available.')}
     </span>
     {$templateShipping->toHtml()}
 HTML
                 ,
-                'after_element_html'     => <<<HTML
+                'after_element_html' => <<<HTML
 &nbsp;
 <span style="line-height: 30px;">
     <span id="edit_shipping_template_link" style="color:#41362f">
@@ -461,6 +464,7 @@ HTML
     );">{$this->__('Add New')}</a>
 </span>
 HTML
+            ,
             ]
         );
 
@@ -468,8 +472,8 @@ HTML
         $fieldset = $form->addFieldset(
             'condition_settings_fieldset',
             [
-                'legend'      => $this->__('Condition Settings'),
-                'collapsable' => true
+                'legend' => $this->__('Condition Settings'),
+                'collapsable' => true,
             ]
         );
 
@@ -477,8 +481,8 @@ HTML
             'condition_custom_attribute',
             'hidden',
             [
-                'name'  => 'condition_custom_attribute',
-                'value' => $formData['condition_custom_attribute']
+                'name' => 'condition_custom_attribute',
+                'value' => $formData['condition_custom_attribute'],
             ]
         );
 
@@ -486,15 +490,16 @@ HTML
             'condition_value',
             'hidden',
             [
-                'name'  => 'condition_value',
-                'value' => $formData['condition_value']
+                'name' => 'condition_value',
+                'value' => $formData['condition_value'],
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['condition_mode'] == AmazonListing::SKU_MODE_CUSTOM_ATTRIBUTE
+            if (
+                $formData['condition_mode'] == AmazonListing::SKU_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['condition_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -510,20 +515,20 @@ HTML
             'condition_mode',
             self::SELECT,
             [
-                'name'    => 'condition_mode',
-                'label'   => $this->__('Condition'),
-                'values'  => [
+                'name' => 'condition_mode',
+                'label' => $this->__('Condition'),
+                'values' => [
                     [
                         'label' => $this->__('Recommended Value'),
-                        'value' => $this->getRecommendedConditionValues()
+                        'value' => $this->getRecommendedConditionValues(),
                     ],
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'tooltip' => $this->__(
                     <<<HTML
@@ -553,14 +558,14 @@ HTML
             self::SELECT,
             [
                 'container_id' => 'condition_note_mode_tr',
-                'label'        => $this->__('Condition Note'),
-                'name'         => 'condition_note_mode',
-                'values'       => [
-                    AmazonListing::CONDITION_NOTE_MODE_NONE         => $this->__('None'),
-                    AmazonListing::CONDITION_NOTE_MODE_CUSTOM_VALUE => $this->__('Custom Value')
+                'label' => $this->__('Condition Note'),
+                'name' => 'condition_note_mode',
+                'values' => [
+                    AmazonListing::CONDITION_NOTE_MODE_NONE => $this->__('None'),
+                    AmazonListing::CONDITION_NOTE_MODE_CUSTOM_VALUE => $this->__('Custom Value'),
                 ],
-                'value'        => $formData['condition_note_mode'],
-                'tooltip'      => $this->__('Short Description of Item(s) Condition.')
+                'value' => $formData['condition_note_mode'],
+                'tooltip' => $this->__('Short Description of Item(s) Condition.'),
             ]
         );
 
@@ -571,36 +576,37 @@ HTML
         }
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
-                                    ->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => 'condition_note_value',
-            'class'=>'primary',
-            'style' => 'display: inline-block;'
-        ]);
+                       ->addData([
+                           'label' => $this->__('Insert'),
+                           'destination_id' => 'condition_note_value',
+                           'class' => 'primary',
+                           'style' => 'display: inline-block;',
+                       ]);
 
         $fieldset->addField(
             'condition_note_value',
             'textarea',
             [
-                'container_id'       => 'condition_note_value_tr',
-                'name'               => 'condition_note_value',
-                'label'              => $this->__('Condition Note Value'),
-                'style'              => 'width: 70%;',
-                'class'              => 'textarea M2ePro-required-when-visible',
-                'required'           => true,
-                'value'              => $formData['condition_note_value']
+                'container_id' => 'condition_note_value_tr',
+                'name' => 'condition_note_value',
+                'label' => $this->__('Condition Note Value'),
+                'style' => 'width: 70%;',
+                'class' => 'textarea M2ePro-required-when-visible',
+                'required' => true,
+                'value' => $formData['condition_note_value'],
             ]
         );
 
         $fieldset->addField(
             'selectAttr_condition_note_value',
             self::SELECT,
-            [   'container_id'       => 'condition_custom_tr',
+            [
+                'container_id' => 'condition_custom_tr',
                 'label' => $this->__('Product Attribute'),
                 'title' => $this->__('Product Attribute'),
                 'values' => $preparedAttributes,
                 'create_magento_attribute' => true,
-                'after_element_html' => $button->toHtml()
+                'after_element_html' => $button->toHtml(),
             ]
         );
 
@@ -608,8 +614,8 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_listing_add_images',
             [
-                'legend'      => $this->__('Listing Photos'),
-                'collapsable' => true
+                'legend' => $this->__('Listing Photos'),
+                'collapsable' => true,
             ]
         );
 
@@ -617,15 +623,16 @@ HTML
             'image_main_attribute',
             'hidden',
             [
-                'name'  => 'image_main_attribute',
-                'value' => $formData['image_main_attribute']
+                'name' => 'image_main_attribute',
+                'value' => $formData['image_main_attribute'],
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_images'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['image_main_mode'] == AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE
+            if (
+                $formData['image_main_mode'] == AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['image_main_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -641,23 +648,23 @@ HTML
             'image_main_mode',
             self::SELECT,
             [
-                'name'     => 'image_main_mode',
-                'label'    => $this->__('Main Image'),
+                'name' => 'image_main_mode',
+                'label' => $this->__('Main Image'),
                 'required' => true,
-                'values'   => [
-                    AmazonListing::IMAGE_MAIN_MODE_NONE    => $this->__('None'),
+                'values' => [
+                    AmazonListing::IMAGE_MAIN_MODE_NONE => $this->__('None'),
                     AmazonListing::IMAGE_MAIN_MODE_PRODUCT => $this->__('Product Base Image'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'    => $formData['image_main_mode'] != AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE
+                'value' => $formData['image_main_mode'] != AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE
                     ? $formData['image_main_mode'] : '',
-                'tooltip'  => $this->__(
+                'tooltip' => $this->__(
                     'You have an ability to add Photos for your Items to be displayed on the More Buying Choices Page.
                     <br/>It is available only for Items with Used or Collectible Condition.'
                 ),
@@ -671,8 +678,8 @@ HTML
             'gallery_images_limit',
             'hidden',
             [
-                'name'  => 'gallery_images_limit',
-                'value' => $formData['gallery_images_limit']
+                'name' => 'gallery_images_limit',
+                'value' => $formData['gallery_images_limit'],
             ]
         );
 
@@ -680,8 +687,8 @@ HTML
             'gallery_images_attribute',
             'hidden',
             [
-                'name'  => 'gallery_images_attribute',
-                'value' => $formData['gallery_images_attribute']
+                'name' => 'gallery_images_attribute',
+                'value' => $formData['gallery_images_attribute'],
             ]
         );
 
@@ -690,8 +697,10 @@ HTML
             'value' => 1,
             'label' => 1,
         ];
-        if ($formData['gallery_images_limit'] == 1 &&
-            $formData['gallery_images_mode'] != AmazonListing::GALLERY_IMAGES_MODE_NONE) {
+        if (
+            $formData['gallery_images_limit'] == 1 &&
+            $formData['gallery_images_mode'] != AmazonListing::GALLERY_IMAGES_MODE_NONE
+        ) {
             $preparedLimitOptions[0]['attrs']['selected'] = 'selected';
         }
 
@@ -712,7 +721,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_images'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['gallery_images_mode'] == AmazonListing::GALLERY_IMAGES_MODE_ATTRIBUTE
+            if (
+                $formData['gallery_images_mode'] == AmazonListing::GALLERY_IMAGES_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['gallery_images_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -726,21 +736,21 @@ HTML
 
         $fieldConfig = [
             'container_id' => 'gallery_images_mode_tr',
-            'name'         => 'gallery_images_mode',
-            'label'        => $this->__('Additional Images'),
-            'values'       => [
+            'name' => 'gallery_images_mode',
+            'label' => $this->__('Additional Images'),
+            'values' => [
                 AmazonListing::GALLERY_IMAGES_MODE_NONE => $this->__('None'),
                 [
                     'label' => $this->__('Product Images Quantity'),
-                    'value' => $preparedLimitOptions
+                    'value' => $preparedLimitOptions,
                 ],
                 [
                     'label' => $this->__('Magento Attribute'),
                     'value' => $preparedAttributes,
                     'attrs' => [
-                        'is_magento_attribute' => true
-                    ]
-                ]
+                        'is_magento_attribute' => true,
+                    ],
+                ],
             ],
 
             'create_magento_attribute' => true,
@@ -760,8 +770,8 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_listing_gift_settings',
             [
-                'legend'      => $this->__('Gift Settings'),
-                'collapsable' => true
+                'legend' => $this->__('Gift Settings'),
+                'collapsable' => true,
             ]
         );
 
@@ -769,15 +779,16 @@ HTML
             'gift_wrap_attribute',
             'hidden',
             [
-                'name'  => 'gift_wrap_attribute',
-                'value' => $formData['gift_wrap_attribute']
+                'name' => 'gift_wrap_attribute',
+                'value' => $formData['gift_wrap_attribute'],
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByTypes['boolean'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['gift_wrap_mode'] == AmazonListing::GIFT_WRAP_MODE_ATTRIBUTE
+            if (
+                $formData['gift_wrap_mode'] == AmazonListing::GIFT_WRAP_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['gift_wrap_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -793,28 +804,28 @@ HTML
             'gift_wrap_mode',
             self::SELECT,
             [
-                'name'    => 'gift_wrap_mode',
-                'label'   => $this->__('Gift Wrap'),
-                'values'  => [
-                    AmazonListing::GIFT_WRAP_MODE_NO  => $this->__('No'),
+                'name' => 'gift_wrap_mode',
+                'label' => $this->__('Gift Wrap'),
+                'values' => [
+                    AmazonListing::GIFT_WRAP_MODE_NO => $this->__('No'),
                     AmazonListing::GIFT_WRAP_MODE_YES => $this->__('Yes'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
-                            'new_option_value'     => AmazonListing::GIFT_WRAP_MODE_ATTRIBUTE
-                        ]
-                    ]
+                            'new_option_value' => AmazonListing::GIFT_WRAP_MODE_ATTRIBUTE,
+                        ],
+                    ],
                 ],
-                'value'   => $formData['gift_wrap_mode'] != AmazonListing::GIFT_WRAP_MODE_ATTRIBUTE
+                'value' => $formData['gift_wrap_mode'] != AmazonListing::GIFT_WRAP_MODE_ATTRIBUTE
                     ? $formData['gift_wrap_mode'] : '',
                 'tooltip' => $this->__(
                     'Enable this Option in case you want Gift Wrapped Option be applied to the
                     Products you are going to sell.'
                 ),
 
-                'create_magento_attribute' => true
+                'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
@@ -822,15 +833,16 @@ HTML
             'gift_message_attribute',
             'hidden',
             [
-                'name'  => 'gift_message_attribute',
-                'value' => $formData['gift_message_attribute']
+                'name' => 'gift_message_attribute',
+                'value' => $formData['gift_message_attribute'],
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByTypes['boolean'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['gift_message_mode'] == AmazonListing::GIFT_MESSAGE_MODE_ATTRIBUTE
+            if (
+                $formData['gift_message_mode'] == AmazonListing::GIFT_MESSAGE_MODE_ATTRIBUTE
                 && $attribute['code'] == $formData['gift_message_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -846,28 +858,28 @@ HTML
             'gift_message_mode',
             self::SELECT,
             [
-                'name'    => 'gift_message_mode',
-                'label'   => $this->__('Gift Message'),
-                'values'  => [
-                    AmazonListing::GIFT_MESSAGE_MODE_NO  => $this->__('No'),
+                'name' => 'gift_message_mode',
+                'label' => $this->__('Gift Message'),
+                'values' => [
+                    AmazonListing::GIFT_MESSAGE_MODE_NO => $this->__('No'),
                     AmazonListing::GIFT_MESSAGE_MODE_YES => $this->__('Yes'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
-                            'new_option_value'     => AmazonListing::GIFT_MESSAGE_MODE_ATTRIBUTE
-                        ]
-                    ]
+                            'new_option_value' => AmazonListing::GIFT_MESSAGE_MODE_ATTRIBUTE,
+                        ],
+                    ],
                 ],
-                'value'   => $formData['gift_message_mode'] != AmazonListing::GIFT_MESSAGE_MODE_ATTRIBUTE
+                'value' => $formData['gift_message_mode'] != AmazonListing::GIFT_MESSAGE_MODE_ATTRIBUTE
                     ? $formData['gift_message_mode'] : '',
                 'tooltip' => $this->__(
                     'Enable this Option in case you want Gift Message Option be applied to the
                     Products you are going to sell.'
                 ),
 
-                'create_magento_attribute' => true
+                'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
@@ -875,8 +887,8 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_listing_add_additional',
             [
-                'legend'      => $this->__('Additional Settings'),
-                'collapsable' => true
+                'legend' => $this->__('Additional Settings'),
+                'collapsable' => true,
             ]
         );
 
@@ -884,8 +896,8 @@ HTML
             'handling_time_custom_attribute',
             'hidden',
             [
-                'name'  => 'handling_time_custom_attribute',
-                'value' => $formData['handling_time_custom_attribute']
+                'name' => 'handling_time_custom_attribute',
+                'value' => $formData['handling_time_custom_attribute'],
             ]
         );
 
@@ -893,8 +905,8 @@ HTML
             'handling_time_value',
             'hidden',
             [
-                'name'  => 'handling_time_value',
-                'value' => $formData['handling_time_value']
+                'name' => 'handling_time_value',
+                'value' => $formData['handling_time_value'],
             ]
         );
 
@@ -916,7 +928,8 @@ HTML
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['handling_time_mode'] == AmazonListing::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE
+            if (
+                $formData['handling_time_mode'] == AmazonListing::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['handling_time_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -929,25 +942,25 @@ HTML
         }
 
         $fieldConfig = [
-            'name'    => 'handling_time_mode',
-            'label'   => $this->__('Production Time'),
-            'values'  => [
+            'name' => 'handling_time_mode',
+            'label' => $this->__('Production Time'),
+            'values' => [
                 AmazonListing::HANDLING_TIME_MODE_NONE => $this->__('None'),
                 [
                     'label' => $this->__('Recommended Value'),
-                    'value' => $recommendedValuesOptions
+                    'value' => $recommendedValuesOptions,
                 ],
                 [
                     'label' => $this->__('Magento Attribute'),
                     'value' => $preparedAttributes,
                     'attrs' => [
-                        'is_magento_attribute' => true
-                    ]
-                ]
+                        'is_magento_attribute' => true,
+                    ],
+                ],
             ],
             'tooltip' => $this->__('Time that is needed to prepare an Item to be shipped.'),
 
-            'create_magento_attribute' => true
+            'create_magento_attribute' => true,
         ];
 
         if ($formData['handling_time_mode'] == AmazonListing::HANDLING_TIME_MODE_NONE) {
@@ -964,15 +977,16 @@ HTML
             'restock_date_custom_attribute',
             'hidden',
             [
-                'name'  => 'restock_date_custom_attribute',
-                'value' => $formData['restock_date_custom_attribute']
+                'name' => 'restock_date_custom_attribute',
+                'value' => $formData['restock_date_custom_attribute'],
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['restock_date_mode'] == AmazonListing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
+            if (
+                $formData['restock_date_mode'] == AmazonListing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['restock_date_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -988,27 +1002,27 @@ HTML
             'restock_date_mode',
             self::SELECT,
             [
-                'name'    => 'restock_date_mode',
-                'label'   => $this->__('Restock Date'),
-                'values'  => [
-                    AmazonListing::RESTOCK_DATE_MODE_NONE         => $this->__('None'),
+                'name' => 'restock_date_mode',
+                'label' => $this->__('Restock Date'),
+                'values' => [
+                    AmazonListing::RESTOCK_DATE_MODE_NONE => $this->__('None'),
                     AmazonListing::RESTOCK_DATE_MODE_CUSTOM_VALUE => $this->__('Custom Value'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
-                'value'   => $formData['restock_date_mode'] != AmazonListing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
+                'value' => $formData['restock_date_mode'] != AmazonListing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
                     ? $formData['restock_date_mode'] : '',
                 'tooltip' => $this->__(
                     'The date you will be able to ship any back-ordered Items to a Customer.
                      Enter the date in the format YYYY-MM-DD.'
                 ),
 
-                'create_magento_attribute' => true
+                'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
@@ -1017,12 +1031,12 @@ HTML
             'date',
             [
                 'container_id' => 'restock_date_value_tr',
-                'name'         => 'restock_date_value',
-                'label'        => $this->__('Restock Date'),
-                'required'     => true,
-                'date_format'  => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
-                'time_format'  => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
-                'value'        => $formData['restock_date_value']
+                'name' => 'restock_date_value',
+                'label' => $this->__('Restock Date'),
+                'required' => true,
+                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
+                'time_format' => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
+                'value' => $formData['restock_date_value'],
             ]
         );
 
@@ -1046,101 +1060,101 @@ HTML
 
         $this->jsUrl->addUrls(
             [
-                'templateCheckMessages'         => $this->getUrl(
+                'templateCheckMessages' => $this->getUrl(
                     '*/template/checkMessages',
                     [
-                        'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                     ]
                 ),
-                'addNewSellingFormatTemplate'   => $this->getUrl(
+                'addNewSellingFormatTemplate' => $this->getUrl(
                     '*/amazon_template_sellingFormat/new',
                     [
-                        'wizard'        => $this->getRequest()->getParam('wizard'),
-                        'close_on_save' => 1
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
                     ]
                 ),
-                'editSellingFormatTemplate'     => $this->getUrl(
+                'editSellingFormatTemplate' => $this->getUrl(
                     '*/amazon_template_sellingFormat/edit',
                     [
-                        'wizard'        => $this->getRequest()->getParam('wizard'),
-                        'close_on_save' => 1
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
                     ]
                 ),
-                'getSellingFormatTemplates'     => $this->getUrl(
+                'getSellingFormatTemplates' => $this->getUrl(
                     '*/general/modelGetAll',
                     [
-                        'model'          => 'Template_SellingFormat',
-                        'id_field'       => 'id',
-                        'data_field'     => 'title',
-                        'sort_field'     => 'title',
-                        'sort_dir'       => 'ASC',
-                        'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK
+                        'model' => 'Template_SellingFormat',
+                        'id_field' => 'id',
+                        'data_field' => 'title',
+                        'sort_field' => 'title',
+                        'sort_dir' => 'ASC',
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                     ]
                 ),
                 'addNewSynchronizationTemplate' => $this->getUrl(
                     '*/amazon_template_synchronization/new',
                     [
-                        'wizard'        => $this->getRequest()->getParam('wizard'),
-                        'close_on_save' => 1
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
                     ]
                 ),
-                'editSynchronizationTemplate'   => $this->getUrl(
+                'editSynchronizationTemplate' => $this->getUrl(
                     '*/amazon_template_synchronization/edit',
                     [
-                        'wizard'        => $this->getRequest()->getParam('wizard'),
-                        'close_on_save' => 1
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
                     ]
                 ),
-                'getSynchronizationTemplates'   => $this->getUrl(
+                'getSynchronizationTemplates' => $this->getUrl(
                     '*/general/modelGetAll',
                     [
-                        'model'          => 'Template_Synchronization',
-                        'id_field'       => 'id',
-                        'data_field'     => 'title',
-                        'sort_field'     => 'title',
-                        'sort_dir'       => 'ASC',
-                        'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK
-                    ]
-                ),
-                'addNewShippingTemplate'        => $this->getUrl(
-                    '*/amazon_template_shipping/new',
-                    [
-                        'wizard'        => $this->getRequest()->getParam('wizard'),
-                        'close_on_save' => 1
-                    ]
-                ),
-                'editShippingTemplate'          => $this->getUrl(
-                    '*/amazon_template_shipping/edit',
-                    [
-                        'wizard'        => $this->getRequest()->getParam('wizard'),
-                        'close_on_save' => 1
-                    ]
-                ),
-                'getShippingTemplates'          => $this->getUrl(
-                    '*/general/modelGetAll',
-                    [
-                        'model'      => 'Amazon_Template_Shipping',
-                        'id_field'   => 'id',
+                        'model' => 'Template_Synchronization',
+                        'id_field' => 'id',
                         'data_field' => 'title',
                         'sort_field' => 'title',
-                        'sort_dir'   => 'ASC'
+                        'sort_dir' => 'ASC',
+                        'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                     ]
-                )
+                ),
+                'addNewShippingTemplate' => $this->getUrl(
+                    '*/amazon_template_shipping/new',
+                    [
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
+                    ]
+                ),
+                'editShippingTemplate' => $this->getUrl(
+                    '*/amazon_template_shipping/edit',
+                    [
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => 1,
+                    ]
+                ),
+                'getShippingTemplates' => $this->getUrl(
+                    '*/general/modelGetAll',
+                    [
+                        'model' => 'Amazon_Template_Shipping',
+                        'id_field' => 'id',
+                        'data_field' => 'title',
+                        'sort_field' => 'title',
+                        'sort_dir' => 'ASC',
+                    ]
+                ),
             ]
         );
 
         $this->jsTranslator->addTranslations(
             [
-                'condition_note_length_error'                    => $this->__(
+                'condition_note_length_error' => $this->__(
                     'Must be not more than 2000 characters long.'
                 ),
-                'sku_modification_custom_value_error'            => $this->__(
+                'sku_modification_custom_value_error' => $this->__(
                     '%value% placeholder should be specified'
                 ),
                 'sku_modification_custom_value_max_length_error' => $this->__(
                     'The SKU length must be less than %value%.',
                     ValidatorSkuGeneral::SKU_MAX_LENGTH
-                )
+                ),
             ]
         );
 
@@ -1226,7 +1240,7 @@ JS
                 'attrs' => ['attribute_code' => AmazonListing::CONDITION_CLUB],
                 'value' => AmazonListing::CONDITION_MODE_DEFAULT,
                 'label' => $this->__('Club'),
-            ]
+            ],
         ];
 
         foreach ($recommendedValues as &$value) {
@@ -1241,41 +1255,41 @@ JS
     public function getDefaultFieldsValues()
     {
         return [
-            'sku_mode'                      => AmazonListing::SKU_MODE_DEFAULT,
-            'sku_custom_attribute'          => '',
-            'sku_modification_mode'         => AmazonListing::SKU_MODIFICATION_MODE_NONE,
+            'sku_mode' => AmazonListing::SKU_MODE_DEFAULT,
+            'sku_custom_attribute' => '',
+            'sku_modification_mode' => AmazonListing::SKU_MODIFICATION_MODE_NONE,
             'sku_modification_custom_value' => '',
-            'generate_sku_mode'             => AmazonListing::GENERATE_SKU_MODE_NO,
+            'generate_sku_mode' => AmazonListing::GENERATE_SKU_MODE_NO,
 
-            'template_selling_format_id'  => '',
+            'template_selling_format_id' => '',
             'template_synchronization_id' => '',
-            'template_shipping_id'        => '',
+            'template_shipping_id' => '',
 
-            'condition_mode'             => AmazonListing::CONDITION_MODE_DEFAULT,
-            'condition_value'            => AmazonListing::CONDITION_NEW,
+            'condition_mode' => AmazonListing::CONDITION_MODE_DEFAULT,
+            'condition_value' => AmazonListing::CONDITION_NEW,
             'condition_custom_attribute' => '',
-            'condition_note_mode'        => AmazonListing::CONDITION_NOTE_MODE_NONE,
-            'condition_note_value'       => '',
+            'condition_note_mode' => AmazonListing::CONDITION_NOTE_MODE_NONE,
+            'condition_note_value' => '',
 
-            'image_main_mode'          => AmazonListing::IMAGE_MAIN_MODE_NONE,
-            'image_main_attribute'     => '',
-            'gallery_images_mode'      => AmazonListing::GALLERY_IMAGES_MODE_NONE,
-            'gallery_images_limit'     => '',
+            'image_main_mode' => AmazonListing::IMAGE_MAIN_MODE_NONE,
+            'image_main_attribute' => '',
+            'gallery_images_mode' => AmazonListing::GALLERY_IMAGES_MODE_NONE,
+            'gallery_images_limit' => '',
             'gallery_images_attribute' => '',
 
-            'gift_wrap_mode'      => AmazonListing::GIFT_WRAP_MODE_NO,
+            'gift_wrap_mode' => AmazonListing::GIFT_WRAP_MODE_NO,
             'gift_wrap_attribute' => '',
 
-            'gift_message_mode'      => AmazonListing::GIFT_MESSAGE_MODE_NO,
+            'gift_message_mode' => AmazonListing::GIFT_MESSAGE_MODE_NO,
             'gift_message_attribute' => '',
 
-            'handling_time_mode'             => AmazonListing::HANDLING_TIME_MODE_NONE,
-            'handling_time_value'            => '',
+            'handling_time_mode' => AmazonListing::HANDLING_TIME_MODE_NONE,
+            'handling_time_value' => '',
             'handling_time_custom_attribute' => '',
 
-            'restock_date_mode'             => AmazonListing::RESTOCK_DATE_MODE_NONE,
-            'restock_date_value'            => $this->dataHelper->getCurrentTimezoneDate(),
-            'restock_date_custom_attribute' => ''
+            'restock_date_mode' => AmazonListing::RESTOCK_DATE_MODE_NONE,
+            'restock_date_value' => $this->dataHelper->getCurrentTimezoneDate(),
+            'restock_date_custom_attribute' => '',
         ];
     }
 
@@ -1325,7 +1339,7 @@ JS
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
-                'label' => 'title'
+                'label' => 'title',
             ]
         );
 
@@ -1342,7 +1356,7 @@ JS
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
-                'label' => 'title'
+                'label' => 'title',
             ]
         );
 
@@ -1359,7 +1373,7 @@ JS
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
-                'label' => 'title'
+                'label' => 'title',
             ]
         );
 

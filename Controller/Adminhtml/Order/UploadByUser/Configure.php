@@ -33,15 +33,16 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
         if (empty($component) || empty($accountId)) {
             $this->setJsonContent(
                 [
-                    'result'   => false,
+                    'result' => false,
                     'messages' => [
                         [
                             'type' => 'error',
-                            'text' => $this->__('Account must be specified.')
-                        ]
-                    ]
+                            'text' => $this->__('Account must be specified.'),
+                        ],
+                    ],
                 ]
             );
+
             return $this->getResult();
         }
 
@@ -65,19 +66,21 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
         } catch (\Exception $e) {
             $this->setJsonContent(
                 [
-                    'result'   => false,
+                    'result' => false,
                     'messages' => [
                         [
                             'type' => 'error',
-                            'text' => $e->getMessage()
-                        ]
-                    ]
+                            'text' => $e->getMessage(),
+                        ],
+                    ],
                 ]
             );
+
             return $this->getResult();
         }
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 
@@ -85,7 +88,7 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
 
     protected function isMoreThanCurrentDate($toDate)
     {
-        $to   = new \DateTime($toDate, new \DateTimeZone('UTC'));
+        $to = new \DateTime($toDate, new \DateTimeZone('UTC'));
 
         if ($to->getTimestamp() > $this->dataHelper->getCurrentGmtDate(true)) {
             return true;
@@ -112,6 +115,7 @@ class Configure extends \Ess\M2ePro\Controller\Adminhtml\Order
 
         /** @var AmazonManager|EbayManager|WalmartManager $manager */
         $manager->setIdentifierByAccount($account);
+
         return $manager;
     }
 }

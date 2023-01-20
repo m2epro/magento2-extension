@@ -15,7 +15,7 @@ use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract as
  */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
-    const INSTRUCTION_INITIATOR = 'action_response';
+    public const INSTRUCTION_INITIATOR = 'action_response';
 
     protected $resourceConnection;
     protected $activeRecordFactory;
@@ -146,6 +146,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     public function setRequestMetaData($value)
     {
         $this->requestMetaData = $value;
+
         return $this;
     }
 
@@ -385,45 +386,45 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getConfigurator()->isQtyAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 80
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 80,
             ];
         }
 
         if ($this->getConfigurator()->isLagTimeAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_LAG_TIME_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 80
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_LAG_TIME_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 80,
             ];
         }
 
         if ($this->getConfigurator()->isPriceAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 80
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 80,
             ];
         }
 
         if ($this->getConfigurator()->isPromotionsAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 60
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 60,
             ];
         }
 
         if ($this->getConfigurator()->isDetailsAllowed()) {
             $instructions[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => 30
+                'type' => ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => 30,
             ];
         }
 

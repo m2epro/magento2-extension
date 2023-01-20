@@ -32,13 +32,14 @@ class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $url = $this->getUrl('*/amazon_account/new');
         $this->buttonList->update('add', 'label', $this->__('Add Account'));
-        $this->buttonList->update('add', 'onclick', 'setLocation(\''.$url.'\');');
+        $this->buttonList->update('add', 'onclick', 'setLocation(\'' . $url . '\');');
     }
 
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(<<<HTML
+            'content' => $this->__(
+                <<<HTML
 <p>On this Page, you can find information about Amazon Accounts which are managed via M2E Pro.
 M2E Pro Amazon Account is a combination of Merchant ID and particular Marketplace.
 For example, to sell Items on Amazon.es, Amazon.it, you need to add two separate M2E Pro Amazon Accounts for
@@ -50,7 +51,7 @@ Channel Order management, Magento Order creation rules, etc.</p><br>
 <p><strong>Note:</strong> M2E Pro Amazon Account can be deleted only if it is not being used
 for any of M2E Pro Listings.</p>
 HTML
-        )
+            ),
         ]);
 
         return parent::_prepareLayout();

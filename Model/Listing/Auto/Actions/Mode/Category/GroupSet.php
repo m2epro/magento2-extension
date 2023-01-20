@@ -59,6 +59,7 @@ class GroupSet
     public function filter(callable $callback): self
     {
         $groups = array_filter($this->groups, $callback);
+
         return new self($groups);
     }
 

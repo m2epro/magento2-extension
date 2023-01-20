@@ -44,6 +44,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->setAjaxContent(
                 $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::class)->getGridHtml()
             );
+
             return $this->getResult();
         }
 
@@ -54,9 +55,9 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             );
 
             return $this->_redirect('*/*/*', [
-                '_current'  => true,
-                'do_list'   => null,
-                'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::VIEW_MODE_EBAY
+                '_current' => true,
+                'do_list' => null,
+                'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::VIEW_MODE_EBAY,
             ]);
         }
 
@@ -66,6 +67,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $id);
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
             return $this->_redirect('*/ebay_listing/index');
         }
 
@@ -73,9 +75,11 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $productAddIds = array_filter((array)$this->getHelper('Data')->jsonDecode($productAddIds));
 
         if (!empty($productAddIds)) {
-            $this->getMessageManager()->addNotice($this->__(
-                'Please make sure you finish adding new Products before moving to the next step.'
-            ));
+            $this->getMessageManager()->addNotice(
+                $this->__(
+                    'Please make sure you finish adding new Products before moving to the next step.'
+                )
+            );
 
             return $this->_redirect('*/ebay_listing_product_category_settings', ['id' => $id, 'step' => 1]);
         }
@@ -103,7 +107,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $listingData = $this->globalData->getValue('view_listing');
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
         $this->globalData->setValue('rule_prefix', $prefix);
 
         $ruleModel = $this->activeRecordFactory->getObject('Ebay_Magento_Product_Rule')->setData(

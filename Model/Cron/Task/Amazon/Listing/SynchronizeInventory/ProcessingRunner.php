@@ -8,20 +8,15 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\ProcessingRunner
- */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial\Runner
 {
-    const LOCK_ITEM_PREFIX = 'synchronization_amazon_listing_inventory';
+    public const LOCK_ITEM_PREFIX = 'synchronization_amazon_listing_inventory';
 
     /** @var \Ess\M2ePro\Model\Listing\SynchronizeInventory\Amazon\BlockedProductsHandler */
     protected $blockedProductsHandler;
 
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-
-    //##################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -35,10 +30,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         parent::__construct($parentFactory, $activeRecordFactory, $helperData, $helperFactory, $modelFactory);
 
         $this->blockedProductsHandler = $blockedProductsHandler;
-        $this->resourceConnection     = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
     }
-
-    //##################################
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -108,6 +101,4 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_amazon_inventory_sku')
         );
     }
-
-    //##################################
 }

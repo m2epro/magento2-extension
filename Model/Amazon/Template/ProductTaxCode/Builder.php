@@ -35,8 +35,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         return [
             'title' => '',
 
-            'product_tax_code_mode'      => '',
-            'product_tax_code_value'     => '',
+            'product_tax_code_mode' => '',
+            'product_tax_code_value' => '',
             'product_tax_code_attribute' => '',
         ];
     }

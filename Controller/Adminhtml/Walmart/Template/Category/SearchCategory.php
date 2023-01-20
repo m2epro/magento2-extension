@@ -29,17 +29,18 @@ class SearchCategory extends Category
     {
         if (!$keywords = $this->getRequest()->getParam('query', '')) {
             $this->setJsonContent([]);
+
             return $this->getResult();
         }
 
         $connection = $this->resourceConnection->getConnection();
 
         $select = $connection->select()
-            ->from(
-                $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
-            )
-            ->where('is_leaf = 1')
-            ->where('marketplace_id = ?', $this->getRequest()->getParam('marketplace_id'));
+                             ->from(
+                                 $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
+                             )
+                             ->where('is_leaf = 1')
+                             ->where('marketplace_id = ?', $this->getRequest()->getParam('marketplace_id'));
 
         $where = [];
         $where[] = "browsenode_id = {$connection->quote($keywords)}";
@@ -50,13 +51,13 @@ class SearchCategory extends Category
                 continue;
             }
 
-            $part = $connection->quote('%'.$part.'%');
+            $part = $connection->quote('%' . $part . '%');
             $where[] = "keywords LIKE {$part} OR title LIKE {$part}";
         }
 
         $select->where(implode(' OR ', $where))
-            ->limit(200)
-            ->order('id ASC');
+               ->limit(200)
+               ->order('id ASC');
 
         $categories = [];
         $queryStmt = $select->query();
@@ -67,6 +68,7 @@ class SearchCategory extends Category
         }
 
         $this->setJsonContent($categories);
+
         return $this->getResult();
     }
 }

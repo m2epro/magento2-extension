@@ -13,15 +13,18 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validat
  */
 class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
+    /** @var array  */
     private $existenceResult = [];
 
     /**
      * @param array $result
+     *
      * @return $this
      */
     public function setExistenceResult(array $result)
     {
         $this->existenceResult = $result;
+
         return $this;
     }
 
@@ -80,7 +83,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             return;
         }
 
-        if ($this->getAmazonListingProduct()->getGeneralId() &&
+        if (
+            $this->getAmazonListingProduct()->getGeneralId() &&
             $this->getAmazonListingProduct()->getGeneralId() != $asin
         ) {
             $this->addMessage(
@@ -177,9 +181,9 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $parentAmazonListingProduct */
         $parentAmazonListingProduct = $this->getVariationManager()
-            ->getTypeModel()
-            ->getParentListingProduct()
-            ->getChildObject();
+                                           ->getTypeModel()
+                                           ->getParentListingProduct()
+                                           ->getChildObject();
 
         if ($parentAmazonListingProduct->getGeneralId() != $info['parent_asin']) {
             $this->addMessage(
@@ -210,8 +214,8 @@ class Existence extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         $parentChannelVariations = $parentAmazonListingProduct->getVariationManager()
-            ->getTypeModel()
-            ->getChannelVariations();
+                                                              ->getTypeModel()
+                                                              ->getChannelVariations();
 
         if (!isset($parentChannelVariations[$asin])) {
             $this->addMessage(

@@ -29,6 +29,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         if ($listing === null) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
             return $this->_redirect('*/amazon_listing/index');
         }
 

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\Description;
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
-    const GALLERY_IMAGES_COUNT_MAX = 8;
+    public const GALLERY_IMAGES_COUNT_MAX = 8;
 
     /**
      * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
@@ -43,11 +43,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -63,11 +65,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Template\Description $instance
+     *
      * @return $this
      */
     public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance)
     {
         $this->descriptionTemplateModel = $instance;
+
         return $this;
     }
 

@@ -57,7 +57,7 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         $params = $this->getParams();
 
         $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-            ->getCollection();
+                                                                    ->getCollection();
         $requestPendingSingleCollection->addFieldToFilter('component', $params['component']);
         $requestPendingSingleCollection->addFieldToFilter('server_hash', $params['server_hash']);
 
@@ -67,13 +67,13 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         if (!$requestPendingSingle->getId()) {
             $requestPendingSingle->setData(
                 [
-                    'component'       => $params['component'],
-                    'server_hash'     => $params['server_hash'],
+                    'component' => $params['component'],
+                    'server_hash' => $params['server_hash'],
                     'expiration_date' => gmdate(
                         'Y-m-d H:i:s',
                         $this->helperData->getCurrentGmtDate(true)
-                            + static::PENDING_REQUEST_MAX_LIFE_TIME
-                    )
+                        + static::PENDING_REQUEST_MAX_LIFE_TIME
+                    ),
                 ]
             );
 
@@ -83,7 +83,7 @@ class Runner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runn
         $processingSingle = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Single');
         $processingSingle->setData(
             [
-                'processing_id'             => $this->getProcessingObject()->getId(),
+                'processing_id' => $this->getProcessingObject()->getId(),
                 'request_pending_single_id' => $requestPendingSingle->getId(),
             ]
         );

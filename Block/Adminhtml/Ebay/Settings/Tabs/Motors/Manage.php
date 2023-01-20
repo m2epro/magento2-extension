@@ -22,8 +22,8 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'id' => 'ebay_settings_motors_form',
                 'method' => 'post',
                 'action' => $this->getUrl('*/ebay_settings_motors/importMotorsData'),
-                'enctype' => 'multipart/form-data'
-            ]
+                'enctype' => 'multipart/form-data',
+            ],
         ]);
 
         $form->addField(
@@ -31,7 +31,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'id' => 'motors_type',
-                'name' => 'motors_type'
+                'name' => 'motors_type',
             ]
         );
 
@@ -41,7 +41,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'label' => $this->__('Clear'),
             'class' => 'action-primary',
             'onclick' => 'EbaySettingsMotorsObj.clearAddedMotorsRecords()',
-            'style' => 'margin-left: 15px;'
+            'style' => 'margin-left: 15px;',
         ]);
 
         $fieldset->addField(
@@ -53,6 +53,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     <span id="database-custom-count" style="font-weight: bold;"></span>
     {$clearButton->toHtml()}
 HTML
+            ,
             ]
         );
 
@@ -60,7 +61,7 @@ HTML
             'label' => $this->__('Import'),
             'class' => 'action-primary',
             'onclick' => 'EbaySettingsMotorsObj.importMotorsRecords()',
-            'style' => 'margin-left: 15px;'
+            'style' => 'margin-left: 15px;',
         ]);
 
         $fieldset->addField(
@@ -73,6 +74,7 @@ HTML
                 'after_element_html' => <<<HTML
     {$importButton->toHtml()}
 HTML
+            ,
             ]
         )->addCustomAttribute('accept', '.csv');
 
@@ -84,7 +86,8 @@ HTML
 
     protected function _toHtml()
     {
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
     #database {
         padding-top: 0px;
     }
@@ -102,7 +105,8 @@ CSS
 
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData([
-            'content' => $this->__(<<<HTML
+            'content' => $this->__(
+                <<<HTML
     In this Section you can <strong>Add/Update</strong> Custom Compatible Vehicles information using prepared file.
     This file should be in CSV format, where each line describes one Compatible Vehicle.<br/><br/>
     First line of the file should contain names of Columns:
@@ -123,7 +127,7 @@ CSS
     </ul>
     You can always clear Added Compatible Vehicles by pressing <strong>Clear</strong> Button.
 HTML
-            )
+            ),
         ]);
 
         return '<div id="ebay_settings_motors_manage_popup">' . $helpBlock->toHtml() . parent::_toHtml() . '</div>';

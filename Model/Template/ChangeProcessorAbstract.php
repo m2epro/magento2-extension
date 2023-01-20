@@ -55,15 +55,15 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\AbstractModel
             foreach ($instructionsData as $instructionData) {
                 $listingsProductsInstructionsData[] = [
                     'listing_product_id' => $affectedListingProductData['id'],
-                    'type'               => $instructionData['type'],
-                    'initiator'          => $this->getInstructionInitiator(),
-                    'priority'           => $instructionData['priority'],
+                    'type' => $instructionData['type'],
+                    'initiator' => $this->getInstructionInitiator(),
+                    'priority' => $instructionData['priority'],
                 ];
             }
         }
 
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()
-            ->add($listingsProductsInstructionsData);
+                                  ->add($listingsProductsInstructionsData);
     }
 
     //########################################

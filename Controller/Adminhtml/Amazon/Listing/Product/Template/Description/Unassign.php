@@ -37,7 +37,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
                 'text' => '<p>' . $this->__(
                     'Description Policy cannot be unassigned from some Products because they are
                      participating in the new ASIN(s)/ISBN(s) creation.'
-                ) . '</p>'
+                ) . '</p>',
             ];
         } else {
             $productsIdsLocked = $this->filterLockedProducts($productsIdsTemp);
@@ -48,7 +48,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
                     'text' => '<p>' . $this->__(
                         'Description Policy cannot be unassigned because the Products are in Action or
                          in the process of new ASIN(s)/ISBN(s) Creation.'
-                    ). '</p>'
+                    ) . '</p>',
                 ];
             }
         }
@@ -56,7 +56,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Description Policy was unassigned.')
+                'text' => $this->__('Description Policy was unassigned.'),
             ];
 
             $this->setDescriptionTemplateForProducts($productsIdsLocked, null);
@@ -64,7 +64,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
         }
 
         $this->setJsonContent([
-            'messages' => $messages
+            'messages' => $messages,
         ]);
 
         return $this->getResult();

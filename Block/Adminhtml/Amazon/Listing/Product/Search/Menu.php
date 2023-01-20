@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search;
  */
 class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
-
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct = null;
 
@@ -36,6 +35,7 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -54,8 +54,8 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         }
 
         return $this->getListingProduct()->getMagentoProduct()->isBundleType() ||
-               $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-               $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
+            $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
+            $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
 
     public function isParentFromBundleOrSimpleOrDownloadable()
@@ -65,8 +65,8 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         }
 
         return $this->getListingProduct()->getMagentoProduct()->isBundleType() ||
-               $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-               $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
+            $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
+            $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
 
     //########################################

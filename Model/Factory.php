@@ -9,6 +9,7 @@
 /**
  * Model factory
  */
+
 namespace Ess\M2ePro\Model;
 
 /**
@@ -40,6 +41,7 @@ class Factory
     /**
      * @param $modelName
      * @param array $arguments
+     *
      * @return \Ess\M2ePro\Model\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -55,6 +57,7 @@ class Factory
 
     /**
      * @param string $modelName
+     *
      * @return bool
      */
     public function canCreateObject($modelName)

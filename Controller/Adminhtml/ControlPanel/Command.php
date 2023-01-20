@@ -27,7 +27,7 @@ abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
             return $this->_redirect($this->controlPanelHelper->getPageInspectionTabUrl());
         }
 
-        $methodName = $action.'Action';
+        $methodName = $action . 'Action';
 
         if (!method_exists($this, $methodName)) {
             return $this->_redirect($this->controlPanelHelper->getPageInspectionTabUrl());
@@ -37,6 +37,7 @@ abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
 
         if (is_string($actionResult)) {
             $this->getRawResult()->setContents($actionResult);
+
             return $this->getRawResult();
         }
 
@@ -52,7 +53,9 @@ abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
 
     /**
      * It will allow to use control panel features even if extension is disabled, etc.
+     *
      * @param \Magento\Framework\App\RequestInterface $request
+     *
      * @return bool
      */
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)

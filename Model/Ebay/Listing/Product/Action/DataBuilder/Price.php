@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
  */
 class Price extends AbstractModel
 {
-    const PRICE_DISCOUNT_MAP_EXPOSURE_NONE             = 'None';
-    const PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT  = 'DuringCheckout';
-    const PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT     = 'PreCheckout';
+    public const PRICE_DISCOUNT_MAP_EXPOSURE_NONE = 'None';
+    public const PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT = 'DuringCheckout';
+    public const PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT = 'PreCheckout';
 
     //########################################
 
@@ -49,13 +49,15 @@ class Price extends AbstractModel
      */
     protected function getPriceDiscountStpData()
     {
-        if (!$this->getEbayListingProduct()->isListingTypeFixed() ||
-            !$this->getEbayListingProduct()->isPriceDiscountStp()) {
+        if (
+            !$this->getEbayListingProduct()->isListingTypeFixed() ||
+            !$this->getEbayListingProduct()->isPriceDiscountStp()
+        ) {
             return [];
         }
 
         $data = [
-            'original_retail_price' => $this->getEbayListingProduct()->getPriceDiscountStp()
+            'original_retail_price' => $this->getEbayListingProduct()->getPriceDiscountStp(),
         ];
 
         if ($this->getEbayMarketplace()->isStpAdvancedEnabled()) {
@@ -92,8 +94,10 @@ class Price extends AbstractModel
      */
     protected function getPriceDiscountMapData()
     {
-        if (!$this->getEbayListingProduct()->isListingTypeFixed() ||
-            !$this->getEbayListingProduct()->isPriceDiscountMap()) {
+        if (
+            !$this->getEbayListingProduct()->isListingTypeFixed() ||
+            !$this->getEbayListingProduct()->isPriceDiscountMap()
+        ) {
             return [];
         }
 

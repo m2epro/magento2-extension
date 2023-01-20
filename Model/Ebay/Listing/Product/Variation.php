@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Listing\Product\Variation getParentObject()
  */
+
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
@@ -232,6 +233,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
      * @param bool $asObjects
      * @param array $filters
      * @param bool $tryToGetFromStorage
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\Variation\Option[]
      */
     public function getOptions($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
@@ -447,23 +449,23 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         $options = $this->getOptions(true);
 
         // Configurable, Grouped product
-        if ($this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
-            $this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
+        if (
+            $this->getListingProduct()->getMagentoProduct()->isConfigurableType() ||
+            $this->getListingProduct()->getMagentoProduct()->isGroupedType()
+        ) {
             foreach ($options as $option) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku = $option->getChildObject()->getSku();
                 break;
             }
-
-        // Bundle product
+            // Bundle product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isBundleType()) {
             foreach ($options as $option) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
                 $sku != '' && $sku .= '-';
                 $sku .= $option->getChildObject()->getSku();
             }
-
-        // Simple with options product
+            // Simple with options product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()) {
             foreach ($options as $option) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
@@ -475,19 +477,17 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
                     $sku .= $tempSku;
                 }
             }
-
             // Downloadable with separated links product
         } elseif ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
             $option = reset($options);
-            $sku = $option->getMagentoProduct()->getSku().'-'
-                .$this->getHelper('Data')->convertStringToSku($option->getOption());
+            $sku = $option->getMagentoProduct()->getSku() . '-'
+                . $this->getHelper('Data')->convertStringToSku($option->getOption());
         }
 
         if (strlen($sku) >= 80) {
-            $sku = 'RANDOM_'.sha1($sku);
+            $sku = 'RANDOM_' . sha1($sku);
         }
 
         return $sku;
@@ -623,9 +623,11 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             $orderItemVariationKeys = array_map('trim', array_keys($orderItemVariationOptions));
             $orderItemVariationValues = array_map('trim', array_values($orderItemVariationOptions));
 
-            if (count($currentSpecifics) == count($orderItemVariationOptions) &&
+            if (
+                count($currentSpecifics) == count($orderItemVariationOptions) &&
                 count(array_diff($variationKeys, $orderItemVariationKeys)) <= 0 &&
-                count(array_diff($variationValues, $orderItemVariationValues)) <= 0) {
+                count(array_diff($variationValues, $orderItemVariationValues)) <= 0
+            ) {
                 $findOrderItem = true;
                 break;
             }

@@ -37,8 +37,8 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
         $response = $this->getResponse()->getResponseData();
 
         $this->responseData = [
-            'status'      => $response['status'],
-            'explanation' => $response['explanation'] === null ? '' : $response['explanation']
+            'status' => $response['status'],
+            'explanation' => $response['explanation'] === null ? '' : $response['explanation'],
         ];
     }
 }

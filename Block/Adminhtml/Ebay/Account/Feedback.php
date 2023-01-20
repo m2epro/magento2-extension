@@ -48,10 +48,11 @@ More detailed information about ability to work with this Page you can find
 HTML
                 ,
                 $this->supportHelper->getDocumentationArticleUrl('x/pf0bB')
-            )
+            ),
         ]);
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 
 .grid-listing-column-ebay_item_id {
     width: 120px;
@@ -68,7 +69,8 @@ HTML
 CSS
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 
     require([
 

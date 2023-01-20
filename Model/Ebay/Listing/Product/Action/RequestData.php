@@ -31,12 +31,12 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     public function hasPrice()
     {
         return !$this->isVariationItem() &&
-                (
-                    $this->hasPriceFixed() ||
-                    $this->hasPriceStart() ||
-                    $this->hasPriceReserve() ||
-                    $this->hasPriceBuyItNow()
-                );
+            (
+                $this->hasPriceFixed() ||
+                $this->hasPriceStart() ||
+                $this->hasPriceReserve() ||
+                $this->hasPriceBuyItNow()
+            );
     }
 
     // ---------------------------------------
@@ -295,6 +295,7 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 
     /**
      * @param bool $calculateWithEmptyQty
+     *
      * @return float|null
      */
     public function getVariationPrice($calculateWithEmptyQty = true)
@@ -304,6 +305,7 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 
     /**
      * @param bool $calculateWithEmptyQty
+     *
      * @return float|null
      */
     public function getVariationMinPrice($calculateWithEmptyQty = true)
@@ -335,6 +337,7 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 
     /**
      * @param bool $calculateWithEmptyQty
+     *
      * @return float|null
      */
     public function getVariationMaxPrice($calculateWithEmptyQty = true)

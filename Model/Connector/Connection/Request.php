@@ -8,23 +8,23 @@
 
 namespace Ess\M2ePro\Model\Connector\Connection;
 
-/**
- * Class \Ess\M2ePro\Model\Connector\Connection\Request
- */
 class Request extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var null  */
     protected $component = null;
+    /** @var null  */
     protected $componentVersion = null;
+    /** @var null  */
     protected $command = null;
-
+    /** @var array  */
     protected $infoRewrites = [];
-    protected $rawData      = null;
-
-    //########################################
+    /** @var null  */
+    protected $rawData = null;
 
     public function setComponent($value)
     {
         $this->component = (string)$value;
+
         return $this;
     }
 
@@ -38,6 +38,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setComponentVersion($value)
     {
         $this->componentVersion = (int)$value;
+
         return $this;
     }
 
@@ -57,6 +58,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->command = $value;
+
         return $this;
     }
 
@@ -72,8 +74,8 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         $data = [
             'client' => [
                 'platform' => [
-                    'name' => $this->getHelper('Magento')->getName().
-                        ' ('.$this->getHelper('Magento')->getEditionName().')',
+                    'name' => $this->getHelper('Magento')->getName() .
+                        ' (' . $this->getHelper('Magento')->getEditionName() . ')',
                     'version' => $this->getHelper('Magento')->getVersion(),
                 ],
                 'module' => [
@@ -83,20 +85,20 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
                 'location' => [
                     'domain' => $this->getHelper('Client')->getDomain(),
                     'ip' => $this->getHelper('Client')->getIp(),
-                    'directory' => $this->getHelper('Client')->getBaseDirectory()
+                    'directory' => $this->getHelper('Client')->getBaseDirectory(),
                 ],
-                'locale' => $this->getHelper('Magento')->getLocaleCode()
+                'locale' => $this->getHelper('Magento')->getLocaleCode(),
             ],
             'auth' => [],
             'component' => [
                 'name' => $this->component,
-                'version' => $this->componentVersion
+                'version' => $this->componentVersion,
             ],
             'command' => [
                 'entity' => $this->command[0],
                 'type' => $this->command[1],
-                'name' => $this->command[2]
-            ]
+                'name' => $this->command[2],
+            ],
         ];
 
         $applicationKey = $this->getHelper('Server')->getApplicationKey();
@@ -114,6 +116,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setInfoRewrites(array $value = [])
     {
         $this->infoRewrites = $value;
+
         return $this;
     }
 
@@ -122,6 +125,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setRawData($value)
     {
         $this->rawData = $value;
+
         return $this;
     }
 
@@ -136,7 +140,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             'info' => $this->getInfo(),
-            'data' => $this->getData()
+            'data' => $this->getData(),
         ];
     }
 

@@ -15,7 +15,7 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result\Set;
  */
 class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     //########################################
@@ -48,7 +48,7 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
         foreach ($resultSet->getByKeys() as $result) {
             $details[$result->getTaskHash()] = [
                 'result' => $result->getTaskResult(),
-                'data'   => $result->getTaskData()
+                'data' => $result->getTaskData(),
             ];
         }
 

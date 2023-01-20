@@ -19,8 +19,8 @@ use Ess\M2ePro\Model\ActiveRecord\Factory;
  */
 class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const RETURNS_ACCEPTED = 'ReturnsAccepted';
-    const RETURNS_NOT_ACCEPTED = 'ReturnsNotAccepted';
+    public const RETURNS_ACCEPTED = 'ReturnsAccepted';
+    public const RETURNS_NOT_ACCEPTED = 'ReturnsNotAccepted';
 
     /**
      * @var \Ess\M2ePro\Model\Marketplace
@@ -85,17 +85,17 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
         }
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
-                ->getCollection()
-                ->addFieldToFilter('template_return_policy_id', $this->getId())
-                ->getSize() ||
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_return_policy_id', $this->getId())
+                                               ->getSize() ||
             (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
-                ->getCollection()
-                ->addFieldToFilter(
-                    'template_return_policy_mode',
-                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                )
-                ->addFieldToFilter('template_return_policy_id', $this->getId())
-                ->getSize();
+                                            ->getCollection()
+                                            ->addFieldToFilter(
+                                                'template_return_policy_mode',
+                                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                                            )
+                                            ->addFieldToFilter('template_return_policy_id', $this->getId())
+                                            ->getSize();
     }
 
     //########################################
@@ -103,6 +103,7 @@ class ReturnPolicy extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMode
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_returnpolicy');
+
         return parent::save();
     }
 

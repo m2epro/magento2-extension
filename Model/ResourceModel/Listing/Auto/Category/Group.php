@@ -44,14 +44,14 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
             'main_table.group_id = melacg.id',
             ['group_title' => 'title']
         );
-        $collection->getSelect()->where('main_table.group_id IN ('.implode(',', $groupIds).')');
+        $collection->getSelect()->where('main_table.group_id IN (' . implode(',', $groupIds) . ')');
 
         $data = [];
 
         foreach ($collection as $item) {
             $data[$item->getData('category_id')] = [
                 'id' => $item->getData('group_id'),
-                'title' => $item->getData('group_title')
+                'title' => $item->getData('group_title'),
             ];
         }
 
@@ -63,13 +63,13 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
     public function isEmpty($groupId)
     {
         $autoCategoryTable = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getResource()
-            ->getMainTable();
+                                                       ->getMainTable();
         $select = $this->getConnection()
-            ->select()
-            ->from(
-                ['mlac' => $autoCategoryTable]
-            )
-            ->where('mlac.group_id = ?', $groupId);
+                       ->select()
+                       ->from(
+                           ['mlac' => $autoCategoryTable]
+                       )
+                       ->where('mlac.group_id = ?', $groupId);
         $result = $this->getConnection()->fetchAll($select);
 
         return count($result) === 0;

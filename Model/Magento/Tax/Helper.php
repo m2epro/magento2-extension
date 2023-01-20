@@ -42,17 +42,18 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
     public function hasRatesForCountry($countryId)
     {
         return $this->calculationRateFactory->create()
-            ->getCollection()
-            ->addFieldToFilter('tax_country_id', $countryId)
-            ->addFieldToFilter('code', ['neq' => Builder::TAX_RATE_CODE_PRODUCT])
-            ->addFieldToFilter('code', ['neq' => Builder::TAX_RATE_CODE_SHIPPING])
-            ->getSize();
+                                            ->getCollection()
+                                            ->addFieldToFilter('tax_country_id', $countryId)
+                                            ->addFieldToFilter('code', ['neq' => Builder::TAX_RATE_CODE_PRODUCT])
+                                            ->addFieldToFilter('code', ['neq' => Builder::TAX_RATE_CODE_SHIPPING])
+                                            ->getSize();
     }
 
     /**
      * Return store tax rate for shipping
      *
      * @param \Magento\Store\Model\Store $store
+     *
      * @return float
      */
     public function getStoreShippingTaxRate($store)
@@ -66,8 +67,8 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
     public function isCalculationBasedOnOrigin($store)
     {
         return $this->storeManager
-                    ->getStore($store)
-                    ->getConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_BASED_ON) == 'origin';
+                ->getStore($store)
+                ->getConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_BASED_ON) == 'origin';
     }
 
     //########################################

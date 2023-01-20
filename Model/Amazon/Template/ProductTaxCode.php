@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\Amazon\Template;
  */
 class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const PRODUCT_TAX_CODE_MODE_VALUE     = 1;
-    const PRODUCT_TAX_CODE_MODE_ATTRIBUTE = 2;
+    public const PRODUCT_TAX_CODE_MODE_VALUE = 1;
+    public const PRODUCT_TAX_CODE_MODE_ATTRIBUTE = 2;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\Source[]
      */
     private $productTaxCodeSourceModels = [];
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -71,15 +71,16 @@ class ProductTaxCode extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMo
         }
 
         return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')
-            ->getCollection()
-            ->addFieldToFilter('template_product_tax_code_id', $this->getId())
-            ->getSize();
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_product_tax_code_id', $this->getId())
+                                               ->getSize();
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)

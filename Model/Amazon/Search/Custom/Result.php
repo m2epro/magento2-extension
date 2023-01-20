@@ -55,6 +55,7 @@ class Result
     public function setResponseData(array $responseData): self
     {
         $this->responseData = $responseData;
+
         return $this;
     }
 
@@ -74,6 +75,7 @@ class Result
     public function setStatus(int $status): Result
     {
         $this->status = $status;
+
         return $this;
     }
 

@@ -29,7 +29,7 @@ class Massaction extends \Magento\Backend\Block\Widget\Grid\Massaction\Extended
         foreach ($groups as $groupName => $label) {
             $this->_groups[$groupName] = [
                 'label' => $label,
-                'items' => []
+                'items' => [],
             ];
         }
 
@@ -120,7 +120,7 @@ HTML;
 
             foreach ($groupData['items'] as $itemId) {
                 $option = $xpathObj->query("//select/option[@value='{$itemId}']", $select)
-                    ->item(0);
+                                   ->item(0);
                 $option = $select->removeChild($option);
                 $optgroup->appendChild($option);
             }

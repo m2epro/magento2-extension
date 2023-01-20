@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract as TemplateChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active
- */
 class Active extends AbstractModel
 {
     //########################################
@@ -31,7 +29,7 @@ class Active extends AbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-            \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
@@ -49,7 +47,8 @@ class Active extends AbstractModel
             return false;
         }
 
-        if (!$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
+        if (
+            !$this->input->hasInstructionWithTypes($this->getStopInstructionTypes()) &&
             !$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())
         ) {
             return false;
@@ -101,9 +100,9 @@ class Active extends AbstractModel
                 $scheduledAction->addData(
                     [
                         'listing_product_id' => $this->input->getListingProduct()->getId(),
-                        'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                        'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-                        'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params,]),
+                        'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                        'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+                        'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params,]),
                     ]
                 );
 
@@ -147,7 +146,8 @@ class Active extends AbstractModel
 
         $tags = array_flip($tags);
 
-        if ($variationManager->isRelationParentType() &&
+        if (
+            $variationManager->isRelationParentType() &&
             $this->input->getListingProduct()->getChildObject()->getSku() === null
         ) {
             return false;
@@ -223,13 +223,13 @@ class Active extends AbstractModel
         $scheduledAction->addData(
             [
                 'listing_product_id' => $this->input->getListingProduct()->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
-                'tag'                => '/' . implode('/', $tags) . '/',
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                'tag' => '/' . implode('/', $tags) . '/',
+                'additional_data' => $this->getHelper('Data')->jsonEncode(
                     [
-                        'params'       => $params,
-                        'configurator' => $configurator->getSerializedData()
+                        'params' => $params,
+                        'configurator' => $configurator->getSerializedData(),
                     ]
                 ),
             ]
@@ -269,8 +269,10 @@ class Active extends AbstractModel
         if ($walmartSynchronizationTemplate->isStopStatusDisabled()) {
             if (!$listingProduct->getMagentoProduct()->isStatusEnabled()) {
                 return true;
-            } elseif ($variationManager->isPhysicalUnit() &&
-                $variationManager->getTypeModel()->isVariationProductMatched()) {
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
+                $variationManager->getTypeModel()->isVariationProductMatched()
+            ) {
                 $temp = $variationResource->isAllStatusesDisabled(
                     $listingProduct->getId(),
                     $listingProduct->getListing()->getStoreId()
@@ -285,7 +287,8 @@ class Active extends AbstractModel
         if ($walmartSynchronizationTemplate->isStopOutOfStock()) {
             if (!$listingProduct->getMagentoProduct()->isStockAvailability()) {
                 return true;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -312,7 +315,7 @@ class Active extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix'   => \Ess\M2ePro\Model\Walmart\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Walmart\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($walmartSynchronizationTemplate->getStopAdvancedRulesFilters());
@@ -379,7 +382,7 @@ class Active extends AbstractModel
         }
 
         $currentLagTime = $walmartListingProduct->getSellingFormatTemplateSource()->getLagTime();
-        $onlineLagTime  = $walmartListingProduct->getOnlineLagTime();
+        $onlineLagTime = $walmartListingProduct->getOnlineLagTime();
 
         if ($currentLagTime != $onlineLagTime) {
             return true;
@@ -407,7 +410,7 @@ class Active extends AbstractModel
         }
 
         $currentPrice = $walmartListingProduct->getPrice();
-        $onlinePrice  = $walmartListingProduct->getOnlinePrice();
+        $onlinePrice = $walmartListingProduct->getOnlinePrice();
 
         if ($walmartListingProduct->getPrice() != $walmartListingProduct->getOnlinePrice()) {
             return true;

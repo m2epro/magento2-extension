@@ -5,6 +5,7 @@
  * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
+
 namespace Ess\M2ePro\Model\Amazon\Listing\Other;
 
 /**
@@ -12,15 +13,16 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Other;
  */
 class Mapping extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     protected $productFactory;
 
     /**
      * @var \Ess\M2ePro\Model\Account|null
      */
     protected $account = null;
-
+    /** @var null  */
     protected $mappingSettings = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -48,6 +50,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $otherListings
+     *
      * @return bool
      */
     public function autoMapOtherListingsProducts(array $otherListings)
@@ -94,6 +97,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $otherListing
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -152,9 +156,9 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             if ((int)$value['mode'] == 0) {
                 continue;
             }
-            for ($i=0; $i<10; $i++) {
-                if (!isset($this->mappingSettings[(int)$value['priority']+$i])) {
-                    $this->mappingSettings[(int)$value['priority']+$i] = (string)$key;
+            for ($i = 0; $i < 10; $i++) {
+                if (!isset($this->mappingSettings[(int)$value['priority'] + $i])) {
+                    $this->mappingSettings[(int)$value['priority'] + $i] = (string)$key;
                     break;
                 }
             }
@@ -183,8 +187,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-            if ($productObj && $productObj->getId() &&
-                $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
+            if (
+                $productObj && $productObj->getId() &&
+                $this->isMagentoProductTypeAllowed($productObj->getTypeId())
+            ) {
                 return $productObj->getId();
             }
         }
@@ -194,6 +200,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $otherListing
+     *
      * @return null|int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -241,8 +248,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $productObj = $this->productFactory->create()->setStoreId($storeId);
         $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-        if ($productObj && $productObj->getId() &&
-            $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
+        if (
+            $productObj && $productObj->getId() &&
+            $this->isMagentoProductTypeAllowed($productObj->getTypeId())
+        ) {
             return $productObj->getId();
         }
 
@@ -251,6 +260,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $otherListing
+     *
      * @return null|int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -282,8 +292,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
         $productObj = $this->productFactory->create()->setStoreId($storeId);
         $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-        if ($productObj && $productObj->getId() &&
-            $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
+        if (
+            $productObj && $productObj->getId() &&
+            $this->isMagentoProductTypeAllowed($productObj->getTypeId())
+        ) {
             return $productObj->getId();
         }
 
@@ -293,8 +305,10 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
             $productObj = $this->productFactory->create()->setStoreId($storeId);
             $productObj = $productObj->loadByAttribute($attributeCode, $attributeValue);
 
-            if ($productObj && $productObj->getId() &&
-                $this->isMagentoProductTypeAllowed($productObj->getTypeId())) {
+            if (
+                $productObj && $productObj->getId() &&
+                $this->isMagentoProductTypeAllowed($productObj->getTypeId())
+            ) {
                 return $productObj->getId();
             }
         }
@@ -307,6 +321,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
     protected function isMagentoProductTypeAllowed($type)
     {
         $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+
         return in_array($type, $knownTypes);
     }
 

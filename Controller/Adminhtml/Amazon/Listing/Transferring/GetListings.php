@@ -15,16 +15,28 @@ class GetListings extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     public function execute()
     {
         $collection = $this->amazonFactory->getObject('Listing')->getCollection()
-            ->addFieldToFilter('id', ['neq' => (int)$this->getRequest()->getParam('listing_id')])
-            ->addFieldToFilter('account_id', (int)$this->getRequest()->getParam('account_id'))
-            ->addFieldToFilter('marketplace_id', (int)$this->getRequest()->getParam('marketplace_id'))
-            ->addFieldToFilter('store_id', (int)$this->getRequest()->getParam('store_id'));
+                                          ->addFieldToFilter(
+                                              'id',
+                                              ['neq' => (int)$this->getRequest()->getParam('listing_id')]
+                                          )
+                                          ->addFieldToFilter(
+                                              'account_id',
+                                              (int)$this->getRequest()->getParam('account_id')
+                                          )
+                                          ->addFieldToFilter(
+                                              'marketplace_id',
+                                              (int)$this->getRequest()->getParam('marketplace_id')
+                                          )
+                                          ->addFieldToFilter(
+                                              'store_id',
+                                              (int)$this->getRequest()->getParam('store_id')
+                                          );
 
         $listings = [];
         foreach ($collection->getItems() as $listing) {
             $listings[] = [
                 'id' => $listing->getId(),
-                'title' => $this->getHelper('Data')->escapeHtml($listing->getTitle())
+                'title' => $this->getHelper('Data')->escapeHtml($listing->getTitle()),
             ];
         }
 

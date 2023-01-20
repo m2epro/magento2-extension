@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -7,9 +8,6 @@
 
 namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\Source\Command;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\Source\Command\Save\Save
- */
 class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -53,6 +51,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -64,6 +63,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     protected function processExecute($interceptor, \Closure $callback, array $arguments)
@@ -84,7 +84,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
         }
 
         $oldValue = $sourceBefore->isEnabled() ? 'Enabled' : 'Disabled';
-        $newValue = $source->isEnabled()       ? 'Enabled' : 'Disabled';
+        $newValue = $source->isEnabled() ? 'Enabled' : 'Disabled';
 
         foreach ($this->msiAffectedProducts->getAffectedListingsBySource($source->getSourceCode()) as $listing) {
             foreach ($listing->getChildObject()->getResource()->getUsedProductsIds($listing->getId()) as $productId) {
@@ -115,7 +115,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
             null,
             $this->getHelper('Module\Log')->encodeDescription(
                 'Status of the "%source%" Source changed [%from%] to [%to%].',
-                ['!from'=> $oldValue, '!to' => $newValue, '!source' => $source->getSourceCode()]
+                ['!from' => $oldValue, '!to' => $newValue, '!source' => $source->getSourceCode()]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );

@@ -22,8 +22,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
     ) {
         $logData = [
-            'reason'     => __METHOD__,
-            'rule_id'    => $categoryGroup->getId(),
+            'reason' => __METHOD__,
+            'rule_id' => $categoryGroup->getId(),
             'rule_title' => $categoryGroup->getTitle(),
         ];
         $listingProduct = $this->getListing()->addProduct(
@@ -42,9 +42,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $group = $categoryGroup->getChildObject();
 
         $params = [
-            'template_category_id'                 => $group->getAddingTemplateCategoryId(),
-            'template_category_secondary_id'       => $group->getAddingTemplateCategorySecondaryId(),
-            'template_store_category_id'           => $group->getAddingTemplateStoreCategoryId(),
+            'template_category_id' => $group->getAddingTemplateCategoryId(),
+            'template_category_secondary_id' => $group->getAddingTemplateCategorySecondaryId(),
+            'template_store_category_id' => $group->getAddingTemplateStoreCategoryId(),
             'template_store_category_secondary_id' => $group->getAddingTemplateStoreCategorySecondaryId(),
         ];
 
@@ -54,6 +54,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param \Ess\M2ePro\Model\Listing $listing
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductByGlobalListing(
@@ -81,10 +82,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $eListing = $listing->getChildObject();
 
         $params = [
-            'template_category_id'                 => $eListing->getAutoGlobalAddingTemplateCategoryId(),
-            'template_category_secondary_id'       => $eListing->getAutoGlobalAddingTemplateCategorySecondaryId(),
-            'template_store_category_id'           => $eListing->getAutoGlobalAddingTemplateStoreCategoryId(),
-            'template_store_category_secondary_id' => $eListing->getAutoGlobalAddingTemplateStoreCategorySecondaryId()
+            'template_category_id' => $eListing->getAutoGlobalAddingTemplateCategoryId(),
+            'template_category_secondary_id' => $eListing->getAutoGlobalAddingTemplateCategorySecondaryId(),
+            'template_store_category_id' => $eListing->getAutoGlobalAddingTemplateStoreCategoryId(),
+            'template_store_category_secondary_id' => $eListing->getAutoGlobalAddingTemplateStoreCategorySecondaryId(),
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -120,10 +121,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $eListing = $listing->getChildObject();
 
         $params = [
-            'template_category_id'                 => $eListing->getAutoWebsiteAddingTemplateCategoryId(),
-            'template_category_secondary_id'       => $eListing->getAutoWebsiteAddingTemplateCategorySecondaryId(),
-            'template_store_category_id'           => $eListing->getAutoWebsiteAddingTemplateStoreCategoryId(),
-            'template_store_category_secondary_id' => $eListing->getAutoWebsiteAddingTemplateStoreCategorySecondaryId()
+            'template_category_id' => $eListing->getAutoWebsiteAddingTemplateCategoryId(),
+            'template_category_secondary_id' => $eListing->getAutoWebsiteAddingTemplateCategorySecondaryId(),
+            'template_store_category_id' => $eListing->getAutoWebsiteAddingTemplateStoreCategoryId(),
+            'template_store_category_secondary_id' => $eListing->getAutoWebsiteAddingTemplateStoreCategorySecondaryId(),
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -139,7 +140,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             'template_category_id',
             'template_category_secondary_id',
             'template_store_category_id',
-            'template_store_category_secondary_id'
+            'template_store_category_secondary_id',
         ];
 
         foreach ($keys as $key) {

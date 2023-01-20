@@ -30,6 +30,7 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon
         $this->checkLocking($listingsProducts, $logsActionId, \Ess\M2ePro\Model\Listing\Product::ACTION_DELETE);
         if (empty($listingsProducts)) {
             $this->setJsonContent(['result' => 'error', 'action_id' => $logsActionId]);
+
             return $this->getResult();
         }
 
@@ -46,6 +47,7 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon
 
         if (empty($listingsProducts)) {
             $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
+
             return $this->getResult();
         }
 
@@ -56,6 +58,7 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon
         );
 
         $this->setJsonContent(['result' => 'success', 'action_id' => $logsActionId]);
+
         return $this->getResult();
     }
 }

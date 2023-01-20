@@ -50,9 +50,9 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
         $this->addButton(
             'back',
             [
-                'label'   => $this->__('Previous Step'),
+                'label' => $this->__('Previous Step'),
                 'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
-                'class'   => 'back'
+                'class' => 'back',
             ]
         );
 
@@ -61,7 +61,8 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
         $sessionData = $this->sessionDataHelper->getValue(
             \Ess\M2ePro\Model\Ebay\Listing::CREATE_LISTING_SESSION_DATA
         );
-        if (isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
+        if (
+            isset($sessionData['creation_mode']) && $sessionData['creation_mode'] ===
             \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY
         ) {
             $nextStepBtnText = 'Complete';
@@ -75,9 +76,9 @@ class Templates extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContain
         $this->addButton(
             'save',
             [
-                'label'   => $this->__($nextStepBtnText),
+                'label' => $this->__($nextStepBtnText),
                 'onclick' => 'CommonObj.saveClick(\'' . $url . '\')',
-                'class'   => 'action-primary forward'
+                'class' => 'action-primary forward',
             ]
         );
     }
@@ -105,7 +106,7 @@ HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/FQAVB ')
                 ),
-                'style'   => 'margin-top: 30px'
+                'style' => 'margin-top: 30px',
             ]
         );
 

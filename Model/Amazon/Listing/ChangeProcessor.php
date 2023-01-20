@@ -13,10 +13,10 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_TYPE_CONDITION_DATA_CHANGED = 'listing_condition_data_changed';
-    const INSTRUCTION_TYPE_SKU_SETTINGS_CHANGED   = 'listing_sku_settings_changed';
+    public const INSTRUCTION_TYPE_CONDITION_DATA_CHANGED = 'listing_condition_data_changed';
+    public const INSTRUCTION_TYPE_SKU_SETTINGS_CHANGED = 'listing_sku_settings_changed';
 
-    const INSTRUCTION_INITIATOR = 'listing_change_processor';
+    public const INSTRUCTION_INITIATOR = 'listing_change_processor';
 
     //########################################
 
@@ -41,7 +41,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -54,7 +54,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_CONDITION_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_CONDITION_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -67,7 +67,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -80,7 +80,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -93,7 +93,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_SKU_SETTINGS_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_SKU_SETTINGS_CHANGED,
                 'priority' => $priority,
             ];
         }

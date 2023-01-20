@@ -22,6 +22,7 @@ class ModelGetAll extends \Ess\M2ePro\Controller\Adminhtml\General
 
         if ($model == '' || $idField == '' || $dataField == '') {
             $this->setJsonContent([]);
+
             return $this->getResult();
         }
 
@@ -37,13 +38,13 @@ class ModelGetAll extends \Ess\M2ePro\Controller\Adminhtml\General
         $isCustomTemplate != null && $collection->addFieldToFilter('is_custom_template', $isCustomTemplate);
 
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns([$idField, $dataField]);
+                   ->columns([$idField, $dataField]);
 
         $sortField = $this->getRequest()->getParam('sort_field', '');
         $sortDir = $this->getRequest()->getParam('sort_dir', 'ASC');
 
         if ($sortField != '' && $sortDir != '') {
-            $collection->setOrder('main_table.'.$sortField, $sortDir);
+            $collection->setOrder('main_table.' . $sortField, $sortDir);
         }
 
         $limit = $this->getRequest()->getParam('limit', null);
@@ -52,6 +53,7 @@ class ModelGetAll extends \Ess\M2ePro\Controller\Adminhtml\General
         $data = $collection->toArray();
 
         $this->setJsonContent($data['items']);
+
         return $this->getResult();
     }
 }

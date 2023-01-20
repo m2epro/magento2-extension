@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -10,9 +11,6 @@ namespace Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel;
 use Magento\InventoryApi\Api\StockRepositoryInterface;
 use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock
- */
 class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -57,6 +55,7 @@ class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -68,12 +67,13 @@ class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     public function processExecute($interceptor, \Closure $callback, array $arguments)
     {
-        $stockId        = $arguments[1];
-        $channelsAfter  = $arguments[0];
+        $stockId = $arguments[1];
+        $channelsAfter = $arguments[0];
         $channelsBefore = $this->getAssignedChannels->execute($stockId);
 
         $result = $callback(...$arguments);
@@ -102,6 +102,7 @@ class ReplaceSalesChannelsDataForStock extends \Ess\M2ePro\Plugin\AbstractPlugin
     /**
      * @param \Magento\InventorySalesApi\Api\Data\SalesChannelInterface[] $oldChannels
      * @param \Magento\InventorySalesApi\Api\Data\SalesChannelInterface[] $newChannels
+     *
      * @return array
      */
     private function getOnlyAddedChannels(array $oldChannels, array $newChannels)

@@ -13,71 +13,71 @@ namespace Ess\M2ePro\Model\Amazon\Template\Description;
  */
 class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const TITLE_MODE_CUSTOM  = 1;
-    const TITLE_MODE_PRODUCT = 2;
+    public const TITLE_MODE_CUSTOM = 1;
+    public const TITLE_MODE_PRODUCT = 2;
 
-    const BRAND_MODE_NONE             = 0;
-    const BRAND_MODE_CUSTOM_VALUE     = 1;
-    const BRAND_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const BRAND_MODE_NONE = 0;
+    public const BRAND_MODE_CUSTOM_VALUE = 1;
+    public const BRAND_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const ITEM_PACKAGE_QUANTITY_MODE_NONE             = 0;
-    const ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_VALUE     = 1;
-    const ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const ITEM_PACKAGE_QUANTITY_MODE_NONE = 0;
+    public const ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_VALUE = 1;
+    public const ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const NUMBER_OF_ITEMS_MODE_NONE             = 0;
-    const NUMBER_OF_ITEMS_MODE_CUSTOM_VALUE     = 1;
-    const NUMBER_OF_ITEMS_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const NUMBER_OF_ITEMS_MODE_NONE = 0;
+    public const NUMBER_OF_ITEMS_MODE_CUSTOM_VALUE = 1;
+    public const NUMBER_OF_ITEMS_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const DESCRIPTION_MODE_NONE     = 0;
-    const DESCRIPTION_MODE_PRODUCT  = 1;
-    const DESCRIPTION_MODE_SHORT    = 2;
-    const DESCRIPTION_MODE_CUSTOM   = 3;
+    public const DESCRIPTION_MODE_NONE = 0;
+    public const DESCRIPTION_MODE_PRODUCT = 1;
+    public const DESCRIPTION_MODE_SHORT = 2;
+    public const DESCRIPTION_MODE_CUSTOM = 3;
 
-    const TARGET_AUDIENCE_MODE_NONE   = 0;
-    const TARGET_AUDIENCE_MODE_CUSTOM = 1;
+    public const TARGET_AUDIENCE_MODE_NONE = 0;
+    public const TARGET_AUDIENCE_MODE_CUSTOM = 1;
 
-    const BULLET_POINTS_MODE_NONE   = 0;
-    const BULLET_POINTS_MODE_CUSTOM = 1;
+    public const BULLET_POINTS_MODE_NONE = 0;
+    public const BULLET_POINTS_MODE_CUSTOM = 1;
 
-    const SEARCH_TERMS_MODE_NONE   = 0;
-    const SEARCH_TERMS_MODE_CUSTOM = 1;
+    public const SEARCH_TERMS_MODE_NONE = 0;
+    public const SEARCH_TERMS_MODE_CUSTOM = 1;
 
-    const MANUFACTURER_MODE_NONE             = 0;
-    const MANUFACTURER_MODE_CUSTOM_VALUE     = 1;
-    const MANUFACTURER_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const MANUFACTURER_MODE_NONE = 0;
+    public const MANUFACTURER_MODE_CUSTOM_VALUE = 1;
+    public const MANUFACTURER_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const MANUFACTURER_PART_NUMBER_MODE_NONE             = 0;
-    const MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE     = 1;
-    const MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const MANUFACTURER_PART_NUMBER_MODE_NONE = 0;
+    public const MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE = 1;
+    public const MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const MSRP_RRP_MODE_NONE             = 0;
-    const MSRP_RRP_MODE_CUSTOM_ATTRIBUTE = 1;
+    public const MSRP_RRP_MODE_NONE = 0;
+    public const MSRP_RRP_MODE_CUSTOM_ATTRIBUTE = 1;
 
-    const DIMENSION_VOLUME_MODE_NONE             = 0;
-    const DIMENSION_VOLUME_MODE_CUSTOM_VALUE     = 1;
-    const DIMENSION_VOLUME_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const DIMENSION_VOLUME_MODE_NONE = 0;
+    public const DIMENSION_VOLUME_MODE_CUSTOM_VALUE = 1;
+    public const DIMENSION_VOLUME_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE     = 1;
-    const DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE = 1;
+    public const DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const WEIGHT_MODE_NONE             = 0;
-    const WEIGHT_MODE_CUSTOM_VALUE     = 1;
-    const WEIGHT_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const WEIGHT_MODE_NONE = 0;
+    public const WEIGHT_MODE_CUSTOM_VALUE = 1;
+    public const WEIGHT_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE     = 1;
-    const WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE = 1;
+    public const WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const IMAGE_MAIN_MODE_NONE       = 0;
-    const IMAGE_MAIN_MODE_PRODUCT    = 1;
-    const IMAGE_MAIN_MODE_ATTRIBUTE  = 2;
+    public const IMAGE_MAIN_MODE_NONE = 0;
+    public const IMAGE_MAIN_MODE_PRODUCT = 1;
+    public const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
 
-    const IMAGE_VARIATION_DIFFERENCE_MODE_NONE      = 0;
-    const IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT   = 1;
-    const IMAGE_VARIATION_DIFFERENCE_MODE_ATTRIBUTE = 2;
+    public const IMAGE_VARIATION_DIFFERENCE_MODE_NONE = 0;
+    public const IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT = 1;
+    public const IMAGE_VARIATION_DIFFERENCE_MODE_ATTRIBUTE = 2;
 
-    const GALLERY_IMAGES_MODE_NONE      = 0;
-    const GALLERY_IMAGES_MODE_PRODUCT   = 1;
-    const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
+    public const GALLERY_IMAGES_MODE_NONE = 0;
+    public const GALLERY_IMAGES_MODE_PRODUCT = 1;
+    public const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
 
     /**
      * @var \Ess\M2ePro\Model\Template\Description
@@ -88,7 +88,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @var \Ess\M2ePro\Model\Amazon\Template\Description\Definition\Source[]
      */
     private $descriptionDefinitionSourceModels = [];
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -130,6 +130,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_description_definition');
+
         return parent::save();
     }
 
@@ -185,6 +186,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Amazon\Template\Description\Definition\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -246,8 +248,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getTitleSource()
     {
         return [
-            'mode'     => $this->getTitleMode(),
-            'template' => $this->getData('title_template')
+            'mode' => $this->getTitleMode(),
+            'template' => $this->getData('title_template'),
         ];
     }
 
@@ -310,9 +312,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getBrandSource()
     {
         return [
-            'mode'             => $this->getBrandMode(),
-            'custom_value'     => $this->getData('brand_custom_value'),
-            'custom_attribute' => $this->getData('brand_custom_attribute')
+            'mode' => $this->getBrandMode(),
+            'custom_value' => $this->getData('brand_custom_value'),
+            'custom_attribute' => $this->getData('brand_custom_attribute'),
         ];
     }
 
@@ -381,9 +383,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getItemPackageQuantitySource()
     {
         return [
-            'mode'      => $this->getItemPackageQuantityMode(),
-            'value'     => $this->getItemPackageQuantityCustomValue(),
-            'attribute' => $this->getItemPackageQuantityCustomAttribute()
+            'mode' => $this->getItemPackageQuantityMode(),
+            'value' => $this->getItemPackageQuantityCustomValue(),
+            'attribute' => $this->getItemPackageQuantityCustomAttribute(),
         ];
     }
 
@@ -442,9 +444,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getNumberOfItemsSource()
     {
         return [
-            'mode'      => $this->getNumberOfItemsMode(),
-            'value'     => $this->getData('number_of_items_custom_value'),
-            'attribute' => $this->getData('number_of_items_custom_attribute')
+            'mode' => $this->getNumberOfItemsMode(),
+            'value' => $this->getData('number_of_items_custom_value'),
+            'attribute' => $this->getData('number_of_items_custom_attribute'),
         ];
     }
 
@@ -511,8 +513,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getDescriptionSource()
     {
         return [
-            'mode'     => $this->getDescriptionMode(),
-            'template' => $this->getData('description_template')
+            'mode' => $this->getDescriptionMode(),
+            'template' => $this->getData('description_template'),
         ];
     }
 
@@ -579,8 +581,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getTargetAudienceSource()
     {
         return [
-            'mode'     => $this->getTargetAudienceMode(),
-            'template' => $this->getTargetAudienceTemplate()
+            'mode' => $this->getTargetAudienceMode(),
+            'template' => $this->getTargetAudienceTemplate(),
         ];
     }
 
@@ -649,8 +651,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getBulletPointsSource()
     {
         return [
-            'mode'     => $this->getBulletPointsMode(),
-            'template' => $this->getBulletPointsTemplate()
+            'mode' => $this->getBulletPointsMode(),
+            'template' => $this->getBulletPointsTemplate(),
         ];
     }
 
@@ -719,8 +721,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getSearchTermsSource()
     {
         return [
-            'mode'     => $this->getSearchTermsMode(),
-            'template' => $this->getSearchTermsTemplate()
+            'mode' => $this->getSearchTermsMode(),
+            'template' => $this->getSearchTermsTemplate(),
         ];
     }
 
@@ -787,9 +789,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getManufacturerSource()
     {
         return [
-            'mode'             => $this->getManufacturerMode(),
-            'custom_value'     => $this->getData('manufacturer_custom_value'),
-            'custom_attribute' => $this->getData('manufacturer_custom_attribute')
+            'mode' => $this->getManufacturerMode(),
+            'custom_value' => $this->getData('manufacturer_custom_value'),
+            'custom_attribute' => $this->getData('manufacturer_custom_attribute'),
         ];
     }
 
@@ -848,9 +850,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getManufacturerPartNumberSource()
     {
         return [
-            'mode'             => $this->getManufacturerPartNumberMode(),
-            'custom_value'     => $this->getData('manufacturer_part_number_custom_value'),
-            'custom_attribute' => $this->getData('manufacturer_part_number_custom_attribute')
+            'mode' => $this->getManufacturerPartNumberMode(),
+            'custom_value' => $this->getData('manufacturer_part_number_custom_value'),
+            'custom_attribute' => $this->getData('manufacturer_part_number_custom_attribute'),
         ];
     }
 
@@ -901,8 +903,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getMsrpRrpSource()
     {
         return [
-            'mode'             => $this->getMsrpRrpMode(),
-            'custom_attribute' => $this->getData('msrp_rrp_custom_attribute')
+            'mode' => $this->getMsrpRrpMode(),
+            'custom_attribute' => $this->getData('msrp_rrp_custom_attribute'),
         ];
     }
 
@@ -964,12 +966,12 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'mode' => $this->getItemDimensionsVolumeMode(),
 
             'length_custom_value' => $this->getData('item_dimensions_volume_length_custom_value'),
-            'width_custom_value'  => $this->getData('item_dimensions_volume_width_custom_value'),
+            'width_custom_value' => $this->getData('item_dimensions_volume_width_custom_value'),
             'height_custom_value' => $this->getData('item_dimensions_volume_height_custom_value'),
 
             'length_custom_attribute' => $this->getData('item_dimensions_volume_length_custom_attribute'),
-            'width_custom_attribute'  => $this->getData('item_dimensions_volume_width_custom_attribute'),
-            'height_custom_attribute' => $this->getData('item_dimensions_volume_height_custom_attribute')
+            'width_custom_attribute' => $this->getData('item_dimensions_volume_width_custom_attribute'),
+            'height_custom_attribute' => $this->getData('item_dimensions_volume_height_custom_attribute'),
         ];
     }
 
@@ -1006,7 +1008,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function isItemDimensionsVolumeUnitOfMeasureModeCustomValue()
     {
         return $this->getItemDimensionsVolumeUnitOfMeasureMode() ==
-               self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE;
+            self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE;
     }
 
     /**
@@ -1015,7 +1017,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function isItemDimensionsVolumeUnitOfMeasureModeCustomAttribute()
     {
         return $this->getItemDimensionsVolumeUnitOfMeasureMode() ==
-               self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE;
+            self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE;
     }
 
     /**
@@ -1024,9 +1026,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getItemDimensionsVolumeUnitOfMeasureSource()
     {
         return [
-            'mode'             => $this->getItemDimensionsVolumeUnitOfMeasureMode(),
-            'custom_value'     => $this->getData('item_dimensions_volume_unit_of_measure_custom_value'),
-            'custom_attribute' => $this->getData('item_dimensions_volume_unit_of_measure_custom_attribute')
+            'mode' => $this->getItemDimensionsVolumeUnitOfMeasureMode(),
+            'custom_value' => $this->getData('item_dimensions_volume_unit_of_measure_custom_value'),
+            'custom_attribute' => $this->getData('item_dimensions_volume_unit_of_measure_custom_attribute'),
         ];
     }
 
@@ -1085,9 +1087,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getItemDimensionsWeightSource()
     {
         return [
-            'mode'             => $this->getItemDimensionsWeightMode(),
-            'custom_value'     => $this->getData('item_dimensions_weight_custom_value'),
-            'custom_attribute' => $this->getData('item_dimensions_weight_custom_attribute')
+            'mode' => $this->getItemDimensionsWeightMode(),
+            'custom_value' => $this->getData('item_dimensions_weight_custom_value'),
+            'custom_attribute' => $this->getData('item_dimensions_weight_custom_attribute'),
         ];
     }
 
@@ -1138,9 +1140,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getItemDimensionsWeightUnitOfMeasureSource()
     {
         return [
-            'mode'             => $this->getItemDimensionsWeightUnitOfMeasureMode(),
-            'custom_value'     => $this->getData('item_dimensions_weight_unit_of_measure_custom_value'),
-            'custom_attribute' => $this->getData('item_dimensions_weight_unit_of_measure_custom_attribute')
+            'mode' => $this->getItemDimensionsWeightUnitOfMeasureMode(),
+            'custom_value' => $this->getData('item_dimensions_weight_unit_of_measure_custom_value'),
+            'custom_attribute' => $this->getData('item_dimensions_weight_unit_of_measure_custom_attribute'),
         ];
     }
 
@@ -1202,12 +1204,12 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'mode' => $this->getPackageDimensionsVolumeMode(),
 
             'length_custom_value' => $this->getData('package_dimensions_volume_length_custom_value'),
-            'width_custom_value'  => $this->getData('package_dimensions_volume_width_custom_value'),
+            'width_custom_value' => $this->getData('package_dimensions_volume_width_custom_value'),
             'height_custom_value' => $this->getData('package_dimensions_volume_height_custom_value'),
 
             'length_custom_attribute' => $this->getData('package_dimensions_volume_length_custom_attribute'),
-            'width_custom_attribute'  => $this->getData('package_dimensions_volume_width_custom_attribute'),
-            'height_custom_attribute' => $this->getData('package_dimensions_volume_height_custom_attribute')
+            'width_custom_attribute' => $this->getData('package_dimensions_volume_width_custom_attribute'),
+            'height_custom_attribute' => $this->getData('package_dimensions_volume_height_custom_attribute'),
         ];
     }
 
@@ -1244,7 +1246,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function isPackageDimensionsVolumeUnitOfMeasureModeCustomValue()
     {
         return $this->getPackageDimensionsVolumeUnitOfMeasureMode() ==
-               self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE;
+            self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE;
     }
 
     /**
@@ -1253,7 +1255,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function isPackageDimensionsVolumeUnitOfMeasureModeCustomAttribute()
     {
         return $this->getPackageDimensionsVolumeUnitOfMeasureMode() ==
-               self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE;
+            self::DIMENSION_VOLUME_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE;
     }
 
     /**
@@ -1262,9 +1264,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getPackageDimensionsVolumeUnitOfMeasureSource()
     {
         return [
-            'mode'             => $this->getPackageDimensionsVolumeUnitOfMeasureMode(),
-            'custom_value'     => $this->getData('package_dimensions_volume_unit_of_measure_custom_value'),
-            'custom_attribute' => $this->getData('package_dimensions_volume_unit_of_measure_custom_attribute')
+            'mode' => $this->getPackageDimensionsVolumeUnitOfMeasureMode(),
+            'custom_value' => $this->getData('package_dimensions_volume_unit_of_measure_custom_value'),
+            'custom_attribute' => $this->getData('package_dimensions_volume_unit_of_measure_custom_attribute'),
         ];
     }
 
@@ -1323,9 +1325,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getPackageWeightSource()
     {
         return [
-            'mode'             => $this->getPackageWeightMode(),
-            'custom_value'     => $this->getData('package_weight_custom_value'),
-            'custom_attribute' => $this->getData('package_weight_custom_attribute')
+            'mode' => $this->getPackageWeightMode(),
+            'custom_value' => $this->getData('package_weight_custom_value'),
+            'custom_attribute' => $this->getData('package_weight_custom_attribute'),
         ];
     }
 
@@ -1376,9 +1378,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getPackageWeightUnitOfMeasureSource()
     {
         return [
-            'mode'             => $this->getPackageWeightUnitOfMeasureMode(),
-            'custom_value'     => $this->getData('package_weight_unit_of_measure_custom_value'),
-            'custom_attribute' => $this->getData('package_weight_unit_of_measure_custom_attribute')
+            'mode' => $this->getPackageWeightUnitOfMeasureMode(),
+            'custom_value' => $this->getData('package_weight_unit_of_measure_custom_value'),
+            'custom_attribute' => $this->getData('package_weight_unit_of_measure_custom_attribute'),
         ];
     }
 
@@ -1437,9 +1439,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getShippingWeightSource()
     {
         return [
-            'mode'             => $this->getShippingWeightMode(),
-            'custom_value'     => $this->getData('shipping_weight_custom_value'),
-            'custom_attribute' => $this->getData('shipping_weight_custom_attribute')
+            'mode' => $this->getShippingWeightMode(),
+            'custom_value' => $this->getData('shipping_weight_custom_value'),
+            'custom_attribute' => $this->getData('shipping_weight_custom_attribute'),
         ];
     }
 
@@ -1490,9 +1492,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getShippingWeightUnitOfMeasureSource()
     {
         return [
-            'mode'             => $this->getShippingWeightUnitOfMeasureMode(),
-            'custom_value'     => $this->getData('shipping_weight_unit_of_measure_custom_value'),
-            'custom_attribute' => $this->getData('shipping_weight_unit_of_measure_custom_attribute')
+            'mode' => $this->getShippingWeightUnitOfMeasureMode(),
+            'custom_value' => $this->getData('shipping_weight_unit_of_measure_custom_value'),
+            'custom_attribute' => $this->getData('shipping_weight_unit_of_measure_custom_attribute'),
         ];
     }
 
@@ -1551,8 +1553,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getImageMainSource()
     {
         return [
-            'mode'     => $this->getImageMainMode(),
-            'attribute' => $this->getData('image_main_attribute')
+            'mode' => $this->getImageMainMode(),
+            'attribute' => $this->getData('image_main_attribute'),
         ];
     }
 
@@ -1613,8 +1615,8 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getImageVariationDifferenceSource()
     {
         return [
-            'mode'     => $this->getImageVariationDifferenceMode(),
-            'attribute' => $this->getData('image_variation_difference_attribute')
+            'mode' => $this->getImageVariationDifferenceMode(),
+            'attribute' => $this->getData('image_variation_difference_attribute'),
         ];
     }
 
@@ -1675,9 +1677,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getGalleryImagesSource()
     {
         return [
-            'mode'      => $this->getGalleryImagesMode(),
+            'mode' => $this->getGalleryImagesMode(),
             'attribute' => $this->getData('gallery_images_attribute'),
-            'limit'     => $this->getData('gallery_images_limit')
+            'limit' => $this->getData('gallery_images_limit'),
         ];
     }
 

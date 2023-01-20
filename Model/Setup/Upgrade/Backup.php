@@ -18,10 +18,10 @@ use Magento\Framework\Module\Setup;
  */
 class Backup extends AbstractModel
 {
-    const TABLE_PREFIX = '__b';
+    public const TABLE_PREFIX = '__b';
 
     // max MySQL lenth (64) - backup prefix (m2epro__b_65016_)
-    const TABLE_IDENTIFIER_MAX_LEN = 46;
+    public const TABLE_IDENTIFIER_MAX_LEN = 46;
 
     private $versionFrom;
 
@@ -45,9 +45,9 @@ class Backup extends AbstractModel
         array $data = []
     ) {
         $this->versionFrom = $versionFrom;
-        $this->versionTo   = $versionTo;
+        $this->versionTo = $versionTo;
 
-        $this->installer  = $installer;
+        $this->installer = $installer;
         $this->tablesList = array_unique($tablesList);
 
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -146,7 +146,7 @@ class Backup extends AbstractModel
 
     private function getBackupTableName($table)
     {
-        $prefix = 'm2epro' . self::TABLE_PREFIX. '_' . str_replace('.', '', $this->versionTo) . '_';
+        $prefix = 'm2epro' . self::TABLE_PREFIX . '_' . str_replace('.', '', $this->versionTo) . '_';
 
         if (strlen($table) > self::TABLE_IDENTIFIER_MAX_LEN) {
             $table = sha1($table);
@@ -182,8 +182,8 @@ class Backup extends AbstractModel
 
     /**
      * @param TableModifier $tableModifier
-     * @param string        $columnTitle
-     * @param array         $columnInfo
+     * @param string $columnTitle
+     * @param array $columnInfo
      * convert FLOAT UNSIGNED columns to FLOAT because of zend framework bug in ->createTableByDdl method,
      * that does not support 'FLOAT UNSIGNED' column type
      */
@@ -203,8 +203,8 @@ class Backup extends AbstractModel
 
     /**
      * @param TableModifier $tableModifier
-     * @param string        $columnTitle
-     * @param array         $columnInfo
+     * @param string $columnTitle
+     * @param array $columnInfo
      * convert VARCHAR(256-500) to VARCHAR(255) because ->createTableByDdl method will handle this column
      * as TEXT. Due to the incorrect length > 255
      */

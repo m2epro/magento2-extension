@@ -29,6 +29,7 @@ class CategoryTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml\Wa
 
         if (empty($listingProductsIds)) {
             $this->_forward('index');
+
             return;
         }
 
@@ -38,7 +39,9 @@ class CategoryTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml\Wa
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $grid = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual\Grid::class);
+                         ->createBlock(
+                             \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual\Grid::class
+                         );
 
             $this->setAjaxContent($grid);
 
@@ -50,8 +53,9 @@ class CategoryTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml\Wa
             $this->__('Set Category Policy')
         );
 
-        $this->addContent($this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual::class)
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate\Manual::class)
         );
 
         return $this->getResult();

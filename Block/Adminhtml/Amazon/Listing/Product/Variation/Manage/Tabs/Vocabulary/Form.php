@@ -39,7 +39,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'id' => 'variation_Vocabulary_form',
                     'method' => 'post',
                     'action' => 'javascript:void(0)',
-                ]
+                ],
             ]
         );
 
@@ -47,7 +47,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'general_fieldset',
             [
                 'legend' => $this->__('Saving of manual Variational Attributes/Options matches'),
-                'collapsable' => true
+                'collapsable' => true,
             ]
         );
 
@@ -60,12 +60,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET => $this->__('Ask Me'),
                     Vocabulary::VOCABULARY_AUTO_ACTION_NO => $this->__('Don\'t save'),
-                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save')
+                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save'),
                 ],
                 'value' => $this->vocabularyHelper->isAttributeAutoActionNotSet() ?
                     Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
                     ($this->vocabularyHelper->isAttributeAutoActionEnabled() ?
-                        Vocabulary::VOCABULARY_AUTO_ACTION_YES : Vocabulary::VOCABULARY_AUTO_ACTION_NO)
+                        Vocabulary::VOCABULARY_AUTO_ACTION_YES : Vocabulary::VOCABULARY_AUTO_ACTION_NO),
             ]
         );
 
@@ -78,12 +78,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET => $this->__('Ask Me'),
                     Vocabulary::VOCABULARY_AUTO_ACTION_NO => $this->__('Don\'t save'),
-                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save')
+                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save'),
                 ],
                 'value' => $this->vocabularyHelper->isOptionAutoActionNotSet() ?
                     Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
                     ($this->vocabularyHelper->isOptionAutoActionEnabled() ?
-                        Vocabulary::VOCABULARY_AUTO_ACTION_YES : Vocabulary::VOCABULARY_AUTO_ACTION_NO)
+                        Vocabulary::VOCABULARY_AUTO_ACTION_YES : Vocabulary::VOCABULARY_AUTO_ACTION_NO),
             ]
         );
 
@@ -94,7 +94,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'label' => '',
                 'value' => $this->__('Save'),
                 'onclick' => 'ListingGridObj.variationProductManageHandler.saveAutoActionSettings()',
-                'class' => 'action-primary'
+                'class' => 'action-primary',
             ]
         );
 

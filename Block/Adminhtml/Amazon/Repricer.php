@@ -43,7 +43,8 @@ class Repricer extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(<<<HTML
+            'content' => $this->__(
+                <<<HTML
 <p>On this page, you can:<ul>
 <li>view which of your M2E Pro Amazon accounts are linked/not linked to
 <a href="%url%" target="_blank">Repricer</a></li>
@@ -52,8 +53,9 @@ class Repricer extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 <p>To connect your Amazon account to Repricer, click <strong>Connect</strong>.</p>
 <p>Click on the Amazon account in the grid to view additional settings.</p>
 HTML
-                , $this->supportHelper->getDocumentationArticleUrl('x/AAAZD')
-            )
+                ,
+                $this->supportHelper->getDocumentationArticleUrl('x/AAAZD')
+            ),
         ]);
 
         return parent::_prepareLayout();

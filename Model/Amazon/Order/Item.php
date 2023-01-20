@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Order\Item getParentObject()
  */
+
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
@@ -18,8 +19,9 @@ use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\Magento\Product\BuilderFactory  */
     private $productBuilderFactory;
-
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     private $productFactory;
 
     /** @var \Ess\M2ePro\Model\Amazon\Item $channelItem */
@@ -68,7 +70,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function getProxy()
     {
         return $this->modelFactory->getObject('Amazon_Order_Item_ProxyObject', [
-            'item' => $this
+            'item' => $this,
         ]);
     }
 
@@ -99,11 +101,20 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     {
         if ($this->channelItem === null) {
             $this->channelItem = $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
-                ->addFieldToFilter('account_id', $this->getParentObject()->getOrder()->getAccountId())
-                ->addFieldToFilter('marketplace_id', $this->getParentObject()->getOrder()->getMarketplaceId())
-                ->addFieldToFilter('sku', $this->getSku())
-                ->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-                ->getFirstItem();
+                                                           ->addFieldToFilter(
+                                                               'account_id',
+                                                               $this->getParentObject()->getOrder()->getAccountId()
+                                                           )
+                                                           ->addFieldToFilter(
+                                                               'marketplace_id',
+                                                               $this->getParentObject()->getOrder()->getMarketplaceId()
+                                                           )
+                                                           ->addFieldToFilter('sku', $this->getSku())
+                                                           ->setOrder(
+                                                               'create_date',
+                                                               \Magento\Framework\Data\Collection::SORT_ORDER_DESC
+                                                           )
+                                                           ->getFirstItem();
         }
 
         return $this->channelItem->getId() !== null ? $this->channelItem : null;
@@ -213,6 +224,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function getTaxAmount()
     {
         $taxDetails = $this->getTaxDetails();
+
         return isset($taxDetails['product']['value']) ? (float)$taxDetails['product']['value'] : 0.0;
     }
 
@@ -223,6 +235,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function getShippingTaxAmount()
     {
         $taxDetails = $this->getTaxDetails();
+
         return isset($taxDetails['shipping']['value']) ? (float)$taxDetails['shipping']['value'] : 0.0;
     }
 
@@ -253,6 +266,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     public function getDiscountAmount()
     {
         $discountDetails = $this->getDiscountDetails();
+
         return !empty($discountDetails['promotion']['value'])
             ? ($discountDetails['promotion']['value'] / $this->getQtyPurchased()) : 0.0;
     }
@@ -307,8 +321,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
         // If order fulfilled by Amazon it has priority
         // ---------------------------------------
-        if ($this->getAmazonOrder()->isFulfilledByAmazon() &&
-            $this->getAmazonAccount()->isMagentoOrdersFbaStoreModeEnabled()) {
+        if (
+            $this->getAmazonOrder()->isFulfilledByAmazon() &&
+            $this->getAmazonAccount()->isMagentoOrdersFbaStoreModeEnabled()
+        ) {
             $storeId = $this->getAmazonAccount()->getMagentoOrdersFbaStoreId();
         }
 
@@ -365,17 +381,17 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         // Unmanaged Item
         // ---------------------------------------
         $sku = $this->getSku();
-        if ($sku != '' && strlen($sku) <=\Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
+        if ($sku != '' && strlen($sku) <= \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
             $product = $this->productFactory->create()
-                ->setStoreId($this->getAmazonOrder()->getAssociatedStoreId())
-                ->getCollection()
-                    ->addAttributeToSelect('sku')
-                    ->addAttributeToFilter('sku', $sku)
-                    ->getFirstItem();
+                                            ->setStoreId($this->getAmazonOrder()->getAssociatedStoreId())
+                                            ->getCollection()
+                                            ->addAttributeToSelect('sku')
+                                            ->addAttributeToFilter('sku', $sku)
+                                            ->getFirstItem();
 
             if ($product->getId()) {
                 $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', [
-                    'product'    => $product,
+                    'product' => $product,
                     'order_item' => $this->getParentObject(),
                 ]);
 
@@ -387,7 +403,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         $product = $this->createProduct();
 
         $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', [
-            'product'    => $product,
+            'product' => $product,
             'order_item' => $this->getParentObject(),
         ]);
 
@@ -401,9 +417,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     protected function createProduct()
     {
         if (!$this->getAmazonAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
-            throw new ProductCreationDisabled($this->getHelper('Module\Translation')->__(
-                'Product creation is disabled in "Account > Orders > Product Not Found".'
-            ));
+            throw new ProductCreationDisabled(
+                $this->getHelper('Module\Translation')->__(
+                    'Product creation is disabled in "Account > Orders > Product Not Found".'
+                )
+            );
         }
 
         $storeId = $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
@@ -423,21 +441,21 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             );
 
             if ($isSaveStart) {
-                $sku = substr($sku, 0, $savedSkuLength).'-'.$hash;
+                $sku = substr($sku, 0, $savedSkuLength) . '-' . $hash;
             } else {
-                $sku = $hash.'-'.substr($sku, strlen($sku) - $savedSkuLength, $savedSkuLength);
+                $sku = $hash . '-' . substr($sku, strlen($sku) - $savedSkuLength, $savedSkuLength);
             }
         }
 
         $productData = [
-            'title'             => $this->getTitle(),
-            'sku'               => $sku,
-            'description'       => '',
+            'title' => $this->getTitle(),
+            'sku' => $sku,
+            'description' => '',
             'short_description' => '',
-            'qty'               => $this->getQtyForNewProduct(),
-            'price'             => $this->getPrice(),
-            'store_id'          => $storeId,
-            'tax_class_id'      => $this->getAmazonAccount()->getMagentoOrdersListingsOtherProductTaxClassId()
+            'qty' => $this->getQtyForNewProduct(),
+            'price' => $this->getPrice(),
+            'store_id' => $storeId,
+            'tax_class_id' => $this->getAmazonAccount()->getMagentoOrdersListingsOtherProductTaxClassId(),
         ];
 
         // Create product in magento
@@ -458,11 +476,17 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     protected function getQtyForNewProduct()
     {
         $otherListing = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Other')
-            ->getCollection()
-            ->addFieldToFilter('account_id', $this->getParentObject()->getOrder()->getAccountId())
-            ->addFieldToFilter('marketplace_id', $this->getParentObject()->getOrder()->getMarketplaceId())
-            ->addFieldToFilter('sku', $this->getSku())
-            ->getFirstItem();
+                                            ->getCollection()
+                                            ->addFieldToFilter(
+                                                'account_id',
+                                                $this->getParentObject()->getOrder()->getAccountId()
+                                            )
+                                            ->addFieldToFilter(
+                                                'marketplace_id',
+                                                $this->getParentObject()->getOrder()->getMarketplaceId()
+                                            )
+                                            ->addFieldToFilter('sku', $this->getSku())
+                                            ->getFirstItem();
 
         if ((int)$otherListing->getOnlineQty() > $this->getQtyPurchased()) {
             return $otherListing->getOnlineQty();

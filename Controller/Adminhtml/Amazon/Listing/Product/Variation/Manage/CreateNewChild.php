@@ -73,7 +73,7 @@ class CreateNewChild extends Main
         );
 
         $addedProductOptions = $childListingProduct->getChildObject()->getVariationManager()
-            ->getTypeModel()->getProductOptions();
+                                                   ->getTypeModel()->getProductOptions();
 
         // Don't use $childListingProduct anymore, because it might be removed after calling the following method
         $parentTypeModel->getProcessor()->process();
@@ -105,12 +105,12 @@ class CreateNewChild extends Main
 
             $result = [
                 'type' => 'error',
-                'msg'  => $message
+                'msg' => $message,
             ];
         } else {
             $result = [
                 'type' => 'success',
-                'msg'  => $this->__('New Amazon Child Product was created.')
+                'msg' => $this->__('New Amazon Child Product was created.'),
             ];
         }
 
@@ -138,7 +138,8 @@ class CreateNewChild extends Main
                 continue;
             }
 
-            if ($this->vocabularyHelper->isOptionExistsInLocalStorage(
+            if (
+                $this->vocabularyHelper->isOptionExistsInLocalStorage(
                     $productOption,
                     $channelOption,
                     $channelAttribute
@@ -147,7 +148,8 @@ class CreateNewChild extends Main
                 continue;
             }
 
-            if ($this->vocabularyHelper->isOptionExistsInServerStorage(
+            if (
+                $this->vocabularyHelper->isOptionExistsInServerStorage(
                     $productOption,
                     $channelOption,
                     $channelAttribute

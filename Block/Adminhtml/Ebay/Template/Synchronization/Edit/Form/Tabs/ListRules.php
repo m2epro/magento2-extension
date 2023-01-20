@@ -42,7 +42,7 @@ class ListRules extends AbstractTab
             'hidden',
             [
                 'name' => 'synchronization[id]',
-                'value' => (!$this->isCustom() && isset($formData['id'])) ? (int)$formData['id'] : ''
+                'value' => (!$this->isCustom() && isset($formData['id'])) ? (int)$formData['id'] : '',
             ]
         );
 
@@ -51,7 +51,7 @@ class ListRules extends AbstractTab
             'hidden',
             [
                 'name' => 'synchronization[title]',
-                'value' => $this->getTitle()
+                'value' => $this->getTitle(),
             ]
         );
 
@@ -60,7 +60,7 @@ class ListRules extends AbstractTab
             'hidden',
             [
                 'name' => 'synchronization[is_custom_template]',
-                'value' => $this->isCustom() ? 1 : 0
+                'value' => $this->isCustom() ? 1 : 0,
             ]
         );
 
@@ -85,7 +85,7 @@ class ListRules extends AbstractTab
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/Zf8UB')
-                )
+                ),
             ]
         );
 
@@ -93,7 +93,7 @@ HTML
             'magento_block_ebay_template_synchronization_form_data_list',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -107,7 +107,7 @@ HTML
                 'values' => [
                     0 => $this->__('Disabled'),
                     1 => $this->__('Enabled'),
-                ]
+                ],
             ]
         );
 
@@ -115,7 +115,7 @@ HTML
             'magento_block_ebay_template_synchronization_form_data_list_rules',
             [
                 'legend' => $this->__('List Conditions'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -134,7 +134,7 @@ HTML
                     '<p><strong>Enabled:</strong> List Items on eBay automatically if they have status Enabled
                     in Magento Product. (Recommended)</p>
                     <p><strong>Any:</strong> List Items with any Magento Product status on eBay automatically</p>'
-                )
+                ),
             ]
         );
 
@@ -152,7 +152,7 @@ HTML
                 'tooltip' => $this->__(
                     '<b>In Stock:</b> List Items automatically if Products are in Stock. (Recommended.)<br/>
                     <b>Any:</b> List Items automatically, regardless of Stock availability.'
-                )
+                ),
             ]
         );
 
@@ -172,15 +172,16 @@ HTML
                     <p><strong>More or Equal:</strong> List Items automatically if the Quantity
                     according to the Selling Policy is at least equal to the number you set.
                     (Recommended)</p>'
-                )
+                ),
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <input name="synchronization[list_qty_calculated_value]" id="list_qty_calculated_value"
        value="{$formData['list_qty_calculated_value']}" type="text"
        style="width: 72px; margin-left: 10px;"
        class="input-text admin__control-text required-entry validate-digits _required" />
 HTML
-            );
+        );
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_synchronization_list_advanced_filters',
@@ -190,7 +191,7 @@ HTML
                 'tooltip' => $this->__(
                     '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
                     Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
-                )
+                ),
             ]
         );
 
@@ -198,14 +199,16 @@ HTML
             'list_advanced_rules_filters_warning',
             self::MESSAGES,
             [
-                'messages' => [[
-                    'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                    'content' => $this->__(
-                        'Please be very thoughtful before enabling this option as this functionality
+                'messages' => [
+                    [
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                        'content' => $this->__(
+                            'Please be very thoughtful before enabling this option as this functionality
                         can have a negative impact on the Performance of your system.<br> It can decrease the speed
                         of running in case you have a lot of Products with the high number of changes made to them.'
-                    )
-                ]]
+                        ),
+                    ],
+                ],
             ]
         );
 
@@ -232,15 +235,15 @@ HTML
         }
 
         $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
-                                       ->setData(['rule_model' => $ruleModel]);
+                          ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'list_advanced_rules_filters_container',
-                'label'        => $this->__('Conditions'),
-                'text'         => $ruleBlock->toHtml(),
+                'label' => $this->__('Conditions'),
+                'text' => $ruleBlock->toHtml(),
             ]
         );
 

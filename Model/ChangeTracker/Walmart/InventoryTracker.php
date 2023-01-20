@@ -13,7 +13,6 @@ class InventoryTracker extends BaseInventoryTracker
     protected function productSubQuery(): SelectQueryBuilder
     {
         return parent::productSubQuery()
-            ->andWhere('c_lp.is_variation_parent = ?', 0)
-        ;
+                     ->andWhere('c_lp.is_variation_parent = ?', 0);
     }
 }

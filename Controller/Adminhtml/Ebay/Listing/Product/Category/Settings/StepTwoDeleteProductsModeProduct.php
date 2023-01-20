@@ -8,14 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
-use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
+use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings\StepTwoDeleteProductsModeProduct
  */
 class StepTwoDeleteProductsModeProduct extends Settings
 {
-
     //########################################
 
     public function execute()
@@ -30,7 +29,7 @@ class StepTwoDeleteProductsModeProduct extends Settings
         $this->setSessionValue('mode_product', $sessionData);
 
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id', ['in' => $ids]);
+                                        ->addFieldToFilter('id', ['in' => $ids]);
 
         foreach ($collection->getItems() as $listingProduct) {
             $listingProduct->delete();

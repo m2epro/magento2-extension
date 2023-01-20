@@ -22,7 +22,7 @@ class SaveProductsToSessionAndGetInfo extends \Ess\M2ePro\Controller\Adminhtml\W
         $initial = explode(',', $initial);
 
         $initial = array_values(array_unique(array_merge($initial, $checked)));
-        $all     = array_values(array_unique(array_merge($all, $initial)));
+        $all = array_values(array_unique(array_merge($all, $initial)));
 
         $all = array_flip($all);
 

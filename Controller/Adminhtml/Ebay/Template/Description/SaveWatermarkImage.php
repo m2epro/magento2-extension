@@ -36,17 +36,20 @@ class SaveWatermarkImage extends Description
 
         if ($templateData['id'] === null || empty($watermarkImageFile['tmp_name'])) {
             $this->setJsonContent([
-                'result' => false
+                'result' => false,
             ]);
+
             return $this->getResult();
         }
 
         /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
-        $varDir = $this->modelFactory->getObject('VariablesDir', ['data' => [
-            'child_folder' => 'ebay/template/description/watermarks'
-        ]]);
+        $varDir = $this->modelFactory->getObject('VariablesDir', [
+            'data' => [
+                'child_folder' => 'ebay/template/description/watermarks',
+            ],
+        ]);
 
-        $watermarkPath = $varDir->getPath().(int)$templateData['id'].'.png';
+        $watermarkPath = $varDir->getPath() . (int)$templateData['id'] . '.png';
 
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         if ($fileDriver->isFile($watermarkPath)) {
@@ -58,8 +61,9 @@ class SaveWatermarkImage extends Description
 
         if ($template->getId() === null) {
             $this->setJsonContent([
-                'result' => false
+                'result' => false,
             ]);
+
             return $this->getResult();
         }
 
@@ -67,15 +71,16 @@ class SaveWatermarkImage extends Description
 
         $data = [
             // @codingStandardsIgnoreLine
-            'watermark_image' => base64_encode(file_get_contents($watermarkImageFile['tmp_name']))
+            'watermark_image' => base64_encode(file_get_contents($watermarkImageFile['tmp_name'])),
         ];
 
         $template->getChildObject()->addData($data);
         $template->save();
 
         $this->setJsonContent([
-            'result' => true
+            'result' => true,
         ]);
+
         return $this->getResult();
     }
 }

@@ -59,12 +59,12 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         // ---------------------------------------
         $url = $this->getUrl('*/*/removeAddedProducts', [
             'id' => $this->listing['id'],
-            '_current' => true
+            '_current' => true,
         ]);
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'ListingGridObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
 
         // ---------------------------------------
@@ -85,9 +85,9 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         );
 
         $this->addButton('add_products_search_asin_continue', [
-            'label'     => $this->__('Continue'),
-            'onclick'   => 'ListingGridObj.checkSearchResults(' . $this->listing['id'] . ')',
-            'class'     => 'action-primary forward'
+            'label' => $this->__('Continue'),
+            'onclick' => 'ListingGridObj.checkSearchResults(' . $this->listing['id'] . ')',
+            'class' => 'action-primary forward',
         ]);
         // ---------------------------------------
     }
@@ -111,7 +111,7 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
                 <p><strong>Note:</strong> The process of Automatic Search might be time-consuming, depending on
                 the number of added Products the Search is applied to.</p>
 HTML
-            )
+            ),
         ]);
 
         return parent::_prepareLayout();
@@ -129,8 +129,8 @@ HTML
                                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Main::class);
 
         return $viewHeaderBlock->toHtml()
-               . $productSearchBlock->toHtml()
-               . parent::getGridHtml();
+            . $productSearchBlock->toHtml()
+            . parent::getGridHtml();
     }
 
     protected function _toHtml()
@@ -166,13 +166,15 @@ HTML
 
         $newAsinPopupTitle = $this->__('New ASIN/ISBN creation');
         $notCompletedPopupTitle = $this->__('Adding of New Products to the Listing was not competed');
-        $notCompletedPopupText = $this->__("
+        $notCompletedPopupText = $this->__(
+            "
             You didn't finish adding Products to the Listing.<br/><br/>
             To add selected Products to the Listing, you need to specify the required information first.
             Once you're done, click <strong>Continue</strong>.<br/><br/>
             If you don't want to add selected Products to the Listing, click <strong>Back</strong> to return
             to the previous step. Or <strong>Cancel</strong> the adding process to return to the Listing.
-        ");
+        "
+        );
 
         $variationManageMatchedAttributesErrorDuplicateSelection = $this->__(
             'You can not choose the same Attribute twice.'
@@ -206,14 +208,16 @@ HTML
 
             'variation_manage_matched_attributes_error_duplicate' =>
                 $variationManageMatchedAttributesErrorDuplicateSelection,
-            'Clear Search Results' => $this->__('Clear Search Results')
+            'Clear Search Results' => $this->__('Clear Search Results'),
         ]);
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Listing'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product'));
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product_Add', [
-            'wizard' => $this->getRequest()->getParam('wizard')
-        ]));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Add', [
+                'wizard' => $this->getRequest()->getParam('wizard'),
+            ])
+        );
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product_Search'));
         $this->jsUrl->addUrls(
             $this->dataHelper->getControllerActions('Amazon_Listing_Product_Variation_Vocabulary')
@@ -223,7 +227,8 @@ HTML
             'back' => $this->getUrl('*/*/index'),
         ]);
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([],function() {
         Common.prototype.scrollPageToTop = function() { return; }
     });
@@ -232,8 +237,8 @@ JS
 
         return
             '<div id="search_asin_progress_bar"></div>' .
-                '<div id="search_asin_products_container">' .
-                parent::_toHtml() .
+            '<div id="search_asin_products_container">' .
+            parent::_toHtml() .
             '</div>';
     }
 }

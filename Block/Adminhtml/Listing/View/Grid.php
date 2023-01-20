@@ -68,7 +68,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->jsTranslator->addTranslations([
             'Are you sure you want to create empty Listing?' => $helper->escapeJs(
                 $this->__('Are you sure you want to create empty Listing?')
-            )
+            ),
         ]);
 
         // ---------------------------------------

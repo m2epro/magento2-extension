@@ -25,6 +25,7 @@ class JsRenderer extends AbstractRenderer
     /**
      * @param array $dependencies variable => module
      * @param $script
+     *
      * @return $this
      */
     public function addRequireJs(array $dependencies, $script, $sOrder = 1)
@@ -52,6 +53,7 @@ JS;
 
     /**
      * @param array $viewModels
+     *
      * @return $this
      */
     public function addKnockoutJs(array $viewModels)

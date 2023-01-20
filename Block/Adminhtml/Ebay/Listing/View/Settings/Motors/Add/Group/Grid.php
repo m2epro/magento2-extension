@@ -61,38 +61,38 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'title',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
             'filter_index' => 'title',
-            'escape'       => true,
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'escape' => true,
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('mode', [
-            'header'       => $this->__('Type'),
-            'width'        => '150px',
-            'align'        => 'left',
-            'type'         => 'options',
-            'index'        => 'mode',
+            'header' => $this->__('Type'),
+            'width' => '150px',
+            'align' => 'left',
+            'type' => 'options',
+            'index' => 'mode',
             'filter_index' => 'mode',
             'options' => [
-                \Ess\M2ePro\Model\Ebay\Motor\Group::MODE_ITEM    => $this->getItemsColumnTitle(),
-                \Ess\M2ePro\Model\Ebay\Motor\Group::MODE_FILTER  => $this->__('Filters'),
+                \Ess\M2ePro\Model\Ebay\Motor\Group::MODE_ITEM => $this->getItemsColumnTitle(),
+                \Ess\M2ePro\Model\Ebay\Motor\Group::MODE_FILTER => $this->__('Filters'),
             ],
-            'frame_callback' => [$this, 'callbackColumnMode']
+            'frame_callback' => [$this, 'callbackColumnMode'],
         ]);
 
         $this->addColumn('items', [
-            'header'       => $this->__('Amount'),
-            'width'        => '60px',
-            'align'        => 'center',
-            'type'         => 'text',
-            'sortable'     => false,
-            'filter'       => false,
-            'index'        => 'items_data',
-            'frame_callback' => [$this, 'callbackColumnItems']
+            'header' => $this->__('Amount'),
+            'width' => '60px',
+            'align' => 'center',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'index' => 'items_data',
+            'frame_callback' => [$this, 'callbackColumnItems'],
         ]);
     }
 
@@ -104,14 +104,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set mass-action
         //--------------------------------
         $this->getMassactionBlock()->addItem('select', [
-            'label'   => $this->__('Select'),
-            'url'     => ''
+            'label' => $this->__('Select'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('removeGroup', [
-            'label'   => $this->__('Remove'),
-            'url'     => ''
+            'label' => $this->__('Remove'),
+            'url' => '',
         ]);
+
         //--------------------------------
 
         return parent::_prepareMassaction();
@@ -146,7 +147,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($row->isModeItem()) {
             $itemsCount = count($row->getItems());
             $title = $this->dataHelper->escapeHtml(
-                $this->__('View Group '.$this->getItemsColumnTitle())
+                $this->__('View Group ' . $this->getItemsColumnTitle())
             );
         } else {
             $itemsCount = count($row->getFiltersIds());
@@ -167,9 +168,9 @@ HTML;
 
     protected function _toHtml()
     {
-
         if (!$this->canDisplayContainer()) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
     EbayListingViewSettingsMotorsAddGroupGridObj.afterInitPage();
 JS
             );
@@ -177,7 +178,8 @@ JS
             return parent::_toHtml();
         }
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Listing/View/Settings/Motors/Add/Group/Grid'
     ], function() {
@@ -199,7 +201,7 @@ JS
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_settings_motors/addGroupGrid', [
-            '_current' => true
+            '_current' => true,
         ]);
     }
 

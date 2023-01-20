@@ -39,32 +39,33 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'AmazonTemplateShippingObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'AmazonTemplateShippingObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
-        if (!$isSaveAndClose
+        if (
+            !$isSaveAndClose
             && $this->globalDataHelper->getValue('tmp_template')
             && $this->globalDataHelper->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
-                'label'   => $this->__('Duplicate'),
+                'label' => $this->__('Duplicate'),
                 'onclick' => 'AmazonTemplateShippingObj.duplicateClick'
-                    .'(\'amazon-template-shipping\')',
-                'class'   => 'action-primary M2ePro_duplicate_button'
+                    . '(\'amazon-template-shipping\')',
+                'class' => 'action-primary M2ePro_duplicate_button',
             ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $this->addButton('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'AmazonTemplateShippingObj.deleteClick()',
-                'class'     => 'action-primary delete M2ePro_delete_button'
+                'label' => $this->__('Delete'),
+                'onclick' => 'AmazonTemplateShippingObj.deleteClick()',
+                'class' => 'action-primary delete M2ePro_delete_button',
             ]);
             // ---------------------------------------
         }
@@ -90,8 +91,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                             . 'undefined,'
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING . '\''
-                            . ')'
-                    ]
+                            . ')',
+                    ],
                 ],
             ];
             $this->removeButton('back');
@@ -100,7 +101,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
-                'onclick'   => 'AmazonTemplateShippingObj.saveAndEditClick('
+                'onclick' => 'AmazonTemplateShippingObj.saveAndEditClick('
                     . '\'\','
                     . 'undefined,'
                     . '\'' . $this->getSaveConfirmationText() . '\','
@@ -109,13 +110,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   =>'AmazonTemplateShippingObj.saveClick('
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'AmazonTemplateShippingObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING . '\''
                             . ')',
-                    ]
+                    ],
                 ],
             ];
         }

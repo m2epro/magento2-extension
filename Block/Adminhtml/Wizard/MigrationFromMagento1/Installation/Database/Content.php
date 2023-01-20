@@ -59,7 +59,7 @@ class Content extends AbstractBlock
     ) {
         parent::__construct($context, $data);
 
-        $this->preconditionsChecker    = $preconditionsChecker;
+        $this->preconditionsChecker = $preconditionsChecker;
         $this->mappingTablesDownloader = $mappingTablesDownloader;
         $this->supportHelper = $supportHelper;
         $this->sessionHelper = $sessionHelper;
@@ -83,12 +83,13 @@ class Content extends AbstractBlock
             $this->messages[] = 'Click <b>Continue</b> to complete the migration process.';
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             if (!$this->recognizeLogicException($e)) {
-
                 $this->processUnexpectedException($e);
+
                 return parent::_beforeToHtml();
             }
         } catch (\Exception $e) {
             $this->processUnexpectedException($e);
+
             return parent::_beforeToHtml();
         }
 
@@ -105,6 +106,7 @@ class Content extends AbstractBlock
 
     /**
      * @param \Ess\M2ePro\Model\Exception\Logic $exception
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -118,6 +120,7 @@ class Content extends AbstractBlock
                     version and complete the migration process.',
                     $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219396')
                 );
+
                 return true;
 
             case UnexpectedlyCopied::EXCEPTION_CODE_MAPPING_VIOLATED:
@@ -136,13 +139,15 @@ class Content extends AbstractBlock
 
                 $form = $this->getLayout()->createBlock(Form::class);
                 $this->setChild('magento1_url_form', $form);
+
                 return true;
 
             case UnexpectedlyCopied::EXCEPTION_CODE_TABLES_DO_NOT_EXIST:
                 $this->messages = [
                     'M2E Pro tables dump from Magento v1.x was not imported to the Magneto v2.x database.
-                    Please complete the action, then click <b>Continue</b>.'
+                    Please complete the action, then click <b>Continue</b>.',
                 ];
+
                 return true;
 
             default:
@@ -190,6 +195,7 @@ class Content extends AbstractBlock
     {
         /** @var MigrationFromMagento1 $wizard */
         $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
+
         return $wizard->getCurrentStatus();
     }
 

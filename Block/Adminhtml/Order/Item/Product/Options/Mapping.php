@@ -42,8 +42,10 @@ class Mapping extends AbstractContainer
 
         if ($this->magentoProduct->isBundleType()) {
             $title = $this->__('Bundle Items');
-        } elseif ($this->magentoProduct->isGroupedType() ||
-                  $this->magentoProduct->isConfigurableType()) {
+        } elseif (
+            $this->magentoProduct->isGroupedType() ||
+            $this->magentoProduct->isConfigurableType()
+        ) {
             $title = $this->__('Associated Products');
         }
 
@@ -55,7 +57,8 @@ class Mapping extends AbstractContainer
         if ($this->magentoProduct->isGroupedType()) {
             $associatedProducts = $this->getOrderItem()->getAssociatedProducts();
 
-            if (count($associatedProducts) == 1
+            if (
+                count($associatedProducts) == 1
                 && count(array_diff($associatedProducts, $magentoOptionValue['product_ids'])) == 0
             ) {
                 return true;
@@ -66,7 +69,8 @@ class Mapping extends AbstractContainer
 
         $associatedOptions = $this->getOrderItem()->getAssociatedOptions();
 
-        if (isset($associatedOptions[(int)$magentoOption['option_id']])
+        if (
+            isset($associatedOptions[(int)$magentoOption['option_id']])
             && $associatedOptions[(int)$magentoOption['option_id']] == $magentoOptionValue['value_id']
         ) {
             return true;
@@ -101,14 +105,14 @@ class Mapping extends AbstractContainer
             $magentoOption = [
                 'option_id' => 0,
                 'label' => $magentoOptionLabel,
-                'values' => []
+                'values' => [],
             ];
 
             foreach ($magentoVariations as $key => $magentoVariation) {
                 $magentoOption['values'][] = [
                     'value_id' => $key,
                     'label' => $magentoVariation->getName(),
-                    'product_ids' => [$magentoVariation->getId()]
+                    'product_ids' => [$magentoVariation->getId()],
                 ];
             }
 
@@ -123,7 +127,7 @@ class Mapping extends AbstractContainer
                 $magentoOption = [
                     'option_id' => $magentoVariation['option_id'],
                     'label' => $magentoOptionLabel,
-                    'values' => []
+                    'values' => [],
                 ];
 
                 foreach ($magentoVariation['values'] as $magentoOptionValue) {
@@ -135,7 +139,7 @@ class Mapping extends AbstractContainer
                     $magentoOption['values'][] = [
                         'value_id' => $magentoOptionValue['value_id'],
                         'label' => $magentoValueLabel,
-                        'product_ids' => $magentoOptionValue['product_ids']
+                        'product_ids' => $magentoOptionValue['product_ids'],
                     ];
                 }
 
@@ -156,14 +160,14 @@ class Mapping extends AbstractContainer
                     select appropriate check-box at the bottom.
                     <br/><br/><b>Note:</b> Magento Order can be only created when all Products of Order are
                     found in Magento Catalog.'
-                )
+                ),
             ])
         );
 
         $this->setChild(
             'product_mapping_options_out_of_stock_message',
             $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class)
-                ->addWarning($this->__('Selected Product Option is Out of Stock.'))
+                 ->addWarning($this->__('Selected Product Option is Out of Stock.'))
         );
 
         parent::_beforeToHtml();

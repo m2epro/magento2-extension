@@ -10,16 +10,15 @@ namespace Ess\M2ePro\Model\Amazon\Template;
 
 class Manager
 {
-    //########################################
+    public const COLUMN_PREFIX = 'template';
 
-    const COLUMN_PREFIX = 'template';
+    public const TEMPLATE_DESCRIPTION = 'description';
+    public const TEMPLATE_PRODUCT_TAX_CODE = 'product_tax_code';
+    public const TEMPLATE_SELLING_FORMAT = 'selling_format';
+    public const TEMPLATE_SHIPPING = 'shipping';
+    public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
 
-    const TEMPLATE_DESCRIPTION = 'description';
-    const TEMPLATE_PRODUCT_TAX_CODE = 'product_tax_code';
-    const TEMPLATE_SELLING_FORMAT = 'selling_format';
-    const TEMPLATE_SHIPPING = 'shipping';
-    const TEMPLATE_SYNCHRONIZATION = 'synchronization';
-
+    /** @var string */
     protected $templateNick = null;
 
     //########################################
@@ -34,7 +33,7 @@ class Manager
             self::TEMPLATE_PRODUCT_TAX_CODE,
             self::TEMPLATE_SELLING_FORMAT,
             self::TEMPLATE_SHIPPING,
-            self::TEMPLATE_SYNCHRONIZATION
+            self::TEMPLATE_SYNCHRONIZATION,
         ];
     }
 
@@ -48,7 +47,7 @@ class Manager
         return [
             self::TEMPLATE_DESCRIPTION,
             self::TEMPLATE_SHIPPING,
-            self::TEMPLATE_PRODUCT_TAX_CODE
+            self::TEMPLATE_PRODUCT_TAX_CODE,
         ];
     }
 
@@ -83,6 +82,7 @@ class Manager
         }
 
         $this->templateNick = strtolower($nick);
+
         return $this;
     }
 

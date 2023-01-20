@@ -45,7 +45,7 @@ class ResubmitShippingInfo extends \Ess\M2ePro\Controller\Adminhtml\Order
                 /** @var \Ess\M2ePro\Model\Order\Shipment\Handler $handler */
                 $componentMode = ucfirst($order->getComponentMode());
                 $handler = $this->modelFactory->getObject("{$componentMode}_Order_Shipment_Handler");
-                $result  = $handler->handle($order, $shipment);
+                $result = $handler->handle($order, $shipment);
 
                 if ($result == \Ess\M2ePro\Model\Order\Shipment\Handler::HANDLE_RESULT_FAILED) {
                     $isFail = true;

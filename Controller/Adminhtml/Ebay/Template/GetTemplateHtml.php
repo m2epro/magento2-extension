@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
-use \Magento\Backend\App\Action;
+use Magento\Backend\App\Action;
 
 class GetTemplateHtml extends Template
 {

@@ -43,23 +43,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('id', [
-            'header'    => $this->__('ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'id',
-            'filter_index' => 'main_table.id'
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'id',
+            'filter_index' => 'main_table.id',
         ]);
 
         $this->addColumn('title', [
-            'header'    => $this->__('Title / Info'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'title',
-            'escape'    => true,
+            'header' => $this->__('Title / Info'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
+            'escape' => true,
             'filter_index' => 'main_table.title',
             'frame_callback' => [$this, 'callbackColumnTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         return parent::_prepareColumns();
@@ -104,7 +104,7 @@ HTML;
 
         $collection->getSelect()->where(
             'main_table.title LIKE ? OR m.title LIKE ? OR consumer_id LIKE ? OR client_id LIKE ?',
-            '%'. $value .'%'
+            '%' . $value . '%'
         );
     }
 

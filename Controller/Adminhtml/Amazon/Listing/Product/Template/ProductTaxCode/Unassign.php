@@ -17,10 +17,11 @@ class Unassign extends ProductTaxCode
 {
     public function execute()
     {
-        $productsIds  = $this->getRequest()->getParam('products_ids');
+        $productsIds = $this->getRequest()->getParam('products_ids');
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.');
+
             return $this->getResult();
         }
 
@@ -37,14 +38,14 @@ class Unassign extends ProductTaxCode
                 'text' => '<p>' . $this->__(
                     'Product Tax Code Policy cannot be unassigned from some Products
                          because the Products are in Action'
-                ). '</p>'
+                ) . '</p>',
             ];
         }
 
         if (!empty($productsIdsLocked)) {
             $messages[] = [
                 'type' => 'success',
-                'text' => $this->__('Product Tax Code Policy was unassigned.')
+                'text' => $this->__('Product Tax Code Policy was unassigned.'),
             ];
 
             $this->setProductTaxCodeTemplateForProducts($productsIdsLocked, null);
@@ -52,8 +53,9 @@ class Unassign extends ProductTaxCode
         }
 
         $this->setJsonContent([
-            'messages' => $messages
+            'messages' => $messages,
         ]);
+
         return $this->getResult();
     }
 }

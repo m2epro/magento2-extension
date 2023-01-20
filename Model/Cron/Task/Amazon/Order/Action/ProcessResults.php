@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action;
  */
 class ProcessResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/action/process_results';
+    public const NICK = 'amazon/order/action/process_results';
 
     //####################################
 
@@ -33,7 +33,7 @@ class ProcessResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $actionCollection->getSelect()->joinLeft(
             [
                 'rps' => $this->activeRecordFactory->getObject('Request_Pending_Single')
-                ->getResource()->getMainTable()
+                                                   ->getResource()->getMainTable(),
             ],
             'rps.id = main_table.request_pending_single_id',
             []
@@ -58,13 +58,13 @@ class ProcessResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function executeCompletedRequestsPendingSingle()
     {
         $requestIds = $this->activeRecordFactory->getObject('Amazon_Order_Action_Processing')->getResource()
-            ->getUniqueRequestPendingSingleIds();
+                                                ->getUniqueRequestPendingSingleIds();
         if (empty($requestIds)) {
             return;
         }
 
         $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-            ->getCollection();
+                                                                    ->getCollection();
         $requestPendingSingleCollection->addFieldToFilter('id', ['in' => $requestIds]);
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 1);
 
@@ -76,14 +76,14 @@ class ProcessResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         foreach ($requestPendingSingleObjects as $requestId => $requestPendingSingle) {
             $actionCollection = $this->activeRecordFactory->getObject('Amazon_Order_Action_Processing')
-                ->getCollection();
+                                                          ->getCollection();
             $actionCollection->setRequestPendingSingleIdFilter($requestId);
             $actionCollection->setInProgressFilter();
 
             /** @var \Ess\M2ePro\Model\Amazon\Order\Action\Processing[] $actions */
             $actions = $actionCollection->getItems();
 
-            $resultData     = $requestPendingSingle->getResultData();
+            $resultData = $requestPendingSingle->getResultData();
             $resultMessages = $requestPendingSingle->getResultMessages();
 
             foreach ($actions as $action) {
@@ -114,8 +114,8 @@ class ProcessResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $messages = array_merge($messages, $responseData['messages']['0-id']);
         }
 
-        if (!empty($responseData['messages'][$relatedId.'-id'])) {
-            $messages = array_merge($messages, $responseData['messages'][$relatedId.'-id']);
+        if (!empty($responseData['messages'][$relatedId . '-id'])) {
+            $messages = array_merge($messages, $responseData['messages'][$relatedId . '-id']);
         }
 
         return $messages;

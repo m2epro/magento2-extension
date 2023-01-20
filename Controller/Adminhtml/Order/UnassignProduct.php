@@ -21,8 +21,9 @@ class UnassignProduct extends Order
 
         if (!$orderItem->getId()) {
             $this->setJsonContent([
-                'error' => $this->__('Please specify Required Options.')
+                'error' => $this->__('Please specify Required Options.'),
             ]);
+
             return $this->getResult();
         }
 
@@ -36,7 +37,7 @@ class UnassignProduct extends Order
                 $this->activeRecordFactory->getObject('Order\Matching')->getResource()->getMainTable(),
                 [
                     'product_id = ?' => $orderItem->getProductId(),
-                    'hash = ?'       => $hash
+                    'hash = ?' => $hash,
                 ]
             );
         }
@@ -48,12 +49,12 @@ class UnassignProduct extends Order
         $orderItem->getOrder()->addSuccessLog(
             'Item "%title%" was Unlinked.',
             [
-                'title' => $orderItem->getChildObject()->getTitle()
+                'title' => $orderItem->getChildObject()->getTitle(),
             ]
         );
 
         $this->setJsonContent([
-            'success' => $this->__('Item was Unlinked.')
+            'success' => $this->__('Item was Unlinked.'),
         ]);
 
         return $this->getResult();

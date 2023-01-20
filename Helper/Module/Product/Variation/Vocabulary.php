@@ -11,14 +11,14 @@ namespace Ess\M2ePro\Helper\Module\Product\Variation;
 class Vocabulary
 {
     public const VOCABULARY_AUTO_ACTION_NOT_SET = 0;
-    public const VOCABULARY_AUTO_ACTION_YES     = 1;
-    public const VOCABULARY_AUTO_ACTION_NO      = 2;
+    public const VOCABULARY_AUTO_ACTION_YES = 1;
+    public const VOCABULARY_AUTO_ACTION_NO = 2;
 
     private const VALUE_TYPE_ATTRIBUTE = 'attribute';
-    private const VALUE_TYPE_OPTION    = 'option';
+    private const VALUE_TYPE_OPTION = 'option';
 
-    private const LOCAL_DATA_REGISTRY_KEY      = '/product/variation/vocabulary/local/';
-    private const SERVER_DATA_REGISTRY_KEY     = '/product/variation/vocabulary/server/';
+    private const LOCAL_DATA_REGISTRY_KEY = '/product/variation/vocabulary/local/';
+    private const SERVER_DATA_REGISTRY_KEY = '/product/variation/vocabulary/server/';
     private const SERVER_METADATA_REGISTRY_KEY = '/product/variation/vocabulary/server/metadata/';
 
     /** @var \Ess\M2ePro\Model\Factory */
@@ -116,9 +116,9 @@ class Vocabulary
                 'variationVocabulary',
                 'add',
                 [
-                    'type'     => self::VALUE_TYPE_ATTRIBUTE,
+                    'type' => self::VALUE_TYPE_ATTRIBUTE,
                     'original' => $channelAttribute,
-                    'value'    => $productAttribute
+                    'value' => $productAttribute,
                 ]
             );
 
@@ -344,7 +344,6 @@ class Vocabulary
     public function addOptionToServerStorage($productOption, $channelOption, $channelAttribute)
     {
         try {
-
             /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('M2ePro_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
@@ -352,10 +351,10 @@ class Vocabulary
                 'variationVocabulary',
                 'add',
                 [
-                    'type'      => self::VALUE_TYPE_OPTION,
+                    'type' => self::VALUE_TYPE_OPTION,
                     'attribute' => $channelAttribute,
-                    'original'  => $channelOption,
-                    'value'     => $productOption
+                    'original' => $channelOption,
+                    'value' => $productOption,
                 ]
             );
 
@@ -645,7 +644,9 @@ class Vocabulary
         $resultNames = [];
 
         foreach ($vocabularyData[$attribute]['options'] as $optionNames) {
-            $preparedOption      = strtolower($option);
+            $preparedOption = strtolower($option);
+
+            $optionNames = array_filter($optionNames);
             $preparedOptionNames = array_map('strtolower', $optionNames);
 
             if (!in_array($preparedOption, $preparedOptionNames)) {
@@ -699,7 +700,8 @@ class Vocabulary
      */
     private function getLocalDataCache()
     {
-        $cacheKey = __CLASS__.self::LOCAL_DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::LOCAL_DATA_REGISTRY_KEY;
+
         return $this->permanentCacheHelper->getValue($cacheKey);
     }
 
@@ -708,7 +710,8 @@ class Vocabulary
      */
     private function getServerDataCache()
     {
-        $cacheKey = __CLASS__.self::SERVER_DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::SERVER_DATA_REGISTRY_KEY;
+
         return $this->permanentCacheHelper->getValue($cacheKey);
     }
 
@@ -717,7 +720,8 @@ class Vocabulary
      */
     private function getServerMetadataCache()
     {
-        $cacheKey = __CLASS__.self::SERVER_METADATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::SERVER_METADATA_REGISTRY_KEY;
+
         return $this->permanentCacheHelper->getValue($cacheKey);
     }
 
@@ -729,7 +733,7 @@ class Vocabulary
      */
     private function setLocalDataCache(array $data)
     {
-        $cacheKey = __CLASS__.self::LOCAL_DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::LOCAL_DATA_REGISTRY_KEY;
         $this->permanentCacheHelper->setValue($cacheKey, $data);
     }
 
@@ -741,7 +745,7 @@ class Vocabulary
      */
     private function setServerDataCache(array $data)
     {
-        $cacheKey = __CLASS__.self::SERVER_DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::SERVER_DATA_REGISTRY_KEY;
         $this->permanentCacheHelper->setValue($cacheKey, $data);
     }
 
@@ -753,17 +757,16 @@ class Vocabulary
      */
     private function setServerMetadataCache(array $data)
     {
-        $cacheKey = __CLASS__.self::SERVER_METADATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::SERVER_METADATA_REGISTRY_KEY;
         $this->permanentCacheHelper->setValue($cacheKey, $data);
     }
-
 
     /**
      * @return void
      */
     private function removeLocalDataCache()
     {
-        $cacheKey = __CLASS__.self::LOCAL_DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::LOCAL_DATA_REGISTRY_KEY;
         $this->permanentCacheHelper->removeValue($cacheKey);
     }
 
@@ -772,7 +775,7 @@ class Vocabulary
      */
     private function removeServerDataCache()
     {
-        $cacheKey = __CLASS__.self::SERVER_DATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::SERVER_DATA_REGISTRY_KEY;
         $this->permanentCacheHelper->removeValue($cacheKey);
     }
 
@@ -781,7 +784,7 @@ class Vocabulary
      */
     private function removeServerMetadataCache()
     {
-        $cacheKey = __CLASS__.self::SERVER_METADATA_REGISTRY_KEY;
+        $cacheKey = __CLASS__ . self::SERVER_METADATA_REGISTRY_KEY;
         $this->permanentCacheHelper->removeValue($cacheKey);
     }
 

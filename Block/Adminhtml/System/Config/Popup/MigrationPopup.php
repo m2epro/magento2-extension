@@ -98,7 +98,7 @@ CSS
         $this->js->addRequireJs(
             [
                 'confirm' => 'Magento_Ui/js/modal/confirm',
-                'gp'      => 'M2ePro/General/PhpFunctions'
+                'gp' => 'M2ePro/General/PhpFunctions',
             ],
             <<<JS
 startMigrationFromMagento1Wizard = function () {

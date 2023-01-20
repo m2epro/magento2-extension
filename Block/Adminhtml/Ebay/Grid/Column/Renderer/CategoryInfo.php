@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
@@ -19,7 +19,7 @@ class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Te
     /** @var \Magento\Framework\DataObject */
     protected $_row;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Model\Listing */
@@ -52,14 +52,14 @@ class CategoryInfo extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Te
     ) {
         parent::__construct($context, $data);
 
-        $this->helperFactory             = $helperFactory;
+        $this->helperFactory = $helperFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->translationHelper = $translationHelper;
     }
 
     //########################################
 
-    public function render(\Magento\Framework\DataObject  $row)
+    public function render(\Magento\Framework\DataObject $row)
     {
         $this->_row = $row;
 
@@ -87,13 +87,14 @@ HTML;
     protected function renderCategoryInfo($categoryData, $categoryType)
     {
         $titles = [
-            eBayCategory::TYPE_EBAY_MAIN       => $this->translationHelper->__('eBay Primary Category'),
-            eBayCategory::TYPE_EBAY_SECONDARY  => $this->translationHelper->__('eBay Secondary Category'),
-            eBayCategory::TYPE_STORE_MAIN      => $this->translationHelper->__('Store Primary Category'),
-            eBayCategory::TYPE_STORE_SECONDARY => $this->translationHelper->__('Store Secondary Category')
+            eBayCategory::TYPE_EBAY_MAIN => $this->translationHelper->__('eBay Primary Category'),
+            eBayCategory::TYPE_EBAY_SECONDARY => $this->translationHelper->__('eBay Secondary Category'),
+            eBayCategory::TYPE_STORE_MAIN => $this->translationHelper->__('Store Primary Category'),
+            eBayCategory::TYPE_STORE_SECONDARY => $this->translationHelper->__('Store Secondary Category'),
         ];
 
-        if (!isset($categoryData[$categoryType], $titles[$categoryType]) ||
+        if (
+            !isset($categoryData[$categoryType], $titles[$categoryType]) ||
             !isset(
                 $categoryData[$categoryType]['mode'],
                 $categoryData[$categoryType]['path'],
@@ -124,7 +125,8 @@ HTML;
             return '';
         }
 
-        if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template']) &&
+        if (
+            !isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template']) &&
             $this->_hideUnselectedSpecifics
         ) {
             return '';
@@ -164,30 +166,35 @@ HTML;
     public function setCategoriesData($data)
     {
         $this->_categoriesData = $data;
+
         return $this;
     }
 
     public function setHideSpecificsRequiredMark($mode)
     {
         $this->_hideSpecificsRequiredMark = $mode;
+
         return $this;
     }
 
     public function setHideUnselectedSpecifics($mode)
     {
         $this->_hideUnselectedSpecifics = $mode;
+
         return $this;
     }
 
     public function setListing(\Ess\M2ePro\Model\Listing $listing)
     {
         $this->_listing = $listing;
+
         return $this;
     }
 
     public function setEntityIdField($field)
     {
         $this->_entityIdField = $field;
+
         return $this;
     }
 

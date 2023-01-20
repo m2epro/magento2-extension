@@ -23,6 +23,7 @@ class GetExcludedStatesPopupHtml extends Account
         $block->setData('selected_states', explode(',', $this->getRequest()->getParam('selected_states')));
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

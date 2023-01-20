@@ -22,7 +22,7 @@ class Manage extends Main
                 'type' => 'error',
                 'message' => $this->__(
                     'Listing Product and Variation Data must be specified.'
-                )
+                ),
             ]);
 
             return $this->getResult();
@@ -71,7 +71,7 @@ class Manage extends Main
             if (count($tempMagentoVariations) != 1) {
                 $this->setJsonContent([
                     'type' => 'error',
-                    'message' => $this->__('Only 1 Variation must leave.')
+                    'message' => $this->__('Only 1 Variation must leave.'),
                 ]);
 
                 return $this->getResult();
@@ -90,7 +90,7 @@ class Manage extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'message' => $this->__('Variation(s) has been saved.')
+            'message' => $this->__('Variation(s) has been saved.'),
         ]);
 
         return $this->getResult();

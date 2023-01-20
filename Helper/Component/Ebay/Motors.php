@@ -239,13 +239,7 @@ class Motors
 
     public function isTypeBasedOnEpids($type)
     {
-        if (in_array($type, [
-                self::TYPE_EPID_MOTOR,
-                self::TYPE_EPID_UK,
-                self::TYPE_EPID_DE,
-                self::TYPE_EPID_IT,
-            ])
-        ) {
+        if (in_array($type, [self::TYPE_EPID_MOTOR, self::TYPE_EPID_UK, self::TYPE_EPID_DE, self::TYPE_EPID_IT])) {
             return true;
         }
 

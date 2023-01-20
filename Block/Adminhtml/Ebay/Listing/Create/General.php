@@ -16,8 +16,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        array $data = [])
-    {
+        array $data = []
+    ) {
         $this->supportHelper = $supportHelper;
         parent::__construct($context, $data);
     }
@@ -43,7 +43,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'next',
             [
                 'label' => $this->__('Next Step'),
-                'class' => 'action-primary next_step_button forward'
+                'class' => 'action-primary next_step_button forward',
             ]
         );
     }
@@ -70,7 +70,7 @@ HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/EwAVB')
                 ),
-                'style'   => 'margin-top: 30px'
+                'style' => 'margin-top: 30px',
             ]
         );
 

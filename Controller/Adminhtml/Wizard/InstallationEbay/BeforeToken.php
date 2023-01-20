@@ -48,14 +48,16 @@ class BeforeToken extends InstallationEbay
 
         if ($accountMode === null) {
             $this->setJsonContent([
-                'message' => 'Account type have not been specified.'
+                'message' => 'Account type have not been specified.',
             ]);
+
             return $this->getResult();
         }
 
         try {
             $backUrl = $this->getUrl('*/*/afterToken', ['mode' => $accountMode]);
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',
@@ -78,8 +80,10 @@ class BeforeToken extends InstallationEbay
 
             $error = 'The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%';
 
-            if (!$this->licenseHelper->isValidDomain() ||
-                !$this->licenseHelper->isValidIp()) {
+            if (
+                !$this->licenseHelper->isValidDomain() ||
+                !$this->licenseHelper->isValidIp()
+            ) {
                 $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
                 $error = $this->__(
                     $error,
@@ -91,8 +95,8 @@ class BeforeToken extends InstallationEbay
             }
 
             $this->setJsonContent([
-                'type'    => 'error',
-                'message' => $error
+                'type' => 'error',
+                'message' => $error,
             ]);
 
             return $this->getResult();
@@ -100,18 +104,19 @@ class BeforeToken extends InstallationEbay
 
         if (!$response || !isset($response['url'], $response['session_id'])) {
             $this->setJsonContent([
-                'url' => null
+                'url' => null,
             ]);
+
             return $this->getResult();
         }
 
         $this->sessionHelper->setValue('token_session_id', $response['session_id']);
 
         $this->setJsonContent([
-            'url' => $response['url']
+            'url' => $response['url'],
         ]);
-        return $this->getResult();
 
+        return $this->getResult();
         // ---------------------------------------
     }
 }

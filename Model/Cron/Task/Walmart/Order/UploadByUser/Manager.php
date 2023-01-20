@@ -58,7 +58,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function isCompleted()
     {
         return $this->isInProgress() &&
-               $this->getCurrentFromDate()->getTimestamp() == $this->getToDate()->getTimestamp();
+            $this->getCurrentFromDate()->getTimestamp() == $this->getToDate()->getTimestamp();
     }
 
     //----------------------------------------
@@ -122,12 +122,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param string $fromDate
      * @param string $toDate
+     *
      * @return bool
      */
     public function validate($fromDate, $toDate)
     {
         $from = new \DateTime($fromDate, new \DateTimeZone('UTC'));
-        $to   = new \DateTime($toDate, new \DateTimeZone('UTC'));
+        $to = new \DateTime($toDate, new \DateTimeZone('UTC'));
 
         if ($from->getTimestamp() > $to->getTimestamp()) {
             throw new \Ess\M2ePro\Model\Exception\Logic('From date is bigger than To date.');
@@ -168,6 +169,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function setIdentifier($id)
     {
         $this->_identifier = $id;
+
         return $this;
     }
 
@@ -192,7 +194,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     protected function getSettings($key = null)
     {
         $value = $this->getHelper('Module')->getRegistry()
-            ->getValueFromJson("/walmart/orders/upload_by_user/{$this->_identifier}/");
+                      ->getValueFromJson("/walmart/orders/upload_by_user/{$this->_identifier}/");
 
         if ($key === null) {
             return $value;
@@ -204,7 +206,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     protected function setSettings($key, $value)
     {
         $settings = $this->getHelper('Module')->getRegistry()
-            ->getValueFromJson("/walmart/orders/upload_by_user/{$this->_identifier}/");
+                         ->getValueFromJson("/walmart/orders/upload_by_user/{$this->_identifier}/");
 
         $settings[$key] = $value;
 

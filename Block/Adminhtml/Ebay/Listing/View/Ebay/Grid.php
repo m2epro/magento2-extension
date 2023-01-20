@@ -70,6 +70,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
             $collection->getSelect()->order($columnIndex . ' ' . strtoupper($column->getDir()));
         }
+
         return $this;
     }
 
@@ -95,7 +96,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'id' => 'id',
                 'status' => 'status',
                 'component_mode' => 'component_mode',
-                'additional_data' => 'additional_data'
+                'additional_data' => 'additional_data',
             ],
             '{{table}}.listing_id=' . (int)$listingData['id']
         );
@@ -150,56 +151,56 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'   => $this->__('Product ID'),
-            'align'    => 'right',
-            'width'    => '100px',
-            'type'     => 'number',
-            'index'    => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'         => $this->__('Product Title / Product SKU / eBay Category'),
-            'align'          => 'left',
-            'type'           => 'text',
-            'index'          => 'online_title',
-            'escape'         => false,
+            'header' => $this->__('Product Title / Product SKU / eBay Category'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_title',
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('ebay_item_id', [
-            'header'         => $this->__('Item ID'),
-            'align'          => 'left',
-            'width'          => '100px',
-            'type'           => 'text',
-            'index'          => 'item_id',
-            'account_id'     => $this->listing->getAccountId(),
+            'header' => $this->__('Item ID'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'text',
+            'index' => 'item_id',
+            'account_id' => $this->listing->getAccountId(),
             'marketplace_id' => $this->listing->getMarketplaceId(),
-            'renderer'       => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class,
         ]);
 
         $this->addColumn('available_qty', [
-            'header'            => $this->__('Available QTY'),
-            'align'             => 'right',
-            'width'             => '50px',
-            'type'              => 'number',
-            'index'             => 'available_qty',
-            'sortable'          => true,
-            'filter_index'      => 'online_qty',
-            'renderer'          => OnlineQty::class,
+            'header' => $this->__('Available QTY'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'index' => 'available_qty',
+            'sortable' => true,
+            'filter_index' => 'online_qty',
+            'renderer' => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
-            'filter_condition_callback' => [$this, 'callbackFilterAvailableQty']
+            'filter_condition_callback' => [$this, 'callbackFilterAvailableQty'],
         ]);
 
         $this->addColumn('online_qty_sold', [
-            'header'   => $this->__('Sold QTY'),
-            'align'    => 'right',
-            'width'    => '50px',
-            'type'     => 'number',
-            'index'    => 'online_qty_sold',
-            'renderer' => OnlineQty::class
+            'header' => $this->__('Sold QTY'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'index' => 'online_qty_sold',
+            'renderer' => OnlineQty::class,
         ]);
 
         $dir = $this->getParam($this->getVarNameDir(), $this->_defaultDir);
@@ -211,48 +212,48 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->addColumn('price', [
-            'header'       => $this->__('Price'),
-            'align'        => 'right',
-            'width'        => '50px',
-            'type'         => 'number',
-            'currency'     => $this->listing->getMarketplace()->getChildObject()->getCurrency(),
-            'index'        => $priceSortField,
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'currency' => $this->listing->getMarketplace()->getChildObject()->getCurrency(),
+            'index' => $priceSortField,
             'filter_index' => $priceSortField,
-            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice::class,
-            'filter_condition_callback' => [$this, 'callbackFilterPrice']
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice::class,
+            'filter_condition_callback' => [$this, 'callbackFilterPrice'],
         ]);
 
         $this->addColumn('end_date', [
-            'header'      => $this->__('End Date'),
-            'align'       => 'right',
-            'width'       => '150px',
-            'type'        => 'datetime',
-            'filter'      => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'format'      => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('End Date'),
+            'align' => 'right',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'       => 'end_date',
-            'renderer'    => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class
+            'index' => 'end_date',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class,
         ]);
 
         $statusColumn = [
-            'header'       => $this->__('Status'),
-            'width'        => '100px',
-            'index'        => 'status',
+            'header' => $this->__('Status'),
+            'width' => '100px',
+            'index' => 'status',
             'filter_index' => 'status',
-            'type'         => 'options',
-            'sortable'     => false,
-            'options'      => [
+            'type' => 'options',
+            'sortable' => false,
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Listed (Hidden)'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => $this->__('Sold'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Stopped'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending'),
             ],
             'showLogIcon' => true,
-            'renderer'    => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status::class,
-            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status::class,
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
         ];
 
         if ($this->ebayViewHelper->isDuplicatesFilterShouldBeShown($this->listing->getId())) {
@@ -283,17 +284,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('list', [
             'label' => $this->__('List Item(s) on eBay'),
-            'url' => ''
+            'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('revise', [
             'label' => $this->__('Revise Item(s) on eBay'),
-            'url' => ''
+            'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('relist', [
             'label' => $this->__('Relist Item(s) on eBay'),
-            'url' => ''
+            'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stop', [
@@ -303,13 +304,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
             'label' => $this->__('Stop on eBay / Remove From Listing'),
-            'url' => ''
+            'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('previewItems', [
             'label' => $this->__('Preview Items'),
-            'url' => ''
+            'url' => '',
         ], 'other');
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -330,8 +332,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('entity_id'))
-                ->getSku();
+                                      ->setProductId($row->getData('entity_id'))
+                                      ->getSku();
         }
 
         $onlineSku = $row->getData('online_sku');
@@ -365,7 +367,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $linkContent = $this->__('Manage Variations');
         $vpmt = $this->dataHelper->escapeJs(
-            $this->__('Manage Variations of "'. $title . '" ')
+            $this->__('Manage Variations of "' . $title . '" ')
         );
         $itemId = $this->getData('item_id');
 
@@ -387,7 +389,8 @@ title="{$linkTitle}">{$linkContent}</a>&nbsp;
 HTML;
 
         if ($childVariationIds = $this->getRequest()->getParam('child_variation_ids')) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
     (function() {
 
          Event.observe(window, 'load', function() {
@@ -405,8 +408,10 @@ JS
 
     private function getItemFeeHtml($row)
     {
-        if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
-            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
+        if (
+            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
+            $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN
+        ) {
             $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
 
             if (empty($additionalData['ebay_item_fees']['listing_fee']['fee'])) {
@@ -455,7 +460,7 @@ HTML;
                 ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
                 ['attribute' => 'name', 'like' => '%' . $value . '%'],
                 ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
-                ['attribute' => 'online_main_category', 'like' => '%' . $value . '%']
+                ['attribute' => 'online_main_category', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -510,25 +515,25 @@ HTML;
            )';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition = $min_online_price.' >= \'' . (float)$value['from'] . '\'';
+            $condition = $min_online_price . ' >= \'' . (float)$value['from'] . '\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= $min_online_price.' <= \'' . (float)$value['to'] . '\'';
+            $condition .= $min_online_price . ' <= \'' . (float)$value['to'] . '\'';
         }
 
         $condition = '(' . $condition . ') OR (';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition .= $max_online_price.' >= \'' . (float)$value['from'] . '\'';
+            $condition .= $max_online_price . ' >= \'' . (float)$value['from'] . '\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= $max_online_price.' <= \'' . (float)$value['to'] . '\'';
+            $condition .= $max_online_price . ' <= \'' . (float)$value['to'] . '\'';
         }
 
         $condition .= ')';
@@ -547,8 +552,10 @@ HTML;
 
         if (is_array($value) && isset($value['value'])) {
             $collection->addFieldToFilter($index, (int)$value['value']);
-        } else if (!is_array($value) && $value !== null) {
-            $collection->addFieldToFilter($index, (int)$value);
+        } else {
+            if (!is_array($value) && $value !== null) {
+                $collection->addFieldToFilter($index, (int)$value);
+            }
         }
 
         if (is_array($value) && isset($value['is_duplicate'])) {
@@ -612,13 +619,13 @@ JS
         $this->jsUrl->add($this->getUrl('*/ebay_listing/getEstimatedFees'), 'ebay_listing/getEstimatedFees');
         $this->jsUrl->add(
             $this->getUrl('*/ebay_listing/getCategoryChooserHtml', [
-                'listing_id' => $this->listing['id']
+                'listing_id' => $this->listing['id'],
             ]),
             'ebay_listing/getCategoryChooserHtml'
         );
         $this->jsUrl->add(
             $this->getUrl('*/ebay_listing/saveCategoryTemplate', [
-                'listing_id' => $this->listing['id']
+                'listing_id' => $this->listing['id'],
             ]),
             'ebay_listing/saveCategoryTemplate'
         );
@@ -632,7 +639,7 @@ JS
                 'back' => $this->dataHelper->makeBackUrlParam(
                     '*/ebay_listing/view',
                     ['id' => $this->listing['id']]
-                )
+                ),
             ]),
             'logViewUrl'
         );
@@ -687,7 +694,7 @@ JS
             'Moving eBay Item' => $this->__('Moving eBay Item'),
             'Moving eBay Items' => $this->__('Moving eBay Items'),
             'Specifics' => $this->__('Specifics'),
-            'Ebay Item Duplicate' => $this->__('eBay Item Duplicate')
+            'Ebay Item Duplicate' => $this->__('eBay Item Duplicate'),
         ]);
 
         $showAutoAction = $this->dataHelper->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));

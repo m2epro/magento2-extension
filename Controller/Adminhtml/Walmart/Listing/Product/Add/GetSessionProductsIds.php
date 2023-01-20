@@ -16,7 +16,7 @@ class GetSessionProductsIds extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Lis
         $selectedProductsIds = !isset($tempSession['products_ids']) ? [] : $tempSession['products_ids'];
 
         $this->setJsonContent([
-            'ids' => $selectedProductsIds
+            'ids' => $selectedProductsIds,
         ]);
 
         return $this->getResult();

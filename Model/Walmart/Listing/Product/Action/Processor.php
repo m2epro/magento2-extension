@@ -8,30 +8,30 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action;
 
-use \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection as ProcessingCollection;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product\Action\Processing\Collection as ProcessingCollection;
 
 /**
  * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processor
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
-    const FEED_TYPE_UPDATE_QTY        = 'update_qty';
-    const FEED_TYPE_UPDATE_LAG_TIME   = 'update_lag_time';
-    const FEED_TYPE_UPDATE_PRICE      = 'update_price';
-    const FEED_TYPE_UPDATE_PROMOTIONS = 'update_promotions';
-    const FEED_TYPE_UPDATE_DETAILS    = 'update_details';
+    public const FEED_TYPE_UPDATE_QTY = 'update_qty';
+    public const FEED_TYPE_UPDATE_LAG_TIME = 'update_lag_time';
+    public const FEED_TYPE_UPDATE_PRICE = 'update_price';
+    public const FEED_TYPE_UPDATE_PROMOTIONS = 'update_promotions';
+    public const FEED_TYPE_UPDATE_DETAILS = 'update_details';
 
-    const RELIST_PRIORITY            = 125;
-    const STOP_PRIORITY              = 1000;
-    const REVISE_QTY_PRIORITY        = 500;
-    const REVISE_LAG_TIME_PRIORITY   = 500;
-    const REVISE_PRICE_PRIORITY      = 250;
-    const REVISE_DETAILS_PRIORITY    = 50;
-    const REVISE_PROMOTIONS_PRIORITY = 50;
+    public const RELIST_PRIORITY = 125;
+    public const STOP_PRIORITY = 1000;
+    public const REVISE_QTY_PRIORITY = 500;
+    public const REVISE_LAG_TIME_PRIORITY = 500;
+    public const REVISE_PRICE_PRIORITY = 250;
+    public const REVISE_DETAILS_PRIORITY = 50;
+    public const REVISE_PROMOTIONS_PRIORITY = 50;
 
-    const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
+    public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
 
-    const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/walmart/listing/product/action/first_connection_error/date/';
+    public const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/walmart/listing/product/action/first_connection_error/date/';
 
     protected $walmartFactory;
     protected $activeRecordFactory;
@@ -76,7 +76,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Account $account */
         foreach ($accountCollection->getItems() as $account) {
-            $feedsPacks               = $this->getFilledPacksByFeeds($account);
+            $feedsPacks = $this->getFilledPacksByFeeds($account);
             $actionsDataForProcessing = $this->prepareAccountsActions($feedsPacks);
 
             $requestsPacks = $this->prepareRequestsPacks($actionsDataForProcessing);
@@ -110,7 +110,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $processingActionCollection->addFieldToFilter(
                 'type',
                 [
-                    'in' => [\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing::TYPE_UPDATE]
+                    'in' => [\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing::TYPE_UPDATE],
                 ]
             );
             $processingActionCollection->addFieldToFilter('request_pending_single_id', ['null' => true]);
@@ -148,6 +148,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return array|false
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -226,6 +227,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $feedsPacks
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -243,13 +245,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 foreach ($accountPacks as $accountPack) {
                     foreach ($accountPack as $listingProductData) {
                         $listingProductId = $listingProductData['listing_product_id'];
-                        $actionType       = $listingProductData['action_type'];
+                        $actionType = $listingProductData['action_type'];
 
                         if (empty($result[$accountId][$actionType])) {
                             $result[$accountId][$actionType] = [];
                         }
 
-                        if ($actionType != \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE &&
+                        if (
+                            $actionType != \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE &&
                             $actionType != \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
                         ) {
                             $result[$accountId][$actionType][$listingProductId] = $listingProductData;
@@ -318,6 +321,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $accountsActions
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -332,12 +336,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     $groupHash = $this->getActualGroupHash($accountId, $groupHashesMetadata, $listingProductData);
                     if (!isset($groupHashesMetadata[$accountId][$groupHash])) {
                         $groupHashesMetadata[$accountId][$groupHash] = [
-                            'slow_actions_count' => 0
+                            'slow_actions_count' => 0,
                         ];
                     }
 
                     if ($listingProductData['action_type'] == \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE) {
-
                         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
                         $configurator = $listingProductData['configurator'];
                         if ($configurator->isDetailsAllowed()) {
@@ -357,6 +360,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      * @param $accountId
      * @param array $groupHashesMetadata
      * @param array $listingProductData
+     *
      * @return int|string|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -392,6 +396,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      * @param $actionType
      * @param array $listingsProductsData
      * @param $groupHash
+     *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -423,13 +428,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $processingRunner->setParams(
                 [
-                    'account_id'         => $listingProduct->getAccount()->getId(),
+                    'account_id' => $listingProduct->getAccount()->getId(),
                     'listing_product_id' => $listingProductId,
-                    'configurator'       => $configurator->getSerializedData(),
-                    'action_type'        => $actionType,
-                    'lock_identifier'    => $this->getLockIdentifier($actionType, $params),
-                    'requester_params'   => $params,
-                    'group_hash'         => $groupHash,
+                    'configurator' => $configurator->getSerializedData(),
+                    'action_type' => $actionType,
+                    'lock_identifier' => $this->getLockIdentifier($actionType, $params),
+                    'requester_params' => $params,
+                    'group_hash' => $groupHash,
                 ]
             );
 
@@ -456,7 +461,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $processingActionColl->addFieldToFilter(
             'type',
             [
-                'in' => [\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing::TYPE_UPDATE]
+                'in' => [\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing::TYPE_UPDATE],
             ]
         );
         $processingActionColl->getSelect()->limit($processingActionPreparationLimit);
@@ -514,6 +519,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $listingsProductsData
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function prepareScheduledActions(array $listingsProductsData)
@@ -601,6 +607,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $processingActions
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function processGroupedProcessingActions(array $processingActions)
@@ -621,7 +628,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $walmartAccount = $account->getChildObject();
 
         $requestData = [
-            'items'   => $itemsRequestData,
+            'items' => $itemsRequestData,
             'account' => $walmartAccount->getServerHash(),
         ];
 
@@ -684,13 +691,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $requestPendingSingle = $this->activeRecordFactory->getObject('Request_Pending_Single');
         $requestPendingSingle->setData(
             [
-                'component'       => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'server_hash'     => $responseData['processing_id'],
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'server_hash' => $responseData['processing_id'],
                 'expiration_date' => gmdate(
                     'Y-m-d H:i:s',
                     $this->helperData->getCurrentGmtDate(true)
-                        + self::PENDING_REQUEST_MAX_LIFE_TIME
-                )
+                    + self::PENDING_REQUEST_MAX_LIFE_TIME
+                ),
             ]
         );
         $requestPendingSingle->save();
@@ -701,13 +708,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_Processing')
-            ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
+                                  ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Zend_Db_Statement
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -715,7 +723,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getScheduledActionsDataStatement(\Ess\M2ePro\Model\Account $account)
     {
-
         $connection = $this->resourceConnection->getConnection();
 
         $unionSelect = $connection->select()->union(
@@ -727,7 +734,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $this->getRevisePriceScheduledActionsPreparedCollection($account->getId())->getSelect(),
                 $this->getRevisePromotionsScheduledActionsPreparedCollection($account->getId())->getSelect(),
                 $this->getReviseDetailsScheduledActionsPreparedCollection($account->getId())->getSelect(),
-                $this->getStopScheduledActionsPreparedCollection($account->getId())->getSelect()
+                $this->getStopScheduledActionsPreparedCollection($account->getId())->getSelect(),
             ]
         );
 
@@ -744,6 +751,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -753,13 +761,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::RELIST_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'qty'"))
-            ->addTagFilter('qty', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::RELIST_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'qty'"))
+                   ->addTagFilter('qty', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -774,6 +782,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -783,13 +792,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::RELIST_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price'"))
-            ->addTagFilter('price', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::RELIST_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price'"))
+                   ->addTagFilter('price', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -804,6 +813,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -813,13 +823,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_QTY_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'qty'"))
-            ->addTagFilter('qty', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::REVISE_QTY_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'qty'"))
+                   ->addTagFilter('qty', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -834,6 +844,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -843,13 +854,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_LAG_TIME_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'lag_time'"))
-            ->addTagFilter('lag_time', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::REVISE_LAG_TIME_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'lag_time'"))
+                   ->addTagFilter('lag_time', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -864,6 +875,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -873,13 +885,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_PRICE_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price'"))
-            ->addTagFilter('price', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::REVISE_PRICE_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'price'"))
+                   ->addTagFilter('price', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -894,6 +906,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -903,13 +916,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_PROMOTIONS_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'promotions'"))
-            ->addTagFilter('promotions', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::REVISE_PROMOTIONS_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'promotions'"))
+                   ->addTagFilter('promotions', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -924,6 +937,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -933,13 +947,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_DETAILS_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'details'"))
-            ->addTagFilter('details', true)
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::REVISE_DETAILS_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'details'"))
+                   ->addTagFilter('details', true)
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -954,6 +968,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $accountId
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -963,12 +978,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
         $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::STOP_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
-            )
-            ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("''"))
-            ->addFieldToFilter('l.account_id', $accountId);
+                   ->getScheduledActionsPreparedCollection(
+                       self::STOP_PRIORITY,
+                       \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                   )
+                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("''"))
+                   ->addFieldToFilter('l.account_id', $accountId);
 
         if ($this->getHelper('Module')->isProductionEnvironment()) {
             $minAllowedWaitInterval = (int)$this->getConfigValue(
@@ -987,6 +1002,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      * @param array $feedsPacks
      * @param $feedType
      * @param $accountId
+     *
      * @return bool
      */
     protected function canAddToLastExistedPack(array $feedsPacks, $feedType, $accountId)
@@ -1039,28 +1055,31 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $actionType
      * @param string $tag
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getFeedTypes($actionType, $tag = null)
     {
-        if (!in_array(
-            $actionType,
-            [
-                \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
-            ]
-        )) {
+        if (
+            !in_array(
+                $actionType,
+                [
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+                ]
+            )
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Unknown action type.');
         }
 
         $feedTypesByTags = [
-            'qty'        => self::FEED_TYPE_UPDATE_QTY,
-            'lag_time'   => self::FEED_TYPE_UPDATE_LAG_TIME,
-            'price'      => self::FEED_TYPE_UPDATE_PRICE,
+            'qty' => self::FEED_TYPE_UPDATE_QTY,
+            'lag_time' => self::FEED_TYPE_UPDATE_LAG_TIME,
+            'price' => self::FEED_TYPE_UPDATE_PRICE,
             'promotions' => self::FEED_TYPE_UPDATE_PROMOTIONS,
-            'details'    => self::FEED_TYPE_UPDATE_DETAILS,
+            'details' => self::FEED_TYPE_UPDATE_DETAILS,
         ];
 
         $feedTypes = [];
@@ -1093,6 +1112,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $feedType
+     *
      * @return int
      */
     protected function getMaxPackSize($feedType)
@@ -1108,6 +1128,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $feedsPacks
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function registerRequestsInThrottling($feedsPacks)
@@ -1126,6 +1147,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param Processing $action
      * @param array $data
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function completeProcessingAction(
@@ -1145,6 +1167,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $actionType
      * @param array $params
+     *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -1171,6 +1194,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $group
      * @param $key
+     *
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

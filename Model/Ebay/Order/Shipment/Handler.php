@@ -41,6 +41,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Shipment $shipment
+     *
      * @return int
      * @throws \Exception
      */
@@ -57,7 +58,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             /** @var \Magento\Sales\Model\Order\Shipment\Item $shipmentItem */
             $orderItem = $shipmentItem->getOrderItem();
 
-            if ($orderItem->getParentItemId() !== null ) {
+            if ($orderItem->getParentItemId() !== null) {
                 continue;
             }
 

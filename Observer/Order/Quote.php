@@ -8,11 +8,8 @@
 
 namespace Ess\M2ePro\Observer\Order;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Observer\Order\Quote
- */
 class Quote extends \Ess\M2ePro\Observer\AbstractModel
 {
     /** @var \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory */
@@ -27,9 +24,8 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
     /** @var null|\Magento\CatalogInventory\Api\Data\StockItemInterface */
     private $stockItem = null;
 
+    /** @var array */
     private $affectedListingsProducts = [];
-
-    //########################################
 
     public function __construct(
         \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory $stockItemFactory,
@@ -91,7 +87,6 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $this->logListingProductMessage(
@@ -126,7 +121,6 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $this->logListingProductMessage(

@@ -40,10 +40,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
-        $this->dataHelper                = $dataHelper;
-        $this->templateCategoryFactory   = $templateCategoryFactory;
-        $this->activeRecordFactory       = $activeRecordFactory;
-        $this->transactionFactory        = $transactionFactory;
+        $this->dataHelper = $dataHelper;
+        $this->templateCategoryFactory = $templateCategoryFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->transactionFactory = $transactionFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
@@ -53,6 +53,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $model = parent::build($model, $rawData);
         $specifics = $this->getSpecifics($model);
         $this->saveSpecifics($model, $specifics);
+
         return $model;
     }
 
@@ -68,17 +69,17 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'category_id'        => 0,
-            'category_path'      => '',
-            'category_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
-            'category_attribute' => ''
+            'category_id' => 0,
+            'category_path' => '',
+            'category_mode' => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY,
+            'category_attribute' => '',
         ];
     }
 
     private function getTemplate()
     {
         if (isset($this->rawData['template_id'])) {
-           return $this->loadTemplateById($this->rawData['template_id']);
+            return $this->loadTemplateById($this->rawData['template_id']);
         }
 
         $isCustomTemplate = $this->rawData['is_custom_template'] ?? false;
@@ -93,6 +94,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $template = $this->templateCategoryFactory->create();
         $template->load($id);
         $this->checkIfTemplateDataMatch($template);
+
         return $template;
     }
 
@@ -100,6 +102,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         $template = $this->templateCategoryFactory->create();
         $template->setData('is_custom_template', 1);
+
         return $template;
     }
 
@@ -111,7 +114,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             return $template->setData('is_custom_template', 0);
         }
 
-        $value =  $this->rawData['category_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY
+        $value = $this->rawData['category_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY
             ? $this->rawData['category_id']
             : $this->rawData['category_attribute'];
 
@@ -140,7 +143,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'category_mode',
             'category_id',
             'category_attribute',
-            'category_path'
+            'category_path',
         ];
 
         foreach ($allowedKeys as $key) {
@@ -153,7 +156,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     }
 
     /** Editing of category data is not allowed */
-    private function checkIfTemplateDataMatch(\Ess\M2ePro\Model\Ebay\Template\Category $template) {
+    private function checkIfTemplateDataMatch(\Ess\M2ePro\Model\Ebay\Template\Category $template)
+    {
         $significantKeys = [
             'marketplace_id',
             'category_mode',
@@ -192,9 +196,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $specifics = [];
         foreach ($dictionarySpecifics as $dictionarySpecific) {
             $specifics[] = [
-                'mode'            => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_ITEM_SPECIFICS,
+                'mode' => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_ITEM_SPECIFICS,
                 'attribute_title' => $dictionarySpecific['title'],
-                'value_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE
+                'value_mode' => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE,
             ];
         }
 
@@ -239,7 +243,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         foreach ($template->getSpecifics() as $specific) {
             $specific['value_ebay_recommended'] = $this->dataHelper->jsonDecode($specific['value_ebay_recommended']);
-            $specific['value_custom_value']     = $this->dataHelper->jsonDecode($specific['value_custom_value']);
+            $specific['value_custom_value'] = $this->dataHelper->jsonDecode($specific['value_custom_value']);
 
             $this->rawData['specific'][] = $specific;
         }
@@ -248,9 +252,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function serializeSpecific(array $specific)
     {
         $specificData = [
-            'mode'            => (int)$specific['mode'],
+            'mode' => (int)$specific['mode'],
             'attribute_title' => $specific['attribute_title'],
-            'value_mode'      => (int)$specific['value_mode']
+            'value_mode' => (int)$specific['value_mode'],
         ];
 
         if (isset($specific['value_ebay_recommended'])) {

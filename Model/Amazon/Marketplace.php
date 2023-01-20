@@ -26,6 +26,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
+
         return parent::save();
     }
 
@@ -34,6 +35,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function delete()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
+
         return parent::delete();
     }
 
@@ -42,6 +44,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -53,6 +56,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

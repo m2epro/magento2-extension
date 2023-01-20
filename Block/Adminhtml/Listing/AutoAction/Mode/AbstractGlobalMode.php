@@ -8,13 +8,12 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\GlobalMode
- */
 class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
+    /** @var mixed */
     protected $listing;
 
+    /** @var array  */
     public $formData = [];
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -51,7 +50,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
             'hidden',
             [
                 'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL
+                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL,
             ]
         );
 
@@ -69,7 +68,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
                 ],
                 'value' => $this->formData['auto_global_adding_mode'],
                 'tooltip' => $this->__('Action which will be applied automatically.'),
-                'style' => 'width: 350px;'
+                'style' => 'width: 350px;',
             ]
         );
 
@@ -84,7 +83,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
                     ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => $this->__('No')],
                     [
                         'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                        'label' => $this->__('Yes')
+                        'label' => $this->__('Yes'),
                     ],
                 ],
                 'value' => $this->formData['auto_global_adding_add_not_visible'],
@@ -96,7 +95,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
                     If set to <strong>No</strong>, only Variation (i.e.
                     Parent) Magento Products will be added to the Listing Automatically,
                     excluding Child Products.'
-                )
+                ),
             ]
         );
 
@@ -109,10 +108,12 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
                 'label' => $this->__('Product Deleted from Magento'),
                 'title' => $this->__('Product Deleted from Magento'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                     'label' => $this->__('Stop on Channel and Delete from Listing')],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
+                        'label' => $this->__('Stop on Channel and Delete from Listing'),
+                    ],
                 ],
-                'style' => 'width: 350px;'
+                'style' => 'width: 350px;',
             ]
         );
 
@@ -134,6 +135,7 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
         $formData = $this->getListing()->getData();
         $formData = array_merge($formData, $this->getListing()->getChildObject()->getData());
         $default = $this->getDefault();
+
         return array_merge($default, $formData);
     }
 
@@ -174,7 +176,8 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
 
         $hasFormData = $this->hasFormData() ? 'true' : 'false';
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         $('auto_global_adding_mode')
             .observe('change', ListingAutoActionObj.addingModeChange)
             .simulate('change');
@@ -191,7 +194,7 @@ JS
     protected function _toHtml()
     {
         return '<div id="additional_autoaction_title_text" style="display: none">' . $this->getBlockTitle() . '</div>'
-                . '<div id="block-content-wrapper"><div id="data_container">'.parent::_toHtml().'</div></div>';
+            . '<div id="block-content-wrapper"><div id="data_container">' . parent::_toHtml() . '</div></div>';
     }
 
     // ---------------------------------------

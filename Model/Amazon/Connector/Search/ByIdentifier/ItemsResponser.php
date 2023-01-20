@@ -33,6 +33,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
 
         if (!empty($responseData['unavailable'])) {
             $this->preparedResponseData = false;
+
             return;
         }
 
@@ -52,7 +53,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Connector\Command\Pendin
                     $product += [
                         'parentage' => $item['parentage'],
                         'variations' => $item['variations'],
-                        'bad_parent' => false
+                        'bad_parent' => false,
                     ];
                 } else {
                     $product['bad_parent'] = (bool)$item['bad_parent'];

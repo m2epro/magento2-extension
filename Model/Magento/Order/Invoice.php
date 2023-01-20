@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\Magento\Order;
  */
 class Invoice extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Framework\DB\TransactionFactory  */
+    /** @var \Magento\Framework\DB\TransactionFactory */
     protected $transactionFactory = null;
 
     /** @var \Magento\Sales\Model\Order $magentoOrder */
-    protected $magentoOrder       = null;
+    protected $magentoOrder = null;
 
     /** @var \Magento\Sales\Model\Order\Invoice $invoice */
-    protected $invoice            = null;
+    protected $invoice = null;
 
     //########################################
 
@@ -37,11 +37,13 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Sales\Model\Order $magentoOrder
+     *
      * @return $this
      */
     public function setMagentoOrder(\Magento\Sales\Model\Order $magentoOrder)
     {
         $this->magentoOrder = $magentoOrder;
+
         return $this;
     }
 
@@ -88,10 +90,10 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
         $this->invoice->getOrder()->setIsInProcess(true);
 
         $this->transactionFactory
-             ->create()
-             ->addObject($this->invoice)
-             ->addObject($this->invoice->getOrder())
-             ->save();
+            ->create()
+            ->addObject($this->invoice)
+            ->addObject($this->invoice->getOrder())
+            ->save();
         // ---------------------------------------
     }
 

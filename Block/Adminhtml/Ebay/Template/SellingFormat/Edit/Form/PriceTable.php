@@ -44,16 +44,17 @@ class PriceTable extends AbstractBlock
         parent::_beforeToHtml();
 
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label'   => $this->__('Add Price Change'),
-                'onclick' => 'EbayTemplateSellingFormatObj.addFixedPriceChangeRow();',
-                'class' => 'action primary'
-            ]);
+                            ->setData([
+                                'label' => $this->__('Add Price Change'),
+                                'onclick' => 'EbayTemplateSellingFormatObj.addFixedPriceChangeRow();',
+                                'class' => 'action primary',
+                            ]);
         $this->setChild('add_fixed_price_change_button', $buttonBlock);
     }
 
     /**
      * @param string $fixedPriceModifierString
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -66,7 +67,8 @@ class PriceTable extends AbstractBlock
 
         $result = [];
         foreach ($fixedPriceModifier as $modification) {
-            if ($modification['mode'] == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE
+            if (
+                $modification['mode'] == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE
                 && $modification['attribute_code']
             ) {
                 $result[] = $modification['attribute_code'];

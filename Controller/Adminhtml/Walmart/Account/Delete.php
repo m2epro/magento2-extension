@@ -19,6 +19,7 @@ class Delete extends Account
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select account(s) to remove.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
@@ -29,12 +30,12 @@ class Delete extends Account
 
         if (empty($accounts)) {
             $this->_redirect('*/*/index');
+
             return;
         }
 
         $deleted = $locked = 0;
         foreach ($accounts as $account) {
-
             /** @var \Ess\M2ePro\Model\Account $account */
 
             if ($account->isLocked(true)) {
@@ -52,7 +53,7 @@ class Delete extends Account
         $tempString = $this->__('%amount% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
-        $tempString  = $this->__('%amount% record(s) are used in M2E Pro Listing(s).', $locked) . ' ';
+        $tempString = $this->__('%amount% record(s) are used in M2E Pro Listing(s).', $locked) . ' ';
         $tempString .= $this->__('Account must not be in use to be deleted.');
         $locked && $this->messageManager->addError($tempString);
 

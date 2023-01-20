@@ -36,10 +36,10 @@ class State extends \Ess\M2ePro\Model\Connector\Command\RealTime
     {
         $connection = parent::buildConnectionInstance();
         $connection->setTimeout(30)
-            ->setServerBaseUrl($this->params['base_url'])
-            ->setServerHostName($this->params['hostname'])
-            ->setTryToSwitchEndpointOnError(false)
-            ->setTryToResendOnError(false);
+                   ->setServerBaseUrl($this->params['base_url'])
+                   ->setServerHostName($this->params['hostname'])
+                   ->setTryToSwitchEndpointOnError(false)
+                   ->setTryToResendOnError(false);
 
         return $connection;
     }

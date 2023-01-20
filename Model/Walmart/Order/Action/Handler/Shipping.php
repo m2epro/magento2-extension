@@ -12,12 +12,13 @@ use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
 class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {
-
     public function isNeedProcess()
     {
-        if (!$this->getWalmartOrder()->isCreated() &&
+        if (
+            !$this->getWalmartOrder()->isCreated() &&
             !$this->getWalmartOrder()->isUnshipped() &&
-            !$this->getWalmartOrder()->isPartiallyShipped()) {
+            !$this->getWalmartOrder()->isPartiallyShipped()
+        ) {
             return false;
         }
 
@@ -38,8 +39,8 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
         foreach ($params['items'] as $itemData) {
             $itemsToCheckCancellation[] = $itemData['walmart_order_item_id'];
             $resultItems[] = [
-                'number'           => $itemData['walmart_order_item_id'],
-                'qty'              => $itemData['qty'],
+                'number' => $itemData['walmart_order_item_id'],
+                'qty' => $itemData['qty'],
                 'tracking_details' => $itemData['tracking_details'],
             ];
         }
@@ -68,7 +69,8 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
 
         foreach ($resultItems as &$item) {
             $walmartOrderItem = $walmartOrderItems[$item['number']];
-            if ($walmartOrderItem->isBuyerCancellationRequested()
+            if (
+                $walmartOrderItem->isBuyerCancellationRequested()
                 && $walmartOrderItem->isBuyerCancellationPossible()
             ) {
                 $item['is_buyer_cancellation_ignored'] = true;
@@ -77,7 +79,7 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
 
         return [
             'channel_order_id' => $this->getWalmartOrder()->getWalmartOrderId(),
-            'items'            => $resultItems,
+            'items' => $resultItems,
         ];
     }
 
@@ -85,6 +87,7 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
     {
         if (!isset($responseData['result']) || !$responseData['result']) {
             $this->processError();
+
             return;
         }
 
@@ -94,10 +97,13 @@ class Shipping extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMo
         foreach ($params['items'] as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
-                ->getCollection()
-                ->addFieldToFilter('order_id', $this->getOrder()->getId())
-                ->addFieldToFilter('walmart_order_item_id', $itemData['walmart_order_item_id'])
-                ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('order_id', $this->getOrder()->getId())
+                                              ->addFieldToFilter(
+                                                  'walmart_order_item_id',
+                                                  $itemData['walmart_order_item_id']
+                                              )
+                                              ->getFirstItem();
 
             /**
              * Walmart returns the same Order Item more than one time with single QTY. That data was merged.

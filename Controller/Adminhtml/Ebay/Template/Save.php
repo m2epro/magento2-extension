@@ -45,7 +45,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
                         'id' => (int)$template->getId(),
                         'title' => $this->dataHelper->escapeJs(
                             $this->dataHelper->escapeHtml($template->getTitle())
-                        )
+                        ),
                     ];
                 }
             }
@@ -55,12 +55,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
         // ---------------------------------------
         if ($this->isAjax()) {
             $this->setJsonContent($templates);
+
             return $this->getResult();
         }
         // ---------------------------------------
 
         if (count($templates) == 0) {
             $this->messageManager->addError($this->__('Policy was not saved.'));
+
             return $this->_redirect('*/*/index');
         }
 
@@ -72,19 +74,21 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
             'edit' => [
                 'id' => $template['id'],
                 'nick' => $template['nick'],
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ]
+                'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+            ],
         ];
 
         if ($this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
             $extendedRoutersParams['edit']['wizard'] = true;
         }
 
-        return $this->_redirect($this->dataHelper->getBackUrl(
-            'list',
-            [],
-            $extendedRoutersParams
-        ));
+        return $this->_redirect(
+            $this->dataHelper->getBackUrl(
+                'list',
+                [],
+                $extendedRoutersParams
+            )
+        );
     }
 
     protected function isSaveAllowed($templateNick)
@@ -126,11 +130,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
             /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
             if ($templateManager->isHorizontalTemplate()) {
                 $snapshotBuilder = $this->modelFactory->getObject(
-                    'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    'Ebay_' . $templateManager->getTemplateModelName() . '_SnapshotBuilder'
                 );
             } else {
                 $snapshotBuilder = $this->modelFactory->getObject(
-                    $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    $templateManager->getTemplateModelName() . '_SnapshotBuilder'
                 );
             }
 
@@ -146,11 +150,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
         /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
         if ($templateManager->isHorizontalTemplate()) {
             $snapshotBuilder = $this->modelFactory->getObject(
-                'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                'Ebay_' . $templateManager->getTemplateModelName() . '_SnapshotBuilder'
             );
         } else {
             $snapshotBuilder = $this->modelFactory->getObject(
-                $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                $templateManager->getTemplateModelName() . '_SnapshotBuilder'
             );
         }
 
@@ -160,9 +164,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 
         /** @var \Ess\M2ePro\Model\ActiveRecord\Diff $diff */
         if ($templateManager->isHorizontalTemplate()) {
-            $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
+            $diff = $this->modelFactory->getObject('Ebay_' . $templateManager->getTemplateModelName() . '_Diff');
         } else {
-            $diff = $this->modelFactory->getObject($templateManager->getTemplateModelName().'_Diff');
+            $diff = $this->modelFactory->getObject($templateManager->getTemplateModelName() . '_Diff');
         }
 
         $diff->setNewSnapshot($newData);
@@ -171,11 +175,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
         /** @var \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract $affectedListingsProducts */
         if ($templateManager->isHorizontalTemplate()) {
             $affectedListingsProducts = $this->modelFactory->getObject(
-                'Ebay_'.$templateManager->getTemplateModelName().'_AffectedListingsProducts'
+                'Ebay_' . $templateManager->getTemplateModelName() . '_AffectedListingsProducts'
             );
         } else {
             $affectedListingsProducts = $this->modelFactory->getObject(
-                $templateManager->getTemplateModelName().'_AffectedListingsProducts'
+                $templateManager->getTemplateModelName() . '_AffectedListingsProducts'
             );
         }
 
@@ -184,11 +188,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
         /** @var \Ess\M2ePro\Model\Template\ChangeProcessorAbstract $changeProcessor */
         if ($templateManager->isHorizontalTemplate()) {
             $changeProcessor = $this->modelFactory->getObject(
-                'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'
+                'Ebay_' . $templateManager->getTemplateModelName() . '_ChangeProcessor'
             );
         } else {
             $changeProcessor = $this->modelFactory->getObject(
-                $templateManager->getTemplateModelName().'_ChangeProcessor'
+                $templateManager->getTemplateModelName() . '_ChangeProcessor'
             );
         }
 

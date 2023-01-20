@@ -52,7 +52,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
         $connectorObject = $this->modelFactory->getObject($className, [
             'params' => $params,
-            'account' => $account
+            'account' => $account,
         ]);
         $connectorObject->setProtocol($this->protocol);
 
@@ -71,7 +71,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
         $connectorObject = $this->modelFactory->getObject($modelName, [
             'params' => $params,
-            'account' => $account
+            'account' => $account,
         ]);
         $connectorObject->setProtocol($this->protocol);
 
@@ -85,6 +85,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $requestData
      * @param string|null $responseDataKey
      * @param null|int|\Ess\M2ePro\Model\Account $account
+     *
      * @return \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual
      */
     public function getVirtualConnector(
@@ -138,6 +139,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     public function process(\Ess\M2ePro\Model\Connector\Command\AbstractModel $connector)
     {
-         $connector->process();
+        $connector->process();
     }
 }

@@ -20,6 +20,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
 
     /**
      * @param array $responseData
+     *
      * @return array|void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
@@ -40,14 +41,12 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
      */
     protected function updateReceivedOtherListings()
     {
-        $dataHelper      = $this->helperFactory->getObject('Data');
+        $dataHelper = $this->helperFactory->getObject('Data');
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
         foreach (array_chunk(array_keys($this->responseData), 200) as $wpids) {
-
             $stmtTemp = $this->getPdoStatementExistingListings($wpids);
             while ($existingItem = $stmtTemp->fetch()) {
-
                 $receivedItem = $this->responseData[$existingItem['wpid']];
                 unset($this->responseData[$existingItem['wpid']]);
 
@@ -57,37 +56,39 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                 );
 
                 $newData = [
-                    'upc'                   => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
-                    'gtin'                  => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
-                    'wpid'                  => (string)$receivedItem['wpid'],
-                    'item_id'               => (string)$receivedItem['item_id'],
-                    'sku'                   => (string)$receivedItem['sku'],
-                    'title'                 => (string)$receivedItem['title'],
-                    'online_price'          => (float)$receivedItem['price'],
-                    'online_qty'            => (int)$receivedItem['qty'],
-                    'publish_status'        => (string)$receivedItem['publish_status'],
-                    'lifecycle_status'      => (string)$receivedItem['lifecycle_status'],
+                    'upc' => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
+                    'gtin' => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
+                    'wpid' => (string)$receivedItem['wpid'],
+                    'item_id' => (string)$receivedItem['item_id'],
+                    'sku' => (string)$receivedItem['sku'],
+                    'title' => (string)$receivedItem['title'],
+                    'online_price' => (float)$receivedItem['price'],
+                    'online_qty' => (int)$receivedItem['qty'],
+                    'publish_status' => (string)$receivedItem['publish_status'],
+                    'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
                     'status_change_reasons' => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
                     'is_online_price_invalid' => $isOnlinePriceInvalid,
                 ];
 
                 $newData['status'] = $componentHelper->getResultProductStatus(
-                    $receivedItem['publish_status'], $receivedItem['lifecycle_status'], $newData['online_qty']
+                    $receivedItem['publish_status'],
+                    $receivedItem['lifecycle_status'],
+                    $newData['online_qty']
                 );
 
                 $existingData = [
-                    'upc'                   => !empty($existingItem['upc']) ? (string)$existingItem['upc'] : null,
-                    'gtin'                  => !empty($existingItem['gtin']) ? (string)$existingItem['gtin'] : null,
-                    'wpid'                  => (string)$existingItem['wpid'],
-                    'item_id'               => (string)$existingItem['item_id'],
-                    'sku'                   => (string)$existingItem['sku'],
-                    'title'                 => (string)$existingItem['title'],
-                    'online_price'          => (float)$existingItem['online_price'],
-                    'online_qty'            => (int)$existingItem['online_qty'],
-                    'publish_status'        => (string)$existingItem['publish_status'],
-                    'lifecycle_status'      => (string)$existingItem['lifecycle_status'],
+                    'upc' => !empty($existingItem['upc']) ? (string)$existingItem['upc'] : null,
+                    'gtin' => !empty($existingItem['gtin']) ? (string)$existingItem['gtin'] : null,
+                    'wpid' => (string)$existingItem['wpid'],
+                    'item_id' => (string)$existingItem['item_id'],
+                    'sku' => (string)$existingItem['sku'],
+                    'title' => (string)$existingItem['title'],
+                    'online_price' => (float)$existingItem['online_price'],
+                    'online_qty' => (int)$existingItem['online_qty'],
+                    'publish_status' => (string)$existingItem['publish_status'],
+                    'lifecycle_status' => (string)$existingItem['lifecycle_status'],
                     'status_change_reasons' => (string)$existingItem['status_change_reasons'],
-                    'status'                => (int)$existingItem['status'],
+                    'status' => (int)$existingItem['status'],
                     'is_online_price_invalid' => (bool)$existingItem['is_online_price_invalid'],
                 ];
 
@@ -122,40 +123,41 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
             $mappingModel->initialize($this->getAccount());
         }
 
-        $dataHelper      = $this->helperFactory->getObject('Data');
+        $dataHelper = $this->helperFactory->getObject('Data');
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
         foreach ($this->responseData as $receivedItem) {
-
             $isOnlinePriceInvalid = in_array(
                 \Ess\M2ePro\Helper\Component\Walmart::PRODUCT_STATUS_CHANGE_REASON_INVALID_PRICE,
                 $receivedItem['status_change_reason']
             );
 
             $newData = [
-                'account_id'     => $this->getAccount()->getId(),
+                'account_id' => $this->getAccount()->getId(),
                 'marketplace_id' => $this->getAccount()->getChildObject()->getMarketplace()->getId(),
-                'product_id'     => null,
+                'product_id' => null,
 
-                'upc'     => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
-                'gtin'    => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
-                'wpid'    => (string)$receivedItem['wpid'],
+                'upc' => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
+                'gtin' => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
+                'wpid' => (string)$receivedItem['wpid'],
                 'item_id' => (string)$receivedItem['item_id'],
 
-                'sku'   => (string)$receivedItem['sku'],
+                'sku' => (string)$receivedItem['sku'],
                 'title' => $receivedItem['title'],
 
                 'online_price' => (float)$receivedItem['price'],
-                'online_qty'   => (int)$receivedItem['qty'],
+                'online_qty' => (int)$receivedItem['qty'],
 
-                'publish_status'        => (string)$receivedItem['publish_status'],
-                'lifecycle_status'      => (string)$receivedItem['lifecycle_status'],
+                'publish_status' => (string)$receivedItem['publish_status'],
+                'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
                 'status_change_reasons' => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
                 'is_online_price_invalid' => $isOnlinePriceInvalid,
             ];
 
             $newData['status'] = $componentHelper->getResultProductStatus(
-                $receivedItem['publish_status'], $receivedItem['lifecycle_status'], $newData['online_qty']
+                $receivedItem['publish_status'],
+                $receivedItem['lifecycle_status'],
+                $newData['online_qty']
             );
 
             $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
@@ -200,7 +202,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                 'second_table.wpid',
                 'second_table.item_id',
                 'second_table.listing_other_id',
-                'second_table.is_online_price_invalid'
+                'second_table.is_online_price_invalid',
             ]
         );
 

@@ -14,90 +14,90 @@ namespace Ess\M2ePro\Model\Ebay\Template;
  */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const TITLE_MODE_PRODUCT = 0;
-    const TITLE_MODE_CUSTOM  = 1;
+    public const TITLE_MODE_PRODUCT = 0;
+    public const TITLE_MODE_CUSTOM = 1;
 
-    const SUBTITLE_MODE_NONE   = 0;
-    const SUBTITLE_MODE_CUSTOM = 1;
+    public const SUBTITLE_MODE_NONE = 0;
+    public const SUBTITLE_MODE_CUSTOM = 1;
 
-    const DESCRIPTION_MODE_PRODUCT = 0;
-    const DESCRIPTION_MODE_SHORT   = 1;
-    const DESCRIPTION_MODE_CUSTOM  = 2;
+    public const DESCRIPTION_MODE_PRODUCT = 0;
+    public const DESCRIPTION_MODE_SHORT = 1;
+    public const DESCRIPTION_MODE_CUSTOM = 2;
 
-    const CONDITION_MODE_EBAY      = 0;
-    const CONDITION_MODE_ATTRIBUTE = 1;
-    const CONDITION_MODE_NONE      = 2;
+    public const CONDITION_MODE_EBAY = 0;
+    public const CONDITION_MODE_ATTRIBUTE = 1;
+    public const CONDITION_MODE_NONE = 2;
 
-    const CONDITION_EBAY_NEW                      = 1000;
-    const CONDITION_EBAY_NEW_OTHER                = 1500;
-    const CONDITION_EBAY_NEW_WITH_DEFECT          = 1750;
-    const CONDITION_EBAY_CERTIFIED_REFURBISHED    = 2000;
-    const CONDITION_EBAY_EXCELLENT_REFURBISHED    = 2010;
-    const CONDITION_EBAY_VERY_GOOD_REFURBISHED    = 2020;
-    const CONDITION_EBAY_GOOD_REFURBISHED         = 2030;
-    const CONDITION_EBAY_SELLER_REFURBISHED       = 2500;
-    const CONDITION_EBAY_LIKE_NEW                 = 2750;
-    const CONDITION_EBAY_USED                     = 3000;
-    const CONDITION_EBAY_VERY_GOOD                = 4000;
-    const CONDITION_EBAY_GOOD                     = 5000;
-    const CONDITION_EBAY_ACCEPTABLE               = 6000;
-    const CONDITION_EBAY_NOT_WORKING              = 7000;
+    public const CONDITION_EBAY_NEW = 1000;
+    public const CONDITION_EBAY_NEW_OTHER = 1500;
+    public const CONDITION_EBAY_NEW_WITH_DEFECT = 1750;
+    public const CONDITION_EBAY_CERTIFIED_REFURBISHED = 2000;
+    public const CONDITION_EBAY_EXCELLENT_REFURBISHED = 2010;
+    public const CONDITION_EBAY_VERY_GOOD_REFURBISHED = 2020;
+    public const CONDITION_EBAY_GOOD_REFURBISHED = 2030;
+    public const CONDITION_EBAY_SELLER_REFURBISHED = 2500;
+    public const CONDITION_EBAY_LIKE_NEW = 2750;
+    public const CONDITION_EBAY_USED = 3000;
+    public const CONDITION_EBAY_VERY_GOOD = 4000;
+    public const CONDITION_EBAY_GOOD = 5000;
+    public const CONDITION_EBAY_ACCEPTABLE = 6000;
+    public const CONDITION_EBAY_NOT_WORKING = 7000;
 
-    const CONDITION_NOTE_MODE_NONE   = 0;
-    const CONDITION_NOTE_MODE_CUSTOM = 1;
+    public const CONDITION_NOTE_MODE_NONE = 0;
+    public const CONDITION_NOTE_MODE_CUSTOM = 1;
 
-    const EDITOR_TYPE_SIMPLE  = 0;
-    const EDITOR_TYPE_TINYMCE = 1;
+    public const EDITOR_TYPE_SIMPLE = 0;
+    public const EDITOR_TYPE_TINYMCE = 1;
 
-    const CUT_LONG_TITLE_DISABLED = 0;
-    const CUT_LONG_TITLE_ENABLED  = 1;
+    public const CUT_LONG_TITLE_DISABLED = 0;
+    public const CUT_LONG_TITLE_ENABLED = 1;
 
-    const PRODUCT_DETAILS_MODE_NONE           = 0;
-    const PRODUCT_DETAILS_MODE_DOES_NOT_APPLY = 1;
-    const PRODUCT_DETAILS_MODE_ATTRIBUTE      = 2;
+    public const PRODUCT_DETAILS_MODE_NONE = 0;
+    public const PRODUCT_DETAILS_MODE_DOES_NOT_APPLY = 1;
+    public const PRODUCT_DETAILS_MODE_ATTRIBUTE = 2;
 
-    const GALLERY_TYPE_EMPTY    = 4;
-    const GALLERY_TYPE_NO       = 0;
-    const GALLERY_TYPE_PICTURE  = 1;
-    const GALLERY_TYPE_PLUS     = 2;
-    const GALLERY_TYPE_FEATURED = 3;
+    public const GALLERY_TYPE_EMPTY = 4;
+    public const GALLERY_TYPE_NO = 0;
+    public const GALLERY_TYPE_PICTURE = 1;
+    public const GALLERY_TYPE_PLUS = 2;
+    public const GALLERY_TYPE_FEATURED = 3;
 
-    const IMAGE_MAIN_MODE_NONE      = 0;
-    const IMAGE_MAIN_MODE_PRODUCT   = 1;
-    const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
+    public const IMAGE_MAIN_MODE_NONE = 0;
+    public const IMAGE_MAIN_MODE_PRODUCT = 1;
+    public const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
 
-    const GALLERY_IMAGES_MODE_NONE      = 0;
-    const GALLERY_IMAGES_MODE_PRODUCT   = 1;
-    const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
+    public const GALLERY_IMAGES_MODE_NONE = 0;
+    public const GALLERY_IMAGES_MODE_PRODUCT = 1;
+    public const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
 
-    const VARIATION_IMAGES_MODE_NONE      = 0;
-    const VARIATION_IMAGES_MODE_PRODUCT   = 1;
-    const VARIATION_IMAGES_MODE_ATTRIBUTE = 2;
+    public const VARIATION_IMAGES_MODE_NONE = 0;
+    public const VARIATION_IMAGES_MODE_PRODUCT = 1;
+    public const VARIATION_IMAGES_MODE_ATTRIBUTE = 2;
 
-    const USE_SUPERSIZE_IMAGES_NO  = 0;
-    const USE_SUPERSIZE_IMAGES_YES = 1;
+    public const USE_SUPERSIZE_IMAGES_NO = 0;
+    public const USE_SUPERSIZE_IMAGES_YES = 1;
 
-    const WATERMARK_MODE_NO  = 0;
-    const WATERMARK_MODE_YES = 1;
+    public const WATERMARK_MODE_NO = 0;
+    public const WATERMARK_MODE_YES = 1;
 
-    const WATERMARK_POSITION_TOP    = 0;
-    const WATERMARK_POSITION_MIDDLE = 1;
-    const WATERMARK_POSITION_BOTTOM = 2;
+    public const WATERMARK_POSITION_TOP = 0;
+    public const WATERMARK_POSITION_MIDDLE = 1;
+    public const WATERMARK_POSITION_BOTTOM = 2;
 
-    const WATERMARK_SCALE_MODE_NONE     = 0;
-    const WATERMARK_SCALE_MODE_IN_WIDTH = 1;
-    const WATERMARK_SCALE_MODE_STRETCH  = 2;
+    public const WATERMARK_SCALE_MODE_NONE = 0;
+    public const WATERMARK_SCALE_MODE_IN_WIDTH = 1;
+    public const WATERMARK_SCALE_MODE_STRETCH = 2;
 
-    const WATERMARK_TRANSPARENT_MODE_NO  = 0;
-    const WATERMARK_TRANSPARENT_MODE_YES = 1;
+    public const WATERMARK_TRANSPARENT_MODE_NO = 0;
+    public const WATERMARK_TRANSPARENT_MODE_YES = 1;
 
-    const WATERMARK_OPACITY_LEVEL = [10, 20, 30, 40, 50, 60, 70, 80, 90];
-    const WATERMARK_OPACITY_LEVEL_DEFAULT = 30;
+    public const WATERMARK_OPACITY_LEVEL = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    public const WATERMARK_OPACITY_LEVEL_DEFAULT = 30;
 
-    const WATERMARK_CACHE_TIME     = 604800; // 7 days
-    const GALLERY_IMAGES_COUNT_MAX = 11;
+    public const WATERMARK_CACHE_TIME = 604800; // 7 days
+    public const GALLERY_IMAGES_COUNT_MAX = 11;
 
-    const INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED = 'magento_static_block_in_description_changed';
+    public const INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED = 'magento_static_block_in_description_changed';
 
     protected $driverPool;
 
@@ -163,17 +163,17 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         }
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
-                ->getCollection()
-                ->addFieldToFilter('template_description_id', $this->getId())
-                ->getSize() ||
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_description_id', $this->getId())
+                                               ->getSize() ||
             (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
-                ->getCollection()
-                ->addFieldToFilter(
-                    'template_description_mode',
-                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                )
-                ->addFieldToFilter('template_description_id', $this->getId())
-                ->getSize();
+                                            ->getCollection()
+                                            ->addFieldToFilter(
+                                                'template_description_mode',
+                                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                                            )
+                                            ->addFieldToFilter('template_description_id', $this->getId())
+                                            ->getSize();
     }
 
     //########################################
@@ -196,8 +196,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             'VariablesDir',
             [
                 'data' => [
-                    'child_folder' => 'ebay/template/description/watermarks'
-                ]
+                    'child_folder' => 'ebay/template/description/watermarks',
+                ],
             ]
         );
 
@@ -221,6 +221,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\Description\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -280,8 +281,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getTitleSource()
     {
         return [
-            'mode'     => $this->getTitleMode(),
-            'template' => $this->getData('title_template')
+            'mode' => $this->getTitleMode(),
+            'template' => $this->getData('title_template'),
         ];
     }
 
@@ -336,8 +337,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getSubTitleSource()
     {
         return [
-            'mode'     => $this->getSubTitleMode(),
-            'template' => $this->getData('subtitle_template')
+            'mode' => $this->getSubTitleMode(),
+            'template' => $this->getData('subtitle_template'),
         ];
     }
 
@@ -398,8 +399,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getDescriptionSource()
     {
         return [
-            'mode'     => $this->getDescriptionMode(),
-            'template' => $this->getData('description_template')
+            'mode' => $this->getDescriptionMode(),
+            'template' => $this->getData('description_template'),
         ];
     }
 
@@ -431,9 +432,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getConditionSource()
     {
         return [
-            'mode'      => (int)$this->getData('condition_mode'),
-            'value'     => (int)$this->getData('condition_value'),
-            'attribute' => $this->getData('condition_attribute')
+            'mode' => (int)$this->getData('condition_mode'),
+            'value' => (int)$this->getData('condition_value'),
+            'attribute' => $this->getData('condition_attribute'),
         ];
     }
 
@@ -460,8 +461,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getConditionNoteSource()
     {
         return [
-            'mode'     => (int)$this->getData('condition_note_mode'),
-            'template' => $this->getData('condition_note_template')
+            'mode' => (int)$this->getData('condition_note_mode'),
+            'template' => $this->getData('condition_note_template'),
         ];
     }
 
@@ -519,6 +520,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     /**
      * @param int $type
+     *
      * @return bool
      */
     public function isProductDetailsModeNone($type)
@@ -528,6 +530,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     /**
      * @param int $type
+     *
      * @return bool
      */
     public function isProductDetailsModeDoesNotApply($type)
@@ -537,6 +540,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     /**
      * @param int $type
+     *
      * @return bool
      */
     public function isProductDetailsModeAttribute($type)
@@ -552,8 +556,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         $productDetails = $this->getProductDetails();
 
-        if (!is_array($productDetails) || !isset($productDetails[$type]) ||
-            !isset($productDetails[$type]['mode'])) {
+        if (
+            !is_array($productDetails) || !isset($productDetails[$type]) ||
+            !isset($productDetails[$type]['mode'])
+        ) {
             return null;
         }
 
@@ -568,8 +574,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         $productDetails = $this->getProductDetails();
 
-        if (!is_array($productDetails) || !isset($productDetails[$type]) ||
-            $this->isProductDetailsModeNone($type) || !isset($productDetails[$type]['attribute'])) {
+        if (
+            !is_array($productDetails) || !isset($productDetails[$type]) ||
+            $this->isProductDetailsModeNone($type) || !isset($productDetails[$type]['attribute'])
+        ) {
             return null;
         }
 
@@ -710,8 +718,8 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getImageMainSource()
     {
         return [
-            'mode'      => $this->getImageMainMode(),
-            'attribute' => $this->getData('image_main_attribute')
+            'mode' => $this->getImageMainMode(),
+            'attribute' => $this->getData('image_main_attribute'),
         ];
     }
 
@@ -772,9 +780,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getGalleryImagesSource()
     {
         return [
-            'mode'      => $this->getGalleryImagesMode(),
+            'mode' => $this->getGalleryImagesMode(),
             'attribute' => $this->getData('gallery_images_attribute'),
-            'limit'     => $this->getData('gallery_images_limit')
+            'limit' => $this->getData('gallery_images_limit'),
         ];
     }
 
@@ -835,9 +843,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function getVariationImagesSource()
     {
         return [
-            'mode'      => $this->getVariationImagesMode(),
+            'mode' => $this->getVariationImagesMode(),
             'attribute' => $this->getData('variation_images_attribute'),
-            'limit'     => $this->getData('variation_images_limit')
+            'limit' => $this->getData('variation_images_limit'),
         ];
     }
 
@@ -914,7 +922,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     {
         $settingNamePath = [
             'hashes',
-            'current'
+            'current',
         ];
 
         return $this->getSetting('watermark_settings', $settingNamePath);
@@ -924,7 +932,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     {
         $settingNamePath = [
             'hashes',
-            'previous'
+            'previous',
         ];
 
         return $this->getSetting('watermark_settings', $settingNamePath);

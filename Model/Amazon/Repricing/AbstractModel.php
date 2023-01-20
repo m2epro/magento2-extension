@@ -23,9 +23,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Synchronization\Log $synchronizationLog */
     protected $synchronizationLog = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
+    /** @var \Magento\Framework\App\ResourceConnection  */
     protected $resourceConnection;
 
     //########################################
@@ -48,6 +50,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setAccount(Account $account)
     {
         $this->account = $account;
+
         return $this;
     }
 
@@ -87,7 +90,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         foreach ($response['messages'] as $messageData) {
             $message = new RepricingResponseMessage(
                 $messageData['text'] ?? '',
-                $messageData['type'] ??  RepricingResponseMessage::TYPE_WARNING,
+                $messageData['type'] ?? RepricingResponseMessage::TYPE_WARNING,
                 (int)($messageData['code'] ?? RepricingResponseMessage::DEFAULT_CODE)
             );
 

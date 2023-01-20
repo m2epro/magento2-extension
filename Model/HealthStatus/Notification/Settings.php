@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\HealthStatus\Notification;
  */
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MODE_DISABLED                    = 0;
-    const MODE_EXTENSION_PAGES             = 1;
-    const MODE_MAGENTO_PAGES               = 2;
-    const MODE_MAGENTO_SYSTEM_NOTIFICATION = 3;
-    const MODE_EMAIL                       = 4;
+    public const MODE_DISABLED = 0;
+    public const MODE_EXTENSION_PAGES = 1;
+    public const MODE_MAGENTO_PAGES = 2;
+    public const MODE_MAGENTO_SYSTEM_NOTIFICATION = 3;
+    public const MODE_EMAIL = 4;
 
     //########################################
 

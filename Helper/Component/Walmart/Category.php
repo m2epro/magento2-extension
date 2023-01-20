@@ -12,7 +12,7 @@ class Category
 {
     public const RECENT_MAX_COUNT = 20;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseStructure;
@@ -51,7 +51,7 @@ class Category
 
             $isCategoryEqualExcludedCategory = !empty($excludedCategory) &&
                 ($excludedCategory['browsenode_id'] == $recentCategoryValue['browsenode_id'] &&
-                 $excludedCategory['path']          == $recentCategoryValue['path']);
+                    $excludedCategory['path'] == $recentCategoryValue['path']);
 
             if (!$isRecentCategoryExists || $isCategoryEqualExcludedCategory) {
                 unset($recentCategories[$index]);
@@ -76,8 +76,10 @@ class Category
                 continue;
             }
 
-            if ($recentCategoryValue['browsenode_id'] == $browseNodeId &&
-                $recentCategoryValue['path'] == $categoryPath) {
+            if (
+                $recentCategoryValue['browsenode_id'] == $browseNodeId &&
+                $recentCategoryValue['path'] == $categoryPath
+            ) {
                 return;
             }
         }
@@ -88,7 +90,7 @@ class Category
 
         $categoryInfo = [
             'browsenode_id' => $browseNodeId,
-            'path'          => $categoryPath
+            'path' => $categoryPath,
         ];
 
         $recentCategories[] = $categoryInfo;
@@ -109,25 +111,27 @@ class Category
         }
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                $this->databaseStructure->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
-            )
-            ->where('marketplace_id = ?', $marketplaceId)
-            ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
+                                           ->select()
+                                           ->from(
+                                               $this->databaseStructure->getTableNameWithPrefix(
+                                                   'm2epro_walmart_dictionary_category'
+                                               )
+                                           )
+                                           ->where('marketplace_id = ?', $marketplaceId)
+                                           ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
 
         $queryStmt = $select->query();
         $tempCategories = [];
 
         while ($row = $queryStmt->fetch()) {
-            $path = $row['path'] ? $row['path'] .'>'. $row['title'] : $row['title'];
-            $key = $row['browsenode_id'] .'##'. $path;
+            $path = $row['path'] ? $row['path'] . '>' . $row['title'] : $row['title'];
+            $key = $row['browsenode_id'] . '##' . $path;
             $tempCategories[$key] = $row;
         }
 
         foreach ($recentCategories as $categoryKey => &$categoryData) {
             $categoryPath = str_replace(' > ', '>', $categoryData['path']);
-            $key = $categoryData['browsenode_id'] .'##'. $categoryPath;
+            $key = $categoryData['browsenode_id'] . '##' . $categoryPath;
 
             if (!array_key_exists($key, $tempCategories)) {
                 $this->removeRecentCategory($categoryData, $marketplaceId);
@@ -147,8 +151,10 @@ class Category
         $currentRecentCategories = $allRecentCategories[$marketplaceId];
 
         foreach ($currentRecentCategories as $index => $recentCategory) {
-            if ($category['browsenode_id'] == $recentCategory['browsenode_id'] &&
-                $category['path']          == $recentCategory['path']) {
+            if (
+                $category['browsenode_id'] == $recentCategory['browsenode_id'] &&
+                $category['path'] == $recentCategory['path']
+            ) {
                 unset($allRecentCategories[$marketplaceId][$index]);
                 break;
             }

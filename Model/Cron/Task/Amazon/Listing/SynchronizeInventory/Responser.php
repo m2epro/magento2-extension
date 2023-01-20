@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\Responser
- */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsResponser
 {
-    const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
+    public const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
 
     /** @var int */
     protected $logsActionId;
@@ -33,11 +30,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
-        \Ess\M2ePro\Helper\Factory $helperFactory, \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -60,12 +56,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         );
 
         $this->listingProductHandler = $listingProductHandler;
-        $this->otherListingsHandler  = $otherListingsHandler;
-        $this->resourceConnection    = $resourceConnection;
-        $this->helperData            = $helperData;
+        $this->otherListingsHandler = $otherListingsHandler;
+        $this->resourceConnection = $resourceConnection;
+        $this->helperData = $helperData;
     }
-
-    //########################################
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -96,6 +90,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
     {
         parent::eventAfterExecuting();
 
+        /** @var \Ess\M2ePro\Model\Amazon\Account $acc */
         $acc = $this->amazonFactory->getObjectLoaded('Account', $this->params['account_id'])->getChildObject();
         $newSynchDate = $this->helperData->getCurrentGmtDate();
 
@@ -126,10 +121,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         return true;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param $messageText
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function failDetected($messageText)
@@ -142,7 +138,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -165,7 +161,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -205,7 +201,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         }
 
         return $this->logsActionId = (int)$this->activeRecordFactory->getObject('Listing\Log')
-            ->getResource()->getNextActionId();
+                                                                    ->getResource()->getNextActionId();
     }
 
     /**
@@ -225,6 +221,4 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
         return $this->synchronizationLog;
     }
-
-    //########################################
 }

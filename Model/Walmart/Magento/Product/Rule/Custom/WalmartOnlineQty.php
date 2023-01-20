@@ -33,6 +33,7 @@ class WalmartOnlineQty extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abs
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return mixed
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)

@@ -32,9 +32,9 @@ class AddOptions extends Main
 
     public function execute()
     {
-        $optionsData          = $this->getRequest()->getParam('options_data');
+        $optionsData = $this->getRequest()->getParam('options_data');
         $isRememberAutoAction = (bool)$this->getRequest()->getParam('is_remember', false);
-        $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
+        $needAddToVocabulary = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($optionsData)) {
             $optionsData = $this->helperData->jsonDecode($optionsData);
@@ -46,6 +46,7 @@ class AddOptions extends Main
 
         if ($isRememberAutoAction && !$needAddToVocabulary) {
             $this->vocabularyHelper->disableOptionAutoAction();
+
             return;
         }
 

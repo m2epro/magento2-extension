@@ -34,6 +34,7 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function setListingViewMode($mode)
     {
         $this->isListingViewMode = $mode;
+
         return $this;
     }
 

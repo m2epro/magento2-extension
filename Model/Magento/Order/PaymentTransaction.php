@@ -25,11 +25,13 @@ class PaymentTransaction extends AbstractModel
 
     /**
      * @param \Magento\Sales\Model\Order $magentoOrder
+     *
      * @return $this
      */
     public function setMagentoOrder(\Magento\Sales\Model\Order $magentoOrder)
     {
         $this->magentoOrder = $magentoOrder;
+
         return $this;
     }
 

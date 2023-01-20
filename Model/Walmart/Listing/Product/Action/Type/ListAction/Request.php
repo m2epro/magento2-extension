@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
  */
 class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request
 {
-    const LIST_TYPE_EXIST = 'exist';
-    const LIST_TYPE_NEW = 'new';
+    public const LIST_TYPE_EXIST = 'exist';
+    public const LIST_TYPE_NEW = 'new';
 
-    const PARENTAGE_PARENT = 'parent';
-    const PARENTAGE_CHILD = 'child';
+    public const PARENTAGE_PARENT = 'parent';
+    public const PARENTAGE_CHILD = 'child';
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;

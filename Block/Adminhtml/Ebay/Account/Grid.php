@@ -46,29 +46,30 @@ class Grid extends AccountGrid
         $collection = $this->ebayFactory->getObject('Account')->getCollection();
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
     {
         $this->addColumn('id', [
-            'header'    => $this->__('ID'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'id',
-            'filter_index' => 'main_table.id'
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'id',
+            'filter_index' => 'main_table.id',
         ]);
 
         $this->addColumn('title', [
-            'header'    => $this->__('Title / Info'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'title',
-            'escape'    => true,
+            'header' => $this->__('Title / Info'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
+            'escape' => true,
             'filter_index' => 'main_table.title',
             'frame_callback' => [$this, 'callbackColumnTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $header = $this->__('Management');
@@ -83,13 +84,13 @@ class Grid extends AccountGrid
 
         if ($this->ebayViewHelper->isFeedbacksShouldBeShown()) {
             $this->addColumn('management', [
-                'header'         => $header,
-                'align'          => 'center',
-                'width'          => '120px',
-                'type'           => 'text',
-                'sortable'       => false,
-                'filter'         => false,
-                'frame_callback' => [$this, 'callbackColumnManagement']
+                'header' => $header,
+                'align' => 'center',
+                'width' => '120px',
+                'type' => 'text',
+                'sortable' => false,
+                'filter' => false,
+                'frame_callback' => [$this, 'callbackColumnManagement'],
             ]);
         }
 
@@ -177,7 +178,7 @@ HTML;
 
         $collection->getSelect()->where(
             'main_table.title LIKE ? OR second_table.user_id LIKE ?' . $modeWhere,
-            '%'. $value .'%'
+            '%' . $value . '%'
         );
     }
 

@@ -31,22 +31,22 @@ class GetProductsSearchStatus extends Main
 
         $tableListingProduct = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
-            ->getResource()->getMainTable();
+                                                               ->getResource()->getMainTable();
 
         $itemsForSearchSelect = $connRead->select();
         $itemsForSearchSelect->from(['lp' => $tableListingProduct], ['id'])
-            ->join(
-                ['alp' => $tableAmazonListingProduct],
-                'lp.id = alp.listing_product_id',
-                []
-            )
-            ->where('lp.id IN (?)', $productsIds)
-            ->where('lp.status = ?', (int)\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
-            ->where('alp.general_id IS NULL')
-            ->where('alp.is_general_id_owner = 0');
+                             ->join(
+                                 ['alp' => $tableAmazonListingProduct],
+                                 'lp.id = alp.listing_product_id',
+                                 []
+                             )
+                             ->where('lp.id IN (?)', $productsIds)
+                             ->where('lp.status = ?', (int)\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
+                             ->where('alp.general_id IS NULL')
+                             ->where('alp.is_general_id_owner = 0');
 
         $selectWarnings = clone $itemsForSearchSelect;
-        $selectError    = clone $itemsForSearchSelect;
+        $selectError = clone $itemsForSearchSelect;
 
         $searchStatusActionRequired = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED;
         $searchStatusInProgress = \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS;
@@ -66,7 +66,7 @@ class GetProductsSearchStatus extends Main
                     'For %count% Items it is necessary to choose manually one of the found Amazon Products
                      or these Items are in process of Search and results for them will be available later.',
                     count($warningsCount)
-                )
+                ),
             ];
         }
 
@@ -85,7 +85,7 @@ class GetProductsSearchStatus extends Main
                 'text' => $this->__(
                     'No Amazon products were found for %count% item(s). Use manual search or create new ASIN/ISBN.',
                     count($errorsCount)
-                )
+                ),
             ];
         }
 
@@ -94,7 +94,7 @@ class GetProductsSearchStatus extends Main
                 'type' => 'success',
                 'text' => $this->__(
                     'ASIN(s)/ISBN(s) were found and assigned for selected Items.'
-                )
+                ),
             ];
         }
 
@@ -105,7 +105,7 @@ class GetProductsSearchStatus extends Main
         ];
 
         $this->setJsonContent([
-            'messages' => $messages
+            'messages' => $messages,
         ]);
 
         return $this->getResult();

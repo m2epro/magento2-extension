@@ -58,13 +58,13 @@ class Form extends AbstractForm
         $form = $this->_formFactory->create([
             'data' => [
                 'id' => 'edit_form',
-            ]
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
             'order_address_info',
             [
-                'legend' => $this->__('Order Address Information')
+                'legend' => $this->__('Order Address Information'),
             ]
         );
 
@@ -108,7 +108,7 @@ class Form extends AbstractForm
             [
                 'name' => 'street[0]',
                 'label' => $this->__('Street Address'),
-                'value' =>  isset($address['street'][0])
+                'value' => isset($address['street'][0])
                     ? $this->dataHelper->escapeHtml($address['street'][0]) : '',
                 'required' => true,
             ]
@@ -120,7 +120,7 @@ class Form extends AbstractForm
             [
                 'name' => 'street[1]',
                 'label' => '',
-                'value' =>  isset($address['street'][1])
+                'value' => isset($address['street'][1])
                     ? $this->dataHelper->escapeHtml($address['street'][1]) : '',
             ]
         );
@@ -131,7 +131,7 @@ class Form extends AbstractForm
             [
                 'name' => 'street[2]',
                 'label' => '',
-                'value' =>  isset($address['street'][2])
+                'value' => isset($address['street'][2])
                     ? $this->dataHelper->escapeHtml($address['street'][2]) : '',
             ]
         );
@@ -213,7 +213,8 @@ class Form extends AbstractForm
 
         $this->js->add("M2ePro.formData.region = '" . $this->dataHelper->escapeJs($regionCode) . "';");
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order/Edit/ShippingAddress',
     ], function(){

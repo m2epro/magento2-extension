@@ -1,5 +1,5 @@
 <?php
-// @codingStandardsIgnoreFile
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -19,7 +19,7 @@ class Upgrader
     /**
      * Means that version, upgrade files are included to the build
      */
-    const MIN_SUPPORTED_VERSION_FOR_UPGRADE = '1.0.0';
+    public const MIN_SUPPORTED_VERSION_FOR_UPGRADE = '1.0.0';
 
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -46,7 +46,6 @@ class Upgrader
      *     ],
      *     ...
      * ]
-     *
      * @var array
      */
     private static $availableVersionUpgrades = [
@@ -129,15 +128,16 @@ class Upgrader
         '1.31.1' => ['1.31.2'],
         '1.31.2' => ['1.32.0'],
         '1.32.0' => ['1.32.1'],
+        '1.32.1' => ['1.33.0'],
     ];
 
     //########################################
 
     /**
-     * @param \Ess\M2ePro\Helper\Module\Maintenance        $maintenance
-     * @param \Ess\M2ePro\Setup\LoggerFactory              $loggerFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Setup        $setupResource
-     * @param \Magento\Framework\ObjectManagerInterface    $objectManager
+     * @param \Ess\M2ePro\Helper\Module\Maintenance $maintenance
+     * @param \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Setup $setupResource
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
@@ -150,7 +150,6 @@ class Upgrader
         $this->objectManager = $objectManager;
         $this->setupResource = $setupResource;
         $this->moduleList = $moduleList;
-
 
         $this->logger = $loggerFactory->create();
     }
@@ -176,12 +175,12 @@ class Upgrader
                     \Ess\M2ePro\Model\Setup\Upgrade\Manager::class,
                     [
                         'versionFrom' => $versionFrom,
-                        'versionTo'   => $versionTo,
-                        'installer'   => $setup,
+                        'versionTo' => $versionTo,
+                        'installer' => $setup,
                     ]
                 );
 
-                $setupObject  = $upgradeManager->getCurrentSetupObject();
+                $setupObject = $upgradeManager->getCurrentSetupObject();
                 $backupObject = $upgradeManager->getBackupObject();
 
                 if (!$setupObject->isBackuped()) {
@@ -205,6 +204,7 @@ class Upgrader
             }
 
             $setup->endSetup();
+
             return;
         }
 

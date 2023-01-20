@@ -12,13 +12,10 @@ use Ess\M2ePro\Model\Amazon\Order as AmazonOrder;
 use Ess\M2ePro\Model\Ebay\Order as EbayOrder;
 use Ess\M2ePro\Model\Walmart\Order as WalmartOrder;
 
-/**
- * Class Ess\M2ePro\Model\Order\ProxyObject
- */
 abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 {
-    const CHECKOUT_GUEST    = 'guest';
-    const CHECKOUT_REGISTER = 'register';
+    public const CHECKOUT_GUEST = 'guest';
+    public const CHECKOUT_REGISTER = 'register';
 
     /** @var \Ess\M2ePro\Model\Currency */
     protected $currency;
@@ -47,8 +44,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\Customer\Model\Options */
     protected $options;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
@@ -69,7 +64,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Order\Item\ProxyObject[]
@@ -99,6 +94,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
      * We have to merge them to avoid qty and price calculation issues.
      *
      * @param \Ess\M2ePro\Model\Order\Item\ProxyObject[] $items
+     *
      * @return \Ess\M2ePro\Model\Order\Item\ProxyObject[]
      */
     protected function mergeItems(array $items)
@@ -136,11 +132,13 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Store\Api\Data\StoreInterface $store
+     *
      * @return $this
      */
     public function setStore(\Magento\Store\Api\Data\StoreInterface $store)
     {
         $this->store = $store;
+
         return $this;
     }
 
@@ -165,8 +163,10 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getCheckoutMethod()
     {
-        if ($this->order->getParentObject()->getAccount()->getChildObject()->isMagentoOrdersCustomerPredefined() ||
-            $this->order->getParentObject()->getAccount()->getChildObject()->isMagentoOrdersCustomerNew()) {
+        if (
+            $this->order->getParentObject()->getAccount()->getChildObject()->isMagentoOrdersCustomerPredefined() ||
+            $this->order->getParentObject()->getAccount()->getChildObject()->isMagentoOrdersCustomerNew()
+        ) {
             return self::CHECKOUT_REGISTER;
         }
 
@@ -218,7 +218,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated()
     {
         return $this->order->getParentObject()->getAccount()->getChildObject()
-            ->isMagentoOrdersCustomerNewNotifyWhenOrderCreated();
+                           ->isMagentoOrdersCustomerNewNotifyWhenOrderCreated();
     }
 
     /**
@@ -357,6 +357,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $fullName
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -366,9 +367,9 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         $parts = explode(' ', $fullName);
 
         $currentInfo = [
-            'prefix'     => null,
+            'prefix' => null,
             'middlename' => null,
-            'suffix'     => null
+            'suffix' => null,
         ];
 
         if (count($parts) > 2) {
@@ -470,9 +471,9 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $priceType
+     *
      * @return bool|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
-     *
      * List of config keys for comfortable search:
      * /ebay/order/tax/product_price/
      * /ebay/order/tax/shipping_price/
@@ -485,8 +486,8 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     {
         $componentMode = $this->order->getParentObject()->getComponentMode();
         $configValue = $this->getHelper('Module')
-            ->getConfig()
-            ->getGroupValue("/{$componentMode}/order/tax/{$priceType}_price/", 'is_include_tax');
+                            ->getConfig()
+                            ->getGroupValue("/{$componentMode}/order/tax/{$priceType}_price/", 'is_include_tax');
 
         if ($configValue !== null) {
             return (bool)$configValue;
@@ -535,8 +536,8 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     public function isTaxModeMixed()
     {
         return !$this->isTaxModeNone() &&
-        !$this->isTaxModeChannel() &&
-        !$this->isTaxModeMagento();
+            !$this->isTaxModeChannel() &&
+            !$this->isTaxModeMagento();
     }
 
     //########################################

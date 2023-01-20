@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
@@ -28,8 +28,8 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
     public function execute()
     {
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
-        $accountId     = $this->getRequest()->getParam('account_id');
-        $categoryMode  = $this->getRequest()->getParam('category_mode');
+        $accountId = $this->getRequest()->getParam('account_id');
+        $categoryMode = $this->getRequest()->getParam('category_mode');
         $isEditAllowed = $this->getRequest()->getParam('is_edit_category_allowed', true);
 
         $selectedCategories = [];
@@ -63,7 +63,6 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
                         ? $helper->addRecent($selectedCategory['value'], $marketplaceId, $type)
                         : $helper->addRecent($selectedCategory['value'], $accountId, $type);
                 }
-
             }
 
             $chooserBlock->setCategoriesData($converter->getCategoryDataForChooser());

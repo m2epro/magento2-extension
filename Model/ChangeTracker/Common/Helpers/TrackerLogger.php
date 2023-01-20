@@ -31,7 +31,7 @@ class TrackerLogger implements LoggerInterface
 
     public function __destruct()
     {
-        $values  = $this->registry->getValueFromJson(self::REGISTRY_KEY) ?: [];
+        $values = $this->registry->getValueFromJson(self::REGISTRY_KEY) ?: [];
         array_unshift($values, $this->tmpLogs);
         $values = array_slice($values, 0, 5);
         $this->registry->setValue(self::REGISTRY_KEY, $values);
@@ -134,7 +134,6 @@ class TrackerLogger implements LoggerInterface
      */
     public function log($level, $message, array $context = []): void
     {
-
         if ($this->level > $level) {
             return;
         }
@@ -143,7 +142,7 @@ class TrackerLogger implements LoggerInterface
             'date' => Date::createCurrentGmt()->format('Y-m-d H:i:s'),
             'level' => Logger::getLevelName($level),
             'message' => $message,
-            'context' => $this->formatContext($context)
+            'context' => $this->formatContext($context),
         ];
     }
 

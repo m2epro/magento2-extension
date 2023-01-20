@@ -53,7 +53,7 @@ class Other extends AbstractModel
         }
 
         return [
-            'item_condition' => $data
+            'item_condition' => $data,
         ];
     }
 
@@ -68,7 +68,7 @@ class Other extends AbstractModel
         $this->processNotFoundAttributes('Seller Notes');
 
         return [
-            'item_condition_note' => $data
+            'item_condition_note' => $data,
         ];
     }
 
@@ -79,18 +79,18 @@ class Other extends AbstractModel
     protected function getVatTaxData()
     {
         $data = [
-            'tax_category' => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getTaxCategory()
+            'tax_category' => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getTaxCategory(),
         ];
 
         if ($this->getEbayMarketplace()->isVatEnabled()) {
-            $data['vat_mode']    = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getVatMode();
+            $data['vat_mode'] = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getVatMode();
             $data['vat_percent'] = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
         if ($this->getEbayMarketplace()->isTaxTableEnabled()) {
             $data['use_tax_table'] = $this->getEbayListingProduct()
-                ->getEbaySellingFormatTemplate()
-                ->isTaxTableEnabled();
+                                          ->getEbaySellingFormatTemplate()
+                                          ->isTaxTableEnabled();
         }
 
         return $data;
@@ -110,7 +110,7 @@ class Other extends AbstractModel
 
         return [
             'charity_id' => $charity[$this->getMarketplace()->getId()]['organization_id'],
-            'charity_percent' => $charity[$this->getMarketplace()->getId()]['percentage']
+            'charity_percent' => $charity[$this->getMarketplace()->getId()]['percentage'],
         ];
     }
 
@@ -121,7 +121,7 @@ class Other extends AbstractModel
     public function getLotSizeData()
     {
         $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures(
-            $this->getEbayListingProduct()->getCategoryTemplateSource()->getMainCategory(),
+            $this->getEbayListingProduct()->getCategoryTemplateSource()->getCategoryId(),
             $this->getMarketplace()->getId()
         );
 
@@ -130,7 +130,7 @@ class Other extends AbstractModel
         }
 
         return [
-            'lot_size' => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getLotSize()
+            'lot_size' => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getLotSize(),
         ];
     }
 

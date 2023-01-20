@@ -55,7 +55,7 @@ class ProductAttributesQueryBuilder
             null
         );
         $attributeSelect->columns([
-            'value' => new \Zend_Db_Expr($valueQuery)
+            'value' => new \Zend_Db_Expr($valueQuery),
         ]);
 
         $linkColumn = $this->getEntityIdColumnName();

@@ -20,7 +20,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     public function processSuccess(array $response, array $responseParams = [])
     {
         $data = [
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
         ];
 
         $data = $this->appendStatusChangerValue($data, $responseParams);
@@ -65,11 +65,10 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $variations = $this->getListingProduct()->getVariations(true);
 
         foreach ($variations as $variation) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             $data = [
-                'add' => 0
+                'add' => 0,
             ];
 
             if ($variation->getChildObject()->isListed() || $variation->getChildObject()->isHidden()) {
@@ -90,10 +89,10 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
             [
                 [
                     'listing_product_id' => $this->getListingProduct()->getId(),
-                    'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-                    'initiator'          => self::INSTRUCTION_INITIATOR,
-                    'priority'           => 80
-                ]
+                    'type' => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => 80,
+                ],
             ]
         );
     }

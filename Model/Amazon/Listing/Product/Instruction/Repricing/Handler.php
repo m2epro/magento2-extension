@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\Repricing;
 
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as TemplateChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\Repricing\Handler
- */
 class Handler extends \Ess\M2ePro\Model\AbstractModel implements
     \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface
 {
@@ -31,7 +29,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements
             \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRICE_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
@@ -62,6 +60,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements
         if ($this->isProcessRequired($amazonListingProduct->getRepricing())) {
             $amazonListingProduct->getRepricing()->setData('is_process_required', true);
             $amazonListingProduct->getRepricing()->save();
+
             return;
         }
 
@@ -82,7 +81,8 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements
             return false;
         }
 
-        if ($isDisabled == $listingProductRepricing->getLastUpdatedIsDisabled() &&
+        if (
+            $isDisabled == $listingProductRepricing->getLastUpdatedIsDisabled() &&
             $listingProductRepricing->getRegularPrice() == $listingProductRepricing->getLastUpdatedRegularPrice() &&
             $listingProductRepricing->getMinPrice() == $listingProductRepricing->getLastUpdatedMinPrice() &&
             $listingProductRepricing->getMaxPrice() == $listingProductRepricing->getLastUpdatedMaxPrice()

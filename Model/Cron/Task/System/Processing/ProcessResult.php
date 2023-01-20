@@ -13,10 +13,10 @@ namespace Ess\M2ePro\Model\Cron\Task\System\Processing;
  */
 class ProcessResult extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const SINGLE_PROCESSINGS_PER_CRON_COUNT = 5000;
-    const PARTIAL_PROCESSINGS_PER_CRON_COUNT = 5;
+    public const SINGLE_PROCESSINGS_PER_CRON_COUNT = 5000;
+    public const PARTIAL_PROCESSINGS_PER_CRON_COUNT = 5;
 
-    const NICK = 'system/processing/process_result';
+    public const NICK = 'system/processing/process_result';
 
     //########################################
 
@@ -46,8 +46,10 @@ class ProcessResult extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Processing\Lock $item */
 
-            if (!isset($logData[$item->getModelName()][$item->getObjectId()]) ||
-                !in_array($item->getTag(), $logData[$item->getModelName()][$item->getObjectId()])) {
+            if (
+                !isset($logData[$item->getModelName()][$item->getObjectId()]) ||
+                !in_array($item->getTag(), $logData[$item->getModelName()][$item->getObjectId()])
+            ) {
                 $logData[$item->getModelName()][$item->getObjectId()][] = $item->getTag();
             }
 
@@ -117,8 +119,8 @@ class ProcessResult extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_SET_DETAILS_EVENT_NAME,
                     [
                         'progress_nick' => self::NICK,
-                        'percentage'    => ceil($percentsForOneAction * $iteration),
-                        'total'         => count($processingObjects)
+                        'percentage' => ceil($percentsForOneAction * $iteration),
+                        'total' => count($processingObjects),
                     ]
                 );
             }

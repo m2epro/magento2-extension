@@ -41,8 +41,10 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                 $this->getListingProduct()->delete();
                 $this->getListingProduct()->isDeleted(true);
             } else {
-                $this->addMessage('Stop Action for FBA Items is impossible as their Quantity is unknown. You can run
-                 Revise Action for such Items, but the Quantity value will be ignored.');
+                $this->addMessage(
+                    'Stop Action for FBA Items is impossible as their Quantity is unknown. You can run
+                 Revise Action for such Items, but the Quantity value will be ignored.'
+                );
             }
 
             return false;

@@ -15,7 +15,7 @@ class Database extends \Magento\Backend\App\Action
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Magento\Framework\View\Result\PageFactory $resultPageFactory  */
+    /** @var \Magento\Framework\View\Result\PageFactory $resultPageFactory */
     protected $resultPageFactory;
 
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -27,8 +27,8 @@ class Database extends \Magento\Backend\App\Action
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
-        $this->helperFactory      = $helperFactory;
-        $this->resultPageFactory  = $resultPageFactory;
+        $this->helperFactory = $helperFactory;
+        $this->resultPageFactory = $resultPageFactory;
         $this->resourceConnection = $resourceConnection;
 
         parent::__construct($context);
@@ -52,7 +52,8 @@ class Database extends \Magento\Backend\App\Action
             $configTableName = $wizard->getM1TablesPrefix() . 'm2epro_config';
 
             if ($this->resourceConnection->getConnection()->isTableExists($configTableName)) {
-                $status = (int)$this->resourceConnection->getConnection()
+                $status = (int)$this->resourceConnection
+                    ->getConnection()
                     ->select()
                     ->from($configTableName, 'value')
                     ->where(
@@ -65,6 +66,7 @@ class Database extends \Magento\Backend\App\Action
 
                 if ($status === 1) {
                     $wizard->setCurrentStatus(MigrationFromMagento1::STATUS_PREPARED);
+
                     return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
                 }
             }
@@ -75,9 +77,11 @@ class Database extends \Magento\Backend\App\Action
         $result->getConfig()->addPageAsset("Ess_M2ePro::css/style.css");
         $result->getConfig()->addPageAsset("Ess_M2ePro::css/wizard.css");
 
-        $result->getConfig()->getTitle()->set(__(
-            'M2E Pro Module Migration from Magento v1.x'
-        ));
+        $result->getConfig()->getTitle()->set(
+            __(
+                'M2E Pro Module Migration from Magento v1.x'
+            )
+        );
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database $block */
         $block = $result->getLayout()->createBlock(
@@ -87,7 +91,7 @@ class Database extends \Magento\Backend\App\Action
 
         $this->_addContent($block);
 
-        $generalBlock =  $result->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General::class);
+        $generalBlock = $result->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General::class);
         $result->getLayout()->setChild('js', $generalBlock->getNameInLayout(), '');
 
         return $result;

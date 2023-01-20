@@ -43,7 +43,7 @@ class View extends AbstractContainer
 
                 <strong>Note:</strong> markers <strong>"will be added"</strong> and <strong>"will be deleted"</strong>
                 mean that Variation will be Added/Removed during the next Revise Action.'
-            )
+            ),
         ]);
 
         $this->js->add(

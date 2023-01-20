@@ -40,7 +40,8 @@ class Edit extends AbstractContainer
             'Edit Shipping Address' => $this->__('Edit Shipping Address'),
         ]);
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order/Edit/Item',
     ], function(){

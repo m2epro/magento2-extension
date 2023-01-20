@@ -62,6 +62,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
         );
 
         $this->setData('collection_ids', $ids);
+
         return $ids;
     }
 
@@ -84,7 +85,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
 
         $this->getRequest()->setPostValue($this->getMassactionBlock()->getFormFieldNameInternal(), implode(',', $ids));
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 
             #{$this->getId()} > .admin__data-grid-header > .admin__data-grid-header-row:first-child {
                 width: 100% !important;
@@ -114,6 +116,7 @@ CSS
     public function setSelectedIds(array $ids)
     {
         $this->selectedIds = $ids;
+
         return $this;
     }
 
@@ -127,6 +130,7 @@ CSS
     public function setCurrentCategoryId($currentCategoryId)
     {
         $this->currentCategoryId = $currentCategoryId;
+
         return $this;
     }
 
@@ -145,7 +149,7 @@ CSS
         $collection->joinTable(
             [
                 'ccp' => $this->databaseHelper
-                    ->getTableNameWithPrefix('catalog_category_product')
+                    ->getTableNameWithPrefix('catalog_category_product'),
             ],
             'product_id=entity_id',
             ['category_id' => 'category_id']
@@ -166,7 +170,7 @@ CSS
 
         saveSelectedProducts(function(transport) {
 
-            new Ajax.Request('{$this->getUrl('*/*/getSessionProductsIds', array('_current' => true))}', {
+            new Ajax.Request('{$this->getUrl('*/*/getSessionProductsIds', ['_current' => true])}', {
                 method: 'get',
                 onSuccess: function(transport) {
                     var massGridObj = {$this->getMassactionBlock()->getJsObjectName()};
@@ -195,7 +199,8 @@ JS;
         if ($this->getRequest()->getParam('category_change')) {
             $checkedString = implode(',', array_intersect($this->getCollectionIds(), $this->selectedIds));
 
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
     {$this->getMassactionBlock()->getJsObjectName()}.checkedString = '{$checkedString}';
     {$this->getMassactionBlock()->getJsObjectName()}.initCheckboxes();
     {$this->getMassactionBlock()->getJsObjectName()}.checkCheckboxes();

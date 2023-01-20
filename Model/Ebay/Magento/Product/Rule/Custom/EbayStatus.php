@@ -58,6 +58,7 @@ class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractM
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,

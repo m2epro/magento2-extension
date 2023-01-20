@@ -10,12 +10,9 @@ namespace Ess\M2ePro\Model\ResourceModel;
 
 use Magento\Framework\DB\Ddl\Table;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Setup
- */
 class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    const LONG_COLUMN_SIZE = 16777217;
+    public const LONG_COLUMN_SIZE = 16777217;
 
     //########################################
 
@@ -29,6 +26,7 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     /**
      * @param $versionFrom
      * @param $versionTo
+     *
      * @return \Ess\M2ePro\Model\Setup
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -41,7 +39,7 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
 
         empty($versionFrom) ? $collection->addFieldToFilter('version_from', ['null' => true])
-                            : $collection->addFieldToFilter('version_from', $versionFrom);
+            : $collection->addFieldToFilter('version_from', $versionFrom);
 
         $collection->addFieldToFilter('version_to', $versionTo);
         $collection->getSelect()->limit(1);
@@ -53,8 +51,8 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             $setupObject->setData(
                 [
                     'version_from' => empty($versionFrom) ? null : $versionFrom,
-                    'version_to'   => $versionTo,
-                    'is_backuped'  => 0,
+                    'version_to' => $versionTo,
+                    'is_backuped' => 0,
                     'is_completed' => 0,
                 ]
             );
@@ -67,62 +65,64 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     protected function initTable()
     {
         $setupTable = $this->getConnection()
-            ->newTable($this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_setup'))
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'version_from',
-                Table::TYPE_TEXT,
-                32,
-                ['default' => null]
-            )
-            ->addColumn(
-                'version_to',
-                Table::TYPE_TEXT,
-                32,
-                ['default' => null]
-            )
-            ->addColumn(
-                'is_backuped',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'is_completed',
-                Table::TYPE_SMALLINT,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'profiler_data',
-                Table::TYPE_TEXT,
-                self::LONG_COLUMN_SIZE,
-                ['default' => null]
-            )
-            ->addColumn(
-                'update_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addIndex('version_from', 'version_from')
-            ->addIndex('version_to', 'version_to')
-            ->addIndex('is_backuped', 'is_backuped')
-            ->addIndex('is_completed', 'is_completed')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
+                           ->newTable(
+                               $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_setup')
+                           )
+                           ->addColumn(
+                               'id',
+                               Table::TYPE_INTEGER,
+                               null,
+                               ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+                           )
+                           ->addColumn(
+                               'version_from',
+                               Table::TYPE_TEXT,
+                               32,
+                               ['default' => null]
+                           )
+                           ->addColumn(
+                               'version_to',
+                               Table::TYPE_TEXT,
+                               32,
+                               ['default' => null]
+                           )
+                           ->addColumn(
+                               'is_backuped',
+                               Table::TYPE_SMALLINT,
+                               null,
+                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                           )
+                           ->addColumn(
+                               'is_completed',
+                               Table::TYPE_SMALLINT,
+                               null,
+                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                           )
+                           ->addColumn(
+                               'profiler_data',
+                               Table::TYPE_TEXT,
+                               self::LONG_COLUMN_SIZE,
+                               ['default' => null]
+                           )
+                           ->addColumn(
+                               'update_date',
+                               Table::TYPE_DATETIME,
+                               null,
+                               ['default' => null]
+                           )
+                           ->addColumn(
+                               'create_date',
+                               Table::TYPE_DATETIME,
+                               null,
+                               ['default' => null]
+                           )
+                           ->addIndex('version_from', 'version_from')
+                           ->addIndex('version_to', 'version_to')
+                           ->addIndex('is_backuped', 'is_backuped')
+                           ->addIndex('is_completed', 'is_completed')
+                           ->setOption('type', 'INNODB')
+                           ->setOption('charset', 'utf8')
+                           ->setOption('collate', 'utf8_general_ci');
 
         $this->getConnection()->createTable($setupTable);
     }
@@ -135,7 +135,7 @@ class Setup extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     public function getNotCompletedUpgrades()
     {
         if (!$this->getHelper('Module_Database_Structure')->isTableExists('m2epro_setup')) {
-            return  [];
+            return [];
         }
 
         $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();

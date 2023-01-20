@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
 class General extends AbstractModel
 {
-    public const LISTING_TYPE_AUCTION  = 'Chinese';
-    public const LISTING_TYPE_FIXED    = 'FixedPriceItem';
+    public const LISTING_TYPE_AUCTION = 'Chinese';
+    public const LISTING_TYPE_FIXED = 'FixedPriceItem';
 
     public const PRODUCT_DETAILS_DOES_NOT_APPLY = 'Does Not Apply';
     public const PRODUCT_DETAILS_UNBRANDED = 'Unbranded';
@@ -43,11 +43,11 @@ class General extends AbstractModel
     public function getBuilderData()
     {
         $data = [
-            'duration'   => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getDuration(),
+            'duration' => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getDuration(),
             'is_private' => $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isPrivateListing(),
-            'currency'   => $this->getEbayMarketplace()->getCurrency(),
+            'currency' => $this->getEbayMarketplace()->getCurrency(),
             'listing_enhancements' => $this->getEbayListingProduct()->getEbayDescriptionTemplate()->getEnhancements(),
-            'product_details'      => $this->getProductDetailsData()
+            'product_details' => $this->getProductDetailsData(),
         ];
 
         $data['listing_type'] = $this->getEbayListingProduct()->isListingTypeFixed()
@@ -56,8 +56,8 @@ class General extends AbstractModel
 
         if ($this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isRestrictedToBusinessEnabled()) {
             $data['restricted_to_business'] = $this->getEbayListingProduct()
-                ->getEbaySellingFormatTemplate()
-                ->isRestrictedToBusinessEnabled();
+                                                   ->getEbaySellingFormatTemplate()
+                                                   ->isRestrictedToBusinessEnabled();
         }
 
         return $data;
@@ -135,7 +135,7 @@ class General extends AbstractModel
         $statusDisabled = \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::PRODUCT_IDENTIFIER_STATUS_DISABLED;
 
         foreach (['ean', 'upc', 'isbn', 'epid'] as $identifier) {
-            $key = $identifier.'_enabled';
+            $key = $identifier . '_enabled';
             if (!isset($categoryFeatures[$key]) || $categoryFeatures[$key] != $statusDisabled) {
                 continue;
             }
@@ -161,7 +161,6 @@ class General extends AbstractModel
         $data = [];
 
         foreach (['brand', 'mpn'] as $type) {
-
             if ($descriptionTemplate->isProductDetailsModeNone($type)) {
                 continue;
             }
@@ -195,16 +194,19 @@ class General extends AbstractModel
     {
         if (empty($data['brand'])) {
             unset($data['mpn']);
+
             return $data;
         }
 
         if ($data['brand'] == self::PRODUCT_DETAILS_UNBRANDED) {
             $data['mpn'] = self::PRODUCT_DETAILS_DOES_NOT_APPLY;
+
             return $data;
         }
 
         if (empty($data['mpn'])) {
             $data['mpn'] = self::PRODUCT_DETAILS_DOES_NOT_APPLY;
+
             return $data;
         }
 

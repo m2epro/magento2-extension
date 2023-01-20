@@ -88,13 +88,12 @@ class Finish extends Base
         }
 
         if ($addingMessage) {
-
             $now = new \DateTime('now', new \DateTimeZone('UTC'));
             $now->modify('+7 days');
 
             $messages['default_values_in_sync_policy'] = [
-                'type'      => \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING,
-                'text'      => $this->__(
+                'type' => \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING,
+                'text' => $this->__(
                     <<<HTML
 <a href="%url_1%" target="_blank">Magento Multi-Source Inventory feature</a>
 enabled by default starting from Magento v2.3.
@@ -112,8 +111,8 @@ HTML
                     $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199813')
                 ),
                 'url_reset' => 'm2epro/template/setDefaultValuesInSyncPolicy',
-                'url_skip'  => 'm2epro/template/skipDefaultValuesInSyncPolicy',
-                'lifetime'  => $now->format('Y-m-d H:i:s')
+                'url_skip' => 'm2epro/template/skipDefaultValuesInSyncPolicy',
+                'lifetime' => $now->format('Y-m-d H:i:s'),
             ];
         }
 

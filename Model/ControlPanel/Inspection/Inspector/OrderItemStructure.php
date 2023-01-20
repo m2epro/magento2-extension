@@ -12,7 +12,7 @@ use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
 class OrderItemStructure implements InspectorInterface, FixerInterface
 {
-    /** @var HelperFactory  */
+    /** @var HelperFactory */
     private $helperFactory;
 
     /** @var UrlInterface */
@@ -39,11 +39,11 @@ class OrderItemStructure implements InspectorInterface, FixerInterface
         ActiveRecordFactory $activeRecordFactory,
         IssueFactory $issueFactory
     ) {
-        $this->helperFactory       = $helperFactory;
-        $this->urlBuilder          = $urlBuilder;
-        $this->formKey             = $formKey;
+        $this->helperFactory = $helperFactory;
+        $this->urlBuilder = $urlBuilder;
+        $this->formKey = $formKey;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->issueFactory        = $issueFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -64,7 +64,7 @@ class OrderItemStructure implements InspectorInterface, FixerInterface
         if ($total = $collection->getSize()) {
             $this->brokenData = [
                 'total' => $total,
-                'ids' => $collection->getAllIds()
+                'ids' => $collection->getAllIds(),
             ];
         }
 
@@ -82,7 +82,7 @@ class OrderItemStructure implements InspectorInterface, FixerInterface
     {
         $formKey = $this->formKey->getFormKey();
         $currentUrl = $this->urlBuilder
-            ->getUrl('m2epro/controlPanel_tools_m2ePro/general',['action' => 'repairOrderItemStructure']);
+            ->getUrl('m2epro/controlPanel_tools_m2ePro/general', ['action' => 'repairOrderItemStructure']);
 
         $html = <<<HTML
     <form method="POST" action="{$currentUrl}">

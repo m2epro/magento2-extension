@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Listing\Product\Instruction;
 
-use \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
+use Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
 
 /**
  * Class \Ess\M2ePro\Model\Listing\Product\Instruction\Processor
@@ -41,12 +41,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public function setComponent($component)
     {
         $this->component = $component;
+
         return $this;
     }
 
     public function setMaxListingsProductsCount($count)
     {
         $this->maxListingsProductsCount = $count;
+
         return $this;
     }
 
@@ -55,6 +57,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public function registerHandler(HandlerInterface $handler)
     {
         $this->handlers[] = $handler;
+
         return $this;
     }
 
@@ -101,6 +104,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\Instruction[]|[]
      */
     protected function loadInstructions(array $listingsProducts)
@@ -187,8 +191,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public function removeInstructionOlderThenWeek()
     {
         $greaterThenDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-            ->modify('-7 day')
-            ->format('Y-m-d');
+                                                  ->modify('-7 day')
+                                                  ->format('Y-m-d');
 
         $productInstructionResource = $this->activeRecordFactory
             ->getObject('Listing_Product_Instruction')

@@ -42,8 +42,11 @@ abstract class AbstractRenderer extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     abstract public function getTitle();
+
     abstract public function getMin();
+
     abstract public function getReal();
+
     abstract public function getAdditional();
 
     //########################################

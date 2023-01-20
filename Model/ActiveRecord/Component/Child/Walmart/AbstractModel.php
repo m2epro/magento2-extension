@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
     protected $walmartFactory;
 
     //########################################

@@ -13,9 +13,13 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 
 class Amazon extends Command
 {
+    /** @var \Magento\Framework\Data\Form\FormKey  */
     private $formKey;
+    /** @var \Magento\Framework\File\Csv  */
     private $csvParser;
+    /** @var \Magento\Framework\HTTP\PhpEnvironment\Request  */
     private $phpEnvironmentRequest;
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     private $productFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
     private $listingProductCollectionFactory;
@@ -68,40 +72,41 @@ class Amazon extends Command
         $alpr = $structureHelper->getTableNameWithPrefix('m2epro_amazon_listing_product_repricing');
 
         $subQuery = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['malp' => $alp],
-                ['general_id', 'sku']
-            )
-            ->joinInner(
-                ['mlp' => $lp],
-                'mlp.id = malp.listing_product_id',
-                ['listing_id',
-                    'product_id',
-                    new \Zend_Db_Expr('COUNT(product_id) - 1 AS count_of_duplicates'),
-                    new \Zend_Db_Expr('MIN(mlp.id) AS save_this_id'),
-                ]
-            )
-            ->group(['mlp.product_id', 'malp.sku'])
-            ->having(new \Zend_Db_Expr('count_of_duplicates > 0'));
+                                             ->select()
+                                             ->from(
+                                                 ['malp' => $alp],
+                                                 ['general_id', 'sku']
+                                             )
+                                             ->joinInner(
+                                                 ['mlp' => $lp],
+                                                 'mlp.id = malp.listing_product_id',
+                                                 [
+                                                     'listing_id',
+                                                     'product_id',
+                                                     new \Zend_Db_Expr('COUNT(product_id) - 1 AS count_of_duplicates'),
+                                                     new \Zend_Db_Expr('MIN(mlp.id) AS save_this_id'),
+                                                 ]
+                                             )
+                                             ->group(['mlp.product_id', 'malp.sku'])
+                                             ->having(new \Zend_Db_Expr('count_of_duplicates > 0'));
 
         $query = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                ['malp' => $alp],
-                ['listing_product_id']
-            )
-            ->joinInner(
-                ['mlp' => $lp],
-                'mlp.id = malp.listing_product_id',
-                ['status']
-            )
-            ->joinInner(
-                ['templ_table' => $subQuery],
-                'malp.sku = templ_table.sku AND mlp.listing_id = templ_table.listing_id'
-            )
-            ->where('malp.listing_product_id <> templ_table.save_this_id')
-            ->query();
+                                          ->select()
+                                          ->from(
+                                              ['malp' => $alp],
+                                              ['listing_product_id']
+                                          )
+                                          ->joinInner(
+                                              ['mlp' => $lp],
+                                              'mlp.id = malp.listing_product_id',
+                                              ['status']
+                                          )
+                                          ->joinInner(
+                                              ['templ_table' => $subQuery],
+                                              'malp.sku = templ_table.sku AND mlp.listing_id = templ_table.listing_id'
+                                          )
+                                          ->where('malp.listing_product_id <> templ_table.save_this_id')
+                                          ->query();
 
         $removed = 0;
         $duplicated = [];
@@ -173,6 +178,7 @@ HTML;
     </body>
 </html>
 HTML;
+
         return str_replace('#count#', count($duplicated), $html);
     }
 

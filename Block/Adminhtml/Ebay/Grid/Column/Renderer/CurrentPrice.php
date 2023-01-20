@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
@@ -17,13 +17,13 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    /** @var \Magento\Framework\Locale\CurrencyInterface  */
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -56,7 +56,7 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
             return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
         }
 
-        $onlineStartPrice   = $row->getData('online_start_price');
+        $onlineStartPrice = $row->getData('online_start_price');
         $onlineCurrentPrice = $row->getData('online_current_price');
 
         if ($onlineCurrentPrice === null || $onlineCurrentPrice === '') {
@@ -76,36 +76,37 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
         }
 
         if (!empty($onlineStartPrice)) {
-            $onlineReservePrice  = $row->getData('online_reserve_price');
+            $onlineReservePrice = $row->getData('online_reserve_price');
             $onlineBuyItNowPrice = $row->getData('online_buyitnow_price');
 
             $onlineStartStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineStartPrice);
 
             $startPriceText = $translator->__('Start Price');
 
-            $onlineCurrentPriceHtml  = '';
-            $onlineReservePriceHtml  = '';
+            $onlineCurrentPriceHtml = '';
+            $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
 
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
                 $currentPriceText = $translator->__('Current Price');
                 $onlineCurrentStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
-                $onlineCurrentPriceHtml = '<strong>'.$currentPriceText.':</strong> '.$onlineCurrentStr.'<br/><br/>';
+                $onlineCurrentPriceHtml = '<strong>' . $currentPriceText . ':</strong> ' . $onlineCurrentStr . '<br/><br/>';
             }
 
             if ($onlineReservePrice > 0) {
                 $reservePriceText = $translator->__('Reserve Price');
                 $onlineReserveStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineReservePrice);
-                $onlineReservePriceHtml = '<strong>'.$reservePriceText.':</strong> '.$onlineReserveStr.'<br/>';
+                $onlineReservePriceHtml = '<strong>' . $reservePriceText . ':</strong> ' . $onlineReserveStr . '<br/>';
             }
 
             if ($onlineBuyItNowPrice > 0) {
                 $buyItNowText = $translator->__('Buy It Now Price');
                 $onlineBuyItNowStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineBuyItNowPrice);
-                $onlineBuyItNowPriceHtml = '<strong>'.$buyItNowText.':</strong> '.$onlineBuyItNowStr;
+                $onlineBuyItNowPriceHtml = '<strong>' . $buyItNowText . ':</strong> ' . $onlineBuyItNowStr;
             }
 
-            $intervalHtml = $this->getTooltipHtml(<<<HTML
+            $intervalHtml = $this->getTooltipHtml(
+                <<<HTML
 <span style="color:gray;">
     {$onlineCurrentPriceHtml}
     <strong>{$startPriceText}:</strong> {$onlineStartStr}<br/>
@@ -131,7 +132,6 @@ HTML;
 
         $noticeHtml = '';
         if ($listingProductId = $row->getData('listing_product_id')) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
             if ($listingProduct->getChildObject()->isVariationsReady()) {
@@ -149,9 +149,9 @@ HTML;
 
         return $noticeHtml .
             '<div style="display: inline;">' .
-                '<span class="product-price-value">' .
-                     $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice) .
-                '</span>' .
+            '<span class="product-price-value">' .
+            $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice) .
+            '</span>' .
             '</div>';
     }
 

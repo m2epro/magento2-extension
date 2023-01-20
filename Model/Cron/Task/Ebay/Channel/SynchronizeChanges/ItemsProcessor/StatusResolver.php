@@ -13,19 +13,23 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProces
  */
 class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 {
-    const EBAY_STATUS_ACTIVE = 'Active';
-    const EBAY_STATUS_ENDED = 'Ended';
-    const EBAY_STATUS_COMPLETED = 'Completed';
+    public const EBAY_STATUS_ACTIVE = 'Active';
+    public const EBAY_STATUS_ENDED = 'Ended';
+    public const EBAY_STATUS_COMPLETED = 'Completed';
 
-    const SKIP_FLAG_KEY = 'skip_first_completed_status_on_sync';
+    public const SKIP_FLAG_KEY = 'skip_first_completed_status_on_sync';
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct;
+    /** @var int  */
     protected $channelQty = 0;
+    /** @var int  */
     protected $channelQtySold = 0;
-
+    /** @var null  */
     protected $productStatus = null;
+    /** @var null  */
     protected $onlineDuration = null;
+    /** @var null  */
     protected $productAdditionalData = null;
 
     //########################################
@@ -75,10 +79,11 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
         if ($this->channelQty - $this->channelQtySold <= 0) {
             // Listed Hidden Status can be only for GTC items
             if ($this->listingProduct->getChildObject()->getOnlineDuration() === null) {
-                $this->onlineDuration = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;;
+                $this->onlineDuration = \Ess\M2ePro\Helper\Component\Ebay::LISTING_DURATION_GTC;
             }
 
             $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
+
             return;
         }
 
@@ -123,6 +128,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
     {
         if (!$this->listingProduct->isHidden() && $this->channelQty == $this->channelQtySold) {
             $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
+
             return true;
         }
 
@@ -134,6 +140,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
     public function statusCompletedIsAlreadySkipped()
     {
         $additionalData = $this->listingProduct->getAdditionalData();
+
         return isset($additionalData[self::SKIP_FLAG_KEY]);
     }
 

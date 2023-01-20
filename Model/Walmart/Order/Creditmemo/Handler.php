@@ -30,6 +30,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -46,8 +47,10 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 $creditmemoItem->getOrderItem()->getAdditionalData()
             );
 
-            if (!isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
-                !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])) {
+            if (
+                !isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
+                !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])
+            ) {
                 continue;
             }
 
@@ -112,16 +115,17 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 
                 $entry = [
                     'item_id' => $orderItemId,
-                    'qty'     => $itemQty,
-                    'prices'  => [
+                    'qty' => $itemQty,
+                    'prices' => [
                         'product' => $price,
                     ],
-                    'taxes'   => [
+                    'taxes' => [
                         'product' => $tax,
                     ],
                 ];
 
-                if ($item->isBuyerCancellationRequested()
+                if (
+                    $item->isBuyerCancellationRequested()
                     && $item->isBuyerCancellationPossible()
                 ) {
                     $entry['is_buyer_cancellation'] = true;

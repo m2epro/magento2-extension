@@ -18,8 +18,7 @@ class Walmart extends AbstractPriceCondition
             ->addSelect('vat', 'price_vat_percent')
             ->addSelect('modifier', 'price_modifier')
             ->addSelect('mode', 'price_mode')
-            ->addSelect('mode_attribute', 'price_custom_attribute')
-        ;
+            ->addSelect('mode_attribute', 'price_custom_attribute');
 
         $sellingPolicyQuery->from('t', 'm2epro_walmart_template_selling_format');
 

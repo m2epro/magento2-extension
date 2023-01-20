@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
- */
 abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
     /**
@@ -37,7 +34,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
     protected $requestDataObject = null;
-
+    /** @var bool  */
     protected $isSuccess = false;
 
     //########################################
@@ -132,6 +129,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function validateResponse()
     {
         $responseData = $this->getResponse()->getResponseData();
+
         return isset($responseData['messages']) && is_array($responseData['messages']);
     }
 
@@ -225,7 +223,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getLogger()
     {
         if ($this->logger === null) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Logger $logger */
 
             $logger = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Logger');
@@ -277,7 +274,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         if ($this->responseObject === null) {
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response $response */
             $response = $this->modelFactory->getObject(
-                'Amazon\Listing\Product\Action\Type\\'.$this->getOrmActionType().'\Response'
+                'Amazon\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Response'
             );
 
             $response->setParams($this->params['params']);
@@ -303,7 +300,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function getRequestDataObject()
     {
         if ($this->requestDataObject === null) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData $requestData */
             $requestData = $this->modelFactory->getObject('Amazon_Listing_Product_Action_RequestData');
 
@@ -371,8 +367,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
      *
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message|bool
      * TODO ERROR CODEs
      */
     protected function isTemporaryErrorAppeared(array $messages)

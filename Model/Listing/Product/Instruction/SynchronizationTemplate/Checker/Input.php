@@ -21,6 +21,7 @@ class Input extends \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\Input
     public function setScheduledAction(\Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction)
     {
         $this->scheduledAction = $scheduledAction;
+
         return $this;
     }
 

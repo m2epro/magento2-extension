@@ -12,8 +12,8 @@ use Ess\M2ePro\Model\Magento\Product\Inventory\AbstractModel;
 use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
 use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
 use Magento\InventorySalesApi\Api\StockResolverInterface;
-use \Magento\InventoryIndexer\Model\ResourceModel\GetStockItemData;
-use \Magento\InventoryReservations\Model\ResourceModel\GetReservationsQuantity;
+use Magento\InventoryIndexer\Model\ResourceModel\GetStockItemData;
+use Magento\InventoryReservations\Model\ResourceModel\GetReservationsQuantity;
 
 /**
  * Class \Ess\M2ePro\Model\MSI\Magento\Product\Inventory
@@ -50,7 +50,7 @@ class Inventory extends AbstractModel
             GetProductSalableQtyInterface::class,
             [
                 'getStockItemData' => $this->getStockItemData,
-                'getReservationsQuantity' => $objectManager->get(GetReservationsQuantity::class)
+                'getReservationsQuantity' => $objectManager->get(GetReservationsQuantity::class),
             ]
         );
         $this->stockResolver = $objectManager->get(StockResolverInterface::class);
@@ -72,6 +72,7 @@ class Inventory extends AbstractModel
             $this->getProduct()->getSku(),
             $this->getStock()->getStockId()
         );
+
         return $stockItemData === null ? 0 : $stockItemData[GetStockItemData::IS_SALABLE];
     }
 

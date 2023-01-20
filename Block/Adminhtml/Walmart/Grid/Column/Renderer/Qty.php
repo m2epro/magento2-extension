@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Product;
@@ -15,7 +15,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */

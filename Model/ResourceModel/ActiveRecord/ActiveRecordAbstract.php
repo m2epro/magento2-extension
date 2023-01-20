@@ -16,10 +16,10 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\ResourceMod
      */
     protected $_useIsObjectNew = true;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     //########################################
@@ -40,6 +40,7 @@ abstract class ActiveRecordAbstract extends \Magento\Framework\Model\ResourceMod
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

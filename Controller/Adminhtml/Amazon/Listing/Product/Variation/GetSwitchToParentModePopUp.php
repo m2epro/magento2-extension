@@ -18,7 +18,9 @@ class GetSwitchToParentModePopUp extends Main
     public function execute()
     {
         $block = $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\SwitchToParentPopup::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\SwitchToParentPopup::class
+                      );
 
         $this->setAjaxContent($block);
 

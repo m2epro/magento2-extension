@@ -44,7 +44,7 @@ class NotCreatedFilter extends AbstractContainer
             $params[$this->getParamName()] = true;
         }
 
-        return $this->getUrl('*/'.$this->getData('controller').'/*', $params);
+        return $this->getUrl('*/' . $this->getData('controller') . '/*', $params);
     }
 
     public function isChecked()

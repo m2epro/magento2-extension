@@ -11,6 +11,7 @@
  * @method \Ess\M2ePro\Model\Amazon\Template\SellingFormat getComponentSellingFormatTemplate()
  * @method \Ess\M2ePro\Model\Amazon\Listing\Product getComponentProduct()
  */
+
 namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 
 /**
@@ -27,11 +28,13 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 
     /**
      * @param bool $value
+     *
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\QtyCalculator
      */
     public function setIsMagentoMode($value)
     {
         $this->isMagentoMode = (bool)$value;
+
         return $this;
     }
 
@@ -56,10 +59,14 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 
     protected function getOptionBaseValue(\Ess\M2ePro\Model\Listing\Product\Variation\Option $option)
     {
-        if ($this->getIsMagentoMode() ||
-            $this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
-            if (!$this->getMagentoProduct()->isStatusEnabled() ||
-                !$this->getMagentoProduct()->isStockAvailability()) {
+        if (
+            $this->getIsMagentoMode() ||
+            $this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
+        ) {
+            if (
+                !$this->getMagentoProduct()->isStatusEnabled() ||
+                !$this->getMagentoProduct()->isStockAvailability()
+            ) {
                 return 0;
             }
         }

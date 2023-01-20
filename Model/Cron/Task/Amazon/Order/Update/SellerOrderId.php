@@ -15,9 +15,9 @@ use Ess\M2ePro\Model\Amazon\Order;
  */
 class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/update/seller_order_id';
+    public const NICK = 'amazon/order/update/seller_order_id';
 
-    const ORDERS_PER_MERCHANT = 1000;
+    public const ORDERS_PER_MERCHANT = 1000;
 
     /** @var int (in seconds) */
     protected $interval = 3600;
@@ -128,12 +128,12 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             foreach ($collection->getItems() as $orderData) {
                 $orders[$orderData['order_id']] = [
                     'amazon_order_id' => $orderData['amazon_order_id'],
-                    'seller_order_id' => $orderData['increment_id']
+                    'seller_order_id' => $orderData['increment_id'],
                 ];
                 $accounts[] = $orderData['server_hash'];
 
                 $ordersToUpdate[$orderData['order_id']] = [
-                    'seller_order_id' => $orderData['increment_id']
+                    'seller_order_id' => $orderData['increment_id'],
                 ];
             }
 
@@ -151,7 +151,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 [
                     'orders' => $orders,
                     'accounts' => array_unique($accounts),
-                    'ignore_processing_request' => 1
+                    'ignore_processing_request' => 1,
                 ]
             );
             $dispatcherObject->process($connectorObj);
@@ -167,7 +167,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     $connection->update(
                         $this->orderAmazonResource->getMainTable(),
                         [
-                            'seller_order_id' => $orderData['seller_order_id']
+                            'seller_order_id' => $orderData['seller_order_id'],
                         ],
                         '`order_id` = ' . $orderId
                     );
@@ -196,7 +196,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private function getOrderCollection($enabledAccountIds, $enabledMerchantId, $date, $replacementDate)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $collection */
-        $collection =  $this->orderCollectionFactory->create();
+        $collection = $this->orderCollectionFactory->create();
         $collection->joinInner(
             ['second_table' => $this->orderAmazonResource->getMainTable()],
             'second_table.order_id = main_table.id'

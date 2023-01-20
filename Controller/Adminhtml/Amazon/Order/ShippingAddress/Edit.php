@@ -27,6 +27,7 @@ class Edit extends Order
                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress\Form::class);
 
         $this->setAjaxContent($form->toHtml());
+
         return $this->getResult();
     }
 }

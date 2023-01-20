@@ -10,7 +10,7 @@ use Ess\M2ePro\Model\ControlPanel\Inspection\Repository;
 
 class Grid extends WidgetAbstractGrid
 {
-    const NOT_SUCCESS_FILTER = 'not-success';
+    public const NOT_SUCCESS_FILTER = 'not-success';
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory */
     protected $customCollectionFactory;
@@ -30,7 +30,6 @@ class Grid extends WidgetAbstractGrid
         \Magento\Backend\Helper\Data $backendHelper,
         ObjectManagerInterface $objectManager
     ) {
-
         $this->customCollectionFactory = $customCollectionFactory;
         $this->objectManager = $objectManager;
         $this->repository = $repository;
@@ -49,10 +48,10 @@ class Grid extends WidgetAbstractGrid
 
         foreach ($this->repository->getDefinitions() as $definition) {
             $row = [
-                'id'          => $definition->getNick(),
-                'title'       => $definition->getTitle(),
+                'id' => $definition->getNick(),
+                'title' => $definition->getTitle(),
                 'description' => $definition->getDescription(),
-                'group'       => $definition->getGroup(),
+                'group' => $definition->getGroup(),
             ];
             $collection->addItem(new DataObject($row));
         }
@@ -67,47 +66,47 @@ class Grid extends WidgetAbstractGrid
         $this->addColumn(
             'title',
             [
-                'header'                    => $this->__('Title'),
-                'align'                     => 'left',
-                'type'                      => 'text',
-                'width'                     => '20%',
-                'index'                     => 'title',
-                'filter_index'              => 'title',
+                'header' => $this->__('Title'),
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '20%',
+                'index' => 'title',
+                'filter_index' => 'title',
                 'filter_condition_callback' => [$this, 'callbackFilterLike'],
-                'frame_callback'            => [$this, 'callbackColumnTitle']
+                'frame_callback' => [$this, 'callbackColumnTitle'],
             ]
         );
 
         $this->addColumn(
             'details',
             [
-                'header'           => $this->__('Details'),
-                'align'            => 'left',
-                'type'             => 'text',
-                'width'            => '40%',
+                'header' => $this->__('Details'),
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '40%',
                 'column_css_class' => 'details',
-                'filter_index'     => false,
+                'filter_index' => false,
             ]
         );
 
         $this->addColumn(
             'actions',
             [
-                'header'   => $this->__('Actions'),
-                'align'    => 'left',
-                'width'    => '150px',
-                'type'     => 'action',
-                'index'    => 'actions',
-                'filter'   => false,
+                'header' => $this->__('Actions'),
+                'align' => 'left',
+                'width' => '150px',
+                'type' => 'action',
+                'index' => 'actions',
+                'filter' => false,
                 'sortable' => false,
-                'getter'   => 'getId',
+                'getter' => 'getId',
                 'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-                'actions'  => [
+                'actions' => [
                     'checkAction' => [
                         'caption' => $this->__('Check'),
-                        'field'   => 'id',
+                        'field' => 'id',
                         'onclick' => 'ControlPanelInspectionObj.checkAction()',
-                    ]
+                    ],
                 ],
             ]
         );
@@ -115,11 +114,11 @@ class Grid extends WidgetAbstractGrid
         $this->addColumn(
             'id',
             [
-                'header'           => $this->__('ID'),
-                'align'            => 'right',
-                'width'            => '100px',
-                'type'             => 'text',
-                'index'            => 'id',
+                'header' => $this->__('ID'),
+                'align' => 'right',
+                'width' => '100px',
+                'type' => 'text',
+                'index' => 'id',
                 'column_css_class' => 'no-display id',
                 'header_css_class' => 'no-display',
             ]
@@ -141,8 +140,8 @@ class Grid extends WidgetAbstractGrid
         $this->getMassactionBlock()->addItem(
             'checkAll',
             [
-                'label'    => $this->__('Run'),
-                'url'      => '',
+                'label' => $this->__('Run'),
+                'url' => '',
             ]
         );
 
@@ -231,7 +230,7 @@ HTML;
         parent::_beforeToHtml();
 
         $urls = [
-            'checkInspection' => $this->getUrl('m2epro/controlPanel_inspection/checkInspection')
+            'checkInspection' => $this->getUrl('m2epro/controlPanel_inspection/checkInspection'),
         ];
 
         $this->jsUrl->addUrls($urls);

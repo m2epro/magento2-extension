@@ -93,12 +93,13 @@ class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 More detailed information about ability to work with this Page you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.',
                 $this->supportHelper->getDocumentationArticleUrl('x/iAMVB')
-            )
+            ),
         ]);
 
         $this->setChild('help_block', $helpBlock);
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
         a.specific-clone-button {
             display: inline-block;
             width: 20px;
@@ -110,38 +111,38 @@ class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 CSS
         );
         $this->jsTranslator->addTranslations([
-            'Add Specifics'        => $this->__('Add Specifics'),
+            'Add Specifics' => $this->__('Add Specifics'),
             'Remove this specific' => $this->__('Remove this specific'),
 
             'Total digits (not more):' => $this->__('Total digits (not more):'),
             'Type: Numeric.' => $this->__('Type: Numeric.'),
-            'Min:'           => $this->__('Min:'),
-            'Max:'           => $this->__('Max:'),
+            'Min:' => $this->__('Min:'),
+            'Max:' => $this->__('Max:'),
 
             'Can take any value.' => $this->__('Can take any value.'),
             'Two uppercase letters or "unknown".' => $this->__('Two uppercase letters or "unknown".'),
             'The value is incorrect.' => $this->__('The value is incorrect.'),
-            'Type: String.'   => $this->__('Type: String.'),
-            'Min length:'     => $this->__('Min length:'),
-            'Max length:'     => $this->__('Max length:'),
+            'Type: String.' => $this->__('Type: String.'),
+            'Min length:' => $this->__('Min length:'),
+            'Max length:' => $this->__('Max length:'),
 
             'Type: Date time. Format: YYYY-MM-DD hh:mm:ss' => $this->__('Type: Date time. Format: YYYY-MM-DD hh:mm:ss'),
-            'Type: Numeric floating point.'                => $this->__('Type: Numeric floating point.'),
-            'Decimal places (not more):'                   => $this->__('Decimal places (not more):'),
+            'Type: Numeric floating point.' => $this->__('Type: Numeric floating point.'),
+            'Decimal places (not more):' => $this->__('Decimal places (not more):'),
 
             'Recommended Values' => $this->__('Recommended Values'),
-            'Allowed Values'     => $this->__('Allowed Values'),
-            'Custom Attribute'   => $this->__('Custom Attribute'),
-            'Custom Value'       => $this->__('Custom Value'),
-            'None'               => $this->__('None'),
+            'Allowed Values' => $this->__('Allowed Values'),
+            'Custom Attribute' => $this->__('Custom Attribute'),
+            'Custom Value' => $this->__('Custom Value'),
+            'None' => $this->__('None'),
 
-            'Definition:'    => $this->__('Definition:'),
-            'Tips:'          => $this->__('Tips:'),
-            'Examples:'      => $this->__('Examples:'),
-            'Desired'        => $this->__('Desired'),
+            'Definition:' => $this->__('Definition:'),
+            'Tips:' => $this->__('Tips:'),
+            'Examples:' => $this->__('Examples:'),
+            'Desired' => $this->__('Desired'),
 
             'Duplicate specific' => $this->__('Duplicate specific'),
-            'Delete specific'    => $this->__('Delete specific'),
+            'Delete specific' => $this->__('Delete specific'),
             'Add Specific into current container' => $this->__('Add Specific into current container'),
 
             'Value of this Specific can be automatically overwritten by M2E Pro.' => $this->__(
@@ -153,18 +154,20 @@ CSS
                 'The Value of this Specific can be necessary due to technical reasons,
                 so there is no ability to Edit the Attribute parentage and also it has no semantic load.
                 In case this Description Policy uses for creation of new Amazon Parent-Child Product,
-                this Value will be overwritten and the Value you selected will not be/cannot be used.'
+                this Value will be overwritten and the Value you selected will not be/cannot be used.',
         ]);
 
         $formData = $this->dataHelper->jsonEncode($this->formData);
-        $this->js->add("
+        $this->js->add(
+            "
             wait(
                 function() { return typeof AmazonTemplateDescriptionCategorySpecificObj != 'undefined'; },
                 function() { AmazonTemplateDescriptionCategorySpecificObj.setFormDataSpecifics({$formData}); },
                 50
             );
 
-        ");
+        "
+        );
 
         return parent::_beforeToHtml();
     }

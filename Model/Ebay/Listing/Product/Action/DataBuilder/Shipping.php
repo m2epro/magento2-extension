@@ -13,17 +13,17 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
  */
 class Shipping extends AbstractModel
 {
-    const SHIPPING_TYPE_FLAT = 'flat';
-    const SHIPPING_TYPE_CALCULATED = 'calculated';
-    const SHIPPING_TYPE_FREIGHT = 'freight';
-    const SHIPPING_TYPE_LOCAL = 'local';
+    public const SHIPPING_TYPE_FLAT = 'flat';
+    public const SHIPPING_TYPE_CALCULATED = 'calculated';
+    public const SHIPPING_TYPE_FREIGHT = 'freight';
+    public const SHIPPING_TYPE_LOCAL = 'local';
 
-    const MEASUREMENT_SYSTEM_ENGLISH = 'English';
-    const MEASUREMENT_SYSTEM_METRIC = 'Metric';
+    public const MEASUREMENT_SYSTEM_ENGLISH = 'English';
+    public const MEASUREMENT_SYSTEM_METRIC = 'Metric';
 
-    const CROSS_BORDER_TRADE_NONE = 'None';
-    const CROSS_BORDER_TRADE_NORTH_AMERICA = 'North America';
-    const CROSS_BORDER_TRADE_UNITED_KINGDOM = 'UK';
+    public const CROSS_BORDER_TRADE_NONE = 'None';
+    public const CROSS_BORDER_TRADE_NORTH_AMERICA = 'North America';
+    public const CROSS_BORDER_TRADE_UNITED_KINGDOM = 'UK';
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Shipping
@@ -39,10 +39,11 @@ class Shipping extends AbstractModel
         $data = [
             'country' => $this->getShippingSource()->getCountry(),
             'address' => $this->getShippingSource()->getAddress(),
-            'postal_code' => $this->getShippingSource()->getPostalCode()
+            'postal_code' => $this->getShippingSource()->getPostalCode(),
         ];
 
-        if ($this->getShippingTemplate()->isLocalShippingFlatEnabled() ||
+        if (
+            $this->getShippingTemplate()->isLocalShippingFlatEnabled() ||
             $this->getShippingTemplate()->isLocalShippingCalculatedEnabled()
         ) {
             $data['dispatch_time'] = $this->getShippingSource()->getDispatchTime();
@@ -74,7 +75,7 @@ class Shipping extends AbstractModel
             'shipping' => array_merge(
                 $data,
                 $this->getShippingData()
-            )
+            ),
         ];
     }
 
@@ -89,13 +90,17 @@ class Shipping extends AbstractModel
 
         $shippingData['local'] = $this->getLocalShippingData();
 
-        if ($this->getShippingTemplate()->isLocalShippingLocalEnabled() ||
-            $this->getShippingTemplate()->isLocalShippingFreightEnabled()) {
+        if (
+            $this->getShippingTemplate()->isLocalShippingLocalEnabled() ||
+            $this->getShippingTemplate()->isLocalShippingFreightEnabled()
+        ) {
             return $shippingData;
         }
 
-        if ($this->getShippingTemplate()->isInternationalShippingFlatEnabled() ||
-            $this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()) {
+        if (
+            $this->getShippingTemplate()->isInternationalShippingFlatEnabled() ||
+            $this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()
+        ) {
             $shippingData['international'] = $this->getInternationalShippingData();
         }
 
@@ -156,27 +161,31 @@ class Shipping extends AbstractModel
     protected function getLocalShippingData()
     {
         $data = [
-            'type' => $this->getLocalType()
+            'type' => $this->getLocalType(),
         ];
 
-        if ($this->getShippingTemplate()->isLocalShippingLocalEnabled() ||
-            $this->getShippingTemplate()->isLocalShippingFreightEnabled()) {
+        if (
+            $this->getShippingTemplate()->isLocalShippingLocalEnabled() ||
+            $this->getShippingTemplate()->isLocalShippingFreightEnabled()
+        ) {
             return $data;
         }
 
         $data['discount_promotional_enabled'] = $this->getShippingTemplate()
-            ->isLocalShippingDiscountPromotionalEnabled();
+                                                     ->isLocalShippingDiscountPromotionalEnabled();
         $data['discount_combined_profile_id'] = $this->getShippingTemplate()
-            ->getLocalShippingDiscountCombinedProfileId(
-                $this->getListingProduct()->getListing()->getAccountId()
-            );
+                                                     ->getLocalShippingDiscountCombinedProfileId(
+                                                         $this->getListingProduct()->getListing()->getAccountId()
+                                                     );
 
-        if ($this->getShippingTemplate()->isLocalShippingFlatEnabled() &&
-            $this->getShippingTemplate()->isLocalShippingRateTableEnabled($this->getAccount())) {
+        if (
+            $this->getShippingTemplate()->isLocalShippingFlatEnabled() &&
+            $this->getShippingTemplate()->isLocalShippingRateTableEnabled($this->getAccount())
+        ) {
             $data['rate_table_mode'] = $this->getShippingTemplate()
-                ->getLocalShippingRateTableMode($this->getAccount());
+                                            ->getLocalShippingRateTableMode($this->getAccount());
             $data['rate_table_enabled'] = $this->getShippingTemplate()
-                ->isLocalShippingRateTableEnabled($this->getAccount());
+                                               ->isLocalShippingRateTableEnabled($this->getAccount());
             $data['rate_table_id'] = $this->getShippingTemplate()->getLocalShippingRateTableId($this->getAccount());
         }
 
@@ -221,7 +230,6 @@ class Shipping extends AbstractModel
         $services = [];
 
         foreach ($this->getShippingTemplate()->getServices(true) as $service) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeLocal()) {
@@ -229,16 +237,16 @@ class Shipping extends AbstractModel
             }
 
             $tempDataMethod = [
-                'service' => $service->getShippingValue()
+                'service' => $service->getShippingValue(),
             ];
 
             if ($this->getShippingTemplate()->isLocalShippingFlatEnabled()) {
                 $store = $this->getListing()->getStoreId();
                 $tempDataMethod['cost'] = $service->getSource($this->getMagentoProduct())
-                    ->getCost($store);
+                                                  ->getCost($store);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
-                    ->getCostAdditional($store);
+                                                             ->getCostAdditional($store);
             }
 
             if ($this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
@@ -260,25 +268,26 @@ class Shipping extends AbstractModel
     protected function getInternationalShippingData()
     {
         $data = [
-            'type' => $this->getInternationalType()
+            'type' => $this->getInternationalType(),
         ];
 
         $data['discount_promotional_enabled'] = $this->getShippingTemplate()
-            ->isInternationalShippingDiscountPromotionalEnabled();
+                                                     ->isInternationalShippingDiscountPromotionalEnabled();
         $data['discount_combined_profile_id'] = $this->getShippingTemplate()
-            ->getInternationalShippingDiscountCombinedProfileId(
-                $this->getListingProduct()->getListing()->getAccountId()
-            );
+                                                     ->getInternationalShippingDiscountCombinedProfileId(
+                                                         $this->getListingProduct()->getListing()->getAccountId()
+                                                     );
 
-        if ($this->getShippingTemplate()->isInternationalShippingFlatEnabled() &&
+        if (
+            $this->getShippingTemplate()->isInternationalShippingFlatEnabled() &&
             $this->getShippingTemplate()->isInternationalShippingRateTableEnabled($this->getAccount())
         ) {
             $data['rate_table_mode'] = $this->getShippingTemplate()
-                ->getInternationalShippingRateTableMode($this->getAccount());
+                                            ->getInternationalShippingRateTableMode($this->getAccount());
             $data['rate_table_enabled'] = $this->getShippingTemplate()
-                ->isInternationalShippingRateTableEnabled($this->getAccount());
+                                               ->isInternationalShippingRateTableEnabled($this->getAccount());
             $data['rate_table_id'] = $this->getShippingTemplate()
-                ->getInternationalShippingRateTableId($this->getAccount());
+                                          ->getInternationalShippingRateTableId($this->getAccount());
         }
 
         if ($this->getShippingTemplate()->isInternationalShippingCalculatedEnabled()) {
@@ -314,7 +323,6 @@ class Shipping extends AbstractModel
         $services = [];
 
         foreach ($this->getShippingTemplate()->getServices(true) as $service) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeInternational()) {
@@ -323,16 +331,16 @@ class Shipping extends AbstractModel
 
             $tempDataMethod = [
                 'service' => $service->getShippingValue(),
-                'locations' => $service->getLocations()
+                'locations' => $service->getLocations(),
             ];
 
             if ($this->getShippingTemplate()->isInternationalShippingFlatEnabled()) {
                 $store = $this->getListing()->getStoreId();
                 $tempDataMethod['cost'] = $service->getSource($this->getMagentoProduct())
-                    ->getCost($store);
+                                                  ->getCost($store);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
-                    ->getCostAdditional($store);
+                                                             ->getCostAdditional($store);
             }
 
             $services[] = $tempDataMethod;
@@ -361,6 +369,7 @@ class Shipping extends AbstractModel
     protected function getShippingSource()
     {
         $shippingTemplate = $this->getShippingTemplate();
+
         return $shippingTemplate !== null ? $shippingTemplate->getSource($this->getMagentoProduct()) : null;
     }
 
@@ -380,6 +389,7 @@ class Shipping extends AbstractModel
     protected function getCalculatedShippingSource()
     {
         $calculatedShipping = $this->getCalculatedShippingTemplate();
+
         return $calculatedShipping !== null ? $calculatedShipping->getSource($this->getMagentoProduct()) : null;
     }
 

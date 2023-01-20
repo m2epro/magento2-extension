@@ -19,6 +19,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 
         if (!$productIds) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -26,6 +27,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
 
         if (empty($productArray)) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -44,6 +46,7 @@ class Removing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Other
         }
 
         $this->setAjaxContent('1', false);
+
         return $this->getResult();
     }
 }

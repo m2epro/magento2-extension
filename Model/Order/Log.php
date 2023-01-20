@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-use \Ess\M2ePro\Model\Connector\Connection\Response\Message;
+use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
 /**
  * Class \Ess\M2ePro\Model\Order\Log
@@ -64,11 +64,13 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     /**
      * @param int $initiator
+     *
      * @return $this
      */
     public function setInitiator($initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN)
     {
         $this->initiator = (int)$initiator;
+
         return $this;
     }
 
@@ -103,20 +105,20 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         }
 
         $dataForAdd = [
-            'account_id'      => $order->getAccountId(),
-            'marketplace_id'  => $order->getMarketplaceId(),
-            'order_id'        => $order->getId(),
-            'description'     => $description,
-            'type'            => (int)$type,
+            'account_id' => $order->getAccountId(),
+            'marketplace_id' => $order->getMarketplaceId(),
+            'order_id' => $order->getId(),
+            'description' => $description,
+            'type' => (int)$type,
             'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
 
-            'initiator'      => $this->initiator ? $this->initiator : \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            'component_mode' => $this->getComponentMode()
+            'initiator' => $this->initiator ? $this->initiator : \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            'component_mode' => $this->getComponentMode(),
         ];
 
         $this->activeRecordFactory->getObject('Order_Log')
-            ->setData($dataForAdd)
-            ->save();
+                                  ->setData($dataForAdd)
+                                  ->save();
 
         return true;
     }
@@ -133,10 +135,10 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         }
 
         $map = [
-            Message::TYPE_NOTICE  => self::TYPE_INFO,
+            Message::TYPE_NOTICE => self::TYPE_INFO,
             Message::TYPE_SUCCESS => self::TYPE_SUCCESS,
             Message::TYPE_WARNING => self::TYPE_WARNING,
-            Message::TYPE_ERROR   => self::TYPE_ERROR
+            Message::TYPE_ERROR => self::TYPE_ERROR,
         ];
 
         $this->addMessage(

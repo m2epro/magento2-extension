@@ -39,15 +39,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $templateModel = $this->globalDataHelper->getValue('tmp_template')->getData();
         $formData = !empty($templateModel) ? $templateModel : ['title' => ''];
 
-        $form = $this->_formFactory->create(['data' => [
-            'id'      => 'edit_form',
-            'method'  => 'post',
-            'action'  => $this->getUrl('*/*/save'),
-            'enctype' => 'multipart/form-data'
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+                'method' => 'post',
+                'action' => $this->getUrl('*/*/save'),
+                'enctype' => 'multipart/form-data',
+            ],
+        ]);
 
         $fieldSet = $form->addFieldset('magento_block_template_description_edit_main_general', [
-            'legend' => $this->__('General'), 'collapsable' => false
+            'legend' => $this->__('General'),
+            'collapsable' => false,
         ]);
 
         $fieldSet->addField(
@@ -60,7 +63,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $formData['title'],
                 'class' => 'input-text M2ePro-description-template-title',
                 'required' => true,
-                'tooltip' => $this->__('Short meaningful Policy Title for your internal use.')
+                'tooltip' => $this->__('Short meaningful Policy Title for your internal use.'),
             ]
         );
 
@@ -70,7 +73,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'content_html',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $dataBlock->toHtml()
+                'text' => $dataBlock->toHtml(),
             ]
         );
 

@@ -20,8 +20,8 @@ class Congratulation extends AbstractBlock
         return <<<HTML
 <h2>
     {$this->__(
-        'Installation Wizard is completed. If you can\'t proceed, please contact us at <a href="mailto:support@m2epro.com">support@m2epro.com</a>.'
-    )}
+            'Installation Wizard is completed. If you can\'t proceed, please contact us at <a href="mailto:support@m2epro.com">support@m2epro.com</a>.'
+        )}
 </h2>
 
 HTML;

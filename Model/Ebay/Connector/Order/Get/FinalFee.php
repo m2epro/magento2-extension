@@ -24,7 +24,7 @@ class FinalFee extends \Ess\M2ePro\Model\Connector\Command\RealTime
     protected function getRequestData()
     {
         return [
-            'account'  => $this->params['account_server_hash'],
+            'account' => $this->params['account_server_hash'],
             'order_id' => $this->params['order_id'],
         ];
     }

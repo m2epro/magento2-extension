@@ -15,7 +15,7 @@ use Ess\M2ePro\Model\Issue\LocatorInterface;
  */
 class GlobalNotifications extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'magento/global_notifications';
+    public const NICK = 'magento/global_notifications';
 
     /**
      * @var int (in seconds)

@@ -24,7 +24,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'category_mode',
             'category_id',
             'category_attribute',
-            'category_path'
+            'category_path',
         ];
 
         foreach ($keys as $key) {
@@ -37,9 +37,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'category_id'        => 0,
-            'category_path'      => '',
-            'category_mode'      => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE,
+            'category_id' => 0,
+            'category_path' => '',
+            'category_mode' => \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE,
             'category_attribute' => '',
         ];
     }

@@ -93,7 +93,10 @@ class Command
 
             $methodContent = '';
             $fileContent = file($reflectionMethod->getFileName());
-            for ($i = $reflectionMethod->getStartLine() + 2; $i < $reflectionMethod->getEndLine(); $i++) {
+
+            $forInit = $reflectionMethod->getStartLine() + 2;
+            $forLimit = $reflectionMethod->getEndLine();
+            for ($i = $forInit; $i < $forLimit; $i++) {
                 $methodContent .= $fileContent[$i - 1];
             }
 

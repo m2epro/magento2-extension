@@ -15,10 +15,11 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Log */
     protected $synchronizationLog = null;
-
+    /** @var null  */
     protected $receiveOrdersToDate = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
     protected $ebayFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //####################################
@@ -40,12 +41,14 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
     public function setSynchronizationLog(\Ess\M2ePro\Model\Synchronization\Log $log)
     {
         $this->synchronizationLog = $log;
+
         return $this;
     }
 
     public function setReceiveOrdersToDate($toDate)
     {
         $this->receiveOrdersToDate = $toDate;
+
         return $this;
     }
 
@@ -57,7 +60,7 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection();
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             try {
                 $this->processAccount($account);
@@ -99,16 +102,17 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return array
      */
     protected function receiveEbayOrdersData(\Ess\M2ePro\Model\Account $account)
     {
-        $toTime   = $this->prepareToTime();
+        $toTime = $this->prepareToTime();
         $fromTime = $this->prepareFromTime($account, $toTime);
 
         $params = [
             'from_update_date' => $this->getHelper('Component\Ebay')->timeToString($fromTime),
-            'to_update_date'=> $this->getHelper('Component\Ebay')->timeToString($toTime)
+            'to_update_date' => $this->getHelper('Component\Ebay')->timeToString($toTime),
         ];
 
         $jobToken = $account->getChildObject()->getData('job_token');
@@ -116,8 +120,9 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
             $params['job_token'] = $jobToken;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Receive\Items $connectorObj */
         $connectorObj = $dispatcherObj->getCustomConnector(
             'Ebay_Connector_Order_Receive_Items',
             $params,
@@ -132,10 +137,10 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
 
         if (!isset($responseData['items']) || !isset($responseData['to_update_date'])) {
             $logData = [
-                'params'            => $params,
-                'account_id'        => $account->getId(),
-                'response_data'     => $responseData,
-                'response_messages' => $connectorObj->getResponseMessages()
+                'params' => $params,
+                'account_id' => $account->getId(),
+                'response_data' => $responseData,
+                'response_messages' => $connectorObj->getResponseMessages(),
             ];
             $this->getHelper('Module\Logger')->process($logData, 'eBay orders receive task - empty response');
 
@@ -173,6 +178,7 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Account $account
      * @param \DateTime $toTime
+     *
      * @return \DateTime
      */
     protected function prepareFromTime(\Ess\M2ePro\Model\Account $account, \DateTime $toTime)
@@ -195,7 +201,6 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
             if ((int)$sinceTime->format('U') < (int)$minDate->format('U')) {
                 $sinceTime = $minDate;
             }
-
             // ---------------------------------------
         }
 

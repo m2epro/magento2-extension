@@ -45,6 +45,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
     public function setSelectedCategories($categories)
     {
         $this->_selectedCategories = $categories;
+
         return $this;
     }
 
@@ -56,6 +57,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
     public function setHighlightedCategories($categories)
     {
         $this->_highlightedCategories = $categories;
+
         return $this;
     }
 
@@ -67,6 +69,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
     public function setCallback($callback)
     {
         $this->_callback = $callback;
+
         return $this;
     }
 
@@ -81,21 +84,22 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
     {
         $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, 0));
         $json = \Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : []);
+
         return $json;
     }
 
     public function _getNodeJson($node, $level = 0)
     {
         if (is_array($node)) {
-            $node = new \Magento\Framework\Data\Tree\Node($node, 'entity_id', new \Magento\Framework\Data\Tree);
+            $node = new \Magento\Framework\Data\Tree\Node($node, 'entity_id', new \Magento\Framework\Data\Tree());
         }
 
         $item = [];
         $item['text'] = $this->buildNodeName($node);
-        $item['id']  = $node->getId();
+        $item['id'] = $node->getId();
         $item['allowDrop'] = false;
 
-        if ((int)$node->getChildrenCount()>0) {
+        if ((int)$node->getChildrenCount() > 0) {
             $item['children'] = [];
         }
 
@@ -104,7 +108,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
             $item['children'] = [];
             if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
                 foreach ($node->getChildren() as $child) {
-                    $item['children'][] = $this->_getNodeJson($child, $level+1);
+                    $item['children'][] = $this->_getNodeJson($child, $level + 1);
                 }
             }
         }

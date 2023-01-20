@@ -23,6 +23,7 @@ abstract class AbstractBlockedHandler extends AbstractHandler
 
     /**
      * @param array $responseData
+     *
      * @return array|void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -58,7 +59,6 @@ abstract class AbstractBlockedHandler extends AbstractHandler
         $componentHelper = $this->helperFactory->getObject("Component\\{$uppercasedComponent}");
 
         while ($notReceivedItem = $stmt->fetch()) {
-
             if (!in_array((int)$notReceivedItem['id'], $notReceivedIds)) {
                 $statusChangedFrom = $componentHelper->getHumanTitleByListingProductStatus($notReceivedItem['status']);
                 $statusChangedTo = $componentHelper->getHumanTitleByListingProductStatus(
@@ -82,7 +82,8 @@ abstract class AbstractBlockedHandler extends AbstractHandler
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
                 );
 
-                if (!empty($notReceivedItem['is_variation_product']) &&
+                if (
+                    !empty($notReceivedItem['is_variation_product']) &&
                     !empty($notReceivedItem['variation_parent_id'])
                 ) {
                     $parentIdsForProcessing[] = $notReceivedItem['variation_parent_id'];
@@ -117,7 +118,7 @@ abstract class AbstractBlockedHandler extends AbstractHandler
                 $this->listingProductChildTable,
                 ['variation_parent_need_processor' => 1],
                 [
-                    'is_variation_parent = ?'   => 1,
+                    'is_variation_parent = ?' => 1,
                     'listing_product_id IN (?)' => $parentIdsForProcessing,
                 ]
             );
@@ -161,10 +162,10 @@ SQL;
         $this->resourceConnection->getConnection()->update(
             $this->listingProductTable,
             [
-                'status'         => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
+                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                 'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
             ],
-            '`id` IN ('.implode(',', $listingProductIds).')'
+            '`id` IN (' . implode(',', $listingProductIds) . ')'
         );
     }
 

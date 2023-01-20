@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Listing\Product\Action;
  */
 abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MODE_INCLUDING = 'including';
-    const MODE_EXCLUDING = 'excluding';
+    public const MODE_INCLUDING = 'including';
+    public const MODE_EXCLUDING = 'excluding';
 
     protected $mode = self::MODE_EXCLUDING;
 
@@ -42,7 +42,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     public function enableAll()
     {
-        $this->mode             = self::MODE_EXCLUDING;
+        $this->mode = self::MODE_EXCLUDING;
         $this->allowedDataTypes = $this->getAllDataTypes();
 
         return $this;
@@ -50,7 +50,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     public function disableAll()
     {
-        $this->mode             = self::MODE_INCLUDING;
+        $this->mode = self::MODE_INCLUDING;
         $this->allowedDataTypes = [];
 
         return $this;
@@ -78,12 +78,14 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     public function setModeExcluding()
     {
         $this->mode = self::MODE_EXCLUDING;
+
         return $this;
     }
 
     public function setModeIncluding()
     {
         $this->mode = self::MODE_INCLUDING;
+
         return $this;
     }
 
@@ -102,6 +104,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     public function isAllowed($dataType)
     {
         $this->validateDataType($dataType);
+
         return in_array($dataType, $this->allowedDataTypes);
     }
 
@@ -114,6 +117,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->allowedDataTypes[] = $dataType;
+
         return $this;
     }
 
@@ -126,6 +130,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->allowedDataTypes = array_diff($this->allowedDataTypes, [$dataType]);
+
         return $this;
     }
 
@@ -141,11 +146,13 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $params
+     *
      * @return $this
      */
     public function setParams(array $params)
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -153,6 +160,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
+     *
      * @return bool
      */
     public function isDataConsists(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
@@ -162,6 +170,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
+     *
      * @return bool
      */
     public function isParamsConsists(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
@@ -173,6 +182,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
+     *
      * @return $this
      */
     public function mergeData(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
@@ -181,24 +191,29 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
             $this->mode = self::MODE_EXCLUDING;
         }
 
-        $this->allowedDataTypes = array_unique(array_merge(
-            $this->getAllowedDataTypes(),
-            $configurator->getAllowedDataTypes()
-        ));
+        $this->allowedDataTypes = array_unique(
+            array_merge(
+                $this->getAllowedDataTypes(),
+                $configurator->getAllowedDataTypes()
+            )
+        );
 
         return $this;
     }
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
+     *
      * @return $this
      */
     public function mergeParams(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
     {
-        $this->params = array_unique(array_merge(
-            $this->getParams(),
-            $configurator->getParams()
-        ));
+        $this->params = array_unique(
+            array_merge(
+                $this->getParams(),
+                $configurator->getParams()
+            )
+        );
 
         return $this;
     }
@@ -211,14 +226,15 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     public function getSerializedData()
     {
         return [
-            'mode'               => $this->mode,
+            'mode' => $this->mode,
             'allowed_data_types' => $this->allowedDataTypes,
-            'params'             => $this->params,
+            'params' => $this->params,
         ];
     }
 
     /**
      * @param array $data
+     *
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -229,7 +245,8 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if (!empty($data['allowed_data_types'])) {
-            if (!is_array($data['allowed_data_types']) ||
+            if (
+                !is_array($data['allowed_data_types']) ||
                 array_diff($data['allowed_data_types'], $this->getAllDataTypes())
             ) {
                 throw new \Ess\M2ePro\Model\Exception\Logic(

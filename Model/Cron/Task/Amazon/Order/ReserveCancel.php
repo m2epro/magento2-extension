@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
  */
 class ReserveCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/reserve_cancel';
+    public const NICK = 'amazon/order/reserve_cancel';
 
     //####################################
 
@@ -43,9 +43,9 @@ class ReserveCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->getSynchronizationLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
         foreach ($permittedAccounts as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
             try {
                 $this->processAccount($account);
@@ -70,6 +70,7 @@ class ReserveCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
         )->getCollection();
+
         return $accountsCollection->getItems();
     }
 
@@ -92,8 +93,11 @@ class ReserveCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Order'
         )->getCollection()
-            ->addFieldToFilter('account_id', $account->getId())
-            ->addFieldToFilter('reservation_state', \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED);
+                                          ->addFieldToFilter('account_id', $account->getId())
+                                          ->addFieldToFilter(
+                                              'reservation_state',
+                                              \Ess\M2ePro\Model\Order\Reserve::STATE_PLACED
+                                          );
 
         $reservationDays = (int)$account->getChildObject()->getQtyReservationDays();
 

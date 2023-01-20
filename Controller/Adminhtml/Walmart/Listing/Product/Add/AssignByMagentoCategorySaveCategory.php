@@ -30,6 +30,7 @@ class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminht
         $this->getListing()->save();
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 }

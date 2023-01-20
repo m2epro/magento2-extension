@@ -8,16 +8,10 @@
 
 namespace Ess\M2ePro\Model\Connector\Command;
 
-/**
- * Class \Ess\M2ePro\Model\Connector\Command\RealTime
- */
 abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\AbstractModel
 {
-    //########################################
-
+    /** @var null  */
     protected $responseData = null;
-
-    //########################################
 
     public function process()
     {

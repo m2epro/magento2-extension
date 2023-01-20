@@ -10,7 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Store\Category;
 
 class GetTree extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
-
     //########################################
 
     public function execute()

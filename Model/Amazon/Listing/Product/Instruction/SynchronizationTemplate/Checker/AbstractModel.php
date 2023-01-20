@@ -8,13 +8,11 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-use \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as BaseAbstractModel;
-use \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
-use \Ess\M2ePro\Model\Amazon\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
+use Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as BaseAbstractModel;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
+use Ess\M2ePro\Model\Amazon\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
+use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as TemplateChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel
- */
 abstract class AbstractModel extends BaseAbstractModel
 {
     //########################################
@@ -40,7 +38,7 @@ abstract class AbstractModel extends BaseAbstractModel
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_QTY_DATA_POTENTIALLY_CHANGED,
             \Ess\M2ePro\Model\Amazon\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_QTY_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_QTY_DISABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_QTY_SETTINGS_CHANGED,
@@ -63,7 +61,7 @@ abstract class AbstractModel extends BaseAbstractModel
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_PRICE_DATA_POTENTIALLY_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_DISABLED,
             \Ess\M2ePro\Model\Amazon\Listing\Product::INSTRUCTION_TYPE_CHANNEL_REGULAR_PRICE_CHANGED,
@@ -84,7 +82,7 @@ abstract class AbstractModel extends BaseAbstractModel
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_PRICE_DATA_POTENTIALLY_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRICE_DISABLED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
@@ -105,7 +103,7 @@ abstract class AbstractModel extends BaseAbstractModel
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_DETAILS_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_DETAILS_DISABLED,
             \Ess\M2ePro\Model\Amazon\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
             \Ess\M2ePro\Model\Amazon\Listing\ChangeProcessor::INSTRUCTION_TYPE_CONDITION_DATA_CHANGED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
@@ -123,7 +121,7 @@ abstract class AbstractModel extends BaseAbstractModel
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED,
             \Ess\M2ePro\Model\Amazon\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,

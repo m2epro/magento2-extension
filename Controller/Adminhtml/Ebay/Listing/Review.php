@@ -50,9 +50,9 @@ class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Review::class,
             '',
             [
-            'data' => [
-                'products_count' => count($ids)
-            ]
+                'data' => [
+                    'products_count' => count($ids),
+                ],
             ]
         );
 

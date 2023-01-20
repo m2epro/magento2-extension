@@ -41,17 +41,25 @@ class StockDataResolver extends \Ess\M2ePro\Model\AbstractModel
         $productsIds = array_values(array_unique($productsIds));
 
         $select = $this->resourceConnection->getConnection()
-           ->select()
-           ->from(
-               [
-                   'cisi' => $this->getHelper('Module_Database_Structure')
-                       ->getTableNameWithPrefix('cataloginventory_stock_item')
-               ],
-               ['product_id', 'manage_stock', 'use_config_manage_stock', 'is_in_stock']
-           )
-           ->where('cisi.product_id IN ('.implode(',', $productsIds).')')
-           ->where('cisi.stock_id = ?', $this->helperFactory->getObject('Magento\Stock')->getStockId($storeId))
-           ->where('cisi.website_id = ?', $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($storeId));
+                                           ->select()
+                                           ->from(
+                                               [
+                                                   'cisi' => $this->getHelper('Module_Database_Structure')
+                                                                  ->getTableNameWithPrefix(
+                                                                      'cataloginventory_stock_item'
+                                                                  ),
+                                               ],
+                                               ['product_id', 'manage_stock', 'use_config_manage_stock', 'is_in_stock']
+                                           )
+                                           ->where('cisi.product_id IN (' . implode(',', $productsIds) . ')')
+                                           ->where(
+                                               'cisi.stock_id = ?',
+                                               $this->helperFactory->getObject('Magento\Stock')->getStockId($storeId)
+                                           )
+                                           ->where(
+                                               'cisi.website_id = ?',
+                                               $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($storeId)
+                                           );
 
         return $select->query()->fetchAll();
     }

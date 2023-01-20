@@ -18,13 +18,13 @@ abstract class AbstractView extends AbstractContainer
     /** @var  \Ess\M2ePro\Block\Adminhtml\Log\Listing\View\Switcher */
     protected $viewModeSwitcherBlock;
 
-    /** @var  \Ess\M2ePro\Block\Adminhtml\Account\Switcher  */
+    /** @var  \Ess\M2ePro\Block\Adminhtml\Account\Switcher */
     protected $accountSwitcherBlock;
 
-    /** @var  \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher  */
+    /** @var  \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher */
     protected $marketplaceSwitcherBlock;
 
-    /** @var  \Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter  */
+    /** @var  \Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter */
     protected $uniqueMessageFilterBlock;
 
     //#######################################
@@ -37,8 +37,8 @@ abstract class AbstractView extends AbstractContainer
 
     protected function _prepareLayout()
     {
-        $this->viewModeSwitcherBlock    = $this->createViewModeSwitcherBlock();
-        $this->accountSwitcherBlock     = $this->createAccountSwitcherBlock();
+        $this->viewModeSwitcherBlock = $this->createViewModeSwitcherBlock();
+        $this->accountSwitcherBlock = $this->createAccountSwitcherBlock();
         $this->marketplaceSwitcherBlock = $this->createMarketplaceSwitcherBlock();
         $this->uniqueMessageFilterBlock = $this->createUniqueMessageFilterBlock();
 
@@ -48,14 +48,15 @@ abstract class AbstractView extends AbstractContainer
             \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO,
             'View',
             $this->viewModeSwitcherBlock->getSelectedParam(),
-            'Grid'
+            'Grid',
         ]);
 
         $this->addChild('grid', $this->getBlockClass($gridClass));
 
         $this->removeButton('add');
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 require(['M2ePro/Log/View'], function () {
 
     window.LogViewObj = new LogView();
@@ -72,7 +73,7 @@ JS
     protected function createViewModeSwitcherBlock()
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Log\Listing\View\Switcher::class)->setData([
-            'component_mode' => $this->getComponentMode()
+            'component_mode' => $this->getComponentMode(),
         ]);
     }
 
@@ -94,7 +95,7 @@ JS
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Log\UniqueMessageFilter::class)->setData([
             'route' => "*/{$this->getComponentMode()}_log_listing_product/",
-            'title' => $this->__('Only messages with a unique Product ID')
+            'title' => $this->__('Only messages with a unique Product ID'),
         ]);
     }
 

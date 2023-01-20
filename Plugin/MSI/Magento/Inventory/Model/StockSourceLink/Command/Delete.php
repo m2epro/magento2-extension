@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -9,9 +10,6 @@ namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command;
 
 use Magento\InventoryApi\Api\Data\StockSourceLinkInterface;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\StockSourceLink\Command\Delete
- */
 class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -61,6 +59,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -72,6 +71,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param $result
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function processExecute($interceptor, \Closure $callback, array $arguments)
@@ -119,7 +119,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
             null,
             $this->getHelper('Module\Log')->encodeDescription(
                 'Source set was changed in the "%stock%" Stock used for M2E Pro Listing.',
-                ['!stock'=> $stock->getName()]
+                ['!stock' => $stock->getName()]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );

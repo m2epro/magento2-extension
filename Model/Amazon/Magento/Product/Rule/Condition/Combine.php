@@ -43,14 +43,16 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     protected function getCustomOptions()
     {
         $attributes = $this->getCustomOptionsAttributes();
+
         return !empty($attributes) ?
-               $this->getOptions('Amazon\Magento\Product\Rule\Condition\Product', $attributes, ['amazon'])
-               : [];
+            $this->getOptions('Amazon\Magento\Product\Rule\Condition\Product', $attributes, ['amazon'])
+            : [];
     }
 
     protected function getCustomOptionsAttributes()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             'amazon_sku' => $helper->__('SKU'),
             'amazon_general_id' => $helper->__('ASIN/ISBN Value'),
@@ -61,7 +63,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
             'amazon_online_sale_price' => $helper->__('Sale Price'),
             'amazon_is_afn_chanel' => $helper->__('Fulfillment'),
             'amazon_is_repricing' => $helper->__('On Repricing'),
-            'amazon_status' => $helper->__('Status')
+            'amazon_status' => $helper->__('Status'),
         ];
     }
 

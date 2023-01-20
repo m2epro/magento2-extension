@@ -13,7 +13,9 @@ namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent;
  */
 class Factory
 {
+    /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -37,6 +39,7 @@ class Factory
     /**
      * @param string $component
      * @param string $modelName
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -61,6 +64,7 @@ class Factory
      * @param mixed $value
      * @param null|string $field
      * @param boolean $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel|NULL
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -83,6 +87,7 @@ class Factory
      * @param mixed $value
      * @param null|string $field
      * @param boolean $throwException
+     *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel|NULL
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -102,7 +107,7 @@ class Factory
 
         $model->setCacheLoading(true);
 
-        $parentKey = strtoupper($modelName.'_data_'.$field.'_'.$value);
+        $parentKey = strtoupper($modelName . '_data_' . $field . '_' . $value);
 
         $cacheData = $this->helperFactory->getObject('Data_Cache_Permanent')->getValue($parentKey);
         if (!empty($cacheData) && is_array($cacheData)) {
@@ -132,7 +137,7 @@ class Factory
             $model->getCacheLifetime()
         );
 
-        $childKey = strtoupper($component.'\\'.$modelName.'_data_'.$field.'_'.$value);
+        $childKey = strtoupper($component . '\\' . $modelName . '_data_' . $field . '_' . $value);
 
         $childTags = $model->getChildObject()->getCacheGroupTags();
         $childTags[] = $model->getChildObject()->getCacheInstancesTag();

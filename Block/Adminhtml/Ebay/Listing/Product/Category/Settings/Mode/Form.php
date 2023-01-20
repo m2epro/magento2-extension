@@ -19,10 +19,12 @@ class Form extends AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'categories_mode_form',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'categories_mode_form',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $fieldset = $form->addFieldset('categories_mode', []);
@@ -33,7 +35,7 @@ class Form extends AbstractForm
             [
                 'value' => $this->__('You need to choose eBay Categories for Products in order to list them on eBay.'),
                 'field_extra_attributes' =>
-                    'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"'
+                    'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
         );
         $this->css->add(
@@ -62,11 +64,11 @@ CSS
                 'values' => [
                     [
                         'value' => CategoryTemplateBlock::MODE_SAME,
-                        'label' => 'All Products same Category'
-                    ]
+                        'label' => 'All Products same Category',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Products will be Listed using the same eBay Category.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Products will be Listed using the same eBay Category.') . '</div>',
             ]
         );
 
@@ -75,13 +77,13 @@ CSS
             'checkbox',
             [
                 'name' => 'mode_same_remember_checkbox',
-                'after_element_html'=>
+                'after_element_html' =>
                     '&nbsp;&nbsp; <span style="color: #808080; font-size: 1.2rem; vertical-align: top;">' .
                     $this->__('Remember my choice and skip this step in the future.') . '</span>',
                 'value' => 1,
                 'checked' => false,
                 'disabled' => true,
-                'field_extra_attributes' => 'style="margin-top: 2px; margin-bottom: 0; padding-left: 56px;"'
+                'field_extra_attributes' => 'style="margin-top: 2px; margin-bottom: 0; padding-left: 56px;"',
             ]
         );
 
@@ -94,11 +96,11 @@ CSS
                 'values' => [
                     [
                         'value' => CategoryTemplateBlock::MODE_CATEGORY,
-                        'label' => 'Based on Magento Categories'
-                    ]
+                        'label' => 'Based on Magento Categories',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Products will have eBay Categories set according to the Magento Categories.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Products will have eBay Categories set according to the Magento Categories.') . '</div>',
             ]
         );
 
@@ -111,13 +113,13 @@ CSS
                 'values' => [
                     [
                         'value' => CategoryTemplateBlock::MODE_PRODUCT,
-                        'label' => 'Get suggested Categories'
-                    ]
+                        'label' => 'Get suggested Categories',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     $this->__(
                         'Get eBay to suggest Categories for your Products based on the Title and Magento Attribute set.'
-                    ).'</div>'
+                    ) . '</div>',
             ]
         );
 
@@ -130,11 +132,11 @@ CSS
                 'values' => [
                     [
                         'value' => CategoryTemplateBlock::MODE_MANUALLY,
-                        'label' => 'Set Manually for each Product'
-                    ]
+                        'label' => 'Set Manually for each Product',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Set eBay Categories for each Product (or a group of Products) manually.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Set eBay Categories for each Product (or a group of Products) manually.') . '</div>',
             ]
         );
 

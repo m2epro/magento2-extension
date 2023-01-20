@@ -19,7 +19,7 @@ class GetRandomMagentoProductId extends Description
 
         if ($productId) {
             $this->setJsonContent([
-                'success'    => true,
+                'success' => true,
                 'product_id' => $productId,
             ]);
         } else {
@@ -58,7 +58,7 @@ class GetRandomMagentoProductId extends Description
             ->addFieldToFilter('store_id', $storeId)
             ->getFirstItem();
 
-       return $listingProduct->getId();
+        return $listingProduct->getId();
     }
 
     private function getProductIdFromMagento(): ?int
@@ -79,6 +79,7 @@ class GetRandomMagentoProductId extends Description
 
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $productCollection->getFirstItem();
+
         return $product->getId();
     }
 }

@@ -49,8 +49,8 @@ class Create
             'entityRequester',
             [
                 'marketplace_id' => $marketplace->getNativeId(),
-                'merchant_id'    => $merchantId,
-                'token'          => $token,
+                'merchant_id' => $merchantId,
+                'token' => $token,
             ]
         );
 

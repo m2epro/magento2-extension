@@ -43,7 +43,7 @@ class UpdateMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         foreach ($items as $id => $note) {
             $itemsData[] = [
                 'id' => $id,
-                'note' => $note
+                'note' => $note,
             ];
         }
 
@@ -58,7 +58,7 @@ class UpdateMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $attrValue = $this->componentEbayMotors->buildAttributeValue([
             'items' => $itemsData,
             'filters' => $filtersIds,
-            'groups' => $groupsIds
+            'groups' => $groupsIds,
         ]);
 
         $motorsAttribute = $this->componentEbayMotors->getAttribute($motorsType);

@@ -18,7 +18,7 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
     /** @var array */
     private $brokenData = [];
 
-    /** @var HelperData  */
+    /** @var HelperData */
     private $helperData;
 
     /** @var UrlInterface */
@@ -33,7 +33,7 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
     /** @var ActiveRecordFactory */
     private $activeRecordFactory;
 
-    /** @var IssueFactory  */
+    /** @var IssueFactory */
     private $issueFactory;
 
     //########################################
@@ -46,12 +46,12 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
         ActiveRecordFactory $activeRecordFactory,
         IssueFactory $issueFactory
     ) {
-        $this->helperData          = $helperData;
-        $this->urlBuilder          = $urlBuilder;
-        $this->formKey             = $formKey;
-        $this->parentFactory       = $parentFactory;
+        $this->helperData = $helperData;
+        $this->urlBuilder = $urlBuilder;
+        $this->formKey = $formKey;
+        $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->issueFactory        = $issueFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -72,8 +72,8 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
             [
                 'nin' => [
                     Product::STATUS_NOT_LISTED,
-                    Product::STATUS_UNKNOWN
-                ]
+                    Product::STATUS_UNKNOWN,
+                ],
             ]
         );
 
@@ -82,7 +82,7 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
         if ($total = $collection->getSize()) {
             $this->brokenData = [
                 'total' => $total,
-                'ids'   => $collection->getAllIds()
+                'ids' => $collection->getAllIds(),
             ];
         }
 

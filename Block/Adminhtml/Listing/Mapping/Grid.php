@@ -53,9 +53,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('type_id');
+                                                            ->addAttributeToSelect('sku')
+                                                            ->addAttributeToSelect('name')
+                                                            ->addAttributeToSelect('type_id');
 
         $collection->joinStockItem();
 
@@ -63,8 +63,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 [
                     'attribute' => 'type_id',
-                    'in'        => $this->magentoProductHelper->getOriginKnownTypes()
-                ]
+                    'in' => $this->magentoProductHelper->getOriginKnownTypes(),
+                ],
             ]
         );
 
@@ -78,71 +78,71 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn(
             'product_id',
             [
-                'header'       => $this->__('Product ID'),
-                'align'        => 'right',
-                'type'         => 'number',
-                'width'        => '100px',
-                'index'        => 'entity_id',
+                'header' => $this->__('Product ID'),
+                'align' => 'right',
+                'type' => 'number',
+                'width' => '100px',
+                'index' => 'entity_id',
                 'filter_index' => 'entity_id',
-                'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
             ]
         );
 
         $this->addColumn(
             'title',
             [
-                'header'                    => $this->__('Product Title / Product SKU'),
-                'align'                     => 'left',
-                'type'                      => 'text',
-                'width'                     => '200px',
-                'index'                     => 'name',
-                'filter_index'              => 'name',
-                'escape'                    => false,
-                'frame_callback'            => [$this, 'callbackColumnTitle'],
-                'filter_condition_callback' => [$this, 'callbackFilterTitle']
+                'header' => $this->__('Product Title / Product SKU'),
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '200px',
+                'index' => 'name',
+                'filter_index' => 'name',
+                'escape' => false,
+                'frame_callback' => [$this, 'callbackColumnTitle'],
+                'filter_condition_callback' => [$this, 'callbackFilterTitle'],
             ]
         );
 
         $this->addColumn(
             'type',
             [
-                'header'       => $this->__('Type'),
-                'align'        => 'left',
-                'width'        => '120px',
-                'type'         => 'options',
-                'sortable'     => false,
-                'index'        => 'type_id',
+                'header' => $this->__('Type'),
+                'align' => 'left',
+                'width' => '120px',
+                'type' => 'options',
+                'sortable' => false,
+                'index' => 'type_id',
                 'filter_index' => 'type_id',
-                'options'      => $this->getProductTypes()
+                'options' => $this->getProductTypes(),
             ]
         );
 
         $this->addColumn(
             'stock_availability',
             [
-                'header'         => $this->__('Stock Availability'),
-                'width'          => '100px',
-                'index'          => 'is_in_stock',
-                'filter_index'   => 'is_in_stock',
-                'type'           => 'options',
-                'sortable'       => false,
-                'options'        => [
+                'header' => $this->__('Stock Availability'),
+                'width' => '100px',
+                'index' => 'is_in_stock',
+                'filter_index' => 'is_in_stock',
+                'type' => 'options',
+                'sortable' => false,
+                'options' => [
                     1 => $this->__('In Stock'),
-                    0 => $this->__('Out of Stock')
+                    0 => $this->__('Out of Stock'),
                 ],
-                'frame_callback' => [$this, 'callbackColumnIsInStock']
+                'frame_callback' => [$this, 'callbackColumnIsInStock'],
             ]
         );
 
         $this->addColumn(
             'actions',
             [
-                'header'         => $this->__('Actions'),
-                'align'          => 'left',
-                'type'           => 'text',
-                'width'          => '125px',
-                'filter'         => false,
-                'sortable'       => false,
+                'header' => $this->__('Actions'),
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '125px',
+                'filter' => false,
+                'sortable' => false,
                 'frame_callback' => [$this, 'callbackColumnActions'],
             ]
         );
@@ -157,7 +157,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $tempSku = $row->getData('sku');
         if ($tempSku === null) {
             $tempSku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('entity_id'))->getSku();
+                                          ->setProductId($row->getData('entity_id'))->getSku();
         }
 
         $value .= '<br/><strong>' . $this->__('SKU') . ':</strong> ';
@@ -205,7 +205,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->addFieldToFilter(
             [
                 ['attribute' => 'sku', 'like' => '%' . $value . '%'],
-                ['attribute' => 'name', 'like' => '%' . $value . '%']
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -243,7 +243,7 @@ JS
             $this->getData('grid_url'),
             [
                 '_current' => true,
-                  'component_mode' => $this->getRequest()->getParam('component_mode')
+                'component_mode' => $this->getRequest()->getParam('component_mode'),
             ]
         );
     }

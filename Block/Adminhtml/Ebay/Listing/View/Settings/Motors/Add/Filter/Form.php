@@ -17,23 +17,27 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'motors_filter',
-            'action'  => $this->getUrl('*/ebay_listing_settings_motors/saveFilter'),
-            'method' => 'post'
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'motors_filter',
+                'action' => $this->getUrl('*/ebay_listing_settings_motors/saveFilter'),
+                'method' => 'post',
+            ],
+        ]);
 
         $form->addField(
             'filter_form_add_filter_help_block',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('
+                'content' => $this->__(
+                    '
                     This Option allows you to Save the <strong>ePIDs/kTypes</strong> Grid Filter
                     and reapply it in future without Manually Setting up the Filter Parameters
                     again. If some ePID(s)/kType(s) are added or removed, according of the Filter,
                     their Values will <strong>Automatically</strong> be <strong>Added</strong>
                     to or <strong>Removed</strong> from of eBay Item.
-                ')
+                '
+                ),
             ]
         );
 
@@ -52,7 +56,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'label' => $this->__('Title'),
                 'title' => $this->__('Title'),
                 'class' => 'M2ePro-filter-title',
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -62,7 +66,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'name' => 'note',
                 'label' => $this->__('Note'),
-                'title' => $this->__('Note')
+                'title' => $this->__('Note'),
             ]
         );
 
@@ -76,6 +80,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'text' => <<<HTML
     <ul class="filter_conditions" style="list-style: none"></ul>
 HTML
+            ,
             ]
         );
 

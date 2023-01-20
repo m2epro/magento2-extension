@@ -10,18 +10,15 @@ namespace Ess\M2ePro\Model\Cron\Strategy;
 
 use Ess\M2ePro\Model\Lock\Item\Manager as LockManager;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Strategy\Serial
- */
 class Serial extends AbstractModel
 {
-    const LOCK_ITEM_NICK = 'cron_strategy_serial';
+    public const LOCK_ITEM_NICK = 'cron_strategy_serial';
 
     /**
      * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
     protected $lockItemManager;
-
+    /** @var array|null */
     protected $allowedTasks;
 
     //########################################
@@ -39,6 +36,7 @@ class Serial extends AbstractModel
 
         if ($this->isParallelStrategyInProgress()) {
             $this->getInitializationLockManager()->unlock();
+
             return;
         }
 
@@ -95,11 +93,13 @@ class Serial extends AbstractModel
 
     /**
      * @param array $tasks
+     *
      * @return $this
      */
     public function setAllowedTasks(array $tasks)
     {
         $this->allowedTasks = $tasks;
+
         return $this;
     }
 
@@ -124,7 +124,7 @@ class Serial extends AbstractModel
         }
 
         $lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => self::LOCK_ITEM_NICK
+            'nick' => self::LOCK_ITEM_NICK,
         ]);
 
         if (!$lockItemManager->isExist()) {
@@ -133,6 +133,7 @@ class Serial extends AbstractModel
 
         if ($lockItemManager->isInactiveMoreThanSeconds(LockManager::DEFAULT_MAX_INACTIVE_TIME)) {
             $lockItemManager->remove();
+
             return $this->lockItemManager = $lockItemManager;
         }
 

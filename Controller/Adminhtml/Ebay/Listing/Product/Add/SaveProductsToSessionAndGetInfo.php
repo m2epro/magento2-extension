@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
  */
 class SaveProductsToSessionAndGetInfo extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');
@@ -26,7 +25,7 @@ class SaveProductsToSessionAndGetInfo extends \Ess\M2ePro\Controller\Adminhtml\E
         $initial = explode(',', $initial);
 
         $initial = array_values(array_unique(array_merge($initial, $checked)));
-        $all     = array_values(array_unique(array_merge($all, $initial)));
+        $all = array_values(array_unique(array_merge($all, $initial)));
 
         $all = array_flip($all);
 

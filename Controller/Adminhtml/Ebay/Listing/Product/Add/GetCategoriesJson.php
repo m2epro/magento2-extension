@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
  */
 class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');

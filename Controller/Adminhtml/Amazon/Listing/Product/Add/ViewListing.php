@@ -26,7 +26,7 @@ class ViewListing extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Produc
         $this->getHelper('Data\Session')->setValue('temp_products', []);
 
         return $this->_redirect('*/amazon_listing/view', [
-            'id' => $listingId
+            'id' => $listingId,
         ]);
     }
 

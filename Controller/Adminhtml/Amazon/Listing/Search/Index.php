@@ -38,6 +38,7 @@ class Index extends Main
             $this->setAjaxContent(
                 $this->getLayout()->createBlock($gridBlock)
             );
+
             return $this->getResult();
         }
 

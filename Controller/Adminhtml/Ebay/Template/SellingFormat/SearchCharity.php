@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
-use \Magento\Backend\App\Action;
+use Magento\Backend\App\Action;
 
 class SearchCharity extends Template
 {
@@ -20,11 +20,12 @@ class SearchCharity extends Template
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
 
         $params = [
-            $destination    => $query,
-            'maxRecord'     => 10,
+            $destination => $query,
+            'maxRecord' => 10,
         ];
 
         try {
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'marketplace',
@@ -41,7 +42,7 @@ class SearchCharity extends Template
             $this->setJsonContent([
                 'result' => 'error',
                 'html' => $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class)
-                    ->addError($this->__('Error search charity'))->toHtml()
+                               ->addError($this->__('Error search charity'))->toHtml(),
             ]);
 
             return $this->getResult();
@@ -55,14 +56,14 @@ class SearchCharity extends Template
             '',
             [
                 'data' => [
-                    'charities' => $charities
-                ]
+                    'charities' => $charities,
+                ],
             ]
         );
 
         $response = [
             'result' => 'success',
-            'html' => $grid->toHtml()
+            'html' => $grid->toHtml(),
         ];
 
         if ((int)$totalCount > 10) {

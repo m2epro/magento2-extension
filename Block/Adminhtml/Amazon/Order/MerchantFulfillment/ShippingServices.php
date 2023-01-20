@@ -52,7 +52,7 @@ class ShippingServices extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             [
                 'data' => [
                     'id' => 'shippingServices_form',
-                ]
+                ],
             ]
         );
 
@@ -65,13 +65,14 @@ class ShippingServices extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 [
                     'messages' => [
                         [
-                            'type'    => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                            'content' => $this->getData('error_message')
-                        ]
-                    ]
+                            'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                            'content' => $this->getData('error_message'),
+                        ],
+                    ],
                 ]
             );
-        } elseif (empty($shippingServices['items']['available']) &&
+        } elseif (
+            empty($shippingServices['items']['available']) &&
             empty($shippingServices['items']['unavailable']) &&
             empty($shippingServices['not_accepted'])
         ) {
@@ -79,7 +80,7 @@ class ShippingServices extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'amazon_template_description_definition',
                 self::HELP_BLOCK,
                 [
-                    'content'     => $this->__(
+                    'content' => $this->__(
                         <<<HTML
 There were <strong>no</strong> suitable <strong>Shipping Services</strong> found according to the provided
 <strong>Configuration Settings</strong>.<br/>
@@ -90,8 +91,8 @@ HTML
                         ,
                         $this->supportHelper->getDocumentationArticleUrl('x/YAMVB')
                     ),
-                    'no_hide'     => true,
-                    'no_collapse' => true
+                    'no_hide' => true,
+                    'no_collapse' => true,
                 ]
             );
         } else {
@@ -134,7 +135,7 @@ HTML
                     <div>
                         <span class="shipping-service-prop">{$this->__('Rate')}:</span>
                         {$this->localeCurrency->getCurrency($shippingService['rate']['currency_code'])
-                    ->toCurrency($shippingService['rate']['amount'])}
+                                              ->toCurrency($shippingService['rate']['amount'])}
                     </div>
                 </div>
             </label>
@@ -201,8 +202,8 @@ HTML;
                 'products_grid',
                 self::CUSTOM_CONTAINER,
                 [
-                    'text'      => $gridHtml,
-                    'css_class' => 'm2epro-custom-container-full-width'
+                    'text' => $gridHtml,
+                    'css_class' => 'm2epro-custom-container-full-width',
                 ]
             );
         }
@@ -262,7 +263,7 @@ JS
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
-                'title'   => $this->__('Amazon\'s Shipping Services'),
+                'title' => $this->__('Amazon\'s Shipping Services'),
                 'content' => $this->__(
                     <<<HTML
 <p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options
@@ -279,7 +280,7 @@ their Orders.</p>
 <br/>
 <p>Amazon's Shipping Service tool is required to be used for Amazon Prime Orders.</p>
 HTML
-                )
+                ),
             ]
         );
 

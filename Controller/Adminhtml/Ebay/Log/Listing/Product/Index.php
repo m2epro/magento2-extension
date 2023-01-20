@@ -39,6 +39,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 
             if ($listing === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing does not exist.'));
+
                 return $this->_redirect('*/*/index');
             }
 
@@ -50,13 +51,16 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Log\Listing
 
             if ($listingProduct === null) {
                 $this->getMessageManager()->addErrorMessage($this->__('Listing Product does not exist.'));
+
                 return $this->_redirect('*/*/index');
             }
 
-            $this->getResult()->getConfig()->getTitle()->prepend($this->__(
-                'M2E Pro Listing Product "%1%" Log',
-                $this->filterManager->truncate($listingProduct->getMagentoProduct()->getName(), ['length' => 28])
-            ));
+            $this->getResult()->getConfig()->getTitle()->prepend(
+                $this->__(
+                    'M2E Pro Listing Product "%1%" Log',
+                    $this->filterManager->truncate($listingProduct->getMagentoProduct()->getName(), ['length' => 28])
+                )
+            );
         } else {
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }

@@ -63,7 +63,7 @@ class ExternalTransaction extends AbstractGrid
             'width' => '*',
             'index' => 'transaction_id',
             'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnTransactionId']
+            'frame_callback' => [$this, 'callbackColumnTransactionId'],
         ]);
 
         $this->addColumn('fee', [
@@ -73,7 +73,7 @@ class ExternalTransaction extends AbstractGrid
             'index' => 'fee',
             'type' => 'number',
             'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnFee']
+            'frame_callback' => [$this, 'callbackColumnFee'],
         ]);
 
         $this->addColumn('sum', [
@@ -83,19 +83,19 @@ class ExternalTransaction extends AbstractGrid
             'index' => 'sum',
             'type' => 'number',
             'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnSum']
+            'frame_callback' => [$this, 'callbackColumnSum'],
         ]);
 
         $this->addColumn('transaction_date', [
-            'header'   => $this->__('Date'),
-            'align'    => 'left',
-            'width'    => '150px',
-            'index'    => 'transaction_date',
-            'type'     => 'datetime',
-            'filter'   => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'format'   => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'index' => 'transaction_date',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'sortable' => false
+            'sortable' => false,
         ]);
 
         return parent::_prepareColumns();
@@ -109,7 +109,7 @@ class ExternalTransaction extends AbstractGrid
 
         $url = $this->getUrl('*/*/goToPaypal', ['transaction_id' => $value]);
 
-        return '<a href="'.$url.'" target="_blank">'.$value.'</a>';
+        return '<a href="' . $url . '" target="_blank">' . $value . '</a>';
     }
 
     public function callbackColumnFee($value, $row, $column, $isExport)

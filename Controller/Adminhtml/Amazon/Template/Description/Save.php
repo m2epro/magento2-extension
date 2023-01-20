@@ -10,19 +10,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description\Save
- */
 class Save extends Description
 {
-    //########################################
-
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
 
         if (empty($post)) {
             $this->_forward('index');
+
             return;
         }
 
@@ -45,7 +41,7 @@ class Save extends Description
         }
 
         $this->modelFactory->getObject('Amazon_Template_Description_Builder')
-            ->build($descriptionTemplate, $post['general']);
+                           ->build($descriptionTemplate, $post['general']);
 
         $id = $descriptionTemplate->getId();
 
@@ -127,7 +123,9 @@ class Save extends Description
         // Run Processor for Variation Relation Parents
         // ---------------------------------------
         if ($diff->isDetailsDifferent() || $diff->isImagesDifferent()) {
-            $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection()
+            $listingProductCollection = $this->amazonFactory
+                ->getObject('Listing\Product')
+                ->getCollection()
                 ->addFieldToFilter('template_description_id', $id)
                 ->addFieldToFilter(
                     'is_general_id_owner',
@@ -148,21 +146,27 @@ class Save extends Description
 
         if ($this->isAjax()) {
             $this->setJsonContent([
-                'status' => true
+                'status' => true,
             ]);
+
             return $this->getResult();
         }
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->getHelper('Data')->getBackUrl(
-            'list',
-            [],
-            ['edit' => [
-                'id' => $id,
-                'wizard' => $this->getRequest()->getParam('wizard'),
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ]]
-        ));
+
+        return $this->_redirect(
+            $this->getHelper('Data')->getBackUrl(
+                'list',
+                [],
+                [
+                    'edit' => [
+                        'id' => $id,
+                        'wizard' => $this->getRequest()->getParam('wizard'),
+                        'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+                    ],
+                ]
+            )
+        );
     }
 
     // ---------------------------------------
@@ -173,16 +177,22 @@ class Save extends Description
             return false;
         }
 
-        if (empty($specificData['recommended_value']) &&
-            !in_array($specificData['mode'], ['none','custom_value','custom_attribute'])) {
+        if (
+            empty($specificData['recommended_value']) &&
+            !in_array($specificData['mode'], ['none', 'custom_value', 'custom_attribute'])
+        ) {
             return false;
         }
-        if (empty($specificData['custom_value']) &&
-            !in_array($specificData['mode'], ['none','recommended_value','custom_attribute'])) {
+        if (
+            empty($specificData['custom_value']) &&
+            !in_array($specificData['mode'], ['none', 'recommended_value', 'custom_attribute'])
+        ) {
             return false;
         }
-        if (empty($specificData['custom_attribute']) &&
-            !in_array($specificData['mode'], ['none','recommended_value','custom_value'])) {
+        if (
+            empty($specificData['custom_attribute']) &&
+            !in_array($specificData['mode'], ['none', 'recommended_value', 'custom_value'])
+        ) {
             return false;
         }
 
@@ -192,13 +202,13 @@ class Save extends Description
     private function sortSpecifics(&$specifics, $productData, $marketplaceId)
     {
         $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific');
+                      ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific');
 
         $dictionarySpecifics = $this->resourceConnection->getConnection()->select()
-            ->from($table, ['id', 'xpath'])
-            ->where('product_data_nick = ?', $productData)
-            ->where('marketplace_id = ?', $marketplaceId)
-            ->query()->fetchAll();
+                                                        ->from($table, ['id', 'xpath'])
+                                                        ->where('product_data_nick = ?', $productData)
+                                                        ->where('marketplace_id = ?', $marketplaceId)
+                                                        ->query()->fetchAll();
 
         foreach ($dictionarySpecifics as $key => $specific) {
             $xpath = $specific['xpath'];
@@ -209,7 +219,6 @@ class Save extends Description
         $this->getHelper('Data\GlobalData')->setValue('dictionary_specifics', $dictionarySpecifics);
 
         $callback = function ($aXpath, $bXpath) use ($dictionarySpecifics) {
-
             $aXpathParts = explode('/', $aXpath);
             foreach ($aXpathParts as &$part) {
                 $part = preg_replace('/\-\d+$/', '', $part);
@@ -232,6 +241,4 @@ class Save extends Description
 
         uksort($specifics, $callback);
     }
-
-    //########################################
 }

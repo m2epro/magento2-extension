@@ -86,7 +86,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $collection->addAttributeToSelect('name');
 
         $collection->addFieldToFilter([
-            ['attribute' => 'entity_id', 'in' => array_keys($this->getData('categories_data'))]
+            ['attribute' => 'entity_id', 'in' => array_keys($this->getData('categories_data'))],
         ]);
 
         $this->setCollection($collection);
@@ -97,54 +97,54 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('magento_category', [
-            'header'    => $this->__('Magento Category'),
-            'align'     => 'left',
-            'width'     => '500px',
-            'type'      => 'text',
-            'index'     => 'name',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+            'header' => $this->__('Magento Category'),
+            'align' => 'left',
+            'width' => '500px',
+            'type' => 'text',
+            'index' => 'name',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory'],
         ]);
 
         $this->addColumn('description_template', [
-            'header'    => $this->__('Description Policy'),
-            'align'     => 'left',
-            'width'     => '*',
-            'sortable'  => false,
-            'type'      => 'options',
-            'index'     => 'description_template_id',
+            'header' => $this->__('Description Policy'),
+            'align' => 'left',
+            'width' => '*',
+            'sortable' => false,
+            'type' => 'options',
+            'index' => 'description_template_id',
             'filter_index' => 'description_template_id',
-            'options'   => [
+            'options' => [
                 1 => $this->__('Description Policy Selected'),
-                0 => $this->__('Description Policy Not Selected')
+                0 => $this->__('Description Policy Not Selected'),
             ],
             'frame_callback' => [$this, 'callbackColumnDescriptionTemplateCallback'],
-            'filter_condition_callback' => [$this, 'callbackColumnDescriptionTemplateFilterCallback']
+            'filter_condition_callback' => [$this, 'callbackColumnDescriptionTemplateFilterCallback'],
         ]);
 
         $actionsColumn = [
-            'header'    => $this->__('Actions'),
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'align'     => 'center',
-            'width'     => '130px',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'actions'   => []
+            'header' => $this->__('Actions'),
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'align' => 'center',
+            'width' => '130px',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'actions' => [],
         ];
 
         $actions = [
             [
                 'caption' => $this->__('Set Description Policy'),
-                'field'   => 'entity_id',
-                'onclick_action' => 'ListingGridObj.setDescriptionTemplateByCategoryRowAction'
+                'field' => 'entity_id',
+                'onclick_action' => 'ListingGridObj.setDescriptionTemplateByCategoryRowAction',
             ],
             [
                 'caption' => $this->__('Reset Description Policy'),
-                'field'   => 'entity_id',
-                'onclick_action' => 'ListingGridObj.resetDescriptionTemplateByCategoryRowAction'
-            ]
+                'field' => 'entity_id',
+                'onclick_action' => 'ListingGridObj.resetDescriptionTemplateByCategoryRowAction',
+            ],
         ];
 
         $actionsColumn['actions'] = $actions;
@@ -162,13 +162,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('setDescriptionTemplateByCategory', [
             'label' => $this->__('Set Description Policy'),
-            'url'   => ''
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('resetDescriptionTemplateByCategory', [
             'label' => $this->__('Reset Description Policy'),
-            'url'   => ''
+            'url' => '',
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -203,7 +204,7 @@ HTML;
         }
 
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $descriptionTemplateId
+            'id' => $descriptionTemplateId,
         ]);
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
@@ -313,7 +314,7 @@ JS
         $listingProductsIds = $this->listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
 
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id', ['in' => $listingProductsIds]);
+                                                        ->addFieldToFilter('id', ['in' => $listingProductsIds]);
 
         $productsIds = [];
         $descriptionTemplatesIds = [];
@@ -340,7 +341,7 @@ JS
             $collection->joinTable(
                 [
                     'ccp' => $this->databaseHelper
-                        ->getTableNameWithPrefix('catalog_category_product')
+                        ->getTableNameWithPrefix('catalog_category_product'),
                 ],
                 'product_id=entity_id',
                 ['category_id' => 'category_id']

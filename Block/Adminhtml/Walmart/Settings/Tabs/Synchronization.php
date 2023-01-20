@@ -65,8 +65,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
             [
                 'data' => [
                     'enctype' => 'multipart/form-data',
-                    'method' => 'post'
-                ]
+                    'method' => 'post',
+                ],
             ]
         );
         // ---------------------------------------
@@ -84,7 +84,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
                     you will be required to monitor the Product changes by yourself and timely update
                     the related information on the Channel.</p>
 HTML
-                )
+                ),
             ]
         );
 
@@ -100,11 +100,11 @@ HTML
             'instructions_mode',
             self::SELECT,
             [
-                'name'        => 'instructions_mode',
-                'label'       => $this->__('Enabled'),
+                'name' => 'instructions_mode',
+                'label' => $this->__('Enabled'),
                 'values' => [
                     0 => $this->__('No'),
-                    1 => $this->__('Yes')
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $instructionsMode,
                 'tooltip' => $this->__(
@@ -113,7 +113,7 @@ HTML
                     Synchronization Policy Rules.</p><br>
                     <p>However, it does not exclude the ability to manually manage Items in Listings using the
                     available List, Revise, Relist or Stop Action options.</p>'
-                )
+                ),
             ]
         );
 
@@ -127,6 +127,7 @@ HTML
     {
         // ---------------------------------------
         $this->inspectorMode = $this->moduleConfiguration->isEnableListingProductInspectorMode();
+
         // ---------------------------------------
 
         return parent::_beforeToHtml();
@@ -153,8 +154,10 @@ HTML
         $this->jsUrl->addUrls([
             Tabs::TAB_ID_SYNCHRONIZATION => $this->getUrl('*/walmart_synchronization/save'),
             'synch_formSubmit' => $this->getUrl('*/walmart_synchronization/save'),
-            'logViewUrl' => $this->getUrl('*/walmart_synchronization_log/index', ['back'=>$this->dataHelper
-                ->makeBackUrlParam('*/walmart_synchronization/index')]),
+            'logViewUrl' => $this->getUrl('*/walmart_synchronization_log/index', [
+                'back' => $this->dataHelper
+                    ->makeBackUrlParam('*/walmart_synchronization/index'),
+            ]),
         ]);
 
         return parent::_toHtml();

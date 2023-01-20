@@ -72,10 +72,10 @@ class Builder extends AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Order\Item $item */
         $item = $this->ebayFactory->getObject('Order\Item')->getCollection()
-            ->addFieldToFilter('order_id', $this->getData('order_id'))
-            ->addFieldToFilter('item_id', $this->getData('item_id'))
-            ->addFieldToFilter('transaction_id', $this->getData('transaction_id'))
-            ->getFirstItem();
+                                  ->addFieldToFilter('order_id', $this->getData('order_id'))
+                                  ->addFieldToFilter('item_id', $this->getData('item_id'))
+                                  ->addFieldToFilter('transaction_id', $this->getData('transaction_id'))
+                                  ->getFirstItem();
 
         foreach ($this->getData() as $key => $value) {
             if (!$item->getId() || ($item->hasData($key) && $item->getData($key) != $value)) {

@@ -33,26 +33,35 @@ class GetAllSpecifics extends Category
     public function execute()
     {
         $tempSpecifics = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_specific')
-            )
-            ->where('marketplace_id = ?', $this->getRequest()->getParam('marketplace_id'))
-            ->where('product_data_nick = ?', $this->getRequest()->getParam('product_data_nick'))
-            ->query()->fetchAll();
+                                                  ->from(
+                                                      $this->dbStructureHelper->getTableNameWithPrefix(
+                                                          'm2epro_walmart_dictionary_specific'
+                                                      )
+                                                  )
+                                                  ->where(
+                                                      'marketplace_id = ?',
+                                                      $this->getRequest()->getParam('marketplace_id')
+                                                  )
+                                                  ->where(
+                                                      'product_data_nick = ?',
+                                                      $this->getRequest()->getParam('product_data_nick')
+                                                  )
+                                                  ->query()->fetchAll();
 
         $specifics = [];
         foreach ($tempSpecifics as $tempSpecific) {
-            $tempSpecific['values']             = (array)$this->dataHelper->jsonDecode($tempSpecific['values']);
+            $tempSpecific['values'] = (array)$this->dataHelper->jsonDecode($tempSpecific['values']);
             $tempSpecific['recommended_values'] = (array)$this->dataHelper->jsonDecode(
                 $tempSpecific['recommended_values']
             );
-            $tempSpecific['params']          = (array)$this->dataHelper->jsonDecode($tempSpecific['params']);
+            $tempSpecific['params'] = (array)$this->dataHelper->jsonDecode($tempSpecific['params']);
             $tempSpecific['data_definition'] = (array)$this->dataHelper->jsonDecode($tempSpecific['data_definition']);
 
             $specifics[$tempSpecific['specific_id']] = $tempSpecific;
         }
 
         $this->setJsonContent($specifics);
+
         return $this->getResult();
     }
 }

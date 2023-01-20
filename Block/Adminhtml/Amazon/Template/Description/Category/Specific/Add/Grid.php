@@ -10,10 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Specif
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    /** @var \Magento\Framework\Data\CollectionFactory  */
+    /** @var \Magento\Framework\Data\CollectionFactory */
     protected $collectionFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -80,15 +80,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $select = $this->resourceConnection->getConnection()->select()
-              ->from(
-                  $this->databaseHelper
-                      ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
-              )
-              ->where('marketplace_id = ?', (int)$this->marketplaceId)
-              ->where('product_data_nick = ?', $this->productDataNick)
-              ->where('type != ?', \Ess\M2ePro\Model\Amazon\Template\Description\Specific::DICTIONARY_TYPE_CONTAINER)
-              ->where('xpath LIKE ?', "{$this->currentXpath}/%")
-              ->order('title ASC');
+                                           ->from(
+                                               $this->databaseHelper
+                                                   ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
+                                           )
+                                           ->where('marketplace_id = ?', (int)$this->marketplaceId)
+                                           ->where('product_data_nick = ?', $this->productDataNick)
+                                           ->where(
+                                               'type != ?',
+                                               \Ess\M2ePro\Model\Amazon\Template\Description\Specific::DICTIONARY_TYPE_CONTAINER
+                                           )
+                                           ->where('xpath LIKE ?', "{$this->currentXpath}/%")
+                                           ->order('title ASC');
 
         if ($this->searchQuery) {
             $select->where('title LIKE ?', "%{$this->searchQuery}%");
@@ -124,7 +127,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         usort($filteredResult, function ($a, $b) {
-
             if ($a['is_desired'] && !$b['is_desired']) {
                 return -1;
             }
@@ -152,35 +154,35 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'         => $this->__('Specific'),
-            'align'          => 'left',
-            'type'           => 'text',
-            'index'          => 'title',
-            'width'          => '700px',
-            'escape'         => false,
-            'filter'         => false,
-            'sortable'       => false,
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'header' => $this->__('Specific'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
+            'width' => '700px',
+            'escape' => false,
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('is_desired', [
-            'header'         => $this->__('Desired'),
-            'align'          => 'center',
-            'type'           => 'text',
-            'index'          => 'is_desired',
-            'width'          => '80px',
-            'filter'         => false,
-            'sortable'       => false,
-            'frame_callback' => [$this, 'callbackColumnIsDesired']
+            'header' => $this->__('Desired'),
+            'align' => 'center',
+            'type' => 'text',
+            'index' => 'is_desired',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnIsDesired'],
         ]);
 
         $this->addColumn('actions', [
-            'header'         => $this->__('Action'),
-            'align'          => 'center',
-            'type'           => 'text',
-            'width'          => '80px',
-            'filter'         => false,
-            'sortable'       => false,
+            'header' => $this->__('Action'),
+            'align' => 'center',
+            'type' => 'text',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
     }
@@ -222,6 +224,7 @@ HTML;
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
         $select = $this->__('Select');
+
         return <<<HTML
 <a href="javascript:void(0);" class="specific_search_result_row" xpath = {$row->getData('xpath')}
                                                                  xml_tag = {$row->getData('xml_tag')}>
@@ -235,48 +238,56 @@ HTML;
     public function setMarketplaceId($marketplaceId)
     {
         $this->marketplaceId = $marketplaceId;
+
         return $this;
     }
 
     public function setProductDataNick($productDataNick)
     {
         $this->productDataNick = $productDataNick;
+
         return $this;
     }
 
     public function setCurrentXpath($indexedXpath)
     {
         $this->currentXpath = preg_replace('/-\d+/', '', $indexedXpath);
+
         return $this;
     }
 
     public function setAllRenderedSpecifics(array $specifics)
     {
         $this->allRenderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+
         return $this;
     }
 
     public function setBlockRenderedSpecifics(array $specifics)
     {
         $this->blockRenderedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+
         return $this;
     }
 
     public function setSelectedSpecifics(array $specifics)
     {
         $this->selectedSpecifics = $this->replaceWithDictionaryXpathes($specifics);
+
         return $this;
     }
 
     public function setOnlyDesired($value)
     {
         $this->onlyDesired = (bool)$value;
+
         return $this;
     }
 
     public function setSearchQuery($searchQuery)
     {
-        $this-> searchQuery = $searchQuery;
+        $this->searchQuery = $searchQuery;
+
         return $this;
     }
 

@@ -33,7 +33,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
         $isNeedCombine = $this->isNeedCombineMessages();
 
         if ($isNeedCombine) {
-            $collection->getSelect()->columns(['main_table.create_date' => new \Zend_Db_Expr('MAX(main_table.create_date)')]);
+            $collection->getSelect()->columns(
+                ['main_table.create_date' => new \Zend_Db_Expr('MAX(main_table.create_date)')]
+            );
             $collection->getSelect()->group(['main_table.listing_product_id', 'main_table.description']);
         }
 

@@ -36,6 +36,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)

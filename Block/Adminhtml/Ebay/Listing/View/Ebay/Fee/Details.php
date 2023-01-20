@@ -58,7 +58,7 @@ class Details extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
             $preparedData[$feeName] = [
                 'label' => $camelCasedFeeName,
-                'value' => $this->localeCurrency->getCurrency($feeData['currency'])->toCurrency($feeData['fee'])
+                'value' => $this->localeCurrency->getCurrency($feeData['currency'])->toCurrency($feeData['fee']),
             ];
         }
 

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Description;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_description_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_description_change_processor';
 
     //########################################
 
@@ -38,8 +38,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -51,8 +51,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -64,8 +64,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -77,8 +77,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -90,8 +90,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_VARIATION_IMAGES_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_VARIATION_IMAGES_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -103,8 +103,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 

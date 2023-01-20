@@ -8,15 +8,12 @@
 
 namespace Ess\M2ePro\Observer\Invoice;
 
-/**
- * Class \Ess\M2ePro\Observer\Invoice\View
- */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Magento\Customer\Model\CustomerFactory */
     protected $customerFactory;
+    /** @var \Magento\Framework\Registry */
     protected $registry;
-
-    //########################################
 
     public function __construct(
         \Magento\Customer\Model\CustomerFactory $customerFactory,
@@ -63,7 +60,7 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
         $customer = $this->customerFactory->create()->load($customerId);
 
         $invoice->getOrder()->setData(
-            'customer_'.\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE,
+            'customer_' . \Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE,
             $customer->getData(\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE)
         );
     }

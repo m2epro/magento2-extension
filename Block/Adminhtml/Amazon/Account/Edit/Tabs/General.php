@@ -128,7 +128,7 @@ HTML
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend'      => $this->__('General'),
+                'legend' => $this->__('General'),
                 'collapsable' => false,
             ]
         );
@@ -137,19 +137,19 @@ HTML
             'title',
             'text',
             [
-                'name'     => 'title',
-                'class'    => 'M2ePro-account-title',
-                'label'    => $this->__('Title'),
+                'name' => 'title',
+                'class' => 'M2ePro-account-title',
+                'label' => $this->__('Title'),
                 'required' => true,
-                'value'    => !empty($accountTitle) ? $accountTitle : $formData['title'],
-                'tooltip'  => $this->__('Title or Identifier of Amazon Account for your internal use.'),
+                'value' => !empty($accountTitle) ? $accountTitle : $formData['title'],
+                'tooltip' => $this->__('Title or Identifier of Amazon Account for your internal use.'),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'access_details',
             [
-                'legend'      => $this->__('Access Details'),
+                'legend' => $this->__('Access Details'),
                 'collapsable' => false,
             ]
         );
@@ -172,10 +172,10 @@ HTML
             'marketplace_id',
             self::SELECT,
             [
-                'name'     => 'marketplace_id',
-                'label'    => $this->__('Marketplace'),
-                'values'   => $preparedValues,
-                'value'    => $isAuthMode ? $authMarketplaceId : $formData['marketplace_id'],
+                'name' => 'marketplace_id',
+                'label' => $this->__('Marketplace'),
+                'values' => $preparedValues,
+                'value' => $isAuthMode ? $authMarketplaceId : $formData['marketplace_id'],
                 'disabled' => $isEdit,
                 'required' => true,
                 'onchange' => 'AmazonAccountObj.changeMarketplace(this.value);',
@@ -187,7 +187,7 @@ HTML
                 'marketplace_id_hidden',
                 'hidden',
                 [
-                    'name'  => 'marketplace_id',
+                    'name' => 'marketplace_id',
                     'value' => $formData['marketplace_id'],
                 ]
             );
@@ -195,7 +195,7 @@ HTML
                 'merchant_id_hidden',
                 'hidden',
                 [
-                    'name'  => 'merchant_id',
+                    'name' => 'merchant_id',
                     'value' => $formData['merchant_id'],
                 ]
             );
@@ -206,9 +206,9 @@ HTML
             'label',
             [
                 'container_id' => 'marketplaces_application_name_container',
-                'label'        => $this->__('Application Name'),
-                'value'        => $this->amazonHelper->getApplicationName(),
-                'display'      => false,
+                'label' => $this->__('Application Name'),
+                'value' => $this->amazonHelper->getApplicationName(),
+                'display' => false,
             ]
         )->setFieldExtraAttributes('style="display: none"');
 
@@ -218,8 +218,8 @@ HTML
                 'label',
                 [
                     'container_id' => 'marketplaces_developer_key_container_' . $marketplace['id'],
-                    'label'        => $this->__('Developer Account Number'),
-                    'value'        => $marketplace['developer_key'],
+                    'label' => $this->__('Developer Account Number'),
+                    'value' => $marketplace['developer_key'],
                 ]
             )->setFieldExtraAttributes('style="display: none"');
 
@@ -228,11 +228,11 @@ HTML
                 'link',
                 [
                     'container_id' => 'marketplaces_register_url_container_' . $marketplace['id'],
-                    'label'        => '',
-                    'target'       => '_blank',
-                    'value'        => $this->__('Get Access Data'),
-                    'onclick'      => 'return AmazonAccountObj.getToken(' . $marketplace['id'] . ')',
-                    'class'        => 'external-link',
+                    'label' => '',
+                    'target' => '_blank',
+                    'value' => $this->__('Get Access Data'),
+                    'onclick' => 'return AmazonAccountObj.getToken(' . $marketplace['id'] . ')',
+                    'class' => 'external-link',
                 ]
             )->setFieldExtraAttributes('style="display: none"');
         }
@@ -240,17 +240,17 @@ HTML
         if ($isEdit) {
             $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
                 [
-                    'label'   => $this->__('Check Token Validity'),
+                    'label' => $this->__('Check Token Validity'),
                     'onclick' => 'AmazonAccountObj.checkClick()',
-                    'class'   => 'check M2ePro_check_button primary',
-                    'id'      => 'check_token_validity',
+                    'class' => 'check M2ePro_check_button primary',
+                    'id' => 'check_token_validity',
                 ]
             );
             $fieldset->addField(
                 'check_token_validity_container',
                 'label',
                 [
-                    'label'              => '',
+                    'label' => '',
                     'after_element_html' => $button->toHtml(),
                 ]
             );
@@ -261,14 +261,14 @@ HTML
             'text',
             [
                 'container_id' => 'marketplaces_merchant_id_container',
-                'name'         => 'merchant_id',
-                'label'        => $this->__('Merchant ID'),
-                'class'        => 'M2ePro-marketplace-merchant',
-                'required'     => true,
-                'value'        => $isAuthMode ? $merchantId : ($isEdit ? $formData['merchant_id'] : ''),
-                'display'      => $isEdit,
-                'disabled'     => $isEdit,
-                'tooltip'      => $this->__('Your Amazon Seller ID.'),
+                'name' => 'merchant_id',
+                'label' => $this->__('Merchant ID'),
+                'class' => 'M2ePro-marketplace-merchant',
+                'required' => true,
+                'value' => $isAuthMode ? $merchantId : ($isEdit ? $formData['merchant_id'] : ''),
+                'display' => $isEdit,
+                'disabled' => $isEdit,
+                'tooltip' => $this->__('Your Amazon Seller ID.'),
             ]
         );
         if (!$isEdit) {
@@ -281,13 +281,13 @@ HTML
                 'text',
                 [
                     'container_id' => 'marketplaces_token_container',
-                    'name'         => 'token',
-                    'label'        => $this->__('MWS Auth Token'),
-                    'class'        => 'M2ePro-marketplace-merchant',
-                    'required'     => true,
-                    'value'        => $isAuthMode ? $mwsToken : '',
-                    'display'      => false,
-                    'tooltip'      => $this->__('An obtained Amazon Authorization Token.'),
+                    'name' => 'token',
+                    'label' => $this->__('MWS Auth Token'),
+                    'class' => 'M2ePro-marketplace-merchant',
+                    'required' => true,
+                    'value' => $isAuthMode ? $mwsToken : '',
+                    'display' => false,
+                    'tooltip' => $this->__('An obtained Amazon Authorization Token.'),
                 ]
             );
 
@@ -299,11 +299,11 @@ HTML
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Account', ['_current' => true]));
         $this->jsUrl->addUrls([
-            'formSubmit'   => $this->getUrl(
+            'formSubmit' => $this->getUrl(
                 '*/amazon_account/save',
                 ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
             ),
-            'checkAction'  => $this->getUrl(
+            'checkAction' => $this->getUrl(
                 '*/amazon_account/check',
                 ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
             ),
@@ -354,12 +354,12 @@ JS
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
             'M2E Pro was not able to get access to the Amazon Account. Please, make sure, that you choose correct ' .
-            'Option on MWS Authorization Page and enter correct Merchant ID.'                      => $this->__(
+            'Option on MWS Authorization Page and enter correct Merchant ID.' => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account.' .
                 ' Please, make sure, that you choose correct Option on MWS Authorization Page
                 and enter correct Merchant ID / MWS Auth Token'
             ),
-            'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%'    => $this->__(
+            'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%' => $this->__(
                 'M2E Pro was not able to get access to the Amazon Account. Reason: %error_message%'
             ),
         ]);

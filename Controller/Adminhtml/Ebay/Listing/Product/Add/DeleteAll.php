@@ -47,7 +47,7 @@ class DeleteAll extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Ad
             return $this->_redirect(
                 '*/ebay_listing_other/view',
                 [
-                    'account'     => $listing->getAccountId(),
+                    'account' => $listing->getAccountId(),
                     'marketplace' => $listing->getMarketplaceId(),
                 ]
             );

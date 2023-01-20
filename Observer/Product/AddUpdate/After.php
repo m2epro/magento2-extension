@@ -11,21 +11,21 @@ namespace Ess\M2ePro\Observer\Product\AddUpdate;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
-/**
- * Class \Ess\M2ePro\Observer\Product\AddUpdate\After
- */
 class After extends AbstractAddUpdate
 {
     /** @var \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory */
     private $listingAutoActionsModeFactory;
+    /** @var array */
     protected $listingsProductsChangedAttributes = [];
+    /** @var array */
     protected $attributeAffectOnStoreIdCache = [];
 
+    /** @var \Magento\Eav\Model\Config */
     protected $eavConfig;
+    /** @var \Magento\Store\Model\StoreManager */
     protected $storeManager;
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
@@ -107,8 +107,8 @@ class After extends AbstractAddUpdate
         }
 
         $this->activeRecordFactory->getObject('Listing\Log')
-            ->getResource()
-            ->updateProductTitle($this->getProductId(), $name);
+                                  ->getResource()
+                                  ->updateProductTitle($this->getProductId(), $name);
     }
 
     protected function updateListingsProductsVariations()
@@ -120,7 +120,6 @@ class After extends AbstractAddUpdate
         $listingsProductsForProcess = [];
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             if (!isset($variationUpdatersByComponent[$listingProduct->getComponentMode()])) {
@@ -144,8 +143,10 @@ class After extends AbstractAddUpdate
 
             $variationManager = $channelListingProduct->getVariationManager();
 
-            if ($variationManager->isRelationChildType() &&
-                isset($listingsProductsForProcess[$variationManager->getVariationParentId()])) {
+            if (
+                $variationManager->isRelationChildType() &&
+                isset($listingsProductsForProcess[$variationManager->getVariationParentId()])
+            ) {
                 unset($listingsProductsForProcess[$listingProduct->getId()]);
             }
         }
@@ -187,7 +188,6 @@ class After extends AbstractAddUpdate
         $newValue = ($newValue == Status::STATUS_ENABLED) ? 'Enabled' : 'Disabled';
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             $listingProductStoreId = $listingProduct->getListing()->getStoreId();
@@ -469,8 +469,8 @@ class After extends AbstractAddUpdate
             // website for default store view
             0 => [
                 'added' => $addedCategories,
-                'deleted' => $deletedCategories
-            ]
+                'deleted' => $deletedCategories,
+            ],
         ];
 
         foreach ($this->storeManager->getWebsites() as $website) {
@@ -478,7 +478,7 @@ class After extends AbstractAddUpdate
 
             $websiteChanges = [
                 'added' => [],
-                'deleted' => []
+                'deleted' => [],
             ];
 
             // website has been enabled
@@ -524,6 +524,7 @@ class After extends AbstractAddUpdate
         }
 
         $key = $this->getEvent()->getProduct()->getData('before_event_key');
+
         return isset(\Ess\M2ePro\Observer\Product\AddUpdate\Before::$proxyStorage[$key]);
     }
 
@@ -545,6 +546,7 @@ class After extends AbstractAddUpdate
         }
 
         $key = $this->getEvent()->getProduct()->getData('before_event_key');
+
         return \Ess\M2ePro\Observer\Product\AddUpdate\Before::$proxyStorage[$key];
     }
 
@@ -566,13 +568,14 @@ class After extends AbstractAddUpdate
 
         $attributeScope = (int)$attributeInstance->getData('is_global');
 
-        if ($attributeScope == \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_GLOBAL ||
-            $this->getStoreId() == $onStoreId) {
+        if (
+            $attributeScope == \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_GLOBAL ||
+            $this->getStoreId() == $onStoreId
+        ) {
             return $this->attributeAffectOnStoreIdCache[$cacheKey] = true;
         }
 
         if ($this->getStoreId() == \Magento\Store\Model\Store::DEFAULT_STORE_ID) {
-
             /** @var \Magento\Catalog\Model\Product $product */
             $product = $this->productFactory->create();
             $product->setStoreId($onStoreId);
@@ -586,6 +589,7 @@ class After extends AbstractAddUpdate
                 $attributeCode,
                 $onStoreId
             );
+
             return $this->attributeAffectOnStoreIdCache[$cacheKey] = !$isExistsValueForStore;
         }
 
@@ -603,6 +607,7 @@ class After extends AbstractAddUpdate
 
     /**
      * @param $attributeCode
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      */
     protected function getAffectedListingsProductsByTrackingAttribute($attributeCode)
@@ -612,7 +617,7 @@ class After extends AbstractAddUpdate
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel $changeProcessor */
             $changeProcessor = $this->modelFactory->getObject(
-                ucfirst($listingProduct->getComponentMode()).'_Magento_Product_ChangeProcessor'
+                ucfirst($listingProduct->getComponentMode()) . '_Magento_Product_ChangeProcessor'
             );
             $changeProcessor->setListingProduct($listingProduct);
 
@@ -667,7 +672,10 @@ class After extends AbstractAddUpdate
 
         if ($listingProduct->isComponentModeEbay() && is_array($listingProduct->getData('found_options_ids'))) {
             $collection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getCollection()
-                ->addFieldToFilter('main_table.id', ['in' => $listingProduct->getData('found_options_ids')]);
+                                                    ->addFieldToFilter(
+                                                        'main_table.id',
+                                                        ['in' => $listingProduct->getData('found_options_ids')]
+                                                    );
 
             $additionalData = [];
             foreach ($collection as $listingProductVariationOption) {
@@ -676,8 +684,10 @@ class After extends AbstractAddUpdate
                     ->getAttribute()] = $listingProductVariationOption->getOption();
             }
 
-            if (!empty($additionalData['variation_options']) &&
-                $this->getHelper('Magento\Product')->isBundleType($collection->getFirstItem()->getProductType())) {
+            if (
+                !empty($additionalData['variation_options']) &&
+                $this->getHelper('Magento\Product')->isBundleType($collection->getFirstItem()->getProductType())
+            ) {
                 foreach ($additionalData['variation_options'] as $attribute => $option) {
                     $log->addProductMessage(
                         $listingProduct->getListingId(),

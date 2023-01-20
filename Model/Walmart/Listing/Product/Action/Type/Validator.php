@@ -91,6 +91,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator
+     *
      * @return $this
      */
     public function setConfigurator(\Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator)
@@ -216,6 +217,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $key
+     *
      * @return array
      */
     public function getValidatorData($key = null)
@@ -229,6 +231,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $data
+     *
      * @return $this
      */
     public function setValidatorData($data)
@@ -310,7 +313,8 @@ HTML;
 
     protected function validateGeneralBlocked()
     {
-        if ($this->getListingProduct()->isBlocked() &&
+        if (
+            $this->getListingProduct()->isBlocked() &&
             !$this->getWalmartListingProduct()->isMissedOnChannel() &&
             !$this->getWalmartListingProduct()->isOnlinePriceInvalid()
         ) {
@@ -349,8 +353,10 @@ HTML;
         }
 
         if ($qty <= 0) {
-            if (isset($this->params['status_changer']) &&
-                $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
+            if (
+                isset($this->params['status_changer']) &&
+                $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+            ) {
                 $message = 'You are submitting an Item with zero quantity. It contradicts Walmart requirements.';
 
                 if ($this->getListingProduct()->isStoppable()) {
@@ -491,7 +497,8 @@ HTML;
 
     protected function validateMagentoProductType()
     {
-        if ($this->getMagentoProduct()->isBundleType() ||
+        if (
+            $this->getMagentoProduct()->isBundleType() ||
             $this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
             $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
         ) {
@@ -618,7 +625,8 @@ HTML;
         $isAtLeastOneSpecified = false;
 
         if ($gtin = $this->getGtin()) {
-            if (strtoupper($gtin) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+            if (
+                strtoupper($gtin) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
                 !$this->helperData->isGTIN($gtin)
             ) {
                 $this->addMessage(
@@ -637,7 +645,8 @@ HTML;
         }
 
         if ($upc = $this->getUpc()) {
-            if (strtoupper($upc) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+            if (
+                strtoupper($upc) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
                 !$this->helperData->isUpc($upc)
             ) {
                 $this->addMessage(
@@ -656,7 +665,8 @@ HTML;
         }
 
         if ($ean = $this->getEan()) {
-            if (strtoupper($ean) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+            if (
+                strtoupper($ean) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
                 !$this->helperData->isEAN($ean)
             ) {
                 $this->addMessage(
@@ -675,7 +685,8 @@ HTML;
         }
 
         if ($isbn = $this->getIsbn()) {
-            if (strtoupper($isbn) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
+            if (
+                strtoupper($isbn) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
                 !$this->helperData->isISBN($isbn)
             ) {
                 $this->addMessage(

@@ -15,8 +15,8 @@ class UpdateTableCells extends Table
 {
     public function execute()
     {
-        $ids           = $this->prepareIds();
-        $cellsValues   = $this->prepareCellsValuesArray();
+        $ids = $this->prepareIds();
+        $cellsValues = $this->prepareCellsValuesArray();
         $modelInstance = $this->getTableModel();
 
         if (empty($ids) || empty($cellsValues)) {

@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Amazon\Account\Repricing;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'account_repricing_change_processor';
+    public const INSTRUCTION_INITIATOR = 'account_repricing_change_processor';
 
-    const INSTRUCTION_TYPE_ACCOUNT_REPRICING_DATA_CHANGED = 'account_repricing_data_changed';
+    public const INSTRUCTION_TYPE_ACCOUNT_REPRICING_DATA_CHANGED = 'account_repricing_data_changed';
 
     //########################################
 
@@ -40,7 +40,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_ACCOUNT_REPRICING_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_ACCOUNT_REPRICING_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }

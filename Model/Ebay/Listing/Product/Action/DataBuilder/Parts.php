@@ -26,7 +26,7 @@ class Parts extends AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
-        $this->resourceConnection  = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->componentEbayMotors = $componentEbayMotors;
     }
@@ -166,12 +166,12 @@ class Parts extends AbstractModel
 
         $typeIdentifier = $this->getMotorsHelper()->getIdentifierKey($type);
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($this->getMotorsHelper()->getDictionaryTable($type))
-            ->where(
-                '`' . $typeIdentifier . '` IN (?)',
-                array_keys($data)
-            );
+                                           ->select()
+                                           ->from($this->getMotorsHelper()->getDictionaryTable($type))
+                                           ->where(
+                                               '`' . $typeIdentifier . '` IN (?)',
+                                               array_keys($data)
+                                           );
 
         if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
             $select->where('scope = ?', $this->getMotorsHelper()->getEpidsScopeByType($type));
@@ -213,8 +213,8 @@ class Parts extends AbstractModel
             $conditions = $filter->getConditions();
 
             $select = $this->resourceConnection->getConnection()
-                ->select()
-                ->from($this->getMotorsHelper()->getDictionaryTable($type));
+                                               ->select()
+                                               ->from($this->getMotorsHelper()->getDictionaryTable($type));
 
             if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
                 $select->where('scope = ?', $this->getMotorsHelper()->getEpidsScopeByType($type));
@@ -244,10 +244,10 @@ class Parts extends AbstractModel
 
             if (empty($filterData)) {
                 $result[] = [
-                    'id'   => $filter->getId(),
+                    'id' => $filter->getId(),
                     'type' => 'filter',
                     'note' => $filter->getNote(),
-                    'info' => []
+                    'info' => [],
                 ];
                 continue;
             }
@@ -259,10 +259,10 @@ class Parts extends AbstractModel
 
                 foreach ($filterData as $group) {
                     $result[] = [
-                        'id'   => $filter->getId(),
+                        'id' => $filter->getId(),
                         'type' => 'filter',
                         'note' => $filter->getNote(),
-                        'info' => $group
+                        'info' => $group,
                     ];
                 }
 
@@ -275,7 +275,7 @@ class Parts extends AbstractModel
                         'id' => $item[$typeIdentifier],
                         'type' => $typeIdentifier,
                         'note' => $filter->getNote(),
-                        'info' => $item
+                        'info' => $item,
                     ];
                 }
             }
@@ -349,7 +349,7 @@ class Parts extends AbstractModel
 
                 $motorsList[] = [
                     'name' => $name,
-                    'value' => $value
+                    'value' => $value,
                 ];
             }
 

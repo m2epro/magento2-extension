@@ -83,6 +83,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $temp && $this->descriptionTemplateModel = null;
         $temp && $this->sellingFormatTemplateModel = null;
         $temp && $this->synchronizationTemplateModel = null;
+
         return $temp;
     }
 
@@ -228,6 +229,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array
      */
     public function getProducts($asObjects = false, array $filters = [])
@@ -258,6 +260,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
      * @param int $initiator
+     *
      * @return bool|\Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -290,22 +293,22 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $walmartListingOther = $listingOtherProduct->getChildObject();
 
         $dataForUpdate = [
-            'sku'  => $walmartListingOther->getSku(),
+            'sku' => $walmartListingOther->getSku(),
             'gtin' => $walmartListingOther->getGtin(),
-            'upc'  => $walmartListingOther->getUpc(),
-            'ean'  => $walmartListingOther->getEan(),
+            'upc' => $walmartListingOther->getUpc(),
+            'ean' => $walmartListingOther->getEan(),
             'wpid' => $walmartListingOther->getWpid(),
 
-            'item_id'     => $walmartListingOther->getItemId(),
+            'item_id' => $walmartListingOther->getItemId(),
 
-            'online_price'            => $walmartListingOther->getOnlinePrice(),
-            'online_qty'              => $walmartListingOther->getOnlineQty(),
+            'online_price' => $walmartListingOther->getOnlinePrice(),
+            'online_qty' => $walmartListingOther->getOnlineQty(),
             'is_online_price_invalid' => $walmartListingOther->isOnlinePriceInvalid(),
 
-            'status'         => $listingOtherProduct->getStatus(),
+            'status' => $listingOtherProduct->getStatus(),
             'status_changer' => $listingOtherProduct->getStatusChanger(),
 
-            'publish_status'   => $walmartListingOther->getPublishStatus(),
+            'publish_status' => $walmartListingOther->getPublishStatus(),
             'lifecycle_status' => $walmartListingOther->getLifecycleStatus(),
 
             'status_change_reasons' => $walmartListingOther->getData('status_change_reasons'),
@@ -317,7 +320,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $listingOtherProduct->getId()
         );
 
-        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+        if (
+            $listingProduct->getMagentoProduct()->isGroupedType() &&
             $this->moduleConfiguration->isGroupedProductModeSet()
         ) {
             $listingProduct->setSetting('additional_data', 'grouped_product_mode', 1);
@@ -336,7 +340,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $listingOtherProduct->save();
 
         $walmartItem = $walmartListingProduct->getWalmartItem();
-        if ($listingProduct->getMagentoProduct()->isGroupedType() &&
+        if (
+            $listingProduct->getMagentoProduct()->isGroupedType() &&
             $this->moduleConfiguration->isGroupedProductModeSet()
         ) {
             $walmartItem->setAdditionalData(json_encode(['grouped_product_mode' => 1]));
@@ -348,10 +353,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $instruction->setData(
             [
                 'listing_product_id' => $listingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
-                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
-                'priority'           => 20,
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
+                'priority' => 20,
             ]
         );
         $instruction->save();

@@ -94,7 +94,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
      */
     public function getCheckNewAsinAccepted()
     {
-        return (bool) $this->checkNewAsinAccepted;
+        return (bool)$this->checkNewAsinAccepted;
     }
 
     /**
@@ -187,22 +187,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'title',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
             'filter_index' => 'title',
-            'escape'       => false,
-            'sortable'     => true,
+            'escape' => false,
+            'sortable' => true,
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('status', [
-            'header'       => $this->__('Status/Reason'),
-            'align'        => 'left',
-            'type'         => 'options',
-            'options'      => [
+            'header' => $this->__('Status/Reason'),
+            'align' => 'left',
+            'type' => 'options',
+            'options' => [
                 self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED => $this->__(
                     'New ASIN/ISBN feature is disabled'
                 ),
@@ -213,23 +213,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     'Ready to be assigned'
                 ),
             ],
-            'width'        => '140px',
-            'index'        => 'description_template_action_status',
+            'width' => '140px',
+            'index' => 'description_template_action_status',
             'filter_index' => 'description_template_action_status',
-            'sortable'     => false,
+            'sortable' => false,
             'filter_condition_callback' => [$this, 'callbackFilterStatus'],
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         $this->addColumn('action', [
-            'header'       => $this->__('Action'),
-            'align'        => 'left',
-            'type'         => 'number',
-            'width'        => '55px',
-            'index'        => 'id',
-            'filter'       => false,
-            'sortable'     => false,
-            'frame_callback' => [$this, 'callbackColumnAction']
+            'header' => $this->__('Action'),
+            'align' => 'left',
+            'type' => 'number',
+            'width' => '55px',
+            'index' => 'id',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnAction'],
         ]);
     }
 
@@ -238,12 +238,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setChild(
             'refresh_button',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                ->setData([
-                    'id' => 'description_template_refresh_btn',
-                    'label'     => $this->__('Refresh'),
-                    'class'     => 'action primary',
-                    'onclick'   => $this->getJsObjectName().'.reload()'
-                ])
+                 ->setData([
+                     'id' => 'description_template_refresh_btn',
+                     'label' => $this->__('Refresh'),
+                     'class' => 'action primary',
+                     'onclick' => $this->getJsObjectName() . '.reload()',
+                 ])
         );
 
         return parent::_prepareLayout();
@@ -260,7 +260,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $collection->getSelect()->where(
             'title LIKE ? OR category_path LIKE ? OR browsenode_id LIKE ?',
-            '%'.$value.'%'
+            '%' . $value . '%'
         );
     }
 
@@ -299,17 +299,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'wizard' => $this->wizardHelper->isActive(
                 \Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK
             ),
-            'close_on_save' => true
+            'close_on_save' => true,
         ]);
 
         $title = $this->dataHelper->escapeHtml($row->getData('title'));
 
         $categoryWord = $this->__('Category');
         $categoryPath = $row->getChildObject()->getData('category_path');
-        $browseNode   = $row->getChildObject()->getData('browsenode_id');
+        $browseNode = $row->getChildObject()->getData('browsenode_id');
 
         $categoryPath = !empty($categoryPath) ? "{$categoryPath} ({$browseNode})"
-                                              : $this->__('N/A');
+            : $this->__('N/A');
 
         return <<<HTML
 <a target="_blank" href="{$templateDescriptionEditUrl}">{$title}</a>
@@ -356,7 +356,7 @@ HTML;
 
         return '<a href="javascript:void(0);"'
             . 'onclick="' . $this->getMapToTemplateJsFn() . '(this, '
-            . $value . $mapToAsin .');">'.$assignText.'</a>';
+            . $value . $mapToAsin . ');">' . $assignText . '</a>';
     }
 
     protected function _toHtml()
@@ -373,7 +373,7 @@ HTML;
             '_query' => [
                 'check_is_new_asin_accepted' => $this->getCheckNewAsinAccepted(),
                 'map_to_template_js_fn' => $this->getMapToTemplateJsFn(),
-                'create_new_template_js_fn' => $this->getCreateNewTemplateJsFn()
+                'create_new_template_js_fn' => $this->getCreateNewTemplateJsFn(),
             ],
             'products_ids' => implode(',', $this->getProductsIds()),
         ]);
@@ -420,11 +420,11 @@ HTML;
     protected function getNewTemplateDescriptionUrl()
     {
         return $this->getUrl('*/amazon_template_description/new', [
-            'is_new_asin_accepted'  => $this->getCheckNewAsinAccepted(),
-            'marketplace_id'        => $this->getMarketplaceId(),
+            'is_new_asin_accepted' => $this->getCheckNewAsinAccepted(),
+            'marketplace_id' => $this->getMarketplaceId(),
             'wizard' => $this->wizardHelper
                 ->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK),
-            'close_on_save' => 1
+            'close_on_save' => 1,
         ]);
     }
 
@@ -441,6 +441,7 @@ HTML;
                 $this->listingProduct = $listingProduct;
             }
         }
+
         return $this->listingProduct;
     }
 
@@ -461,7 +462,7 @@ HTML;
             $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
             $collection->getSelect()->columns(
                 [
-                    'main_table.id'
+                    'main_table.id',
                 ]
             );
 

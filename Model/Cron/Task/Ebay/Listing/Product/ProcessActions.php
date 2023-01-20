@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product;
  */
 class ProcessActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/listing/product/process_actions';
+    public const NICK = 'ebay/listing/product/process_actions';
 
     //####################################
 

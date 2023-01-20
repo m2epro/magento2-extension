@@ -62,11 +62,11 @@ class Form extends AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'    => 'edit_form',
+                    'id' => 'edit_form',
                     'action' => $this->getUrl('*/*/save'),
                     'method' => 'post',
-                    'enctype' => 'multipart/form-data'
-                ]
+                    'enctype' => 'multipart/form-data',
+                ],
             ]
         );
         $form->setUseContainer(true);
@@ -92,11 +92,14 @@ class Form extends AbstractForm
             'amazon_accounts_repricing',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
 <p>If necessary, you can manage additional settings of your Amazon items managed by Repricer.</p>
 <p>Head over to <a href="%url%" target="_blank" class="external-link">docs</a> for detailed information.</p>
 HTML
-                    , $this->supportHelper->getDocumentationArticleUrl('x/CP4kB'))
+                    ,
+                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                ),
             ]
         );
 
@@ -104,7 +107,7 @@ HTML
             'additional_settings',
             [
                 'legend' => $this->__(''),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -128,13 +131,14 @@ HTML
                 'hidden',
                 [
                     'name' => 'repricing[regular_price_attribute]',
-                    'value' => $repricing->getData('regular_price_attribute')
+                    'value' => $repricing->getData('regular_price_attribute'),
                 ]
             );
 
             $priceModeAttribute = \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE;
 
-            if ($repricing->getRegularPriceMode() == $priceModeAttribute &&
+            if (
+                $repricing->getRegularPriceMode() == $priceModeAttribute &&
                 !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('regular_price_attribute'),
                     $attributesByInputTypes['text_price']
@@ -142,7 +146,7 @@ HTML
             ) {
                 $attrs = [
                     'attribute_code' => $repricing->getData('regular_price_attribute'),
-                    'selected' => 'selected'
+                    'selected' => 'selected',
                 ];
 
                 $preparedAttributes[] = [
@@ -156,7 +160,8 @@ HTML
 
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if ($repricing->getRegularPriceMode() == $priceModeAttribute
+                if (
+                    $repricing->getRegularPriceMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('regular_price_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -168,13 +173,15 @@ HTML
                 ];
             }
 
-            $priceCoefficient = $this->elementFactory->create('text', ['data' => [
-                'html_id' => 'regular_price_coefficient',
-                'name' => 'repricing[regular_price_coefficient]',
-                'label' => '',
-                'value' => $repricing->getData('regular_price_coefficient'),
-                'class' => 'M2ePro-validate-price-coefficient',
-            ]])->setForm($form)->toHtml();
+            $priceCoefficient = $this->elementFactory->create('text', [
+                'data' => [
+                    'html_id' => 'regular_price_coefficient',
+                    'name' => 'repricing[regular_price_coefficient]',
+                    'label' => '',
+                    'value' => $repricing->getData('regular_price_coefficient'),
+                    'class' => 'M2ePro-validate-price-coefficient',
+                ],
+            ])->setForm($form)->toHtml();
 
             $value = (
                 $repricing->getRegularPriceMode() ==
@@ -232,9 +239,9 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'create_magento_attribute' => true,
                 'value' => $value,
@@ -242,7 +249,7 @@ HTML
                 'after_element_html' => $fieldTooltip . '<span id="regular_price_coefficient_td">' .
                     $priceCoefficient . $tooltipPriceCoefficient .
                     '</span>',
-                'style' => 'max-width: 310px'
+                'style' => 'max-width: 310px',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
@@ -258,11 +265,11 @@ HTML
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_PARENT =>
                         $this->__('Main Product'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_CHILDREN =>
-                        $this->__('Associated Products')
+                        $this->__('Associated Products'),
                 ],
                 'value' => ($repricing) ? $repricing->getRegularPriceVariationMode() : '',
                 'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -279,18 +286,20 @@ HTML
                 'hidden',
                 [
                     'name' => 'repricing[min_price_attribute]',
-                    'value' => $repricing->getData('min_price_attribute')
+                    'value' => $repricing->getData('min_price_attribute'),
                 ]
             );
 
-            if ($repricing->getMinPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
+            if (
+                $repricing->getMinPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
                 !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('min_price_attribute'),
                     $attributesByInputTypes['text_price']
-                ) && $repricing->getData('min_price_attribute') != '') {
+                ) && $repricing->getData('min_price_attribute') != ''
+            ) {
                 $attrs = [
                     'attribute_code' => $repricing->getData('min_price_attribute'),
-                    'selected' => 'selected'
+                    'selected' => 'selected',
                 ];
 
                 $preparedAttributes[] = [
@@ -304,7 +313,8 @@ HTML
 
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if ($repricing->getMinPriceMode() == $priceModeAttribute
+                if (
+                    $repricing->getMinPriceMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('min_price_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -316,13 +326,15 @@ HTML
                 ];
             }
 
-            $priceCoefficient = $this->elementFactory->create('text', ['data' => [
-                'html_id' => 'min_price_coefficient',
-                'name' => 'repricing[min_price_coefficient]',
-                'label' => '',
-                'value' => $repricing->getData('min_price_coefficient'),
-                'class' => 'M2ePro-validate-price-coefficient',
-            ]])->setForm($form)->toHtml();
+            $priceCoefficient = $this->elementFactory->create('text', [
+                'data' => [
+                    'html_id' => 'min_price_coefficient',
+                    'name' => 'repricing[min_price_coefficient]',
+                    'label' => '',
+                    'value' => $repricing->getData('min_price_coefficient'),
+                    'class' => 'M2ePro-validate-price-coefficient',
+                ],
+            ])->setForm($form)->toHtml();
 
             $value = (
                 $repricing->getMinPriceMode() ==
@@ -371,30 +383,30 @@ More detailed information on how to work with this option can be found
                         'label' => $this->__('Less than Regular Price by Value'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MIN_PRICE_MODE_REGULAR_VALUE,
                         'attrs' => [
-                            'class' => 'repricing-min-price-mode-regular-depended'
-                        ]
+                            'class' => 'repricing-min-price-mode-regular-depended',
+                        ],
                     ],
                     [
                         'label' => $this->__('Less than Regular Price by Percent'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MIN_PRICE_MODE_REGULAR_PERCENT,
                         'attrs' => [
-                            'class' => 'repricing-min-price-mode-regular-depended'
-                        ]
+                            'class' => 'repricing-min-price-mode-regular-depended',
+                        ],
                     ],
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'create_magento_attribute' => true,
                 'value' => $value,
                 'css_class' => 'price_mode',
                 'after_element_html' => $fieldTooltip . '<span id="min_price_coefficient_td">'
                     . $priceCoefficient . $tooltipPriceCoefficient .
-                    '</span>'
+                    '</span>',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
@@ -411,7 +423,7 @@ More detailed information on how to work with this option can be found
                 'tooltip' => $this->__(
                     'Provide the Value which you would like to decrease the Regular Price by.'
                 ),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -428,7 +440,7 @@ More detailed information on how to work with this option can be found
                 'tooltip' => $this->__(
                     'Provide the Percent Value which you would like to decrease the Regular Price by.'
                 ),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -444,11 +456,11 @@ More detailed information on how to work with this option can be found
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_PARENT =>
                         $this->__('Main Product'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_CHILDREN =>
-                        $this->__('Associated Products')
+                        $this->__('Associated Products'),
                 ],
                 'value' => ($repricing) ? $repricing->getMinPriceVariationMode() : '',
                 'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -468,10 +480,10 @@ More detailed information on how to work with this option can be found
                             assurance that all the data will be properly set and the correct
                             Price will be used for the Item. Thus, more preferable and reliable
                             option is Manual updating of the Min Price value.'
-                        )
+                        ),
                     ],
                 ],
-                'style' => 'display: none'
+                'style' => 'display: none',
             ]
         );
 
@@ -488,11 +500,12 @@ More detailed information on how to work with this option can be found
                 'hidden',
                 [
                     'name' => 'repricing[max_price_attribute]',
-                    'value' => $repricing->getData('max_price_attribute')
+                    'value' => $repricing->getData('max_price_attribute'),
                 ]
             );
 
-            if ($repricing->getMaxPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
+            if (
+                $repricing->getMaxPriceMode() == \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_ATTRIBUTE &&
                 !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('max_price_attribute'),
                     $attributesByInputTypes['text_price']
@@ -500,7 +513,7 @@ More detailed information on how to work with this option can be found
             ) {
                 $attrs = [
                     'attribute_code' => $repricing->getData('max_price_attribute'),
-                    'selected' => 'selected'
+                    'selected' => 'selected',
                 ];
 
                 $preparedAttributes[] = [
@@ -514,7 +527,8 @@ More detailed information on how to work with this option can be found
 
             foreach ($attributesByInputTypes['text_price'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if ($repricing->getMaxPriceMode() == $priceModeAttribute
+                if (
+                    $repricing->getMaxPriceMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('max_price_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -526,13 +540,15 @@ More detailed information on how to work with this option can be found
                 ];
             }
 
-            $priceCoefficient = $this->elementFactory->create('text', ['data' => [
-                'html_id' => 'max_price_coefficient',
-                'name' => 'repricing[max_price_coefficient]',
-                'label' => '',
-                'value' => $repricing->getData('max_price_coefficient'),
-                'class' => 'M2ePro-validate-price-coefficient',
-            ]])->setForm($form)->toHtml();
+            $priceCoefficient = $this->elementFactory->create('text', [
+                'data' => [
+                    'html_id' => 'max_price_coefficient',
+                    'name' => 'repricing[max_price_coefficient]',
+                    'label' => '',
+                    'value' => $repricing->getData('max_price_coefficient'),
+                    'class' => 'M2ePro-validate-price-coefficient',
+                ],
+            ])->setForm($form)->toHtml();
 
             $value = (
                 $repricing->getMaxPriceMode() ==
@@ -581,30 +597,30 @@ More detailed information on how to work with this option can be found
                         'label' => $this->__('More than Regular Price by Value'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MAX_PRICE_MODE_REGULAR_VALUE,
                         'attrs' => [
-                            'class' => 'repricing-max-price-mode-regular-depended'
-                        ]
+                            'class' => 'repricing-max-price-mode-regular-depended',
+                        ],
                     ],
                     [
                         'label' => $this->__('More than Regular Price by Percent'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MAX_PRICE_MODE_REGULAR_PERCENT,
                         'attrs' => [
-                            'class' => 'repricing-max-price-mode-regular-depended'
-                        ]
+                            'class' => 'repricing-max-price-mode-regular-depended',
+                        ],
                     ],
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'create_magento_attribute' => true,
                 'value' => $value,
                 'css_class' => 'price_mode',
                 'after_element_html' => $fieldTooltip . '<span id="max_price_coefficient_td">'
                     . $priceCoefficient . $tooltipPriceCoefficient .
-                    '</span>'
+                    '</span>',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
@@ -621,7 +637,7 @@ More detailed information on how to work with this option can be found
                 'tooltip' => $this->__(
                     'Provide the Value which you would like to decrease the Regular Price by.'
                 ),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -638,7 +654,7 @@ More detailed information on how to work with this option can be found
                 'tooltip' => $this->__(
                     'Provide the Percent Value which you would like to decrease the Regular Price by.'
                 ),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -654,11 +670,11 @@ More detailed information on how to work with this option can be found
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_PARENT =>
                         $this->__('Main Product'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_CHILDREN =>
-                        $this->__('Associated Products')
+                        $this->__('Associated Products'),
                 ],
                 'value' => ($repricing) ? $repricing->getMaxPriceVariationMode() : '',
                 'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -678,10 +694,10 @@ More detailed information on how to work with this option can be found
                             assurance that all the data will be properly set and the correct
                             Price will be used for the Item. Thus, more preferable and reliable
                             option is Manual updating of the Max Price value.'
-                        )
+                        ),
                     ],
                 ],
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 
@@ -697,13 +713,14 @@ More detailed information on how to work with this option can be found
                 'hidden',
                 [
                     'name' => 'repricing[disable_mode_attribute]',
-                    'value' => $repricing->getData('disable_mode_attribute')
+                    'value' => $repricing->getData('disable_mode_attribute'),
                 ]
             );
 
             $priceModeAttribute = \Ess\M2ePro\Model\Amazon\Account\Repricing::DISABLE_MODE_ATTRIBUTE;
 
-            if ($repricing->getDisableMode() == $priceModeAttribute &&
+            if (
+                $repricing->getDisableMode() == $priceModeAttribute &&
                 !$this->magentoAttributeHelper->isExistInAttributesArray(
                     $repricing->getData('disable_mode_attribute'),
                     $attributesByInputTypes['boolean']
@@ -711,7 +728,7 @@ More detailed information on how to work with this option can be found
             ) {
                 $attrs = [
                     'attribute_code' => $repricing->getData('disable_mode_attribute'),
-                    'selected' => 'selected'
+                    'selected' => 'selected',
                 ];
 
                 $preparedAttributes[] = [
@@ -725,7 +742,8 @@ More detailed information on how to work with this option can be found
 
             foreach ($attributesByInputTypes['boolean'] as $attribute) {
                 $attrs = ['attribute_code' => $attribute['code']];
-                if ($repricing->getDisableMode() == $priceModeAttribute
+                if (
+                    $repricing->getDisableMode() == $priceModeAttribute
                     && $attribute['code'] == $repricing->getData('disable_mode_attribute')
                 ) {
                     $attrs['selected'] = 'selected';
@@ -757,16 +775,17 @@ More detailed information on how to work with this option can be found
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'create_magento_attribute' => true,
                 'value' => $value,
                 'after_element_html' =>
                     '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
-                    $this->getTooltipHtml($this->__(
-                        '
+                    $this->getTooltipHtml(
+                        $this->__(
+                            '
 This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items.
 <a href="%url1%" target="_blank">Learn more</a> about the Product Disabling feature.
 <br /><br />
@@ -781,9 +800,10 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                        $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
-                        $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
-                    )).'</div>'
+                            $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
+                            $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                        )
+                    ) . '</div>',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
@@ -828,15 +848,17 @@ CSS
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Account\Repricing::class)
         );
 
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Repricer', [
-            'id' => $account->getId()
-        ]));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions('Amazon_Repricer', [
+                'id' => $account->getId(),
+            ])
+        );
 
         $this->jsUrl->addUrls([
-            'formSubmit'   => $this->getUrl(
+            'formSubmit' => $this->getUrl(
                 '*/amazon_repricer_settings/save',
                 ['_current' => true, 'id' => $this->getRequest()->getParam('id')]
-            )
+            ),
         ]);
 
         $this->setForm($form);

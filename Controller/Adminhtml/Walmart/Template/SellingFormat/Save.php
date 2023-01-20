@@ -31,6 +31,7 @@ class Save extends Template
 
         if (!$post->count()) {
             $this->_forward('index');
+
             return;
         }
 
@@ -52,7 +53,7 @@ class Save extends Template
         }
 
         $this->modelFactory->getObject('Walmart_Template_SellingFormat_Builder')
-            ->build($sellingFormatTemplate, $post->toArray());
+                           ->build($sellingFormatTemplate, $post->toArray());
 
         $this->updateServices($post, $sellingFormatTemplate->getId());
         $this->updatePromotions($post, $sellingFormatTemplate->getId());
@@ -78,8 +79,9 @@ class Save extends Template
 
         if ($this->isAjax()) {
             $this->setJsonContent([
-                'status' => true
+                'status' => true,
             ]);
+
             return $this->getResult();
         }
 
@@ -87,20 +89,23 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->dataHelper->getBackUrl('*/walmart_template/index', [], [
-            'edit' => [
-                'id' => $id,
-                'wizard' => $this->getRequest()->getParam('wizard'),
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ],
-        ]));
+
+        return $this->_redirect(
+            $this->dataHelper->getBackUrl('*/walmart_template/index', [], [
+                'edit' => [
+                    'id' => $id,
+                    'wizard' => $this->getRequest()->getParam('wizard'),
+                    'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+                ],
+            ])
+        );
     }
 
     private function updateServices($data, $templateId)
     {
         $collection = $this->activeRecordFactory->getObject('Walmart_Template_SellingFormat_ShippingOverride')
-                          ->getCollection()
-                          ->addFieldToFilter('template_selling_format_id', (int)$templateId);
+                                                ->getCollection()
+                                                ->addFieldToFilter('template_selling_format_id', (int)$templateId);
 
         foreach ($collection as $item) {
             $item->delete();

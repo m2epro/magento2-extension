@@ -15,8 +15,8 @@ use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
 use Ess\M2ePro\Helper\Factory as HelperFactory;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\View\Result\PageFactory;
-use \Magento\Framework\Controller\Result\RawFactory;
-use \Magento\Framework\View\LayoutFactory;
+use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\View\LayoutFactory;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer\CssRenderer;
 
 class Context extends ActionContext
@@ -36,19 +36,19 @@ class Context extends ActionContext
     /** @var PageFactory $resultPageFactory */
     protected $resultPageFactory = null;
 
-    /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory  */
+    /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory */
     protected $resultRawFactory = null;
 
     /** @var \Magento\Framework\View\LayoutFactory $layoutFactory */
     protected $layoutFactory = null;
 
-    /** @var CssRenderer|null  */
+    /** @var CssRenderer|null */
     protected $cssRenderer = null;
 
-    /** @var \Magento\Framework\App\ResourceConnection|null  */
+    /** @var \Magento\Framework\App\ResourceConnection|null */
     protected $resourceConnection = null;
 
-    /** @var \Magento\Config\Model\Config|null  */
+    /** @var \Magento\Config\Model\Config|null */
     protected $magentoConfig = null;
 
     public function __construct(
@@ -84,9 +84,9 @@ class Context extends ActionContext
     ) {
         $this->cssRenderer = $cssRenderer;
 
-        $this->modelFactory  = $modelFactory;
-        $this->parentFactory  = $parentFactory;
-        $this->activeRecordFactory  = $activeRecordFactory;
+        $this->modelFactory = $modelFactory;
+        $this->parentFactory = $parentFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->helperFactory = $helperFactory;
         $this->resultPageFactory = $resultPageFactory;
 

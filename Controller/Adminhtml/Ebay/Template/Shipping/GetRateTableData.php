@@ -28,15 +28,15 @@ class GetRateTableData extends Template
 
     public function execute()
     {
-        $accountId     = $this->getRequest()->getParam('account_id', false);
+        $accountId = $this->getRequest()->getParam('account_id', false);
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', false);
-        $type          = $this->getRequest()->getParam('type', false);
+        $type = $this->getRequest()->getParam('type', false);
 
         if (!$accountId || !$marketplaceId || !$type) {
             return $this->getResponse()->setBody(
                 $this->dataHelper->jsonEncode(
                     [
-                        'error' => $this->__('Wrong parameters.')
+                        'error' => $this->__('Wrong parameters.'),
                     ]
                 )
             );
@@ -51,7 +51,7 @@ class GetRateTableData extends Template
                 $this->dataHelper->jsonEncode(
                     [
                         'sell_api_disabled' => true,
-                        'error' => $this->__('Sell Api token is missing.')
+                        'error' => $this->__('Sell Api token is missing.'),
                     ]
                 )
             );
@@ -63,7 +63,7 @@ class GetRateTableData extends Template
             return $this->getResponse()->setBody(
                 $this->dataHelper->jsonEncode(
                     [
-                        'error' => $exception->getMessage()
+                        'error' => $exception->getMessage(),
                     ]
                 )
             );
@@ -77,9 +77,11 @@ class GetRateTableData extends Template
 
         $rateTablesData = [];
         foreach ($rateTables as $rateTable) {
-            if (empty($rateTable['countryCode']) ||
+            if (
+                empty($rateTable['countryCode']) ||
                 strtolower($rateTable['countryCode']) != $countryCode ||
-                strtolower($rateTable['locality']) != $type) {
+                strtolower($rateTable['locality']) != $type
+            ) {
                 continue;
             }
 

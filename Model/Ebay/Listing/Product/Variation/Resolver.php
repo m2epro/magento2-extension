@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
-use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General as DataBuilderGeneral;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General as DataBuilderGeneral;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Listing\Product\Variation;
@@ -16,17 +16,17 @@ use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MPN_SPECIFIC_NAME = 'MPN';
+    public const MPN_SPECIFIC_NAME = 'MPN';
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct;
     protected $isAllowedToSave = false;
 
     protected $isAllowedToProcessVariationsWhichAreNotExistInTheModule = false;
-    protected $isAllowedToProcessVariationMpnErrors                    = false;
-    protected $isAllowedToProcessExistedVariations                     = false;
+    protected $isAllowedToProcessVariationMpnErrors = false;
+    protected $isAllowedToProcessExistedVariations = false;
 
-    protected $moduleVariations  = [];
+    protected $moduleVariations = [];
     protected $channelVariations = [];
     protected $variationMpnValues = [];
 
@@ -56,10 +56,10 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
-        $this->parentFactory              = $parentFactory;
-        $this->activeRecordFactory        = $activeRecordFactory;
+        $this->parentFactory = $parentFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->componentEbayConfiguration = $componentEbayConfiguration;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     //########################################
@@ -113,14 +113,14 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function validateModuleVariations()
     {
-        $skus    = [];
+        $skus = [];
         $options = [];
 
-        $duplicatedSkus    = [];
+        $duplicatedSkus = [];
         $duplicatedOptions = [];
 
         foreach ($this->moduleVariations as $variation) {
-            $sku    = $variation['sku'];
+            $sku = $variation['sku'];
             $option = $this->getVariationHash($variation);
 
             if (empty($sku)) {
@@ -167,7 +167,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         $variationUpdater->process($this->listingProduct);
 
         $trimmedSpecificsReplacements = [];
-        $specificsReplacements        = $this->listingProduct->getSetting(
+        $specificsReplacements = $this->listingProduct->getSetting(
             'additional_data',
             'variations_specifics_replacements',
             []
@@ -179,25 +179,24 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
         $this->moduleVariations = [];
         foreach ($this->listingProduct->getVariations(true) as $variation) {
-
             /**@var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
             $ebayVariation = $variation->getChildObject();
 
             $tempVariation = [
-                'id'            => $variation->getId(),
-                'sku'           => $ebayVariation->getOnlineSku(),
-                'price'         => $ebayVariation->getOnlinePrice(),
-                'quantity'      => $ebayVariation->getOnlineQty(),
+                'id' => $variation->getId(),
+                'sku' => $ebayVariation->getOnlineSku(),
+                'price' => $ebayVariation->getOnlinePrice(),
+                'quantity' => $ebayVariation->getOnlineQty(),
                 'quantity_sold' => $ebayVariation->getOnlineQtySold(),
-                'specifics'     => [],
-                'details'       => []
+                'specifics' => [],
+                'details' => [],
             ];
 
             //--------------------------------
             foreach ($variation->getOptions(true) as $option) {
                 /**@var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
-                $optionName  = trim($option->getAttribute());
+                $optionName = trim($option->getAttribute());
                 $optionValue = trim($option->getOption());
 
                 if (array_key_exists($optionName, $trimmedSpecificsReplacements)) {
@@ -212,17 +211,19 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             //--------------------------------
 
             //-- MPN Specific has been changed
-            if (!empty($tempVariation['details']['mpn_previous']) && !empty($tempVariation['details']['mpn']) &&
-                $tempVariation['details']['mpn_previous'] != $tempVariation['details']['mpn']) {
-                $oneMoreVariation                   = [
-                    'id'        => null,
-                    'qty'       => 0,
-                    'price'     => $tempVariation['price'],
-                    'sku'       => 'del-' . sha1(microtime(1) . $tempVariation['sku']),
-                    'add'       => 0,
-                    'delete'    => 1,
+            if (
+                !empty($tempVariation['details']['mpn_previous']) && !empty($tempVariation['details']['mpn']) &&
+                $tempVariation['details']['mpn_previous'] != $tempVariation['details']['mpn']
+            ) {
+                $oneMoreVariation = [
+                    'id' => null,
+                    'qty' => 0,
+                    'price' => $tempVariation['price'],
+                    'sku' => 'del-' . sha1(microtime(1) . $tempVariation['sku']),
+                    'add' => 0,
+                    'delete' => 1,
                     'specifics' => $tempVariation['specifics'],
-                    'details'   => $tempVariation['details'],
+                    'details' => $tempVariation['details'],
                     'has_sales' => true,
                 ];
                 $oneMoreVariation['details']['mpn'] = $tempVariation['details']['mpn_previous'];
@@ -248,13 +249,13 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($variationsThatCanNoBeDeleted as $canNoBeDeleted) {
             $this->moduleVariations[] = [
-                'id'            => null,
-                'sku'           => $canNoBeDeleted['sku'],
-                'price'         => isset($canNoBeDeleted['price']) ? $canNoBeDeleted['price'] : 0,
-                'quantity'      => $canNoBeDeleted['qty'],
+                'id' => null,
+                'sku' => $canNoBeDeleted['sku'],
+                'price' => isset($canNoBeDeleted['price']) ? $canNoBeDeleted['price'] : 0,
+                'quantity' => $canNoBeDeleted['qty'],
                 'quantity_sold' => $canNoBeDeleted['qty'],
-                'specifics'     => $canNoBeDeleted['specifics'],
-                'details'       => isset($canNoBeDeleted['details']) ? $canNoBeDeleted['details'] : []
+                'specifics' => $canNoBeDeleted['specifics'],
+                'details' => isset($canNoBeDeleted['details']) ? $canNoBeDeleted['details'] : [],
             ];
         }
     }
@@ -266,7 +267,6 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         $additionalData = $variation->getAdditionalData();
 
         foreach (['isbn', 'upc', 'ean', 'epid'] as $identifier) {
-
             if (isset($additionalData['product_details'][$identifier])) {
                 $tempVariation['details'][$identifier] = $additionalData['product_details'][$identifier];
                 continue;
@@ -281,8 +281,10 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            if (!$this->listingProduct->getMagentoProduct()->isConfigurableType() &&
-                !$this->listingProduct->getMagentoProduct()->isGroupedType()) {
+            if (
+                !$this->listingProduct->getMagentoProduct()->isConfigurableType() &&
+                !$this->listingProduct->getMagentoProduct()->isGroupedType()
+            ) {
                 continue;
             }
 
@@ -312,7 +314,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $this->listingProduct->getChildObject();
 
-        $categoryId    = $ebayListingProduct->getCategoryTemplateSource()->getCategoryId();
+        $categoryId = $ebayListingProduct->getCategoryTemplateSource()->getCategoryId();
         $marketplaceId = $this->listingProduct->getMarketplace()->getId();
 
         $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures($categoryId, $marketplaceId);
@@ -358,22 +360,30 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
         if (isset($additionalData['product_details']['mpn'])) {
             $tempVariation['details']['mpn'] = $additionalData['product_details']['mpn'];
+
             return;
         }
 
-        if ($ebayDescriptionTemplate->isProductDetailsModeNone('mpn') ||
-            $ebayDescriptionTemplate->isProductDetailsModeNone('brand')) {
+        if (
+            $ebayDescriptionTemplate->isProductDetailsModeNone('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeNone('brand')
+        ) {
             return;
         }
 
-        if ($ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('mpn') ||
-            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')) {
+        if (
+            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('mpn') ||
+            $ebayDescriptionTemplate->isProductDetailsModeDoesNotApply('brand')
+        ) {
             $tempVariation['details']['mpn'] = DataBuilderGeneral::PRODUCT_DETAILS_DOES_NOT_APPLY;
+
             return;
         }
 
-        if (!$this->listingProduct->getMagentoProduct()->isConfigurableType() &&
-            !$this->listingProduct->getMagentoProduct()->isGroupedType()) {
+        if (
+            !$this->listingProduct->getMagentoProduct()->isConfigurableType() &&
+            !$this->listingProduct->getMagentoProduct()->isGroupedType()
+        ) {
             return;
         }
 
@@ -397,26 +407,26 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
      */
     private function prepareChannelVariations()
     {
-        $this->channelVariations  = [];
+        $this->channelVariations = [];
         $this->variationMpnValues = [];
 
         foreach ($this->getVariationsDataFromEbay() as $variation) {
             $tempVariation = [
-                'id'            => null,
-                'sku'           => $variation['sku'],
-                'price'         => $variation['price'],
-                'quantity'      => $variation['quantity'],
+                'id' => null,
+                'sku' => $variation['sku'],
+                'price' => $variation['price'],
+                'quantity' => $variation['quantity'],
                 'quantity_sold' => $variation['quantity_sold'],
-                'specifics'     => $variation['specifics'],
-                'details'       => !empty($variation['details']) ? $variation['details'] : []
+                'specifics' => $variation['specifics'],
+                'details' => !empty($variation['details']) ? $variation['details'] : [],
             ];
 
             if (isset($tempVariation['specifics'][self::MPN_SPECIFIC_NAME])) {
                 $tempVariation['details']['mpn'] = $tempVariation['specifics'][self::MPN_SPECIFIC_NAME];
 
                 $this->variationMpnValues[] = [
-                    'mpn'       => $tempVariation['specifics'][self::MPN_SPECIFIC_NAME],
-                    'sku'       => $variation['sku'],
+                    'mpn' => $tempVariation['specifics'][self::MPN_SPECIFIC_NAME],
+                    'sku' => $variation['sku'],
                     'specifics' => $variation['specifics'],
                 ];
 
@@ -434,15 +444,16 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getVariationsDataFromEbay()
     {
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $connector */
-        $connector = $this->modelFactory->getObject('Ebay_Connector_Dispatcher')->getVirtualConnector(
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
+        $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
+        $connector = $dispatcher->getVirtualConnector(
             'item',
             'get',
             'info',
             [
-                'item_id'              => $this->listingProduct->getChildObject()->getEbayItemIdReal(),
-                'parser_type'          => 'standard',
-                'full_variations_mode' => true
+                'item_id' => $this->listingProduct->getChildObject()->getEbayItemIdReal(),
+                'parser_type' => 'standard',
+                'full_variations_mode' => true,
             ],
             'result',
             $this->listingProduct->getMarketplace(),
@@ -507,25 +518,25 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                         $moduleVariation['id']
                     );
 
-                    $additionalData                           = $lpv->getAdditionalData();
+                    $additionalData = $lpv->getAdditionalData();
                     $additionalData['online_product_details'] = $channelVariation['details'];
 
                     $lpv->addData(
                         [
-                            'additional_data' => json_encode($additionalData)
+                            'additional_data' => json_encode($additionalData),
                         ]
                     );
                     $lpv->save();
 
                     $lpv->getChildObject()->addData(
                         [
-                            'online_sku'      => $channelVariation['sku'],
-                            'online_qty'      => $channelVariation['quantity'],
+                            'online_sku' => $channelVariation['sku'],
+                            'online_qty' => $channelVariation['quantity'],
                             'online_qty_sold' => $channelVariation['quantity_sold'],
-                            'status'          => $availableQty > 0 ? \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
+                            'status' => $availableQty > 0 ? \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
                                 : \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
-                            'add'             => 0,
-                            'detele'          => 0,
+                            'add' => 0,
+                            'detele' => 0,
                         ]
                     );
                     $lpv->getChildObject()->save();
@@ -574,13 +585,13 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($variations as $variation) {
             $variationsThatCanNoBeDeleted[] = [
-                'qty'       => 0,
-                'price'     => $variation['price'],
-                'sku'       => !empty($variation['sku']) ? 'del-' . sha1(microtime(1) . $variation['sku']) : '',
-                'add'       => 0,
-                'delete'    => 1,
+                'qty' => 0,
+                'price' => $variation['price'],
+                'sku' => !empty($variation['sku']) ? 'del-' . sha1(microtime(1) . $variation['sku']) : '',
+                'add' => 0,
+                'delete' => 1,
                 'specifics' => $variation['specifics'],
-                'details'   => $variation['details'],
+                'details' => $variation['details'],
                 'has_sales' => true,
             ];
         }
@@ -628,7 +639,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var Collection $variationOptionCollection */
         $variationOptionCollection = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')
-            ->getCollection();
+                                                               ->getCollection();
         $variationOptionCollection->addFieldToFilter(
             'listing_product_variation_id',
             $variationCollection->getColumnValues('id')
@@ -656,7 +667,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             $ebayVariation = $variation->getChildObject();
 
             foreach ($this->variationMpnValues as $id => $variationMpnValue) {
-                if ($ebayVariation->getOnlineSku() != $variationMpnValue['sku'] &&
+                if (
+                    $ebayVariation->getOnlineSku() != $variationMpnValue['sku'] &&
                     $specifics != $variationMpnValue['specifics']
                 ) {
                     continue;
@@ -664,10 +676,10 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
                 $additionalData = $variation->getAdditionalData();
 
-                if (!isset($additionalData['online_product_details']['mpn']) ||
+                if (
+                    !isset($additionalData['online_product_details']['mpn']) ||
                     $additionalData['online_product_details']['mpn'] != $variationMpnValue['mpn']
                 ) {
-
                     $this->addWarning(
                         sprintf(
                             "MPN for SKU %s has been added to the Module. Hash: %s",
@@ -702,7 +714,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $channelMpn = isset($channelVariation['details']['mpn']) ? $channelVariation['details']['mpn'] : null;
-        $moduleMpn  = isset($moduleVariation['details']['mpn']) ? $moduleVariation['details']['mpn'] : null;
+        $moduleMpn = isset($moduleVariation['details']['mpn']) ? $moduleVariation['details']['mpn'] : null;
 
         if ($channelMpn != $moduleMpn) {
             return false;
@@ -711,8 +723,10 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         foreach ($moduleVariation['specifics'] as $moduleVariationOptionName => $moduleVariationOptionValue) {
             $haveOption = false;
             foreach ($channelVariation['specifics'] as $channelVariationOptionName => $channelVariationOptionValue) {
-                if (trim($moduleVariationOptionName) == trim($channelVariationOptionName) &&
-                    trim($moduleVariationOptionValue) == trim($channelVariationOptionValue)) {
+                if (
+                    trim($moduleVariationOptionName) == trim($channelVariationOptionName) &&
+                    trim($moduleVariationOptionValue) == trim($channelVariationOptionValue)
+                ) {
                     $haveOption = true;
                     break;
                 }

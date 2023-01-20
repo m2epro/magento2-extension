@@ -19,12 +19,14 @@ class CssRenderer extends AbstractRenderer
     public function add($css)
     {
         $this->css[] = $css;
+
         return $this;
     }
 
     public function addFile($file)
     {
         $this->cssFiles[] = $file;
+
         return $this;
     }
 

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const EMPTY_TITLE_PLACEHOLDER = '--';
+    public const EMPTY_TITLE_PLACEHOLDER = '--';
 
     //########################################
 
@@ -153,7 +153,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             'marketplace_id' => $this->getParentObject()->getMarketplaceId(),
             'sku' => $this->getSku(),
             'product_id' => $this->getParentObject()->getProductId(),
-            'store_id' => $this->getRelatedStoreId()
+            'store_id' => $this->getRelatedStoreId(),
         ];
 
         $this->activeRecordFactory->getObject('Amazon\Item')->setData($dataForAdd)->save();
@@ -167,20 +167,20 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $productTable = $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable();
 
         $existedRelation = $connection->select()
-            ->from(
-                ['ai' => $itemTable],
-                []
-            )
-            ->join(
-                ['alp' => $productTable],
-                '(`alp`.`sku` = `ai`.`sku`)',
-                ['alp.listing_product_id']
-            )
-            ->where('`ai`.`sku` = ?', $this->getSku())
-            ->where('`ai`.`account_id` = ?', $this->getParentObject()->getAccountId())
-            ->where('`ai`.`marketplace_id` = ?', $this->getParentObject()->getMarketplaceId())
-            ->query()
-            ->fetchColumn();
+                                      ->from(
+                                          ['ai' => $itemTable],
+                                          []
+                                      )
+                                      ->join(
+                                          ['alp' => $productTable],
+                                          '(`alp`.`sku` = `ai`.`sku`)',
+                                          ['alp.listing_product_id']
+                                      )
+                                      ->where('`ai`.`sku` = ?', $this->getSku())
+                                      ->where('`ai`.`account_id` = ?', $this->getParentObject()->getAccountId())
+                                      ->where('`ai`.`marketplace_id` = ?', $this->getParentObject()->getMarketplaceId())
+                                      ->query()
+                                      ->fetchColumn();
 
         if ($existedRelation) {
             return;
@@ -192,7 +192,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                 '`account_id` = ?' => $this->getParentObject()->getAccountId(),
                 '`marketplace_id` = ?' => $this->getParentObject()->getMarketplaceId(),
                 '`sku` = ?' => $this->getSku(),
-                '`product_id` = ?' => $this->getParentObject()->getProductId()
+                '`product_id` = ?' => $this->getParentObject()->getProductId(),
             ]
         );
     }

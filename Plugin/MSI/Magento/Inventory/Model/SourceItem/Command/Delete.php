@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -9,9 +10,6 @@ namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command;
 
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Delete
- */
 class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -44,6 +42,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -55,6 +54,7 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     protected function processExecute($interceptor, \Closure $callback, array $arguments)
@@ -65,7 +65,6 @@ class Delete extends \Ess\M2ePro\Plugin\AbstractPlugin
         $result = $callback(...$arguments);
 
         foreach ($sourceItems as $sourceItem) {
-
             $affected = $this->msiAffectedProducts->getAffectedProductsBySourceAndSku(
                 $sourceItem->getSourceCode(),
                 $sourceItem->getSku()

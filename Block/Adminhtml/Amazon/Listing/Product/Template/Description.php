@@ -46,7 +46,7 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
     {
         if ($this->isNewAsin()) {
             $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-//                'title' => $this->__('Assign Description Policy for New ASIN/ISBN Creation'),
+                //                'title' => $this->__('Assign Description Policy for New ASIN/ISBN Creation'),
                 'content' => $this->__(
                     '
     For New ASIN/ISBN Creation you should select a prepared Description Policy,
@@ -59,12 +59,13 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
     More detailed information about ability to work with this Page you can find
     <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/zmYtAg')
-                )
+                ),
             ]);
         } else {
             $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-//                'title' => $this->__('Description Policy Assigning'),
-                'content' => $this->__('
+                //                'title' => $this->__('Description Policy Assigning'),
+                'content' => $this->__(
+                    '
     Description Policy is using to update Amazon Product Information, such as Title, Images, etc.
     It can be assigned to already existed Products.<br/><br/>
 
@@ -76,7 +77,8 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
     Option in Actions bulk at the top of the Grid;</li>
     <li>clicking on a Plus Icon in <strong>ASIN/ISBN Column</strong>
     of a Grid and selecting an <strong>Assign Settings for New ASIN/ISBN</strong> Option in an opened pop-up.</li>
-    </ul>')
+    </ul>'
+                ),
             ]);
         }
 

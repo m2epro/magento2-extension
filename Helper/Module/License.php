@@ -107,6 +107,7 @@ class License
         $requestParams['city'] = $info->getCity();
         $requestParams['postal_code'] = $info->getPostalCode();
 
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record', $requestParams);
         $dispatcherObject->process($connectorObj);

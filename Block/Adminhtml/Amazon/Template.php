@@ -81,12 +81,12 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         );
 
         $addButtonProps = [
-            'id'           => 'add_policy',
-            'label'        => __('Add Policy'),
-            'class'        => 'add',
+            'id' => 'add_policy',
+            'label' => __('Add Policy'),
+            'class' => 'add',
             'button_class' => '',
-            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
-            'options'      => $this->_getAddTemplateButtonOptions(),
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
+            'options' => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
 
@@ -96,29 +96,29 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _getAddTemplateButtonOptions()
     {
         return [
-            Grid::TEMPLATE_SELLING_FORMAT   => [
-                'label'   => $this->__('Selling'),
-                'id'      => 'selling',
+            Grid::TEMPLATE_SELLING_FORMAT => [
+                'label' => $this->__('Selling'),
+                'id' => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
-            Grid::TEMPLATE_DESCRIPTION      => [
-                'label'   => $this->__('Description'),
-                'id'      => 'description',
+            Grid::TEMPLATE_DESCRIPTION => [
+                'label' => $this->__('Description'),
+                'id' => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_DESCRIPTION) . "')",
             ],
-            Grid::TEMPLATE_SYNCHRONIZATION  => [
-                'label'   => $this->__('Synchronization'),
-                'id'      => 'synchronization',
+            Grid::TEMPLATE_SYNCHRONIZATION => [
+                'label' => $this->__('Synchronization'),
+                'id' => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ],
-            Grid::TEMPLATE_SHIPPING         => [
-                'label'   => $this->__('Shipping'),
-                'id'      => 'shipping',
+            Grid::TEMPLATE_SHIPPING => [
+                'label' => $this->__('Shipping'),
+                'id' => 'shipping',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING) . "')",
             ],
             Grid::TEMPLATE_PRODUCT_TAX_CODE => [
-                'label'   => $this->__('Product Tax Code'),
-                'id'      => 'product_tax_code',
+                'label' => $this->__('Product Tax Code'),
+                'id' => 'product_tax_code',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_PRODUCT_TAX_CODE) . "')",
             ],
         ];

@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Product\Attribute\Update;
 
-/**
- * Class \Ess\M2ePro\Observer\Product\Attribute\Update\Before
- */
 class Before extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -26,8 +22,6 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
         $this->objectManager = $objectManager;
     }
-
-    //########################################
 
     public function process()
     {
@@ -45,6 +39,4 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
 
         $changesModel->applyChanges();
     }
-
-    //########################################
 }

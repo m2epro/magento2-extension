@@ -8,14 +8,15 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate;
 
-use \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
-use \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as CheckerAbstract;
+use Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
+use Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as CheckerAbstract;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Handler
  */
 class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterface
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -52,7 +53,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
         }
 
         $params = [
-            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH,
         ];
 
         foreach ($this->getAllCheckers() as $checker) {
@@ -80,12 +81,13 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements HandlerInterfac
 
     /**
      * @param $checkerNick
+     *
      * @return CheckerAbstract
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getCheckerModel($checkerNick)
     {
-        $checkerModelName = 'Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\\'.$checkerNick;
+        $checkerModelName = 'Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\\' . $checkerNick;
 
         if (!$this->modelFactory->canCreateObject($checkerModelName)) {
             throw new \Ess\M2ePro\Model\Exception\Logic(

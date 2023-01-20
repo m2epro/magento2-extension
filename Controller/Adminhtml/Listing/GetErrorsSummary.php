@@ -17,7 +17,7 @@ class GetErrorsSummary extends Listing
         $blockParams = [
             'action_ids' => $this->getRequest()->getParam('action_ids'),
             'table_name' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-            'type_log'   => 'listing'
+            'type_log' => 'listing',
         ];
         $block = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\Log\ErrorsSummary::class,

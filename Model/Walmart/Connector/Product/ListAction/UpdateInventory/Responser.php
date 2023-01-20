@@ -68,6 +68,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
     public function setProcessingList(\Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList $processingList)
     {
         $this->processingList = $processingList;
+
         return $this;
     }
 

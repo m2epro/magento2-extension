@@ -26,10 +26,12 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'motors_custom_item',
-            'action' => $this->getUrl('*/*/saveCustomItem'),
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'motors_custom_item',
+                'action' => $this->getUrl('*/*/saveCustomItem'),
+            ],
+        ]);
 
         $motorsType = $this->getRequest()->getParam('motors_type');
 
@@ -41,14 +43,18 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'custom_motors_item_help_block',
             self::HELP_BLOCK,
             [
-                'content' => $this->__('
+                'content' => $this->__(
+                    '
                     You can add custom %item% value in case there are no suitable %items% available in the list.
                     In order to add it, you should fill in all the fields of the form below.<br/><br/>
 
                     <b>Please note</b>, the values you specified such as Make, Model, etc. will be sent to eBay in the
                     way you set them without any changes. So, please, ensure that the values you provided are valid
                     and correctly formatted.
-                ', $itemTitle, $itemTitle . 's')
+                ',
+                    $itemTitle,
+                    $itemTitle . 's'
+                ),
             ]
         );
 
@@ -57,7 +63,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'motors_type',
-                'value' => $motorsType
+                'value' => $motorsType,
             ]
         );
 
@@ -92,7 +98,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'label' => 'ePID',
                 'name' => 'item[epid]',
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -108,7 +114,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_VEHICLE => $this->__('Car / Truck'),
                     \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_MOTORCYCLE => $this->__('Motorcycle'),
                     \Ess\M2ePro\Helper\Component\Ebay\Motors::PRODUCT_TYPE_ATV => $this->__('ATV / Snowmobiles'),
-                ]
+                ],
             ]
         );
 
@@ -118,7 +124,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'label' => 'Make',
                 'name' => 'item[make]',
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -128,7 +134,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'label' => 'Model',
                 'name' => 'item[model]',
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -137,7 +143,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Submodel',
-                'name' => 'item[submodel]'
+                'name' => 'item[submodel]',
             ]
         );
 
@@ -148,7 +154,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'label' => 'Year',
                 'name' => 'item[year]',
                 'class' => 'validate-digits',
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -157,7 +163,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Trim',
-                'name' => 'item[trim]'
+                'name' => 'item[trim]',
             ]
         );
 
@@ -166,7 +172,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Engine',
-                'name' => 'item[engine]'
+                'name' => 'item[engine]',
             ]
         );
 
@@ -175,7 +181,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Street Name',
-                'name' => 'item[street_name]'
+                'name' => 'item[street_name]',
             ]
         );
     }
@@ -197,7 +203,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'item[ktype]',
                 'class' => 'validate-digits',
                 'maxlength' => 10,
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -206,7 +212,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Make',
-                'name' => 'item[make]'
+                'name' => 'item[make]',
             ]
         );
 
@@ -215,7 +221,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Model',
-                'name' => 'item[model]'
+                'name' => 'item[model]',
             ]
         );
 
@@ -224,7 +230,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Variant',
-                'name' => 'item[variant]'
+                'name' => 'item[variant]',
             ]
         );
 
@@ -233,7 +239,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Body Style',
-                'name' => 'item[body_style]'
+                'name' => 'item[body_style]',
             ]
         );
 
@@ -242,7 +248,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Type',
-                'name' => 'item[type]'
+                'name' => 'item[type]',
             ]
         );
 
@@ -271,7 +277,7 @@ class CustomForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'label' => 'Engine',
-                'name' => 'item[engine]'
+                'name' => 'item[engine]',
             ]
         );
     }

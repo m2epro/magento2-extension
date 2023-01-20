@@ -13,7 +13,7 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Dictionary extends MagentoElement
 {
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     public $helperFactory;
 
     protected $element;
@@ -43,6 +43,7 @@ class Dictionary extends MagentoElement
     public function render(AbstractElement $element)
     {
         $this->element = $element;
+
         return $this->toHtml();
     }
 }

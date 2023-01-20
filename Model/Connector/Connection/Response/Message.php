@@ -13,14 +13,16 @@ namespace Ess\M2ePro\Model\Connector\Connection\Response;
  */
 class Message extends \Ess\M2ePro\Model\Response\Message
 {
-    const SENDER_KEY = 'sender';
-    const CODE_KEY   = 'code';
+    public const SENDER_KEY = 'sender';
+    public const CODE_KEY = 'code';
 
-    const SENDER_SYSTEM    = 'system';
-    const SENDER_COMPONENT = 'component';
+    public const SENDER_SYSTEM = 'system';
+    public const SENDER_COMPONENT = 'component';
 
+    /** @var null  */
     protected $sender = null;
-    protected $code   = null;
+    /** @var null  */
+    protected $code = null;
 
     //########################################
 
@@ -29,7 +31,7 @@ class Message extends \Ess\M2ePro\Model\Response\Message
         parent::initFromResponseData($responseData);
 
         $this->sender = $responseData[self::SENDER_KEY];
-        $this->code   = $responseData[self::CODE_KEY];
+        $this->code = $responseData[self::CODE_KEY];
     }
 
     public function initFromPreparedData($text, $type, $sender = null, $code = null)
@@ -37,7 +39,7 @@ class Message extends \Ess\M2ePro\Model\Response\Message
         parent::initFromPreparedData($text, $type);
 
         $this->sender = $sender;
-        $this->code   = $code;
+        $this->code = $code;
     }
 
     //########################################
@@ -46,7 +48,7 @@ class Message extends \Ess\M2ePro\Model\Response\Message
     {
         return array_merge(parent::asArray(), [
             self::SENDER_KEY => $this->sender,
-            self::CODE_KEY   => $this->code,
+            self::CODE_KEY => $this->code,
         ]);
     }
 

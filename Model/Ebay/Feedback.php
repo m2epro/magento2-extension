@@ -10,10 +10,10 @@ namespace Ess\M2ePro\Model\Ebay;
 
 class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    public const ROLE_BUYER  = 'Buyer';
+    public const ROLE_BUYER = 'Buyer';
     public const ROLE_SELLER = 'Seller';
 
-    public const TYPE_NEUTRAL  = 'Neutral';
+    public const TYPE_NEUTRAL = 'Neutral';
     public const TYPE_POSITIVE = 'Positive';
     public const TYPE_NEGATIVE = 'Negative';
 
@@ -68,6 +68,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         $temp = parent::delete();
         $temp && $this->accountModel = null;
+
         return $temp;
     }
 
@@ -91,7 +92,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function setAccount(\Ess\M2ePro\Model\Account $instance)
     {
-         $this->accountModel = $instance;
+        $this->accountModel = $instance;
     }
 
     /**
@@ -137,16 +138,20 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Order\Collection $collection */
         $collection = $this->ebayFactory->getObject('Order')->getCollection();
         $collection->getSelect()
-            ->join(
-                ['oi' => $this->activeRecordFactory->getObject('Order\Item')->getResource()->getMainTable()],
-                '`oi`.`order_id` = `main_table`.`id`',
-                []
-            )
-            ->join(
-                ['eoi' => $this->activeRecordFactory->getObject('Ebay_Order_Item')->getResource()->getMainTable()],
-                '`eoi`.`order_item_id` = `oi`.`id`',
-                []
-            );
+                   ->join(
+                       ['oi' => $this->activeRecordFactory->getObject('Order\Item')->getResource()->getMainTable()],
+                       '`oi`.`order_id` = `main_table`.`id`',
+                       []
+                   )
+                   ->join(
+                       [
+                           'eoi' => $this->activeRecordFactory->getObject('Ebay_Order_Item')
+                                                              ->getResource()
+                                                              ->getMainTable(),
+                       ],
+                       '`eoi`.`order_item_id` = `oi`.`id`',
+                       []
+                   );
 
         $collection->addFieldToFilter('account_id', $this->getData('account_id'));
         $collection->addFieldToFilter('eoi.item_id', $this->getData('ebay_item_id'));
@@ -167,6 +172,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setAccountId(int $value): self
     {
         $this->setData('account_id', $value);
+
         return $this;
     }
 
@@ -186,6 +192,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setEbayItemId(string $value): self
     {
         $this->setData('ebay_item_id', $value);
+
         return $this;
     }
 
@@ -205,6 +212,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setEbayItemTitle(string $value): self
     {
         $this->setData('ebay_item_title', $value);
+
         return $this;
     }
 
@@ -224,6 +232,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setEbayTransactionId(string $value): self
     {
         $this->setData('ebay_transaction_id', $value);
+
         return $this;
     }
 
@@ -243,6 +252,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setBuyerName(string $value): self
     {
         $this->setData('buyer_name', $value);
+
         return $this;
     }
 
@@ -262,6 +272,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setBuyerFeedbackId(string $value): self
     {
         $this->setData('buyer_feedback_id', $value);
+
         return $this;
     }
 
@@ -281,6 +292,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setBuyerFeedbackText(string $value): self
     {
         $this->setData('buyer_feedback_text', $value);
+
         return $this;
     }
 
@@ -300,6 +312,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setBuyerFeedbackDate(\DateTime $value): self
     {
         $this->setData('buyer_feedback_date', $value->format('Y-m-d H:i:s'));
+
         return $this;
     }
 
@@ -320,6 +333,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setBuyerFeedbackType(string $value): self
     {
         $this->setData('buyer_feedback_type', $value);
+
         return $this;
     }
 
@@ -339,6 +353,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setSellerFeedbackId(string $value): self
     {
         $this->setData('seller_feedback_id', $value);
+
         return $this;
     }
 
@@ -358,6 +373,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setSellerFeedbackText(string $value): self
     {
         $this->setData('seller_feedback_text', $value);
+
         return $this;
     }
 
@@ -377,6 +393,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setSellerFeedbackDate(\DateTime $value): self
     {
         $this->setData('seller_feedback_date', $value->format('Y-m-d H:i:s'));
+
         return $this;
     }
 
@@ -397,6 +414,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setSellerFeedbackType(string $value): self
     {
         $this->setData('seller_feedback_type', $value);
+
         return $this;
     }
 
@@ -416,6 +434,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setLastResponseAttemptDate(\DateTime $value): self
     {
         $this->setData('last_response_attempt_date', $value->format('Y-m-d H:i:s'));
+
         return $this;
     }
 
@@ -436,6 +455,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setIsCriticalErrorReceived(bool $value): self
     {
         $this->setData('is_critical_error_receive', (int)$value);
+
         return $this;
     }
 

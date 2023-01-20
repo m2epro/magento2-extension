@@ -62,8 +62,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
-            ->from('base', $query)
-        ;
+            ->from('base', $query);
 
         $conditionalReviseCondition = '(base.calculated_qty > online_qty AND online_qty < revise_threshold)
             OR (base.calculated_qty != online_qty) AND (base.calculated_qty < base.revise_threshold)';
@@ -76,7 +75,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             $this->getChannel()
         );
         $this->logger->debug($message, [
-            'query' => (string) $mainQuery->getQuery(),
+            'query' => (string)$mainQuery->getQuery(),
             'type' => $this->getType(),
             'channel' => $this->getChannel(),
         ]);
@@ -105,8 +104,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('store_id', 'l.store_id')
             ->addSelect('sync_template_id', 'c_l.template_synchronization_id')
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id')
-            ->addSelect('is_variation', 'IFNULL(c_lp.is_variation_parent, 0)')
-        ;
+            ->addSelect('is_variation', 'IFNULL(c_lp.is_variation_parent, 0)');
 
         $onlineQtyExpression = 'IFNULL(c_lp.online_qty, 0)';
         $query->addSelect('online_qty', $onlineQtyExpression);
@@ -140,8 +138,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'lpvo',
                 'm2epro_listing_product_variation_option',
                 'lpvo.listing_product_variation_id = lpv.id'
-            )
-        ;
+            );
 
         /* Не включаем в выборку grouped and bundle товары */
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
@@ -177,8 +174,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'ea',
                 'eav_attribute',
                 'ea.attribute_code = sp.qty_custom_attribute'
-            )
-        ;
+            );
     }
 
     /**
@@ -200,8 +196,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->from(
                 'ts',
                 $this->setChannelToTableName('m2epro_%s_template_synchronization')
-            )
-        ;
+            );
     }
 
     /**
@@ -223,8 +218,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('stock_qty', 'FLOOR(stock.qty)')
             ->addSelect('online_qty', 'product.online_qty')
             ->addSelect('is_variation', 'product.is_variation')
-            ->addSelect('revise_threshold', 'sync_policy.revise_threshold')
-        ;
+            ->addSelect('revise_threshold', 'sync_policy.revise_threshold');
 
         $query->addSelect('calculated_qty', $this->calculatedQtyExpression());
 
@@ -250,8 +244,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'ea',
                 'eav_attribute',
                 'ea.attribute_code = selling_policy.custom_attribute'
-            )
-        ;
+            );
 
         $entityVarcharCondition = '
             cpev.attribute_id = ea.attribute_id
@@ -279,14 +272,12 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'lpi',
                 'm2epro_listing_product_instruction',
                 'lpi.listing_product_id = product.listing_product_id'
-            )
-        ;
+            );
 
         $query
             ->andWhere('pl.object_id IS NULL')
             ->andWhere('lpsa.listing_product_id IS NULL')
-            ->andWhere('lpi.listing_product_id IS NULL')
-        ;
+            ->andWhere('lpi.listing_product_id IS NULL');
 
         //$query
         //    ->addGroup('product.listing_product_id')

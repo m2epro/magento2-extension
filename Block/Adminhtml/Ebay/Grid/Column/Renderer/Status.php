@@ -17,16 +17,16 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\View */
@@ -67,15 +67,15 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
                 \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing::class,
                 '',
                 [
-                'data' => ['jsHandler' => 'EbayListingViewEbayGridObj']
+                    'data' => ['jsHandler' => 'EbayListingViewEbayGridObj'],
                 ]
             );
             $html = $viewLogIcon->render($row);
 
             $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
             $synchNote = (isset($additionalData['synch_template_list_rules_note']))
-                                ? $additionalData['synch_template_list_rules_note']
-                                : [];
+                ? $additionalData['synch_template_list_rules_note']
+                : [];
             if (!empty($synchNote)) {
                 $synchNote = $this->viewHelper->getModifiedLogMessage($synchNote);
 
@@ -211,7 +211,7 @@ HTML;
          * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
          */
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
+                                                                ->getCollection();
         $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row->getData('id'));
 
         /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */

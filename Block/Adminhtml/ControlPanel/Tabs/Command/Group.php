@@ -40,7 +40,7 @@ class Group extends AbstractBlock
         $this->enabledComponents = $this->componentHelper->getEnabledComponents();
 
         $this->commands = $this->controlPanelCommandHelper
-                            ->parseGeneralCommandsData($this->getControllerName());
+            ->parseGeneralCommandsData($this->getControllerName());
 
         return parent::_beforeToHtml();
     }
@@ -48,7 +48,7 @@ class Group extends AbstractBlock
     public function getCommandLauncherHtml(array $commandRow, $component = null)
     {
         $href = $commandRow['url'];
-        $component && $href = rtrim($commandRow['url'], '/')."/component/{$component}/";
+        $component && $href = rtrim($commandRow['url'], '/') . "/component/{$component}/";
 
         $target = '';
         $commandRow['new_window'] && $target = 'target="_blank"';
@@ -56,7 +56,7 @@ class Group extends AbstractBlock
         $onClick = '';
         $commandRow['confirm'] && $onClick = "return confirm('{$commandRow['confirm']}');";
         if (!empty($commandRow['prompt']['text']) && !empty($commandRow['prompt']['var'])) {
-            $onClick =  <<<JS
+            $onClick = <<<JS
 var result = prompt('{$commandRow['prompt']['text']}');
 if (result) window.location.href = $(this).getAttribute('href') + '?{$commandRow['prompt']['var']}=' + result;
 return false;

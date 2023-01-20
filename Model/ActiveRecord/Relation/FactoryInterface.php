@@ -17,12 +17,14 @@ interface FactoryInterface
 
     /**
      * @param $modelName
+     *
      * @return mixed
      */
     public function getObject($modelName);
 
     /**
      * @param $modelName
+     *
      * @return mixed
      */
     public function getObjectCollection($modelName);
@@ -32,6 +34,7 @@ interface FactoryInterface
      * @param $value
      * @param null $field
      * @param bool $throwException
+     *
      * @return mixed
      */
     public function getObjectLoaded($modelName, $value, $field = null, $throwException = true);
@@ -41,6 +44,7 @@ interface FactoryInterface
      * @param $value
      * @param null $field
      * @param bool $throwException
+     *
      * @return mixed
      */
     public function getCachedObjectLoaded($modelName, $value, $field = null, $throwException = true);

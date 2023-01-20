@@ -54,9 +54,11 @@ class Action extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Ac
     {
         $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'));
 
-        if (!$marketplace->getChildObject()->isMultiMotorsEnabled() &&
+        if (
+            !$marketplace->getChildObject()->isMultiMotorsEnabled() &&
             isset($action['action_id']) &&
-            $action['action_id'] == ListingGrid::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY) {
+            $action['action_id'] == ListingGrid::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY
+        ) {
             return '';
         }
 

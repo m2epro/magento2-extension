@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -61,13 +62,14 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $sourceCode
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getAffectedStoresBySource($sourceCode)
     {
-        $cacheKey   = __METHOD__.$sourceCode;
+        $cacheKey = __METHOD__ . $sourceCode;
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -83,18 +85,20 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         $storesIds = array_values($storesIds);
 
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $storesIds);
+
         return $storesIds;
     }
 
     /**
      * @param $stockId
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getAffectedStoresByStock($stockId)
     {
-        $cacheKey   = __METHOD__.$stockId;
+        $cacheKey = __METHOD__ . $stockId;
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -103,7 +107,6 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
 
         $storesIds = [];
         foreach ($this->getAssignedChannels->execute($stockId) as $channel) {
-
             if ($channel->getType() !== SalesChannelInterface::TYPE_WEBSITE) {
                 continue;
             }
@@ -115,18 +118,20 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         $storesIds = array_values($storesIds);
 
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $storesIds);
+
         return $storesIds;
     }
 
     /**
      * @param $channelCode
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getAffectedStoresByChannel($channelCode)
     {
-        $cacheKey   = __METHOD__.$channelCode;
+        $cacheKey = __METHOD__ . $channelCode;
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -145,13 +150,13 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
             if ($website->getIsDefault()) {
                 $storesIds[] = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
             }
-
         } catch (\Magento\Framework\Exception\NoSuchEntityException $noSuchEntityException) {
             return [];
         }
         $storesIds = array_values($storesIds);
 
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $storesIds);
+
         return $storesIds;
     }
 
@@ -159,13 +164,14 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $sourceCode
+     *
      * @return \Ess\M2ePro\Model\Listing[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getAffectedListingsBySource($sourceCode)
     {
-        $cacheKey   = __METHOD__.$sourceCode;
+        $cacheKey = __METHOD__ . $sourceCode;
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -182,18 +188,20 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         $collection->addFieldToFilter('store_id', ['in' => $storesIds]);
 
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $collection->getItems());
+
         return $collection->getItems();
     }
 
     /**
      * @param $stockId
+     *
      * @return \Ess\M2ePro\Model\Listing[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getAffectedListingsByStock($stockId)
     {
-        $cacheKey   = __METHOD__.$stockId;
+        $cacheKey = __METHOD__ . $stockId;
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -210,18 +218,20 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         $collection->addFieldToFilter('store_id', ['in' => $storesIds]);
 
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $collection->getItems());
+
         return $collection->getItems();
     }
 
     /**
      * @param $channelCode
+     *
      * @return \Ess\M2ePro\Model\Listing[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getAffectedListingsByChannel($channelCode)
     {
-        $cacheKey   = __METHOD__.$channelCode;
+        $cacheKey = __METHOD__ . $channelCode;
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {
@@ -238,6 +248,7 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         $collection->addFieldToFilter('store_id', ['in' => $storesIds]);
 
         $this->getHelper('Data_Cache_Runtime')->setValue($cacheKey, $collection->getItems());
+
         return $collection->getItems();
     }
 
@@ -246,6 +257,7 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $sourceCode
      * @param $sku
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -258,15 +270,16 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->activeRecordFactory->getObject('Listing\Product')->getResource()
-            ->getItemsByProductId(
-                $this->productResource->getIdBySku($sku),
-                ['store_id' => $storesIds]
-            );
+                                         ->getItemsByProductId(
+                                             $this->productResource->getIdBySku($sku),
+                                             ['store_id' => $storesIds]
+                                         );
     }
 
     /**
      * @param $stockId
      * @param $sku
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -279,10 +292,10 @@ class AffectedProducts extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->activeRecordFactory->getObject('Listing\Product')->getResource()
-            ->getItemsByProductId(
-                $this->productResource->getIdBySku($sku),
-                ['store_id' => $storesIds]
-            );
+                                         ->getItemsByProductId(
+                                             $this->productResource->getIdBySku($sku),
+                                             ['store_id' => $storesIds]
+                                         );
     }
 
     //########################################

@@ -53,9 +53,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'ListingGridObj.stepNewAsinBack()',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'ListingGridObj.stepNewAsinBack()',
+            'class' => 'back',
         ]);
         // ---------------------------------------
         $url = $this->getUrl(
@@ -77,9 +77,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $url = $this->getUrl('*/*/index', ['_current' => true, 'step' => 5]);
         // ---------------------------------------
         $this->addButton('add_products_new_asin_manual_continue', [
-            'label'   => $this->__('Continue'),
+            'label' => $this->__('Continue'),
             'onclick' => 'ListingGridObj.checkManualProducts(\'' . $url . '\')',
-            'class'   => 'action-primary forward'
+            'class' => 'action-primary forward',
         ]);
         // ---------------------------------------
     }
@@ -103,7 +103,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsTranslator->addTranslations([
             'templateDescriptionPopupTitle' => $this->__('Assign Description Policy'),
             'setDescriptionPolicy' => $this->__('Set Description Policy'),
-            'Add New Description Policy' => $this->__('Add New Description Policy')
+            'Add New Description Policy' => $this->__('Add New Description Policy'),
         ]);
         // ---------------------------------------
 
@@ -113,9 +113,12 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_Description')
         );
 
-        $this->jsUrl->add($this->getUrl('*/amazon_listing_product_template_description/viewGrid', [
-            'map_to_template_js_fn' => 'selectTemplateDescription'
-        ]), 'amazon_listing_product_template_description/viewGrid');
+        $this->jsUrl->add(
+            $this->getUrl('*/amazon_listing_product_template_description/viewGrid', [
+                'map_to_template_js_fn' => 'selectTemplateDescription',
+            ]),
+            'amazon_listing_product_template_description/viewGrid'
+        );
 
         $this->jsUrl->add(
             $this->getUrl('*/amazon_listing_product_add/checkNewAsinManualProducts', ['_current' => true]),
@@ -151,7 +154,7 @@ JS
         );
 
         return '<div id="search_asin_products_container">' .
-                parent::_toHtml() .
+            parent::_toHtml() .
             '</div>';
     }
 

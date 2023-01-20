@@ -13,12 +13,13 @@ class MapProductPopupHtml extends \Ess\M2ePro\Controller\Adminhtml\Listing
                 'data' => [
                     'grid_url' => '*/listing_other_mapping/mapGrid',
                     'mapping_handler_js' => 'ListingOtherMappingObj',
-                    'mapping_action' => 'map'
-                ]
+                    'mapping_action' => 'map',
+                ],
             ]
         );
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

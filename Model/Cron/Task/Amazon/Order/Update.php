@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
  */
 class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/update';
-    const ORDER_CHANGES_PER_ACCOUNT = 300;
+    public const NICK = 'amazon/order/update';
+    public const ORDER_CHANGES_PER_ACCOUNT = 300;
 
     //####################################
 
@@ -56,11 +56,11 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($permittedAccounts as $account) {
             /** @var \Ess\M2ePro\Model\Account $account */
 
-            $this->getOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
 
             $this->getOperationHistory()->addTimePoint(
-                __METHOD__.'process'.$account->getId(),
-                'Process Account '.$account->getTitle()
+                __METHOD__ . 'process' . $account->getId(),
+                'Process Account ' . $account->getTitle()
             );
 
             try {
@@ -75,7 +75,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $this->processTaskException($exception);
             }
 
-            $this->getOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+            $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
         }
     }
 
@@ -88,6 +88,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
         )->getCollection();
+
         return $accountsCollection->getItems();
     }
 
@@ -101,7 +102,7 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order\Change')
-            ->getResource()->incrementAttemptCount(array_keys($relatedChanges));
+                                  ->getResource()->incrementAttemptCount(array_keys($relatedChanges));
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
@@ -110,17 +111,18 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $changeParams = $change->getParams();
 
             $connectorData = [
-                'order_id'         => $change->getOrderId(),
-                'change_id'        => $change->getId(),
-                'amazon_order_id'  => $changeParams['amazon_order_id'],
-                'tracking_number'  => isset($changeParams['tracking_number']) ? $changeParams['tracking_number'] : null,
-                'carrier_name'     => isset($changeParams['carrier_title']) ? $changeParams['carrier_title'] : null,
-                'carrier_code'     => isset($changeParams['carrier_code']) ? $changeParams['carrier_code'] : null,
+                'order_id' => $change->getOrderId(),
+                'change_id' => $change->getId(),
+                'amazon_order_id' => $changeParams['amazon_order_id'],
+                'tracking_number' => isset($changeParams['tracking_number']) ? $changeParams['tracking_number'] : null,
+                'carrier_name' => isset($changeParams['carrier_title']) ? $changeParams['carrier_title'] : null,
+                'carrier_code' => isset($changeParams['carrier_code']) ? $changeParams['carrier_code'] : null,
                 'fulfillment_date' => $changeParams['fulfillment_date'],
-                'shipping_method'  => isset($changeParams['shipping_method']) ? $changeParams['shipping_method'] : null,
-                'items'            => $changeParams['items']
+                'shipping_method' => isset($changeParams['shipping_method']) ? $changeParams['shipping_method'] : null,
+                'items' => $changeParams['items'],
             ];
 
+            /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update\Requester $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
                 'Cron_Task_Amazon_Order_Update_Requester',
                 ['order' => $connectorData],

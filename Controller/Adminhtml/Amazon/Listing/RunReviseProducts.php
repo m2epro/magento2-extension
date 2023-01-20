@@ -45,14 +45,14 @@ class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
 
         return [
             'listing_product_id' => $listingProduct->getId(),
-            'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'action_type'        => $action,
-            'is_force'           => true,
-            'tag'                => $tag,
-            'additional_data'    => $this->getHelper('Data')->jsonEncode(
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'action_type' => $action,
+            'is_force' => true,
+            'tag' => $tag,
+            'additional_data' => $this->getHelper('Data')->jsonEncode(
                 [
-                    'params'       => $params,
-                    'configurator' => $configurator->getSerializedData()
+                    'params' => $params,
+                    'configurator' => $configurator->getSerializedData(),
                 ]
             ),
         ];

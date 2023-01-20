@@ -12,7 +12,7 @@ use Magento\Framework\ObjectManagerInterface;
 
 class Factory
 {
-    /** @var ObjectManagerInterface  */
+    /** @var ObjectManagerInterface */
     private $objectManager;
 
     public function __construct(ObjectManagerInterface $objectManager)
@@ -31,8 +31,8 @@ class Factory
         return $this->objectManager->create(
             \Ess\M2ePro\Model\ControlPanel\Inspection\Issue::class,
             [
-                'message'  => $message,
-                'metadata' => $metadata
+                'message' => $message,
+                'metadata' => $metadata,
             ]
         );
     }

@@ -21,6 +21,7 @@ class SaveTemplateCategorySpecifics extends \Ess\M2ePro\Controller\Adminhtml\Eba
 
         if (empty($post['template_id'])) {
             $this->getMessageManager()->addError($this->__('Template not found.'));
+
             return $this->_redirect('*/*/index');
         }
 

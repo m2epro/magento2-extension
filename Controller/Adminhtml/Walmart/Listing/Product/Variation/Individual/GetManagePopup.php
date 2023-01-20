@@ -20,18 +20,18 @@ class GetManagePopup extends Main
         if (!$listingProductId) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Listing Product must be specified.')
+                'message' => $this->__('Listing Product must be specified.'),
             ]);
 
             return $this->getResult();
         }
 
         $variationManageBlock = $this->getLayout()->createBlock(Manage::class)
-                                                  ->setData('listing_product_id', $listingProductId);
+                                     ->setData('listing_product_id', $listingProductId);
 
         $this->setJsonContent([
             'type' => 'success',
-            'html' => $variationManageBlock->toHtml()
+            'html' => $variationManageBlock->toHtml(),
         ]);
 
         return $this->getResult();

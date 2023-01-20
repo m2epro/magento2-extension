@@ -94,13 +94,15 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
         if ($variationManager->isRelationParentType()) {
             $this->parentListingsProductsForProcessing[$listingProduct->getId()] = $listingProduct;
+
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
         $typeModel = $variationManager->getTypeModel();
 
-        if (!$listingProduct->getMagentoProduct()->isSimpleType() &&
+        if (
+            !$listingProduct->getMagentoProduct()->isSimpleType() &&
             !$listingProduct->getMagentoProduct()->isDownloadableType()
         ) {
             $typeModel->inspectAndFixProductOptionsIds();
@@ -111,6 +113,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]
                     = $typeModel->getParentListingProduct();
+
                 return;
             }
 
@@ -128,6 +131,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]
                     = $typeModel->getParentListingProduct();
+
                 return;
             }
 
@@ -136,7 +140,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $typeModel */
 
-        if ($variationManager->isRelationChildType() &&
+        if (
+            $variationManager->isRelationChildType() &&
             $typeModel->getParentTypeModel()->getVirtualChannelAttributes()
         ) {
             if (!$typeModel->getParentTypeModel()->isActualVirtualChannelAttributes()) {

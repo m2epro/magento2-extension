@@ -11,7 +11,8 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relati
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\AbstractModel
+ * Class
+ * \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\AbstractModel
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -30,6 +31,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setProcessor($processor)
     {
         $this->processor = $processor;
+
         return $this;
     }
 

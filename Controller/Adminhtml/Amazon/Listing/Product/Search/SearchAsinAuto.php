@@ -42,7 +42,6 @@ class SearchAsinAuto extends Main
 
         $productsToSearch = [];
         foreach ($productsIds as $productId) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 

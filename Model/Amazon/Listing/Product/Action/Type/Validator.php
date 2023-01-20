@@ -30,8 +30,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
      * @var array
      */
     private $messages = [];
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -87,11 +88,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator
+     *
      * @return $this
      */
     public function setConfigurator(\Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator)
     {
         $this->configurator = $configurator;
+
         return $this;
     }
 
@@ -177,6 +180,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if (!$this->getAmazonListingProduct()->getSku()) {
             $this->addMessage('You have to list Item first.');
+
             return false;
         }
 
@@ -221,8 +225,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($qty <= 0) {
-            if (isset($this->params['status_changer']) &&
-                $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
+            if (
+                isset($this->params['status_changer']) &&
+                $this->params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+            ) {
                 $message = 'You are submitting an Item with zero quantity. It contradicts Amazon requirements.';
 
                 if ($this->getListingProduct()->isStoppable()) {
@@ -345,11 +351,15 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->getListingProduct()->getData('no_child_for_processing')) {
             $this->addMessage('This Parent has no Child Products on which the chosen Action can be performed.');
+
             return false;
         }
         if ($this->getListingProduct()->getData('child_locked')) {
-            $this->addMessage('This Action cannot be fully performed because there are
-                                different Actions in progress on some Child Products');
+            $this->addMessage(
+                'This Action cannot be fully performed because there are
+                                different Actions in progress on some Child Products'
+            );
+
             return false;
         }
 
@@ -362,6 +372,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if (!$this->getVariationManager()->isPhysicalUnit() && !$this->getVariationManager()->isSimpleType()) {
             $this->addMessage('Only physical Products can be processed.');
+
             return false;
         }
 
@@ -372,6 +383,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     {
         if (!$this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
             $this->addMessage('You have to select Magento Variation.');
+
             return false;
         }
 
@@ -384,6 +396,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         if (!$this->getAmazonListingProduct()->isGeneralIdOwner() && !$typeModel->isVariationChannelMatched()) {
             $this->addMessage('You have to select Channel Variation.');
+
             return false;
         }
 

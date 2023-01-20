@@ -25,7 +25,9 @@ class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\A
         }
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree $treeBlock */
         $treeBlock = $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree::class
+                          );
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 
         $productsForEachCategory = $treeBlock->getProductsForEachCategory();

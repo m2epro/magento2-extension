@@ -10,11 +10,9 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing\GetUpdatedPriceBySkus
- */
 class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
+    /** @var \Magento\Framework\Locale\CurrencyInterface  */
     protected $localeCurrency;
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -70,7 +68,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingProductCollection->getSelect()->columns(
                 [
                     'second_table.sku',
-                    'second_table.online_regular_price'
+                    'second_table.online_regular_price',
                 ]
             );
 
@@ -93,7 +91,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingOtherCollection->getSelect()->columns(
                 [
                     'second_table.sku',
-                    'second_table.online_price'
+                    'second_table.online_price',
                 ]
             );
 

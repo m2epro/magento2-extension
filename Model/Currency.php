@@ -67,7 +67,8 @@ class Currency extends AbstractModel
 
     public function isConvertible($currencyCode, $store)
     {
-        if ($this->isBase($currencyCode, $store)
+        if (
+            $this->isBase($currencyCode, $store)
             || !$this->isAllowed($currencyCode, $store)
             || $this->getConvertRateFromBase($currencyCode, $store) == 0
         ) {

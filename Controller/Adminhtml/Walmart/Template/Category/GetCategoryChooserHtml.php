@@ -53,11 +53,12 @@ class GetCategoryChooserHtml extends Category
         if ($browseNodeId && $categoryPath) {
             $editBlock->setSelectedCategory([
                 'browseNodeId' => $browseNodeId,
-                'categoryPath' => $categoryPath
+                'categoryPath' => $categoryPath,
             ]);
         }
 
         $this->setAjaxContent($editBlock->toHtml());
+
         return $this->getResult();
     }
 }

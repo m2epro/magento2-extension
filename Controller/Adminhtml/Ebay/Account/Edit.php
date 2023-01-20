@@ -49,6 +49,7 @@ class Edit extends Account
 
         if ($account === null && $id) {
             $this->messageManager->addError($this->__('Account does not exist.'));
+
             return $this->_redirect('*/ebay_account');
         }
 
@@ -61,10 +62,12 @@ class Edit extends Account
         $headerTextEdit = $this->__('Edit Account');
         $headerTextAdd = $this->__('Add Account');
 
-        if ($account &&
-            $account->getId()) {
+        if (
+            $account &&
+            $account->getId()
+        ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->helperData->escapeHtml($account->getTitle()).'"';
+            $headerText .= ' "' . $this->helperData->escapeHtml($account->getTitle()) . '"';
         } else {
             $headerText = $headerTextAdd;
         }
@@ -81,6 +84,7 @@ class Edit extends Account
     private function addLicenseMessage(\Ess\M2ePro\Model\Account $account)
     {
         try {
+            /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account', 'get', 'info', [
                 'account' => $account->getChildObject()->getServerHash(),
@@ -98,10 +102,11 @@ class Edit extends Account
         }
 
         $status = (bool)$response['info']['status'];
-        $note   = $response['info']['note'];
+        $note = $response['info']['note'];
 
         if ($status) {
             $this->addExtendedNoticeMessage($note);
+
             return;
         }
 

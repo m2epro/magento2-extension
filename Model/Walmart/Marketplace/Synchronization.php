@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Marketplace;
  */
 class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 {
-    const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
+    public const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
 
     /** @var \Ess\M2ePro\Model\Marketplace */
     protected $marketplace = null;
@@ -24,7 +24,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Lock\Item\Progress */
     protected $progressManager = null;
 
-    /** @var \Ess\M2ePro\Model\Synchronization\Log  */
+    /** @var \Ess\M2ePro\Model\Synchronization\Log */
     protected $synchronizationLog = null;
 
     protected $activeRecordFactory;
@@ -49,6 +49,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $this->marketplace = $marketplace;
+
         return $this;
     }
 
@@ -62,6 +63,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getLockItemManager()->isInactiveMoreThanSeconds(self::LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME)) {
             $this->getLockItemManager()->remove();
+
             return false;
         }
 
@@ -99,13 +101,13 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
-        $connectorObj  = $dispatcherObj->getVirtualConnector(
+        $connectorObj = $dispatcherObj->getVirtualConnector(
             'marketplace',
             'get',
             'info',
             [
                 'include_details' => true,
-                'marketplace' => $this->marketplace->getNativeId()
+                'marketplace' => $this->marketplace->getNativeId(),
             ],
             'info',
             null
@@ -122,7 +124,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         $details = $details['details'];
 
         $tableMarketplaces = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace');
+                                  ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace');
 
         $this->resourceConnection->getConnection()->delete(
             $tableMarketplaces,
@@ -135,7 +137,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             'marketplace_id' => $this->marketplace->getId(),
             'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
-            'product_data'   => isset($details['product_data']) ? $helper->jsonEncode($details['product_data']) : null,
+            'product_data' => isset($details['product_data']) ? $helper->jsonEncode($details['product_data']) : null,
         ];
 
         $this->resourceConnection->getConnection()->insert($tableMarketplaces, $data);
@@ -156,13 +158,13 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         for ($i = 0; $i < 100; $i++) {
             /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObj */
             $dispatcherObj = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
-            $connectorObj  = $dispatcherObj->getVirtualConnector(
+            $connectorObj = $dispatcherObj->getVirtualConnector(
                 'marketplace',
                 'get',
                 'categories',
                 [
                     'part_number' => $partNumber,
-                    'marketplace' => $this->marketplace->getNativeId()
+                    'marketplace' => $this->marketplace->getNativeId(),
                 ],
                 null,
                 null
@@ -185,14 +187,14 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
                 $isLeaf = $data['is_leaf'];
                 $insertData[] = [
-                    'marketplace_id'     => $this->marketplace->getId(),
-                    'category_id'        => $data['id'],
+                    'marketplace_id' => $this->marketplace->getId(),
+                    'category_id' => $data['id'],
                     'parent_category_id' => $data['parent_id'],
-                    'browsenode_id'      => ($isLeaf ? $data['browsenode_id'] : null),
+                    'browsenode_id' => ($isLeaf ? $data['browsenode_id'] : null),
                     'product_data_nicks' => ($isLeaf ? $helper->jsonEncode($data['product_data_nicks']) : null),
-                    'title'              => $data['title'],
-                    'path'               => $data['path'],
-                    'is_leaf'            => $isLeaf,
+                    'title' => $data['title'],
+                    'path' => $data['path'],
+                    'is_leaf' => $isLeaf,
                 ];
 
                 if (count($insertData) >= 100 || $categoryIndex >= (count($response['data']) - 1)) {
@@ -225,13 +227,13 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         for ($i = 0; $i < 100; $i++) {
             /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
-            $connectorObj     = $dispatcherObject->getVirtualConnector(
+            $connectorObj = $dispatcherObject->getVirtualConnector(
                 'marketplace',
                 'get',
                 'specifics',
                 [
                     'part_number' => $partNumber,
-                    'marketplace' => $this->marketplace->getNativeId()
+                    'marketplace' => $this->marketplace->getNativeId(),
                 ]
             );
 
@@ -251,19 +253,19 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                 $data = $response['data'][$specificIndex];
 
                 $insertData[] = [
-                    'marketplace_id'     => $this->marketplace->getId(),
-                    'specific_id'        => $data['id'],
+                    'marketplace_id' => $this->marketplace->getId(),
+                    'specific_id' => $data['id'],
                     'parent_specific_id' => $data['parent_id'],
-                    'product_data_nick'  => $data['product_data_nick'],
-                    'title'              => $data['title'],
-                    'xml_tag'            => $data['xml_tag'],
-                    'xpath'              => $data['xpath'],
-                    'type'               => (int)$data['type'],
-                    'values'             => $helper->jsonEncode($data['values']),
-                    'params'             => $helper->jsonEncode($data['params']),
-                    'data_definition'    => $helper->jsonEncode($data['data_definition']),
-                    'min_occurs'         => (int)$data['min_occurs'],
-                    'max_occurs'         => (int)$data['max_occurs']
+                    'product_data_nick' => $data['product_data_nick'],
+                    'title' => $data['title'],
+                    'xml_tag' => $data['xml_tag'],
+                    'xpath' => $data['xpath'],
+                    'type' => (int)$data['type'],
+                    'values' => $helper->jsonEncode($data['values']),
+                    'params' => $helper->jsonEncode($data['params']),
+                    'data_definition' => $helper->jsonEncode($data['data_definition']),
+                    'min_occurs' => (int)$data['min_occurs'],
+                    'max_occurs' => (int)$data['max_occurs'],
                 ];
 
                 if (count($insertData) >= 100 || $specificIndex >= (count($response['data']) - 1)) {
@@ -289,7 +291,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->lockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
-            'nick' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK
+            'nick' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK,
         ]);
     }
 
@@ -301,7 +303,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->progressManager = $this->modelFactory->getObject('Lock_Item_Progress', [
             'lockItemManager' => $this->getLockItemManager(),
-            'progressNick'    => $this->marketplace->getTitle() . ' Marketplace'
+            'progressNick' => $this->marketplace->getTitle() . ' Marketplace',
         ]);
     }
 

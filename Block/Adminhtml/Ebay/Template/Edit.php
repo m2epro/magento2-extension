@@ -59,18 +59,18 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 : 'EbayTemplateEditObj';
 
             $this->buttonList->add('duplicate', [
-                'label'     => $this->__('Duplicate'),
-                'onclick'   => $onclickHandler.'.duplicateClick(
-                    \'ebay-template\', \''.$duplicateHeaderText.'\', \''.$nick.'\'
+                'label' => $this->__('Duplicate'),
+                'onclick' => $onclickHandler . '.duplicateClick(
+                    \'ebay-template\', \'' . $duplicateHeaderText . '\', \'' . $nick . '\'
                 )',
-                'class'     => 'add M2ePro_duplicate_button primary'
+                'class' => 'add M2ePro_duplicate_button primary',
             ]);
 
             $url = $this->getUrl('*/ebay_template/delete');
             $this->buttonList->add('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'EbayTemplateEditObj.deleteClick(\'' . $url . '\')',
-                'class'     => 'delete M2ePro_delete_button primary'
+                'label' => $this->__('Delete'),
+                'onclick' => 'EbayTemplateEditObj.deleteClick(\'' . $url . '\')',
+                'class' => 'delete M2ePro_delete_button primary',
             ]);
         }
         // ---------------------------------------
@@ -95,7 +95,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         ]);
 
         $saveAndBackUrl = $this->getUrl('*/ebay_template/save', [
-            'back' => $this->dataHelper->makeBackUrlParam('list')
+            'back' => $this->dataHelper->makeBackUrlParam('list'),
         ]);
 
         if ($isSaveAndClose) {
@@ -112,12 +112,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                     'save' => [
                         'label' => $this->__('Save And Continue Edit'),
                         'onclick' =>
-                            "EbayTemplateEditObj.saveAndEditClick('{$url}', '', '{$saveConfirmation}', '{$nick}');"
-                    ]
+                            "EbayTemplateEditObj.saveAndEditClick('{$url}', '', '{$saveConfirmation}', '{$nick}');",
+                    ],
                 ],
             ];
         } else {
-
             $saveButtons = [
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),
@@ -131,7 +130,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                         'label' => $this->__('Save And Back'),
                         'onclick' =>
                             "EbayTemplateEditObj.saveClick('{$saveAndBackUrl}', '{$saveConfirmation}', '{$nick}');",
-                    ]
+                    ],
                 ],
             ];
         }

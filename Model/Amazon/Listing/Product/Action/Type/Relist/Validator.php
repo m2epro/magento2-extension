@@ -33,8 +33,10 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if ($this->getAmazonListingProduct()->isAfnChannel()) {
-            $this->addMessage('Relist Action for FBA Items is impossible as their Quantity is unknown. You can run
-            Revise Action for such Items, but the Quantity value will be ignored.');
+            $this->addMessage(
+                'Relist Action for FBA Items is impossible as their Quantity is unknown. You can run
+            Revise Action for such Items, but the Quantity value will be ignored.'
+            );
 
             return false;
         }

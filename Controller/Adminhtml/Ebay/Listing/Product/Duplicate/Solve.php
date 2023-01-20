@@ -21,7 +21,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $listingProductId = $this->getRequest()->getParam('listing_product_id');
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId, null, false);
 
-        $result   = true;
+        $result = true;
         $messages = [];
 
         if ($listingProduct === null) {
@@ -51,9 +51,10 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->setJsonContent([
-            'result'  => $result,
-            'message' => implode(' ', $messages)
+            'result' => $result,
+            'message' => implode(' ', $messages),
         ]);
+
         return $this->getResult();
     }
 
@@ -66,6 +67,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         if (!$itemId) {
             $messages[] = $this->__('Item ID is not presented.');
+
             return false;
         }
 
@@ -84,10 +86,11 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
         } catch (\Exception $exception) {
-             $this->getHelper('Module\Exception')->process($exception);
+            $this->getHelper('Module\Exception')->process($exception);
         }
         if (!isset($response['result'][0]['ebay_end_date_raw'])) {
             $messages[] = $this->__('Unable to stop eBay item ID.');
+
             return false;
         }
 
@@ -106,7 +109,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Item_Dispatcher');
         $dispatcher->process(\Ess\M2ePro\Model\Listing\Product::ACTION_LIST, [$listingProduct], [
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
-            'is_realtime'    => true,
+            'is_realtime' => true,
         ]);
 
         return true;

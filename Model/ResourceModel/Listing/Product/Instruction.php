@@ -55,8 +55,10 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
                 'component_mode' => 'main_table.component_mode',
             ])
             ->joinLeft(
-                ['lpi' => $this->getHelper('Module_Database_Structure')
-                        ->getTableNameWithPrefix('m2epro_listing_product_instruction')],
+                [
+                    'lpi' => $this->getHelper('Module_Database_Structure')
+                                  ->getTableNameWithPrefix('m2epro_listing_product_instruction'),
+                ],
                 'lpi.listing_product_id = main_table.id AND lpi.component = main_table.component_mode',
                 ['instruction_json_types' => $instructionSelectExpression]
             )

@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Shipping;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_shipping_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_shipping_change_processor';
 
     //########################################
 
@@ -38,8 +38,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 

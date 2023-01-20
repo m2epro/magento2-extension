@@ -19,7 +19,7 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $dataHelper,$data);
+        parent::__construct($context, $dataHelper, $data);
         $this->viewHelper = $viewHelper;
     }
 
@@ -50,10 +50,10 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
 
         foreach ($logs as $log) {
             $actions[] = [
-                'type'           => $log->getData('type'),
-                'text'           => $this->viewHelper->getModifiedLogMessage($log->getData('description')),
-                'initiator'      => $this->getInitiator([$log]),
-                'date'           => $date = $log->getData('create_date'),
+                'type' => $log->getData('type'),
+                'text' => $this->viewHelper->getModifiedLogMessage($log->getData('description')),
+                'initiator' => $this->getInitiator([$log]),
+                'date' => $date = $log->getData('create_date'),
                 'localized_date' => $this->_localeDate->formatDate($date, \IntlDateFormatter::MEDIUM, true),
             ];
         }

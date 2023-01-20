@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
@@ -27,6 +27,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $this->componentEbayCategory = $componentEbayCategory;
     }
+
     public function _construct()
     {
         parent::_construct();
@@ -53,10 +54,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         );
         $tabsContainer->setDestElementId('chooser_tabs_container');
 
-        return '<div id="chooser_container">'.
-                parent::_toHtml() .
-                $tabsContainer->toHtml() .
-                '<div id="chooser_tabs_container"></div></div>';
+        return '<div id="chooser_container">' .
+            parent::_toHtml() .
+            $tabsContainer->toHtml() .
+            '<div id="chooser_tabs_container"></div></div>';
     }
 
     //########################################
@@ -73,6 +74,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setCategoryType($categoryType)
     {
         $this->_categoryType = $categoryType;
+
         return $this;
     }
 
@@ -91,12 +93,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     public function setSelectedCategory(array $selectedCategory)
     {
         $this->_selectedCategory = $selectedCategory;
+
         return $this;
     }
 
     public function getSelectedCategoryPathHtml()
     {
-        if (!isset($this->_selectedCategory['mode']) ||
+        if (
+            !isset($this->_selectedCategory['mode']) ||
             $this->_selectedCategory['mode'] == TemplateCategory::CATEGORY_MODE_NONE
         ) {
             return <<<HTML

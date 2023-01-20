@@ -114,6 +114,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -144,6 +145,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         }
 
         $this->deleteChildInstance();
+
         return parent::delete();
     }
 

@@ -12,7 +12,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
     public const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -27,9 +27,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        $this->ebayFactory             = $ebayFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->moduleDatabaseStructure = $moduleDatabaseStructure;
-        parent::__construct($viewHelper, $context, $backendHelper, $dataHelper,$data);
+        parent::__construct($viewHelper, $context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -78,13 +78,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 GROUP BY listing_id";
 
         $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('('.$sql.')'),
+            new \Zend_Db_Expr('(' . $sql . ')'),
             'main_table.id=t.listing_id',
             [
-                'products_total_count'    => 'products_total_count',
-                'products_active_count'   => 'products_active_count',
+                'products_total_count' => 'products_total_count',
+                'products_active_count' => 'products_active_count',
                 'products_inactive_count' => 'products_inactive_count',
-                'items_sold_count'        => 'items_sold_count'
+                'items_sold_count' => 'items_sold_count',
             ]
         );
 
@@ -109,12 +109,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         $this->addColumn(
             'items_sold_count',
             [
-                'header'         => $this->__('Sold QTY'),
-                'align'          => 'right',
-                'type'           => 'number',
-                'index'          => 'items_sold_count',
-                'filter_index'   => 't.items_sold_count',
-                'frame_callback' => [$this, 'callbackColumnProductsCount']
+                'header' => $this->__('Sold QTY'),
+                'align' => 'right',
+                'type' => 'number',
+                'index' => 'items_sold_count',
+                'filter_index' => 't.items_sold_count',
+                'frame_callback' => [$this, 'callbackColumnProductsCount'],
             ]
         );
 
@@ -128,94 +128,94 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         return [
             'manageProducts' => [
                 'caption' => $this->__('Manage'),
-                'group'   => 'products_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/ebay_listing/view',
-                    'params' => ['id' => $this->getId(), 'back' => $backUrl]
-                ]
+                'group' => 'products_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/ebay_listing/view',
+                    'params' => ['id' => $this->getId(), 'back' => $backUrl],
+                ],
             ],
 
             'addProductsSourceProducts' => [
-                'caption'        => $this->__('Add From Products List'),
-                'group'          => 'products_actions',
-                'field'          => 'id',
+                'caption' => $this->__('Add From Products List'),
+                'group' => 'products_actions',
+                'field' => 'id',
                 'onclick_action' => 'EbayListingGridObj.addProductsSourceProductsAction',
             ],
 
             'addProductsSourceCategories' => [
-                'caption'        => $this->__('Add From Categories'),
-                'group'          => 'products_actions',
-                'field'          => 'id',
+                'caption' => $this->__('Add From Categories'),
+                'group' => 'products_actions',
+                'field' => 'id',
                 'onclick_action' => 'EbayListingGridObj.addProductsSourceCategoriesAction',
             ],
 
             'autoActions' => [
                 'caption' => $this->__('Auto Add/Remove Rules'),
-                'group'   => 'products_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/ebay_listing/view',
-                    'params' => ['id' => $this->getId(), 'auto_actions' => 1]
-                ]
+                'group' => 'products_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/ebay_listing/view',
+                    'params' => ['id' => $this->getId(), 'auto_actions' => 1],
+                ],
             ],
 
             'editTitle' => [
-                'caption'        => $this->__('Title'),
-                'group'          => 'edit_actions',
-                'field'          => 'id',
+                'caption' => $this->__('Title'),
+                'group' => 'edit_actions',
+                'field' => 'id',
                 'onclick_action' => 'EditListingTitleObj.openPopup',
             ],
 
             'editConfiguration' => [
                 'caption' => $this->__('Configuration'),
-                'group'   => 'edit_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/ebay_listing/edit',
-                    'params' => ['back' => $backUrl]
-                ]
+                'group' => 'edit_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/ebay_listing/edit',
+                    'params' => ['back' => $backUrl],
+                ],
             ],
 
             self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY => [
-                'caption'        => $this->__('Parts Compatibility Mode'),
-                'group'          => 'edit_actions',
-                'field'          => 'id',
+                'caption' => $this->__('Parts Compatibility Mode'),
+                'group' => 'edit_actions',
+                'field' => 'id',
                 'onclick_action' => 'EditCompatibilityModeObj.openPopup',
-                'action_id'      => self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY
+                'action_id' => self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY,
             ],
 
             'viewLogs' => [
                 'caption' => $this->__('Logs & Events'),
-                'group'   => 'other',
-                'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
-                'url'     => [
-                    'base' => '*/ebay_log_listing_product/index'
-                ]
+                'group' => 'other',
+                'field' => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+                'url' => [
+                    'base' => '*/ebay_log_listing_product/index',
+                ],
             ],
 
             'clearLogs' => [
                 'caption' => $this->__('Clear Log'),
                 'confirm' => $this->__('Are you sure?'),
-                'group'   => 'other',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/listing/clearLog',
+                'group' => 'other',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/listing/clearLog',
                     'params' => [
-                        'back' => $backUrl
-                    ]
-                ]
+                        'back' => $backUrl,
+                    ],
+                ],
             ],
 
             'delete' => [
                 'caption' => $this->__('Delete Listing'),
                 'confirm' => $this->__('Are you sure?'),
-                'group'   => 'other',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/ebay_listing/delete',
-                    'params' => ['id' => $this->getId()]
-                ]
+                'group' => 'other',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/ebay_listing/delete',
+                    'params' => ['id' => $this->getId()],
+                ],
             ],
         ];
     }
@@ -287,7 +287,7 @@ HTML;
         return $this->getUrl(
             '*/ebay_listing/view',
             [
-                'id' => $row->getId()
+                'id' => $row->getId(),
             ]
         );
     }

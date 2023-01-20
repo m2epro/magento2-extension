@@ -15,6 +15,7 @@ class Account extends InstallationWalmart
     public function execute()
     {
         $this->init();
+
         return $this->renderSimpleStep();
     }
 }

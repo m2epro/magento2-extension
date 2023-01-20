@@ -109,8 +109,8 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             [
-                'id'   => 'main_table.id',
-                'sku'  => 'second_table.sku'
+                'id' => 'main_table.id',
+                'sku' => 'second_table.sku',
             ]
         );
 
@@ -130,8 +130,8 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
             [
-                'id'   => 'main_table.id',
-                'sku'  => 'second_table.sku'
+                'id' => 'main_table.id',
+                'sku' => 'second_table.sku',
             ]
         );
 
@@ -206,7 +206,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingProductCollection->getSelect()->joinLeft(
             [
                 'alpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                ->getResource()->getMainTable()
+                                                    ->getResource()->getMainTable(),
             ],
             'alpr.listing_product_id = main_table.id'
         );
@@ -215,8 +215,8 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             [
-                'id'   => 'main_table.id',
-                'sku'  => 'second_table.sku'
+                'id' => 'main_table.id',
+                'sku' => 'second_table.sku',
             ]
         );
 
@@ -238,8 +238,8 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
             [
-                'id'   => 'main_table.id',
-                'sku'  => 'second_table.sku'
+                'id' => 'main_table.id',
+                'sku' => 'second_table.sku',
             ]
         );
 
@@ -294,6 +294,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param $account
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -330,6 +331,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param $account
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

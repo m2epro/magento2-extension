@@ -16,7 +16,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
-
     public function __construct(
         \Ess\M2ePro\Model\Magento\Config\Mutable $mutableConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -48,8 +47,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     protected function processGetValue($interceptor, \Closure $callback, array $arguments)
     {
-        $path      = isset($arguments[0]) ? $arguments[0] : null;
-        $scope     = isset($arguments[1]) ? $arguments[1] : null;
+        $path = isset($arguments[0]) ? $arguments[0] : null;
+        $scope = isset($arguments[1]) ? $arguments[1] : null;
         $scopeCode = isset($arguments[2]) ? $arguments[2] : null;
 
         if (!is_string($path) || !is_string($scope)) {

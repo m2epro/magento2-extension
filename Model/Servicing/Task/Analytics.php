@@ -104,9 +104,8 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
 
         foreach ($this->getEntitiesTypes() as $component => $entitiesTypes) {
             foreach ($entitiesTypes as $entityType) {
-                /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager $manager */
                 $manager = $this->entityManagerFactory->create(
-                    ['params' => ['component' => $component, 'entityType' => $entityType]]
+                    ['component' => $component, 'entityType' => $entityType]
                 );
 
                 $progress[$manager->getEntityKey()] = false;
@@ -137,9 +136,9 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
 
         return [
             'analytics' => [
-                'entities'    => $entities,
-                'planned_at'  => $this->registry->getPlannedAt(),
-                'started_at'  => $this->registry->getStartedAt(),
+                'entities' => $entities,
+                'planned_at' => $this->registry->getPlannedAt(),
+                'started_at' => $this->registry->getStartedAt(),
                 'finished_at' => $this->registry->getFinishedAt(),
             ],
         ];
@@ -153,7 +152,7 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
     private function getEntitiesTypes(): array
     {
         return [
-            \Ess\M2ePro\Helper\Component\Amazon::NICK  => [
+            \Ess\M2ePro\Helper\Component\Amazon::NICK => [
                 'Account',
                 'Listing',
                 'Template_Synchronization',
@@ -162,7 +161,7 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
                 'Amazon_Template_ProductTaxCode',
                 'Amazon_Template_Shipping',
             ],
-            \Ess\M2ePro\Helper\Component\Ebay::NICK    => [
+            \Ess\M2ePro\Helper\Component\Ebay::NICK => [
                 'Account',
                 'Listing',
                 'Template_Synchronization',

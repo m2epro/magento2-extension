@@ -8,13 +8,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 class DateTime extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Datetime
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */

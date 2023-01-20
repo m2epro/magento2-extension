@@ -25,7 +25,7 @@ class RemoveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Motor\Filter\Collection $filters */
         $filters = $this->activeRecordFactory->getObject('Ebay_Motor_Filter')->getCollection()
-            ->addFieldToFilter('id', ['in' => $filtersIds]);
+                                             ->addFieldToFilter('id', ['in' => $filtersIds]);
 
         foreach ($filters->getItems() as $filter) {
             $filter->delete();

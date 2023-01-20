@@ -16,8 +16,8 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
     protected function getRequestData(): array
     {
         return [
-            'merchant_id'    => $this->params['merchant_id'],
-            'token'          => $this->params['token'],
+            'merchant_id' => $this->params['merchant_id'],
+            'token' => $this->params['token'],
             'marketplace_id' => $this->params['marketplace_id'],
         ];
     }
@@ -27,7 +27,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
      */
     protected function getCommand(): array
     {
-        return ['account','add','entity'];
+        return ['account', 'add', 'entity'];
     }
 
     // ----------------------------------------
@@ -38,7 +38,8 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
     protected function validateResponse(): bool
     {
         $responseData = $this->getResponse()->getResponseData();
-        if ((empty($responseData['hash']) || !isset($responseData['info'])) &&
+        if (
+            (empty($responseData['hash']) || !isset($responseData['info'])) &&
             !$this->getResponse()->getMessages()->hasErrorEntities()
         ) {
             return false;

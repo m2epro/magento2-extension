@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\StoreCategory getResource()
  */
+
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 /**
@@ -61,6 +62,7 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
             $data
         );
     }
+
     //########################################
 
     public function loadByCategoryValue($value, $mode, $accountId)
@@ -120,6 +122,7 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('ebay_template_storecategory');
+
         return parent::save();
     }
 
@@ -161,13 +164,14 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
      */
     public function setAccount(\Ess\M2ePro\Model\Account $instance)
     {
-         $this->accountModel = $instance;
+        $this->accountModel = $instance;
     }
 
     // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Ebay\Template\StoreCategory\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -263,10 +267,10 @@ class StoreCategory extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractMod
     public function getCategorySource()
     {
         return [
-            'mode'      => $this->getData('category_mode'),
-            'value'     => $this->getData('category_id'),
-            'path'      => $this->getData('category_path'),
-            'attribute' => $this->getData('category_attribute')
+            'mode' => $this->getData('category_mode'),
+            'value' => $this->getData('category_id'),
+            'path' => $this->getData('category_path'),
+            'attribute' => $this->getData('category_attribute'),
         ];
     }
 

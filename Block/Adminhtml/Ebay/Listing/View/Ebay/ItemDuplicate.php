@@ -40,6 +40,7 @@ class ItemDuplicate extends AbstractForm
     protected function getItemId()
     {
         $duplicateMark = $this->listingProduct->getSetting('additional_data', 'item_duplicate_action_required');
+
         return isset($duplicateMark['item_id']) ? $duplicateMark['item_id'] : null;
     }
 
@@ -62,7 +63,7 @@ class ItemDuplicate extends AbstractForm
                 [
                     'item_id' => $itemId,
                     'account_id' => $this->listingProduct->getAccount()->getId(),
-                    'marketplace_id' => $this->listingProduct->getMarketplace()->getId()
+                    'marketplace_id' => $this->listingProduct->getMarketplace()->getId(),
                 ]
             );
 
@@ -75,7 +76,7 @@ class ItemDuplicate extends AbstractForm
                     'target' => '_blank',
                     'value' => $itemId,
                     'class' => 'external-link',
-                    'style' => 'position: relative; top: 6px;'
+                    'style' => 'position: relative; top: 6px;',
                 ]
             );
         }
@@ -89,7 +90,7 @@ class ItemDuplicate extends AbstractForm
                 'onclick' => "EbayListingViewEbayGridObj.solveItemDuplicateAction
                     ({$this->listingProduct->getId()}, false, false)",
                 'value' => $this->__('Ignore this problem for the Item %s%', $itemId),
-                'css_class' => 'no-margin-bottom no-margin-top'
+                'css_class' => 'no-margin-bottom no-margin-top',
             ]
         );
 
@@ -102,7 +103,7 @@ class ItemDuplicate extends AbstractForm
                 'onclick' => "EbayListingViewEbayGridObj.solveItemDuplicateAction
                     ({$this->listingProduct->getId()}, true, false)",
                 'value' => $this->__('Stop Item %s% on eBay', $itemId),
-                'css_class' => 'no-margin-bottom no-margin-top'
+                'css_class' => 'no-margin-bottom no-margin-top',
             ]
         );
 
@@ -115,7 +116,7 @@ class ItemDuplicate extends AbstractForm
                 'onclick' => "EbayListingViewEbayGridObj.solveItemDuplicateAction
                     ({$this->listingProduct->getId()}, true, true)",
                 'value' => $this->__('Stop Item %s% on eBay and List/Relist the current Item', $itemId),
-                'css_class' => 'no-margin-bottom no-margin-top'
+                'css_class' => 'no-margin-bottom no-margin-top',
             ]
         );
 

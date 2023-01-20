@@ -21,11 +21,11 @@ use Ess\M2ePro\Model\Template\SellingFormat;
 
 abstract class PriceCalculator extends AbstractModel
 {
-    const MODE_NONE      = 0;
-    const MODE_PRODUCT   = 1;
-    const MODE_SPECIAL   = 2;
-    const MODE_ATTRIBUTE = 3;
-    const MODE_TIER      = 4;
+    public const MODE_NONE = 0;
+    public const MODE_PRODUCT = 1;
+    public const MODE_SPECIAL = 2;
+    public const MODE_ATTRIBUTE = 3;
+    public const MODE_TIER = 4;
 
     /**
      * @var null|array
@@ -36,11 +36,11 @@ abstract class PriceCalculator extends AbstractModel
      * @var array
      */
     private $sourceModeMapping = [
-        self::MODE_NONE      => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
-        self::MODE_PRODUCT   => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-        self::MODE_SPECIAL   => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
+        self::MODE_NONE => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
+        self::MODE_PRODUCT => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
+        self::MODE_SPECIAL => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
         self::MODE_ATTRIBUTE => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
-        self::MODE_TIER      => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_TIER,
+        self::MODE_TIER => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_TIER,
     ];
 
     /**
@@ -85,16 +85,19 @@ abstract class PriceCalculator extends AbstractModel
 
     /**
      * @param array $source
+     *
      * @return PriceCalculator
      */
     public function setSource(array $source)
     {
         $this->source = $source;
+
         return $this;
     }
 
     /**
      * @param null|string $key
+     *
      * @return array|mixed
      * @throws Logic
      */
@@ -116,6 +119,7 @@ abstract class PriceCalculator extends AbstractModel
     public function setSourceModeMapping(array $mapping)
     {
         $this->sourceModeMapping = $mapping;
+
         return $this;
     }
 
@@ -132,11 +136,13 @@ abstract class PriceCalculator extends AbstractModel
 
     /**
      * @param ListingProduct $product
+     *
      * @return PriceCalculator
      */
     public function setProduct(ListingProduct $product)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -157,11 +163,13 @@ abstract class PriceCalculator extends AbstractModel
 
     /**
      * @param string $value
+     *
      * @return PriceCalculator
      */
     public function setCoefficient($value)
     {
         $this->coefficient = $value;
+
         return $this;
     }
 
@@ -175,11 +183,13 @@ abstract class PriceCalculator extends AbstractModel
 
     /**
      * @param array $value
+     *
      * @return PriceCalculator
      */
     public function setModifier(array $value): PriceCalculator
     {
         $this->modifier = $value;
+
         return $this;
     }
 
@@ -199,6 +209,7 @@ abstract class PriceCalculator extends AbstractModel
     public function setAttributeSourceProduct(?Cache $attributeSourceProduct): PriceCalculator
     {
         $this->attributeSourceProduct = $attributeSourceProduct;
+
         return $this;
     }
 
@@ -215,6 +226,7 @@ abstract class PriceCalculator extends AbstractModel
     public function setVatPercent($value)
     {
         $this->vatPercent = $value;
+
         return $this;
     }
 
@@ -230,11 +242,13 @@ abstract class PriceCalculator extends AbstractModel
 
     /**
      * @param $mode
+     *
      * @return PriceCalculator
      */
     public function setPriceVariationMode($mode)
     {
         $this->priceVariationMode = $mode;
+
         return $this;
     }
 
@@ -302,6 +316,7 @@ abstract class PriceCalculator extends AbstractModel
 
         $this->setAttributeSourceProduct($this->getMagentoProduct());
         $value = $this->getProductBaseValue();
+
         return $this->prepareFinalValue($value);
     }
 
@@ -322,6 +337,7 @@ abstract class PriceCalculator extends AbstractModel
 
         $this->setAttributeSourceProduct($magentoProduct);
         $value = $this->getVariationBaseValue($variation);
+
         return $this->prepareFinalValue($value);
     }
 
@@ -462,7 +478,7 @@ abstract class PriceCalculator extends AbstractModel
                 [
                     'listing_product_id' => $this->getProduct()->getId(),
                     'product_id' => $this->getMagentoProduct()->getProductId(),
-                    'type'       => $this->getMagentoProduct()->getTypeId()
+                    'type' => $this->getMagentoProduct()->getTypeId(),
                 ]
             );
         }
@@ -497,12 +513,14 @@ abstract class PriceCalculator extends AbstractModel
     protected function getConfigurableVariationValue(Variation $variation)
     {
         $options = $variation->getOptions(true);
+
         return $this->getOptionBaseValue(reset($options));
     }
 
     protected function getSimpleWithCustomOptionsVariationValue(Variation $variation)
     {
         $value = $this->getProductBaseValue();
+
         return $this->applyAdditionalOptionValuesModifications($variation, $value);
     }
 
@@ -591,12 +609,14 @@ abstract class PriceCalculator extends AbstractModel
     protected function getGroupedVariationValue(Variation $variation)
     {
         $options = $variation->getOptions(true);
+
         return $this->getOptionBaseValue(reset($options));
     }
 
     protected function getDownloadableWithSeparatedLinksVariationValue(Variation $variation)
     {
         $value = $this->getProductBaseValue();
+
         return $this->applyAdditionalOptionValuesModifications($variation, $value);
     }
 
@@ -635,10 +655,10 @@ abstract class PriceCalculator extends AbstractModel
         $value = 0;
 
         $attributeName = $this->prepareAttributeTitles([
-            strtolower($option->getAttribute())
+            strtolower($option->getAttribute()),
         ])[0];
         $optionName = $this->prepareOptionTitles([
-            strtolower($option->getOption())
+            strtolower($option->getOption()),
         ])[0];
 
         $simpleAttributes = $this->getMagentoProduct()->getProduct()->getOptions();
@@ -655,7 +675,7 @@ abstract class PriceCalculator extends AbstractModel
             $tempAttributeTitles = [
                 $tempAttribute->getData('default_title'),
                 $tempAttribute->getData('store_title'),
-                $tempAttribute->getData('title')
+                $tempAttribute->getData('title'),
             ];
 
             $tempAttributeTitles = array_map('strtolower', array_filter($tempAttributeTitles));
@@ -669,7 +689,7 @@ abstract class PriceCalculator extends AbstractModel
                 $tempOptionTitles = [
                     $tempOption->getData('default_title'),
                     $tempOption->getData('store_title'),
-                    $tempOption->getData('title')
+                    $tempOption->getData('title'),
                 ];
 
                 $tempOptionTitles = array_map('strtolower', array_filter($tempOptionTitles));
@@ -731,7 +751,7 @@ abstract class PriceCalculator extends AbstractModel
 
             $tempAttributeNames = [
                 $tempAttribute->getData('title'),
-                $tempAttribute->getData('default_title')
+                $tempAttribute->getData('default_title'),
             ];
 
             $tempAttributeNames = array_map('strtolower', array_filter($tempAttributeNames));
@@ -758,7 +778,7 @@ abstract class PriceCalculator extends AbstractModel
                         }
                     } else {
                         $value = ($this->getProductBaseValue() * (float)$tempOption->getData('selection_price_value'))
-                                 / 100;
+                            / 100;
                     }
                 } else {
                     $value = (float)$tempOption->getData('selection_price_value');
@@ -830,6 +850,7 @@ abstract class PriceCalculator extends AbstractModel
     protected function getExistedProductValue(Product $product)
     {
         $value = $product->getPrice();
+
         return $this->convertValueFromStoreToMarketplace($value);
     }
 
@@ -868,7 +889,6 @@ abstract class PriceCalculator extends AbstractModel
         $productTypeInstance = $product->getTypeInstance();
 
         foreach ($productTypeInstance->getUsedProducts($product->getProduct()) as $childProduct) {
-
             /** @var Product $childProduct */
             $childProduct = $this->modelFactory->getObject('Magento\Product')->setProduct($childProduct);
 
@@ -939,7 +959,6 @@ abstract class PriceCalculator extends AbstractModel
             $variationValue = 0;
 
             foreach ($variation as $option) {
-
                 /** @var Product $childProduct */
                 $childProduct = $this->modelFactory->getObject('Magento\Product')->setProductId($option['product_id']);
 
@@ -980,6 +999,7 @@ abstract class PriceCalculator extends AbstractModel
         }
 
         $percent = (double)$product->getProduct()->getSpecialPrice();
+
         return round((($value * $percent) / 100), 2);
     }
 
@@ -989,10 +1009,9 @@ abstract class PriceCalculator extends AbstractModel
         $productTypeInstance = $product->getTypeInstance();
 
         $lowestVariationValue = null;
-        $resultChildProduct   = null;
+        $resultChildProduct = null;
 
         foreach ($productTypeInstance->getAssociatedProducts($product->getProduct()) as $childProduct) {
-
             /** @var \Ess\M2ePro\Model\Magento\Product $childProduct */
             $childProduct = $this->modelFactory->getObject('Magento\Product')->setProduct($childProduct);
 
@@ -1001,7 +1020,7 @@ abstract class PriceCalculator extends AbstractModel
 
             if ($variationValue < $lowestVariationValue || $lowestVariationValue === null) {
                 $lowestVariationValue = $variationValue;
-                $resultChildProduct   = $childProduct;
+                $resultChildProduct = $childProduct;
             }
         }
 
@@ -1150,7 +1169,7 @@ abstract class PriceCalculator extends AbstractModel
 
     protected function increaseValueByVatPercent($value)
     {
-        return $value + (($this->getVatPercent()*$value) / 100);
+        return $value + (($this->getVatPercent() * $value) / 100);
     }
 
     // ---------------------------------------

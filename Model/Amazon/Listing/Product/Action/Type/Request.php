@@ -109,6 +109,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
         }
 
         $dataBuilder = $this->getDataBuilder('qty');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -127,6 +128,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
         }
 
         $dataBuilder = $this->getDataBuilder('price_regular');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -149,6 +151,7 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
         }
 
         $dataBuilder = $this->getDataBuilder('price_business');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -192,13 +195,13 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
 
     /**
      * @param $type
+     *
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getDataBuilder($type)
     {
         if (!isset($this->dataBuilders[$type])) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\AbstractModel $dataBuilder */
             $dataBuilder = $this->modelFactory->getObject(
                 'Amazon\Listing\Product\Action\DataBuilder\\' . ucwords($type, '_')

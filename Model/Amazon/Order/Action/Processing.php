@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -13,10 +13,10 @@ namespace Ess\M2ePro\Model\Amazon\Order\Action;
  */
 class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const ACTION_TYPE_UPDATE = 'update';
-    const ACTION_TYPE_CANCEL = 'cancel';
-    const ACTION_TYPE_REFUND = 'refund';
-    const ACTION_TYPE_SEND_INVOICE = 'send_invoice';
+    public const ACTION_TYPE_UPDATE = 'update';
+    public const ACTION_TYPE_CANCEL = 'cancel';
+    public const ACTION_TYPE_REFUND = 'refund';
+    public const ACTION_TYPE_SEND_INVOICE = 'send_invoice';
 
     //####################################
 
@@ -42,6 +42,7 @@ class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setOrder(\Ess\M2ePro\Model\Order $order)
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -63,6 +64,7 @@ class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setProcessing(\Ess\M2ePro\Model\Processing $processing)
     {
         $this->processing = $processing;
+
         return $this;
     }
 
@@ -88,6 +90,7 @@ class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setRequestPendingSingle(\Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle)
     {
         $this->requestPendingSingle = $requestPendingSingle;
+
         return $this;
     }
 

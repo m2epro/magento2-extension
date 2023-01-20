@@ -73,13 +73,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['lp' => $lpTable],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'amazon_status'          => 'status',
-                'component_mode'  => 'component_mode',
-                'additional_data' => 'additional_data'
+                'id' => 'id',
+                'amazon_status' => 'status',
+                'component_mode' => 'component_mode',
+                'additional_data' => 'additional_data',
             ],
             [
-                'listing_id' => (int)$this->listing['id']
+                'listing_id' => (int)$this->listing['id'],
             ]
         );
 
@@ -88,32 +88,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['alp' => $alpTable],
             'listing_product_id=id',
             [
-                'template_shipping_id'           => 'template_shipping_id',
-                'template_description_id'        => 'template_description_id',
-                'template_product_tax_code_id'   => 'template_product_tax_code_id',
-                'general_id'                     => 'general_id',
-                'general_id_search_info'         => 'general_id_search_info',
-                'search_settings_status'         => 'search_settings_status',
-                'search_settings_data'           => 'search_settings_data',
-                'variation_child_statuses'       => 'variation_child_statuses',
-                'amazon_sku'                     => 'sku',
-                'online_qty'                     => 'online_qty',
-                'online_regular_price'           => 'online_regular_price',
-                 'online_regular_sale_price'     => 'IF(
+                'template_shipping_id' => 'template_shipping_id',
+                'template_description_id' => 'template_description_id',
+                'template_product_tax_code_id' => 'template_product_tax_code_id',
+                'general_id' => 'general_id',
+                'general_id_search_info' => 'general_id_search_info',
+                'search_settings_status' => 'search_settings_status',
+                'search_settings_data' => 'search_settings_data',
+                'variation_child_statuses' => 'variation_child_statuses',
+                'amazon_sku' => 'sku',
+                'online_qty' => 'online_qty',
+                'online_regular_price' => 'online_regular_price',
+                'online_regular_sale_price' => 'IF(
                   `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
                   `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
                   `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
                   `alp`.`online_regular_sale_price`,
                   NULL
                 )',
-                'online_regular_sale_price_start_date'   => 'online_regular_sale_price_start_date',
-                'online_regular_sale_price_end_date'     => 'online_regular_sale_price_end_date',
-                'is_repricing'                   => 'is_repricing',
-                'is_afn_channel'                 => 'is_afn_channel',
-                'is_general_id_owner'            => 'is_general_id_owner',
-                'is_variation_parent'            => 'is_variation_parent',
-                'defected_messages'              => 'defected_messages',
-                'variation_parent_afn_state'       => 'variation_parent_afn_state',
+                'online_regular_sale_price_start_date' => 'online_regular_sale_price_start_date',
+                'online_regular_sale_price_end_date' => 'online_regular_sale_price_end_date',
+                'is_repricing' => 'is_repricing',
+                'is_afn_channel' => 'is_afn_channel',
+                'is_general_id_owner' => 'is_general_id_owner',
+                'is_variation_parent' => 'is_variation_parent',
+                'defected_messages' => 'defected_messages',
+                'variation_parent_afn_state' => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
             ],
             '{{table}}.variation_parent_id is NULL'
@@ -124,19 +124,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['td' => $tdTable],
             'id=template_description_id',
             [
-                'template_description_title' => 'title'
+                'template_description_title' => 'title',
             ],
             null,
             'left'
         );
 
         $tsTable = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')
-            ->getResource()->getMainTable();
+                                             ->getResource()->getMainTable();
         $collection->joinTable(
             ['ts' => $tsTable],
             'id=template_shipping_id',
             [
-                'template_shipping_title' => 'title'
+                'template_shipping_title' => 'title',
             ],
             null,
             'left'
@@ -144,16 +144,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $amazonAccount = $this->listing->getAccount()->getChildObject();
 
-        if ($amazonAccount->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+        if (
+            $amazonAccount->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
             $amazonAccount->isVatCalculationServiceEnabled()
         ) {
             $ptcTable = $this->activeRecordFactory->getObject('Amazon_Template_ProductTaxCode')
-                ->getResource()->getMainTable();
+                                                  ->getResource()->getMainTable();
             $collection->joinTable(
                 ['tptc' => $ptcTable],
                 'id=template_product_tax_code_id',
                 [
-                    'template_product_tax_code_title' => 'title'
+                    'template_product_tax_code_title' => 'title',
                 ],
                 null,
                 'left'
@@ -172,99 +173,100 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'   => $this->__('Product ID'),
-            'align'    => 'right',
-            'width'    => '100px',
-            'type'     => 'number',
-            'index'    => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'                    => $this->__('Product Title / Product SKU'),
-            'align'                     => 'left',
-            'type'                      => 'text',
-            'index'                     => 'name',
-            'filter_index'              => 'name',
-            'escape'                    => false,
-            'frame_callback'            => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
+            'filter_index' => 'name',
+            'escape' => false,
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('sku', [
-            'header'                 => $this->__('SKU'),
-            'align'                  => 'left',
-            'width'                  => '150px',
-            'type'                   => 'text',
-            'index'                  => 'amazon_sku',
+            'header' => $this->__('SKU'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'text',
+            'index' => 'amazon_sku',
             'show_defected_messages' => false,
-            'filter_index'           => 'amazon_sku',
-            'renderer'               => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku::class
+            'filter_index' => 'amazon_sku',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Sku::class,
         ]);
 
         $this->addColumn('general_id', [
-            'header'         => $this->__('ASIN / ISBN'),
-            'align'          => 'left',
-            'width'          => '140px',
-            'type'           => 'text',
-            'index'          => 'general_id',
-            'filter_index'   => 'general_id',
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId::class,
+            'header' => $this->__('ASIN / ISBN'),
+            'align' => 'left',
+            'width' => '140px',
+            'type' => 'text',
+            'index' => 'general_id',
+            'filter_index' => 'general_id',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId::class,
             'frame_callback' => [$this, 'callbackColumnGeneralId'],
-            'filter_condition_callback' => [$this, 'callbackFilterGeneralId']
+            'filter_condition_callback' => [$this, 'callbackFilterGeneralId'],
         ]);
 
         $this->addColumn('description_template', [
-            'header'         => $this->__('Description Policy'),
-            'align'          => 'left',
-            'width'          => '170px',
-            'type'           => 'text',
-            'index'          => 'template_description_title',
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
-            'filter_index'   => 'template_description_title',
+            'header' => $this->__('Description Policy'),
+            'align' => 'left',
+            'width' => '170px',
+            'type' => 'text',
+            'index' => 'template_description_title',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
+            'filter_index' => 'template_description_title',
             'filter_condition_callback' => [$this, 'callbackFilterDescriptionSettings'],
-            'frame_callback' => [$this, 'callbackColumnTemplateDescription']
+            'frame_callback' => [$this, 'callbackColumnTemplateDescription'],
         ]);
 
         $this->addColumn('shipping_template', [
-            'header'         => 'Shipping Policy',
-            'align'          => 'left',
-            'width'          => '170px',
-            'type'           => 'text',
-            'index'          => 'template_shipping_title',
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
-            'filter_index'   => 'template_shipping_title',
+            'header' => 'Shipping Policy',
+            'align' => 'left',
+            'width' => '170px',
+            'type' => 'text',
+            'index' => 'template_shipping_title',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
+            'filter_index' => 'template_shipping_title',
             'filter_condition_callback' => [$this, 'callbackFilterShippingSettings'],
-            'frame_callback' => [$this, 'callbackColumnTemplateShipping']
+            'frame_callback' => [$this, 'callbackColumnTemplateShipping'],
         ]);
 
-        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+        if (
+            $this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
             $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
         ) {
             $this->addColumn('product_tax_code_template', [
-                'header'         => $this->__('Product Tax Code Policy'),
-                'align'          => 'left',
-                'width'          => '170px',
-                'type'           => 'text',
-                'index'          => 'template_product_tax_code_title',
-                'filter_index'   => 'template_product_tax_code_title',
-                'frame_callback' => [$this, 'callbackColumnTemplateProductTaxCode']
+                'header' => $this->__('Product Tax Code Policy'),
+                'align' => 'left',
+                'width' => '170px',
+                'type' => 'text',
+                'index' => 'template_product_tax_code_title',
+                'filter_index' => 'template_product_tax_code_title',
+                'frame_callback' => [$this, 'callbackColumnTemplateProductTaxCode'],
             ]);
         }
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'width'     => '100px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'field'     => 'id',
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'field' => 'id',
             'group_order' => $this->getGroupOrder(),
-            'actions'     => $this->getColumnActionsItems()
+            'actions' => $this->getColumnActionsItems(),
         ]);
 
         return parent::_prepareColumns();
@@ -274,11 +276,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $groups = [
             'edit_template_description' => $this->__('Description Policy'),
-            'edit_template_shipping'    => $this->__('Shipping Policy'),
-            'other' => $this->__('Other')
+            'edit_template_shipping' => $this->__('Shipping Policy'),
+            'other' => $this->__('Other'),
         ];
 
-        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+        if (
+            $this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
             $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
         ) {
             $groups['edit_template_product_tax_code'] = $this->__('Product Tax Code Policy');
@@ -292,58 +295,59 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $actions = [
             'assignTemplateDescription' => [
                 'caption' => $this->__('Assign'),
-                'group'   => 'edit_template_description',
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.actions[\'assignTemplateDescriptionIdAction\']'
+                'group' => 'edit_template_description',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.actions[\'assignTemplateDescriptionIdAction\']',
             ],
 
             'unassignTemplateDescription' => [
                 'caption' => $this->__('Unassign'),
-                'group'   => 'edit_template_description',
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.unassignTemplateDescriptionIdActionConfrim'
+                'group' => 'edit_template_description',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.unassignTemplateDescriptionIdActionConfrim',
             ],
         ];
 
         $actions['assignTemplateShipping'] = [
             'caption' => $this->__('Assign'),
-            'group'   => 'edit_template_shipping',
-            'field'   => 'id',
-            'onclick_action' => 'ListingGridObj.actions[\'assignTemplateShippingIdAction\']'
+            'group' => 'edit_template_shipping',
+            'field' => 'id',
+            'onclick_action' => 'ListingGridObj.actions[\'assignTemplateShippingIdAction\']',
         ];
 
         $actions['unassignTemplateShipping'] = [
             'caption' => $this->__('Unassign'),
-            'group'   => 'edit_template_shipping',
-            'field'   => 'id',
-            'onclick_action' => 'ListingGridObj.unassignTemplateShippingIdActionConfrim'
+            'group' => 'edit_template_shipping',
+            'field' => 'id',
+            'onclick_action' => 'ListingGridObj.unassignTemplateShippingIdActionConfrim',
         ];
 
-        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+        if (
+            $this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
             $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
         ) {
             $actions['assignTemplateProductTaxCode'] = [
                 'caption' => $this->__('Assign'),
-                'group'   => 'edit_template_product_tax_code',
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.actions[\'assignTemplateProductTaxCodeIdAction\']'
+                'group' => 'edit_template_product_tax_code',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.actions[\'assignTemplateProductTaxCodeIdAction\']',
             ];
 
             $actions['unassignTemplateProductTaxCode'] = [
                 'caption' => $this->__('Unassign'),
-                'group'   => 'edit_template_product_tax_code',
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.unassignTemplateProductTaxCodeIdActionConfrim'
+                'group' => 'edit_template_product_tax_code',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.unassignTemplateProductTaxCodeIdActionConfrim',
             ];
         }
 
         $actions['remapProduct'] = [
-            'caption'            => $this->__('Link to another Magento Product'),
-            'group'              => 'other',
-            'field'              => 'id',
+            'caption' => $this->__('Link to another Magento Product'),
+            'group' => 'other',
+            'field' => 'id',
             'only_remap_product' => true,
-            'style'              => 'width: 130px',
-            'onclick_action'     => 'ListingGridObj.actions[\'remapProductAction\']'
+            'style' => 'width: 130px',
+            'onclick_action' => 'ListingGridObj.actions[\'remapProductAction\']',
         ];
 
         return $actions;
@@ -360,62 +364,64 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Set mass-action
         // ---------------------------------------
         $groups = [
-            'description_policy'             => $this->__('Description Policy'),
-            'shipping_policy'                => $this->__('Shipping Policy'),
+            'description_policy' => $this->__('Description Policy'),
+            'shipping_policy' => $this->__('Shipping Policy'),
             'edit_template_product_tax_code' => $this->__('Product Tax Code Policy'),
-            'other'                          => $this->__('Other'),
+            'other' => $this->__('Other'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
 
         $this->getMassactionBlock()->addItem('assignTemplateDescriptionId', [
-            'label'    => $this->__('Assign'),
-            'url'      => ''
+            'label' => $this->__('Assign'),
+            'url' => '',
         ], 'description_policy');
 
         $this->getMassactionBlock()->addItem('unassignTemplateDescriptionId', [
-            'label'    => $this->__('Unassign'),
-            'url'      => ''
+            'label' => $this->__('Unassign'),
+            'url' => '',
         ], 'description_policy');
 
         $this->getMassactionBlock()->addItem('assignTemplateShippingId', [
-            'label'   => $this->__('Assign'),
-            'url'     => ''
+            'label' => $this->__('Assign'),
+            'url' => '',
         ], 'shipping_policy');
 
         $this->getMassactionBlock()->addItem('unassignTemplateShippingId', [
-            'label'   => $this->__('Unassign'),
-            'url'     => ''
+            'label' => $this->__('Unassign'),
+            'url' => '',
         ], 'shipping_policy');
 
-        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+        if (
+            $this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
             $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
         ) {
             $this->getMassactionBlock()->addItem('assignTemplateProductTaxCodeId', [
-                'label'   => $this->__('Assign'),
-                'url'     => ''
+                'label' => $this->__('Assign'),
+                'url' => '',
             ], 'edit_template_product_tax_code');
 
             $this->getMassactionBlock()->addItem('unassignTemplateProductTaxCodeId', [
-                'label'   => $this->__('Unassign'),
-                'url'     => ''
+                'label' => $this->__('Unassign'),
+                'url' => '',
             ], 'edit_template_product_tax_code');
         }
 
         $this->getMassactionBlock()->addItem('moving', [
-            'label'    => $this->__('Move Item(s) to Another Listing'),
-            'url'      => ''
+            'label' => $this->__('Move Item(s) to Another Listing'),
+            'url' => '',
         ], 'other');
 
         $this->getMassactionBlock()->addItem('duplicate', [
-            'label'    => $this->__('Duplicate'),
-            'url'      => ''
+            'label' => $this->__('Duplicate'),
+            'url' => '',
         ], 'other');
 
         $this->getMassactionBlock()->addItem('transferring', [
             'label' => $this->__('Sell on Another Marketplace'),
-            'url' => ''
+            'url' => '',
         ], 'other');
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -425,14 +431,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-        $value = '<span>'.$productTitle.'</span>';
+        $value = '<span>' . $productTitle . '</span>';
 
         $sku = $this->modelFactory->getObject('Magento\Product')
-            ->setProductId($row->getData('entity_id'))
-            ->getSku();
+                                  ->setProductId($row->getData('entity_id'))
+                                  ->getSku();
 
-        $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
+        $value .= '<br/><strong>' . $this->__('SKU') .
+            ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -497,6 +503,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             if ($row->getData('is_general_id_owner') == 1) {
                 return $this->__('New ASIN/ISBN');
             }
+
             return $this->getGeneralIdColumnValueEmptyGeneralId($row);
         }
 
@@ -507,7 +514,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         // ---------------------------------------
         if ((int)$row->getData('amazon_status') != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<i style="color:gray;">'.$this->__('receiving...').'</i>';
+            return '<i style="color:gray;">' . $this->__('receiving...') . '</i>';
         }
 
         $searchSettingsStatus = $row->getData('search_settings_status');
@@ -524,6 +531,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 </a>
 HTML;
         }
+
         // ---------------------------------------
 
         return $this->__('N/A');
@@ -537,8 +545,8 @@ HTML;
 
         $generalIdOwnerHtml = '';
         if ($row->getData('is_general_id_owner') == \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES) {
-            $generalIdOwnerHtml = '<br/><span style="font-size: 10px; color: grey;">'.
-                $this->__('creator of ASIN/ISBN').
+            $generalIdOwnerHtml = '<br/><span style="font-size: 10px; color: grey;">' .
+                $this->__('creator of ASIN/ISBN') .
                 '</span>';
         }
 
@@ -576,7 +584,7 @@ HTML;
         if ($row->getData('template_description_id')) {
             $url = $this->getUrl('*/amazon_template_description/edit', [
                 'id' => $row->getData('template_description_id'),
-                'close_on_save' => true
+                'close_on_save' => true,
             ]);
 
             $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_description_title'));
@@ -593,11 +601,12 @@ HTML;
     {
         $html = $this->__('N/A');
 
-        if ($row->getData('template_shipping_id')
+        if (
+            $row->getData('template_shipping_id')
         ) {
             $url = $this->getUrl('*/amazon_template_shipping/edit', [
                 'id' => $row->getData('template_shipping_id'),
-                'close_on_save' => true
+                'close_on_save' => true,
             ]);
 
             $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_shipping_title'));
@@ -607,6 +616,7 @@ HTML;
 HTML;
         } elseif ($this->listing->getChildObject()->getData('template_shipping_id')) {
             $shippingSettings = $this->__('Use from Listing Settings');
+
             return <<<HTML
 <div style="padding: 4px">
     <span style="color: #666666">{$shippingSettings}</span><br/>
@@ -623,7 +633,7 @@ HTML;
 
         if ($row->getData('template_product_tax_code_id')) {
             $url = $this->getUrl('*/amazon_template_productTaxCode/edit', [
-                'id' => $row->getData('template_product_tax_code_id')
+                'id' => $row->getData('template_product_tax_code_id'),
             ]);
 
             $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_product_tax_code_title'));
@@ -646,8 +656,8 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -678,7 +688,7 @@ HTML;
 
         if ($inputValue !== null) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
-            $collection->addAttributeToFilter('template_shipping_title',  ['like' => '%' . $inputValue . '%']);
+            $collection->addAttributeToFilter('template_shipping_title', ['like' => '%' . $inputValue . '%']);
         }
 
         if (isset($value['select'])) {
@@ -731,7 +741,8 @@ HTML;
 
     protected function _toHtml()
     {
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Amazon/Listing/Transferring'
     ],function() {

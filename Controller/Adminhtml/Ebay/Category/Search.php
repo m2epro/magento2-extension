@@ -27,22 +27,23 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         parent::__construct($ebayFactory, $context);
 
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
-        $this->componentEbayCategory      = $componentEbayCategory;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->componentEbayCategory = $componentEbayCategory;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
     public function execute()
     {
         $query = $this->getRequest()->getParam('query');
         $categoryType = $this->getRequest()->getParam('category_type');
-        $marketplaceId  = $this->getRequest()->getParam('marketplace_id');
-        $accountId  = $this->getRequest()->getParam('account_id');
+        $marketplaceId = $this->getRequest()->getParam('marketplace_id');
+        $accountId = $this->getRequest()->getParam('account_id');
         $result = [];
 
         $ebayCategoryTypes = $this->componentEbayCategory->getEbayCategoryTypes();
         $storeCategoryTypes = $this->componentEbayCategory->getStoreCategoryTypes();
 
-        if ($query === null
+        if (
+            $query === null
             || (in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null)
             || (in_array($categoryType, $storeCategoryTypes) && $accountId === null)
         ) {
@@ -54,15 +55,15 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $connection = $this->resourceConnection->getConnection();
         if (in_array($categoryType, $ebayCategoryTypes)) {
             $tableName = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
+                              ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
         } else {
             $tableName = $this->getHelper('Module_Database_Structure')
-                ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
+                              ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
         }
 
         $dbSelect = $connection->select();
         $dbSelect->from($tableName, 'category_id')
-            ->where('is_leaf = ?', 1);
+                 ->where('is_leaf = ?', 1);
         if (in_array($categoryType, $ebayCategoryTypes)) {
             $dbSelect->where('marketplace_id = ?', (int)$marketplaceId);
         } else {
@@ -100,7 +101,7 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
             $result[] = [
                 'titles' => $treePath,
-                'id' => $categoryId['category_id']
+                'id' => $categoryId['category_id'],
             ];
         }
 

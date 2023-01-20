@@ -42,7 +42,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'title' => __('Main'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Main::class)
-                              ->toHtml()
+                              ->toHtml(),
         ];
 
         $this->addTab(self::TAB_ID_MAIN, $tab);
@@ -54,7 +54,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'title' => __('Synchronization'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Synchronization::class)
-                              ->toHtml()
+                              ->toHtml(),
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);
@@ -67,14 +67,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         if ($isMotorsEpidsMarketplaceEnabled || $isMotorsKtypesMarketplaceEnabled) {
             $tab = [
-                'label'   => __('Parts Compatibility'),
-                'title'   => __('Parts Compatibility'),
+                'label' => __('Parts Compatibility'),
+                'title' => __('Parts Compatibility'),
                 'content' => $this->getLayout()->createBlock(
                     \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Motors::class,
                     '',
                     [
                         'data' => [
-                            'epids_enabled'  => $isMotorsEpidsMarketplaceEnabled,
+                            'epids_enabled' => $isMotorsEpidsMarketplaceEnabled,
                             'ktypes_enabled' => $isMotorsKtypesMarketplaceEnabled,
                         ],
                     ]
@@ -83,6 +83,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
             $this->addTab(self::TAB_ID_MOTORS, $tab);
         }
+
         // ---------------------------------------
 
         return parent::_prepareLayout();
@@ -94,6 +95,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
     protected function _beforeToHtml()
     {
         $this->jsUrl->add($this->getUrl('*/ebay/getGlobalMessages'), 'getGlobalMessages');
+
         return parent::_beforeToHtml();
     }
 }

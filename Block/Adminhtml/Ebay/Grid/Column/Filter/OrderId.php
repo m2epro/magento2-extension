@@ -14,6 +14,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
     {
         if ($index === null) {
             $value = $this->getData('value');
+
             return is_array($value) ? $value : ['value' => $value];
         }
 

@@ -8,17 +8,16 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Description\Definition;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Description\Definition\Source
- */
+use Ess\M2ePro\Model\Amazon\Template\Description\Definition as DescriptionDefinition;
+
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
-    const GALLERY_IMAGES_COUNT_MAX = 8;
+    public const GALLERY_IMAGES_COUNT_MAX = 8;
 
-    const WEIGHT_TYPE_ITEM_DIMENSIONS    = 'item_dimensions';
-    const WEIGHT_TYPE_PACKAGE_DIMENSIONS = 'package_dimensions';
-    const WEIGHT_TYPE_SHIPPING           = 'shipping';
-    const WEIGHT_TYPE_PACKAGE            = 'package';
+    public const WEIGHT_TYPE_ITEM_DIMENSIONS = 'item_dimensions';
+    public const WEIGHT_TYPE_PACKAGE_DIMENSIONS = 'package_dimensions';
+    public const WEIGHT_TYPE_SHIPPING = 'shipping';
+    public const WEIGHT_TYPE_PACKAGE = 'package';
 
     /**
      * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
@@ -30,6 +29,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      */
     private $descriptionDefinitionTemplateModel = null;
 
+    /** @var \Magento\Email\Model\Template\Filter  */
     protected $emailTemplateFilter;
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
@@ -50,11 +50,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -69,17 +71,19 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     // ---------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\Amazon\Template\Description\Definition $instance
+     * @param DescriptionDefinition $instance
+     *
      * @return $this
      */
-    public function setDescriptionDefinitionTemplate(\Ess\M2ePro\Model\Amazon\Template\Description\Definition $instance)
+    public function setDescriptionDefinitionTemplate(DescriptionDefinition $instance)
     {
         $this->descriptionDefinitionTemplateModel = $instance;
+
         return $this;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\Description\Definition
+     * @return DescriptionDefinition
      */
     public function getDescriptionDefinitionTemplate()
     {
@@ -96,11 +100,11 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getDescriptionDefinitionTemplate()->getTitleSource();
 
         switch ($src['mode']) {
-            case \Ess\M2ePro\Model\Amazon\Template\Description\Definition::TITLE_MODE_PRODUCT:
+            case DescriptionDefinition::TITLE_MODE_PRODUCT:
                 $title = $this->getMagentoProduct()->getName();
                 break;
 
-            case \Ess\M2ePro\Model\Amazon\Template\Description\Definition::TITLE_MODE_CUSTOM:
+            case DescriptionDefinition::TITLE_MODE_CUSTOM:
                 $title = $this->getHelper('Module_Renderer_Description')->parseTemplate(
                     $src['template'],
                     $this->getMagentoProduct()
@@ -212,17 +216,17 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $src = $this->getDescriptionDefinitionTemplate()->getDescriptionSource();
 
         switch ($src['mode']) {
-            case \Ess\M2ePro\Model\Amazon\Template\Description\Definition::DESCRIPTION_MODE_PRODUCT:
+            case DescriptionDefinition::DESCRIPTION_MODE_PRODUCT:
                 $description = (string)$this->getMagentoProduct()->getProduct()->getDescription();
                 $description = $this->emailTemplateFilter->filter($description);
                 break;
 
-            case \Ess\M2ePro\Model\Amazon\Template\Description\Definition::DESCRIPTION_MODE_SHORT:
+            case DescriptionDefinition::DESCRIPTION_MODE_SHORT:
                 $description = (string)$this->getMagentoProduct()->getProduct()->getShortDescription();
                 $description = $this->emailTemplateFilter->filter($description);
                 break;
 
-            case \Ess\M2ePro\Model\Amazon\Template\Description\Definition::DESCRIPTION_MODE_CUSTOM:
+            case DescriptionDefinition::DESCRIPTION_MODE_CUSTOM:
                 $description = $this->getHelper('Module_Renderer_Description')->parseTemplate(
                     $src['template'],
                     $this->getMagentoProduct()
@@ -370,14 +374,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getDescriptionDefinitionTemplate()->isItemDimensionsVolumeModeCustomValue()) {
             $volume = [
                 'length' => $src['length_custom_value'],
-                'width'  => $src['width_custom_value'],
-                'height' => $src['height_custom_value']
+                'width' => $src['width_custom_value'],
+                'height' => $src['height_custom_value'],
             ];
         } else {
             $volume = [
                 'length' => trim($this->getMagentoProduct()->getAttributeValue($src['length_custom_attribute'])),
-                'width'  => trim($this->getMagentoProduct()->getAttributeValue($src['width_custom_attribute'])),
-                'height' => trim($this->getMagentoProduct()->getAttributeValue($src['height_custom_attribute']))
+                'width' => trim($this->getMagentoProduct()->getAttributeValue($src['width_custom_attribute'])),
+                'height' => trim($this->getMagentoProduct()->getAttributeValue($src['height_custom_attribute'])),
             ];
         }
 
@@ -450,14 +454,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getDescriptionDefinitionTemplate()->isPackageDimensionsVolumeModeCustomValue()) {
             $volume = [
                 'length' => $src['length_custom_value'],
-                'width'  => $src['width_custom_value'],
-                'height' => $src['height_custom_value']
+                'width' => $src['width_custom_value'],
+                'height' => $src['height_custom_value'],
             ];
         } else {
             $volume = [
                 'length' => trim($this->getMagentoProduct()->getAttributeValue($src['length_custom_attribute'])),
-                'width'  => trim($this->getMagentoProduct()->getAttributeValue($src['width_custom_attribute'])),
-                'height' => trim($this->getMagentoProduct()->getAttributeValue($src['height_custom_attribute']))
+                'width' => trim($this->getMagentoProduct()->getAttributeValue($src['width_custom_attribute'])),
+                'height' => trim($this->getMagentoProduct()->getAttributeValue($src['height_custom_attribute'])),
             ];
         }
 
@@ -525,6 +529,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $weightType
+     *
      * @return float|null|string
      */
     private function getWeight($weightType)
@@ -545,11 +550,11 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        if (!$src || $src['mode'] == \Ess\M2ePro\Model\Amazon\Template\Description\Definition::WEIGHT_MODE_NONE) {
+        if (!$src || $src['mode'] == DescriptionDefinition::WEIGHT_MODE_NONE) {
             return null;
         }
 
-        $weight = $src['mode'] == \Ess\M2ePro\Model\Amazon\Template\Description\Definition::WEIGHT_MODE_CUSTOM_VALUE
+        $weight = $src['mode'] == DescriptionDefinition::WEIGHT_MODE_CUSTOM_VALUE
             ? $src['custom_value']
             : $this->getMagentoProduct()->getAttributeValue($src['custom_attribute']);
 
@@ -585,12 +590,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        $tValue = \Ess\M2ePro\Model\Amazon\Template\Description\Definition::WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE;
+        $tValue = DescriptionDefinition::WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_VALUE;
         if ($src['mode'] == $tValue) {
             return $src['custom_value'];
         }
 
-        $tValue =\Ess\M2ePro\Model\Amazon\Template\Description\Definition::WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE;
+        $tValue = DescriptionDefinition::WEIGHT_UNIT_OF_MEASURE_MODE_CUSTOM_ATTRIBUTE;
         if ($src['mode'] == $tValue) {
             return trim($this->getMagentoProduct()->getAttributeValue($src['custom_attribute']));
         }
@@ -727,13 +732,15 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         $isPriceConvertEnabled = $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode();
 
-        if ($isPriceConvertEnabled &&
-            $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)) {
+        if (
+            $isPriceConvertEnabled &&
+            $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)
+        ) {
             $currency = $this->getDescriptionDefinitionTemplate()
-                ->getAmazonDescriptionTemplate()
-                ->getMarketplace()
-                ->getChildObject()
-                ->getCurrency();
+                             ->getAmazonDescriptionTemplate()
+                             ->getMarketplace()
+                             ->getChildObject()
+                             ->getCurrency();
 
             return $this->modelFactory->getObject('Currency')->convertPrice($attributeValue, $currency, $store);
         }

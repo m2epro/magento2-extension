@@ -42,7 +42,7 @@ class Note extends OriginalNote
 
         if ($this->taskResult !== null) {
             $labelClass = $this->getLabelClass($this->taskResult);
-            $parentHtml = preg_replace('/class="(.+)"/', 'class="' .$labelClass. ' $1"', $parentHtml);
+            $parentHtml = preg_replace('/class="(.+)"/', 'class="' . $labelClass . ' $1"', $parentHtml);
         }
 
         return $parentHtml;

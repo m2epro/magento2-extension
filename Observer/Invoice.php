@@ -8,16 +8,14 @@
 
 namespace Ess\M2ePro\Observer;
 
-/**
- * Class \Ess\M2ePro\Observer\Invoice
- */
 class Invoice extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+    /** @var \Magento\Framework\Message\Manager */
     protected $messageManager;
+    /** @var \Magento\Framework\UrlInterface */
     protected $urlBuilder;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -40,6 +38,7 @@ class Invoice extends AbstractModel
         if ($this->getHelper('Data\GlobalData')->getValue('skip_invoice_observer')) {
             // Not process invoice observer when set such flag
             $this->getHelper('Data\GlobalData')->unsetValue('skip_invoice_observer');
+
             return;
         }
 

@@ -20,6 +20,7 @@ class SetChannelAttributes extends Main
 
         if (empty($listingProductId) || $channelAttributes === null) {
             $this->setAjaxContent('You should provide correct parameters.');
+
             return $this->getResult();
         }
 

@@ -64,47 +64,47 @@ class Grid extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('create_date', [
-            'header'    => $this->__('Create Date'),
-            'align'     => 'left',
-            'width'     => '165px',
-            'type'      => 'datetime',
-            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'format'    => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('Create Date'),
+            'align' => 'left',
+            'width' => '165px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'     => 'create_date'
+            'index' => 'create_date',
         ]);
 
         $this->addColumn('message', [
-            'header'    => $this->__('Message'),
-            'align'     => 'left',
-            'width'     => '*',
-            'type'      => 'text',
-            'sortable'  => false,
+            'header' => $this->__('Message'),
+            'align' => 'left',
+            'width' => '*',
+            'type' => 'text',
+            'sortable' => false,
             'filter_index' => 'id',
-            'index'     => 'description',
-            'frame_callback' => [$this, 'callbackColumnDescription']
+            'index' => 'description',
+            'frame_callback' => [$this, 'callbackColumnDescription'],
         ]);
 
         $this->addColumn('initiator', [
-            'header'    => $this->__('Run Mode'),
-            'align'     => 'right',
-            'width'     => '65px',
-            'index'     => 'initiator',
-            'sortable'  => false,
-            'type'      => 'options',
-            'options'   => $this->_getLogInitiatorList(),
-            'frame_callback' => [$this, 'callbackColumnInitiator']
+            'header' => $this->__('Run Mode'),
+            'align' => 'right',
+            'width' => '65px',
+            'index' => 'initiator',
+            'sortable' => false,
+            'type' => 'options',
+            'options' => $this->_getLogInitiatorList(),
+            'frame_callback' => [$this, 'callbackColumnInitiator'],
         ]);
 
         $this->addColumn('type', [
-            'header'    => $this->__('Type'),
-            'align'     => 'right',
-            'width'     => '65px',
-            'index'     => 'type',
-            'sortable'  => false,
-            'type'      => 'options',
-            'options'   => $this->_getLogTypeList(),
-            'frame_callback' => [$this, 'callbackColumnType']
+            'header' => $this->__('Type'),
+            'align' => 'right',
+            'width' => '65px',
+            'index' => 'type',
+            'sortable' => false,
+            'type' => 'options',
+            'options' => $this->_getLogTypeList(),
+            'frame_callback' => [$this, 'callbackColumnType'],
         ]);
 
         return parent::_prepareColumns();

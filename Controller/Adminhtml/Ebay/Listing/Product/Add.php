@@ -10,11 +10,9 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product;
 
 use Ess\M2ePro\Model\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
- */
 abstract class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
+    /** @var string  */
     protected $sessionKey = 'ebay_listing_product_add';
 
     //########################################

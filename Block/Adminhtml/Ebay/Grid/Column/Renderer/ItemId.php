@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use \Ess\M2ePro\Block\Adminhtml\Traits;
+use Ess\M2ePro\Block\Adminhtml\Traits;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId
@@ -17,7 +17,7 @@ class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -54,16 +54,16 @@ class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         $accountId = ($this->getColumn()->getData('account_id')) ? $this->getColumn()->getData('account_id')
-                                                                 : $row->getData('account_id');
+            : $row->getData('account_id');
         $marketplaceId = ($this->getColumn()->getData('marketplace_id')) ? $this->getColumn()->getData('marketplace_id')
-                                                                         : $row->getData('marketplace_id');
+            : $row->getData('marketplace_id');
 
         $url = $this->getUrl(
             '*/ebay_listing/gotoEbay/',
             [
-                'item_id'        => $itemId,
-                'account_id'     => $accountId,
-                'marketplace_id' => $marketplaceId
+                'item_id' => $itemId,
+                'account_id' => $accountId,
+                'marketplace_id' => $marketplaceId,
             ]
         );
 

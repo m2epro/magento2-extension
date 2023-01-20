@@ -18,6 +18,7 @@ class NewAction extends Template
 
         if (empty($type)) {
             $this->messageManager->addError($this->__('You should provide correct parameters.'));
+
             return $this->_redirect('*/*/index');
         }
 

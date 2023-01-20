@@ -15,7 +15,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->prepareMetadata();
 
         $data = [
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
         ];
 
         $data = $this->appendStatusHiddenValue($data);
@@ -61,7 +61,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $responseParams['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
 
         $data = [
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
         ];
 
         $data = $this->appendStatusChangerValue($data, $responseParams);
@@ -105,9 +105,11 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = parent::appendOnlinePriceValues($data);
 
         // if auction item has bids, we do not know correct online_current_price after revise action
-        if ($this->getRequestData()->hasPriceStart() &&
+        if (
+            $this->getRequestData()->hasPriceStart() &&
             $this->getEbayListingProduct()->isListingTypeAuction() &&
-            $this->getEbayListingProduct()->getOnlineBids()) {
+            $this->getEbayListingProduct()->getOnlineBids()
+        ) {
             unset($data['online_current_price']);
         }
 
@@ -144,10 +146,10 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     protected function updateEbayItem()
     {
         $data = [
-            'account_id'     => $this->getAccount()->getId(),
+            'account_id' => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),
-            'product_id'     => (int)$this->getListingProduct()->getProductId(),
-            'store_id'       => (int)$this->getListing()->getStoreId()
+            'product_id' => (int)$this->getListingProduct()->getProductId(),
+            'store_id' => (int)$this->getListing()->getStoreId(),
         ];
 
         if ($this->getRequestData()->isVariationItem() && $this->getRequestData()->getVariations()) {

@@ -21,6 +21,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             $this->setAjaxContent(
                 $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Grid::class)
             );
+
             return $this->getResult();
         }
 

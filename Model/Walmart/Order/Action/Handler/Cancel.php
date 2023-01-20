@@ -19,9 +19,11 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
 
     public function isNeedProcess()
     {
-        if (!$this->getWalmartOrder()->isCreated() &&
+        if (
+            !$this->getWalmartOrder()->isCreated() &&
             !$this->getWalmartOrder()->isUnshipped() &&
-            !$this->getWalmartOrder()->isPartiallyShipped()) {
+            !$this->getWalmartOrder()->isPartiallyShipped()
+        ) {
             return false;
         }
 
@@ -31,8 +33,8 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
             [
                 'in' => [
                     OrderItem::STATUS_ACKNOWLEDGED,
-                    OrderItem::STATUS_CREATED
-                ]
+                    OrderItem::STATUS_CREATED,
+                ],
             ]
         );
 
@@ -58,21 +60,22 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         foreach ($params['items'] as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
-                ->getCollection()
-                ->addFieldToFilter('order_id', $this->getOrder()->getId())
-                ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
-                ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('order_id', $this->getOrder()->getId())
+                                              ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
+                                              ->getFirstItem();
 
-            if ($orderItem->getId() !== null &&
+            if (
+                $orderItem->getId() !== null &&
                 ($orderItem->getChildObject()->getStatus() != OrderItem::STATUS_ACKNOWLEDGED &&
-                 $orderItem->getChildObject()->getStatus() != OrderItem::STATUS_CREATED)
+                    $orderItem->getChildObject()->getStatus() != OrderItem::STATUS_CREATED)
             ) {
                 continue;
             }
 
             $entry = [
                 'number' => $itemData['item_id'],
-                'qty'    => $itemData['qty'],
+                'qty' => $itemData['qty'],
             ];
             if (!empty($itemData['is_buyer_cancellation'])) {
                 $entry['is_buyer_cancellation'] = true;
@@ -83,7 +86,7 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
 
         return [
             'channel_order_id' => $this->getWalmartOrder()->getWalmartOrderId(),
-            'items'            => $resultItems,
+            'items' => $resultItems,
         ];
     }
 
@@ -91,6 +94,7 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
     {
         if (!isset($responseData['result']) || !$responseData['result']) {
             $this->processError();
+
             return;
         }
 
@@ -100,10 +104,10 @@ class Cancel extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         foreach ($params['items'] as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
-                ->getCollection()
-                ->addFieldToFilter('order_id', $this->getOrder()->getId())
-                ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
-                ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('order_id', $this->getOrder()->getId())
+                                              ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
+                                              ->getFirstItem();
 
             /**
              * Walmart returns the same Order Item more than one time with single QTY. That data was merged.

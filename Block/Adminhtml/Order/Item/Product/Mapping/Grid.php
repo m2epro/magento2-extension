@@ -85,58 +85,58 @@ class Grid extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'       => $this->__('Product ID'),
-            'align'        => 'right',
-            'type'         => 'number',
-            'width'        => '60px',
-            'index'        => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'type' => 'number',
+            'width' => '60px',
+            'index' => 'entity_id',
             'filter_index' => 'entity_id',
-            'store_id'     => $this->storeId,
-            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'store_id' => $this->storeId,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('title', [
-            'header'       => $this->__('Product Title / Product SKU'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'width'        => '350px',
-            'index'        => 'name',
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'width' => '350px',
+            'index' => 'name',
             'filter_index' => 'name',
-            'escape'       => false,
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('type_id', [
-            'header'=> $this->__('Type'),
+            'header' => $this->__('Type'),
             'width' => '60px',
             'index' => 'type_id',
-            'sortable'  => false,
-            'type'  => 'options',
-            'options' => $this->productTypeModel->getOptionArray()
+            'sortable' => false,
+            'type' => 'options',
+            'options' => $this->productTypeModel->getOptionArray(),
         ]);
 
         $this->addColumn('stock_availability', [
-            'header'=> $this->__('Stock Availability'),
+            'header' => $this->__('Stock Availability'),
             'width' => '100px',
             'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
-            'type'  => 'options',
-            'sortable'  => false,
+            'type' => 'options',
+            'sortable' => false,
             'options' => [
                 1 => $this->__('In Stock'),
-                0 => $this->__('Out of Stock')
+                0 => $this->__('Out of Stock'),
             ],
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('actions', [
-            'header'       => $this->__('Actions'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'width'        => '125px',
-            'filter'       => false,
-            'sortable'     => false,
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'type' => 'text',
+            'width' => '125px',
+            'filter' => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
     }
@@ -145,23 +145,23 @@ class Grid extends AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<div style="margin-left: 3px">'.$this->dataHelper->escapeHtml($value);
+        $value = '<div style="margin-left: 3px">' . $this->dataHelper->escapeHtml($value);
 
         $sku = $row->getData('sku');
         if ($sku === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('entity_id'))->getSku();
+                                      ->setProductId($row->getData('entity_id'))->getSku();
         }
 
-        $value .= '<br/><strong>'.$this->__('SKU').':</strong> ';
-        $value .= $this->dataHelper->escapeHtml($sku).'</div>';
+        $value .= '<br/><strong>' . $this->__('SKU') . ':</strong> ';
+        $value .= $this->dataHelper->escapeHtml($sku) . '</div>';
 
         return $value;
     }
 
     public function callbackColumnType($value, $row, $column, $isExport)
     {
-        return '<div style="margin-left: 3px">'.$this->dataHelper->escapeHtml($value).'</div>';
+        return '<div style="margin-left: 3px">' . $this->dataHelper->escapeHtml($value) . '</div>';
     }
 
     public function callbackColumnIsInStock($value, $row, $column, $isExport)
@@ -171,7 +171,7 @@ class Grid extends AbstractGrid
         }
 
         if ((int)$row->getData('is_in_stock') <= 0) {
-            return '<span style="color: red;">'.$this->__('Out of Stock').'</span>';
+            return '<span style="color: red;">' . $this->__('Out of Stock') . '</span>';
         }
 
         return $value;
@@ -204,8 +204,8 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -214,7 +214,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/order/productMappingGrid', ['_current'=>true]);
+        return $this->getUrl('*/order/productMappingGrid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

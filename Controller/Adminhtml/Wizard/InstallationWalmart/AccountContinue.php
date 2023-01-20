@@ -26,7 +26,7 @@ class AccountContinue extends InstallationWalmart
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
-        \Ess\M2ePro\Helper\Magento\Store  $storeHelper,
+        \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -62,7 +62,7 @@ class AccountContinue extends InstallationWalmart
             'consumer_id',
             'private_key',
             'client_id',
-            'client_secret'
+            'client_secret',
         ];
 
         foreach ($requiredFields as $requiredField) {
@@ -92,7 +92,7 @@ class AccountContinue extends InstallationWalmart
 
         try {
             $requestData = [
-                'marketplace_id' => $params['marketplace_id']
+                'marketplace_id' => $params['marketplace_id'],
             ];
 
             if ($params['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
@@ -106,6 +106,7 @@ class AccountContinue extends InstallationWalmart
             /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Add\EntityRequester $connectorObj */
             $connectorObj = $dispatcherObject->getConnector(
                 'account',
                 'add',
@@ -119,7 +120,7 @@ class AccountContinue extends InstallationWalmart
             $account->getChildObject()->addData(
                 [
                     'server_hash' => $responseData['hash'],
-                    'info'        => $this->getHelper('Data')->jsonEncode($responseData['info'])
+                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
                 ]
             );
             $account->getChildObject()->save();
@@ -134,8 +135,10 @@ class AccountContinue extends InstallationWalmart
 
             $error = 'The Walmart access obtaining is currently unavailable.<br/>Reason: %error_message%';
 
-            if (!$this->licenseHelper->isValidDomain() ||
-                !$this->licenseHelper->isValidIp()) {
+            if (
+                !$this->licenseHelper->isValidDomain() ||
+                !$this->licenseHelper->isValidIp()
+            ) {
                 $error .= '</br>Go to the <a href="%url%" target="_blank">License Page</a>.';
                 $error = $this->__(
                     $error,

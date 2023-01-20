@@ -25,7 +25,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 
     public function execute()
     {
-        $id    = $this->getRequest()->getParam('id');
+        $id = $this->getRequest()->getParam('id');
         $order = $this->ebayFactory->getObjectLoaded('Order', (int)$id);
 
         $this->globalData->setValue('order', $order);

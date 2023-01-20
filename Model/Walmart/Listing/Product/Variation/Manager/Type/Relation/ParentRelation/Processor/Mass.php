@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relati
  */
 class Mass extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MAX_PROCESSORS_COUNT_PER_ONE_TIME = 1000;
+    public const MAX_PROCESSORS_COUNT_PER_ONE_TIME = 1000;
 
     //########################################
 
@@ -27,7 +27,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
@@ -39,21 +39,25 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $listingsProducts
+     *
      * @return $this
      */
     public function setListingsProducts(array $listingsProducts)
     {
         $this->listingsProducts = $listingsProducts;
+
         return $this;
     }
 
     /**
      * @param bool $forceExecuting
+     *
      * @return $this
      */
     public function setForceExecuting($forceExecuting = true)
     {
         $this->forceExecuting = $forceExecuting;
+
         return $this;
     }
 
@@ -88,7 +92,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
             $resource->getChildTable(\Ess\M2ePro\Helper\Component\Walmart::NICK),
             ['variation_parent_need_processor' => 1],
             [
-                'is_variation_parent = ?'   => 1,
+                'is_variation_parent = ?' => 1,
                 'listing_product_id IN (?)' => $notProcessedListingProductIds,
             ]
         );

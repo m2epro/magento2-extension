@@ -50,6 +50,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             parent::_prepareGrid();
             $this->isGridPrepared = true;
         }
+
         return $this;
     }
 
@@ -65,8 +66,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $categoriesCollection = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getCollection();
         $categoriesCollection->getSelect()->reset(\Magento\Framework\DB\Select::FROM);
         $categoriesCollection->getSelect()->from(
-            ['mlac' => $this->activeRecordFactory->getObject('Listing_Auto_Category')
-                ->getResource()->getMainTable()]
+            [
+                'mlac' => $this->activeRecordFactory->getObject('Listing_Auto_Category')
+                                                    ->getResource()->getMainTable(),
+            ]
         );
         $categoriesCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $categoriesCollection->getSelect()->columns(new \Zend_Db_Expr('GROUP_CONCAT(`category_id`)'));
@@ -75,7 +78,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
         $collection = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getCollection();
         $collection->addFieldToFilter('main_table.listing_id', $this->getRequest()->getParam('listing_id'));
         $collection->getSelect()->columns(
-            ['categories' => new \Zend_Db_Expr('('.$categoriesCollection->getSelect().')')]
+            ['categories' => new \Zend_Db_Expr('(' . $categoriesCollection->getSelect() . ')')]
         );
 
         $this->setCollection($collection);
@@ -102,40 +105,40 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'    => $this->__('Title'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'escape'    => true,
-            'index'     => 'title',
-            'filter_index' => 'title'
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'escape' => true,
+            'index' => 'title',
+            'filter_index' => 'title',
         ]);
 
         $this->addColumn('categories', [
-            'header'    => $this->__('Categories'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'frame_callback' => [$this, 'callbackColumnCategories']
+            'header' => $this->__('Categories'),
+            'align' => 'left',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'frame_callback' => [$this, 'callbackColumnCategories'],
         ]);
 
         $this->addColumn('action', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'actions'   => [
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'actions' => [
                 0 => [
                     'label' => $this->__('Edit Rule'),
-                    'value' => 'categoryStepOne'
+                    'value' => 'categoryStepOne',
                 ],
                 1 => [
                     'label' => $this->__('Delete Rule'),
-                    'value' => 'categoryDeleteGroup'
-                ]
+                    'value' => 'categoryDeleteGroup',
+                ],
             ],
-            'frame_callback' => [$this, 'callbackColumnActions']
+            'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
 
         return parent::_prepareColumns();
@@ -199,8 +202,9 @@ HTML;
 
         if (count($actions) == 1) {
             $action = reset($actions);
-            $onclick = 'ListingAutoActionObj[\''.$action['value'].'\']('.$id.');';
-            return '<a href="javascript: void(0);" onclick="' . $onclick . '">'.$action['label'].'</a>';
+            $onclick = 'ListingAutoActionObj[\'' . $action['value'] . '\'](' . $id . ');';
+
+            return '<a href="javascript: void(0);" onclick="' . $onclick . '">' . $action['label'] . '</a>';
         }
 
         $optionsHtml = '<option></option>';

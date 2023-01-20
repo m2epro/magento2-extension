@@ -35,7 +35,7 @@ class AbstractModifier extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->installer  = $installer;
+        $this->installer = $installer;
         $this->connection = $installer->getConnection();
 
         $this->helperFactory = $helperFactory;
@@ -64,6 +64,7 @@ class AbstractModifier extends AbstractModel
     public function addQueryToLog($query)
     {
         $this->queriesLog[] = $query;
+
         return $this;
     }
 
@@ -72,6 +73,7 @@ class AbstractModifier extends AbstractModel
     public function setQueriesLog(array $queriesLog = [])
     {
         $this->queriesLog = $queriesLog;
+
         return $this;
     }
 

@@ -38,7 +38,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(false);
         $this->setUseAjax(true);
-
         // ---------------------------------------
     }
 
@@ -75,25 +74,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'title',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
             'filter_index' => 'title',
-            'escape'       => false,
-            'sortable'     => true,
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'escape' => false,
+            'sortable' => true,
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('action', [
-            'header'       => $this->__('Action'),
-            'align'        => 'left',
-            'type'         => 'number',
-            'width'        => '55px',
-            'index'        => 'id',
-            'filter'       => false,
-            'sortable'     => false,
-            'frame_callback' => [$this, 'callbackColumnAction']
+            'header' => $this->__('Action'),
+            'align' => 'left',
+            'type' => 'number',
+            'width' => '55px',
+            'index' => 'id',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnAction'],
         ]);
     }
 
@@ -102,12 +101,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setChild(
             'refresh_button',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                             ->setData([
-                                   'id'        => 'productTaxCode_template_refresh_btn',
-                                   'label'     => $this->__('Refresh'),
-                                   'class'     => 'action primary',
-                                   'onclick'   => "ListingGridObj.templateProductTaxCodeHandler.loadGrid()"
-                             ])
+                 ->setData([
+                     'id' => 'productTaxCode_template_refresh_btn',
+                     'label' => $this->__('Refresh'),
+                     'class' => 'action primary',
+                     'onclick' => "ListingGridObj.templateProductTaxCodeHandler.loadGrid()",
+                 ])
         );
 
         return parent::_prepareLayout();
@@ -132,8 +131,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $templateEditUrl = $this->getUrl('*/amazon_template_productTaxCode/edit', [
-            'id'            => $row->getData('id'),
-            'close_on_save' => true
+            'id' => $row->getData('id'),
+            'close_on_save' => true,
         ]);
 
         $title = $this->dataHelper->escapeHtml($value);
@@ -175,7 +174,7 @@ JS
     {
         return $this->getUrl('*/amazon_listing_product_template_productTaxCode/viewGrid', [
             'products_ids' => implode(',', $this->getProductsIds()),
-            '_current'     => true
+            '_current' => true,
         ]);
     }
 
@@ -203,7 +202,7 @@ HTML;
     protected function getNewTemplateProductTaxCodeUrl()
     {
         return $this->getUrl('*/amazon_template_productTaxCode/new', [
-            'close_on_save'  => true
+            'close_on_save' => true,
         ]);
     }
 

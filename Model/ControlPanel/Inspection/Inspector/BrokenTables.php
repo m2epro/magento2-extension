@@ -96,45 +96,45 @@ class BrokenTables implements InspectorInterface, FixerInterface
                 }
 
                 $parentTablePrefix = $this->databaseStructure->getTableNameWithPrefix($parentTable);
-                $childTablePrefix  = $this->databaseStructure->getTableNameWithPrefix($childTable);
+                $childTablePrefix = $this->databaseStructure->getTableNameWithPrefix($childTable);
 
                 $parentIdColumn = $this->databaseStructure->getIdColumn($parentTable);
-                $childIdColumn  = $this->databaseStructure->getIdColumn($childTable);
+                $childIdColumn = $this->databaseStructure->getIdColumn($childTable);
 
                 if ($table == $parentTable) {
                     $stmtQuery = $connection->select()
-                        ->from(
-                            ['parent' => $parentTablePrefix],
-                            $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
-                                : ['id' => $parentIdColumn]
-                        )
-                        ->joinLeft(
-                            ['child' => $childTablePrefix],
-                            '`parent`.`'.$parentIdColumn.'` = `child`.`'.$childIdColumn.'`',
-                            []
-                        )
-                        ->where(
-                            '`parent`.`component_mode` = \''.$component.'\' OR
+                                            ->from(
+                                                ['parent' => $parentTablePrefix],
+                                                $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
+                                                    : ['id' => $parentIdColumn]
+                                            )
+                                            ->joinLeft(
+                                                ['child' => $childTablePrefix],
+                                                '`parent`.`' . $parentIdColumn . '` = `child`.`' . $childIdColumn . '`',
+                                                []
+                                            )
+                                            ->where(
+                                                '`parent`.`component_mode` = \'' . $component . '\' OR
                                 (`parent`.`component_mode` NOT IN (?) OR `parent`.`component_mode` IS NULL)',
-                            $this->helperComponent->getComponents()
-                        )
-                        ->where('`child`.`'.$childIdColumn.'` IS NULL')
-                        ->query();
+                                                $this->helperComponent->getComponents()
+                                            )
+                                            ->where('`child`.`' . $childIdColumn . '` IS NULL')
+                                            ->query();
                 } elseif ($table == $childTable) {
                     $stmtQuery = $connection->select()
-                        ->from(
-                            ['child' => $childTablePrefix],
-                            $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
-                                : ['id' => $childIdColumn]
-                        )
-                        ->joinLeft(
-                            ['parent' => $parentTablePrefix],
-                            "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
+                                            ->from(
+                                                ['child' => $childTablePrefix],
+                                                $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
+                                                    : ['id' => $childIdColumn]
+                                            )
+                                            ->joinLeft(
+                                                ['parent' => $parentTablePrefix],
+                                                "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
                                    `parent`.`component_mode` = '{$component}'",
-                            []
-                        )
-                        ->where('`parent`.`'.$parentIdColumn.'` IS NULL')
-                        ->query();
+                                                []
+                                            )
+                                            ->where('`parent`.`' . $parentIdColumn . '` IS NULL')
+                                            ->query();
                 }
 
                 if ($returnOnlyCount) {
@@ -199,6 +199,7 @@ HTML;
             <button type="button" onclick="ControlPanelInspectionObj.removeRow(this)">Delete checked</button>
         </form>
 HTML;
+
         return $html;
     }
 
@@ -223,7 +224,7 @@ HTML;
 
                 $connection->delete(
                     $tableWithPrefix,
-                    '`'.$idColumnName.'` IN ('.implode(',', $brokenIdsPart).')'
+                    '`' . $idColumnName . '` IN (' . implode(',', $brokenIdsPart) . ')'
                 );
             }
         }

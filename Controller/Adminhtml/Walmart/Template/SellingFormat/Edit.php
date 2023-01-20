@@ -39,6 +39,7 @@ class Edit extends Template
 
         if (!$template->getId() && $id) {
             $this->messageManager->addError($this->__('Policy does not exist'));
+
             return $this->_redirect('*/walmart_template/index');
         }
 
@@ -47,11 +48,12 @@ class Edit extends Template
         $headerTextEdit = $this->__('Edit Selling Policy');
         $headerTextAdd = $this->__('Add Selling Policy');
 
-        if ($template !== null
+        if (
+            $template !== null
             && $template->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->dataHelper->escapeHtml($template->getTitle()).'"';
+            $headerText .= ' "' . $this->dataHelper->escapeHtml($template->getTitle()) . '"';
         } else {
             $headerText = $headerTextAdd;
         }

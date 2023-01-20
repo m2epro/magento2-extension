@@ -44,17 +44,17 @@ class Template extends AbstractContainer
 
         $this->appendHelpBlock(
             [
-                'content' => $content
+                'content' => $content,
             ]
         );
 
         $addButtonProps = [
-            'id'           => 'add_policy',
-            'label'        => __('Add Policy'),
-            'class'        => 'add',
+            'id' => 'add_policy',
+            'label' => __('Add Policy'),
+            'class' => 'add',
             'button_class' => '',
-            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
-            'options'      => $this->_getAddTemplateButtonOptions(),
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
+            'options' => $this->_getAddTemplateButtonOptions(),
         ];
         $this->addButton('add', $addButtonProps);
 
@@ -66,36 +66,36 @@ class Template extends AbstractContainer
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Manager::TEMPLATE_SHIPPING        => [
-                'label'   => $this->__('Shipping'),
-                'id'      => 'shipping',
+            Manager::TEMPLATE_SHIPPING => [
+                'label' => $this->__('Shipping'),
+                'id' => 'shipping',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SHIPPING) . "')",
                 'default' => false,
             ],
-            Manager::TEMPLATE_RETURN_POLICY   => [
-                'label'   => $this->__('Return'),
-                'id'      => 'return',
+            Manager::TEMPLATE_RETURN_POLICY => [
+                'label' => $this->__('Return'),
+                'id' => 'return',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_RETURN_POLICY) . "')",
                 'default' => false,
             ],
-            Manager::TEMPLATE_SELLING_FORMAT  => [
-                'label'   => $this->__('Selling'),
-                'id'      => 'selling',
+            Manager::TEMPLATE_SELLING_FORMAT => [
+                'label' => $this->__('Selling'),
+                'id' => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SELLING_FORMAT) . "')",
                 'default' => false,
             ],
-            Manager::TEMPLATE_DESCRIPTION     => [
-                'label'   => $this->__('Description'),
-                'id'      => 'description',
+            Manager::TEMPLATE_DESCRIPTION => [
+                'label' => $this->__('Description'),
+                'id' => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_DESCRIPTION) . "')",
                 'default' => false,
             ],
             Manager::TEMPLATE_SYNCHRONIZATION => [
-                'label'   => $this->__('Synchronization'),
-                'id'      => 'synchronization',
+                'label' => $this->__('Synchronization'),
+                'id' => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SYNCHRONIZATION) . "')",
                 'default' => false,
-            ]
+            ],
         ];
 
         return $data;

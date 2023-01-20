@@ -70,7 +70,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                     particular Account. M2E Pro has several options to display the content of Listings
                     referring to different data details. Each of the view options contains a unique set of
                     available Actions accessible in the Mass Actions drop-down.</p>'
-                )
+                ),
             ]);
 
             $this->setPageActionsBlock(
@@ -81,42 +81,43 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // ---------------------------------------
         $this->addButton('back', [
-            'label'   => $this->__('Back'),
-            'onclick' => 'setLocation(\''.$this->getUrl('*/amazon_listing/index') . '\');',
-            'class'   => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'setLocation(\'' . $this->getUrl('*/amazon_listing/index') . '\');',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('view_logs', [
-            'label'   => $this->__('Logs & Events'),
-            'onclick' => 'window.open(\''.$this->getUrl('*/amazon_log_listing_product/index', [
-                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
-                    $this->listing->getId()
-            ]) . '\');',
-            'class'   => '',
+            'label' => $this->__('Logs & Events'),
+            'onclick' => 'window.open(\'' . $this->getUrl('*/amazon_log_listing_product/index', [
+                    \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
+                        $this->listing->getId(),
+                ]) . '\');',
+            'class' => '',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('edit_settings', [
-            'label'   => $this->__('Edit Settings'),
+            'label' => $this->__('Edit Settings'),
             'onclick' => '',
-            'class'   => 'drop_down edit_default_settings_drop_down primary',
+            'class' => 'drop_down edit_default_settings_drop_down primary',
             'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
-            'options' => $this->getSettingsButtonDropDownItems()
+            'options' => $this->getSettingsButtonDropDownItems(),
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('add_products', [
-            'id'        => 'add_products',
-            'label'     => $this->__('Add Products'),
-            'class'     => 'add',
+            'id' => 'add_products',
+            'label' => $this->__('Add Products'),
+            'class' => 'add',
             'button_class' => '',
             'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
             'options' => $this->getAddProductsDropDownItems(),
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareLayout();
@@ -140,9 +141,11 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsPhp->addConstants(
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class)
         );
-        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
-        ));
+        $this->jsPhp->addConstants(
+            $this->dataHelper->getClassConstants(
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::class
+            )
+        );
 
         $this->jsPhp->addConstants(
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Account::class)
@@ -151,16 +154,21 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $showAutoAction = $this->dataHelper->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Amazon_Listing_AutoAction',
-            ['listing_id' => $this->getRequest()->getParam('id')]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Amazon_Listing_AutoAction',
+                ['listing_id' => $this->getRequest()->getParam('id')]
+            )
+        );
 
         $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
-        $this->jsUrl->add($this->getUrl('*/' . $path, [
-            'marketplace_id' => $this->listing->getMarketplaceId(),
-            'is_new_asin_accepted' => 1
-        ]), $path);
+        $this->jsUrl->add(
+            $this->getUrl('*/' . $path, [
+                'marketplace_id' => $this->listing->getMarketplaceId(),
+                'is_new_asin_accepted' => 1,
+            ]),
+            $path
+        );
 
         $path = 'amazon_log_listing_product/index';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
@@ -169,9 +177,12 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
         $path = 'amazon_listing/transferring/index';
-        $this->jsUrl->add($this->getUrl('*/' . $path, [
-            'listing_id' => $this->listing->getId()
-        ]), $path);
+        $this->jsUrl->add(
+            $this->getUrl('*/' . $path, [
+                'listing_id' => $this->listing->getId(),
+            ]),
+            $path
+        );
 
         $path = 'amazon_listing_transferring/getMarketplace';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
@@ -179,9 +190,12 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $path = 'amazon_listing_transferring/getListings';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
-        $this->jsUrl->add($this->getUrl('*/amazon_log_listing_product/index', [
-            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
-        ]), 'logViewUrl');
+        $this->jsUrl->add(
+            $this->getUrl('*/amazon_log_listing_product/index', [
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
+            ]),
+            'logViewUrl'
+        );
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
 
@@ -223,38 +237,48 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
 
-        $this->jsUrl->add($this->getUrl(
-            '*/listing_mapping/mapProductPopupHtml',
-            [
-                'account_id'     => $this->listing->getAccountId(),
-                'marketplace_id' => $this->listing->getMarketplaceId()
-            ]
-        ), 'mapProductPopupHtml');
+        $this->jsUrl->add(
+            $this->getUrl(
+                '*/listing_mapping/mapProductPopupHtml',
+                [
+                    'account_id' => $this->listing->getAccountId(),
+                    'marketplace_id' => $this->listing->getMarketplaceId(),
+                ]
+            ),
+            'mapProductPopupHtml'
+        );
         $this->jsUrl->add($this->getUrl('*/listing_mapping/remap'), 'listing_mapping/remap');
 
         $this->jsUrl->add($this->getUrl('*/amazon_marketplace/index'), 'marketplaceSynchUrl');
 
-        $this->jsUrl->add($this->getUrl('*/listing/saveListingAdditionalData', [
-            'id' => $this->listing['id']
-        ]), 'saveListingAdditionalData');
-
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Amazon_Listing_Product_Repricing',
-            [
+        $this->jsUrl->add(
+            $this->getUrl('*/listing/saveListingAdditionalData', [
                 'id' => $this->listing['id'],
-                'account_id' => $this->listing['account_id']
-            ]
-        ));
+            ]),
+            'saveListingAdditionalData'
+        );
+
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Amazon_Listing_Product_Repricing',
+                [
+                    'id' => $this->listing['id'],
+                    'account_id' => $this->listing['account_id'],
+                ]
+            )
+        );
 
         // ---------------------------------------
 
         $component = \Ess\M2ePro\Helper\Component\Amazon::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
         $ignoreListings = $this->dataHelper->jsonEncode([$this->listing['id']]);
-        $marketplace = $this->dataHelper->jsonEncode(array_merge(
-            $this->listing->getMarketplace()->getData(),
-            $this->listing->getMarketplace()->getChildObject()->getData()
-        ));
+        $marketplace = $this->dataHelper->jsonEncode(
+            array_merge(
+                $this->listing->getMarketplace()->getData(),
+                $this->listing->getMarketplace()->getChildObject()->getData()
+            )
+        );
         $isNewAsinAvailable = $this->dataHelper->jsonEncode(
             $this->listing->getMarketplace()->getChildObject()->isNewAsinAvailable()
         );
@@ -298,7 +322,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $assignString = $this->__('Assign');
 
         $templateShippingPopupTitle = $this->__('Assign Shipping Template Policy');
-        $templateProductTaxCodePopupTitle   = $this->__('Assign Product Tax Code Policy');
+        $templateProductTaxCodePopupTitle = $this->__('Assign Product Tax Code Policy');
 
         $enterProductSearchQueryMessage = $this->__('Please enter Product Title or ASIN/ISBN/UPC/EAN.');
         $autoMapAsinSearchProducts = $this->__('Search %product_title% Product(s) on Amazon.');
@@ -341,7 +365,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Linking Product' => $this->__('Linking Product'),
 
             'Add New Shipping Policy' => $this->__('Add New Shipping Policy'),
-            'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),
+            'Add New Product Tax Code Policy' => $this->__('Add New Product Tax Code Policy'),
             'Add New Listing' => $this->__('Add New Listing'),
 
             'Clear Search Results' => $this->__('Clear Search Results'),
@@ -374,7 +398,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'templateDescriptionPopupTitle' => $templateDescriptionPopupTitle,
 
             'templateShippingPopupTitle' => $templateShippingPopupTitle,
-            'templateProductTaxCodePopupTitle'   => $templateProductTaxCodePopupTitle,
+            'templateProductTaxCodePopupTitle' => $templateProductTaxCodePopupTitle,
 
             'assign' => $assignString,
 
@@ -403,7 +427,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'switch_to_parent_mode_popup_title' => $switchToParentModePopUpTitle,
 
             'Add New Description Policy' => $this->__('Add New Description Policy'),
-            'Add New Child Product' => $this->__('Add New Child Product')
+            'Add New Child Product' => $this->__('Add New Child Product'),
         ]);
 
         $this->js->addOnReadyJs(
@@ -461,9 +485,10 @@ JS
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
-            'data' => ['listing' => $this->listing]
+                'data' => ['listing' => $this->listing],
             ]
         );
+
         // ---------------------------------------
 
         return $viewHeaderBlock->toHtml()
@@ -481,19 +506,19 @@ JS
         ]);
 
         $url = $this->getUrl('*/amazon_listing/edit', [
-            'id'   => $this->listing['id'],
+            'id' => $this->listing['id'],
             'back' => $backUrl,
         ]);
 
         return [
             [
-                'label'   => $this->__('Selling'),
+                'label' => $this->__('Selling'),
                 'onclick' => "window.open('$url', '_blank');",
                 'default' => true,
             ],
             [
                 'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-                'label'   => $this->__('Auto Add/Remove Rules'),
+                'label' => $this->__('Auto Add/Remove Rules'),
             ],
         ];
     }
@@ -503,7 +528,7 @@ JS
         $items = [];
 
         $backUrl = $this->dataHelper->makeBackUrlParam('*/amazon_listing/view', [
-            'id' => $this->listing['id']
+            'id' => $this->listing['id'],
         ]);
 
         // ---------------------------------------
@@ -513,13 +538,13 @@ JS
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'clear' => 1,
             'step' => 2,
-            'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
+            'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT,
         ]);
         $items[] = [
             'id' => 'add_products_mode_product',
             'label' => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
-            'default' => true
+            'default' => true,
         ];
         // ---------------------------------------
 
@@ -530,13 +555,14 @@ JS
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'clear' => 1,
             'step' => 2,
-            'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
+            'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY,
         ]);
         $items[] = [
             'id' => 'add_products_mode_category',
             'label' => $this->__('From Categories'),
-            'onclick' => "setLocation('" . $url . "')"
+            'onclick' => "setLocation('" . $url . "')",
         ];
+
         // ---------------------------------------
 
         return $items;

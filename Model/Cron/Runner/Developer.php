@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Runner;
  */
 class Developer extends AbstractModel
 {
+    /** @var null|array  */
     private $allowedTasks = null;
 
     //########################################
@@ -56,11 +57,13 @@ class Developer extends AbstractModel
 
     /**
      * @param array $tasks
+     *
      * @return $this
      */
     public function setAllowedTasks(array $tasks)
     {
         $this->allowedTasks = $tasks;
+
         return $this;
     }
 

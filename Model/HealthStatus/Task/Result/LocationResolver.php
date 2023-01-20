@@ -17,9 +17,9 @@ use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
  */
 class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
 {
-    const KEY_TAB       = 'tab';
-    const KEY_FIELD_SET = 'field_set';
-    const KEY_FIELD     = 'field';
+    public const KEY_TAB = 'tab';
+    public const KEY_FIELD_SET = 'field_set';
+    public const KEY_FIELD = 'field';
 
     //########################################
 
@@ -67,6 +67,7 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
     private function usingMap(Task\AbstractModel $task)
     {
         $key = $this->getHelper('Client')->getClassName($task);
+
         return array_key_exists($key, $this->getMap()) ? $this->getMap()[$key] : null;
     }
 
@@ -80,16 +81,16 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        $tabName      = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[0]);
+        $tabName = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[0]);
         $fieldSetName = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[1]);
-        $fieldName    = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[2]);
+        $fieldName = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[2]);
 
         $task->getType() == IssueType::TYPE && $tabName = Tabs::TAB_ID_DASHBOARD;
 
         return [
-            self::KEY_TAB       => $tabName,
+            self::KEY_TAB => $tabName,
             self::KEY_FIELD_SET => $fieldSetName,
-            self::KEY_FIELD     => $fieldName
+            self::KEY_FIELD => $fieldName,
         ];
     }
 
@@ -99,58 +100,58 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             \Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo\CrashedTables::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Database',
-                self::KEY_FIELD     => 'Crashed Tables'
+                self::KEY_FIELD => 'Crashed Tables',
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo\TablesStructure::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Database',
-                self::KEY_FIELD     => 'Scheme (tables, columns)'
+                self::KEY_FIELD => 'Scheme (tables, columns)',
             ],
 
             \Ess\M2ePro\Model\HealthStatus\Task\Server\Status\SystemLogs::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Server',
-                self::KEY_FIELD     => 'System Log'
+                self::KEY_FIELD => 'System Log',
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Server\Status\GmtTime::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Server',
-                self::KEY_FIELD     => 'Current Time'
+                self::KEY_FIELD => 'Current Time',
             ],
 
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Amazon::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'Amazon Retrieving'
+                self::KEY_FIELD => 'Amazon Retrieving',
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Ebay::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'eBay Retrieving'
+                self::KEY_FIELD => 'eBay Retrieving',
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Walmart::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'Walmart Retrieving'
+                self::KEY_FIELD => 'Walmart Retrieving',
             ],
 
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Amazon::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'Amazon Magento Order Creation'
+                self::KEY_FIELD => 'Amazon Magento Order Creation',
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Ebay::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'eBay Magento Order Creation'
+                self::KEY_FIELD => 'eBay Magento Order Creation',
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Walmart::class => [
-                self::KEY_TAB       => 'Problems',
+                self::KEY_TAB => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'Walmart Magento Order Creation'
-            ]
+                self::KEY_FIELD => 'Walmart Magento Order Creation',
+            ],
         ];
     }
 

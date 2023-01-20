@@ -41,11 +41,13 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Sales\Model\Order $magentoOrder
+     *
      * @return $this
      */
     public function setMagentoOrder(\Magento\Sales\Model\Order $magentoOrder)
     {
         $this->magentoOrder = $magentoOrder;
+
         return $this;
     }
 
@@ -53,11 +55,13 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $trackingDetails
+     *
      * @return $this
      */
     public function setTrackingDetails(array $trackingDetails)
     {
         $this->trackingDetails = $trackingDetails;
+
         return $this;
     }
 
@@ -65,11 +69,13 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $supportedCarriers
+     *
      * @return $this
      */
     public function setSupportedCarriers(array $supportedCarriers)
     {
         $this->supportedCarriers = $supportedCarriers;
+
         return $this;
     }
 
@@ -106,8 +112,10 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         $shipment = $this->magentoOrder->getShipmentsCollection()->getFirstItem();
 
         // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
-        if ($shipment->hasData(ShipmentInterface::TRACKS) &&
-            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)) {
+        if (
+            $shipment->hasData(ShipmentInterface::TRACKS) &&
+            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)
+        ) {
             $shipment->unsetData(ShipmentInterface::TRACKS);
         }
 
@@ -140,6 +148,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
                 }
             }
         }
+
         // ---------------------------------------
 
         return $this->trackingDetails;

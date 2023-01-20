@@ -79,23 +79,23 @@ class Form extends AbstractContainer
 
         $data = [
             'class' => 'primary',
-            'label'   => $this->__('Edit'),
+            'label' => $this->__('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
         ];
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                         ->setData($data);
+                            ->setData($data);
         $this->setChild('edit_shipping_info', $buttonBlock);
 
         // ---------------------------------------
         if ($magentoOrder !== null && $magentoOrder->hasShipments()) {
             $url = $this->getUrl('*/order/resubmitShippingInfo', ['id' => $this->order->getId()]);
             $data = [
-                'class'   => 'primary',
-                'label'   => $this->__('Resend Shipping Information'),
-                'onclick' => 'setLocation(\''.$url.'\');',
+                'class' => 'primary',
+                'label' => $this->__('Resend Shipping Information'),
+                'onclick' => 'setLocation(\'' . $url . '\');',
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('resubmit_shipping_info', $buttonBlock);
         }
         // ---------------------------------------
@@ -118,31 +118,37 @@ class Form extends AbstractContainer
         }
         // ---------------------------------------
         $buttonAddNoteBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'label'   => $this->__('Add Note'),
-                    'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
-                    'class'   => 'order_note_btn',
-                ]
-            );
+                                   ->setData(
+                                       [
+                                           'label' => $this->__('Add Note'),
+                                           'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
+                                           'class' => 'order_note_btn',
+                                       ]
+                                   );
 
-        $this->setChild('shipping_address',
+        $this->setChild(
+            'shipping_address',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress::class)
         );
-        $this->setChild('item',
+        $this->setChild(
+            'item',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\Item::class)
         );
-        $this->setChild('item_edit',
+        $this->setChild(
+            'item_edit',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Edit::class)
         );
-        $this->setChild('log',
+        $this->setChild(
+            'log',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid::class)
         );
-        $this->setChild('order_note_grid',
+        $this->setChild(
+            'order_note_grid',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class)
         );
         $this->setChild('add_note_button', $buttonAddNoteBlock);
-        $this->setChild('external_transaction',
+        $this->setChild(
+            'external_transaction',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Order\View\ExternalTransaction::class)
         );
 
@@ -281,22 +287,22 @@ class Form extends AbstractContainer
         if ($this->order->getChildObject()->isCanceled()) {
             $status = [
                 'value' => $this->__('Canceled'),
-                'color' => 'red'
+                'color' => 'red',
             ];
         } elseif ($this->order->getChildObject()->isShippingCompleted()) {
             $status = [
                 'value' => $this->__('Shipped'),
-                'color' => 'green'
+                'color' => 'green',
             ];
         } elseif ($this->order->getChildObject()->isPaymentCompleted()) {
             $status = [
                 'value' => $this->__('Unshipped'),
-                'color' => 'black'
+                'color' => 'black',
             ];
         } else {
             $status = [
                 'value' => $this->__('Pending'),
-                'color' => 'gray'
+                'color' => 'gray',
             ];
         }
 
@@ -339,7 +345,8 @@ class Form extends AbstractContainer
                            )
                            ->add(
                                'ebay_order_fee_sell_api_popup_text',
-                               $this->__(<<<HTML
+                               $this->__(
+                                   <<<HTML
     To get actualized data on eBay final fee, you should grant M2E Pro access to your eBay data.
 If you consent, click <strong>Confirm</strong>. You will be redirected to M2E Pro eBay Account page. Under the
 <strong>Access Details</strong> section, click <strong>Get Token</strong> (the instructions can be found
@@ -351,7 +358,8 @@ HTML
                                )
                            );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Order/Note',
     ], function(){

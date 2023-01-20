@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
  */
 class SourceMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-
     public function execute()
     {
         $this->setWizardStep('sourceMode');
@@ -21,10 +20,12 @@ class SourceMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\A
         if ($this->getRequest()->isPost()) {
             $source = $this->getRequest()->getPost('source');
 
-            if (!in_array($source, [
-                \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT,
-                \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY
-            ])) {
+            if (
+                !in_array($source, [
+                    \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT,
+                    \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY,
+                ])
+            ) {
                 return $this->_redirect('*/*/*', ['_current' => true]);
             }
 
@@ -36,7 +37,7 @@ class SourceMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\A
                     'source' => $source,
                     'clear' => true,
                     'listing_creation' => true,
-                    '_current' => true
+                    '_current' => true,
                 ]
             );
         }

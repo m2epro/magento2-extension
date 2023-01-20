@@ -12,19 +12,19 @@ use Ess\M2ePro\Model\Exception\Logic;
 
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const DATA_TYPE_GENERAL = 'general';
-    const DATA_TYPE_QTY = 'qty';
-    const DATA_TYPE_PRICE = 'price';
-    const DATA_TYPE_TITLE = 'title';
-    const DATA_TYPE_SUBTITLE = 'subtitle';
-    const DATA_TYPE_DESCRIPTION = 'description';
-    const DATA_TYPE_IMAGES = 'images';
-    const DATA_TYPE_CATEGORIES = 'categories';
-    const DATA_TYPE_PARTS = 'parts';
-    const DATA_TYPE_SHIPPING = 'shipping';
-    const DATA_TYPE_RETURN = 'return';
-    const DATA_TYPE_OTHER = 'other';
-    const DATA_TYPE_VARIATIONS = 'variations';
+    public const DATA_TYPE_GENERAL = 'general';
+    public const DATA_TYPE_QTY = 'qty';
+    public const DATA_TYPE_PRICE = 'price';
+    public const DATA_TYPE_TITLE = 'title';
+    public const DATA_TYPE_SUBTITLE = 'subtitle';
+    public const DATA_TYPE_DESCRIPTION = 'description';
+    public const DATA_TYPE_IMAGES = 'images';
+    public const DATA_TYPE_CATEGORIES = 'categories';
+    public const DATA_TYPE_PARTS = 'parts';
+    public const DATA_TYPE_SHIPPING = 'shipping';
+    public const DATA_TYPE_RETURN = 'return';
+    public const DATA_TYPE_OTHER = 'other';
+    public const DATA_TYPE_VARIATIONS = 'variations';
 
     /**
      * @return array

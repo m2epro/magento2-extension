@@ -37,6 +37,7 @@ HTML;
     public function getReal()
     {
         $color = $this->getCheckObject()->isMeet() ? 'green' : 'red';
+
         return <<<HTML
 <span style="color: {$color};">
     <span>{$this->getCheckObject()->getReal()}</span>&nbsp;

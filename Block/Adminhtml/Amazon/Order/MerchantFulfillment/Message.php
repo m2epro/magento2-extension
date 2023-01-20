@@ -29,7 +29,7 @@ class Message extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'data' => [
                     'id' => 'messages_form',
-                ]
+                ],
             ]
         );
 
@@ -78,10 +78,10 @@ HTML
             [
                 'messages' => [
                     [
-                        'type'    => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                        'content' => $message
-                    ]
-                ]
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                        'content' => $message,
+                    ],
+                ],
             ]
         );
 

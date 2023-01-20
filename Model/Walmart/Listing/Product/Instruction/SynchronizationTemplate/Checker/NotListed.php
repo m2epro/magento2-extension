@@ -32,7 +32,8 @@ class NotListed extends AbstractModel
         $variationManager = $walmartListingProduct->getVariationManager();
 
         if ($variationManager->isVariationProduct()) {
-            if ($variationManager->isPhysicalUnit() &&
+            if (
+                $variationManager->isPhysicalUnit() &&
                 !$variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 return false;
@@ -70,9 +71,9 @@ class NotListed extends AbstractModel
         $scheduledAction->addData(
             [
                 'listing_product_id' => $this->input->getListingProduct()->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
             ]
         );
 
@@ -119,7 +120,8 @@ class NotListed extends AbstractModel
                 $listingProduct->setSettings('additional_data', $additionalData)->save();
 
                 return false;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllStatusesDisabled(
@@ -152,7 +154,8 @@ class NotListed extends AbstractModel
                 $listingProduct->setSettings('additional_data', $additionalData)->save();
 
                 return false;
-            } elseif ($variationManager->isPhysicalUnit() &&
+            } elseif (
+                $variationManager->isPhysicalUnit() &&
                 $variationManager->getTypeModel()->isVariationProductMatched()
             ) {
                 $temp = $variationResource->isAllDoNotHaveStockAvailabilities(
@@ -174,7 +177,8 @@ class NotListed extends AbstractModel
             }
         }
 
-        if ($walmartSynchronizationTemplate->isListWhenQtyCalculatedHasValue() &&
+        if (
+            $walmartSynchronizationTemplate->isListWhenQtyCalculatedHasValue() &&
             !$variationManager->isRelationParentType()
         ) {
             $result = false;
@@ -207,7 +211,7 @@ class NotListed extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix'   => \Ess\M2ePro\Model\Walmart\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Walmart\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($walmartSynchronizationTemplate->getListAdvancedRulesFilters());

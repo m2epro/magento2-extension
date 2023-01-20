@@ -24,9 +24,9 @@ class GetTreeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Produc
             'data' => [
                 'tree_settings' => [
                     'show_products_amount' => true,
-                    'hide_products_this_listing' => true
-                ]
-            ]
+                    'hide_products_this_listing' => true,
+                ],
+            ],
         ]);
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 

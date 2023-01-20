@@ -45,7 +45,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         // ---------------------------------------
         $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
-            'data' => ['listing' => $listing]
+            'data' => ['listing' => $listing],
         ]);
 
         $this->setChild('view_header', $viewHeaderBlock);
@@ -53,15 +53,15 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         // ---------------------------------------
         $url = $this->getUrl('*/ebay_listing/view', [
-            'id' => $this->getRequest()->getParam('id')
+            'id' => $this->getRequest()->getParam('id'),
         ]);
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'id'   => $this->__('go_to_the_listing'),
-                'label'   => $this->__('Go To The Listing'),
-                'onclick' => 'setLocation(\''.$url.'\');',
-                'class'   => 'primary'
-            ]);
+                            ->setData([
+                                'id' => $this->__('go_to_the_listing'),
+                                'label' => $this->__('Go To The Listing'),
+                                'onclick' => 'setLocation(\'' . $url . '\');',
+                                'class' => 'primary',
+                            ]);
         $this->setChild('review', $buttonBlock);
         // ---------------------------------------
 
@@ -72,25 +72,25 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             'productIds' => implode(',', $addedProductsIds),
         ]);
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label'   => $this->__('Preview Added Products Now'),
-                'onclick' => 'window.open(\''.$url.'\').focus();',
-                'class'   => 'primary go'
-            ]);
+                            ->setData([
+                                'label' => $this->__('Preview Added Products Now'),
+                                'onclick' => 'window.open(\'' . $url . '\').focus();',
+                                'class' => 'primary go',
+                            ]);
         $this->setChild('preview', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $url = $this->getUrl('*/ebay_listing/view', [
             'id' => $this->getRequest()->getParam('id'),
-            'do_list' => true
+            'do_list' => true,
         ]);
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label' => $this->__('List Added Products Now'),
-                'onclick' => 'setLocation(\''.$url.'\');',
-                'class' => 'primary'
-            ]);
+                            ->setData([
+                                'label' => $this->__('List Added Products Now'),
+                                'onclick' => 'setLocation(\'' . $url . '\');',
+                                'class' => 'primary',
+                            ]);
         $this->getRequest()->getParam('disable_list', false) && $buttonBlock->setData('style', 'display: none');
         $this->setChild('save_and_list', $buttonBlock);
         // ---------------------------------------
@@ -98,18 +98,17 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
         if ($this->getSource() === SourceModeBlock::MODE_OTHER) {
             $url = $this->getUrl('*/ebay_listing_other/view', [
-                    'account'     => $listing->getAccountId(),
-                    'marketplace' => $listing->getMarketplaceId(),
+                'account' => $listing->getAccountId(),
+                'marketplace' => $listing->getMarketplaceId(),
             ]);
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                ->setData([
-                    'label' => $this->__('Back to Unmanaged Listing'),
-                    'onclick' => 'setLocation(\''.$url.'\');',
-                    'class'   => 'primary go'
-                ]);
+                                ->setData([
+                                    'label' => $this->__('Back to Unmanaged Listing'),
+                                    'onclick' => 'setLocation(\'' . $url . '\');',
+                                    'class' => 'primary go',
+                                ]);
             $this->setChild('back_to_listing_other', $buttonBlock);
         }
-
         // ---------------------------------------
     }
 

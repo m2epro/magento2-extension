@@ -35,8 +35,9 @@ class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Ele
      * Render element
      *
      * @param AbstractElement $element
-     * @see \Magento\Framework\Data\Form\Element\Renderer\RendererInterface::render()
+     *
      * @return string
+     * @see \Magento\Framework\Data\Form\Element\Renderer\RendererInterface::render()
      */
     public function render(AbstractElement $element)
     {
@@ -73,9 +74,9 @@ class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Ele
 
             if ($element->getExplicitApply()) {
                 $html .= ' <a href="javascript:void(0)" class="rule-param-apply"><img src="'
-                . $this->_assetRepo->getUrl('Ess_M2ePro::images/rule_component_apply.gif')
-                . '" class="v-middle" alt="'
-                . $this->__('Apply') . '" title="' . $this->__('Apply') . '" /></a> ';
+                    . $this->_assetRepo->getUrl('Ess_M2ePro::images/rule_component_apply.gif')
+                    . '" class="v-middle" alt="'
+                    . $this->__('Apply') . '" title="' . $this->__('Apply') . '" /></a> ';
             }
 
             $html .= '</span></span>&nbsp;';

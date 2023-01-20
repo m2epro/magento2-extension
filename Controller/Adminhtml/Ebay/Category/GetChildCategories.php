@@ -25,9 +25,9 @@ class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
     public function execute()
     {
-        $marketplaceId  = $this->getRequest()->getParam('marketplace_id');
+        $marketplaceId = $this->getRequest()->getParam('marketplace_id');
         $accountId = $this->getRequest()->getParam('account_id');
-        $parentCategoryId  = $this->getRequest()->getParam('parent_category_id');
+        $parentCategoryId = $this->getRequest()->getParam('parent_category_id');
         $categoryType = $this->getRequest()->getParam('category_type');
 
         $ebayCategoryTypes = $this->componentEbayCategory->getEbayCategoryTypes();
@@ -35,17 +35,19 @@ class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         $data = [];
 
-        if ((in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null) ||
+        if (
+            (in_array($categoryType, $ebayCategoryTypes) && $marketplaceId === null) ||
             (in_array($categoryType, $storeCategoryTypes) && $accountId === null)
         ) {
             $this->setJsonContent($data);
+
             return $this->getResult();
         }
 
         if (in_array($categoryType, $ebayCategoryTypes)) {
             $data = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)
-                ->getChildObject()
-                ->getChildCategories($parentCategoryId);
+                                      ->getChildObject()
+                                      ->getChildCategories($parentCategoryId);
         } elseif (in_array($categoryType, $storeCategoryTypes)) {
             $connection = $this->resourceConnection->getConnection();
             $tableAccountStoreCategories = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
@@ -53,10 +55,10 @@ class GetChildCategories extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
             );
 
             $dbSelect = $connection->select()
-                ->from($tableAccountStoreCategories, '*')
-                ->where('`account_id` = ?', (int)$accountId)
-                ->where('`parent_id` = ?', $parentCategoryId)
-                ->order(['sorder ASC']);
+                                   ->from($tableAccountStoreCategories, '*')
+                                   ->where('`account_id` = ?', (int)$accountId)
+                                   ->where('`parent_id` = ?', $parentCategoryId)
+                                   ->order(['sorder ASC']);
 
             $data = $connection->fetchAll($dbSelect);
         }

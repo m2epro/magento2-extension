@@ -33,8 +33,8 @@ abstract class AbstractFeature
         Setup $installer
     ) {
         $this->helperFactory = $helperFactory;
-        $this->modelFactory  = $modelFactory;
-        $this->installer     = $installer;
+        $this->modelFactory = $modelFactory;
+        $this->installer = $installer;
     }
 
     //########################################
@@ -53,6 +53,7 @@ abstract class AbstractFeature
 
     /**
      * @param $tableName
+     *
      * @return Table
      */
     protected function getTableModifier($tableName)
@@ -68,6 +69,7 @@ abstract class AbstractFeature
 
     /**
      * @param $configName
+     *
      * @return Config
      */
     protected function getConfigModifier($configName = '')
@@ -113,6 +115,7 @@ abstract class AbstractFeature
     /**
      * @param array|string $tableName
      * @param string $columnName
+     *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

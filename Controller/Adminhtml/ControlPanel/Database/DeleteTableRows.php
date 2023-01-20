@@ -15,7 +15,7 @@ class DeleteTableRows extends Table
 {
     public function execute()
     {
-        $ids           = $this->prepareIds();
+        $ids = $this->prepareIds();
         $modelInstance = $this->getTableModel();
 
         if (empty($ids)) {

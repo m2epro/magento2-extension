@@ -26,7 +26,7 @@ class Factory
     //########################################
 
     /**
-     * @param string      $featureName
+     * @param string $featureName
      * @param string|null $fromVersion
      * @param string|null $toVersion
      *
@@ -40,8 +40,8 @@ class Factory
             $className = '\Ess\M2ePro\Setup\Update\\' . $featureName[0] . '\\' . $featureName[1];
         } elseif ($fromVersion !== null && $toVersion !== null) {
             $fromVersion = $this->prepareVersion($fromVersion);
-            $toVersion   = $this->prepareVersion($toVersion);
-            $className = '\Ess\M2ePro\Setup\Upgrade\v'.$fromVersion.'__v'.$toVersion.'\\'.$featureName;
+            $toVersion = $this->prepareVersion($toVersion);
+            $className = '\Ess\M2ePro\Setup\Upgrade\v' . $fromVersion . '__v' . $toVersion . '\\' . $featureName;
         } else {
             $className = '\Ess\M2ePro\Setup\Update\\' . $featureName;
         }
@@ -60,16 +60,17 @@ class Factory
     /**
      * @param $fromVersion
      * @param $toVersion
+     *
      * @return \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getConfigObject($fromVersion, $toVersion)
     {
         $fromVersion = $this->prepareVersion($fromVersion);
-        $toVersion   = $this->prepareVersion($toVersion);
+        $toVersion = $this->prepareVersion($toVersion);
 
         $object = $this->objectManager->create(
-            '\Ess\M2ePro\Setup\Upgrade\v'.$fromVersion.'__v'.$toVersion.'\Config'
+            '\Ess\M2ePro\Setup\Upgrade\v' . $fromVersion . '__v' . $toVersion . '\Config'
         );
 
         if (!$object instanceof \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractConfig) {

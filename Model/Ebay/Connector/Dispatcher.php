@@ -58,9 +58,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
         $connectorObject = $this->modelFactory->getObject($className, [
-            'params'      => $params,
+            'params' => $params,
             'marketplace' => $marketplace,
-            'account'     => $account
+            'account' => $account,
         ]);
         $connectorObject->setProtocol($this->protocol);
 
@@ -79,9 +79,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
         $connectorObject = $this->modelFactory->getObject($modelName, [
-            'params'      => $params,
+            'params' => $params,
             'marketplace' => $marketplace,
-            'account'     => $account
+            'account' => $account,
         ]);
         $connectorObject->setProtocol($this->protocol);
 

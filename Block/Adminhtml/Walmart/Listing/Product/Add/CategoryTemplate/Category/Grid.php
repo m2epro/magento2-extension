@@ -13,13 +13,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing = null;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory  */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
 
     /** @var \Ess\M2ePro\Helper\Magento\Category */
@@ -87,7 +87,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $collection->addAttributeToSelect('name');
 
         $collection->addFieldToFilter([
-            ['attribute' => 'entity_id', 'in' => array_keys($this->getData('categories_data'))]
+            ['attribute' => 'entity_id', 'in' => array_keys($this->getData('categories_data'))],
         ]);
 
         $this->setCollection($collection);
@@ -98,50 +98,50 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('magento_category', [
-            'header'    => $this->__('Magento Category'),
-            'align'     => 'left',
-            'width'     => '500px',
-            'type'      => 'text',
-            'index'     => 'name',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+            'header' => $this->__('Magento Category'),
+            'align' => 'left',
+            'width' => '500px',
+            'type' => 'text',
+            'index' => 'name',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory'],
         ]);
 
         $this->addColumn('category_template', [
-            'header'    => $this->__('Category Policy'),
-            'align'     => 'left',
-            'width'     => '*',
-            'sortable'  => false,
-            'type'      => 'options',
-            'index'     => 'category_template_id',
+            'header' => $this->__('Category Policy'),
+            'align' => 'left',
+            'width' => '*',
+            'sortable' => false,
+            'type' => 'options',
+            'index' => 'category_template_id',
             'filter_index' => 'category_template_id',
-            'options'   => [
+            'options' => [
                 1 => $this->__('Category Policy Selected'),
-                0 => $this->__('Category Policy Not Selected')
+                0 => $this->__('Category Policy Not Selected'),
             ],
             'frame_callback' => [$this, 'callbackColumnCategoryTemplateCallback'],
-            'filter_condition_callback' => [$this, 'callbackColumnCategoryTemplateFilterCallback']
+            'filter_condition_callback' => [$this, 'callbackColumnCategoryTemplateFilterCallback'],
         ]);
 
         $actionsColumn = [
-            'header'    => $this->__('Actions'),
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'header' => $this->__('Actions'),
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'no_link' => true,
-            'align'     => 'center',
-            'width'     => '130px',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'actions'   => []
+            'align' => 'center',
+            'width' => '130px',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'actions' => [],
         ];
 
         $actions = [
             [
                 'caption' => $this->__('Set Category Policy'),
-                'field'   => 'entity_id',
-                'onclick_action' => 'ListingGridObj.setCategoryTemplateByCategoryRowAction'
-            ]
+                'field' => 'entity_id',
+                'onclick_action' => 'ListingGridObj.setCategoryTemplateByCategoryRowAction',
+            ],
         ];
 
         $actionsColumn['actions'] = $actions;
@@ -159,8 +159,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('setCategoryTemplateByCategory', [
             'label' => $this->__('Set Category Policy'),
-            'url'   => ''
+            'url' => '',
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -195,7 +196,7 @@ HTML;
         }
 
         $templateCategoryEditUrl = $this->getUrl('*/walmart_template_category/edit', [
-            'id' => $categoryTemplateId
+            'id' => $categoryTemplateId,
         ]);
 
         /** @var \Ess\M2ePro\Model\Walmart\Template\Category $categoryTemplate */
@@ -256,17 +257,17 @@ HTML;
 
     protected function _toHtml()
     {
-            $errorMessage = $this
-                ->__(
-                    "To proceed, the category data must be specified.
+        $errorMessage = $this
+            ->__(
+                "To proceed, the category data must be specified.
                                 Please select a relevant Category Policy for at least one Magento Category."
-                );
-            $isNotExistProductsWithCategoryTemplate = (int)$this->isNotExistProductsWithCategoryTemplate(
-                $this->getData('category_templates_data')
             );
+        $isNotExistProductsWithCategoryTemplate = (int)$this->isNotExistProductsWithCategoryTemplate(
+            $this->getData('category_templates_data')
+        );
 
-            $this->js->add(
-                <<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Plugin/Messages'
     ],function(MessageObj) {
@@ -282,7 +283,7 @@ HTML;
         }
     });
 JS
-            );
+        );
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
@@ -302,7 +303,7 @@ JS
         $listingProductsIds = $this->listing->getSetting('additional_data', 'adding_listing_products_ids');
 
         $listingProductCollection = $this->walmartFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id', ['in' => $listingProductsIds]);
+                                                         ->addFieldToFilter('id', ['in' => $listingProductsIds]);
 
         $productsIds = [];
         $categoryTemplatesIds = [];
@@ -329,7 +330,7 @@ JS
             $collection->joinTable(
                 [
                     'ccp' => $this->databaseHelper
-                        ->getTableNameWithPrefix('catalog_category_product')
+                        ->getTableNameWithPrefix('catalog_category_product'),
                 ],
                 'product_id=entity_id',
                 ['category_id' => 'category_id']

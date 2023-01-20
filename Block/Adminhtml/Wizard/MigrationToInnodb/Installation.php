@@ -34,10 +34,10 @@ abstract class Installation extends AbstractWizard
         $this->addButton(
             'continue',
             [
-                'id'      => 'update_all_marketplaces',
-                'label'   => $this->__('Continue'),
+                'id' => 'update_all_marketplaces',
+                'label' => $this->__('Continue'),
                 'onclick' => 'MigrationToInnodbObj.continueStep();',
-                'class'   => 'primary forward',
+                'class' => 'primary forward',
             ]
         );
     }
@@ -55,10 +55,10 @@ abstract class Installation extends AbstractWizard
 
         $this->jsUrl->addUrls(
             [
-                'ebay_marketplace/synchGetExecutingInfo'    => $this->getUrl(
+                'ebay_marketplace/synchGetExecutingInfo' => $this->getUrl(
                     '*/ebay_marketplace/synchGetExecutingInfo'
                 ),
-                'amazon_marketplace/synchGetExecutingInfo'  => $this->getUrl(
+                'amazon_marketplace/synchGetExecutingInfo' => $this->getUrl(
                     '*/amazon_marketplace/synchGetExecutingInfo'
                 ),
                 'walmart_marketplace/synchGetExecutingInfo' => $this->getUrl(
@@ -94,8 +94,8 @@ JS
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class, 'wizard.help.block')
                           ->setData(
                               [
-                              'no_collapse' => true,
-                              'no_hide'     => true,
+                                  'no_collapse' => true,
+                                  'no_hide' => true,
                               ]
                           );
 

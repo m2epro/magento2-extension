@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description as DescriptionTemplate;
 
 class MapToNewAsin extends Main
 {
@@ -24,14 +25,13 @@ class MapToNewAsin extends Main
         $this->variationHelper = $variationHelper;
     }
 
-    //########################################
-
     public function execute()
     {
         $productsIds = $this->getRequestIds('products_id');
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -91,7 +91,9 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType($filteredLockedProducts);
+        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType(
+            $filteredLockedProducts
+        );
 
         if (count($filteredLockedProducts) != count($filteredProductsIdsByType)) {
             $tempCount = count($filteredLockedProducts) - count($filteredProductsIdsByType);
@@ -103,7 +105,9 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByTpl = $this->variationHelper->filterProductsByDescriptionTemplate($filteredProductsIdsByType);
+        $filteredProductsIdsByTpl = $this->variationHelper->filterProductsByDescriptionTemplate(
+            $filteredProductsIdsByType
+        );
 
         if (count($filteredProductsIdsByType) != count($filteredProductsIdsByTpl)) {
             $badDescriptionProductsIds = array_diff($filteredProductsIdsByType, $filteredProductsIdsByTpl);
@@ -138,9 +142,9 @@ class MapToNewAsin extends Main
         }
 
         if (!empty($errors)) {
-            $messages[] =  [
+            $messages[] = [
                 'type' => 'warning',
-                'text' => $errorMsg . implode(', ', $errors) . ' ('. $errorMsgProductsCount . ')'
+                'text' => $errorMsg . implode(', ', $errors) . ' (' . $errorMsgProductsCount . ')',
             ];
         }
 
@@ -154,7 +158,7 @@ class MapToNewAsin extends Main
                     'text' => $this->__(
                         'New ASIN/ISBN creation feature was added to %count% Products.',
                         count($filteredProductsIdsByParent)
-                    )
+                    ),
                 ]
             );
         }
@@ -163,8 +167,7 @@ class MapToNewAsin extends Main
             $badDescriptionProductsIds = $this->variationHelper
                 ->filterProductsByMagentoProductType($badDescriptionProductsIds);
 
-            $descriptionTemplatesBlock = $this->getLayout()
-                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description::class);
+            $descriptionTemplatesBlock = $this->getLayout()->createBlock(DescriptionTemplate::class);
             $descriptionTemplatesBlock->setNewAsin(true);
             $descriptionTemplatesBlock->setMessages($messages);
             $descriptionTemplatesBlock = $descriptionTemplatesBlock->toHtml();
@@ -173,7 +176,7 @@ class MapToNewAsin extends Main
         $this->setJsonContent([
             'messages' => $messages,
             'html' => $descriptionTemplatesBlock,
-            'products_ids' => implode(',', $badDescriptionProductsIds)
+            'products_ids' => implode(',', $badDescriptionProductsIds),
         ]);
 
         return $this->getResult();
@@ -190,9 +193,9 @@ class MapToNewAsin extends Main
             $connection->update(
                 $tableAmazonListingProduct,
                 [
-                    'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+                    'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES,
                 ],
-                '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')'
+                '`listing_product_id` IN (' . implode(',', $productsIdsChunk) . ')'
             );
         }
     }
@@ -205,8 +208,8 @@ class MapToNewAsin extends Main
 
         $select = $connection->select();
         $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id'])
-            ->where('listing_product_id IN (?)', $productsIds)
-            ->where('is_variation_parent = ?', 1);
+               ->where('listing_product_id IN (?)', $productsIds)
+               ->where('is_variation_parent = ?', 1);
 
         $productsIds = $connection->fetchCol($select);
 

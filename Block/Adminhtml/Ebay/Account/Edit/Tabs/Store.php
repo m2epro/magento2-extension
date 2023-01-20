@@ -62,12 +62,15 @@ class Store extends AbstractForm
             'ebay_accounts_store',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(<<<HTML
+                'content' => $this->__(
+                    <<<HTML
 <p>This tab displays information about your eBay Store and might be helpful for the
 Category settings via M2E Pro.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                    , $this->supportHelper->getDocumentationArticleUrl('x/WP8UB'))
+                    ,
+                    $this->supportHelper->getDocumentationArticleUrl('x/WP8UB')
+                ),
             ]
         );
 
@@ -76,7 +79,7 @@ HTML
                 'information',
                 [
                     'legend' => $this->__('Information'),
-                    'collapsable' => false
+                    'collapsable' => false,
                 ]
             );
 
@@ -85,7 +88,7 @@ HTML
                 'label',
                 [
                     'label' => $this->__('Store Title'),
-                    'value' =>  $formData['ebay_store_title']
+                    'value' => $formData['ebay_store_title'],
                 ]
             );
 
@@ -94,7 +97,7 @@ HTML
                 'link',
                 [
                     'label' => $this->__('URL'),
-                    'value' =>  $formData['ebay_store_url'],
+                    'value' => $formData['ebay_store_url'],
                     'href' => $formData['ebay_store_url'],
                     'target' => '_blank',
                     'class' => 'control-value external-link',
@@ -106,7 +109,7 @@ HTML
                 'label',
                 [
                     'label' => $this->__('Subscription Level'),
-                    'value' =>  $formData['ebay_store_subscription_level']
+                    'value' => $formData['ebay_store_subscription_level'],
                 ]
             );
 
@@ -116,7 +119,7 @@ HTML
                     'label',
                     [
                         'label' => $this->__('Description'),
-                        'value' =>  $formData['ebay_store_description']
+                        'value' => $formData['ebay_store_description'],
                     ]
                 );
             }
@@ -131,7 +134,7 @@ HTML
                     'onclick' => 'EbayAccountObj.refreshStoreCategories();',
                     'tooltip' => $this->__(
                         'Click on Refresh button to update eBay Store information - title, URL, Category tree, etc.'
-                    )
+                    ),
                 ]
             );
 
@@ -144,7 +147,7 @@ HTML
                         '<p>The list below shows your eBay Store Category tree.
                         This data will be of help when you are looking for a particular Category ID which
                         then can be used for Category settings for your Products in M2E Pro Listings.</p>'
-                    )
+                    ),
                 ]
             );
 
@@ -155,7 +158,7 @@ HTML
                     [
                         'container_id' => 'ebay_store_categories_not_found',
                         'label' => '',
-                        'value' => $this->__('Categories not found.')
+                        'value' => $this->__('Categories not found.'),
                     ]
                 );
             }
@@ -163,7 +166,8 @@ HTML
             if (!empty($categoriesTreeArray)) {
                 $categoriesTreeArray = $this->dataHelper->jsonEncode($categoriesTreeArray);
 
-                $this->js->add(<<<JS
+                $this->js->add(
+                    <<<JS
 require([
     'M2ePro/Ebay/Account',
 ], function() {
@@ -172,13 +176,12 @@ require([
 JS
                 );
             }
-
         } else {
             $fieldset = $form->addFieldset(
                 'no_subscription',
                 [
                     'legend' => $this->__('Information'),
-                    'collapsable' => false
+                    'collapsable' => false,
                 ]
             );
 
@@ -206,7 +209,7 @@ JS
             'label' => $this->__('Hide'),
             'class' => 'primary',
             'onclick' => 'EbayAccountObj.ebayStoreSelectCategoryHide();',
-            'style' => 'margin-left: 15px;'
+            'style' => 'margin-left: 15px;',
         ]);
 
         $fieldset->addField(
@@ -220,7 +223,7 @@ JS
                 'readonly' => true,
                 'class' => 'hide',
                 'placeholder' => $this->__('Please, select the Category'),
-                'after_element_html' => $hideButton->toHtml()
+                'after_element_html' => $hideButton->toHtml(),
             ]
         );
 
@@ -232,7 +235,8 @@ JS
             ]
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 require([
     'M2ePro/Ebay/Account',
 ], function() {
@@ -252,7 +256,8 @@ JS
             ]
         );
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 #no_subscription .admin__field-control {
     margin-left: 20% !important;
 }

@@ -55,7 +55,13 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         if ((bool)$this->getRequest()->getParam('listing_creation', false)) {
-            $url = $this->getUrl('*/*/sourceMode', ['_current' => true]);
+            $url = $this->getUrl(
+                '*/*/sourceMode',
+                [
+                    '_current' => true,
+                    'listing_creation' => $this->getRequest()->getParam('listing_creation', 0),
+                ]
+            );
         } else {
             $url = $this->getUrl('*/ebay_listing/view', [
                 'id' => $this->getRequest()->getParam('id'),
@@ -67,41 +73,44 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         }
 
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'class'     => 'back',
-            'onclick'   => 'setLocation(\''.$url.'\')'
+            'label' => $this->__('Back'),
+            'class' => 'back',
+            'onclick' => 'setLocation(\'' . $url . '\')',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('auto_action', [
-            'label'     => $this->__('Auto Add/Remove Rules'),
-            'class'     => 'action-primary',
-            'onclick'   => 'ListingAutoActionObj.loadAutoActionHtml();'
+            'label' => $this->__('Auto Add/Remove Rules'),
+            'class' => 'action-primary',
+            'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl(
-            '*/ebay_listing_product_add/exitToListing',
-            ['id' => $this->getRequest()->getParam('id')]
-        );
-        $confirm =
-            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
-            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
-        $this->addButton(
-            'exit_to_listing',
-            [
-                'label' => $this->__('Cancel'),
-                'onclick' => "confirmSetLocation('$confirm', '$url');",
-                'class' => 'action-primary',
-            ]
-        );
+
+        if ($this->getRequest()->getParam('listing_creation')) {
+            $url = $this->getUrl(
+                '*/ebay_listing_product_add/exitToListing',
+                ['id' => $this->getRequest()->getParam('id')]
+            );
+            $confirm =
+                '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+                . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+            $this->addButton(
+                'exit_to_listing',
+                [
+                    'label' => $this->__('Cancel'),
+                    'onclick' => "confirmSetLocation('$confirm', '$url');",
+                    'class' => 'action-primary',
+                ]
+            );
+        }
 
         $this->addButton('continue', [
-            'label'     => $this->__('Continue'),
-            'class'     => 'action-primary forward',
-            'onclick'   => 'ListingProductAddObj.continue();'
+            'label' => $this->__('Continue'),
+            'class' => 'action-primary forward',
+            'onclick' => 'ListingProductAddObj.continue();',
         ]);
         // ---------------------------------------
 
@@ -109,7 +118,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Remove Category' => $this->__('Remove Category'),
             'Add New Rule' => $this->__('Add New Rule'),
             'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-            'Start Configure' => $this->__('Start Configure')
+            'Start Configure' => $this->__('Start Configure'),
         ]);
 
         $this->jsPhp->addConstants(
@@ -122,21 +131,23 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     public function getGridHtml()
     {
         $viewHeaderBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class, '', [
-            'data' => ['listing' => $this->globalDataHelper->getValue('listing_for_products_add')]
+            'data' => ['listing' => $this->globalDataHelper->getValue('listing_for_products_add')],
         ]);
 
         $hideOthersListingsProductsFilterBlock = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter::class)
-            ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'controller' => 'ebay_listing_product_add'
-        ]);
+                                                      ->createBlock(
+                                                          \Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter::class
+                                                      )
+                                                      ->setData([
+                                                          'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                                                          'controller' => 'ebay_listing_product_add',
+                                                      ]);
 
         return $viewHeaderBlock->toHtml()
-               . '<div class="filter_block">'
-               . $hideOthersListingsProductsFilterBlock->toHtml()
-               . '</div>'
-               . parent::getGridHtml();
+            . '<div class="filter_block">'
+            . $hideOthersListingsProductsFilterBlock->toHtml()
+            . '</div>'
+            . parent::getGridHtml();
     }
 
     protected function _toHtml()
@@ -145,7 +156,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             '<div id="add_products_container">' .
             parent::_toHtml() .
             '</div>'
-           . $this->getAutoactionPopupHtml();
+            . $this->getAutoactionPopupHtml();
     }
 
     //########################################

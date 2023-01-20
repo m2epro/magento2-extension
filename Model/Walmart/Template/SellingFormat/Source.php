@@ -29,11 +29,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -49,11 +51,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Template\SellingFormat $instance
+     *
      * @return $this
      */
     public function setSellingFormatTemplate(\Ess\M2ePro\Model\Template\SellingFormat $instance)
     {
         $this->sellingFormatTemplateModel = $instance;
+
         return $this;
     }
 

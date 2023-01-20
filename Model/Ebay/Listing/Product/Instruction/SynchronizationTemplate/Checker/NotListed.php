@@ -208,7 +208,7 @@ class NotListed extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix' => \Ess\M2ePro\Model\Ebay\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Ebay\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($ebaySynchronizationTemplate->getListAdvancedRulesFilters());

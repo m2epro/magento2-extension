@@ -37,7 +37,8 @@ class BlockedProductsHandler extends AbstractBlockedHandler
         $collection->getSelect()->where('l.account_id = ?', (int)$this->getAccount()->getId());
         $collection->getSelect()->where('second_table.is_variation_parent != ?', 1);
         $collection->getSelect()->where(
-            'second_table.list_date IS NULL OR second_table.list_date < ?', $borderDate->format('Y-m-d H:i:s')
+            'second_table.list_date IS NULL OR second_table.list_date < ?',
+            $borderDate->format('Y-m-d H:i:s')
         );
         $collection->getSelect()->where('ais.sku IS NULL');
         $collection->getSelect()->where(
@@ -57,7 +58,7 @@ class BlockedProductsHandler extends AbstractBlockedHandler
                 'main_table.product_id',
                 'main_table.additional_data',
                 'second_table.is_variation_product',
-                'second_table.variation_parent_id'
+                'second_table.variation_parent_id',
             ]
         );
 

@@ -13,10 +13,10 @@ namespace Ess\M2ePro\Model\Amazon\Magento\Product;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel
 {
-    const INSTRUCTION_TYPE_QTY_DATA_CHANGED       = 'magento_product_qty_data_changed';
-    const INSTRUCTION_TYPE_DETAILS_DATA_CHANGED   = 'magento_product_details_data_changed';
-    const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED    = 'magento_product_images_data_changed';
-    const INSTRUCTION_TYPE_REPRICING_DATA_CHANGED = 'magento_product_repricing_data_changed';
+    public const INSTRUCTION_TYPE_QTY_DATA_CHANGED = 'magento_product_qty_data_changed';
+    public const INSTRUCTION_TYPE_DETAILS_DATA_CHANGED = 'magento_product_details_data_changed';
+    public const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'magento_product_images_data_changed';
+    public const INSTRUCTION_TYPE_REPRICING_DATA_CHANGED = 'magento_product_repricing_data_changed';
 
     //########################################
 
@@ -44,7 +44,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -57,7 +57,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -70,7 +70,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -83,7 +83,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_REPRICING_DATA_CHANGED,
+                'type' => self::INSTRUCTION_TYPE_REPRICING_DATA_CHANGED,
                 'priority' => $priority,
             ];
         }
@@ -119,7 +119,7 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
         );
 
         if ($this->getAmazonListingProduct()->isExistDescriptionTemplate()) {
-            $amazonDescriptionTemplate     = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
+            $amazonDescriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
             $descriptionDefinitionTemplate = $amazonDescriptionTemplate->getDefinitionTemplate();
 
             $trackingAttributes = array_merge(

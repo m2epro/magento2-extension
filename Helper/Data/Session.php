@@ -61,7 +61,7 @@ class Session
 
         foreach ($session as $key => $value) {
             if (strpos($key, \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER) === 0) {
-                $tempReturnedKey = substr($key, strlen(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER)+1);
+                $tempReturnedKey = substr($key, strlen(\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER) + 1);
                 $return[$tempReturnedKey] = $this->session->getData($key);
             }
         }

@@ -39,6 +39,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         if ($listing === null && $id) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
             return $this->_redirect('*/walmart_listing/index');
         }
 
@@ -82,7 +83,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $this->getMessageManager()->addSuccess($this->__('The Listing was saved.'));
 
-        return $this->_redirect($this->dataHelper->getBackUrl('list', [], ['edit'=>['id'=>$id]]));
+        return $this->_redirect($this->dataHelper->getBackUrl('list', [], ['edit' => ['id' => $id]]));
     }
 
     protected function processDescriptionTemplateChange(
@@ -90,8 +91,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         array $newData,
         array $affectedListingsProductsData
     ) {
-        if (empty($affectedListingsProductsData) ||
-            empty($oldData['template_description_id']) || empty($newData['template_description_id'])) {
+        if (
+            empty($affectedListingsProductsData) ||
+            empty($oldData['template_description_id']) || empty($newData['template_description_id'])
+        ) {
             return;
         }
 
@@ -130,8 +133,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         array $newData,
         array $affectedListingsProductsData
     ) {
-        if (empty($affectedListingsProductsData) ||
-            empty($oldData['template_selling_format_id']) || empty($newData['template_selling_format_id'])) {
+        if (
+            empty($affectedListingsProductsData) ||
+            empty($oldData['template_selling_format_id']) || empty($newData['template_selling_format_id'])
+        ) {
             return;
         }
 
@@ -168,8 +173,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         array $newData,
         array $affectedListingsProductsData
     ) {
-        if (empty($affectedListingsProductsData) ||
-            empty($oldData['template_synchronization_id']) || empty($newData['template_synchronization_id'])) {
+        if (
+            empty($affectedListingsProductsData) ||
+            empty($oldData['template_synchronization_id']) || empty($newData['template_synchronization_id'])
+        ) {
             return;
         }
 

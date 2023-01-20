@@ -24,7 +24,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         'parts',
         'shipping',
         'returnPolicy',
-        'other'
+        'other',
     ];
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\AbstractModel[] */
     protected $dataBuilders = [];
@@ -43,8 +43,8 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
-        $this->activeRecordFactory        = $activeRecordFactory;
-        $this->ebayFactory                = $ebayFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->componentEbayConfiguration = $componentEbayConfiguration;
     }
 
@@ -125,8 +125,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     protected function replaceVariationSpecificsNames(array $data)
     {
-        if (!$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
-            empty($data['variations_sets']) || !is_array($data['variations_sets'])) {
+        if (
+            !$this->getIsVariationItem() || !$this->getMagentoProduct()->isConfigurableType() ||
+            empty($data['variations_sets']) || !is_array($data['variations_sets'])
+        ) {
             return $data;
         }
 
@@ -144,9 +146,11 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     protected function resolveVariationAndItemSpecificsConflict(array $data)
     {
-        if (!$this->getIsVariationItem() ||
+        if (
+            !$this->getIsVariationItem() ||
             empty($data['item_specifics']) || !is_array($data['item_specifics']) ||
-            empty($data['variations_sets']) || !is_array($data['variations_sets'])) {
+            empty($data['variations_sets']) || !is_array($data['variations_sets'])
+        ) {
             return $data;
         }
 
@@ -197,8 +201,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                     continue;
                 }
 
-                if (!$ebayVariation->getOnlineQtySold() &&
-                    ($ebayVariation->isStopped() || $ebayVariation->isHidden())) {
+                if (
+                    !$ebayVariation->getOnlineQtySold() &&
+                    ($ebayVariation->isStopped() || $ebayVariation->isHidden())
+                ) {
                     continue;
                 }
 
@@ -216,14 +222,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      * (even if Brand was Unbranded). Due to eBay specific we can not stop sending it. So, for "old" items we need
      * set 'Does Not Apply', if real MPN is empty. New items has 'without_mpn_variation_issue' in additional data
      * (set by list response), it means that item was listed after fixing this issue.
-     *
      * 1) form variation MPN value (from additional only for list action)
-     *
      *       TRY TO RETRIEVE FROM ADDITIONAL DATA OF EACH VARIATION
      *       IF EMPTY: TRY TO RETRIEVE FROM DESCRIPTION POLICY SETTINGS
-     *
      * 2) prepare variation MPN value (skip this for list action)
-     *
      *   - item variations MPN flag == unknown (variation MPN value only from settings)
      *     [-> item variations MPN flag == without MPN, item variations MPN flag == with MPN]
      *     - without_mpn_variation_issue == NULL
@@ -232,13 +234,11 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      *     - without_mpn_variation_issue == true
      *        empty variation MPN value -> do nothing
      *        filled variation MPN value -> do nothing
-     *
      *   - item variations MPN flag == without MPN (variation MPN value only from settings)
      *      [-> item variations MPN flag == with MPN]
      *      - without_mpn_variation_issue == NULL / without_mpn_variation_issue == true
      *         empty variation MPN value -> do nothing
      *         filled variation MPNvalue  -> do nothing
-     *
      *   - item variations MPN flag == with MPN (variation MPN value from additional or settings) [->]
      *     - without_mpn_variation_issue == NULL
      *        empty variation MPN value -> set "Does Not Apply"
@@ -246,20 +246,18 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      *   - without_mpn_variation_issue == true
      *        empty variation MPN value -> do nothing
      *        filled variation MPN value -> do nothing
-     *
      * 3) after revise/relist error use getItem (skip this for list action)
-     *
      *       CONDITIONS:
      *       VARIATIONAL PRODUCT == true
      *       VARIATIONS WERE SENT == true
      *       ANY ERROR FROM LIST [in_array]
      *       item variations MPN flag == unknown
-     *
      *       ACTIONS:
      *       set item variations MPN flag according to the request
      *       set variations additional MPN values if need
      *
      * @param array $data
+     *
      * @return array
      */
     // todo PHPdoc should be changed
@@ -278,7 +276,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
         if (isset($data['variation']) && is_array($data['variation'])) {
             foreach ($data['variation'] as &$variationData) {
-
                 /**
                  * Item was listed without MPN, but then the Description Policy setting was changed and
                  * MPN values are being send to eBay
@@ -287,7 +284,8 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                     unset($variationData['details']['mpn']);
                 }
 
-                if (!isset($variationData['details']['mpn']) &&
+                if (
+                    !isset($variationData['details']['mpn']) &&
                     ($isMpnOnChannel === true || ($isMpnOnChannel === null && !$withoutMpnIssue))
                 ) {
                     $variationData['details']['mpn'] =
@@ -401,6 +399,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('general');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -414,6 +413,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('qty');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -427,6 +427,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('price');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -440,6 +441,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('title');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -453,6 +455,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('subtitle');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -466,6 +469,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('description');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -565,6 +569,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $dataBuilder = $this->getDataBuilder('variations');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -589,13 +594,13 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     /**
      * @param $type
+     *
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getDataBuilder($type)
     {
         if (!isset($this->dataBuilders[$type])) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\AbstractModel $dataBuilder */
             $dataBuilder = $this->modelFactory->getObject('Ebay\Listing\Product\Action\DataBuilder\\' . ucfirst($type));
 

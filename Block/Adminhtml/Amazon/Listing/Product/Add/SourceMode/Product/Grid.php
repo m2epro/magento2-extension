@@ -74,9 +74,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
-            ->addAttributeToSelect('sku')
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('type_id');
+                                                            ->addAttributeToSelect('sku')
+                                                            ->addAttributeToSelect('name')
+                                                            ->addAttributeToSelect('type_id');
 
         $collection->setStoreId($this->listing->getStoreId());
         $collection->joinStockItem();
@@ -150,20 +150,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             $excludeProductsExpr = $this->getExcludedProductsExpression($hideParam);
 
             $collection->getSelect()
-                ->joinLeft(
-                    $excludeProductsExpr,
-                    'true',
-                    []
-                )
-                ->where('lp.product_id IS NULL');
+                       ->joinLeft(
+                           $excludeProductsExpr,
+                           'true',
+                           []
+                       )
+                       ->where('lp.product_id IS NULL');
         }
         // ---------------------------------------
 
         $collection->addFieldToFilter(
-            [[
-                'attribute' => 'type_id',
-                'in' => $this->magentoProductHelper->getOriginKnownTypes()
-            ]]
+            [
+                [
+                    'attribute' => 'type_id',
+                    'in' => $this->magentoProductHelper->getOriginKnownTypes(),
+                ],
+            ]
         );
 
         $collection->addWebsiteNamesToResult();
@@ -181,7 +183,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 );
 
             $originalCollection->setLeftJoinsImportant(true)
-                ->setCustomCountSelect($countSelect);
+                               ->setCustomCountSelect($countSelect);
             $this->setCollection($originalCollection);
         }
 
@@ -231,7 +233,7 @@ ON l.id = lp.listing_id
             'index' => 'entity_id',
             'filter_index' => 'entity_id',
             'store_id' => $this->_getStore()->getId(),
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
@@ -240,8 +242,8 @@ ON l.id = lp.listing_id
             'type' => 'text',
             'index' => 'name',
             'filter_index' => 'name',
-            'escape'       => false,
-            'frame_callback' => [$this, 'callbackColumnProductTitle']
+            'escape' => false,
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
         ]);
 
         $this->addColumn('type', [
@@ -252,7 +254,7 @@ ON l.id = lp.listing_id
             'sortable' => false,
             'index' => 'type_id',
             'filter_index' => 'type_id',
-            'options' => $this->getProductTypes()
+            'options' => $this->getProductTypes(),
         ]);
 
         $this->addColumn('is_in_stock', [
@@ -265,9 +267,9 @@ ON l.id = lp.listing_id
             'filter_index' => 'is_in_stock',
             'options' => [
                 '1' => $this->__('In Stock'),
-                '0' => $this->__('Out of Stock')
+                '0' => $this->__('Out of Stock'),
             ],
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('sku', [
@@ -276,7 +278,7 @@ ON l.id = lp.listing_id
             'width' => '90px',
             'type' => 'text',
             'index' => 'sku',
-            'filter_index' => 'sku'
+            'filter_index' => 'sku',
         ]);
 
         $store = $this->_getStore();
@@ -290,7 +292,7 @@ ON l.id = lp.listing_id
             'currency_code' => $store->getBaseCurrency()->getCode(),
             'index' => 'price',
             'filter_index' => 'price',
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('qty', [
@@ -300,7 +302,7 @@ ON l.id = lp.listing_id
             'type' => 'number',
             'index' => 'qty',
             'filter_index' => 'qty',
-            'frame_callback' => [$this, 'callbackColumnQty']
+            'frame_callback' => [$this, 'callbackColumnQty'],
         ]);
 
         $this->addColumn('visibility', [
@@ -311,7 +313,7 @@ ON l.id = lp.listing_id
             'sortable' => false,
             'index' => 'visibility',
             'filter_index' => 'visibility',
-            'options' => \Magento\Catalog\Model\Product\Visibility::getOptionArray()
+            'options' => \Magento\Catalog\Model\Product\Visibility::getOptionArray(),
         ]);
 
         $this->addColumn('status', [
@@ -323,7 +325,7 @@ ON l.id = lp.listing_id
             'index' => 'status',
             'filter_index' => 'status',
             'options' => \Magento\Catalog\Model\Product\Attribute\Source\Status::getOptionArray(),
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         if (!$this->_storeManager->isSingleStoreMode()) {
@@ -335,7 +337,7 @@ ON l.id = lp.listing_id
                 'sortable' => false,
                 'index' => 'websites',
                 'filter_index' => 'websites',
-                'options' => $this->websiteFactory->create()->getCollection()->toOptionHash()
+                'options' => $this->websiteFactory->create()->getCollection()->toOptionHash(),
             ]);
         }
 
@@ -365,6 +367,7 @@ ON l.id = lp.listing_id
                 );
             }
         }
+
         return parent::_addColumnFilterToCollection($column);
     }
 
@@ -379,6 +382,7 @@ ON l.id = lp.listing_id
         if (isset($this->listing['store_id'])) {
             $storeId = (int)$this->listing['store_id'];
         }
+
         // ---------------------------------------
 
         return $this->_storeManager->getStore($storeId);
@@ -390,6 +394,7 @@ ON l.id = lp.listing_id
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->massactionMassSelectStyleFix();
+
             return parent::_toHtml();
         }
 
@@ -404,7 +409,7 @@ ON l.id = lp.listing_id
             $selectItemsMessage => $this->__($selectItemsMessage),
             $createEmptyListingMessage => $this->__($createEmptyListingMessage),
             $showAdvancedFilterButtonText => $this->__($showAdvancedFilterButtonText),
-            $hideAdvancedFilterButtonText => $this->__($hideAdvancedFilterButtonText)
+            $hideAdvancedFilterButtonText => $this->__($hideAdvancedFilterButtonText),
         ]);
         // ---------------------------------------
 
@@ -446,7 +451,8 @@ JS
 
     protected function massactionMassSelectStyleFix()
     {
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         require([
         'M2ePro/General/PhpFunctions',
     ], function(){

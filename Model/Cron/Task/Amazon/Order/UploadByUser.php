@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
  */
 class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/upload_by_user';
+    public const NICK = 'amazon/order/upload_by_user';
 
     //########################################
 
@@ -56,7 +56,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setValidateAccountCreateDate(false);
 
         foreach ($permittedAccounts as $merchantId => $accounts) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\UploadByUser\Manager $manager */
             $manager = $this->modelFactory->getObject('Cron_Task_Amazon_Order_UploadByUser_Manager');
@@ -100,7 +100,8 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
                 $manager->setCurrentFromDate($amazonData['to_create_date']);
 
-                if (empty($amazonData['job_token']) &&
+                if (
+                    empty($amazonData['job_token']) &&
                     $manager->getCurrentFromDate()->getTimestamp() >= $manager->getToDate()->getTimestamp()
                 ) {
                     $manager->clear();
@@ -149,14 +150,14 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $merchantId,
         $accounts
     ) {
-        $toTime   = $manager->getToDate();
+        $toTime = $manager->getToDate();
         $fromTime = $manager->getCurrentFromDate();
         $fromTime === null && $fromTime = $manager->getFromDate();
 
         $params = [
-            'accounts'         => $accounts,
+            'accounts' => $accounts,
             'from_create_date' => $fromTime->format('Y-m-d H:i:s'),
-            'to_create_date'   => $toTime->format('Y-m-d H:i:s')
+            'to_create_date' => $toTime->format('Y-m-d H:i:s'),
         ];
 
         $jobToken = $manager->getJobToken();
@@ -164,8 +165,9 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $params['job_token'] = $jobToken;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        /** @var \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\Items $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Amazon_Connector_Orders_Get_Items',
             $params
@@ -190,7 +192,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-                                           : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),

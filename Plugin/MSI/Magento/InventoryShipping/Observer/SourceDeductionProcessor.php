@@ -70,7 +70,7 @@ class SourceDeductionProcessor extends \Ess\M2ePro\Plugin\AbstractPlugin
         $this->getSourceItemBySourceCodeAndSku = $objectManager->get(GetSourceItemBySourceCodeAndSku::class);
         $this->sourceItemsSave = $objectManager->get(SourceItemsSaveInterface::class);
         $this->msiReservation = $objectManager->get(MSIReserve::class);
-}
+    }
 
     //########################################
 
@@ -78,6 +78,7 @@ class SourceDeductionProcessor extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -89,6 +90,7 @@ class SourceDeductionProcessor extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     public function processExecute($interceptor, \Closure $callback, array $arguments)
@@ -103,8 +105,10 @@ class SourceDeductionProcessor extends \Ess\M2ePro\Plugin\AbstractPlugin
             return $result;
         }
 
-        if (!empty($this->shipment->getExtensionAttributes()) &&
-            !empty($this->shipment->getExtensionAttributes()->getSourceCode())) {
+        if (
+            !empty($this->shipment->getExtensionAttributes()) &&
+            !empty($this->shipment->getExtensionAttributes()->getSourceCode())
+        ) {
             $sourceCode = $this->shipment->getExtensionAttributes()->getSourceCode();
         } elseif ($this->isSingleSourceMode->execute()) {
             $sourceCode = $this->defaultSourceProvider->getCode();
@@ -144,9 +148,9 @@ class SourceDeductionProcessor extends \Ess\M2ePro\Plugin\AbstractPlugin
             $reservationItems,
             $this->shipment->getOrder()->getStoreId(),
             [
-                'type'       => MSIReserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED,
+                'type' => MSIReserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED,
                 'objectType' => SalesEventInterface::OBJECT_TYPE_ORDER,
-                'objectId'   => (string)$this->shipment->getOrder()->getId()
+                'objectId' => (string)$this->shipment->getOrder()->getId(),
             ]
         );
 

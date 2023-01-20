@@ -309,8 +309,8 @@ TEXT
         $editHash = sha1(__CLASS__ . $accountId . $tokenExpirationTimeStamp . $messageType . $method);
 
         return $this->supportHelper->getSupportUrl(
-                '/support/solutions/articles/9000219023'
-            ) . '/?' . $editHash;
+            '/support/solutions/articles/9000219023'
+        ) . '/?' . $editHash;
     }
 
     /**

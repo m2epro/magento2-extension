@@ -55,6 +55,7 @@ abstract class AbstractBuilder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBu
         unset($this->rawData['id']);
         unset($this->rawData['is_custom_template']);
         unset($this->rawData['title']);
+
         // ---------------------------------------
 
         return $data;

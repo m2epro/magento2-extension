@@ -63,6 +63,7 @@ class LogicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Man
     protected function getMagentoAttributes()
     {
         $magentoVariations = $this->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
+
         return array_keys($magentoVariations['set']);
     }
 

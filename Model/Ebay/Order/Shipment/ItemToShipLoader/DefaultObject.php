@@ -12,9 +12,6 @@ use Ess\M2ePro\Helper\Data as Helper;
 use Ess\M2ePro\Model\AbstractModel;
 use Ess\M2ePro\Model\Order\Shipment\ItemToShipLoaderInterface;
 
-/**
- * Class Ess\M2ePro\Model\Ebay\Order\Shipment\ItemToShipLoader\DefaultObject
- */
 class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
 {
     /** @var \Ess\M2ePro\Model\Order $order */
@@ -39,7 +36,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
     ) {
         $this->ebayFactory = $ebayFactory;
 
-        list($this->order, $this->shipmentItem) = $data;
+        [$this->order, $this->shipmentItem] = $data;
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -86,8 +83,10 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
      */
     protected function validate(array $additionalData)
     {
-        if (!isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items']) ||
-            !is_array($additionalData[Helper::CUSTOM_IDENTIFIER]['items'])) {
+        if (
+            !isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items']) ||
+            !is_array($additionalData[Helper::CUSTOM_IDENTIFIER]['items'])
+        ) {
             return false;
         }
 
@@ -126,6 +125,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
 
     /**
      * @param array $additionalData
+     *
      * @return \Ess\M2ePro\Model\Order\Item
      */
     protected function getOrderItem(array $additionalData)
@@ -134,9 +134,14 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
             return $this->orderItem;
         }
 
-        $this->orderItem = $this->ebayFactory->getObject('Order_Item')->getCollection()
+        $this->orderItem = $this->ebayFactory
+            ->getObject('Order_Item')
+            ->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId())
-            ->addFieldToFilter('item_id', $additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['item_id'])
+            ->addFieldToFilter(
+                'item_id',
+                $additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['item_id']
+            )
             ->addFieldToFilter(
                 'transaction_id',
                 $additionalData[Helper::CUSTOM_IDENTIFIER]['items'][0]['transaction_id']
@@ -145,6 +150,4 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
 
         return $this->orderItem;
     }
-
-    //########################################
 }

@@ -13,9 +13,9 @@ use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
 class Preview extends AbstractBlock
 {
-    const NEXT     = 0;
-    const PREVIOUS = 1;
-    const CURRENT  = 3;
+    public const NEXT = 0;
+    public const PREVIOUS = 1;
+    public const CURRENT = 3;
 
     protected $ebayFactory;
     protected $currency;
@@ -43,10 +43,10 @@ class Preview extends AbstractBlock
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
-        $this->ebayFactory                = $ebayFactory;
-        $this->currency                   = $currency;
+        $this->ebayFactory = $ebayFactory;
+        $this->currency = $currency;
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
-        $this->componentEbayCategoryEbay  = $componentEbayCategoryEbay;
+        $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
 
         parent::__construct($context, $data);
         $this->dataHelper = $dataHelper;
@@ -128,14 +128,14 @@ JS
 
         return [
             'title' => $tempEbayListingProduct->getMagentoProduct()->getName(),
-            'id'    => $tempEbayListingProduct->getMagentoProduct()->getProductId(),
-            'url'   => $this->getUrl(
+            'id' => $tempEbayListingProduct->getMagentoProduct()->getProductId(),
+            'url' => $this->getUrl(
                 '*/ebay_listing/previewItems',
                 [
                     'currentProductId' => current($parsedProductIds),
-                    'productIds'       => $productIds,
+                    'productIds' => $productIds,
                 ]
-            )
+            ),
         ];
     }
 
@@ -176,19 +176,23 @@ JS
     public function getPrice(array $variations)
     {
         $data = [
-            'price'     => null,
+            'price' => null,
             'price_stp' => null,
-            'price_map' => null
+            'price_map' => null,
         ];
 
         if ($this->ebayListingProduct->isListingTypeFixed()) {
             $data['price_fixed'] = number_format($this->ebayListingProduct->getFixedPrice(), 2);
 
-            if ($this->ebayListingProduct->isPriceDiscountStp() &&
-                $this->ebayListingProduct->getPriceDiscountStp() > $this->ebayListingProduct->getFixedPrice()) {
+            if (
+                $this->ebayListingProduct->isPriceDiscountStp() &&
+                $this->ebayListingProduct->getPriceDiscountStp() > $this->ebayListingProduct->getFixedPrice()
+            ) {
                 $data['price_stp'] = number_format($this->ebayListingProduct->getPriceDiscountStp(), 2);
-            } elseif ($this->ebayListingProduct->isPriceDiscountMap() &&
-                $this->ebayListingProduct->getPriceDiscountMap() > $this->ebayListingProduct->getFixedPrice()) {
+            } elseif (
+                $this->ebayListingProduct->isPriceDiscountMap() &&
+                $this->ebayListingProduct->getPriceDiscountMap() > $this->ebayListingProduct->getFixedPrice()
+            ) {
                 $data['price_map'] = number_format($this->ebayListingProduct->getPriceDiscountMap(), 2);
             }
         } else {
@@ -268,7 +272,6 @@ JS
         }
 
         foreach ($variations as $variation) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $productVariation */
 
@@ -284,17 +287,21 @@ JS
             $options = $productVariation->getOptions(true);
 
             $variationData = [
-                'price'     => number_format($productVariation->getPrice(), 2),
-                'qty'       => $variationQty,
+                'price' => number_format($productVariation->getPrice(), 2),
+                'qty' => $variationQty,
                 'price_stp' => null,
-                'price_map' => null
+                'price_map' => null,
             ];
 
-            if ($this->ebayListingProduct->isPriceDiscountStp()
-                && $productVariation->getPriceDiscountStp() > $productVariation->getPrice()) {
+            if (
+                $this->ebayListingProduct->isPriceDiscountStp()
+                && $productVariation->getPriceDiscountStp() > $productVariation->getPrice()
+            ) {
                 $variationData['price_stp'] = number_format($productVariation->getPriceDiscountStp(), 2);
-            } elseif ($this->ebayListingProduct->isPriceDiscountMap()
-                && $productVariation->getPriceDiscountMap() > $productVariation->getPrice()) {
+            } elseif (
+                $this->ebayListingProduct->isPriceDiscountMap()
+                && $productVariation->getPriceDiscountMap() > $productVariation->getPrice()
+            ) {
                 $variationData['price_map'] = number_format($productVariation->getPriceDiscountMap(), 2);
             }
 
@@ -309,8 +316,8 @@ JS
             }
 
             $variationData = [
-                'data'      => $variationData,
-                'specifics' => $variationSpecifics
+                'data' => $variationData,
+                'specifics' => $variationSpecifics,
             ];
 
             $data['variations'][] = $variationData;
@@ -362,7 +369,6 @@ JS
         $productTypeInstance = $this->ebayListingProduct->getMagentoProduct()->getTypeInstance();
 
         foreach ($productTypeInstance->getConfigurableAttributes($product) as $configurableAttribute) {
-
             /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable\Attribute $configurableAttribute */
             $configurableAttribute->setStoteId($product->getStoreId());
 
@@ -388,8 +394,8 @@ JS
     protected function getBundleImagesAttributeLabels()
     {
         $variations = $this->ebayListingProduct->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                               ->getVariationInstance()
+                                               ->getVariationsTypeStandard();
 
         if (!empty($variations['set'])) {
             return [(string)key($variations['set'])];
@@ -405,7 +411,6 @@ JS
         $attributeLabel = false;
 
         foreach ($this->ebayListingProduct->getVariations(true) as $variation) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             if ($variation->getChildObject()->isDelete() || !$variation->getChildObject()->getQty()) {
@@ -413,7 +418,6 @@ JS
             }
 
             foreach ($variation->getOptions(true) as $option) {
-
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
 
                 $optionLabel = trim($option->getAttribute());
@@ -437,8 +441,8 @@ JS
 
                 $attributeLabel = $foundAttributeLabel;
                 $optionImages = $this->ebayListingProduct->getEbayDescriptionTemplate()
-                    ->getSource($option->getMagentoProduct())
-                    ->getVariationImages();
+                                                         ->getSource($option->getMagentoProduct())
+                                                         ->getVariationImages();
 
                 foreach ($optionImages as $image) {
                     if (!$image->getUrl()) {
@@ -463,7 +467,7 @@ JS
 
         return [
             'specific' => $attributeLabel,
-            'images'   => $imagesLinks
+            'images' => $imagesLinks,
         ];
     }
 
@@ -591,13 +595,12 @@ JS
         }
 
         foreach ($this->ebayListingProduct->getCategoryTemplate()->getSpecifics(true) as $specific) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific */
 
             $tempAttributeLabel = $specific->getSource($this->ebayListingProduct->getMagentoProduct())
-                ->getLabel();
+                                           ->getLabel();
             $tempAttributeValues = $specific->getSource($this->ebayListingProduct->getMagentoProduct())
-                ->getValues();
+                                            ->getValues();
 
             $values = [];
             foreach ($tempAttributeValues as $tempAttributeValue) {
@@ -612,8 +615,8 @@ JS
             }
 
             $data[] = [
-                'name'  => $tempAttributeLabel,
-                'value' => $values
+                'name' => $tempAttributeLabel,
+                'value' => $values,
             ];
         }
 
@@ -625,11 +628,11 @@ JS
     private function getConditionHumanTitle($code)
     {
         $codes = [
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW                   =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW =>
                 $this->__('New'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER             =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER =>
                 $this->__('New Other'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT       =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT =>
                 $this->__('New With Defects'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_CERTIFIED_REFURBISHED =>
                 $this->__('Manufacturer Refurbished'),
@@ -639,20 +642,20 @@ JS
                 $this->__('Very Good (Refurbished)'),
             \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD_REFURBISHED =>
                 $this->__('Good (Refurbished)'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED    =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED =>
                 $this->__('Seller Refurbished, Re-manufactured'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_LIKE_NEW    =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_LIKE_NEW =>
                 $this->__('Like New'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED                  =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED =>
                 $this->__('Used'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD             =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD =>
                 $this->__('Very Good'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD                  =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD =>
                 $this->__('Good'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE            =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE =>
                 $this->__('Acceptable'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING           =>
-                $this->__('For Parts or Not Working')
+            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING =>
+                $this->__('For Parts or Not Working'),
         ];
 
         if (!isset($codes[$code])) {
@@ -724,7 +727,7 @@ JS
         $itemLocation = [
             $this->ebayListingProduct->getShippingTemplateSource()->getPostalCode(),
             $this->ebayListingProduct->getShippingTemplateSource()->getAddress(),
-            $this->getCountryHumanTitle($this->ebayListingProduct->getShippingTemplateSource()->getCountry())
+            $this->getCountryHumanTitle($this->ebayListingProduct->getShippingTemplateSource()->getCountry()),
         ];
 
         return implode(', ', $itemLocation);
@@ -734,7 +737,8 @@ JS
     {
         $dispatchTime = null;
 
-        if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled() ||
+        if (
+            $this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled() ||
             $this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()
         ) {
             $dispatchTimeId = $this->ebayListingProduct->getShippingTemplateSource()->getDispatchTime();
@@ -762,7 +766,7 @@ JS
     {
         if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
             return $this->ebayListingProduct->getShippingTemplate()->getCalculatedShipping()
-                ->getLocalHandlingCost();
+                                            ->getLocalHandlingCost();
         }
 
         return 0;
@@ -772,7 +776,7 @@ JS
     {
         if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
             return $this->ebayListingProduct->getShippingTemplate()->getCalculatedShipping()
-                ->getInternationalHandlingCost();
+                                            ->getInternationalHandlingCost();
         }
 
         return 0;
@@ -827,7 +831,6 @@ JS
         $storeId = $this->ebayListingProduct->getListing()->getStoreId();
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeLocal()) {
@@ -835,15 +838,15 @@ JS
             }
 
             $tempDataMethod = [
-                'service' => $this->getShippingServiceHumanTitle($service->getShippingValue())
+                'service' => $this->getShippingServiceHumanTitle($service->getShippingValue()),
             ];
 
             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled()) {
                 $tempDataMethod['cost'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCost($storeId);
+                                                  ->getCost($storeId);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCostAdditional($storeId);
+                                                             ->getCostAdditional($storeId);
             }
 
             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
@@ -862,7 +865,6 @@ JS
         $storeId = $this->ebayListingProduct->getListing()->getStoreId();
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
-
             /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $service */
 
             if (!$service->isShippingTypeInternational()) {
@@ -870,16 +872,16 @@ JS
             }
 
             $tempDataMethod = [
-                'service'   => $this->getShippingServiceHumanTitle($service->getShippingValue()),
-                'locations' => implode(', ', $this->getShippingLocationHumanTitle($service->getLocations()))
+                'service' => $this->getShippingServiceHumanTitle($service->getShippingValue()),
+                'locations' => implode(', ', $this->getShippingLocationHumanTitle($service->getLocations())),
             ];
 
             if ($this->ebayListingProduct->getShippingTemplate()->isInternationalShippingFlatEnabled()) {
                 $tempDataMethod['cost'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCost($storeId);
+                                                  ->getCost($storeId);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCostAdditional($storeId);
+                                                             ->getCostAdditional($storeId);
             }
 
             $services[] = $tempDataMethod;
@@ -909,17 +911,17 @@ JS
     public function getReturnPolicy()
     {
         $returnPolicyTitles = [
-            'returns_accepted'      => '',
-            'returns_within'        => '',
-            'refund'                => '',
+            'returns_accepted' => '',
+            'returns_within' => '',
+            'refund' => '',
             'shipping_cost_paid_by' => '',
 
-            'international_returns_accepted'      => '',
-            'international_returns_within'        => '',
-            'international_refund'                => '',
+            'international_returns_accepted' => '',
+            'international_returns_within' => '',
+            'international_refund' => '',
             'international_shipping_cost_paid_by' => '',
 
-            'description' => ''
+            'description' => '',
         ];
 
         $returnAccepted = $this->ebayListingProduct->getReturnTemplate()->getAccepted();

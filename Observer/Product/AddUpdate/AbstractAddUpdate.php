@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
-/**
- * Class \Ess\M2ePro\Observer\Product\AddUpdate\AbstractAddUpdate
- */
 abstract class AbstractAddUpdate extends \Ess\M2ePro\Observer\Product\AbstractProduct
 {
+    /** @var array  */
     private $affectedListingsProducts = [];
-
-    //########################################
 
     /**
      * @return bool
@@ -48,9 +44,9 @@ abstract class AbstractAddUpdate extends \Ess\M2ePro\Observer\Product\AbstractPr
         }
 
         return $this->affectedListingsProducts = $this->activeRecordFactory
-                                                      ->getObject('Listing\Product')
-                                                      ->getResource()
-                                                      ->getItemsByProductId($this->getProductId());
+            ->getObject('Listing\Product')
+            ->getResource()
+            ->getItemsByProductId($this->getProductId());
     }
 
     //########################################

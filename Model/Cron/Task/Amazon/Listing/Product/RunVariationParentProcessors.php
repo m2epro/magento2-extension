@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * @author     M2E Pro Developers Team
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
@@ -8,17 +8,12 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass
     as MassProcessor;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\RunVariationParentProcessors
- */
 class RunVariationParentProcessors extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/listing/product/run_variation_parent_processors';
-
-    //####################################
+    public const NICK = 'amazon/listing/product/run_variation_parent_processors';
 
     protected function performActions()
     {
@@ -45,6 +40,4 @@ class RunVariationParentProcessors extends \Ess\M2ePro\Model\Cron\Task\AbstractM
 
         $massProcessor->execute();
     }
-
-    //########################################
 }

@@ -16,10 +16,10 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
  */
 class Custom extends MagentoElement
 {
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     public $helperFactory;
 
-    /** @var \Magento\Framework\View\LayoutInterface  */
+    /** @var \Magento\Framework\View\LayoutInterface */
     public $layout;
 
     protected $element;
@@ -50,6 +50,7 @@ class Custom extends MagentoElement
     public function render(AbstractElement $element)
     {
         $this->element = $element;
+
         return $this->toHtml();
     }
 
@@ -57,13 +58,13 @@ class Custom extends MagentoElement
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $buttonBlock */
         $buttonBlock = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'label'   => $this->translationHelper->__('Remove'),
-                    'onclick' => 'EbayTemplateCategorySpecificsObj.removeCustomSpecific(this);',
-                    'class'   => 'action remove_custom_specific_button'
-                ]
-            );
+                                    ->setData(
+                                        [
+                                            'label' => $this->translationHelper->__('Remove'),
+                                            'onclick' => 'EbayTemplateCategorySpecificsObj.removeCustomSpecific(this);',
+                                            'class' => 'action remove_custom_specific_button',
+                                        ]
+                                    );
 
         return $buttonBlock->toHtml();
     }
@@ -72,14 +73,14 @@ class Custom extends MagentoElement
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $buttonBlock */
         $buttonBlock = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'id'      => 'add_custom_specific_button',
-                    'label'   => $this->translationHelper->__('Add Specific'),
-                    'onclick' => 'EbayTemplateCategorySpecificsObj.addCustomSpecificRow();',
-                    'class'   => 'action-primary add'
-                ]
-            );
+                                    ->setData(
+                                        [
+                                            'id' => 'add_custom_specific_button',
+                                            'label' => $this->translationHelper->__('Add Specific'),
+                                            'onclick' => 'EbayTemplateCategorySpecificsObj.addCustomSpecificRow();',
+                                            'class' => 'action-primary add',
+                                        ]
+                                    );
 
         return $buttonBlock->toHtml();
     }

@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validat
  */
 class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
+    /** @var null  */
     private $skusInProcessing = null;
 
     //########################################
@@ -38,6 +39,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         $unifiedSku = $this->getUnifiedSku($sku);
         if ($this->checkSkuRequirements($unifiedSku)) {
             $this->setData('sku', $unifiedSku);
+
             return true;
         }
 
@@ -47,6 +49,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
             $unifiedBaseSku = $this->getUnifiedSku($baseSku);
             if ($this->checkSkuRequirements($unifiedBaseSku)) {
                 $this->setData('sku', $unifiedBaseSku);
+
                 return true;
             }
         }
@@ -54,16 +57,19 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         $unifiedSku = $this->getUnifiedSku();
         if ($this->checkSkuRequirements($unifiedSku)) {
             $this->setData('sku', $unifiedSku);
+
             return true;
         }
 
         $randomSku = $this->getRandomSku();
         if ($this->checkSkuRequirements($randomSku)) {
             $this->setData('sku', $randomSku);
+
             return true;
         }
 
         $this->addMessage('SKU generating is not successful.');
+
         return false;
     }
 
@@ -80,20 +86,22 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     private function getUnifiedSku($prefix = 'SKU')
     {
-        return $prefix.'_'.$this->getListingProduct()->getProductId().'_'.$this->getListingProduct()->getId();
+        return $prefix . '_' . $this->getListingProduct()->getProductId() . '_' . $this->getListingProduct()->getId();
     }
 
     private function getRandomSku()
     {
-        $hash = sha1(rand(0, 10000).microtime(1));
-        return $this->getUnifiedSku().'_'.substr($hash, 0, 10);
+        $hash = sha1(rand(0, 10000) . microtime(1));
+
+        return $this->getUnifiedSku() . '_' . substr($hash, 0, 10);
     }
 
     //########################################
 
     private function checkSkuRequirements($sku)
     {
-        if ($sku>\Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH
+        if (
+            $sku > \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH
         ) {
             return false;
         }
@@ -110,8 +118,11 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
     private function isExistInM2ePro($sku, $addMessages = false)
     {
         if ($this->isAlreadyInProcessing($sku)) {
-            $addMessages && $this->addMessage('Another Product with the same SKU is being Listed simultaneously
-                                with this one. Please change the SKU or enable the Option Generate Merchant SKU.');
+            $addMessages && $this->addMessage(
+                'Another Product with the same SKU is being Listed simultaneously
+                                with this one. Please change the SKU or enable the Option Generate Merchant SKU.'
+            );
+
             return true;
         }
 
@@ -120,12 +131,16 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
                 'Product with the same SKU is found in other M2E Pro Listing that is created
                  from the same Merchant ID for the same Marketplace.'
             );
+
             return true;
         }
 
         if ($this->isExistInOtherListings($sku)) {
-            $addMessages && $this->addMessage('Product with the same SKU is found in M2E Pro Unmanaged Listing.
-                                            Please change the SKU or enable the Option Generate Merchant SKU.');
+            $addMessages && $this->addMessage(
+                'Product with the same SKU is found in M2E Pro Unmanaged Listing.
+                                            Please change the SKU or enable the Option Generate Merchant SKU.'
+            );
+
             return true;
         }
 
@@ -146,7 +161,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $collection->getSelect()->join(
-            ['l'=>$listingTable],
+            ['l' => $listingTable],
             '`main_table`.`listing_id` = `l`.`id`',
             []
         );
@@ -177,8 +192,8 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         }
 
         $processingActionListSkuCollection = $this->activeRecordFactory
-                                                  ->getObject('Amazon_Listing_Product_Action_ProcessingListSku')
-                                                  ->getCollection();
+            ->getObject('Amazon_Listing_Product_Action_ProcessingListSku')
+            ->getCollection();
         $processingActionListSkuCollection->addFieldToFilter('account_id', $this->getListing()->getAccountId());
 
         return $this->skusInProcessing = $processingActionListSkuCollection->getColumnValues('sku');

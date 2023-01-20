@@ -14,6 +14,6 @@ class ListingAccount extends InstallationEbay
 {
     public function execute()
     {
-        return $this->_redirect('*/ebay_listing_create', ['step' => 1,'wizard' => true,'clear' => true]);
+        return $this->_redirect('*/ebay_listing_create', ['step' => 1, 'wizard' => true, 'clear' => true]);
     }
 }

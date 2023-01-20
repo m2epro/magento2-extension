@@ -45,6 +45,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         if ($this->getRequest()->getParam('clear')) {
             $this->clearSession();
             $this->getRequest()->setParam('clear', null);
+
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
@@ -71,7 +72,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                         $this->stepOneSourceCategories();
                         break;
                     default:
-                        return $this->_redirect('*/*/index', ['_current' => true,'step' => 1]);
+                        return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
                 }
                 break;
             case 3:
@@ -84,7 +85,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                 $this->review();
                 break;
             default:
-                return $this->_redirect('*/*/index', ['_current' => true,'step' => 1]);
+                return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
         }
 
         return $this->getResult();
@@ -121,6 +122,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         if ($this->getRequest()->getParam('clear')) {
             $this->clearSession();
             $this->getRequest()->setParam('clear', null);
+
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
@@ -143,9 +145,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $grid = $this->getLayout()
-                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product\Grid::class);
+                         ->createBlock(
+                             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product\Grid::class
+                         );
 
             $this->setAjaxContent($grid->toHtml());
+
             return;
         }
 
@@ -168,6 +173,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         if ($this->getRequest()->getParam('clear')) {
             $this->clearSession();
             $this->getRequest()->setParam('clear', null);
+
             return $this->_redirect('*/*/*', ['_current' => true]);
         }
 
@@ -198,7 +204,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
             /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid $grid */
             $grid = $this->getLayout()
-                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid::class);
+                         ->createBlock(
+                             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid::class
+                         );
 
             $grid->setSelectedIds($selectedProductsIds);
             $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
@@ -211,7 +219,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->setPageHelpLink('x/tgMVB');
 
         $gridContainer = $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category::class);
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category::class
+                              );
         $this->addContent($gridContainer);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree $treeBlock */
@@ -249,6 +259,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         if (empty($listingProductsIds)) {
             $this->_redirect('*/amazon_listing/view', ['id' => $this->getRequest()->getParam('id')]);
+
             return;
         }
 
@@ -281,6 +292,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         if (empty($listingProductsIds)) {
             $this->_redirect('*/amazon_listing/view', ['id' => $this->getRequest()->getParam('id')]);
+
             return;
         }
 
@@ -301,7 +313,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
         } else {
             $this->getListing()
-                ->setSetting('additional_data', 'adding_listing_products_ids', $listingProductsIds)->save();
+                 ->setSetting('additional_data', 'adding_listing_products_ids', $listingProductsIds)->save();
 
             $this->sessionHelper->setValue('temp_products', []);
         }
@@ -348,8 +360,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
     protected function setRuleData($prefix)
     {
         $listingData = $this->globalDataHelper
-                            ->getValue('listing_for_products_add')
-                            ->getData();
+            ->getValue('listing_for_products_add')
+            ->getData();
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
         $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';

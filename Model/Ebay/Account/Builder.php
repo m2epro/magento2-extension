@@ -48,7 +48,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'token_session',
             'token_expired_date',
             'sell_api_token_session',
-            'sell_api_token_expired_date'
+            'sell_api_token_expired_date',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -60,7 +60,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         // ---------------------------------------
         $keys = [
             'other_listings_synchronization',
-            'other_listings_mapping_mode'
+            'other_listings_mapping_mode',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -69,9 +69,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         }
 
         $marketplacesIds = $this->activeRecordFactory->getObject('Marketplace')->getCollection()
-            ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-            ->getColumnValues('id');
+                                                     ->addFieldToFilter(
+                                                         'component_mode',
+                                                         \Ess\M2ePro\Helper\Component\Ebay::NICK
+                                                     )
+                                                     ->addFieldToFilter(
+                                                         'status',
+                                                         \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE
+                                                     )
+                                                     ->getColumnValues('id');
 
         $marketplacesData = [];
         if ($this->getModel()->getId()) {
@@ -103,7 +109,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'mapping_item_id_mode',
             'mapping_item_id_priority',
-            'mapping_item_id_attribute'
+            'mapping_item_id_attribute',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -121,7 +127,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_sku_mode'])) {
             $mappingSettings['sku']['mode'] = (int)$tempData['mapping_sku_mode'];
 
-            if ($tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT ||
+            if (
+                $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT ||
                 $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE ||
                 $tempData['mapping_sku_mode'] == Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID
             ) {
@@ -136,7 +143,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_title_mode'])) {
             $mappingSettings['title']['mode'] = (int)$tempData['mapping_title_mode'];
 
-            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
+            if (
+                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
                 $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
             ) {
                 $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
@@ -176,7 +184,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'mode',
             'store_mode',
-            'store_id'
+            'store_id',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -194,7 +202,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'product_mode',
             'product_tax_class_id',
-            'store_id'
+            'store_id',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -214,7 +222,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $prefixKeys = [
             'prefix',
-            'use_marketplace_prefix'
+            'use_marketplace_prefix',
         ];
         $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {
@@ -230,7 +238,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             ? $this->rawData['magento_orders_settings'][$tempKey] : [];
 
         $keys = [
-            'mode'
+            'mode',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -245,7 +253,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             ? $this->rawData['magento_orders_settings'][$tempKey] : [];
 
         $keys = [
-            'mode'
+            'mode',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -277,7 +285,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempSettings['mode'])) {
             $notificationsKeys = [
                 'order_created',
-                'invoice_created'
+                'invoice_created',
             ];
             $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
             foreach ($notificationsKeys as $key) {
@@ -295,7 +303,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'new',
             'paid',
-            'shipped'
+            'shipped',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -345,7 +353,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'create_magento_invoice',
             'create_magento_shipment',
-            'skip_evtin'
+            'skip_evtin',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -358,7 +366,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'feedbacks_receive',
             'feedbacks_auto_response',
-            'feedbacks_auto_response_only_positive'
+            'feedbacks_auto_response_only_positive',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -375,66 +383,66 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData(): array
     {
         return [
-            'title'                       => '',
-            'user_id'                     => '',
-            'mode'                        => Account::MODE_PRODUCTION,
-            'server_hash'                 => '',
-            'token_session'               => '',
-            'token_expired_date'          => '',
-            'sell_api_token_session'      => '',
+            'title' => '',
+            'user_id' => '',
+            'mode' => Account::MODE_PRODUCTION,
+            'server_hash' => '',
+            'token_session' => '',
+            'token_expired_date' => '',
+            'sell_api_token_session' => '',
             'sell_api_token_expired_date' => '',
 
-            'other_listings_synchronization'  => 1,
-            'other_listings_mapping_mode'     => 0,
+            'other_listings_synchronization' => 1,
+            'other_listings_mapping_mode' => 0,
             'other_listings_mapping_settings' => [],
 
             'magento_orders_settings' => [
-                'listing'                  => [
-                    'mode'       => 1,
+                'listing' => [
+                    'mode' => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id'   => null
+                    'store_id' => null,
                 ],
-                'listing_other'            => [
-                    'mode'                 => 1,
-                    'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
+                'listing_other' => [
+                    'mode' => 1,
+                    'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id'             => null,
+                    'store_id' => null,
                 ],
-                'number'                   => [
+                'number' => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
-                        'prefix'                 => '',
+                        'prefix' => '',
                         'use_marketplace_prefix' => 0,
                     ],
                 ],
-                'customer'                 => [
-                    'mode'                 => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id'                   => null,
-                    'website_id'           => null,
-                    'group_id'             => null,
-                    'notifications'        => [
+                'customer' => [
+                    'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
+                    'id' => null,
+                    'website_id' => null,
+                    'group_id' => null,
+                    'notifications' => [
                         'invoice_created' => false,
-                        'order_created'   => false
+                        'order_created' => false,
                     ],
                     'billing_address_mode' =>
-                        Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT
+                        Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT,
                 ],
-                'creation'                 => [
+                'creation' => [
                     'mode' => Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID,
                 ],
-                'tax'                      => [
-                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
+                'tax' => [
+                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
                 ],
-                'status_mapping'           => [
-                    'mode'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
-                    'new'     => Account::MAGENTO_ORDERS_STATUS_MAPPING_NEW,
-                    'paid'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_PAID,
-                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED
+                'status_mapping' => [
+                    'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
+                    'new' => Account::MAGENTO_ORDERS_STATUS_MAPPING_NEW,
+                    'paid' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PAID,
+                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
                 ],
-                'qty_reservation'          => [
-                    'days' => 1
+                'qty_reservation' => [
+                    'days' => 1,
                 ],
-                'refund_and_cancellation'  => [
+                'refund_and_cancellation' => [
                     'refund_mode' => 0,
                 ],
                 'shipping_information' => [
@@ -442,18 +450,18 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ],
             ],
 
-            'create_magento_invoice'  => 1,
+            'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,
-            'skip_evtin'              => 0,
+            'skip_evtin' => 0,
 
-            'ebay_store_title'              => '',
-            'ebay_store_url'                => '',
+            'ebay_store_title' => '',
+            'ebay_store_url' => '',
             'ebay_store_subscription_level' => '',
-            'ebay_store_description'        => '',
+            'ebay_store_description' => '',
 
-            'feedbacks_receive'                     => 0,
-            'feedbacks_auto_response'               => Account::FEEDBACKS_AUTO_RESPONSE_NONE,
-            'feedbacks_auto_response_only_positive' => 0
+            'feedbacks_receive' => 0,
+            'feedbacks_auto_response' => Account::FEEDBACKS_AUTO_RESPONSE_NONE,
+            'feedbacks_auto_response_only_positive' => 0,
         ];
     }
 }

@@ -60,6 +60,7 @@ HTML;
 
         if ($tooltip === null) {
             $element->addClass('m2epro-field-without-tooltip');
+
             return parent::render($element);
         }
 
@@ -77,9 +78,9 @@ HTML;
     /**
      * @param array|string $data
      * @param null $allowedTags
+     *
      * @return array|string
      * @throws \Ess\M2ePro\Model\Exception\Logic
-     *
      * Starting from version 2.2.3 Magento forcibly escapes content of tooltips. But we are using HTML there
      */
     public function escapeHtml($data, $allowedTags = null)

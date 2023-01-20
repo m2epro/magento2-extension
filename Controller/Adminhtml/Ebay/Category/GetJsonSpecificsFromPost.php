@@ -13,7 +13,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
  */
 class GetJsonSpecificsFromPost extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 {
-
     //########################################
 
     public function execute()

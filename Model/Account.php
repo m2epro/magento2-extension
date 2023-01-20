@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Model;
 
-use \Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
-use \Ess\M2ePro\Model\Ebay\Account as EbayAccount;
-use \Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
+use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
+use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
+use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
 
 /**
  * @method AmazonAccount|EbayAccount|WalmartAccount getChildObject()
@@ -29,6 +29,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     /**
      * @param bool $onlyMainConditions
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -43,9 +44,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         }
 
         return (bool)$this->activeRecordFactory->getObject('Listing')
-                            ->getCollection()
-                            ->addFieldToFilter('account_id', $this->getId())
-                            ->getSize();
+                                               ->getCollection()
+                                               ->addFieldToFilter('account_id', $this->getId())
+                                               ->getSize();
     }
 
     //########################################
@@ -53,6 +54,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+
         return parent::save($reloadOnCreate);
     }
 
@@ -84,6 +86,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->deleteChildInstance();
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+
         return parent::delete();
     }
 
@@ -92,6 +95,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Listing\Other[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -112,6 +116,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

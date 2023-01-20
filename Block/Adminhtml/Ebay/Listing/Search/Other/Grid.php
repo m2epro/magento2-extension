@@ -41,33 +41,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
         $listingOtherCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns([
-            'id'                    =>'main_table.id',
-            'store_id'              => new \Zend_Db_Expr(0),
-            'account_id'            => 'main_table.account_id',
-            'marketplace_id'        => 'main_table.marketplace_id',
-            'entity_id'             => 'main_table.product_id',
-            'name'                  => 'second_table.title',
-            'sku'                   => 'second_table.sku',
-            'currency'              => 'second_table.currency',
-            'item_id'               => 'second_table.item_id',
-            'listing_product_id'    => new \Zend_Db_Expr('NULL'),
-            'listing_other_id'      => 'main_table.id',
-            'additional_data'       => new \Zend_Db_Expr('NULL'),
-            'status'                => 'main_table.status',
-            'online_sku'            => new \Zend_Db_Expr('NULL'),
-            'online_title'          => new \Zend_Db_Expr('NULL'),
-            'online_qty'            => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
-            'online_qty_sold'       => 'second_table.online_qty_sold',
-            'online_bids'           => new \Zend_Db_Expr('NULL'),
-            'online_start_price'    => new \Zend_Db_Expr('NULL'),
-            'online_current_price'  => 'second_table.online_price',
-            'online_reserve_price'  => new \Zend_Db_Expr('NULL'),
+            'id' => 'main_table.id',
+            'store_id' => new \Zend_Db_Expr(0),
+            'account_id' => 'main_table.account_id',
+            'marketplace_id' => 'main_table.marketplace_id',
+            'entity_id' => 'main_table.product_id',
+            'name' => 'second_table.title',
+            'sku' => 'second_table.sku',
+            'currency' => 'second_table.currency',
+            'item_id' => 'second_table.item_id',
+            'listing_product_id' => new \Zend_Db_Expr('NULL'),
+            'listing_other_id' => 'main_table.id',
+            'additional_data' => new \Zend_Db_Expr('NULL'),
+            'status' => 'main_table.status',
+            'online_sku' => new \Zend_Db_Expr('NULL'),
+            'online_title' => new \Zend_Db_Expr('NULL'),
+            'online_qty' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
+            'online_qty_sold' => 'second_table.online_qty_sold',
+            'online_bids' => new \Zend_Db_Expr('NULL'),
+            'online_start_price' => new \Zend_Db_Expr('NULL'),
+            'online_current_price' => 'second_table.online_price',
+            'online_reserve_price' => new \Zend_Db_Expr('NULL'),
             'online_buyitnow_price' => new \Zend_Db_Expr('NULL'),
-            'listing_id'            => new \Zend_Db_Expr('NULL'),
-            'listing_title'         => new \Zend_Db_Expr('NULL'),
+            'listing_id' => new \Zend_Db_Expr('NULL'),
+            'listing_title' => new \Zend_Db_Expr('NULL'),
         ]);
 
-        $accountId     = (int)$this->getRequest()->getParam('ebayAccount', false);
+        $accountId = (int)$this->getRequest()->getParam('ebayAccount', false);
         $marketplaceId = (int)$this->getRequest()->getParam('ebayMarketplace', false);
 
         if ($accountId) {
@@ -79,6 +79,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
         }
 
         $this->setCollection($listingOtherCollection);
+
         return parent::_prepareCollection();
     }
 
@@ -98,18 +99,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
         $html = '<strong>' . $this->__('Account') . ':</strong>'
             . '&nbsp;' . $account->getTitle() . '<br/>'
-            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '<strong>' . $this->__('Marketplace') . ':</strong>'
             . '&nbsp;' . $marketplace->getTitle();
 
         $sku = $row->getData('sku');
         if ($row->getChildObject() && ($sku === null || $sku === '')) {
-             $sku = $row->getChildObject()->getData('sku');
+            $sku = $row->getChildObject()->getData('sku');
         }
 
         if ($sku === null && $row->getData('product_id') !== null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('product_id'))
-                ->getSku();
+                                      ->setProductId($row->getData('product_id'))
+                                      ->getSku();
         }
 
         if ($sku === null) {
@@ -127,15 +128,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search\AbstractGrid
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $altTitle  = $this->dataHelper->escapeHtml($this->__('Go to Listing'));
-        $iconSrc   = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
+        $altTitle = $this->dataHelper->escapeHtml($this->__('Go to Listing'));
+        $iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/goto_listing.png');
 
         $manageUrl = $this->getUrl('*/ebay_listing_other/view/', [
-            'account'     => $row->getData('account_id'),
+            'account' => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
-            'filter'      => base64_encode(
+            'filter' => base64_encode(
                 'item_id=' . $row->getData('item_id')
-            )
+            ),
         ]);
 
         return <<<HTML
@@ -166,7 +167,7 @@ HTML;
             return;
         }
 
-        $collection->getSelect()->where('second_table.title LIKE ? OR second_table.sku LIKE ?', '%'.$value.'%');
+        $collection->getSelect()->where('second_table.title LIKE ? OR second_table.sku LIKE ?', '%' . $value . '%');
     }
 
     protected function callbackFilterOnlineQty($collection, $column)
@@ -177,9 +178,12 @@ HTML;
             return;
         }
 
-        $collection->addFieldToFilter(new \Zend_Db_Expr(
-            'second_table.online_qty - second_table.online_qty_sold'
-        ), $cond);
+        $collection->addFieldToFilter(
+            new \Zend_Db_Expr(
+                'second_table.online_qty - second_table.online_qty_sold'
+            ),
+            $cond
+        );
     }
 
     protected function callbackFilterPrice($collection, $column)

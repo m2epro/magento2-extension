@@ -41,8 +41,8 @@ class Recent extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             $this->getRequest()->getPost('marketplace_id'),
             [
                 'product_data_nick' => $this->getRequest()->getPost('product_data_nick'),
-                'browsenode_id'     => $this->getRequest()->getPost('browsenode_id'),
-                'path'              => $this->getRequest()->getPost('category_path')
+                'browsenode_id' => $this->getRequest()->getPost('browsenode_id'),
+                'path' => $this->getRequest()->getPost('category_path'),
             ]
         );
     }

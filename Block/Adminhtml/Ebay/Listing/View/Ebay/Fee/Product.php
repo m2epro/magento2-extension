@@ -55,6 +55,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $details->setData('product_name', $this->getData('product_name'));
 
         $this->setChild('details', $details);
+
         // ---------------------------------------
 
         return parent::_beforeToHtml();

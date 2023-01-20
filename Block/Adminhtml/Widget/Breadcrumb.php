@@ -24,6 +24,7 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function setContainerData(array $data)
     {
         $this->containerData = $data;
+
         return $this;
     }
 
@@ -40,6 +41,7 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function setSteps(array $steps)
     {
         $this->steps = $steps;
+
         return $this;
     }
 
@@ -51,6 +53,7 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     public function setSelectedStep($stepId)
     {
         $this->selectedStep = $stepId;
+
         return $this;
     }
 

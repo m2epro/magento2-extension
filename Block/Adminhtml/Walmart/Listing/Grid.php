@@ -24,7 +24,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        $this->walmartFactory          = $walmartFactory;
+        $this->walmartFactory = $walmartFactory;
         $this->moduleDatabaseStructure = $moduleDatabaseStructure;
         parent::__construct($viewHelper, $context, $backendHelper, $dataHelper, $data);
     }
@@ -75,16 +75,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         // join marketplace and accounts
         // ---------------------------------------
         $collection->getSelect()
-            ->join(
-                ['a'=> $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable()],
-                '(`a`.`id` = `main_table`.`account_id`)',
-                ['account_title'=>'title']
-            )
-            ->join(
-                ['m'=> $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
-                '(`m`.`id` = `main_table`.`marketplace_id`)',
-                ['marketplace_title'=>'title']
-            );
+                   ->join(
+                       ['a' => $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable()],
+                       '(`a`.`id` = `main_table`.`account_id`)',
+                       ['account_title' => 'title']
+                   )
+                   ->join(
+                       ['m' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
+                       '(`m`.`id` = `main_table`.`marketplace_id`)',
+                       ['marketplace_title' => 'title']
+                   );
         // ---------------------------------------
 
         $m2eproListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing');
@@ -102,11 +102,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 GROUP BY listing_id";
 
         $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('('.$sql.')'),
+            new \Zend_Db_Expr('(' . $sql . ')'),
             'main_table.id=t.listing_id',
             [
-                'products_total_count'    => 'products_total_count',
-                'products_active_count'   => 'products_active_count',
+                'products_total_count' => 'products_total_count',
+                'products_active_count' => 'products_active_count',
                 'products_inactive_count' => 'products_inactive_count',
             ]
         );
@@ -127,106 +127,106 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         return [
             'manageProducts' => [
                 'caption' => $this->__('Manage'),
-                'group'   => 'products_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/walmart_listing/view',
-                    'params' => ['back' => $backUrl]
-                ]
+                'group' => 'products_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/walmart_listing/view',
+                    'params' => ['back' => $backUrl],
+                ],
             ],
 
             'addProductsFromProductsList' => [
                 'caption' => $this->__('Add From Products List'),
-                'group'   => 'products_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/walmart_listing_product_add/index',
+                'group' => 'products_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/walmart_listing_product_add/index',
                     'params' => [
                         'back' => $backUrl,
                         'step' => 2,
-                        'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT
-                    ]
-                ]
+                        'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT,
+                    ],
+                ],
             ],
 
             'addProductsFromCategories' => [
                 'caption' => $this->__('Add From Categories'),
-                'group'   => 'products_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/walmart_listing_product_add/index',
+                'group' => 'products_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/walmart_listing_product_add/index',
                     'params' => [
                         'back' => $backUrl,
                         'step' => 2,
-                        'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY
-                    ]
-                ]
+                        'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY,
+                    ],
+                ],
             ],
 
             'automaticActions' => [
                 'caption' => $this->__('Auto Add/Remove Rules'),
-                'group'   => 'products_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/walmart_listing/view',
+                'group' => 'products_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/walmart_listing/view',
                     'params' => [
                         'back' => $backUrl,
-                        'auto_actions' => 1
-                    ]
-                ]
+                        'auto_actions' => 1,
+                    ],
+                ],
             ],
 
             'editListingTitle' => [
                 'caption' => $this->__('Title'),
-                'group'   => 'edit_actions',
+                'group' => 'edit_actions',
                 'confirm' => $this->__('Are you sure?'),
-                'field'   => 'id',
-                'onclick_action' => 'EditListingTitleObj.openPopup'
+                'field' => 'id',
+                'onclick_action' => 'EditListingTitleObj.openPopup',
             ],
 
             'editConfiguration' => [
                 'caption' => $this->__('Configuration'),
-                'group'   => 'edit_actions',
-                'field'   => 'id',
-                'url'     => [
-                    'base'   => '*/walmart_listing/edit',
-                    'params' => ['back' => $backUrl]
-                ]
+                'group' => 'edit_actions',
+                'field' => 'id',
+                'url' => [
+                    'base' => '*/walmart_listing/edit',
+                    'params' => ['back' => $backUrl],
+                ],
             ],
 
             'viewLog' => [
                 'caption' => $this->__('Logs & Events'),
-                'group'   => 'other',
-                'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
-                'url'     => [
-                    'base'   => '*/walmart_log_listing_product/index'
-                ]
+                'group' => 'other',
+                'field' => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
+                'url' => [
+                    'base' => '*/walmart_log_listing_product/index',
+                ],
             ],
 
             'clearLogs' => [
                 'caption' => $this->__('Clear Log'),
                 'confirm' => $this->__('Are you sure?'),
-                'group'   => 'other',
-                'field'   => 'id',
-                'url'     => [
+                'group' => 'other',
+                'field' => 'id',
+                'url' => [
                     'base' => '*/listing/clearLog',
                     'params' => [
-                        'back' => $backUrl
-                    ]
-                ]
+                        'back' => $backUrl,
+                    ],
+                ],
             ],
 
             'deleteListing' => [
                 'caption' => $this->__('Delete Listing'),
                 'confirm' => $this->__('Are you sure?'),
-                'group'   => 'other',
-                'field'   => 'id',
-                'url'     => [
+                'group' => 'other',
+                'field' => 'id',
+                'url' => [
                     'base' => '*/walmart_listing/delete',
                     'params' => [
-                        'back' => $backUrl
-                    ]
-                ]
+                        'back' => $backUrl,
+                    ],
+                ],
             ],
         ];
     }
@@ -235,7 +235,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<span id="listing_title_'.$row->getId().'">' .
+        $value = '<span id="listing_title_' . $row->getId() . '">' .
             $this->dataHelper->escapeHtml($value) .
             '</span>';
 
@@ -246,8 +246,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         $storeModel = $this->_storeManager->getStore($row->getStoreId());
         $storeView = $this->_storeManager->getWebsite($storeModel->getWebsiteId())->getName();
         if (strtolower($storeView) != 'admin') {
-            $storeView .= ' > '.$this->_storeManager->getGroup($storeModel->getStoreGroupId())->getName();
-            $storeView .= ' > '.$storeModel->getName();
+            $storeView .= ' > ' . $this->_storeManager->getGroup($storeModel->getStoreGroupId())->getName();
+            $storeView .= ' > ' . $storeModel->getName();
         } else {
             $storeView = $this->__('Admin (Default Values)');
         }
@@ -279,7 +279,7 @@ HTML;
 
         $collection->getSelect()->where(
             'main_table.title LIKE ? OR m.title LIKE ? OR a.title LIKE ?',
-            '%'. $value .'%'
+            '%' . $value . '%'
         );
     }
 
@@ -295,7 +295,7 @@ HTML;
             '*/walmart_listing/view',
             [
                 'id' => $row->getId(),
-                'back' => $backUrl
+                'back' => $backUrl,
             ]
         );
     }
@@ -314,7 +314,7 @@ HTML;
             'Cancel' => $this->__('Cancel'),
             'Save' => $this->__('Save'),
             'Edit Listing Title' => $this->__('Edit Listing Title'),
-            $uniqueTitleTxt => $this->__($uniqueTitleTxt)
+            $uniqueTitleTxt => $this->__($uniqueTitleTxt),
         ]);
 
         $component = \Ess\M2ePro\Helper\Component\Walmart::NICK;

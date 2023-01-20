@@ -44,14 +44,14 @@ class BulkUpdate extends \Ess\M2ePro\Plugin\AbstractPlugin
     {
         $productIds = $arguments[0];
         $websiteIds = $arguments[1];
-        $type       = $arguments[2];
+        $type = $arguments[2];
 
         $this->eventManager->dispatch(
             'catalog_product_website_update_before',
             [
                 'product_ids' => $productIds,
                 'website_ids' => $websiteIds,
-                'action'      => $type,
+                'action' => $type,
             ]
         );
 

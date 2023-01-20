@@ -26,6 +26,7 @@ class MsiNotificationPopupClose extends \Ess\M2ePro\Controller\Adminhtml\Base
     {
         $this->moduleHelper->getRegistry()->setValue('/view/msi/popup/shown/', 1);
         $this->setJsonContent(['status' => true]);
+
         return $this->getResult();
     }
 }

@@ -86,8 +86,7 @@ class InventoryStock
             ->andWhere('source.enabled = ?', 1)
             ->andWhere('product.entity_id IS NOT NULL')
             ->addGroup('issl.stock_id')
-            ->addGroup('isi.sku')
-        ;
+            ->addGroup('isi.sku');
 
         $reservedSubQuery = $this->queryBuilder
             ->makeSubQuery()
@@ -102,9 +101,8 @@ class InventoryStock
                 'cpe.sku = ir.sku'
             )
             ->addGroup('ir.stock_id')
-            ->addGroup('cpe.sku')
+            ->addGroup('cpe.sku');
 
-        ;
         return $this->queryBuilder
             ->makeSubQuery()
             ->addSelect('product_id', 'stock.product_id')
@@ -115,8 +113,7 @@ class InventoryStock
                 'reserved',
                 $reservedSubQuery,
                 'reserved.sku = stock.sku AND reserved.stock_id = stock.stock_id'
-            )
-        ;
+            );
     }
 
     /**

@@ -42,12 +42,10 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
         $childListingsProducts = [];
 
         foreach ($listingsProducts as $index => $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
             $walmartListingProduct = $listingProduct->getChildObject();
 
             if (!$walmartListingProduct->getVariationManager()->isRelationParentType()) {
-
                 /** @var \Ess\M2ePro\Model\Listing\Product\LockManager $lockManager */
                 $lockManager = $this->modelFactory->getObject('Listing_Product_LockManager');
                 $lockManager->setListingProduct($listingProduct);
@@ -71,7 +69,6 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
             $isParentLocked = false;
 
             foreach ($tempChildListingsProducts as $tempChildListingProduct) {
-
                 /** @var \Ess\M2ePro\Model\Listing\Product\LockManager $lockManager */
                 $lockManager = $this->modelFactory->getObject('Listing_Product_LockManager');
                 $lockManager->setListingProduct($tempChildListingProduct);
@@ -90,7 +87,7 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
             if (!$isParentLocked) {
                 // @codingStandardsIgnoreLine
-                $childListingsProducts          = array_merge($childListingsProducts, $tempChildListingsProducts);
+                $childListingsProducts = array_merge($childListingsProducts, $tempChildListingsProducts);
                 $parentListingsProducts[$index] = $listingProduct;
             }
         }
@@ -99,9 +96,11 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
         if (empty($listingsProducts) && empty($parentListingsProducts)) {
             $this->setJsonContent(['result' => 'error', 'action_id' => $logsActionId]);
+
             return $this->getResult();
         }
 
+        /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
         $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
 
         foreach ($listingsProducts as $listingProduct) {
@@ -137,6 +136,7 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
         }
 
         $this->setJsonContent(['result' => 'success']);
+
         return $this->getResult();
     }
 }

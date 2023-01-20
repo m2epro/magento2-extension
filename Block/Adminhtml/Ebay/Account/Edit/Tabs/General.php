@@ -53,7 +53,8 @@ class General extends AbstractForm
         $account = $this->globalDataHelper->getValue('edit_account');
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
-        if (empty($formData['user_id']) && isset($formData['info']) &&
+        if (
+            empty($formData['user_id']) && isset($formData['info']) &&
             $ebayInfo = $this->dataHelper->jsonDecode($formData['info'])
         ) {
             !empty($ebayInfo['UserID']) && $formData['user_id'] = (string)$ebayInfo['UserID'];
@@ -80,7 +81,8 @@ class General extends AbstractForm
         $form = $this->_formFactory->create();
 
         if (!$isEdit) {
-            $content = $this->__(<<<HTML
+            $content = $this->__(
+                <<<HTML
 Add an eBay Account to M2E Pro by choosing the eBay Environment and granting access to your eBay Account.<br/><br/>
 First choose the <b>Environment</b> of the eBay Account you want to work in.
 If you want to add an eBay Account to list for real on Marketplaces,
@@ -97,21 +99,24 @@ To register for a Sandbox Account, register at
 HTML
             );
         } else {
-            $content = $this->__(<<<HTML
+            $content = $this->__(
+                <<<HTML
 This Page shows the Environment for your eBay Account and details of the authorisation for M2E Pro to connect
 to your eBay Account.<br/><br/>
 If your token has expired or is not activated, click <b>Get Token</b>.<br/><br/>
 More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>.
 HTML
-                , $this->supportHelper->getDocumentationArticleUrl('x/Uv8UB'));
+                ,
+                $this->supportHelper->getDocumentationArticleUrl('x/Uv8UB')
+            );
         }
 
         $form->addField(
             'ebay_accounts_general',
             self::HELP_BLOCK,
             [
-                'content' => $content
+                'content' => $content,
             ]
         );
 
@@ -119,7 +124,7 @@ HTML
             'general',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -132,7 +137,7 @@ HTML
                 'label' => $this->__('Title'),
                 'required' => true,
                 'value' => $formData['title'],
-                'tooltip' => $this->__('Title or Identifier of eBay Account for your internal use.')
+                'tooltip' => $this->__('Title or Identifier of eBay Account for your internal use.'),
             ]
         );
 
@@ -140,7 +145,7 @@ HTML
             'access_detaails',
             [
                 'legend' => $this->__('Access Details'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -158,7 +163,7 @@ HTML
                         ),
                         'class' => 'control-value external-link',
                         'target' => '_blank',
-                        'style' => 'text-decoration: underline;'
+                        'style' => 'text-decoration: underline;',
                     ]
                 );
             } else {
@@ -167,7 +172,7 @@ HTML
                     'label',
                     [
                         'label' => $this->__('eBay User ID'),
-                        'value' => $formData['title']
+                        'value' => $formData['title'],
                     ]
                 );
             }
@@ -189,8 +194,10 @@ HTML
                     'Choose \'Production (Live)\' to use an eBay Account to list for real on Marketplaces.
                     <br/>Choose \'Sandbox (Test)\' to use an eBay Sandbox Account for testing purposes.'
                 )
-                    : $this->__('<b>Production (Live):</b> an eBay Account Listing for real on Marketplaces.
-                                <br/><b>Sandbox (Test):</b> an eBay Sandbox Account for testing purposes.')
+                    : $this->__(
+                        '<b>Production (Live):</b> an eBay Account Listing for real on Marketplaces.
+                                <br/><b>Sandbox (Test):</b> an eBay Sandbox Account for testing purposes.'
+                    ),
             ]
         );
 
@@ -200,7 +207,7 @@ HTML
                 'hidden',
                 [
                     'name' => 'mode',
-                    'value' => $formData['mode']
+                    'value' => $formData['mode'],
                 ]
             );
         }
@@ -210,7 +217,7 @@ HTML
                 'trading_api_details',
                 [
                     'legend' => $this->__('Trading API Details'),
-                    'collapsable' => false
+                    'collapsable' => false,
                 ]
             );
         }
@@ -226,7 +233,7 @@ HTML
                 'note' => $this->__(
                     'You need to finish the token process within 5 minutes.<br/>
                     If not, just click <b>Get Token</b> and try again.'
-                )
+                ),
             ]
         );
 
@@ -237,7 +244,7 @@ HTML
                 'label' => $this->__('Activated'),
                 'value' => $formData['token_session'] != '' ? $this->__('Yes') : $this->__('No'),
                 'css_class' => !$formData['token_session'] || !$formData['token_expired_date'] ?
-                    'no-margin-bottom' : ''
+                    'no-margin-bottom' : '',
             ]
         );
 
@@ -247,7 +254,7 @@ HTML
                 'label',
                 [
                     'label' => $this->__('Expiration Date'),
-                    'value' => $formData['token_expired_date']
+                    'value' => $formData['token_expired_date'],
                 ]
             );
         }
@@ -257,7 +264,7 @@ HTML
             'hidden',
             [
                 'name' => 'token_expired_date',
-                'value' => $formData['token_expired_date']
+                'value' => $formData['token_expired_date'],
             ]
         );
 
@@ -269,17 +276,16 @@ HTML
                 'name' => 'token_session',
                 'value' => $formData['token_session'],
                 'class' => 'M2ePro-account-token-session',
-                'style' => 'visibility: hidden'
+                'style' => 'visibility: hidden',
             ]
         );
 
         if ($this->isSellApiMode()) {
-
             $fieldset = $form->addFieldset(
                 'Sell API Details',
                 [
                     'legend' => $this->__('Sell API Details'),
-                    'collapsable' => false
+                    'collapsable' => false,
                 ]
             );
 
@@ -294,7 +300,7 @@ HTML
                     'note' => $this->__(
                         'You need to finish the token process within 5 minutes.<br/>
                         If not, just click <b>Get Token</b> and try again.'
-                    )
+                    ),
                 ]
             );
 
@@ -305,7 +311,7 @@ HTML
                     'label' => $this->__('Activated'),
                     'value' => $formData['sell_api_token_session'] != '' ? $this->__('Yes') : $this->__('No'),
                     'css_class' => !$formData['sell_api_token_session'] ||
-                    !$formData['token_expired_date'] ? 'no-margin-bottom' : ''
+                    !$formData['token_expired_date'] ? 'no-margin-bottom' : '',
                 ]
             );
 
@@ -315,7 +321,7 @@ HTML
                     'label',
                     [
                         'label' => $this->__('Expiration Date'),
-                        'value' => $formData['sell_api_token_expired_date']
+                        'value' => $formData['sell_api_token_expired_date'],
                     ]
                 );
             }
@@ -325,7 +331,7 @@ HTML
                 'hidden',
                 [
                     'name' => 'sell_api_token_expired_date',
-                    'value' => $formData['sell_api_token_expired_date']
+                    'value' => $formData['sell_api_token_expired_date'],
                 ]
             );
 
@@ -336,10 +342,9 @@ HTML
                     'label' => '',
                     'name' => 'sell_api_token_session',
                     'value' => $formData['sell_api_token_session'],
-                    'style' => 'visibility: hidden'
+                    'style' => 'visibility: hidden',
                 ]
             );
-
         }
 
         $this->css->add('label.mage-error[for="token_session"] { top: 0 !important; }');
@@ -368,7 +373,8 @@ HTML
         $id = $this->getRequest()->getParam('id');
         $this->js->add("M2ePro.formData.id = '$id';");
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Account',
     ], function(){

@@ -21,7 +21,7 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     protected function getActionData()
     {
         return [
-            'sku' => $this->getAmazonListingProduct()->getSku()
+            'sku' => $this->getAmazonListingProduct()->getSku(),
         ];
     }
 

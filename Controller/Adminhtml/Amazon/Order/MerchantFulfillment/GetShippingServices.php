@@ -65,7 +65,7 @@ class GetShippingServices extends Order
             'ship_from_address_address_line_1',
             'ship_from_address_address_line_2',
             'delivery_experience',
-            'carrier_will_pickup'
+            'carrier_will_pickup',
         ];
 
         $fulfillmentCachedData = array_intersect_key($post, array_flip($fulfillmentCachedFields));
@@ -87,32 +87,39 @@ class GetShippingServices extends Order
         foreach ($orderItems as $parentOrderItem) {
             $orderItem = $parentOrderItem->getChildObject();
             $preparedOrderItems[] = [
-                'id'  => $orderItem->getAmazonOrderItemId(),
-                'qty' => $orderItem->getQtyPurchased()
+                'id' => $orderItem->getAmazonOrderItemId(),
+                'qty' => $orderItem->getQtyPurchased(),
             ];
         }
 
         $preparedPackageData = [];
         $isVirtualPredefinedPackage = false;
-        if (isset($post['package_dimension_predefined']) &&
-            strpos($post['package_dimension_predefined'], MerchantFulfillment::VIRTUAL_PREDEFINED_PACKAGE) !== false) {
+        if (
+            isset($post['package_dimension_predefined']) &&
+            strpos($post['package_dimension_predefined'], MerchantFulfillment::VIRTUAL_PREDEFINED_PACKAGE) !== false
+        ) {
             $isVirtualPredefinedPackage = true;
         }
 
-        if ($post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_PREDEFINED &&
-            !$isVirtualPredefinedPackage) {
+        if (
+            $post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_PREDEFINED &&
+            !$isVirtualPredefinedPackage
+        ) {
             $preparedPackageData['predefined_dimensions'] = $post['package_dimension_predefined'];
-        } elseif ($post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_CUSTOM ||
+        } elseif (
+            $post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_CUSTOM ||
             ($post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_PREDEFINED &&
-                $isVirtualPredefinedPackage)) {
+                $isVirtualPredefinedPackage)
+        ) {
             $preparedPackageData['dimensions'] = [];
             $preparedPackageData['dimensions']['length'] = $post['package_dimension_length'];
             $preparedPackageData['dimensions']['width'] = $post['package_dimension_width'];
             $preparedPackageData['dimensions']['height'] = $post['package_dimension_height'];
             $preparedPackageData['dimensions']['unit_of_measure'] = $post['package_dimension_measure'];
-        } elseif ($post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_CUSTOM_ATTRIBUTE &&
-            $order->getItemsCollection()->count() === 1) {
-
+        } elseif (
+            $post['package_dimension_source'] == MerchantFulfillment::DIMENSION_SOURCE_CUSTOM_ATTRIBUTE &&
+            $order->getItemsCollection()->count() === 1
+        ) {
             /** @var \Ess\M2ePro\Model\Order\Item $item */
             $item = $order->getItemsCollection()->getFirstItem();
 
@@ -131,32 +138,32 @@ class GetShippingServices extends Order
 
         if ($post['package_weight_source'] == MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_VALUE) {
             $preparedPackageData['weight'] = [
-                'value'           => $post['package_weight_custom_value'],
-                'unit_of_measure' => $post['package_weight_measure']
+                'value' => $post['package_weight_custom_value'],
+                'unit_of_measure' => $post['package_weight_measure'],
             ];
         } elseif ($post['package_weight_source'] == MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_ATTRIBUTE) {
             /** @var \Ess\M2ePro\Model\Order\Item $item */
             $item = $order->getItemsCollection()->getFirstItem();
 
             $preparedPackageData['weight'] = [
-                'value'           => $item->getMagentoProduct()->getAttributeValue(
+                'value' => $item->getMagentoProduct()->getAttributeValue(
                     $post['package_weight_custom_attribute']
                 ),
-                'unit_of_measure' => $post['package_weight_measure']
+                'unit_of_measure' => $post['package_weight_measure'],
             ];
         }
 
         $preparedShipmentData = [];
         $preparedShipmentData['info'] = [
-            'name'  => $post['ship_from_address_name'],
+            'name' => $post['ship_from_address_name'],
             'email' => $post['ship_from_address_email'],
             'phone' => $post['ship_from_address_phone'],
         ];
         $preparedShipmentData['physical'] = [
-            'country'     => $post['ship_from_address_country'],
-            'city'        => $post['ship_from_address_city'],
+            'country' => $post['ship_from_address_country'],
+            'city' => $post['ship_from_address_city'],
             'postal_code' => $post['ship_from_address_postal_code'],
-            'address_1'   => $post['ship_from_address_address_line_1'],
+            'address_1' => $post['ship_from_address_address_line_1'],
         ];
 
         if ($post['ship_from_address_region_state']) {
@@ -168,16 +175,15 @@ class GetShippingServices extends Order
         }
 
         $requestData = [
-            'order_id'                    => $order->getChildObject()->getAmazonOrderId(),
-            'order_items'                 => $preparedOrderItems,
-            'package'                     => $preparedPackageData,
-            'shipment_location'           => $preparedShipmentData,
+            'order_id' => $order->getChildObject()->getAmazonOrderId(),
+            'order_items' => $preparedOrderItems,
+            'package' => $preparedPackageData,
+            'shipment_location' => $preparedShipmentData,
             'delivery_confirmation_level' => $post['delivery_experience'],
-            'carrier_pickup'              => $post['carrier_will_pickup']
+            'carrier_pickup' => $post['carrier_will_pickup'],
         ];
 
         if ($post['must_arrive_by_date']) {
-
             $mustArriveByDateTimestamp = (int)$this->helperData->createGmtDateTime(
                 $post['must_arrive_by_date']
             )->format('U');
@@ -194,9 +200,12 @@ class GetShippingServices extends Order
         $this->getHelper('Data_Session')->setValue('fulfillment_request_data', $requestData);
 
         $popup = $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\ShippingServices::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\ShippingServices::class
+                      );
 
         try {
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'shipment',

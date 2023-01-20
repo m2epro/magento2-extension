@@ -20,12 +20,12 @@ class GetChildCategories extends Description
     public function execute()
     {
         $select = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
-            )
-            ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
-            ->order('title ASC');
+                                           ->from(
+                                               $this->getHelper('Module_Database_Structure')
+                                                    ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
+                                           )
+                                           ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
+                                           ->order('title ASC');
 
         $parentCategoryId = $this->getRequest()->getPost('parent_category_id');
         empty($parentCategoryId) ? $select->where('parent_category_id IS NULL')
@@ -43,6 +43,7 @@ class GetChildCategories extends Description
 
         ksort($tempCategories);
         $this->setJsonContent(array_values($tempCategories));
+
         return $this->getResult();
     }
 

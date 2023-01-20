@@ -14,9 +14,9 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
  */
 class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const TYPE_ADD    = 'add';
-    const TYPE_UPDATE = 'update';
-    const TYPE_DELETE = 'delete';
+    public const TYPE_ADD = 'add';
+    public const TYPE_UPDATE = 'update';
+    public const TYPE_DELETE = 'delete';
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct = null;
@@ -40,6 +40,7 @@ class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -68,6 +69,7 @@ class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setProcessing(\Ess\M2ePro\Model\Processing $processing)
     {
         $this->processing = $processing;
+
         return $this;
     }
 
@@ -96,6 +98,7 @@ class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function setRequestPendingSingle(\Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle)
     {
         $this->requestPendingSingle = $requestPendingSingle;
+
         return $this;
     }
 

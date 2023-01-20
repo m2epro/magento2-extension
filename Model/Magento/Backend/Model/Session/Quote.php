@@ -17,6 +17,7 @@ class Quote extends \Magento\Backend\Model\Session\Quote
     {
         parent::clearStorage();
         $this->_quote = null;
+
         return $this;
     }
 }

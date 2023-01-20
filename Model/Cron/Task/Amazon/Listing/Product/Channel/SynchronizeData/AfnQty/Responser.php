@@ -159,6 +159,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $receivedItems = $responseData['data'];
         if (empty($receivedItems)) {
             $this->refreshLastUpdate(true);
+
             return;
         }
 
@@ -167,6 +168,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         // next lines is for possible situation with deleted account
         if (!$merchantId) {
             $this->refreshLastUpdate(true);
+
             return;
         }
 

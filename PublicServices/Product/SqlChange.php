@@ -27,28 +27,27 @@
 
 namespace Ess\M2ePro\PublicServices\Product;
 
-/**
- * Class \Ess\M2ePro\PublicServices\Product\SqlChange
- */
 class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 {
-    const VERSION = '2.0.1';
+    public const VERSION = '2.0.1';
 
-    const INSTRUCTION_TYPE_PRODUCT_CHANGED = 'sql_change_product_changed';
-    const INSTRUCTION_TYPE_STATUS_CHANGED  = 'sql_change_status_changed';
-    const INSTRUCTION_TYPE_QTY_CHANGED     = 'sql_change_qty_changed';
-    const INSTRUCTION_TYPE_PRICE_CHANGED   = 'sql_change_price_changed';
+    public const INSTRUCTION_TYPE_PRODUCT_CHANGED = 'sql_change_product_changed';
+    public const INSTRUCTION_TYPE_STATUS_CHANGED = 'sql_change_status_changed';
+    public const INSTRUCTION_TYPE_QTY_CHANGED = 'sql_change_qty_changed';
+    public const INSTRUCTION_TYPE_PRICE_CHANGED = 'sql_change_price_changed';
 
-    const INSTRUCTION_INITIATOR = 'public_services_sql_change_processor';
+    public const INSTRUCTION_INITIATOR = 'public_services_sql_change_processor';
 
+    /** @var bool */
     protected $preventDuplicatesMode = true;
 
+    /** @var array */
     protected $changesData = [];
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resource;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -60,6 +59,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         $this->resource = $resource;
         parent::__construct($helperFactory, $modelFactory);
     }
+
     //########################################
 
     public function enablePreventDuplicatesMode()
@@ -83,7 +83,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()
-            ->add($instructionsData);
+                                  ->add($instructionsData);
 
         $this->flushChanges();
 
@@ -96,6 +96,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
     public function flushChanges()
     {
         $this->changesData = [];
+
         return $this;
     }
 
@@ -103,7 +104,9 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * Backward compatibility issue
+     *
      * @param $productId
+     *
      * @return $this
      */
     public function markQtyWasChanged($productId)
@@ -113,7 +116,9 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * Backward compatibility issue
+     *
      * @param $productId
+     *
      * @return $this
      */
     public function markPriceWasChanged($productId)
@@ -123,7 +128,9 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * Backward compatibility issue
+     *
      * @param $productId
+     *
      * @return $this
      */
     public function markStatusWasChanged($productId)
@@ -148,36 +155,40 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
     public function markProductChanged($productId)
     {
         $this->changesData[] = [
-            'product_id'       => (int)$productId,
+            'product_id' => (int)$productId,
             'instruction_type' => self::INSTRUCTION_TYPE_PRODUCT_CHANGED,
         ];
+
         return $this;
     }
 
     public function markStatusChanged($productId)
     {
         $this->changesData[] = [
-            'product_id'       => (int)$productId,
+            'product_id' => (int)$productId,
             'instruction_type' => self::INSTRUCTION_TYPE_STATUS_CHANGED,
         ];
+
         return $this;
     }
 
     public function markQtyChanged($productId)
     {
         $this->changesData[] = [
-            'product_id'       => (int)$productId,
+            'product_id' => (int)$productId,
             'instruction_type' => self::INSTRUCTION_TYPE_QTY_CHANGED,
         ];
+
         return $this;
     }
 
     public function markPriceChanged($productId)
     {
         $this->changesData[] = [
-            'product_id'       => (int)$productId,
+            'product_id' => (int)$productId,
             'instruction_type' => self::INSTRUCTION_TYPE_PRICE_CHANGED,
         ];
+
         return $this;
     }
 
@@ -201,11 +212,11 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         $connection = $this->resource->getConnection();
 
         $listingProductTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_listing_product');
+                                    ->getTableNameWithPrefix('m2epro_listing_product');
         $variationTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_listing_product_variation');
+                               ->getTableNameWithPrefix('m2epro_listing_product_variation');
         $variationOptionTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_listing_product_variation_option');
+                                     ->getTableNameWithPrefix('m2epro_listing_product_variation_option');
 
         $instructionsData = [];
 
@@ -237,9 +248,9 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
                 foreach ($productInstructionTypesPart[$magentoProductId] as $instructionType) {
                     $instructionsData[] = [
                         'listing_product_id' => $listingProductId,
-                        'type'               => $instructionType,
-                        'initiator'          => self::INSTRUCTION_INITIATOR,
-                        'priority'           => 50,
+                        'type' => $instructionType,
+                        'initiator' => self::INSTRUCTION_INITIATOR,
+                        'priority' => 50,
                     ];
                 }
             }
@@ -253,14 +264,14 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
         $indexedInstructionsData = [];
 
         foreach ($instructionsData as $instructionData) {
-            $key = $instructionData['listing_product_id'].'##'.$instructionData['type'];
+            $key = $instructionData['listing_product_id'] . '##' . $instructionData['type'];
             $indexedInstructionsData[$key] = $instructionData;
         }
 
         $connection = $this->resource->getConnection();
 
         $instructionTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_listing_product_instruction');
+                                 ->getTableNameWithPrefix('m2epro_listing_product_instruction');
 
         $stmt = $connection
             ->select()
@@ -269,10 +280,10 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
         while ($row = $stmt->fetch()) {
             $listingProductId = (int)$row['listing_product_id'];
-            $type             = $row['type'];
+            $type = $row['type'];
 
-            if (isset($indexedInstructionsData[$listingProductId.'##'.$type])) {
-                unset($indexedInstructionsData[$listingProductId.'##'.$type]);
+            if (isset($indexedInstructionsData[$listingProductId . '##' . $type])) {
+                unset($indexedInstructionsData[$listingProductId . '##' . $type]);
             }
         }
 

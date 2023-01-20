@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord;
 
 use Ess\M2ePro\Model\ActiveRecord\AbstractModel as ActiveRecordAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
- */
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
@@ -21,8 +18,11 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
      */
     protected $_useIsObjectNew = true;
 
+    /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
     protected $parentFactory;
 
     //########################################
@@ -45,6 +45,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

@@ -10,30 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing\Product;
 
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\AbstractGrid
 {
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager $config,
-        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Helper\View $viewHelper,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Backend\Helper\Data $backendHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
-        array $data = []
-    ) {
-        parent::__construct(
-            $config,
-            $wrapperCollectionFactory,
-            $customCollectionFactory,
-            $resourceConnection,
-            $viewHelper,
-            $context,
-            $backendHelper,
-            $dataHelper,
-            $data
-        );
-    }
-
     public function _construct()
     {
         parent::_construct();
@@ -69,17 +45,17 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
                 $collection->addFieldToFilter(
                     [
                         self::LISTING_PRODUCT_ID_FIELD,
-                        self::LISTING_PARENT_PRODUCT_ID_FIELD
+                        self::LISTING_PARENT_PRODUCT_ID_FIELD,
                     ],
                     [
                         [
                             'attribute' => self::LISTING_PRODUCT_ID_FIELD,
-                            'eq' => $this->getEntityId()
+                            'eq' => $this->getEntityId(),
                         ],
                         [
                             'attribute' => self::LISTING_PARENT_PRODUCT_ID_FIELD,
-                            'eq' => $this->getEntityId()
-                        ]
+                            'eq' => $this->getEntityId(),
+                        ],
                     ]
                 );
             } else {
@@ -96,7 +72,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             $collection->getSelect()->joinLeft(
                 [
                     'account_table' => $this->activeRecordFactory->getObject('Account')
-                        ->getResource()->getMainTable()
+                                                                 ->getResource()->getMainTable(),
                 ],
                 'main_table.account_id = account_table.id',
                 ['real_account_id' => 'account_table.id']
@@ -110,7 +86,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             $collection->getSelect()->joinLeft(
                 [
                     'marketplace_table' => $this->activeRecordFactory->getObject('Marketplace')
-                        ->getResource()->getMainTable()
+                                                                     ->getResource()->getMainTable(),
                 ],
                 'main_table.marketplace_id = marketplace_table.id',
                 ['marketplace_status' => 'marketplace_table.status']
@@ -125,11 +101,15 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
      */
     private function checkVariations(): bool
     {
-        if ($this->isListingProductLog() && $this->getListingProduct()->isComponentModeEbay() &&
-            $this->getListingProduct()->getChildObject()->isVariationsReady()) {
+        if (
+            $this->isListingProductLog() && $this->getListingProduct()->isComponentModeEbay() &&
+            $this->getListingProduct()->getChildObject()->isVariationsReady()
+        ) {
             return true;
-        } elseif ($this->isListingProductLog() && !$this->getListingProduct()->isComponentModeEbay() &&
-            $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType()){
+        } elseif (
+            $this->isListingProductLog() && !$this->getListingProduct()->isComponentModeEbay() &&
+            $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType()
+        ) {
             return true;
         }
 
@@ -139,35 +119,35 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
     protected function _prepareColumns()
     {
         $this->addColumn('create_date', [
-            'header'    => $this->__('Creation Date'),
-            'align'     => 'left',
-            'type'      => 'datetime',
-            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'header' => $this->__('Creation Date'),
+            'align' => 'left',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
             'filter_index' => 'main_table.create_date',
-            'index'     => 'create_date',
+            'index' => 'create_date',
             'frame_callback' => [$this, 'callbackColumnCreateDate'],
         ]);
 
         $this->addColumn('action', [
-            'header'    => $this->__('Action'),
-            'align'     => 'left',
-            'type'      => 'options',
-            'index'     => 'action',
-            'sortable'  => false,
+            'header' => $this->__('Action'),
+            'align' => 'left',
+            'type' => 'options',
+            'index' => 'action',
+            'sortable' => false,
             'filter_index' => 'main_table.action',
             'options' => $this->getActionTitles(),
         ]);
 
         if (!$this->getEntityId()) {
             $this->addColumn('listing_title', [
-                'header'    => $this->__('Listing'),
-                'align'     => 'left',
-                'type'      => 'text',
-                'index'     => 'listing_title',
+                'header' => $this->__('Listing'),
+                'align' => 'left',
+                'type' => 'text',
+                'index' => 'listing_title',
                 'filter_index' => 'main_table.listing_title',
                 'frame_callback' => [$this, 'callbackColumnListingTitleID'],
-                'filter_condition_callback' => [$this, 'callbackFilterListingTitleID']
+                'filter_condition_callback' => [$this, 'callbackFilterListingTitleID'],
             ]);
         }
 
@@ -179,52 +159,54 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
                 'index' => 'product_title',
                 'filter_index' => 'main_table.product_title',
                 'frame_callback' => [$this, 'callbackColumnProductTitleID'],
-                'filter_condition_callback' => [$this, 'callbackFilterProductTitleID']
+                'filter_condition_callback' => [$this, 'callbackFilterProductTitleID'],
             ]);
         }
 
-        if ($this->isListingProductLog() && $this->getListingProduct()->isComponentModeAmazon() &&
+        if (
+            $this->isListingProductLog() && $this->getListingProduct()->isComponentModeAmazon() &&
             ($this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType() ||
                 $this->getListingProduct()->getChildObject()->getVariationManager()->isRelationChildType() ||
-                $this->getListingProduct()->getChildObject()->getVariationManager()->isIndividualType())) {
+                $this->getListingProduct()->getChildObject()->getVariationManager()->isIndividualType())
+        ) {
             $this->addColumn('attributes', [
                 'header' => $this->__('Variation'),
                 'align' => 'left',
                 'index' => 'additional_data',
-                'sortable'  => false,
+                'sortable' => false,
                 'filter_index' => 'main_table.additional_data',
                 'frame_callback' => [$this, 'callbackColumnAttributes'],
-                'filter_condition_callback' => [$this, 'callbackFilterAttributes']
+                'filter_condition_callback' => [$this, 'callbackFilterAttributes'],
             ]);
         }
 
         $this->addColumn('description', [
-            'header'    => $this->__('Message'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'description',
+            'header' => $this->__('Message'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'description',
             'filter_index' => 'main_table.description',
-            'frame_callback' => [$this, 'callbackColumnDescription']
+            'frame_callback' => [$this, 'callbackColumnDescription'],
         ]);
 
         $this->addColumn('initiator', [
-            'header'=> $this->__('Run Mode'),
+            'header' => $this->__('Run Mode'),
             'index' => 'initiator',
             'align' => 'right',
-            'type'  => 'options',
-            'sortable'  => false,
+            'type' => 'options',
+            'sortable' => false,
             'options' => $this->_getLogInitiatorList(),
-            'frame_callback' => [$this, 'callbackColumnInitiator']
+            'frame_callback' => [$this, 'callbackColumnInitiator'],
         ]);
 
         $this->addColumn('type', [
-            'header'=> $this->__('Type'),
+            'header' => $this->__('Type'),
             'index' => 'type',
             'align' => 'right',
-            'type'  => 'options',
-            'sortable'  => false,
+            'type' => 'options',
+            'sortable' => false,
             'options' => $this->_getLogTypeList(),
-            'frame_callback' => [$this, 'callbackColumnType']
+            'frame_callback' => [$this, 'callbackColumnType'],
         ]);
 
         return parent::_prepareColumns();
@@ -242,8 +224,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         $productId = (int)$row->getData('product_id');
 
         $urlData = [
-            'id'     => $row->getData('listing_id'),
-            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}")
+            'id' => $row->getData('listing_id'),
+            'filter' => base64_encode("product_id[from]={$productId}&product_id[to]={$productId}"),
         ];
 
         $manageUrl = $this->getUrl('*/' . $row->getData('component_mode') . '_listing/view', $urlData);

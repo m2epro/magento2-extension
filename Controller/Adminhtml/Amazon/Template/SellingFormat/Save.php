@@ -43,6 +43,7 @@ class Save extends Template
 
         if (!$post->count()) {
             $this->_forward('index');
+
             return;
         }
 
@@ -93,21 +94,25 @@ class Save extends Template
 
         if ($this->isAjax()) {
             $this->setJsonContent([
-                'status' => true
+                'status' => true,
             ]);
+
             return $this->getResult();
         }
 
         $id = $model->getId();
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->helperData->getBackUrl('*/amazon_template/index', [], [
-            'edit' => [
-                'id' => $id,
-                'wizard' => $this->getRequest()->getParam('wizard'),
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ],
-        ]));
+
+        return $this->_redirect(
+            $this->helperData->getBackUrl('*/amazon_template/index', [], [
+                'edit' => [
+                    'id' => $id,
+                    'wizard' => $this->getRequest()->getParam('wizard'),
+                    'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+                ],
+            ])
+        );
     }
 
     //########################################
@@ -121,11 +126,12 @@ class Save extends Template
         $this->resourceConnection->getConnection()->delete(
             $amazonTemplateSellingFormatBusinessDiscountTable,
             [
-                'template_selling_format_id = ?' => (int)$templateId
+                'template_selling_format_id = ?' => (int)$templateId,
             ]
         );
 
-        if (empty($post['is_business_customer_allowed']) ||
+        if (
+            empty($post['is_business_customer_allowed']) ||
             empty($post['business_discount']) || empty($post['business_discount']['qty'])
         ) {
             return;
@@ -148,10 +154,10 @@ class Save extends Template
 
             $discounts[] = [
                 'template_selling_format_id' => $templateId,
-                'qty'                        => $qty,
-                'mode'                       => $mode,
-                'attribute'                  => $attribute,
-                'coefficient'                => $coefficient
+                'qty' => $qty,
+                'mode' => $mode,
+                'attribute' => $attribute,
+                'coefficient' => $coefficient,
             ];
         }
 

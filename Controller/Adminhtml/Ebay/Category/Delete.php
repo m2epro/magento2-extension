@@ -33,6 +33,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         if (count($ids) == 0) {
             $this->getMessageManager()->addError($this->__('Please select Item(s) to remove.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 
@@ -64,7 +65,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $tempString = $this->__('%s% record(s) were deleted.', $deleted);
         $deleted && $this->getMessageManager()->addSuccess($tempString);
 
-        $tempString  = $this->__(
+        $tempString = $this->__(
             '[%count%] Category cannot be removed until it’s unassigned from the existing products.
             Read the <a href="%url%" target="_blank">article</a> for more information.',
             $locked,
@@ -77,6 +78,7 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
     /**
      * @param array $ids
+     *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

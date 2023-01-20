@@ -24,11 +24,13 @@ class Delete extends Template
 
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Item(s) to remove.'));
+
             return $this->_redirect('*/*/index');
         }
 
         if (empty($type)) {
             $this->messageManager->addError($this->__('You should provide correct parameters.'));
+
             return $this->_redirect('*/*/index');
         }
 
@@ -47,7 +49,7 @@ class Delete extends Template
         $tempString = $this->__('%amount% record(s) were deleted.', $deleted);
         $deleted && $this->messageManager->addSuccess($tempString);
 
-        $tempString  = $this->__('%amount% record(s) are used in Listing(s).', $locked) . ' ';
+        $tempString = $this->__('%amount% record(s) are used in Listing(s).', $locked) . ' ';
         $tempString .= $this->__('Policy must not be in use to be deleted.');
         $locked && $this->messageManager->addError($tempString);
 

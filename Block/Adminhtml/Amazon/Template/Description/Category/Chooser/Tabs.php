@@ -10,9 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Choose
 
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs
 {
-    const TAB_ID_RECENT = 'recent';
-    const TAB_ID_BROWSE = 'browse';
-    const TAB_ID_SEARCH = 'search';
+    public const TAB_ID_RECENT = 'recent';
+    public const TAB_ID_BROWSE = 'browse';
+    public const TAB_ID_SEARCH = 'search';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
@@ -39,29 +39,35 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     protected function _prepareLayout()
     {
         !$this->isNeedToHideRecent() && $this->addTab(self::TAB_ID_RECENT, [
-            'label'   => $this->__('Recently Used'),
-            'title'   => $this->__('Recently Used'),
+            'label' => $this->__('Recently Used'),
+            'title' => $this->__('Recently Used'),
             'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Recent::class)
-              ->toHtml(),
-            'active'  => true
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Recent::class
+                              )
+                              ->toHtml(),
+            'active' => true,
         ]);
 
         $this->addTab(self::TAB_ID_BROWSE, [
-            'label'   => $this->__('Browse'),
-            'title'   => $this->__('Browse'),
+            'label' => $this->__('Browse'),
+            'title' => $this->__('Browse'),
             'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Browse::class)
-              ->toHtml(),
-            'active'  => $this->isNeedToHideRecent() ? true : false
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Browse::class
+                              )
+                              ->toHtml(),
+            'active' => $this->isNeedToHideRecent() ? true : false,
         ]);
 
         $this->addTab(self::TAB_ID_SEARCH, [
-            'label'   => $this->__('Search'),
-            'title'   => $this->__('Search'),
+            'label' => $this->__('Search'),
+            'title' => $this->__('Search'),
             'content' => $this->getLayout()
-              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Search::class)
-              ->toHtml()
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Search::class
+                              )
+                              ->toHtml(),
         ]);
 
         return parent::_prepareLayout();

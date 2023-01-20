@@ -36,8 +36,11 @@ class Data extends AbstractBlock
         $this->globalDataHelper->setValue('is_custom', $this->getData('is_custom'));
         $this->globalDataHelper->setValue('custom_title', $this->getData('custom_title'));
 
-        $this->setChild('tabs', $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs::class));
+        $this->setChild(
+            'tabs',
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\Synchronization\Edit\Form\Tabs::class)
+        );
 
         $this->jsPhp->addConstants(
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Template\Synchronization::class)
@@ -64,7 +67,8 @@ class Data extends AbstractBlock
             'Must be greater than "From Time".' => $this->__('Must be greater than "From Time".'),
         ]);
 
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 .field-advanced_filter ul.rule-param-children {
     margin-top: 1em;
 }
@@ -75,7 +79,8 @@ class Data extends AbstractBlock
 CSS
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Template/Synchronization'
     ], function(){

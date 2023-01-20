@@ -29,7 +29,7 @@ class FilesValidity implements InspectorInterface
     /** @var ReadFactory */
     private $readFactory;
 
-    /** @var IssueFactory  */
+    /** @var IssueFactory */
     private $issueFactory;
 
     public function __construct(
@@ -40,12 +40,12 @@ class FilesValidity implements InspectorInterface
         ComponentRegistrarInterface $componentRegistrar,
         IssueFactory $issueFactory
     ) {
-        $this->modelFactory       = $modelFactory;
-        $this->urlBuilder         = $urlBuilder;
-        $this->readFactory        = $readFactory;
-        $this->fileDriver         = $fileDriver;
+        $this->modelFactory = $modelFactory;
+        $this->urlBuilder = $urlBuilder;
+        $this->readFactory = $readFactory;
+        $this->fileDriver = $fileDriver;
         $this->componentRegistrar = $componentRegistrar;
-        $this->issueFactory       = $issueFactory;
+        $this->issueFactory = $issueFactory;
     }
 
     //########################################
@@ -77,7 +77,7 @@ class FilesValidity implements InspectorInterface
             if (!$this->fileDriver->isExists($filePath)) {
                 $problems[] = [
                     'path' => $info['path'],
-                    'reason' => 'File is missing'
+                    'reason' => 'File is missing',
                 ];
                 continue;
             }
@@ -91,7 +91,7 @@ class FilesValidity implements InspectorInterface
             if (call_user_func('md5', $fileContent) != $info['hash']) {
                 $problems[] = [
                     'path' => $info['path'],
-                    'reason' => 'Hash mismatch'
+                    'reason' => 'Hash mismatch',
                 ];
                 continue;
             }
@@ -109,9 +109,11 @@ class FilesValidity implements InspectorInterface
 
     private function getDiff()
     {
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'info');
         $dispatcherObject->process($connectorObj);
+
         return $connectorObj->getResponseData();
     }
 

@@ -10,11 +10,9 @@ namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
 use Magento\Framework\DB\Select;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Listing
- */
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     //########################################

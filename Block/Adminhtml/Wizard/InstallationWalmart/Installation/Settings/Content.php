@@ -32,11 +32,14 @@ class Content extends AbstractForm
 
     protected function _prepareLayout()
     {
-        $this->getLayout()->getBlock('wizard.help.block')->setContent($this->__(<<<HTML
+        $this->getLayout()->getBlock('wizard.help.block')->setContent(
+            $this->__(
+                <<<HTML
 In this section, you can configure the general settings for interaction between M2E Pro and Walmart
 Marketplaces including SKU, Product Identifiers, image URL settings.
 HTML
-        ));
+            )
+        );
 
         parent::_prepareLayout();
     }
@@ -62,7 +65,7 @@ HTML
 
         $form->setData([
             'id' => 'edit_form',
-            'method' => 'post'
+            'method' => 'post',
         ]);
 
         $form->setUseContainer(true);

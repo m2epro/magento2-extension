@@ -17,6 +17,7 @@ class AccountGrid extends Account
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Grid $switcherBlock */
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Grid::class);
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

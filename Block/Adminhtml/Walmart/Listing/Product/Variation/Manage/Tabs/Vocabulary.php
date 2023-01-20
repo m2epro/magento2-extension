@@ -32,6 +32,7 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -40,6 +41,7 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         return $this;
     }
+
     /**
      * @return \Ess\M2ePro\Model\Listing\Product
      */
@@ -55,11 +57,11 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $localVocabulary = [];
         $fixedAttributes = [];
         $matchedAttributes = $this->getListingProduct()->getChildObject()
-            ->getVariationManager()->getTypeModel()->getMatchedAttributes();
+                                  ->getVariationManager()->getTypeModel()->getMatchedAttributes();
         $magentoProductVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                         ->getMagentoProduct()
+                                         ->getVariationInstance()
+                                         ->getVariationsTypeStandard();
 
         $vocabularyHelper = $this->walmartVocabularyHelper;
         $vocabularyData = $vocabularyHelper->getLocalData();
@@ -67,7 +69,7 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         if (empty($matchedAttributes)) {
             return [
                 'local_vocabulary' => $localVocabulary,
-                'fixed_attributes' => $fixedAttributes
+                'fixed_attributes' => $fixedAttributes,
             ];
         }
 
@@ -90,9 +92,11 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                         }
                     }
 
-                    if (!empty($fixedAttributes[$magentoAttr]) &&
+                    if (
+                        !empty($fixedAttributes[$magentoAttr]) &&
                         in_array($attribute, $fixedAttributes[$magentoAttr]) &&
-                        empty($localVocabulary[$magentoAttr][$attribute])) {
+                        empty($localVocabulary[$magentoAttr][$attribute])
+                    ) {
                         unset($localVocabulary[$magentoAttr][$attribute]);
                         if (empty($localVocabulary[$magentoAttr])) {
                             unset($localVocabulary[$magentoAttr]);
@@ -104,7 +108,7 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         return [
             'local_vocabulary' => $localVocabulary,
-            'fixed_attributes' => $fixedAttributes
+            'fixed_attributes' => $fixedAttributes,
         ];
     }
 
@@ -113,7 +117,9 @@ class Vocabulary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _beforeToHtml()
     {
         $form = $this->getLayout()
-        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary\Form::class);
+                     ->createBlock(
+                         \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Vocabulary\Form::class
+                     );
         $this->setChild('variation_Vocabulary_form', $form);
 
         return parent::_beforeToHtml();

@@ -35,15 +35,16 @@ class ProductSelection extends InstallationEbay
         $source = isset($productAddSessionData['source']) ? $productAddSessionData['source'] : null;
 
         $this->sessionHelper->setValue('ebay_listing_product_add', $productAddSessionData);
+
         return $this->_redirect(
             '*/ebay_listing_product_add/index',
             [
                 'clear' => true,
-                'step'  => 1,
+                'step' => 1,
                 'wizard' => true,
                 'id' => $listingId,
                 'listing_creation' => true,
-                'source' => $source
+                'source' => $source,
             ]
         );
     }

@@ -42,17 +42,18 @@ class Listing extends AbstractContainer
         );
 
         $this->appendHelpBlock([
-            'content' => $content
+            'content' => $content,
         ]);
 
         // ---------------------------------------
         $url = $this->getUrl('*/ebay_listing_create/index', ['step' => 1, 'clear' => 1]);
         $this->addButton('add', [
-            'label'     => $this->__('Add Listing'),
-            'onclick'   => 'setLocation(\'' .$url.'\')',
+            'label' => $this->__('Add Listing'),
+            'onclick' => 'setLocation(\'' . $url . '\')',
             'class' => 'action-primary',
             'button_class' => '',
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareLayout();

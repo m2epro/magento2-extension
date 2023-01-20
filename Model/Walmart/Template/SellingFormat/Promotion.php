@@ -13,22 +13,22 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
  */
 class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const START_DATE_MODE_VALUE = 1;
-    const START_DATE_MODE_ATTRIBUTE = 2;
+    public const START_DATE_MODE_VALUE = 1;
+    public const START_DATE_MODE_ATTRIBUTE = 2;
 
-    const END_DATE_MODE_VALUE = 1;
-    const END_DATE_MODE_ATTRIBUTE = 2;
+    public const END_DATE_MODE_VALUE = 1;
+    public const END_DATE_MODE_ATTRIBUTE = 2;
 
-    const PRICE_MODE_PRODUCT = 1;
-    const PRICE_MODE_SPECIAL = 2;
-    const PRICE_MODE_ATTRIBUTE = 3;
+    public const PRICE_MODE_PRODUCT = 1;
+    public const PRICE_MODE_SPECIAL = 2;
+    public const PRICE_MODE_ATTRIBUTE = 3;
 
-    const COMPARISON_PRICE_MODE_PRODUCT = 1;
-    const COMPARISON_PRICE_MODE_SPECIAL = 2;
-    const COMPARISON_PRICE_MODE_ATTRIBUTE = 3;
+    public const COMPARISON_PRICE_MODE_PRODUCT = 1;
+    public const COMPARISON_PRICE_MODE_SPECIAL = 2;
+    public const COMPARISON_PRICE_MODE_ATTRIBUTE = 3;
 
-    const TYPE_REDUCED = 'reduced';
-    const TYPE_CLEARANCE = 'clearance';
+    public const TYPE_REDUCED = 'reduced';
+    public const TYPE_CLEARANCE = 'clearance';
 
     /**
      * @var \Ess\M2ePro\Model\Walmart\Template\SellingFormat
@@ -55,6 +55,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $temp = parent::delete();
         $temp && $this->sellingFormatTemplateModel = null;
         $temp && $this->sellingFormatPromotionSourceModels = [];
+
         return $temp;
     }
 
@@ -87,6 +88,7 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
@@ -253,9 +255,9 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getPriceSource()
     {
         return [
-            'mode'        => $this->getPriceMode(),
+            'mode' => $this->getPriceMode(),
             'coefficient' => $this->getPriceCoefficient(),
-            'attribute'   => $this->getPriceAttribute(),
+            'attribute' => $this->getPriceAttribute(),
         ];
     }
 
@@ -298,9 +300,9 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getComparisonPriceSource()
     {
         return [
-            'mode'        => $this->getComparisonPriceMode(),
+            'mode' => $this->getComparisonPriceMode(),
             'coefficient' => $this->getComparisonPriceCoefficient(),
-            'attribute'   => $this->getComparisonPriceAttribute(),
+            'attribute' => $this->getComparisonPriceAttribute(),
         ];
     }
 

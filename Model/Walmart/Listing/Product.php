@@ -15,8 +15,8 @@ use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
-    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED    = 'channel_qty_changed';
-    public const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED  = 'channel_price_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
 
     public const PROMOTIONS_MAX_ALLOWED_COUNT = 10;
 
@@ -327,13 +327,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
             $variation = reset($variations);
-            $options   = $variation->getOptions(true);
-            $option    = reset($options);
+            $options = $variation->getOptions(true);
+            $option = reset($options);
 
             return $option->getMagentoProduct();
         }
@@ -343,6 +343,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product\Cache $instance
+     *
      * @return \Ess\M2ePro\Model\Magento\Product\Cache
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -358,7 +359,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $parentTypeModel = $this->getVariationManager()->getTypeModel();
         } else {
             $parentWalmartListingProduct = $this->getVariationManager()->getTypeModel()
-                ->getWalmartParentListingProduct();
+                                                ->getWalmartParentListingProduct();
             $parentTypeModel = $parentWalmartListingProduct->getVariationManager()->getTypeModel();
         }
 
@@ -376,11 +377,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function getWalmartItem()
     {
         return $this->activeRecordFactory->getObject('Walmart\Item')->getCollection()
-            ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
-            ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
-            ->addFieldToFilter('sku', $this->getSku())
-            ->setOrder('create_date', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC)
-            ->getFirstItem();
+                                         ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
+                                         ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
+                                         ->addFieldToFilter('sku', $this->getSku())
+                                         ->setOrder(
+                                             'create_date',
+                                             \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC
+                                         )
+                                         ->getFirstItem();
     }
 
     public function getVariationManager()
@@ -397,6 +401,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
      * @param bool $asObjects
      * @param array $filters
      * @param bool $tryToGetFromStorage
+     *
      * @return array
      */
     public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
@@ -619,6 +624,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     /**
      * @param bool $magentoMode
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -634,7 +640,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -670,7 +676,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -711,7 +717,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -734,8 +740,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $priceCalculator = $this->walmartPriceCalculatorFactory->create();
             $priceCalculator->setSource($promotion->getPriceSource())->setProduct($this->getParentObject());
             $priceCalculator->setSourceModeMapping([
-                PriceCalculator::MODE_PRODUCT   => Promotion::PRICE_MODE_PRODUCT,
-                PriceCalculator::MODE_SPECIAL   => Promotion::PRICE_MODE_SPECIAL,
+                PriceCalculator::MODE_PRODUCT => Promotion::PRICE_MODE_PRODUCT,
+                PriceCalculator::MODE_SPECIAL => Promotion::PRICE_MODE_SPECIAL,
                 PriceCalculator::MODE_ATTRIBUTE => Promotion::PRICE_MODE_ATTRIBUTE,
             ]);
             $priceCalculator->setCoefficient($promotion->getPriceCoefficient());
@@ -744,10 +750,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculator $comparisonPriceCalculator */
             $comparisonPriceCalculator = $this->walmartPriceCalculatorFactory->create();
             $comparisonPriceCalculator->setSource($promotion->getComparisonPriceSource())
-                ->setProduct($this->getParentObject());
+                                      ->setProduct($this->getParentObject());
             $comparisonPriceCalculator->setSourceModeMapping([
-                PriceCalculator::MODE_PRODUCT   => Promotion::COMPARISON_PRICE_MODE_PRODUCT,
-                PriceCalculator::MODE_SPECIAL   => Promotion::COMPARISON_PRICE_MODE_SPECIAL,
+                PriceCalculator::MODE_PRODUCT => Promotion::COMPARISON_PRICE_MODE_PRODUCT,
+                PriceCalculator::MODE_SPECIAL => Promotion::COMPARISON_PRICE_MODE_SPECIAL,
                 PriceCalculator::MODE_ATTRIBUTE => Promotion::COMPARISON_PRICE_MODE_ATTRIBUTE,
             ]);
             $comparisonPriceCalculator->setCoefficient($promotion->getComparisonPriceCoefficient());
@@ -756,11 +762,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $promotionSource = $promotion->getSource($this->getMagentoProduct());
 
             $resultPromotions[] = [
-                'start_date'       => $promotionSource->getStartDate(),
-                'end_date'         => $promotionSource->getEndDate(),
-                'price'            => $priceCalculator->getProductValue(),
+                'start_date' => $promotionSource->getStartDate(),
+                'end_date' => $promotionSource->getEndDate(),
+                'price' => $priceCalculator->getProductValue(),
                 'comparison_price' => $comparisonPriceCalculator->getProductValue(),
-                'type'             => strtoupper($promotion->getType())
+                'type' => strtoupper($promotion->getType()),
             ];
 
             if (count($resultPromotions) >= self::PROMOTIONS_MAX_ALLOWED_COUNT) {
@@ -804,9 +810,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     {
         $translationHelper = $this->helperFactory->getObject('Module\Translation');
         $requiredAttributesMap = [
-            'start_date'       => $translationHelper->__('Start Date'),
-            'end_date'         => $translationHelper->__('End Date'),
-            'price'            => $translationHelper->__('Promotion Price'),
+            'start_date' => $translationHelper->__('Start Date'),
+            'end_date' => $translationHelper->__('End Date'),
+            'price' => $translationHelper->__('Promotion Price'),
             'comparison_price' => $translationHelper->__('Comparison Price'),
         ];
 

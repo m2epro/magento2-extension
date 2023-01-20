@@ -10,15 +10,12 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs
- */
 class Tabs extends AbstractTabs
 {
-    const TAB_ID_GENERAL                = 'general';
-    const TAB_ID_LISTING_OTHER          = 'listingOther';
-    const TAB_ID_ORDERS                 = 'orders';
-    const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
+    public const TAB_ID_GENERAL = 'general';
+    public const TAB_ID_LISTING_OTHER = 'listingOther';
+    public const TAB_ID_ORDERS = 'orders';
+    public const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
 
     protected function _construct()
     {
@@ -33,8 +30,8 @@ class Tabs extends AbstractTabs
         $this->addTab(
             self::TAB_ID_GENERAL,
             [
-                'label'   => $this->__('General'),
-                'title'   => $this->__('General'),
+                'label' => $this->__('General'),
+                'title' => $this->__('General'),
                 'content' => $this->getLayout()
                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\General::class)
                                   ->toHtml(),
@@ -44,19 +41,21 @@ class Tabs extends AbstractTabs
         $this->addTab(
             self::TAB_ID_LISTING_OTHER,
             [
-                'label'   => $this->__('Unmanaged Listings'),
-                'title'   => $this->__('Unmanaged Listings'),
+                'label' => $this->__('Unmanaged Listings'),
+                'title' => $this->__('Unmanaged Listings'),
                 'content' => $this->getLayout()
-                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\ListingOther::class)
-                              ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\ListingOther::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 
         $this->addTab(
             self::TAB_ID_ORDERS,
             [
-                'label'   => $this->__('Orders'),
-                'title'   => $this->__('Orders'),
+                'label' => $this->__('Orders'),
+                'title' => $this->__('Orders'),
                 'content' => $this->getLayout()
                                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order::class)
                                   ->toHtml(),
@@ -66,11 +65,13 @@ class Tabs extends AbstractTabs
         $this->addTab(
             self::TAB_ID_INVOICES_AND_SHIPMENTS,
             [
-                'label'   => $this->__('Invoices & Shipments'),
-                'title'   => $this->__('Invoices & Shipments'),
+                'label' => $this->__('Invoices & Shipments'),
+                'title' => $this->__('Invoices & Shipments'),
                 'content' => $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\InvoicesAndShipments::class)
-                      ->toHtml(),
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\InvoicesAndShipments::class
+                                  )
+                                  ->toHtml(),
             ]
         );
 

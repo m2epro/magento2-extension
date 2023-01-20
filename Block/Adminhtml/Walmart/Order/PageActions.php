@@ -21,23 +21,24 @@ class PageActions extends AbstractBlock
         $marketplaceSwitcherBlock = $this->getLayout()
                                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace\Switcher::class)
                                          ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'controller_name' => 'walmart_order'
-        ]);
+                                             'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                                             'controller_name' => 'walmart_order',
+                                         ]);
 
         $accountSwitcherBlock = $this->getLayout()
                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher::class)
                                      ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'controller_name' => 'walmart_order'
-        ]);
+                                         'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                                         'controller_name' => 'walmart_order',
+                                     ]);
 
         $orderStateSwitcherBlock = $this->getLayout()
                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter::class)
                                         ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'controller' => 'walmart_order'
-        ]);
+                                            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                                            'controller' => 'walmart_order',
+                                        ]);
+
         // ---------------------------------------
 
         return

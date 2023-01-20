@@ -17,11 +17,12 @@ class Edit extends Template
 {
     public function execute()
     {
-        $id    = $this->getRequest()->getParam('id');
+        $id = $this->getRequest()->getParam('id');
         $model = $this->activeRecordFactory->getObjectLoaded('Amazon_Template_Shipping', $id, null, false);
 
         if ($model === null && $id) {
             $this->getMessageManager()->addError($this->__('Policy does not exist'));
+
             return $this->_redirect('*/amazon_template/index');
         }
 
@@ -30,11 +31,12 @@ class Edit extends Template
         $headerTextEdit = $this->__('Edit Shipping Policy');
         $headerTextAdd = $this->__('Add Shipping Policy');
 
-        if ($model !== null
+        if (
+            $model !== null
             && $model->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->getHelper('Data')->escapeHtml($model->getTitle()).'"';
+            $headerText .= ' "' . $this->getHelper('Data')->escapeHtml($model->getTitle()) . '"';
         } else {
             $headerText = $headerTextAdd;
         }

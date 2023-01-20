@@ -37,23 +37,23 @@ class Edit extends AbstractContainer
 
         $url = $this->getUrl('*/amazon_repricer_settings/index');
         $this->addButton('back', [
-            'label'   => $this->__('Back'),
+            'label' => $this->__('Back'),
             'onclick' => 'AmazonRepricerObj.backClick(\'' . $url . '\')',
-            'class'   => 'back',
+            'class' => 'back',
         ]);
 
         $saveButtons = [
-            'id'           => 'save_and_continue',
-            'label'        => $this->__('Save And Continue Edit'),
-            'class'        => 'add',
+            'id' => 'save_and_continue',
+            'label' => $this->__('Save And Continue Edit'),
+            'class' => 'add',
             'button_class' => '',
-            'onclick'      => 'AmazonRepricerObj.saveAndEditClick(\'\',)',
-            'class_name'   => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
-            'options'      => [
+            'onclick' => 'AmazonRepricerObj.saveAndEditClick(\'\',)',
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+            'options' => [
                 'save' => [
-                    'label'   => $this->__('Save And Back'),
+                    'label' => $this->__('Save And Back'),
                     'onclick' => 'AmazonRepricerObj.saveClick()',
-                    'class'   => 'action-primary',
+                    'class' => 'action-primary',
                 ],
             ],
         ];

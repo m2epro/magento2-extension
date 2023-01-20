@@ -34,6 +34,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $tasksType
+     *
      * @return Task\Result\Set
      */
     public function doCheck($tasksType = null)
@@ -98,6 +99,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $taskNick
+     *
      * @return \Ess\M2ePro\Model\HealthStatus\Task\AbstractModel
      */
     private function buildTaskObject($taskNick)

@@ -16,9 +16,9 @@ use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    const LIST_ADVANCED_RULES_PREFIX   = 'amazon_template_synchronization_list_advanced_rules';
-    const RELIST_ADVANCED_RULES_PREFIX = 'amazon_template_synchronization_relist_advanced_rules';
-    const STOP_ADVANCED_RULES_PREFIX   = 'amazon_template_synchronization_stop_advanced_rules';
+    public const LIST_ADVANCED_RULES_PREFIX = 'amazon_template_synchronization_list_advanced_rules';
+    public const RELIST_ADVANCED_RULES_PREFIX = 'amazon_template_synchronization_relist_advanced_rules';
+    public const STOP_ADVANCED_RULES_PREFIX = 'amazon_template_synchronization_stop_advanced_rules';
 
     //########################################
 
@@ -41,9 +41,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
         }
 
         return (bool)$this->activeRecordFactory->getObject('Amazon\Listing')
-            ->getCollection()
-            ->addFieldToFilter('template_synchronization_id', $this->getId())
-            ->getSize();
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_synchronization_id', $this->getId())
+                                               ->getSize();
     }
 
     //########################################

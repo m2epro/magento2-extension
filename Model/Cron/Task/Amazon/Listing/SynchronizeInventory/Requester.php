@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\SynchronizeInventory\Requester
- */
 class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRequester
 {
-    //########################################
-
     /**
      * @return string
      */
@@ -36,6 +31,4 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             ]
         );
     }
-
-    //########################################
 }

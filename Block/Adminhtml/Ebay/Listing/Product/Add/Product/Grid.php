@@ -47,39 +47,39 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
     protected function _prepareColumns()
     {
         $this->addColumnAfter('visibility', [
-            'header'    => $this->__('Visibility'),
-            'align'     => 'left',
-            'width'     => '90px',
-            'type'      => 'options',
-            'sortable'  => false,
-            'index'     => 'visibility',
+            'header' => $this->__('Visibility'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'visibility',
             'filter_index' => 'visibility',
-            'options' => $this->visibility->getOptionArray()
+            'options' => $this->visibility->getOptionArray(),
         ], 'qty');
 
         $this->addColumnAfter('status', [
-            'header'    => $this->__('Status'),
-            'align'     => 'left',
-            'width'     => '90px',
-            'type'      => 'options',
-            'sortable'  => false,
-            'index'     => 'status',
+            'header' => $this->__('Status'),
+            'align' => 'left',
+            'width' => '90px',
+            'type' => 'options',
+            'sortable' => false,
+            'index' => 'status',
             'filter_index' => 'status',
             'options' => $this->status->getOptionArray(),
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ], 'visibility');
 
         if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumnAfter('websites', [
-                'header'    => $this->__('Websites'),
-                'align'     => 'left',
-                'width'     => '90px',
-                'type'      => 'options',
-                'sortable'  => false,
-                'index'     => 'websites',
+                'header' => $this->__('Websites'),
+                'align' => 'left',
+                'width' => '90px',
+                'type' => 'options',
+                'sortable' => false,
+                'index' => 'websites',
                 'filter_index' => 'websites',
-                'options'   => $this->websiteFactory->create()->getCollection()->toOptionHash(),
-                'frame_callback' => [$this, 'callbackColumnWebsites']
+                'options' => $this->websiteFactory->create()->getCollection()->toOptionHash(),
+                'frame_callback' => [$this, 'callbackColumnWebsites'],
             ], 'status');
         }
 
@@ -106,6 +106,7 @@ JS;
             foreach ($row->getWebsiteIds() as $websiteId) {
                 $websites[] = $this->_storeManager->getWebsite($websiteId)->getName();
             }
+
             return implode(', ', $websites);
         }
 

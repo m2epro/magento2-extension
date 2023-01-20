@@ -8,12 +8,11 @@
 
 namespace Ess\M2ePro\Observer\StockItem;
 
-/**
- * Class \Ess\M2ePro\Observer\StockItem\AbstractStockItem
- */
 abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Magento\Framework\Registry */
     protected $registry;
+    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory */
     protected $stockItemFactory;
     /**
      * @var null|\Magento\CatalogInventory\Api\Data\StockItemInterface
@@ -28,8 +27,6 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
      * @var null|int
      */
     protected $storeId = null;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\Registry $registry,
@@ -81,13 +78,15 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     protected function reloadStockItem()
     {
         if ($this->getStockItemId() <= 0) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('To reload StockItem instance stockitem_id should be
-                greater than 0.');
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'To reload StockItem instance stockitem_id should be
+                greater than 0.'
+            );
         }
 
         $this->stockItem = $this->stockItemFactory->create()
-                                              ->setStoreId($this->getStoreId())
-                                              ->load($this->getStockItemId());
+                                                  ->setStoreId($this->getStoreId())
+                                                  ->load($this->getStockItemId());
 
         return $this->getStockItem();
     }

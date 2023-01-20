@@ -58,8 +58,8 @@ class AmazonProductWithoutVariations implements InspectorInterface, FixerInterfa
         $brokenItems = [];
 
         $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing_Product_Variation')
-            ->getResource()
-            ->getMainTable();
+                                                                  ->getResource()
+                                                                  ->getMainTable();
 
         $collection = $this->parentFactory->getObject(Amazon::NICK, 'Listing\Product')->getCollection();
         $collection->getSelect()->joinLeft(

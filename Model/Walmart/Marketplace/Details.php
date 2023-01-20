@@ -35,6 +35,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $marketplaceId
+     *
      * @return $this
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -62,6 +63,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $productDataNick
+     *
      * @return array
      */
     public function getVariationAttributes($productDataNick)
@@ -83,13 +85,13 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
 
         $connRead = $this->resourceConnection->getConnection();
         $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace');
+                      ->getTableNameWithPrefix('m2epro_walmart_dictionary_marketplace');
 
         $data = $connRead->select()
-            ->from($table)
-            ->where('marketplace_id = ?', (int)$this->marketplaceId)
-            ->query()
-            ->fetch();
+                         ->from($table)
+                         ->where('marketplace_id = ?', (int)$this->marketplaceId)
+                         ->query()
+                         ->fetch();
 
         if ($data === false) {
             throw new \Ess\M2ePro\Model\Exception('Marketplace not found or not synchronized');

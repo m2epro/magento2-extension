@@ -152,7 +152,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'business_discounts_tier_modifier' => '[]',
             'business_discounts_tier_customer_group_id' => null,
 
-            'discount_rules' => []
+            'discount_rules' => [],
         ];
     }
 }

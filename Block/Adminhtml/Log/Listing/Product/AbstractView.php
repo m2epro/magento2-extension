@@ -63,7 +63,7 @@ abstract class AbstractView extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
         }
 
         return
-              '<div class="switcher-separator"></div>'
+            '<div class="switcher-separator"></div>'
             . $html;
     }
 

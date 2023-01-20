@@ -22,7 +22,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\P
 
     public function getCommand()
     {
-        return ['inventory','get','items'];
+        return ['inventory', 'get', 'items'];
     }
 
     //########################################
@@ -30,8 +30,8 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\P
     protected function getResponserParams()
     {
         return [
-            'account_id'     => $this->account->getId(),
-            'marketplace_id' => $this->marketplace->getId()
+            'account_id' => $this->account->getId(),
+            'marketplace_id' => $this->marketplace->getId(),
         ];
     }
 

@@ -125,7 +125,6 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     private function getListingLog()
     {
         if ($this->listingLog === null) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Log $listingLog */
             $listingLog = $this->activeRecordFactory->getObject('Walmart_Listing_Log');
 
@@ -141,21 +140,25 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($message->isError()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
         }
 
         if ($message->isWarning()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_WARNING);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
         }
 
         if ($message->isSuccess()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
         }
 
         if ($message->isNotice()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO;
         }
 

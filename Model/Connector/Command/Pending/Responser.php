@@ -13,17 +13,18 @@ namespace Ess\M2ePro\Model\Connector\Command\Pending;
  */
 abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var array  */
     protected $params = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response $response */
     protected $response = null;
-
+    /** @var array  */
     protected $preparedResponseData = [];
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
@@ -44,11 +45,11 @@ abstract class Responser extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $params = []
     ) {
-        $this->params              = $params;
-        $this->response            = $response;
-        $this->amazonFactory       = $amazonFactory;
-        $this->walmartFactory      = $walmartFactory;
-        $this->ebayFactory         = $ebayFactory;
+        $this->params = $params;
+        $this->response = $response;
+        $this->amazonFactory = $amazonFactory;
+        $this->walmartFactory = $walmartFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
 
         parent::__construct($helperFactory, $modelFactory);

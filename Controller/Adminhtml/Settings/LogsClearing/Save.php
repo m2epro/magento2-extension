@@ -46,6 +46,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         $this->setJsonContent(
             ['success' => true, 'messages' => $messages]
         );
+
         return $this->getResult();
     }
 }

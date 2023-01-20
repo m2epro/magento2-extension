@@ -20,7 +20,7 @@ class ViewListingAndList extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listin
 
         return $this->_redirect('*/walmart_listing/view', [
             'id' => $listingId,
-            'do_list' => true
+            'do_list' => true,
         ]);
     }
 }

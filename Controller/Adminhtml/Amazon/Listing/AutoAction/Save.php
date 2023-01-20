@@ -30,11 +30,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
     {
         if (!$post = $this->getRequest()->getPost()) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
         if (!isset($post['auto_action_data'])) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
@@ -49,7 +51,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_global_adding_description_template_id'  => null,
+            'auto_global_adding_description_template_id' => null,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
@@ -64,7 +66,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'categories' => []
+            'categories' => [],
         ];
 
         // mode global
@@ -137,6 +139,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         $listing->save();
 
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 }

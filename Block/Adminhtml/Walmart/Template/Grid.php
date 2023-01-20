@@ -36,8 +36,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         array $data = []
     ) {
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
-        $this->walmartFactory           = $walmartFactory;
-        $this->resourceConnection       = $resourceConnection;
+        $this->walmartFactory = $walmartFactory;
+        $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -74,12 +74,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\''.self::TEMPLATE_CATEGORY.'\' as `type`'),
+                new \Zend_Db_Expr('\'' . self::TEMPLATE_CATEGORY . '\' as `type`'),
                 'marketplace_id',
                 'create_date',
                 'update_date',
                 'category_path',
-                'browsenode_id'
+                'browsenode_id',
             ]
         );
         // ---------------------------------------
@@ -92,16 +92,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\''.self::TEMPLATE_SELLING_FORMAT.'\' as `type`'),
+                new \Zend_Db_Expr('\'' . self::TEMPLATE_SELLING_FORMAT . '\' as `type`'),
                 'second_table.marketplace_id',
                 'create_date',
                 'update_date',
                 new \Zend_Db_Expr('NULL as `category_path`'),
-                new \Zend_Db_Expr('NULL as `browsenode_id`')
+                new \Zend_Db_Expr('NULL as `browsenode_id`'),
             ]
         );
         $collectionSellingFormat->getSelect()
-            ->where('component_mode = (?)', \Ess\M2ePro\Helper\Component\Walmart::NICK);
+                                ->where('component_mode = (?)', \Ess\M2ePro\Helper\Component\Walmart::NICK);
         // ---------------------------------------
 
         // Prepare synchronization collection
@@ -112,12 +112,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\''.self::TEMPLATE_SYNCHRONIZATION.'\' as `type`'),
+                new \Zend_Db_Expr('\'' . self::TEMPLATE_SYNCHRONIZATION . '\' as `type`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
                 new \Zend_Db_Expr('NULL as `category_path`'),
-                new \Zend_Db_Expr('NULL as `browsenode_id`')
+                new \Zend_Db_Expr('NULL as `browsenode_id`'),
             ]
         );
         $collectionSynchronization->getSelect()->where(
@@ -135,12 +135,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\''.self::TEMPLATE_DESCRIPTION.'\' as `type`'),
+                new \Zend_Db_Expr('\'' . self::TEMPLATE_DESCRIPTION . '\' as `type`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
                 new \Zend_Db_Expr('NULL as `category_path`'),
-                new \Zend_Db_Expr('NULL as `browsenode_id`')
+                new \Zend_Db_Expr('NULL as `browsenode_id`'),
             ]
         );
         // ---------------------------------------
@@ -151,7 +151,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collectionCategory->getSelect(),
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
-            $collectionDescription->getSelect()
+            $collectionDescription->getSelect(),
         ];
 
         $unionSelect = $this->resourceConnection->getConnection()->select();
@@ -173,12 +173,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'create_date',
                 'update_date',
                 'category_path',
-                'browsenode_id'
+                'browsenode_id',
             ]
         );
         // ---------------------------------------
 
-//        echo $resultCollection->getSelectSql(true); exit;
+        //        echo $resultCollection->getSelectSql(true); exit;
 
         $this->setCollection($resultCollection);
 
@@ -189,106 +189,105 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-
         $this->addColumn('title', [
-            'header'                    => $this->__('Details'),
-            'align'                     => 'left',
-            'type'                      => 'text',
+            'header' => $this->__('Details'),
+            'align' => 'left',
+            'type' => 'text',
             //            'width'         => '150px',
-            'index'                     => 'title',
-            'escape'                    => true,
-            'filter_index'              => 'main_table.title',
-            'frame_callback'            => [$this, 'callbackColumnTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'index' => 'title',
+            'escape' => true,
+            'filter_index' => 'main_table.title',
+            'frame_callback' => [$this, 'callbackColumnTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $options = [
-            self::TEMPLATE_CATEGORY          => $this->__('Category'),
-            self::TEMPLATE_SELLING_FORMAT    => $this->__('Selling'),
-            self::TEMPLATE_DESCRIPTION       => $this->__('Description'),
-            self::TEMPLATE_SYNCHRONIZATION   => $this->__('Synchronization')
+            self::TEMPLATE_CATEGORY => $this->__('Category'),
+            self::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
+            self::TEMPLATE_DESCRIPTION => $this->__('Description'),
+            self::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
         ];
         $this->addColumn('type', [
-            'header'        => $this->__('Type'),
-            'align'         => 'left',
-            'type'          => 'options',
-            'width'         => '120px',
-            'sortable'      => false,
-            'index'         => 'type',
-            'filter_index'  => 'main_table.type',
-            'options'       => $options
+            'header' => $this->__('Type'),
+            'align' => 'left',
+            'type' => 'options',
+            'width' => '120px',
+            'sortable' => false,
+            'index' => 'type',
+            'filter_index' => 'main_table.type',
+            'options' => $options,
         ]);
 
         $this->addColumn('marketplace', [
-            'header'        => $this->__('Marketplace'),
-            'align'         => 'left',
-            'type'          => 'options',
-            'width'         => '100px',
-            'index'         => 'marketplace_id',
-            'filter_index'  => 'marketplace_id',
+            'header' => $this->__('Marketplace'),
+            'align' => 'left',
+            'type' => 'options',
+            'width' => '100px',
+            'index' => 'marketplace_id',
+            'filter_index' => 'marketplace_id',
             'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
-            'frame_callback'=> [$this, 'callbackColumnMarketplace'],
-            'options'       => $this->getEnabledMarketplaceTitles()
+            'frame_callback' => [$this, 'callbackColumnMarketplace'],
+            'options' => $this->getEnabledMarketplaceTitles(),
         ], 'type');
 
         $this->addColumn('create_date', [
-            'header'    => $this->__('Creation Date'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'datetime',
-            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'header' => $this->__('Creation Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
-            'format'    => \IntlDateFormatter::MEDIUM,
-            'index'     => 'create_date',
-            'filter_index' => 'main_table.create_date'
+            'format' => \IntlDateFormatter::MEDIUM,
+            'index' => 'create_date',
+            'filter_index' => 'main_table.create_date',
         ]);
 
         $this->addColumn('update_date', [
-            'header'    => $this->__('Update Date'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'datetime',
-            'filter'    => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'header' => $this->__('Update Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
             'filter_time' => true,
-            'format'    => \IntlDateFormatter::MEDIUM,
-            'index'     => 'update_date',
-            'filter_index' => 'main_table.update_date'
+            'format' => \IntlDateFormatter::MEDIUM,
+            'index' => 'update_date',
+            'filter_index' => 'main_table.update_date',
         ]);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'width'     => '100px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'getter'    => 'getTemplateId',
-            'actions'   => [
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'getter' => 'getTemplateId',
+            'actions' => [
                 [
-                    'caption'   => $this->__('Edit'),
-                    'url'       => [
+                    'caption' => $this->__('Edit'),
+                    'url' => [
                         'base' => '*/walmart_template/edit',
                         'params' => [
-                            'type'    => '$type'
-                        ]
+                            'type' => '$type',
+                        ],
                     ],
-                    'field' => 'id'
+                    'field' => 'id',
                 ],
                 [
-                    'caption'   => $this->__('Delete'),
-                    'class'     => 'action-default scalable add primary policy-delete-btn',
-                    'url'       => [
+                    'caption' => $this->__('Delete'),
+                    'class' => 'action-default scalable add primary policy-delete-btn',
+                    'url' => [
                         'base' => '*/walmart_template/delete',
                         'params' => [
-                            'type' => '$type'
-                        ]
+                            'type' => '$type',
+                        ],
                     ],
-                    'field'    => 'id',
-                    'confirm'  => $this->__('Are you sure?')
-                ]
-            ]
+                    'field' => 'id',
+                    'confirm' => $this->__('Are you sure?'),
+                ],
+            ],
         ]);
 
         return parent::_prepareColumns();
@@ -337,7 +336,7 @@ HTML;
 
         $collection->getSelect()->where(
             'category_path LIKE ? OR browsenode_id LIKE ? OR title LIKE ?',
-            '%'. $value .'%'
+            '%' . $value . '%'
         );
     }
 
@@ -377,7 +376,7 @@ HTML;
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/grid', ['_current'=>true]);
+        return $this->getUrl('*/*/grid', ['_current' => true]);
     }
 
     public function getRowUrl($row)
@@ -385,9 +384,9 @@ HTML;
         return $this->getUrl(
             '*/walmart_template/edit',
             [
-                'id'   => $row->getData('template_id'),
+                'id' => $row->getData('template_id'),
                 'type' => $row->getData('type'),
-                'back' => 1
+                'back' => 1,
             ]
         );
     }

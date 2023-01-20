@@ -31,6 +31,7 @@ class Save extends Template
 
         if (!$post->count()) {
             $this->_forward('index');
+
             return;
         }
 
@@ -72,8 +73,9 @@ class Save extends Template
 
         if ($this->isAjax()) {
             $this->setJsonContent([
-                'status' => true
+                'status' => true,
             ]);
+
             return $this->getResult();
         }
 
@@ -81,13 +83,16 @@ class Save extends Template
         // ---------------------------------------
 
         $this->messageManager->addSuccess($this->__('Policy was saved'));
-        return $this->_redirect($this->dataHelper->getBackUrl('*/walmart_template/index', [], [
-            'edit' => [
-                'id' => $id,
-                'wizard' => $this->getRequest()->getParam('wizard'),
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
-            ],
-        ]));
+
+        return $this->_redirect(
+            $this->dataHelper->getBackUrl('*/walmart_template/index', [], [
+                'edit' => [
+                    'id' => $id,
+                    'wizard' => $this->getRequest()->getParam('wizard'),
+                    'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+                ],
+            ])
+        );
     }
 
     private function getRuleData($rulePrefix)

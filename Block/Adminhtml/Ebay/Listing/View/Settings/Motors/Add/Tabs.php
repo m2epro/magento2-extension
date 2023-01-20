@@ -67,35 +67,39 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $title = $this->getItemsTabTitle();
 
         $this->addTab('items', [
-            'label'   => $this->__($title),
-            'title'   => $this->__('Child Products'),
-            'content' => $itemsGrid->toHtml()
+            'label' => $this->__($title),
+            'title' => $this->__('Child Products'),
+            'content' => $itemsGrid->toHtml(),
         ]);
         //------------------------------
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid $filtersGrid */
         $filtersGrid = $this->getLayout()
-                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid::class);
+                            ->createBlock(
+                                \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Grid::class
+                            );
         $filtersGrid->setMotorsType($this->getMotorsType());
 
         $this->addTab('filters', [
-            'label'   => $this->__('Filters'),
-            'title'   => $this->__('Filters'),
-            'content' => $filtersGrid->toHtml()
+            'label' => $this->__('Filters'),
+            'title' => $this->__('Filters'),
+            'content' => $filtersGrid->toHtml(),
         ]);
         //------------------------------
 
         //------------------------------
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Grid $groupsGrid */
         $groupsGrid = $this->getLayout()
-                   ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Grid::class);
+                           ->createBlock(
+                               \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Group\Grid::class
+                           );
         $groupsGrid->setMotorsType($this->getMotorsType());
 
         $this->addTab('groups', [
-            'label'   => $this->__('Groups'),
-            'title'   => $this->__('Groups'),
-            'content' => $groupsGrid->toHtml()
+            'label' => $this->__('Groups'),
+            'title' => $this->__('Groups'),
+            'content' => $groupsGrid->toHtml(),
         ]);
         //------------------------------
 

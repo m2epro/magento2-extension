@@ -18,12 +18,12 @@ use Magento\Framework\View\Result\PageFactory;
 
 abstract class Base extends Action
 {
-    const LAYOUT_ONE_COLUMN  = '1column';
-    const LAYOUT_TWO_COLUMNS = '2columns';
-    const LAYOUT_BLANK       = 'blank';
+    public const LAYOUT_ONE_COLUMN = '1column';
+    public const LAYOUT_TWO_COLUMNS = '2columns';
+    public const LAYOUT_BLANK = 'blank';
 
-    const MESSAGE_IDENTIFIER    = 'm2epro_messages';
-    const GLOBAL_MESSAGES_GROUP = 'm2epro_global_messages_group';
+    public const MESSAGE_IDENTIFIER = 'm2epro_messages';
+    public const GLOBAL_MESSAGES_GROUP = 'm2epro_global_messages_group';
 
     /** @var HelperFactory $helperFactory */
     protected $helperFactory;
@@ -40,7 +40,7 @@ abstract class Base extends Action
     /** @var PageFactory $resultPageFactory */
     protected $resultPageFactory;
 
-    /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory  */
+    /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory */
     protected $resultRawFactory;
 
     /** @var \Magento\Framework\View\LayoutFactory $layoutFactory */
@@ -55,18 +55,19 @@ abstract class Base extends Action
     /** @var \Magento\Config\Model\Config */
     protected $magentoConfig;
 
-    /** @var \Magento\Framework\Controller\Result\Raw $rawResult  */
+    /** @var \Magento\Framework\Controller\Result\Raw $rawResult */
     protected $rawResult;
 
     /** @var \Magento\Framework\View\LayoutInterface $emptyLayout */
     protected $emptyLayout;
 
-    /** @var \Magento\Framework\View\Result\Page $resultPage  */
+    /** @var \Magento\Framework\View\Result\Page $resultPage */
     protected $resultPage;
 
     /** @var \Magento\Framework\App\Response\RedirectInterface */
     protected $redirect;
 
+    /** @var bool  */
     private $generalBlockWasAppended = false;
 
     public function __construct(Context $context)
@@ -171,6 +172,7 @@ abstract class Base extends Action
         } catch (\Exception $exception) {
             if ($request->getControllerName() == $this->getHelper('Module\Support')->getPageControllerName()) {
                 $this->getRawResult()->setContents($exception->getMessage());
+
                 return $this->getRawResult();
             }
 
@@ -182,6 +184,7 @@ abstract class Base extends Action
 
             if ($request->isXmlHttpRequest() || $request->getParam('isAjax')) {
                 $this->getRawResult()->setContents($exception->getMessage());
+
                 return $this->getRawResult();
             }
 
@@ -190,7 +193,7 @@ abstract class Base extends Action
             );
 
             $params = [
-                'error' => 'true'
+                'error' => 'true',
             ];
 
             if ($this->getViewHelper()->getCurrentView() !== null) {
@@ -220,27 +223,35 @@ abstract class Base extends Action
         }
 
         if ($this->getHelper('Module')->isDisabled()) {
-            $message = $this->__('M2E Pro is disabled. Inventory and Order synchronization is not running.
+            $message = $this->__(
+                'M2E Pro is disabled. Inventory and Order synchronization is not running.
                                   The Module interface is unavailable.<br>
                                   You can enable the Module under
-                                  <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Module</i>.');
+                                  <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Module</i>.'
+            );
             $this->getMessageManager()->addNotice($message);
+
             return $this->_redirect('admin/dashboard');
         }
 
         if (empty($this->getHelper('Component')->getEnabledComponents())) {
-            $message = $this->__('Channel Integrations are disabled. To start working with M2E Pro, go to
+            $message = $this->__(
+                'Channel Integrations are disabled. To start working with M2E Pro, go to
                                   <i>Stores > Settings > Configuration > M2E Pro</i>
-                                  and enable at least one Channel Integration.');
+                                  and enable at least one Channel Integration.'
+            );
             $this->getMessageManager()->addNotice($message);
+
             return $this->_redirect('admin/dashboard');
         }
 
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
-            $this->getRawResult()->setContents($this->getHelper('Data')->jsonEncode([
-                'ajaxExpired'  => 1,
-                'ajaxRedirect' => $this->redirect->getRefererUrl()
-            ]));
+            $this->getRawResult()->setContents(
+                $this->getHelper('Data')->jsonEncode([
+                    'ajaxExpired' => 1,
+                    'ajaxRedirect' => $this->redirect->getRefererUrl(),
+                ])
+            );
 
             return $this->getRawResult();
         }
@@ -271,6 +282,7 @@ abstract class Base extends Action
     {
         if ($this->isAjax()) {
             $this->initEmptyLayout();
+
             return $this->emptyLayout;
         }
 
@@ -387,6 +399,7 @@ abstract class Base extends Action
 
     /**
      * If key 'html' is exists, general block will be appended
+     *
      * @param array $data
      */
     protected function setJsonContent(array $data)
@@ -444,6 +457,7 @@ abstract class Base extends Action
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -456,6 +470,7 @@ abstract class Base extends Action
      * @param $block
      * @param $name
      * @param $arguments
+     *
      * @return \Magento\Framework\View\Element\AbstractBlock
      */
     protected function createBlock($block, $name = '', array $arguments = [])
@@ -471,7 +486,7 @@ abstract class Base extends Action
     protected function getRequestIds($key = 'id')
     {
         $id = $this->getRequest()->getParam($key);
-        $ids = $this->getRequest()->getParam($key.'s');
+        $ids = $this->getRequest()->getParam($key . 's');
 
         if ($id === null && $ids === null) {
             return [];
@@ -503,7 +518,7 @@ abstract class Base extends Action
         $helpLinkBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\PageHelpLink::class)->setData([
             'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
                 $tinyLink
-            )
+            ),
         ]);
 
         $pageTitleBlock->setTitleClass('m2epro-page-title');
@@ -527,6 +542,7 @@ abstract class Base extends Action
     protected function _redirect($path, $arguments = [])
     {
         $this->messageManager->getMessages(true, self::GLOBAL_MESSAGES_GROUP);
+
         return parent::_redirect($path, $arguments);
     }
 

@@ -13,14 +13,14 @@ namespace Ess\M2ePro\Model\Ebay\Magento\Product;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel
 {
-    const INSTRUCTION_TYPE_TITLE_DATA_CHANGED = 'magento_product_title_data_changed';
-    const INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED = 'magento_product_subtitle_data_changed';
-    const INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED = 'magento_product_description_data_changed';
-    const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'magento_product_images_data_changed';
-    const INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED = 'magento_product_categories_data_changed';
-    const INSTRUCTION_TYPE_PARTS_DATA_CHANGED = 'magento_product_parts_data_changed';
-    const INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED = 'magento_product_shipping_data_changed';
-    const INSTRUCTION_TYPE_OTHER_DATA_CHANGED = 'magento_product_other_data_changed';
+    public const INSTRUCTION_TYPE_TITLE_DATA_CHANGED = 'magento_product_title_data_changed';
+    public const INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED = 'magento_product_subtitle_data_changed';
+    public const INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED = 'magento_product_description_data_changed';
+    public const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'magento_product_images_data_changed';
+    public const INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED = 'magento_product_categories_data_changed';
+    public const INSTRUCTION_TYPE_PARTS_DATA_CHANGED = 'magento_product_parts_data_changed';
+    public const INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED = 'magento_product_shipping_data_changed';
+    public const INSTRUCTION_TYPE_OTHER_DATA_CHANGED = 'magento_product_other_data_changed';
 
     //########################################
 
@@ -142,18 +142,21 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
     public function getTitleTrackingAttributes()
     {
         $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
+
         return array_unique($ebayDescriptionTemplate->getTitleAttributes());
     }
 
     public function getSubtitleTrackingAttributes()
     {
         $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
+
         return array_unique($ebayDescriptionTemplate->getSubTitleAttributes());
     }
 
     public function getDescriptionTrackingAttributes()
     {
         $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
+
         return array_unique($ebayDescriptionTemplate->getDescriptionAttributes());
     }
 

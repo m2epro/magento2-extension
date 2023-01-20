@@ -21,10 +21,12 @@ class Content extends AbstractForm
     protected function _prepareLayout()
     {
         $this->getLayout()->getBlock('wizard.help.block')->setContent(
-            $this->__('
+            $this->__(
+                '
                In this section, you can configure the general settings for the interaction between M2E Pro and eBay
                Marketplaces.<br><br>Anytime you can change these settings under <b>eBay > Configuration > General</b>.
-               ')
+               '
+            )
         );
 
         parent::_prepareLayout();
@@ -38,8 +40,8 @@ class Content extends AbstractForm
         $form = $settings->getForm();
 
         $form->setData([
-            'id'     => 'edit_form',
-            'method' => 'post'
+            'id' => 'edit_form',
+            'method' => 'post',
         ]);
 
         $form->setUseContainer(true);

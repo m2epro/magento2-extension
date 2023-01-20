@@ -87,11 +87,11 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $matching = $matchingCollection->getFirstItem();
 
         $matching->addData([
-            'product_id'               => (int)$productId,
-            'input_variation_options'  => $this->getHelper('Data')->jsonEncode($input),
+            'product_id' => (int)$productId,
+            'input_variation_options' => $this->getHelper('Data')->jsonEncode($input),
             'output_variation_options' => $this->getHelper('Data')->jsonEncode($output),
-            'hash'                     => $hash,
-            'component'                => $component,
+            'hash' => $hash,
+            'component' => $component,
         ]);
 
         $matching->save();
@@ -104,6 +104,7 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         $helper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Ess\M2ePro\Helper\Data::class);
+
         return sha1($helper->serialize($input));
     }
 

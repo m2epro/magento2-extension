@@ -108,6 +108,6 @@ abstract class MigrationFromMagento1 extends Wizard
         return $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Congratulation::class
         )
-        ->setData(['nick' => $this->getNick()]);
+                    ->setData(['nick' => $this->getNick()]);
     }
 }

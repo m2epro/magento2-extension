@@ -65,7 +65,7 @@ class ListRules extends AbstractForm
                     <i>Walmart Integration > Configuration > Settings > Synchronization</i>. Otherwise,
                     Synchronization Rules will not take effect.</p><br>
 HTML
-                )
+                ),
             ]
         );
 
@@ -73,7 +73,7 @@ HTML
             'magento_block_walmart_template_synchronization_general_list',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -90,7 +90,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Enable to automatically list the Not Listed Item(s) when the List Conditions are met.'
-                )
+                ),
             ]
         );
 
@@ -98,7 +98,7 @@ HTML
             'magento_block_walmart_template_synchronization_list_rules',
             [
                 'legend' => $this->__('List Conditions'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -115,7 +115,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Magento Product Status at which the Item(s) have to be listed.'
-                )
+                ),
             ]
         );
 
@@ -132,7 +132,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Magento Stock Availability at which the Item(s) have to be listed'
-                )
+                ),
             ]
         );
 
@@ -152,15 +152,16 @@ HTML
                     the Item(s) have to be listed.</p>
                     <p><strong>Note:</strong> This option will be ignored for
                     Magento Variational Product listed as Walmart Variant Group</p>'
-                )
+                ),
             ]
-        )->setAfterElementHtml(<<<HTML
+        )->setAfterElementHtml(
+            <<<HTML
 <input name="list_qty_calculated_value" id="list_qty_calculated_value"
        value="{$formData['list_qty_calculated_value']}" type="text"
        style="width: 72px; margin-left: 10px;"
        class="input-text admin__control-text required-entry validate-digits _required" />
 HTML
-            );
+        );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_list_advanced_filters',
@@ -170,7 +171,7 @@ HTML
                 'tooltip' => $this->__(
                     '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
                     Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
-                )
+                ),
             ]
         );
 
@@ -178,14 +179,16 @@ HTML
             'list_advanced_rules_filters_warning',
             self::MESSAGES,
             [
-                'messages' => [[
-                    'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                    'content' => $this->__(
-                        'Please be very thoughtful before enabling this option as this functionality can have
+                'messages' => [
+                    [
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                        'content' => $this->__(
+                            'Please be very thoughtful before enabling this option as this functionality can have
                         a negative impact on the Performance of your system.<br> It can decrease the speed of running
                         in case you have a lot of Products with the high number of changes made to them.'
-                    )
-                ]]
+                        ),
+                    ],
+                ],
             ]
         );
 
@@ -198,7 +201,7 @@ HTML
                 'value' => $formData['list_advanced_rules_mode'],
                 'values' => [
                     0 => $this->__('Disabled'),
-                    1  => $this->__('Enabled'),
+                    1 => $this->__('Enabled'),
                 ],
             ]
         );
@@ -212,15 +215,15 @@ HTML
         }
 
         $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
-                                       ->setData(['rule_model' => $ruleModel]);
+                          ->setData(['rule_model' => $ruleModel]);
 
         $fieldset->addField(
             'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'list_advanced_rules_filters_container',
-                'label'        => $this->__('Conditions'),
-                'text'         => $ruleBlock->toHtml(),
+                'label' => $this->__('Conditions'),
+                'text' => $ruleBlock->toHtml(),
             ]
         );
 
@@ -230,19 +233,21 @@ HTML
         $this->jsPhp->addConstants(
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\Synchronization::class)
         );
-        $this->jsPhp->addConstants($this->dataHelper
-            ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class));
+        $this->jsPhp->addConstants(
+            $this->dataHelper
+                ->getClassConstants(\Ess\M2ePro\Helper\Component\Walmart::class)
+        );
 
         $this->jsUrl->addUrls([
-            'formSubmit'    => $this->getUrl(
+            'formSubmit' => $this->getUrl(
                 '*/walmart_template_synchronization/save',
                 ['_current' => true]
             ),
             'formSubmitNew' => $this->getUrl('m2epro/walmart_template_synchronization/save'),
-            'deleteAction'  => $this->getUrl(
+            'deleteAction' => $this->getUrl(
                 '*/walmart_template_synchronization/delete',
                 ['_current' => true]
-            )
+            ),
         ]);
 
         $this->jsTranslator->addTranslations([
@@ -261,7 +266,8 @@ HTML
 
         $this->js->add("M2ePro.formData.id = '{$this->getRequest()->getParam('id')}';");
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Walmart/Template/Synchronization',
     ], function(){

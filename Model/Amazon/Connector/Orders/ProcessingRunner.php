@@ -27,9 +27,9 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $processingAction->setData(
             [
                 'processing_id' => $this->getProcessingObject()->getId(),
-                'order_id'      => $params['order_id'],
-                'type'          => $params['action_type'],
-                'request_data'  => $this->getHelper('Data')->jsonEncode($params['request_data']),
+                'order_id' => $params['order_id'],
+                'type' => $params['action_type'],
+                'request_data' => $this->getHelper('Data')->jsonEncode($params['request_data']),
             ]
         );
         $processingAction->save();
@@ -77,7 +77,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         }
 
         $processingActionCollection = $this->activeRecordFactory->getObject('Amazon_Order_Action_Processing')
-            ->getCollection();
+                                                                ->getCollection();
         $processingActionCollection->addFieldToFilter('processing_id', $this->getProcessingObject()->getId());
 
         $processingAction = $processingActionCollection->getFirstItem();

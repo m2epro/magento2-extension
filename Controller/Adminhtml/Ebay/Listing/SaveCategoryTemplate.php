@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
@@ -59,16 +59,16 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     ) {
         parent::__construct($ebayFactory, $context);
 
-        $this->dataHelper                  = $dataHelper;
-        $this->converterFactory            = $converterFactory;
-        $this->snapshotBuilderFactory      = $snapshotBuilderFactory;
-        $this->transactionFactory          = $transactionFactory;
-        $this->exceptionHelper             = $exceptionHelper;
-        $this->categoryFactory             = $categoryFactory;
-        $this->storeCategoryFactory        = $storeCategoryFactory;
-        $this->categoryBuilderFactory      = $categoryBuilderFactory;
+        $this->dataHelper = $dataHelper;
+        $this->converterFactory = $converterFactory;
+        $this->snapshotBuilderFactory = $snapshotBuilderFactory;
+        $this->transactionFactory = $transactionFactory;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->categoryFactory = $categoryFactory;
+        $this->storeCategoryFactory = $storeCategoryFactory;
+        $this->categoryBuilderFactory = $categoryBuilderFactory;
         $this->storeCategoryBuilderFactory = $storeCategoryBuilderFactory;
-        $this->processorFactory            = $changeProcessorFactory;
+        $this->processorFactory = $changeProcessorFactory;
     }
 
     public function execute()
@@ -79,6 +79,7 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         if ($categoryTemplatesData === null) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -93,10 +94,12 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
         $this->setAjaxContent('1', false);
+
         return $this->getResult();
     }
 
@@ -120,7 +123,7 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_SECONDARY)
         );
 
-        $snapshots   = [];
+        $snapshots = [];
         $transaction = $this->transactionFactory->create();
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -154,12 +157,14 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     private function buildTemplateCategory(array $rawData)
     {
         $builder = $this->categoryBuilderFactory->create();
+
         return $builder->build($this->categoryFactory->create(), $rawData);
     }
 
     private function buildStoreTemplateCategory(array $rawData)
     {
         $builder = $this->storeCategoryBuilderFactory->create();
+
         return $builder->build($this->storeCategoryFactory->create(), $rawData);
     }
 

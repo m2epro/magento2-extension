@@ -29,7 +29,7 @@ class SettingsForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create([
-            'data' => ['id' => 'change_tracker_config_form']
+            'data' => ['id' => 'change_tracker_config_form'],
         ]);
         $form->setUseContainer(true);
         $fieldset = $form->addFieldset('base', []);
@@ -42,7 +42,7 @@ class SettingsForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'change_tracker_status',
                 'values' => [
                     ['value' => 0, 'label' => $this->__('No')],
-                    ['value' => 1, 'label' => $this->__('Yes')]
+                    ['value' => 1, 'label' => $this->__('Yes')],
                 ],
                 'value' => $this->changeTrackerHelper->getStatus(),
             ]
@@ -56,7 +56,7 @@ class SettingsForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'track_direct_status',
                 'values' => [
                     ['value' => 0, 'label' => $this->__('No')],
-                    ['value' => 1, 'label' => $this->__('Yes')]
+                    ['value' => 1, 'label' => $this->__('Yes')],
                 ],
                 'value' => (int)$this->moduleConfiguration->isEnableListingProductInspectorMode(),
             ]
@@ -81,7 +81,7 @@ class SettingsForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     100 => 'Debug',
                     200 => 'Info',
-                    300 => 'Notice'
+                    300 => 'Notice',
                 ],
                 'value' => $this->changeTrackerHelper->getLogLevel(),
             ]
@@ -93,7 +93,7 @@ class SettingsForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'value' => 'Save',
                 'class' => 'save_btn',
-                'onclick' => 'ChangeTracker.saveConfig()'
+                'onclick' => 'ChangeTracker.saveConfig()',
             ]
         );
 

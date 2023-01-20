@@ -38,14 +38,14 @@ class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
         }
 
         $attributes = [
-            'id'       => $this->getId(),
-            'name'     => $this->getElementName(),
-            'title'    => $title,
-            'type'     => $this->getType(),
-            'class'    => join(' ', $classes) . ' magento-attribute-btn',
-            'onclick'  => $onclick,
-            'style'    => $this->getStyle(),
-            'value'    => $this->getValue(),
+            'id' => $this->getId(),
+            'name' => $this->getElementName(),
+            'title' => $title,
+            'type' => $this->getType(),
+            'class' => join(' ', $classes) . ' magento-attribute-btn',
+            'onclick' => $onclick,
+            'style' => $this->getStyle(),
+            'value' => $this->getValue(),
             'disabled' => $disabled,
         ];
 

@@ -17,20 +17,25 @@ use Ess\M2ePro\Model\Amazon\Order\Invoice as AmazonOrderInvoice;
  */
 class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/send_invoice';
+    public const NICK = 'amazon/order/send_invoice';
 
     /** ~4-10 seconds on call, ~5-10 invoices per minute, 50 requests in 10 minutes */
-    const LIMIT_ORDER_CHANGES = 50;
+    public const LIMIT_ORDER_CHANGES = 50;
 
     /** @var int $interval (in seconds) */
     protected $interval = 600;
 
+    /** @var int  */
     protected $maxOrderChangesPerTask = 0;
-
+    /** @var \Magento\Framework\Validator\UniversalFactory  */
     protected $universalFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf\InvoiceFactory  */
     protected $invocePdfFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice\Pdf\CreditNoteFactory  */
     protected $creditNotePdfFactory;
+    /** @var \Magento\Sales\Model\Order\Pdf\Invoice  */
     protected $pdfInvoice;
+    /** @var \Magento\Sales\Model\Order\Pdf\Creditmemo  */
     protected $pdfCreditmemo;
 
     //####################################
@@ -147,11 +152,12 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $accountsCollection->getSelect()->where(
             'auto_invoicing = ' . AmazonAccount::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES .
             ' OR (' .
-                'auto_invoicing = ' . AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE .
-                ' AND ' .
-                'invoice_generation = ' . AmazonAccount::INVOICE_GENERATION_BY_EXTENSION .
+            'auto_invoicing = ' . AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE .
+            ' AND ' .
+            'invoice_generation = ' . AmazonAccount::INVOICE_GENERATION_BY_EXTENSION .
             ')'
         );
+
         return $accountsCollection->getItems();
     }
 
@@ -165,7 +171,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $this->activeRecordFactory->getObject('Order_Change')->getResource()
-            ->incrementAttemptCount(array_keys($relatedChanges));
+                                  ->incrementAttemptCount(array_keys($relatedChanges));
 
         $failedChangesIds = [];
         $changesCount = count($relatedChanges);
@@ -181,7 +187,8 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             );
 
             if ($changeParams['invoice_source'] == AmazonOrder::INVOICE_SOURCE_MAGENTO) {
-                if (($changeParams['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE &&
+                if (
+                    ($changeParams['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE &&
                         !$order->getChildObject()->canSendMagentoInvoice()) ||
                     ($changeParams['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE &&
                         !$order->getChildObject()->canSendMagentoCreditmemo())
@@ -219,12 +226,12 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $documentData = $this->getMagentoDocumentData($order, $changeParams['document_type']);
 
         $requestData = [
-            'change_id'       => $change->getId(),
-            'order_id'        => $change->getOrderId(),
+            'change_id' => $change->getId(),
+            'order_id' => $change->getOrderId(),
             'amazon_order_id' => $order->getChildObject()->getAmazonOrderId(),
             'document_number' => $documentData['document_number'],
-            'document_type'   => $changeParams['document_type'],
-            'document_pdf'    => $documentData['document_pdf']
+            'document_type' => $changeParams['document_type'],
+            'document_pdf' => $documentData['document_pdf'],
         ];
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
@@ -242,6 +249,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param $type
+     *
      * @return array
      * @throws \Zend_Pdf_Exception
      */
@@ -280,7 +288,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return [
             'document_number' => $documentNumber,
-            'document_pdf'    => $documentPdf
+            'document_pdf' => $documentPdf,
         ];
     }
 
@@ -317,24 +325,30 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice $lastInvoice */
         $lastInvoice = $this->activeRecordFactory->getObject('Amazon_Order_Invoice')->getCollection()
-            ->addFieldToFilter('document_type', AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE)
-            ->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-            ->getFirstItem();
+                                                 ->addFieldToFilter(
+                                                     'document_type',
+                                                     AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE
+                                                 )
+                                                 ->setOrder(
+                                                     'create_date',
+                                                     \Magento\Framework\Data\Collection::SORT_ORDER_DESC
+                                                 )
+                                                 ->getFirstItem();
 
         $lastInvoiceNumber = $lastInvoice->getDocumentNumber();
 
         /** @var \Magento\Eav\Model\Entity\Increment\NumericValue $incrementModel */
         $incrementModel = $this->universalFactory->create(\Magento\Eav\Model\Entity\Increment\NumericValue::class);
         $incrementModel->setPrefix('IN-')
-            ->setPadLength(12)
-            ->setLastId($lastInvoiceNumber);
+                       ->setPadLength(12)
+                       ->setLastId($lastInvoiceNumber);
 
         /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice $invoice */
         $invoice = $this->activeRecordFactory->getObject('Amazon_Order_Invoice');
         $invoice->addData([
-            'order_id'        => $order->getId(),
-            'document_type'   => AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE,
-            'document_number' => $incrementModel->getNextId()
+            'order_id' => $order->getId(),
+            'document_type' => AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE,
+            'document_number' => $incrementModel->getNextId(),
         ]);
         $invoice->setSettings('document_data', $invocieData);
         $invoice->save();
@@ -348,16 +362,16 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $documentPdf = $pdf->render();
 
         $requestData = [
-            'change_id'                 => $change->getId(),
-            'order_id'                  => $change->getOrderId(),
-            'amazon_order_id'           => $invoice->getSetting('document_data', 'order-id'),
-            'document_shipping_id'      => $invoice->getSetting('document_data', 'shipping-id'),
-            'document_transaction_id'   => $invoice->getSetting('document_data', 'transaction-id'),
-            'document_total_amount'     => $orderPdfInvoice->getDocumentTotal(),
+            'change_id' => $change->getId(),
+            'order_id' => $change->getOrderId(),
+            'amazon_order_id' => $invoice->getSetting('document_data', 'order-id'),
+            'document_shipping_id' => $invoice->getSetting('document_data', 'shipping-id'),
+            'document_transaction_id' => $invoice->getSetting('document_data', 'transaction-id'),
+            'document_total_amount' => $orderPdfInvoice->getDocumentTotal(),
             'document_total_vat_amount' => $orderPdfInvoice->getDocumentVatTotal(),
-            'document_type'             => $invoice->getDocumentType(),
-            'document_number'           => $invoice->getDocumentNumber(),
-            'document_pdf'              => $documentPdf
+            'document_type' => $invoice->getDocumentType(),
+            'document_number' => $invoice->getDocumentNumber(),
+            'document_pdf' => $documentPdf,
         ];
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
@@ -385,24 +399,30 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice $lastInvoice */
             $lastInvoice = $this->activeRecordFactory->getObject('Amazon_Order_Invoice')->getCollection()
-                ->addFieldToFilter('document_type', AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE)
-                ->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-                ->getFirstItem();
+                                                     ->addFieldToFilter(
+                                                         'document_type',
+                                                         AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE
+                                                     )
+                                                     ->setOrder(
+                                                         'create_date',
+                                                         \Magento\Framework\Data\Collection::SORT_ORDER_DESC
+                                                     )
+                                                     ->getFirstItem();
 
             $lastInvoiceNumber = $lastInvoice->getDocumentNumber();
 
             /** @var \Magento\Eav\Model\Entity\Increment\NumericValue $incrementModel */
             $incrementModel = $this->universalFactory->create(\Magento\Eav\Model\Entity\Increment\NumericValue::class);
             $incrementModel->setPrefix('CN-')
-                ->setPadLength(12)
-                ->setLastId($lastInvoiceNumber);
+                           ->setPadLength(12)
+                           ->setLastId($lastInvoiceNumber);
 
             /** @var \Ess\M2ePro\Model\Amazon\Order\Invoice $invoice */
             $invoice = $this->activeRecordFactory->getObject('Amazon_Order_Invoice');
             $invoice->addData([
-                'order_id'        => $order->getId(),
-                'document_type'   => AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE,
-                'document_number' => $incrementModel->getNextId()
+                'order_id' => $order->getId(),
+                'document_type' => AmazonOrderInvoice::DOCUMENT_TYPE_CREDIT_NOTE,
+                'document_number' => $incrementModel->getNextId(),
             ]);
             $invoice->setSettings('document_data', $invocieData);
             $invoice->save();
@@ -416,16 +436,16 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $documentPdf = $pdf->render();
 
             $requestData = [
-                'change_id'                 => $change->getId(),
-                'order_id'                  => $change->getOrderId(),
-                'amazon_order_id'           => $invoice->getSetting('document_data', 'order-id'),
-                'document_shipping_id'      => $invoice->getSetting('document_data', 'shipping-id'),
-                'document_transaction_id'   => $invoice->getSetting('document_data', 'transaction-id'),
-                'document_total_amount'     => $orderPdfCreditNote->getDocumentTotal(),
+                'change_id' => $change->getId(),
+                'order_id' => $change->getOrderId(),
+                'amazon_order_id' => $invoice->getSetting('document_data', 'order-id'),
+                'document_shipping_id' => $invoice->getSetting('document_data', 'shipping-id'),
+                'document_transaction_id' => $invoice->getSetting('document_data', 'transaction-id'),
+                'document_total_amount' => $orderPdfCreditNote->getDocumentTotal(),
                 'document_total_vat_amount' => $orderPdfCreditNote->getDocumentVatTotal(),
-                'document_type'             => $invoice->getDocumentType(),
-                'document_number'           => $invoice->getDocumentNumber(),
-                'document_pdf'              => $documentPdf
+                'document_type' => $invoice->getDocumentType(),
+                'document_number' => $invoice->getDocumentNumber(),
+                'document_pdf' => $documentPdf,
             ];
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
@@ -446,6 +466,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return \Ess\M2ePro\Model\Order\Change[]
      */
     protected function getRelatedChanges(\Ess\M2ePro\Model\Account $account)
@@ -475,10 +496,10 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function deleteNotActualChanges()
     {
         $this->activeRecordFactory->getObject('Order_Change')->getResource()
-            ->deleteByProcessingAttemptCount(
-                \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
-                \Ess\M2ePro\Helper\Component\Amazon::NICK
-            );
+                                  ->deleteByProcessingAttemptCount(
+                                      \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
+                                      \Ess\M2ePro\Helper\Component\Amazon::NICK
+                                  );
     }
 
     //########################################
@@ -489,6 +510,7 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($data as $row) {
             $groupedData[$row[$field]][] = $row;
         }
+
         return $groupedData;
     }
 

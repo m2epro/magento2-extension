@@ -16,13 +16,13 @@ abstract class Base extends Action
     /** @var HelperFactory $helperFactory */
     protected $helperFactory = null;
 
-    /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory  */
+    /** @var \Magento\Framework\Controller\Result\RawFactory $resultRawFactory */
     protected $resultRawFactory = null;
 
-    /** @var \Magento\Framework\App\ResourceConnection|null  */
+    /** @var \Magento\Framework\App\ResourceConnection|null */
     protected $resourceConnection = null;
 
-    /** @var \Magento\Framework\Controller\Result\Raw $rawResult  */
+    /** @var \Magento\Framework\Controller\Result\Raw $rawResult */
     protected $rawResult = null;
 
     /** @var \Ess\M2ePro\Setup\MigrationFromMagento1\Runner */
@@ -62,6 +62,7 @@ abstract class Base extends Action
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

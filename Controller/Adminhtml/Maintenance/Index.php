@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Maintenance;
 
-use \Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
+use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
 class Index extends \Magento\Backend\App\Action
 {
@@ -42,9 +42,11 @@ class Index extends \Magento\Backend\App\Action
 
         $result = $this->pageFactory->create();
 
-        $result->getConfig()->getTitle()->set(__(
-            'M2E Pro is currently under maintenance'
-        ));
+        $result->getConfig()->getTitle()->set(
+            __(
+                'M2E Pro is currently under maintenance'
+            )
+        );
         $this->_setActiveMenu('Ess_M2ePro::m2epro_maintenance');
 
         /** @var \Magento\Framework\View\Element\Template $block */
@@ -62,6 +64,7 @@ class Index extends \Magento\Backend\App\Action
     {
         /** @var \Ess\M2ePro\Model\Wizard\MigrationFromMagento1 $wizard */
         $wizard = $this->wizardHelper->getWizard(MigrationFromMagento1::NICK);
+
         return $wizard->isStarted();
     }
 }

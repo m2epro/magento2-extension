@@ -53,33 +53,39 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     protected function _beforeToHtml()
     {
         $this->addTab('variations', [
-            'label'   => $this->__('Child Products'),
-            'title'   => $this->__('Child Products'),
+            'label' => $this->__('Child Products'),
+            'title' => $this->__('Child Products'),
             'content' => $this->getLayout()
-               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations::class)
-               ->setListingProduct($this->getListingProduct())
-               ->toHtml()
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations::class
+                              )
+                              ->setListingProduct($this->getListingProduct())
+                              ->toHtml(),
         ]);
 
         $settingsBlock = $this->getLayout()
-           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings\Form::class)
-           ->setListingProduct($this->getListingProduct());
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Settings\Form::class
+                              )
+                              ->setListingProduct($this->getListingProduct());
         $settingsBlock->calculateWarnings();
 
         $this->addTab('settings', [
-            'label'   => $this->__('Settings'),
-            'title'   => $this->__('Settings'),
+            'label' => $this->__('Settings'),
+            'title' => $this->__('Settings'),
             'content' => $settingsBlock->toHtml(),
-            'class'   => (!empty($settingsBlock->getMessages())) ? 'listing-view-warning-icon' : ''
+            'class' => (!empty($settingsBlock->getMessages())) ? 'listing-view-warning-icon' : '',
         ]);
 
         $this->addTab('vocabulary', [
-            'label'   => $this->__('Advanced'),
-            'title'   => $this->__('Advanced'),
+            'label' => $this->__('Advanced'),
+            'title' => $this->__('Advanced'),
             'content' => $this->getLayout()
-               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary::class)
-               ->setListingProduct($this->getListingProduct())
-               ->toHtml()
+                              ->createBlock(
+                                  \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary::class
+                              )
+                              ->setListingProduct($this->getListingProduct())
+                              ->toHtml(),
         ]);
 
         $generalId = $this->getListingProduct()->getChildObject()->getGeneralId();
@@ -97,7 +103,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $generalId = $this->getListingProduct()->getChildObject()->getGeneralId();
 
         $showChildProducts = (int)(
-            !(empty($generalId) && $this->getListingProduct()->getChildObject()->isGeneralIdOwner())
+        !(empty($generalId) && $this->getListingProduct()->getChildObject()->isGeneralIdOwner())
         );
 
         $this->js->add(

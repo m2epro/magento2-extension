@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Model;
 
-/**
- * Class \Ess\M2ePro\Model\Processing
- */
 class Processing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const TYPE_SINGLE = 1;
-    const TYPE_PARTIAL = 2;
+    public const TYPE_SINGLE = 1;
+    public const TYPE_PARTIAL = 2;
 
     //####################################
 

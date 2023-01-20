@@ -13,10 +13,10 @@ namespace Ess\M2ePro\Model\HealthStatus\Task;
  */
 class Result extends \Ess\M2ePro\Model\AbstractModel
 {
-    const STATE_CRITICAL = 40;
-    const STATE_WARNING  = 30;
-    const STATE_NOTICE   = 20;
-    const STATE_SUCCESS  = 10;
+    public const STATE_CRITICAL = 40;
+    public const STATE_WARNING = 30;
+    public const STATE_NOTICE = 20;
+    public const STATE_SUCCESS = 10;
 
     private $taskHash;
     private $taskType;
@@ -26,9 +26,9 @@ class Result extends \Ess\M2ePro\Model\AbstractModel
     private $fieldSetName;
     private $fieldName;
 
-    private $taskResult  = self::STATE_SUCCESS;
+    private $taskResult = self::STATE_SUCCESS;
     private $taskMessage = '';
-    private $taskData    = [];
+    private $taskData = [];
 
     //########################################
 
@@ -93,6 +93,7 @@ class Result extends \Ess\M2ePro\Model\AbstractModel
     public function setTaskResult($value)
     {
         $this->taskResult = $value;
+
         return $this;
     }
 
@@ -106,6 +107,7 @@ class Result extends \Ess\M2ePro\Model\AbstractModel
     public function setTaskMessage($message)
     {
         $this->taskMessage = $message;
+
         return $this;
     }
 
@@ -119,6 +121,7 @@ class Result extends \Ess\M2ePro\Model\AbstractModel
     public function setTaskData($data)
     {
         $this->taskData = $data;
+
         return $this;
     }
 

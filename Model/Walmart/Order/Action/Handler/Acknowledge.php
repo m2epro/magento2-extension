@@ -48,6 +48,7 @@ class Acknowledge extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Abstrac
     {
         if (!isset($responseData['result']) || !$responseData['result']) {
             $this->processError();
+
             return;
         }
 

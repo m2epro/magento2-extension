@@ -40,6 +40,7 @@ class GetAutoCategoryFormHtml extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category\Form::class);
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 

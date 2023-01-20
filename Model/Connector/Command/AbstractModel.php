@@ -13,6 +13,7 @@ namespace Ess\M2ePro\Model\Connector\Command;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var array  */
     protected $params = [];
 
     /** @var \Ess\M2ePro\Model\Connector\ProtocolInterface */
@@ -37,6 +38,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function setProtocol(\Ess\M2ePro\Model\Connector\ProtocolInterface $protocol)
     {
         $this->protocol = $protocol;
+
         return $this;
     }
 

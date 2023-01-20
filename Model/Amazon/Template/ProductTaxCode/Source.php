@@ -27,11 +27,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -47,11 +49,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $instance
+     *
      * @return $this
      */
     public function setProductTaxCodeTemplate(\Ess\M2ePro\Model\Amazon\Template\ProductTaxCode $instance)
     {
         $this->productTaxCodeTemplateModel = $instance;
+
         return $this;
     }
 

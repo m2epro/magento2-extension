@@ -22,12 +22,13 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper
     ) {
-        parent::__construct($helperFactory, $modelFactory);
+        parent::__construct($helperFactory, $modelFactory, $supportHelper);
 
-        $this->activeRecordFactory        = $activeRecordFactory;
-        $this->ebayFactory                = $ebayFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->ebayFactory = $ebayFactory;
         $this->componentEbayConfiguration = $componentEbayConfiguration;
     }
 
@@ -37,6 +38,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
     {
         if (!$this->getListingProduct()->isListable()) {
             $this->addMessage('Item is Listed or not available');
+
             return false;
         }
 
@@ -122,14 +124,16 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             return true;
         }
 
-        $this->addMessage($this->getHelper('Module\Log')->encodeDescription(
-            'There is another Item with the same eBay User ID, ' .
-            'Product ID and Marketplace presented in "%listing_title%" (%listing_id%) Listing.',
-            [
-                '!listing_title' => $theSameListingProduct->getListing()->getTitle(),
-                '!listing_id' => $theSameListingProduct->getListing()->getId()
-            ]
-        ));
+        $this->addMessage(
+            $this->getHelper('Module\Log')->encodeDescription(
+                'There is another Item with the same eBay User ID, ' .
+                'Product ID and Marketplace presented in "%listing_title%" (%listing_id%) Listing.',
+                [
+                    '!listing_title' => $theSameListingProduct->getListing()->getTitle(),
+                    '!listing_id' => $theSameListingProduct->getListing()->getId(),
+                ]
+            )
+        );
 
         return false;
     }
@@ -139,6 +143,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
     public function setIsVerifyCall($value)
     {
         $this->isVerifyCall = $value;
+
         return $this;
     }
 

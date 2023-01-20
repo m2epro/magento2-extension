@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-use \Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
-use \Ess\M2ePro\Model\Amazon\Order\Item as AmazonItem;
-use \Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
+use Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
+use Ess\M2ePro\Model\Amazon\Order\Item as AmazonItem;
+use Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
 
 /**
  * @method EbayItem|AmazonItem|WalmartItem getChildObject()
@@ -84,6 +84,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     public function setAssociatedOptions(array $options)
     {
         $this->setSetting('product_details', 'associated_options', $options);
+
         return $this;
     }
 
@@ -95,6 +96,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     public function setAssociatedProducts(array $products)
     {
         $this->setSetting('product_details', 'associated_products', $products);
+
         return $this;
     }
 
@@ -106,6 +108,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     public function setReservedProducts(array $products)
     {
         $this->setSetting('product_details', 'reserved_products', $products);
+
         return $this;
     }
 
@@ -118,11 +121,13 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
+     *
      * @return $this
      */
     public function setOrder(\Ess\M2ePro\Model\Order $order)
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -149,6 +154,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     {
         if (!$product instanceof \Magento\Catalog\Model\Product) {
             $this->magentoProduct = null;
+
             return $this;
         }
 
@@ -221,8 +227,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         }
 
         $storeIds = $this->modelFactory->getObject('Magento\Product')
-            ->setProductId($this->getProductId())
-            ->getStoreIds();
+                                       ->setProductId($this->getProductId())
+                                       ->getStoreIds();
 
         if (empty($storeIds)) {
             return \Magento\Store\Model\Store::DEFAULT_STORE_ID;
@@ -235,7 +241,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Associate order item with product in magento
-     *
      * @throws \Ess\M2ePro\Model\Exception
      */
     public function associateWithProduct()
@@ -250,7 +255,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             $message = $this->getHelper('Module\Log')->encodeDescription(
                 'Order Import does not support Product type: %type%.',
                 [
-                    'type' => $this->getMagentoProduct()->getTypeId()
+                    'type' => $this->getMagentoProduct()->getTypeId(),
                 ]
             );
 
@@ -284,22 +289,22 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Associate order item variation with options of magento product
-     *
      * @throws \LogicException
      * @throws \Exception
      */
     private function associateVariationWithOptions()
     {
         $variationChannelOptions = $this->getChildObject()->getVariationChannelOptions();
-        $magentoProduct   = $this->getMagentoProduct();
+        $magentoProduct = $this->getMagentoProduct();
 
-        $existOptions  = $this->getAssociatedOptions();
+        $existOptions = $this->getAssociatedOptions();
         $existProducts = $this->getAssociatedProducts();
 
-        if (count($existProducts) == 1
-            && ($magentoProduct->isDownloadableType() ||
-                $magentoProduct->isGroupedType() ||
-                $magentoProduct->isConfigurableType())
+        if (
+            count($existProducts) == 1
+            && ($magentoProduct->isDownloadableType()
+                || $magentoProduct->isGroupedType()
+                || $magentoProduct->isConfigurableType())
         ) {
             // grouped and configurable products can have only one associated product mapped with sold variation
             // so if count($existProducts) == 1 - there is no need for further actions
@@ -324,6 +329,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
                 $this->setAssociatedOptions($productDetails['associated_options']);
 
                 $this->save();
+
                 return;
             }
         }
@@ -358,6 +364,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -370,7 +377,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         $magentoOptions = $this->prepareMagentoOptions($magentoProduct->getVariationInstance()->getVariationsTypeRaw());
 
         $storedItemOptions = (array)$this->getChildObject()->getVariationProductOptions();
-        $orderItemOptions  = (array)$this->getChildObject()->getVariationOptions();
+        $orderItemOptions = (array)$this->getChildObject()->getVariationOptions();
 
         /** @var \Ess\M2ePro\Model\Order\Item\OptionsFinder $optionsFinder */
         $optionsFinder = $this->modelFactory->getObject('Order_Item_OptionsFinder');
@@ -434,7 +441,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Product does not exist.');
         }
 
-        if (empty($associatedProducts)
+        if (
+            empty($associatedProducts)
             || (!$magentoProduct->isGroupedType() && empty($associatedOptions))
         ) {
             throw new \InvalidArgumentException('Required Options were not selected.');

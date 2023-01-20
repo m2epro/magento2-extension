@@ -24,6 +24,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
             return null;
         }
         $className = $this->getHelper('Client')->getClassName($this);
+
         return str_replace('Ess\M2ePro\Model\ResourceModel', ucwords($childMode), $className);
     }
 
@@ -33,7 +34,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
             return null;
         }
 
-        return str_replace('m2epro_', 'm2epro_'.$childMode.'_', $this->getMainTable());
+        return str_replace('m2epro_', 'm2epro_' . $childMode . '_', $this->getMainTable());
     }
 
     public function getChildPrimary($childMode)
@@ -44,8 +45,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $secondTable = $this->getChildTable($childMode);
 
-        $primaryName = substr($secondTable, strpos($secondTable, 'm2epro_'.$childMode.'_'));
-        return substr($primaryName, strlen('m2epro_'.$childMode.'_')).'_id';
+        $primaryName = substr($secondTable, strpos($secondTable, 'm2epro_' . $childMode . '_'));
+
+        return substr($primaryName, strlen('m2epro_' . $childMode . '_')) . '_id';
     }
 
     //########################################
@@ -63,7 +65,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         $childTable = $this->getChildTable($object->getChildMode());
         $select->join(
             $childTable,
-            "`{$childTable}`.`".$this->getChildPrimary($object->getChildMode())."` = `".$this->getMainTable().'`.`id`'
+            "`{$childTable}`.`" . $this->getChildPrimary($object->getChildMode()) . "` = `" . $this->getMainTable(
+            ) . '`.`id`'
         );
 
         return $select;

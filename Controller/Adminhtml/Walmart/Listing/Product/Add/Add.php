@@ -27,7 +27,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
     {
         $listingId = $this->getRequest()->getParam('listing_id');
         /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing =  $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId);
+        $listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId);
 
         $productsIds = $this->getRequest()->getParam('products');
         $productsIds = explode(',', $productsIds);
@@ -59,7 +59,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             $backUrl = $this->getUrl('*/*/index', [
                 'id' => $listingId,
                 'skip_products_steps' => empty($tempProducts),
-                'step' => 3
+                'step' => 3,
             ]);
 
             $this->clearSession();

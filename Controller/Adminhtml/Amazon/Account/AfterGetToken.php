@@ -46,7 +46,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
         if (empty($params)) {
             return $this->_redirect('*/*/new', [
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
+                'close_on_save' => $this->getRequest()->getParam('close_on_save'),
             ]);
         }
 
@@ -61,7 +61,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
                 $this->messageManager->addErrorMessage($error);
 
                 return $this->_redirect('*/*/new', [
-                    'close_on_save' => $this->getRequest()->getParam('close_on_save')
+                    'close_on_save' => $this->getRequest()->getParam('close_on_save'),
                 ]);
             }
         }
@@ -74,7 +74,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             $this->temporaryStorage->setMWSToken($params['MWSAuthToken']);
 
             return $this->_redirect('*/*/new', [
-                'close_on_save' => $this->getRequest()->getParam('close_on_save')
+                'close_on_save' => $this->getRequest()->getParam('close_on_save'),
             ]);
         }
 
@@ -86,10 +86,12 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             $this->helperException->process($exception);
             $this->temporaryStorage->removeAllValues();
 
-            $this->messageManager->addError($this->__(
-                'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',
-                $exception->getMessage()
-            ));
+            $this->messageManager->addError(
+                $this->__(
+                    'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',
+                    $exception->getMessage()
+                )
+            );
 
             return $this->_redirect('*/amazon_account');
         }
@@ -97,7 +99,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $this->messageManager->addSuccessMessage($this->__('Token was saved'));
 
         return $this->_redirect('*/*/edit', [
-            'id' => $accountId, 'close_on_save' => $this->getRequest()->getParam('close_on_save')
+            'id' => $accountId,
+            'close_on_save' => $this->getRequest()->getParam('close_on_save'),
         ]);
     }
 }

@@ -40,9 +40,9 @@ class Order extends AbstractContainer
         $this->addButton(
             'upload_by_user',
             [
-                'label'   => $this->__('Order Reimport'),
+                'label' => $this->__('Order Reimport'),
                 'onclick' => 'UploadByUserObj.openPopup()',
-                'class'   => 'action-primary'
+                'class' => 'action-primary',
             ]
         );
     }
@@ -64,7 +64,7 @@ class Order extends AbstractContainer
                 and Shipments in the Account Configuration under
                 <i>Walmart Integration > Configuration > Accounts > Edit Account > Orders</i>.</p>
 HTML
-                )
+                ),
             ]
         );
 
@@ -98,9 +98,9 @@ JS
 
         $this->jsTranslator->addTranslations(
             [
-                'Order Reimport'               => $this->__('Order Reimport'),
+                'Order Reimport' => $this->__('Order Reimport'),
                 'Order importing in progress.' => $this->__('Order importing in progress.'),
-                'Order importing is canceled.' => $this->__('Order importing is canceled.')
+                'Order importing is canceled.' => $this->__('Order importing is canceled.'),
             ]
         );
 

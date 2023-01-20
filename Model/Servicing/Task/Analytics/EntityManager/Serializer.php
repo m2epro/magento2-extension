@@ -8,26 +8,21 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager;
 
-use \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager as EntityManager;
+use Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager as EntityManager;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer
- */
 class Serializer extends \Ess\M2ePro\Model\AbstractModel
 {
-    //########################################
-
-    public function serializeData(\Ess\M2ePro\Model\ActiveRecord\AbstractModel $item, EntityManager $manager)
+    public function serializeData(\Ess\M2ePro\Model\ActiveRecord\AbstractModel $item, EntityManager $manager): array
     {
         return [
             'component' => $manager->getComponent(),
-            'entity'    => $manager->getEntityType(),
-            'id'        => $item->getId(),
-            'data'      => $this->prepareEntityData($item, $manager)
+            'entity' => $manager->getEntityType(),
+            'id' => $item->getId(),
+            'data' => $this->prepareEntityData($item, $manager),
         ];
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function prepareEntityData(\Ess\M2ePro\Model\ActiveRecord\AbstractModel $item, EntityManager $manager)
     {
@@ -37,10 +32,10 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
             $data['id'],
             $data['component_mode'],
             $data['server_hash'],
-            $data[strtolower($manager->getEntityType()).'_id']
+            $data[strtolower($manager->getEntityType()) . '_id']
         );
 
-        switch ($manager->getComponent() .'::'. $manager->getEntityType()) {
+        switch ($manager->getComponent() . '::' . $manager->getEntityType()) {
             case \Ess\M2ePro\Helper\Component\Amazon::NICK . '::Account':
                 unset($data['server_hash'], $data['token']);
                 break;
@@ -128,21 +123,18 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 break;
         }
 
-        return $this->getHelper('Data')->jsonEncode($data);
+        return \Ess\M2ePro\Helper\Json::encode($data);
     }
-
-    //########################################
 
     protected function unsetDataInRelatedItems(array $items, $dataKey)
     {
         return array_map(
             function ($el) use ($dataKey) {
                 unset($el[$dataKey]);
+
                 return $el;
             },
             $items
         );
     }
-
-    //########################################
 }

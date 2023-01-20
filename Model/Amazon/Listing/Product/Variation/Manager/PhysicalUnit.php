@@ -48,8 +48,8 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
 
         $currentOptions = array_change_key_case(array_map('strtolower', $currentOptions), CASE_LOWER);
         $magentoVariations = $this->getListingProduct()->getMagentoProduct()
-                                                       ->getVariationInstance()
-                                                       ->getVariationsTypeStandard();
+                                  ->getVariationInstance()
+                                  ->getVariationsTypeStandard();
 
         foreach ($magentoVariations['variations'] as $magentoVariation) {
             $magentoOptions = [];
@@ -195,8 +195,10 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
 
         foreach ($currentVariation->getOptions(true) as $currentOption) {
             foreach ($magentoVariation as $magentoOption) {
-                if ($currentOption->getAttribute() != $magentoOption['attribute'] ||
-                    $currentOption->getOption() != $magentoOption['option']) {
+                if (
+                    $currentOption->getAttribute() != $magentoOption['attribute'] ||
+                    $currentOption->getOption() != $magentoOption['option']
+                ) {
                     continue;
                 }
 
@@ -223,16 +225,16 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
     private function createStructure(array $variation)
     {
         $variationId = $this->amazonFactory->getObject('Listing_Product_Variation')->addData([
-            'listing_product_id' => $this->getListingProduct()->getId()
+            'listing_product_id' => $this->getListingProduct()->getId(),
         ])->save()->getId();
 
         foreach ($variation as $option) {
             $tempData = [
                 'listing_product_variation_id' => $variationId,
-                'product_id'   => $option['product_id'],
+                'product_id' => $option['product_id'],
                 'product_type' => $option['product_type'],
-                'attribute'    => $option['attribute'],
-                'option'       => $option['option']
+                'attribute' => $option['attribute'],
+                'option' => $option['option'],
             ];
 
             $this->amazonFactory->getObject('Listing_Product_Variation_Option')->addData($tempData)->save();
@@ -244,12 +246,12 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
     private function removeChannelItems()
     {
         $items = $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
-                            ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
-                            ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
-                            ->addFieldToFilter('sku', $this->getAmazonListingProduct()->getSku())
-                            ->addFieldToFilter('product_id', $this->getListingProduct()->getProductId())
-                            ->addFieldToFilter('store_id', $this->getListing()->getStoreId())
-                            ->getItems();
+                                           ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
+                                           ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
+                                           ->addFieldToFilter('sku', $this->getAmazonListingProduct()->getSku())
+                                           ->addFieldToFilter('product_id', $this->getListingProduct()->getProductId())
+                                           ->addFieldToFilter('store_id', $this->getListing()->getStoreId())
+                                           ->getItems();
 
         foreach ($items as $item) {
             /** @var \Ess\M2ePro\Model\Amazon\Item $item */
@@ -276,9 +278,9 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
     protected function getMagentoAttributes()
     {
         $magentoVariations = $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                                  ->getMagentoProduct()
+                                  ->getVariationInstance()
+                                  ->getVariationsTypeStandard();
 
         return array_keys($magentoVariations['set']);
     }

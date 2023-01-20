@@ -35,7 +35,7 @@ abstract class AbstractModel extends DataObject
 
     public function getCacheLifetime()
     {
-        return 60*60*24;
+        return 60 * 60 * 24;
     }
 
     public function getCacheGroupTags()
@@ -49,7 +49,7 @@ abstract class AbstractModel extends DataObject
             $modelNameComponent = substr($modelName, 0, strpos($modelName, '\\'));
 
             if (in_array(strtolower($modelNameComponent), array_map('strtolower', $allComponents))) {
-                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\')+1);
+                $modelNameOnlyModel = substr($modelName, strpos($modelName, '\\') + 1);
                 $tags[] = $modelNameComponent;
                 $tags[] = $modelNameOnlyModel;
             }
@@ -66,6 +66,7 @@ abstract class AbstractModel extends DataObject
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

@@ -13,13 +13,14 @@ namespace Ess\M2ePro\Model\ActiveRecord\Component\Parent;
  */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
+    /** @var null  */
     protected $childMode = null;
 
     /**
      * @var \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
      */
     protected $childObject = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
     protected $parentFactory;
 
     //########################################
@@ -52,12 +53,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     /**
      * @param string $mode
+     *
      * @return $this
      */
     public function setChildMode($mode)
     {
         $mode = strtolower((string)$mode);
         $mode && $this->childMode = $mode;
+
         return $this;
     }
 
@@ -263,6 +266,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
      * @param bool $asObjects
      * @param array $filters
      * @param array $sort
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -306,10 +310,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
         $resourceCollection = $this->_resourceCollection ? clone $this
             ->_resourceCollection : \Magento\Framework\App\ObjectManager::getInstance()
-            ->create(
-                $this->_collectionName,
-                ['childMode' => $this->childMode]
-            );
+                                                                        ->create(
+                                                                            $this->_collectionName,
+                                                                            ['childMode' => $this->childMode]
+                                                                        );
 
         return $resourceCollection;
     }

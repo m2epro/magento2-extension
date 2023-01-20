@@ -36,11 +36,11 @@ class GlobalMessage implements ChannelInterface
     {
         $url = $message->getUrl() ?? 'https://m2epro.com/?' . sha1($message->getTitle());
         $dataForAdd = [
-            'title'       => $message->getTitle(),
+            'title' => $message->getTitle(),
             'description' => strip_tags($message->getText()),
-            'url'         => $url,
-            'severity'    => $this->recognizeSeverity($message),
-            'date_added'  => Date::createCurrentGmt()->format('Y-m-d H:i:s'),
+            'url' => $url,
+            'severity' => $this->recognizeSeverity($message),
+            'date_added' => Date::createCurrentGmt()->format('Y-m-d H:i:s'),
         ];
 
         $this->notificationFactory->create()->parse([$dataForAdd]);

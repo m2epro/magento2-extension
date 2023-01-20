@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel;
  */
 class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/channel/synchronize_changes';
+    public const NICK = 'ebay/channel/synchronize_changes';
 
     /**
      * @var int (in seconds)

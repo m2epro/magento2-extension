@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item;
 
-/**
- * Class \Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem
- */
 class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
+    /** @var \Magento\Framework\Event\ManagerInterface  */
     protected $eventManager;
 
     //########################################
@@ -48,7 +46,7 @@ class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
             'ess_sales_convert_quote_item_to_order_item',
             [
                 'order_item' => $orderItem,
-                'item'       => $quoteItem,
+                'item' => $quoteItem,
             ]
         );
 

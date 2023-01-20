@@ -65,19 +65,19 @@ class License extends AbstractBlock
     protected function _beforeToHtml()
     {
         $this->licenseData = [
-            'key'    => $this->dataHelper->escapeHtml($this->licenseHelper->getKey()),
+            'key' => $this->dataHelper->escapeHtml($this->licenseHelper->getKey()),
             'domain' => $this->dataHelper->escapeHtml($this->licenseHelper->getDomain()),
-            'ip'     => $this->dataHelper->escapeHtml($this->licenseHelper->getIp()),
-            'valid'  => [
+            'ip' => $this->dataHelper->escapeHtml($this->licenseHelper->getIp()),
+            'valid' => [
                 'domain' => $this->licenseHelper->isValidDomain(),
-                'ip'     => $this->licenseHelper->isValidIp(),
+                'ip' => $this->licenseHelper->isValidIp(),
             ],
         ];
 
         $this->locationData = [
-            'domain'             => $this->clientHelper->getDomain(),
-            'ip'                 => $this->clientHelper->getIp(),
-            'directory'          => $this->clientHelper->getBaseDirectory(),
+            'domain' => $this->clientHelper->getDomain(),
+            'ip' => $this->clientHelper->getIp(),
+            'directory' => $this->clientHelper->getBaseDirectory(),
             'relative_directory' => $this->moduleHelper->getBaseRelativeDirectory(),
         ];
 

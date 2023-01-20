@@ -29,8 +29,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
-        $this->storeManager              = $storeManager;
-        $this->config                    = $config;
+        $this->storeManager = $storeManager;
+        $this->config = $config;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
@@ -38,11 +38,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -58,11 +60,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Ebay\Template\Category\Specific $instance
+     *
      * @return $this
      */
     public function setCategorySpecificTemplate(\Ess\M2ePro\Model\Ebay\Template\Category\Specific $instance)
     {
         $this->categorySpecificTemplateModel = $instance;
+
         return $this;
     }
 
@@ -88,8 +92,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     public function getLabel()
     {
-        if ($this->getCategorySpecificTemplate()->isCustomItemSpecificsMode() &&
-            $this->getCategorySpecificTemplate()->isCustomAttributeValueMode()) {
+        if (
+            $this->getCategorySpecificTemplate()->isCustomItemSpecificsMode() &&
+            $this->getCategorySpecificTemplate()->isCustomAttributeValueMode()
+        ) {
             return $this->getAttributeLabel();
         }
 
@@ -116,8 +122,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             );
         }
 
-        if (!$this->getCategorySpecificTemplate()->isCustomAttributeValueMode() &&
-            !$this->getCategorySpecificTemplate()->isCustomLabelAttributeValueMode()) {
+        if (
+            !$this->getCategorySpecificTemplate()->isCustomAttributeValueMode() &&
+            !$this->getCategorySpecificTemplate()->isCustomLabelAttributeValueMode()
+        ) {
             return $valueData;
         }
 
@@ -127,9 +135,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $categoryId = $this->getCategoryTemplate()->getCategoryId();
         $marketplaceId = $this->getCategoryTemplate()->getMarketplaceId();
 
-        if (empty($categoryId) || empty($marketplaceId) || strpos($valueTemp, ',') === false ||
-            $this->getMagentoProduct()->getAttributeFrontendInput($attributeCode) !== 'multiselect') {
+        if (
+            empty($categoryId) || empty($marketplaceId) || strpos($valueTemp, ',') === false ||
+            $this->getMagentoProduct()->getAttributeFrontendInput($attributeCode) !== 'multiselect'
+        ) {
             $valueData[] = $valueTemp;
+
             return $valueData;
         }
 
@@ -137,14 +148,17 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if (empty($specifics)) {
             $valueData[] = $valueTemp;
+
             return $valueData;
         }
 
         foreach ($specifics as $specific) {
-            if ($specific['title'] === $this->getCategorySpecificTemplate()->getData('attribute_title') &&
-                in_array($specific['type'], ['select_multiple_or_text','select_multiple'])) {
+            if (
+                $specific['title'] === $this->getCategorySpecificTemplate()->getData('attribute_title') &&
+                in_array($specific['type'], ['select_multiple_or_text', 'select_multiple'])
+            ) {
                 foreach (explode(',', $valueTemp) as $val) {
-                    $valueData[] =  trim($val);
+                    $valueData[] = trim($val);
                 }
 
                 return $valueData;
@@ -152,6 +166,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $valueData[] = $valueTemp;
+
         return $valueData;
     }
 

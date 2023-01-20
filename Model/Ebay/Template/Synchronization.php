@@ -20,9 +20,9 @@ use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const LIST_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_list_advanced_rules';
-    const RELIST_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_relist_advanced_rules';
-    const STOP_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_stop_advanced_rules';
+    public const LIST_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_list_advanced_rules';
+    public const RELIST_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_relist_advanced_rules';
+    public const STOP_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_stop_advanced_rules';
 
     //########################################
 
@@ -53,17 +53,17 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         }
 
         return (bool)$this->activeRecordFactory->getObject('Ebay\Listing')
-                ->getCollection()
-                ->addFieldToFilter('template_synchronization_id', $this->getId())
-                ->getSize() ||
+                                               ->getCollection()
+                                               ->addFieldToFilter('template_synchronization_id', $this->getId())
+                                               ->getSize() ||
             (bool)$this->activeRecordFactory->getObject('Ebay_Listing_Product')
-                ->getCollection()
-                ->addFieldToFilter(
-                    'template_synchronization_mode',
-                    \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
-                )
-                ->addFieldToFilter('template_synchronization_id', $this->getId())
-                ->getSize();
+                                            ->getCollection()
+                                            ->addFieldToFilter(
+                                                'template_synchronization_mode',
+                                                \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE
+                                            )
+                                            ->addFieldToFilter('template_synchronization_id', $this->getId())
+                                            ->getSize();
     }
 
     //########################################
@@ -71,12 +71,14 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
+
         return parent::save();
     }
 
     public function delete()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
+
         return parent::delete();
     }
 

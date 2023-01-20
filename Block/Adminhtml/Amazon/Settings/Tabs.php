@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
-    const TAB_ID_MAIN = 'main';
-
-    //########################################
+    public const TAB_ID_MAIN = 'main';
 
     protected function _prepareLayout()
     {
@@ -25,7 +20,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'label' => __('Main'),
             'title' => __('Main'),
             'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main::class)
-                                           ->toHtml()
+                              ->toHtml(),
         ];
 
         $this->addTab(self::TAB_ID_MAIN, $tab);
@@ -39,7 +34,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'title' => __('Synchronization'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Synchronization::class)
-                              ->toHtml()
+                              ->toHtml(),
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);
@@ -49,13 +44,10 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _beforeToHtml()
     {
         $this->jsUrl->add($this->getUrl('*/amazon/getGlobalMessages'), 'getGlobalMessages');
+
         return parent::_beforeToHtml();
     }
-
-    //########################################
 }

@@ -110,14 +110,17 @@ abstract class AbstractPriceCondition
                     'product.store_id',
                     'product.product_id'
                 );
+
             return "($attributeQuery)";
         }
 
-        throw new \RuntimeException(sprintf(
-            'Wrong selling policy mode %s for channel %s',
-            $mode,
-            $this->channel
-        ));
+        throw new \RuntimeException(
+            sprintf(
+                'Wrong selling policy mode %s for channel %s',
+                $mode,
+                $this->channel
+            )
+        );
     }
 
     /**

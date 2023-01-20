@@ -19,7 +19,9 @@ class GetSaveFilterForm extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     {
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Form $block */
         $block = $this->getLayout()
-                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Form::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add\Filter\Form::class
+                      );
 
         $this->setAjaxContent($block);
 

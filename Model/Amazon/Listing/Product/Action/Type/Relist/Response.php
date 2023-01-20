@@ -13,11 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist;
  */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
-    const INSTRUCTION_TYPE_CHECK_QTY            = 'success_relist_check_qty';
-    const INSTRUCTION_TYPE_CHECK_PRICE_REGULAR  = 'success_relist_check_price_regular';
-    const INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS = 'success_relist_check_price_business';
-    const INSTRUCTION_TYPE_CHECK_DETAILS        = 'success_relist_check_details';
-    const INSTRUCTION_TYPE_CHECK_IMAGES         = 'success_relist_check_images';
+    public const INSTRUCTION_TYPE_CHECK_QTY = 'success_relist_check_qty';
+    public const INSTRUCTION_TYPE_CHECK_PRICE_REGULAR = 'success_relist_check_price_regular';
+    public const INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS = 'success_relist_check_price_business';
+    public const INSTRUCTION_TYPE_CHECK_DETAILS = 'success_relist_check_details';
+    public const INSTRUCTION_TYPE_CHECK_IMAGES = 'success_relist_check_images';
 
     //########################################
 
@@ -66,32 +66,32 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $instructionsData = [];
 
         foreach ($data['additional_data']['recheck_properties'] as $property) {
-            $instructionType     = null;
+            $instructionType = null;
             $instructionPriority = 0;
 
             switch ($property) {
                 case 'qty':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_QTY;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_QTY;
                     $instructionPriority = 80;
                     break;
 
                 case 'price_regular':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_PRICE_REGULAR;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_PRICE_REGULAR;
                     $instructionPriority = 60;
                     break;
 
                 case 'price_business':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS;
                     $instructionPriority = 60;
                     break;
 
                 case 'details':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_DETAILS;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_DETAILS;
                     $instructionPriority = 30;
                     break;
 
                 case 'images':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_IMAGES;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_IMAGES;
                     $instructionPriority = 30;
                     break;
             }
@@ -102,9 +102,9 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
             $instructionsData[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => $instructionType,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => $instructionPriority,
+                'type' => $instructionType,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => $instructionPriority,
             ];
         }
 

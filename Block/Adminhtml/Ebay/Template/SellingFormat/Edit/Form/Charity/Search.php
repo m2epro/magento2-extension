@@ -33,20 +33,24 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'id'    => 'searchCharity_submit',
-                'class' => 'action primary',
-                'label' => $this->__('Search'),
-                'onclick' => 'EbayTemplateSellingFormatObj.searchCharity()'
-            ]);
+                            ->setData([
+                                'id' => 'searchCharity_submit',
+                                'class' => 'action primary',
+                                'label' => $this->__('Search'),
+                                'onclick' => 'EbayTemplateSellingFormatObj.searchCharity()',
+                            ]);
         $this->setChild('submit_button', $buttonBlock);
         // ---------------------------------------
 
         $this->setChild(
             'search_charity_warning',
             $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class)
-                ->addWarning($this->__('If you do not see the organization you were looking for,
-                try to enter another keywords and run the Search again.'))
+                 ->addWarning(
+                     $this->__(
+                         'If you do not see the organization you were looking for,
+                try to enter another keywords and run the Search again.'
+                     )
+                 )
         );
     }
 

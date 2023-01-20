@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product;
  */
 class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/listing/product/process_instructions';
+    public const NICK = 'walmart/listing/product/process_instructions';
 
     //####################################
 

@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task\Statistic;
 
-/**
- * Class \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager
- */
 class Manager
 {
-    const STORAGE_KEY = 'servicing/statistic';
-    const TASK_LISTING_PRODUCT_INSTRUCTION_TYPE = 'listing_product_instruction_type_statistic';
+    public const STORAGE_KEY = 'servicing/statistic';
+    public const TASK_LISTING_PRODUCT_INSTRUCTION_TYPE = 'listing_product_instruction_type_statistic';
 
     /** @var \Ess\M2ePro\Model\Registry\Manager $registryManager */
     private $registryManager;
@@ -24,12 +21,10 @@ class Manager
         $this->registryManager = $registryManager;
     }
 
-    //########################################
-
     /**
      * @param array $data
      */
-    public function setTasksStates($data)
+    public function setTasksStates($data): void
     {
         $regData = $this->getStoredData();
         $regData['tasks'] = $data;
@@ -37,21 +32,17 @@ class Manager
         $this->registryManager->setValue(self::STORAGE_KEY, $regData);
     }
 
-    //########################################
-
     /**
      * @param string $taskKey
      *
      * @return bool
      */
-    public function isTaskEnabled($taskKey)
+    public function isTaskEnabled($taskKey): bool
     {
         $regData = $this->getStoredData();
 
         return isset($regData['tasks'][$taskKey]) ? (bool)$regData['tasks'][$taskKey] : false;
     }
-
-    //########################################
 
     /**
      * @return array
@@ -60,6 +51,4 @@ class Manager
     {
         return $this->registryManager->getValueFromJson(self::STORAGE_KEY);
     }
-
-    //########################################
 }

@@ -33,32 +33,33 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'AmazonTemplateProductTaxCodeObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'AmazonTemplateProductTaxCodeObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
-        if (!$isSaveAndClose
+        if (
+            !$isSaveAndClose
             && $this->globalDataHelper->getValue('tmp_template')
             && $this->globalDataHelper->getValue('tmp_template')->getId()
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
-                'label'   => $this->__('Duplicate'),
+                'label' => $this->__('Duplicate'),
                 'onclick' => 'AmazonTemplateProductTaxCodeObj.duplicateClick'
-                    .'(\'amazon-template-productTaxCode\')',
-                'class'   => 'add M2ePro_duplicate_button primary'
+                    . '(\'amazon-template-productTaxCode\')',
+                'class' => 'add M2ePro_duplicate_button primary',
             ]);
             // ---------------------------------------
 
             // ---------------------------------------
             $this->addButton('delete', [
-                'label'     => $this->__('Delete'),
-                'onclick'   => 'AmazonTemplateProductTaxCodeObj.deleteClick()',
-                'class'     => 'delete M2ePro_delete_button primary'
+                'label' => $this->__('Delete'),
+                'onclick' => 'AmazonTemplateProductTaxCodeObj.deleteClick()',
+                'class' => 'delete M2ePro_delete_button primary',
             ]);
             // ---------------------------------------
         }
@@ -72,7 +73,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'id' => 'save_and_close',
                 'label' => $this->__('Save And Close'),
                 'class' => 'add',
-                'onclick'   => 'AmazonTemplateProductTaxCodeObj.saveAndCloseClick('
+                'onclick' => 'AmazonTemplateProductTaxCodeObj.saveAndCloseClick('
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE . '\''
                     . ')',
@@ -85,8 +86,8 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                             . 'undefined,'
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE . '\''
-                            . ')'
-                    ]
+                            . ')',
+                    ],
                 ],
             ];
         } else {
@@ -94,7 +95,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'id' => 'save_and_continue',
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
-                'onclick'   => 'AmazonTemplateProductTaxCodeObj.saveAndEditClick('
+                'onclick' => 'AmazonTemplateProductTaxCodeObj.saveAndEditClick('
                     . '\'\','
                     . 'undefined,'
                     . '\'' . $this->getSaveConfirmationText() . '\','
@@ -103,14 +104,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label'     => $this->__('Save And Back'),
-                        'onclick'   =>'AmazonTemplateProductTaxCodeObj.saveClick('
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'AmazonTemplateProductTaxCodeObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','
                             . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE . '\''
                             . ')',
-                        'class'     => 'save primary'
-                    ]
+                        'class' => 'save primary',
+                    ],
                 ],
             ];
         }

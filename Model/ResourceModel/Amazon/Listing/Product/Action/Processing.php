@@ -25,14 +25,14 @@ class Processing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMo
     public function getFullyPreparedGroupHashes()
     {
         $select = $this->getConnection()->select()
-            ->from(['lpap' => $this->getMainTable()], 'group_hash')
-            ->joinLeft(
-                ['temp' => $this->getMainTable()],
-                'lpap.id = temp.id AND temp.is_prepared = 0',
-                []
-            )
-            ->group('lpap.group_hash')
-            ->having(new \Zend_Db_Expr('count(temp.id) = 0'));
+                       ->from(['lpap' => $this->getMainTable()], 'group_hash')
+                       ->joinLeft(
+                           ['temp' => $this->getMainTable()],
+                           'lpap.id = temp.id AND temp.is_prepared = 0',
+                           []
+                       )
+                       ->group('lpap.group_hash')
+                       ->having(new \Zend_Db_Expr('count(temp.id) = 0'));
 
         return $this->getConnection()->fetchCol($select);
     }
@@ -53,10 +53,10 @@ class Processing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMo
     public function getUniqueRequestPendingSingleIds()
     {
         $select = $this->getConnection()
-            ->select()
-            ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `request_pending_single_id`'))
-            ->where('request_pending_single_id IS NOT NULL')
-            ->distinct(true);
+                       ->select()
+                       ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `request_pending_single_id`'))
+                       ->where('request_pending_single_id IS NOT NULL')
+                       ->distinct(true);
 
         return $this->getConnection()->fetchCol($select);
     }

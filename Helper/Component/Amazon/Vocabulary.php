@@ -189,7 +189,8 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
             'additional_data',
             [
                 'regexp' =>
-                    '"variation_channel_attributes_sets":.*"' . $channelAttribute . '":\s*[\[|{].*' . $channelOption . '.*[\]|}]',
+                    '"variation_channel_attributes_sets":.*"'
+                    . $channelAttribute . '":\s*[\[|{].*' . $channelOption . '.*[\]|}]',
             ]
         );
 

@@ -23,6 +23,7 @@ class GetSendResponseForm extends Account
 
         if (empty($feedbackId) || $feedback === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -36,7 +37,7 @@ class GetSendResponseForm extends Account
 
         $this->setJsonContent([
             'html' => $form,
-            'title' => $title
+            'title' => $title,
         ]);
 
         return $this->getResult();

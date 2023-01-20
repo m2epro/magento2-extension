@@ -17,6 +17,7 @@ class SavePartsCompatibilityMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\L
 
         if ($listingId === null) {
             $this->setAjaxContent('0', false);
+
             return $this->getResult();
         }
 
@@ -24,6 +25,7 @@ class SavePartsCompatibilityMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\L
         $model->getChildObject()->setData('parts_compatibility_mode', $mode)->save();
 
         $this->setAjaxContent('1', false);
+
         return $this->getResult();
     }
 }

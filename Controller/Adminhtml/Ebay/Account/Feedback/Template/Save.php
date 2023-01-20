@@ -29,7 +29,7 @@ class Save extends Account
 
         $keys = [
             'account_id',
-            'body'
+            'body',
         ];
 
         foreach ($keys as $key) {
@@ -49,8 +49,9 @@ class Save extends Account
         $model->addData($data)->save();
 
         $this->setJsonContent([
-            'status' => true
+            'status' => true,
         ]);
+
         return $this->getResult();
     }
 }

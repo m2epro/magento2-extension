@@ -24,7 +24,7 @@ class RunSynchNow extends MigrationToInnodb
             (int)$this->getRequest()->getParam('marketplace_id')
         );
 
-        $component= ucfirst(strtolower($component));
+        $component = ucfirst(strtolower($component));
         $synchronization = $this->modelFactory->getObject($component . '_Marketplace_Synchronization');
         $synchronization->setMarketplace($marketplace);
 
@@ -38,6 +38,7 @@ class RunSynchNow extends MigrationToInnodb
             );
 
             $this->setJsonContent(['result' => 'error']);
+
             return $this->getResult();
         }
 
@@ -48,10 +49,12 @@ class RunSynchNow extends MigrationToInnodb
             $synchronization->getLockItemManager()->remove();
 
             $this->setJsonContent(['result' => 'error']);
+
             return $this->getResult();
         }
 
         $this->setJsonContent(['result' => 'success']);
+
         return $this->getResult();
     }
 }

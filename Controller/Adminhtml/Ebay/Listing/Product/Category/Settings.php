@@ -72,7 +72,7 @@ abstract class Settings extends Listing
         $productsIds = $this->magentoCategoryHelper->getProductsFromCategories($categoriesIds);
 
         $listingProductIds = $this->ebayFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('product_id', ['in' => $productsIds])->getAllIds();
+                                               ->addFieldToFilter('product_id', ['in' => $productsIds])->getAllIds();
 
         return array_values(
             array_intersect(
@@ -156,7 +156,8 @@ abstract class Settings extends Listing
         \Ess\M2ePro\Model\Listing $listing,
         $validateSpecifics = true
     ) {
-        if (!isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
+        if (
+            !isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) ||
             $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] === TemplateCategory::CATEGORY_MODE_NONE
         ) {
             return false;
@@ -190,7 +191,8 @@ abstract class Settings extends Listing
             }
 
             foreach ($templatesData as $categoryType => $categoryData) {
-                if (!$categoryHelper->isEbayCategoryType($categoryType) &&
+                if (
+                    !$categoryHelper->isEbayCategoryType($categoryType) &&
                     !$categoryHelper->isStoreCategoryType($categoryType)
                 ) {
                     continue;
@@ -265,9 +267,9 @@ abstract class Settings extends Listing
             }
 
             $onlineDataByType = [
-                'category_main_id'            => eBayCategory::TYPE_EBAY_MAIN,
-                'category_secondary_id'       => eBayCategory::TYPE_EBAY_SECONDARY,
-                'store_category_main_id'      => eBayCategory::TYPE_STORE_MAIN,
+                'category_main_id' => eBayCategory::TYPE_EBAY_MAIN,
+                'category_secondary_id' => eBayCategory::TYPE_EBAY_SECONDARY,
+                'store_category_main_id' => eBayCategory::TYPE_STORE_MAIN,
                 'store_category_secondary_id' => eBayCategory::TYPE_STORE_SECONDARY,
             ];
 
@@ -285,12 +287,12 @@ abstract class Settings extends Listing
                         );
 
                     $sessionData[$id][$categoryType] = [
-                        'mode'               => TemplateCategory::CATEGORY_MODE_EBAY,
-                        'value'              => $onlineData[$onlineKey],
-                        'path'               => $categoryPath,
-                        'template_id'        => null,
+                        'mode' => TemplateCategory::CATEGORY_MODE_EBAY,
+                        'value' => $onlineData[$onlineKey],
+                        'path' => $categoryPath,
+                        'template_id' => null,
                         'is_custom_template' => null,
-                        'specific'           => null
+                        'specific' => null,
                     ];
 
                     if ($categoryType === eBayCategory::TYPE_EBAY_MAIN) {
@@ -348,7 +350,7 @@ abstract class Settings extends Listing
         $converter->setAccountId($listing->getAccountId());
         $converter->setMarketplaceId($listing->getMarketplaceId());
 
-        $tempData = $ebayListing->getLastPrimaryCategory(['ebay_primary_category','mode_category']);
+        $tempData = $ebayListing->getLastPrimaryCategory(['ebay_primary_category', 'mode_category']);
         foreach ($tempData as $categoryId => $data) {
             !isset($previousCategoriesData[$categoryId]) && $previousCategoriesData[$categoryId] = [];
             if (!empty($data['mode']) && !empty($data['value']) && !empty($data['path'])) {
@@ -366,15 +368,15 @@ abstract class Settings extends Listing
                         $converter->getCategoryDataForChooser(eBayCategory::TYPE_EBAY_MAIN);
                 } else {
                     $previousCategoriesData[$categoryId][eBayCategory::TYPE_EBAY_MAIN] = [
-                        'mode'  => $data['mode'],
+                        'mode' => $data['mode'],
                         'value' => $data['value'],
-                        'path'  => $data['path']
+                        'path' => $data['path'],
                     ];
                 }
             }
         }
 
-        $tempData = $ebayListing->getLastPrimaryCategory(['ebay_store_primary_category','mode_category']);
+        $tempData = $ebayListing->getLastPrimaryCategory(['ebay_store_primary_category', 'mode_category']);
         foreach ($tempData as $categoryId => $data) {
             !isset($previousCategoriesData[$categoryId]) && $previousCategoriesData[$categoryId] = [];
             if (!empty($data['mode']) && !empty($data['value']) && !empty($data['path'])) {
@@ -391,9 +393,9 @@ abstract class Settings extends Listing
                         $converter->getCategoryDataForChooser(eBayCategory::TYPE_STORE_MAIN);
                 } else {
                     $previousCategoriesData[$categoryId][eBayCategory::TYPE_STORE_MAIN] = [
-                        'mode'  => $data['mode'],
+                        'mode' => $data['mode'],
                         'value' => $data['value'],
-                        'path'  => $data['path']
+                        'path' => $data['path'],
                     ];
                 }
             }
@@ -627,15 +629,16 @@ abstract class Settings extends Listing
     protected function getCategoryHashes(array $categoryData)
     {
         // @codingStandardsIgnoreStart
-        $mainHash = $categoryData['mode'] .'-'. $categoryData['value'];
+        $mainHash = $categoryData['mode'] . '-' . $categoryData['value'];
         $specificsHash = !empty($categoryData['specific'])
             ? sha1(\Ess\M2ePro\Helper\Json::encode($categoryData['specific']))
             : '';
+
         // @codingStandardsIgnoreEnd
 
         return [
             $mainHash,
-            $mainHash . '-' . $specificsHash
+            $mainHash . '-' . $specificsHash,
         ];
     }
 

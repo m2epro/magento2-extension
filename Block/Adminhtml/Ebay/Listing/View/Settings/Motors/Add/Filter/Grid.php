@@ -25,7 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        $this->resourceConnection  = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
         $this->componentEbayMotors = $componentEbayMotors;
         $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
@@ -62,42 +62,42 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'title',
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
             'filter_index' => 'title',
-            'escape'       => true,
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'escape' => true,
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('items', [
-            'header'       => $this->getItemsColumnTitle(),
-            'align'        => 'right',
-            'type'         => 'text',
-            'sortable'     => false,
-            'filter'       => false,
-            'index'        => 'conditions',
-            'frame_callback' => [$this, 'callbackColumnItems']
+            'header' => $this->getItemsColumnTitle(),
+            'align' => 'right',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'index' => 'conditions',
+            'frame_callback' => [$this, 'callbackColumnItems'],
         ]);
 
         $this->addColumn('note', [
-            'header'       => $this->__('Note'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'note',
-            'filter_index' => 'note'
+            'header' => $this->__('Note'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'note',
+            'filter_index' => 'note',
         ]);
 
         $this->addColumn('conditions', [
-            'header'       => $this->__('Conditions'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'sortable'     => false,
-            'index'        => 'conditions',
+            'header' => $this->__('Conditions'),
+            'align' => 'left',
+            'type' => 'text',
+            'sortable' => false,
+            'index' => 'conditions',
             'filter_index' => 'conditions',
             'frame_callback' => [$this, 'callbackColumnConditions'],
-            'filter_condition_callback' => [$this, 'callbackFilterConditions']
+            'filter_condition_callback' => [$this, 'callbackFilterConditions'],
         ]);
     }
 
@@ -109,29 +109,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set mass-action
         //--------------------------------
         $this->getMassactionBlock()->addItem('select', [
-            'label'   => $this->__('Select'),
-            'url'     => ''
+            'label' => $this->__('Select'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('setNote', [
-            'label'   => $this->__('Set Note'),
-            'url'     => ''
+            'label' => $this->__('Set Note'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('resetNote', [
-            'label'   => $this->__('Reset Note'),
-            'url'     => ''
+            'label' => $this->__('Reset Note'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('saveAsGroup', [
-            'label'   => $this->__('Save As Group'),
-            'url'     => ''
+            'label' => $this->__('Save As Group'),
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('removeFilter', [
-            'label'   => $this->__('Remove'),
-            'url'     => ''
+            'label' => $this->__('Remove'),
+            'url' => '',
         ]);
+
         //--------------------------------
 
         return parent::_prepareMassaction();
@@ -151,8 +152,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $helper = $this->componentEbayMotors;
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($helper->getDictionaryTable($this->getMotorsType()));
+                                           ->select()
+                                           ->from($helper->getDictionaryTable($this->getMotorsType()));
 
         if ($helper->isTypeBasedOnEpids($this->getMotorsType())) {
             $select->where('scope = ?', $helper->getEpidsScopeByType($this->getMotorsType()));
@@ -160,7 +161,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         foreach ($conditions as $key => $value) {
             if ($key != 'year') {
-                $select->where('`'.$key.'` LIKE ?', '%'.$value.'%');
+                $select->where('`' . $key . '` LIKE ?', '%' . $value . '%');
                 continue;
             }
 
@@ -286,7 +287,8 @@ HTML;
     protected function _toHtml()
     {
         if (!$this->canDisplayContainer()) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
         EbayListingViewSettingsMotorsAddFilterGridObj.afterInitPage();
         EbayListingViewSettingsMotorsAddFilterGridObj
             .filtersConditions = typeof ebayMotorsFiltersConditions !== 'undefined' ? ebayMotorsFiltersConditions : {};
@@ -296,7 +298,8 @@ JS
             return parent::_toHtml();
         }
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Ebay/Listing/View/Settings/Motors/Add/Filter/Grid'
     ], function() {
@@ -320,7 +323,7 @@ JS
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing_settings_motors/addFilterGrid', [
-            '_current' => true
+            '_current' => true,
         ]);
     }
 

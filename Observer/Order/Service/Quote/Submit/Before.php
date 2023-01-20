@@ -21,7 +21,7 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         /** @var \Magento\Quote\Model\Quote $quote */
 
         $magentoOrder = $this->getEvent()->getOrder();
-        $quote        = $this->getEvent()->getQuote();
+        $quote = $this->getEvent()->getQuote();
 
         if ($quote->getIsM2eProQuote()) {
             $magentoOrder->setCanSendNewEmailFlag($quote->getIsNeedToSendEmail());

@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Walmart\Order;
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
-    const INSTRUCTION_INITIATOR = 'order_builder';
+    public const INSTRUCTION_INITIATOR = 'order_builder';
 
-    const STATUS_NOT_MODIFIED = 0;
-    const STATUS_NEW = 1;
-    const STATUS_UPDATED = 2;
+    public const STATUS_NOT_MODIFIED = 0;
+    public const STATUS_NEW = 1;
+    public const STATUS_UPDATED = 2;
 
-    const UPDATE_STATUS = 'status';
+    public const UPDATE_STATUS = 'status';
 
     //########################################
 
@@ -129,10 +129,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->status = self::STATUS_NOT_MODIFIED;
 
         $existOrders = $this->walmartFactory->getObject('Order')->getCollection()
-            ->addFieldToFilter('account_id', $this->account->getId())
-            ->addFieldToFilter('walmart_order_id', $this->getData('walmart_order_id'))
-            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-            ->getItems();
+                                            ->addFieldToFilter('account_id', $this->account->getId())
+                                            ->addFieldToFilter('walmart_order_id', $this->getData('walmart_order_id'))
+                                            ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
+                                            ->getItems();
         $existOrdersNumber = count($existOrders);
 
         // duplicated M2ePro orders. remove m2e order without magento order id or newest order
@@ -238,7 +238,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                     $description,
                     [
                         '!order_number' => $this->order->getChildObject()->getWalmartOrderId(),
-                        '!item_name'    => $item->getChildObject()->getTitle()
+                        '!item_name' => $item->getChildObject()->getTitle(),
                     ]
                 );
             }
@@ -337,6 +337,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->hasUpdate(self::UPDATE_STATUS) && $this->order->getChildObject()->isCanceled()) {
             $this->cancelMagentoOrder();
+
             return;
         }
 
@@ -444,10 +445,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $instruction->setData(
                     [
                         'listing_product_id' => $listingProduct->getId(),
-                        'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                        'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                         'type' => \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                        'initiator'          => self::INSTRUCTION_INITIATOR,
-                        'priority'           => 80,
+                        'initiator' => self::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
                     ]
                 );
                 $instruction->save();
@@ -484,14 +485,16 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                         'Item QTY was changed from %from% to %to% .',
                         $currentOnlineQty,
                         0
-                    )
+                    ),
                 ];
 
                 if (!$listingProduct->isStopped()) {
                     $statusChangedFrom = $this->getHelper('Component\Walmart')
-                        ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
+                                              ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
                     $statusChangedTo = $this->getHelper('Component\Walmart')
-                        ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
+                                            ->getHumanTitleByListingProductStatus(
+                                                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+                                            );
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         $tempLogMessages[] = $this->getHelper('Module\Translation')->__(

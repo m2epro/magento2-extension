@@ -73,7 +73,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ->getCollection();
 
         foreach ($ignoreListings as $listingId) {
-            $collection->addFieldToFilter('main_table.id', ['neq'=>$listingId]);
+            $collection->addFieldToFilter('main_table.id', ['neq' => $listingId]);
         }
 
         $this->addAccountAndMarketplaceFilter($collection);
@@ -88,61 +88,61 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('listing_id', [
-            'header'       => $this->__('ID'),
-            'align'        => 'right',
-            'type'         => 'number',
-            'width'        => '75px',
-            'index'        => 'id',
+            'header' => $this->__('ID'),
+            'align' => 'right',
+            'type' => 'number',
+            'width' => '75px',
+            'index' => 'id',
             'filter_index' => 'id',
-            'frame_callback' => [$this, 'callbackColumnId']
+            'frame_callback' => [$this, 'callbackColumnId'],
         ]);
 
         $this->addColumn('title', [
-            'header'       => $this->__('Title'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'width'        => '200px',
-            'index'        => 'title',
-            'escape'       => false,
+            'header' => $this->__('Title'),
+            'align' => 'left',
+            'type' => 'text',
+            'width' => '200px',
+            'index' => 'title',
+            'escape' => false,
             'filter_index' => 'main_table.title',
-            'frame_callback' => [$this, 'callbackColumnTitle']
+            'frame_callback' => [$this, 'callbackColumnTitle'],
         ]);
 
         $this->addColumn('store_name', [
-            'header'        => $this->__('Store View'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'width'        => '100px',
-            'index'        => 'store_id',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnStore']
+            'header' => $this->__('Store View'),
+            'align' => 'left',
+            'type' => 'text',
+            'width' => '100px',
+            'index' => 'store_id',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnStore'],
         ]);
 
         $this->addColumn('products_total_count', [
-            'header'        => $this->__('Total Items'),
-            'align'        => 'right',
-            'type'         => 'number',
-            'width'        => '100px',
-            'index'        => 'products_total_count',
+            'header' => $this->__('Total Items'),
+            'align' => 'right',
+            'type' => 'number',
+            'width' => '100px',
+            'index' => 'products_total_count',
             'filter_index' => 'products_total_count',
-            'frame_callback' => [$this, 'callbackColumnSourceTotalItems']
+            'frame_callback' => [$this, 'callbackColumnSourceTotalItems'],
         ]);
 
         $this->addColumn('actions', [
-            'header'       => $this->__('Actions'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'width'        => '125px',
-            'filter'       => false,
-            'sortable'     => false,
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'type' => 'text',
+            'width' => '125px',
+            'filter' => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
     }
 
     public function callbackColumnId($value, $row, $column, $isExport)
     {
-        return $value.'&nbsp;';
+        return $value . '&nbsp;';
     }
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
@@ -154,7 +154,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'view',
             ['id' => $row->getData('id')]
         );
-        return '&nbsp;<a href="'.$url.'" target="_blank">'.$title.'</a>';
+
+        return '&nbsp;<a href="' . $url . '" target="_blank">' . $title . '</a>';
     }
 
     public function callbackColumnStore($value, $row, $column, $isExport)
@@ -174,17 +175,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $storeName = $storeModel->getGroup()->getName();
         }
 
-        return '&nbsp;'.$storeName;
+        return '&nbsp;' . $storeName;
     }
 
     public function callbackColumnSource($value, $row, $column, $isExport)
     {
-        return '&nbsp;'.$value;
+        return '&nbsp;' . $value;
     }
 
     public function callbackColumnSourceTotalItems($value, $row, $column, $isExport)
     {
-        return $value.'&nbsp;';
+        return $value . '&nbsp;';
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
@@ -201,12 +202,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
     });">{$this->__('Move To This Listing')}</a>
 HTML;
+
         return $actions;
     }
 
     protected function getHelpBlockHtml()
     {
-        $helpBlockHtml  = '';
+        $helpBlockHtml = '';
 
         if ($this->canDisplayContainer()) {
             $componentTitle = $this->componentHelper->getComponentTitle(
@@ -221,6 +223,7 @@ HTML;
                 <strong>Note:</strong> Once the Items are moved, they will be updated
                  based on the new Listing settings.
 HTML
+    ,
             ])->toHtml();
         }
 
@@ -231,14 +234,14 @@ HTML
     {
         $componentMode = $this->globalDataHelper->getValue('componentMode');
         $newListingUrl = $this->getUrl(
-            '*/' .strtolower($componentMode). '_listing_create/index',
+            '*/' . strtolower($componentMode) . '_listing_create/index',
             [
-                'step'           => 1,
-                'clear'          => 1,
-                'account_id'     => $this->globalDataHelper->getValue('accountId'),
+                'step' => 1,
+                'clear' => 1,
+                'account_id' => $this->globalDataHelper->getValue('accountId'),
                 'marketplace_id' => $this->globalDataHelper->getValue('marketplaceId'),
-                'creation_mode'  => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
-                'component'      => $componentMode
+                'creation_mode' => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
+                'component' => $componentMode,
             ]
         );
 
@@ -249,7 +252,8 @@ HTML
     {
         $this->jsUrl->add($this->getNewListingUrl(), 'add_new_listing_url');
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         var warning_msg_block = $('empty_grid_warning');
             warning_msg_block && warning_msg_block.remove();
 

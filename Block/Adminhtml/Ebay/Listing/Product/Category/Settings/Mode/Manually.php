@@ -33,9 +33,9 @@ class Manually extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
         $url = $this->getUrl('*/*/', ['step' => 1, '_current' => true]);
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'class'     => 'back',
-            'onclick'   => 'setLocation(\'' . $url . '\');'
+            'label' => $this->__('Back'),
+            'class' => 'back',
+            'onclick' => 'setLocation(\'' . $url . '\');',
         ]);
 
         $url = $this->getUrl(
@@ -55,10 +55,10 @@ class Manually extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         );
 
         $this->addButton('next', [
-            'id'      => 'ebay_listing_category_continue_btn',
-            'class'   => 'action-primary forward',
-            'label'   => $this->__('Continue'),
-            'onclick' => 'EbayListingProductCategorySettingsModeProductGridObj.completeCategoriesDataStep(1, 0);'
+            'id' => 'ebay_listing_category_continue_btn',
+            'class' => 'action-primary forward',
+            'label' => $this->__('Continue'),
+            'onclick' => 'EbayListingProductCategorySettingsModeProductGridObj.completeCategoriesDataStep(1, 0);',
         ]);
     }
 
@@ -75,7 +75,7 @@ class Manually extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
-            'data' => ['listing' => $listing]
+                'data' => ['listing' => $listing],
             ]
         );
 
@@ -99,8 +99,10 @@ HTML;
     private function getPopupsHtml()
     {
         return $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\WarningPopup::class)
-            ->toHtml();
+                    ->createBlock(
+                        \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\WarningPopup::class
+                    )
+                    ->toHtml();
     }
 
     //########################################

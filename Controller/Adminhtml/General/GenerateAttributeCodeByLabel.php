@@ -16,6 +16,7 @@ class GenerateAttributeCodeByLabel extends General
     {
         $label = $this->getRequest()->getParam('store_label');
         $this->setAjaxContent(\Ess\M2ePro\Model\Magento\Attribute\Builder::generateCodeByLabel($label), false);
+
         return $this->getResult();
     }
 }

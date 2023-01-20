@@ -7,15 +7,15 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction;
 
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList as ProcessingList;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Action\ProcessingList as ProcessingList;
 
 /**
  * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\ProcessingRunner
  */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Single\Runner
 {
-    const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
-    const MAX_LIFETIME                  = 172800;
+    public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
+    public const MAX_LIFETIME = 172800;
 
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct = null;
@@ -85,11 +85,11 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $processingActionList = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList');
         $processingActionList->setData(
             [
-                'account_id'           => $accountId,
+                'account_id' => $accountId,
                 'processing_action_id' => $this->getProcessingAction()->getId(),
-                'listing_product_id'   => $this->getListingProduct()->getId(),
-                'sku'                  => $sku,
-                'stage'                => ProcessingList::STAGE_LIST_DETAILS
+                'listing_product_id' => $this->getListingProduct()->getId(),
+                'sku' => $sku,
+                'stage' => ProcessingList::STAGE_LIST_DETAILS,
             ]
         );
         $processingActionList->save();
@@ -122,10 +122,10 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $processingAction->setData(
             [
                 'listing_product_id' => $params['listing_product_id'],
-                'processing_id'      => $this->getProcessingObject()->getId(),
-                'type'               => \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing::TYPE_ADD,
-                'is_prepared'        => 0,
-                'group_hash'         => $params['group_hash'],
+                'processing_id' => $this->getProcessingObject()->getId(),
+                'type' => \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Processing::TYPE_ADD,
+                'is_prepared' => 0,
+                'group_hash' => $params['group_hash'],
             ]
         );
         $processingAction->save();
@@ -180,8 +180,8 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
                 ->getObject(
                     'Walmart_Connector_Product_ListAction_UpdateInventory_Responser',
                     [
-                        'params'   => $this->getResponserParams(),
-                        'response' => $response
+                        'params' => $this->getResponserParams(),
+                        'response' => $response,
                     ]
                 );
 

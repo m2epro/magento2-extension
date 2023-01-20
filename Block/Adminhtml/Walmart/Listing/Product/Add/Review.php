@@ -59,47 +59,47 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         // ---------------------------------------
         $url = $this->getUrl('*/*/viewListing', [
             '_current' => true,
-            'id' => $this->getRequest()->getParam('id')
+            'id' => $this->getRequest()->getParam('id'),
         ]);
 
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'id'   => $this->__('go_to_the_listing'),
-                'label'   => $this->__('Go To The Listing'),
-                'onclick' => 'setLocation(\''.$url.'\');',
-                'class' => 'action primary'
-            ]);
+                            ->setData([
+                                'id' => $this->__('go_to_the_listing'),
+                                'label' => $this->__('Go To The Listing'),
+                                'onclick' => 'setLocation(\'' . $url . '\');',
+                                'class' => 'action primary',
+                            ]);
         $this->setChild('review', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $url = $this->getUrl('*/*/viewListingAndList', [
             '_current' => true,
-            'id' => $this->getRequest()->getParam('id')
+            'id' => $this->getRequest()->getParam('id'),
         ]);
 
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label'   => $this->__('List Added Products Now'),
-                'onclick' => 'setLocation(\''.$url.'\');',
-                'class' => 'action primary'
-            ]);
+                            ->setData([
+                                'label' => $this->__('List Added Products Now'),
+                                'onclick' => 'setLocation(\'' . $url . '\');',
+                                'class' => 'action primary',
+                            ]);
         $this->setChild('list', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         if ($this->getSource() === SourceModeBlock::MODE_OTHER) {
             $url = $this->getUrl('*/walmart_listing_other/view', [
-                'account'     => $listing->getAccountId(),
+                'account' => $listing->getAccountId(),
                 'marketplace' => $listing->getMarketplaceId(),
             ]);
 
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                ->setData([
-                    'label'   => $this->__('Back to Unmanaged Listing'),
-                    'onclick' => 'setLocation(\''.$url.'\');',
-                    'class' => 'action primary'
-                ]);
+                                ->setData([
+                                    'label' => $this->__('Back to Unmanaged Listing'),
+                                    'onclick' => 'setLocation(\'' . $url . '\');',
+                                    'class' => 'action primary',
+                                ]);
             $this->setChild('back_to_listing_other', $buttonBlock);
         }
         // ---------------------------------------

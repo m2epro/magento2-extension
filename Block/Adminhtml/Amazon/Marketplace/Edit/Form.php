@@ -47,7 +47,7 @@ class Form extends AbstractForm
 
         foreach ($this->groups as $group) {
             $fieldset = $form->addFieldset(
-                'marketplaces_group_'.$group['id'],
+                'marketplaces_group_' . $group['id'],
                 ['legend' => $this->__($group['title'])]
             );
 
@@ -56,18 +56,18 @@ class Form extends AbstractForm
 
                 if (!$this->amazonHelper->isMarketplacesWithoutData($marketplace['instance']->getId())) {
                     $afterElementHtml .= '
-                <div id="run_single_button_'.$marketplace['instance']->getId().'" class="control-value"';
+                <div id="run_single_button_' . $marketplace['instance']->getId() . '" class="control-value"';
                     $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
                     $afterElementHtml .= ' style="display: none;"';
                     $afterElementHtml .= '">';
 
                     $afterElementHtml .= $this->getLayout()
-                        ->createBlock(\Magento\Backend\Block\Widget\Button::class)
-                        ->setData([
-                            'label'   => $this->__('Update Now'),
-                            'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
-                            'class' => 'run_single_button primary'
-                        ])->toHtml();
+                                              ->createBlock(\Magento\Backend\Block\Widget\Button::class)
+                                              ->setData([
+                                                  'label' => $this->__('Update Now'),
+                                                  'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
+                                                  'class' => 'run_single_button primary',
+                                              ])->toHtml();
                     $afterElementHtml .= '</div>';
                 }
 
@@ -99,42 +99,42 @@ HTML;
                 $selectData = [
                     'label' => $this->__($marketplace['instance']->getData('title')),
                     'style' => 'display: inline-block;',
-                    'after_element_html' => $afterElementHtml
+                    'after_element_html' => $afterElementHtml,
                 ];
 
                 if ($marketplace['params']['locked']) {
                     $selectData['disabled'] = 'disabled';
                     $selectData['values'] = [
                         \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled') . ' - ' .
-                            $this->__('Used in Account(s)')
+                            $this->__('Used in Account(s)'),
                     ];
                     $selectData['value'] = \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE;
                 } elseif ($marketplace['instance']->getChildObject()->getData('developer_key') === null) {
                     $selectData['values'] = [
-                        \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled - Coming Soon')
+                        \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled - Coming Soon'),
                     ];
                     $selectData['value'] = \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE;
                     $selectData['disabled'] = true;
                 } else {
                     $selectData['values'] = [
                         \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled'),
-                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled')
+                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled'),
                     ];
                     $selectData['value'] = $marketplace['instance']->getStatus();
                 }
 
-                $selectData['name'] = 'status_'.$marketplace['instance']->getId();
+                $selectData['name'] = 'status_' . $marketplace['instance']->getId();
                 $selectData['class'] = 'marketplace_status_select';
                 $selectData['note'] = $marketplace['instance']->getUrl();
 
                 $fieldset->addField(
-                    'status_'.$marketplace['instance']->getId(),
+                    'status_' . $marketplace['instance']->getId(),
                     self::SELECT,
                     $selectData
                 )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
-                 ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Amazon::NICK)
-                 ->addCustomAttribute('component_title', $this->amazonHelper->getTitle())
-                 ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
+                         ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Amazon::NICK)
+                         ->addCustomAttribute('component_title', $this->amazonHelper->getTitle())
+                         ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
             }
         }
 
@@ -149,27 +149,27 @@ HTML;
         // ---------------------------------------
         /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplaces */
         $tempMarketplaces = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Marketplace')
-            ->getCollection()
-            ->setOrder('group_title', 'ASC')
-            ->setOrder('sorder', 'ASC')
-            ->setOrder('title', 'ASC')
-            ->getItems();
+                                                ->getCollection()
+                                                ->setOrder('group_title', 'ASC')
+                                                ->setOrder('sorder', 'ASC')
+                                                ->setOrder('title', 'ASC')
+                                                ->getItems();
 
         $storedStatuses = [];
         $groups = [];
         $idGroup = 1;
 
         $groupOrder = [
-            'america'      => 'America',
-            'europe'       => 'Europe',
-            'asia_pacific' => 'Asia / Pacific'
+            'america' => 'America',
+            'europe' => 'Europe',
+            'asia_pacific' => 'Asia / Pacific',
         ];
 
         foreach ($groupOrder as $key => $groupOrderTitle) {
             $groups[$key] = [
-                'id'           => $idGroup++,
-                'title'        => $groupOrderTitle,
-                'marketplaces' => []
+                'id' => $idGroup++,
+                'title' => $groupOrderTitle,
+                'marketplaces' => [],
             ];
 
             foreach ($tempMarketplaces as $tempMarketplace) {
@@ -184,13 +184,13 @@ HTML;
 
                 $storedStatuses[] = [
                     'marketplace_id' => $tempMarketplace->getId(),
-                    'status'         => $tempMarketplace->getStatus()
+                    'status' => $tempMarketplace->getStatus(),
                 ];
 
                 /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplace */
                 $marketplace = [
                     'instance' => $tempMarketplace,
-                    'params'   => ['locked' => $isLocked]
+                    'params' => ['locked' => $isLocked],
                 ];
 
                 $groups[$key]['marketplaces'][] = $marketplace;
@@ -208,7 +208,7 @@ HTML;
             'formSubmit' => $this->getUrl('*/amazon_marketplace/save'),
             'logViewUrl' => $this->getUrl(
                 '*/amazon_synchronization_log/index',
-                ['back'=>$this->dataHelper->makeBackUrlParam('*/amazon_synchronization/index')]
+                ['back' => $this->dataHelper->makeBackUrlParam('*/amazon_synchronization/index')]
             ),
             'runSynchNow' => $this->getUrl('*/amazon_marketplace/runSynchNow'),
         ]);
@@ -216,7 +216,8 @@ HTML;
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Marketplace'));
 
         $storedStatuses = $this->dataHelper->jsonEncode($this->storedStatuses);
-        $this->js->addOnReadyJs(<<<JS
+        $this->js->addOnReadyJs(
+            <<<JS
             require([
                 'M2ePro/Marketplace',
                 'M2ePro/SynchProgress',

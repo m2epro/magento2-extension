@@ -17,7 +17,7 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 
     protected function getCommand()
     {
-        return ['item','update','end'];
+        return ['item', 'update', 'end'];
     }
 
     protected function getActionType()

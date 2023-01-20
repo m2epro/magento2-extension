@@ -17,7 +17,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
     protected $productResource;
     protected $magentoProductCollectionFactory;
 
-    protected $_productAttributes  = [];
+    protected $_productAttributes = [];
 
     //########################################
 
@@ -41,6 +41,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
         if (empty($this->_productAttributes[$attribute])) {
             $this->_productAttributes[$attribute] = $this->productResource->getAttribute($attribute);
         }
+
         return $this->_productAttributes[$attribute];
     }
 
@@ -60,7 +61,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter([
-            ['attribute' => 'entity_id', 'in' => $productIds]
+            ['attribute' => 'entity_id', 'in' => $productIds],
         ]);
         $collection->joinAttribute(
             'status',

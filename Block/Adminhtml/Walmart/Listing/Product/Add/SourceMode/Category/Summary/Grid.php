@@ -34,6 +34,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     public function setProductsForEachCategory($productsForEachCategory)
     {
         $this->setData('products_for_each_category', $productsForEachCategory);
+
         return $this;
     }
 
@@ -45,6 +46,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     public function setProductsIds($productsIds)
     {
         $this->setData('products_ids', $productsIds);
+
         return $this;
     }
 
@@ -80,14 +82,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $collection->addAttributeToSelect('name');
 
         $dbSelect = $collection->getConnection()
-             ->select()
-             ->from(
-                 $this->databaseHelper->getTableNameWithPrefix('catalog_category_product'),
-                 'category_id'
-             )
-             ->where('`product_id` IN(?)', $this->getProductsIds());
+                               ->select()
+                               ->from(
+                                   $this->databaseHelper->getTableNameWithPrefix('catalog_category_product'),
+                                   'category_id'
+                               )
+                               ->where('`product_id` IN(?)', $this->getProductsIds());
 
-        $collection->getSelect()->where('entity_id IN ('.$dbSelect->__toString().')');
+        $collection->getSelect()->where('entity_id IN (' . $dbSelect->__toString() . ')');
 
         $this->setCollection($collection);
 
@@ -107,7 +109,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         // ---------------------------------------
 
         $this->getMassactionBlock()->addItem('remove', [
-             'label'    => $this->__('Remove'),
+            'label' => $this->__('Remove'),
         ]);
 
         // ---------------------------------------
@@ -120,23 +122,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('magento_category', [
-            'header'    => $this->__('Magento Category'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+            'header' => $this->__('Magento Category'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory'],
         ]);
 
         $this->addColumn('action', [
-            'header'    => $this->__('Action'),
-            'align'     => 'center',
-            'width'     => '75px',
-            'type'      => 'text',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnActions']
+            'header' => $this->__('Action'),
+            'align' => 'center',
+            'width' => '75px',
+            'type' => 'text',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
 
         return parent::_prepareColumns();
@@ -149,7 +151,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $productsForEachCategory = $this->getProductsForEachCategory();
 
         return parent::callbackColumnMagentoCategory($value, $row, $column, $isExport) .
-               ' ('.$productsForEachCategory[$row->getId()].')';
+            ' (' . $productsForEachCategory[$row->getId()] . ')';
     }
 
     //########################################
@@ -201,7 +203,7 @@ HTML;
                  If the Product belongs to several Categories,
                  it is shown in each Category.
                  And if you remove the Category with such Product it will be subtracted from each Category.'
-            )
+            ),
         ]);
 
         $beforeHtml .= <<<HTML
@@ -212,7 +214,8 @@ HTML;
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
         if (!$this->getRequest()->getParam('grid')) {
-            $this->js->add(<<<JS
+            $this->js->add(
+                <<<JS
     require([
         'M2ePro/Walmart/Listing/Product/Add/SourceMode/Category/Summary/Grid'
     ],function() {
@@ -225,7 +228,8 @@ JS
             );
         }
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     require([
         'M2ePro/Walmart/Listing/Product/Add/SourceMode/Category/Summary/Grid'
     ],function() {

@@ -16,7 +16,7 @@ use Ess\M2ePro\Model\MSI\Order\Reserve as MSIReserve;
  */
 class Order extends \Ess\M2ePro\Observer\AbstractModel
 {
-    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface */
     protected $stockRegistry;
 
     /** @var \Magento\Framework\ObjectManagerInterface */
@@ -52,10 +52,10 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
             }
 
             $itemsToSell[] = [
-                'id'      => $orderItem->getProductId(),
-                'sku'     => $orderItem->getSku(),
-                'qty'     => (float)$orderItem->getQtyOrdered(),
-                'website' => $orderItem->getStore()->getWebsiteId()
+                'id' => $orderItem->getProductId(),
+                'sku' => $orderItem->getSku(),
+                'qty' => (float)$orderItem->getQtyOrdered(),
+                'website' => $orderItem->getStore()->getWebsiteId(),
             ];
         }
 
@@ -65,15 +65,14 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
     private function placeReservation(\Magento\Sales\Model\Order $magentoOrder, array $itemsToSell)
     {
         if ($this->helperFactory->getObject('Magento')->isMSISupportingVersion()) {
-
             $reservation = $this->objectManager->get(MSIReserve::class);
             $reservation->placeCompensationReservation(
                 $itemsToSell,
                 $magentoOrder->getStoreId(),
                 [
-                    'type'       => MSIReserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED,
+                    'type' => MSIReserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED,
                     'objectType' => SalesEventInterface::OBJECT_TYPE_ORDER,
-                    'objectId'   => (string)$magentoOrder->getId()
+                    'objectId' => (string)$magentoOrder->getId(),
                 ]
             );
 
@@ -81,12 +80,11 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         foreach ($itemsToSell as $itemToSell) {
-
             $stockItem = $this->stockRegistry->getStockItem($itemToSell['id'], $itemToSell['website']);
 
             /** @var \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem */
             $magentoStockItem = $this->modelFactory->getObject('Magento_Product_StockItem', [
-                'stockItem' => $stockItem
+                'stockItem' => $stockItem,
             ]);
             $magentoStockItem->addQty($itemToSell['qty']);
         }

@@ -45,11 +45,13 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
      * Set magento order for updating
      *
      * @param \Magento\Sales\Model\Order $order
+     *
      * @return $this
      */
     public function setMagentoOrder(\Magento\Sales\Model\Order $order)
     {
         $this->magentoOrder = $order;
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
      * Update customer email
      *
      * @param $email
+     *
      * @return null
      */
     public function updateCustomerEmail($email)
@@ -178,10 +181,10 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Magento\Customer\Model\Address $customerAddress */
         $customerAddress = $this->customerAddressFactory->create()
-            ->setData($customerAddress)
-            ->setCustomerId($customer->getId())
-            ->setIsDefaultBilling(false)
-            ->setIsDefaultShipping(false);
+                                                        ->setData($customerAddress)
+                                                        ->setCustomerId($customer->getId())
+                                                        ->setIsDefaultBilling(false)
+                                                        ->setIsDefaultShipping(false);
 
         $customerAddress->save();
     }
@@ -213,6 +216,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
      * Add notes
      *
      * @param mixed $comments
+     *
      * @return null
      */
     public function updateComments($comments)
@@ -240,6 +244,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
      * Update status
      *
      * @param $status
+     *
      * @return null
      */
     public function updateStatus($status)
@@ -252,7 +257,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        if ($this->magentoOrder->getState() != \Magento\Sales\Model\Order::STATE_COMPLETE
+        if (
+            $this->magentoOrder->getState() != \Magento\Sales\Model\Order::STATE_COMPLETE
             && $this->magentoOrder->getState() != \Magento\Sales\Model\Order::STATE_CLOSED
         ) {
             $this->magentoOrder->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);

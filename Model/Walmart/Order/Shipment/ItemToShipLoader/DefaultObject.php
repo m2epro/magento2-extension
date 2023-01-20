@@ -39,7 +39,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
     ) {
         $this->walmartFactory = $walmartFactory;
 
-        list($this->order, $this->shipmentItem) = $data;
+        [$this->order, $this->shipmentItem] = $data;
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -76,10 +76,13 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
         $orderItemIdsInShipped = isset($orderItemAdditionalData['order_item_ids_in_shipped']) ?
             $orderItemAdditionalData['order_item_ids_in_shipped'] : [];
 
-        $orderItemIds = array_diff(array_merge(
-            [$orderItem->getChildObject()->getWalmartOrderItemId()],
-            $orderItem->getChildObject()->getMergedWalmartOrderItemIds()
-        ), $orderItemIdsInShipped);
+        $orderItemIds = array_diff(
+            array_merge(
+                [$orderItem->getChildObject()->getWalmartOrderItemId()],
+                $orderItem->getChildObject()->getMergedWalmartOrderItemIds()
+            ),
+            $orderItemIdsInShipped
+        );
 
         /**
          * - Walmart returns the same Order Item more than one time with single QTY. That data was merged.
@@ -93,7 +96,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
 
             $items[$orderItemId] = [
                 'walmart_order_item_id' => $orderItemId,
-                'qty'                   => 1
+                'qty' => 1,
             ];
 
             $itemQty--;
@@ -133,8 +136,10 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
      */
     protected function validate(array $additionalData)
     {
-        if (!isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items']) ||
-            !is_array($additionalData[Helper::CUSTOM_IDENTIFIER]['items'])) {
+        if (
+            !isset($additionalData[Helper::CUSTOM_IDENTIFIER]['items']) ||
+            !is_array($additionalData[Helper::CUSTOM_IDENTIFIER]['items'])
+        ) {
             return false;
         }
 
@@ -169,6 +174,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
 
     /**
      * @param array $additionalData
+     *
      * @return \Ess\M2ePro\Model\Order\Item
      */
     protected function getOrderItem(array $additionalData)
@@ -177,7 +183,9 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
             return $this->orderItem;
         }
 
-        $this->orderItem = $this->walmartFactory->getObject('Order_Item')->getCollection()
+        $this->orderItem = $this->walmartFactory
+            ->getObject('Order_Item')
+            ->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId())
             ->addFieldToFilter(
                 'walmart_order_item_id',

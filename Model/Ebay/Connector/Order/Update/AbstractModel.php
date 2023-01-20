@@ -41,6 +41,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
+     *
      * @return $this
      */
     public function setOrder(\Ess\M2ePro\Model\Order $order)
@@ -54,11 +55,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
 
     /**
      * @param $action
+     *
      * @return $this
      */
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -115,6 +118,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
     {
         if (!$this->isNeedSendRequest()) {
             $this->status = \Ess\M2ePro\Helper\Data::STATUS_ERROR;
+
             return;
         }
 
@@ -146,28 +150,32 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
      */
     protected function isNeedSendRequest()
     {
-        if ($this->order->getMarketplace()->getCode() == 'India'
+        if (
+            $this->order->getMarketplace()->getCode() == 'India'
             && stripos($this->order->getChildObject()->getPaymentMethod(), 'paisa') !== false
         ) {
             /** @var \Ess\M2ePro\Model\Order\Change $orderChange */
             $orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($this->getOrderChangeId());
             $this->order->getLog()->setInitiator($orderChange->getCreatorType());
             $this->order->addErrorLog('eBay Order Status was not updated. Reason: %msg%', [
-                'msg' => 'Status of India Site Orders cannot be updated if the Buyer uses PaisaPay payment method.'
+                'msg' => 'Status of India Site Orders cannot be updated if the Buyer uses PaisaPay payment method.',
             ]);
 
             $orderChange->delete();
+
             return false;
         }
 
-        if (!in_array(
-            $this->action,
-            [
-                \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY,
-                \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP,
-                \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK
-            ]
-        )) {
+        if (
+            !in_array(
+                $this->action,
+                [
+                    \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY,
+                    \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP,
+                    \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK,
+                ]
+            )
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Action.');
         }
 
@@ -182,7 +190,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
     {
         return [
             'action' => $this->action,
-            'order_id' => $this->order->getChildObject()->getEbayOrderId()
+            'order_id' => $this->order->getChildObject()->getEbayOrderId(),
         ];
     }
 

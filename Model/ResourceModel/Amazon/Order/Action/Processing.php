@@ -33,10 +33,10 @@ class Processing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMo
     public function getUniqueRequestPendingSingleIds()
     {
         $select = $this->getConnection()
-            ->select()
-            ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `request_pending_single_id`'))
-            ->where('request_pending_single_id IS NOT NULL')
-            ->distinct(true);
+                       ->select()
+                       ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `request_pending_single_id`'))
+                       ->where('request_pending_single_id IS NOT NULL')
+                       ->distinct(true);
 
         return $this->getConnection()->fetchCol($select);
     }

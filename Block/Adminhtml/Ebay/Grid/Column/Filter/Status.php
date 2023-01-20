@@ -63,8 +63,10 @@ HTML;
 
         $value = $this->getData('value');
 
-        if ((isset($value['value']) && $value['value'] !== null) ||
-            (isset($value['is_duplicate']) && $value['is_duplicate'] == 1)) {
+        if (
+            (isset($value['value']) && $value['value'] !== null) ||
+            (isset($value['is_duplicate']) && $value['is_duplicate'] == 1)
+        ) {
             return $value;
         }
 
@@ -76,6 +78,7 @@ HTML;
     protected function _renderOption($option, $value)
     {
         $value = isset($value['value']) ? $value['value'] : null;
+
         return parent::_renderOption($option, $value);
     }
 

@@ -11,9 +11,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 use Ess\M2ePro\Model\Ebay\Account\Issue\ValidTokens;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\AfterGetToken
- */
 class AfterGetSellApiToken extends Account
 {
     /** @var \Ess\M2ePro\Model\Ebay\Account\TemporaryStorage */

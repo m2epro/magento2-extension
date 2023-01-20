@@ -92,12 +92,12 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         return array_merge(
             parent::getProcessingParams(),
             [
-                'request_data'       => $this->getRequestData(),
-                'configurator'       => $this->listingProduct->getActionConfigurator()->getSerializedData(),
+                'request_data' => $this->getRequestData(),
+                'configurator' => $this->listingProduct->getActionConfigurator()->getSerializedData(),
                 'listing_product_id' => $this->listingProduct->getId(),
-                'lock_identifier'    => $this->getLockIdentifier(),
-                'action_type'        => $this->getActionType(),
-                'requester_params'   => $this->params,
+                'lock_identifier' => $this->getLockIdentifier(),
+                'action_type' => $this->getActionType(),
+                'requester_params' => $this->params,
             ]
         );
     }
@@ -229,12 +229,14 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      */
     abstract protected function filterChildListingProductsByStatus(array $listingProducts);
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      */
     protected function filterLockedChildListingProducts(array $listingProducts)
@@ -245,7 +247,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
                 'Lock_Item_Manager',
                 [
                     'nick' => \Ess\M2ePro\Helper\Component\Walmart::NICK . '_listing_product_' . $listingProduct->getId(
-                        )
+                    ),
                 ]
             );
 
@@ -304,21 +306,21 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         $metaData['log_messages'] = $logMessages;
 
         $product = [
-            'request'          => $this->getRequestData(),
+            'request' => $this->getRequestData(),
             'request_metadata' => $metaData,
-            'configurator'     => $this->listingProduct->getActionConfigurator()->getSerializedData(),
-            'id'               => $this->listingProduct->getId(),
+            'configurator' => $this->listingProduct->getActionConfigurator()->getSerializedData(),
+            'id' => $this->listingProduct->getId(),
         ];
 
         return [
-            'account_id'      => $this->account->getId(),
-            'action_type'     => $this->getActionType(),
+            'account_id' => $this->account->getId(),
+            'action_type' => $this->getActionType(),
             'lock_identifier' => $this->getLockIdentifier(),
-            'logs_action'     => $this->getLogsAction(),
-            'logs_action_id'  => $this->getLogger()->getActionId(),
-            'status_changer'  => $this->params['status_changer'],
-            'params'          => $this->params,
-            'product'         => $product,
+            'logs_action' => $this->getLogsAction(),
+            'logs_action_id' => $this->getLogger()->getActionId(),
+            'status_changer' => $this->params['status_changer'],
+            'params' => $this->params,
+            'product' => $product,
         ];
     }
 
@@ -330,7 +332,6 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     protected function getLogger()
     {
         if ($this->logger === null) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Logger $logger */
 
             $logger = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Logger');
@@ -366,7 +367,6 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
     protected function getValidatorObject()
     {
         if ($this->validatorObject === null) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator $validator */
             $validator = $this->modelFactory->getObject(
                 'Walmart\Listing\Product\Action\Type\\' . $this->getOrmActionType() . '\Validator'
@@ -416,12 +416,12 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
 
     /**
      * @param array $data
+     *
      * @return \Ess\M2ePro\Model\Walmart\Listing\Product\Action\RequestData
      */
     protected function buildRequestDataObject(array $data)
     {
         if ($this->requestDataObject === null) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\RequestData $requestData */
             $requestData = $this->modelFactory->getObject('Walmart_Listing_Product_Action_RequestData');
 

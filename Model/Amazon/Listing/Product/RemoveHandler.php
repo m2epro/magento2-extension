@@ -35,7 +35,6 @@ class RemoveHandler extends \Ess\M2ePro\Model\Listing\Product\RemoveHandler
         $variationManager = $this->getAmazonListingProduct()->getVariationManager();
 
         if ($variationManager->isRelationChildType()) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $parentAmazonListingProduct */
             $parentAmazonListingProduct = $variationManager
                 ->getTypeModel()

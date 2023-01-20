@@ -25,13 +25,13 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     public function getResultData(\Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial, $partNumber)
     {
         $select = $this->getConnection()->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_request_pending_partial_data'),
-                'data'
-            )
-            ->where('request_pending_partial_id = ?', $requestPendingPartial->getId())
-            ->where('part_number = ?', $partNumber);
+                       ->from(
+                           $this->getHelper('Module_Database_Structure')
+                                ->getTableNameWithPrefix('m2epro_request_pending_partial_data'),
+                           'data'
+                       )
+                       ->where('request_pending_partial_id = ?', $requestPendingPartial->getId())
+                       ->where('part_number = ?', $partNumber);
 
         $resultData = $this->getConnection()->fetchCol($select);
         $resultData = reset($resultData);

@@ -21,10 +21,10 @@ class DeleteCategory extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Aut
         $categoryId = $this->getRequest()->getParam('category_id');
 
         $category = $this->activeRecordFactory->getObject('Listing_Auto_Category')
-            ->getCollection()
-            ->addFieldToFilter('group_id', (int)$groupId)
-            ->addFieldToFilter('category_id', (int)$categoryId)
-            ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('group_id', (int)$groupId)
+                                              ->addFieldToFilter('category_id', (int)$categoryId)
+                                              ->getFirstItem();
 
         if (!$category->getId()) {
             return;

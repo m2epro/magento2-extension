@@ -37,41 +37,41 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractG
             ['lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable()],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'status'          => 'status',
-                'component_mode'  => 'component_mode',
-                'listing_id'      => 'listing_id',
-                'additional_data' => 'additional_data'
+                'id' => 'id',
+                'status' => 'status',
+                'component_mode' => 'component_mode',
+                'listing_id' => 'listing_id',
+                'additional_data' => 'additional_data',
             ]
         );
         $collection->joinTable(
             ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
             'listing_product_id=id',
             [
-                'listing_product_id'    => 'listing_product_id',
-                'end_date'              => 'end_date',
-                'start_date'            => 'start_date',
-                'online_title'          => 'online_title',
-                'online_sku'            => 'online_sku',
-                'available_qty'         => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
-                'ebay_item_id'          => 'ebay_item_id',
-                'online_main_category'  => 'online_main_category',
-                'online_qty_sold'       => 'online_qty_sold',
-                'online_bids'           => 'online_bids',
-                'online_start_price'    => 'online_start_price',
-                'online_current_price'  => 'online_current_price',
-                'online_reserve_price'  => 'online_reserve_price',
+                'listing_product_id' => 'listing_product_id',
+                'end_date' => 'end_date',
+                'start_date' => 'start_date',
+                'online_title' => 'online_title',
+                'online_sku' => 'online_sku',
+                'available_qty' => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
+                'ebay_item_id' => 'ebay_item_id',
+                'online_main_category' => 'online_main_category',
+                'online_qty_sold' => 'online_qty_sold',
+                'online_bids' => 'online_bids',
+                'online_start_price' => 'online_start_price',
+                'online_current_price' => 'online_current_price',
+                'online_reserve_price' => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
-                'template_category_secondary_id'  => 'template_category_secondary_id'
+                'template_category_secondary_id' => 'template_category_secondary_id',
             ]
         );
         $collection->joinTable(
             ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
             'id=listing_id',
             [
-                'store_id'       => 'store_id',
-                'account_id'     => 'account_id',
-                'marketplace_id' => 'marketplace_id'
+                'store_id' => 'store_id',
+                'account_id' => 'account_id',
+                'marketplace_id' => 'marketplace_id',
             ]
         );
         $collection->joinTable(
@@ -95,9 +95,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractG
             ['etc' => $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable()],
             'id=template_category_secondary_id',
             [
-                'category_id'        => 'category_id',
+                'category_id' => 'category_id',
                 'category_attribute' => 'category_attribute',
-                'is_custom_template' => 'is_custom_template'
+                'is_custom_template' => 'is_custom_template',
             ]
         );
 
@@ -112,6 +112,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractG
         $collection->addFieldToFilter('marketplace_id', $templateCategory->getMarketplaceId());
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -125,7 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\AbstractG
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/viewSecondaryGrid', ['_current'=>true]);
+        return $this->getUrl('*/*/viewSecondaryGrid', ['_current' => true]);
     }
 
     //########################################

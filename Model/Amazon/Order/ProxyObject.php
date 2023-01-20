@@ -61,7 +61,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return parent::getBillingAddressData();
         }
 
-        if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
+        if (
+            $this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
             $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
         ) {
             return parent::getBillingAddressData();
@@ -70,18 +71,18 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $customerNameParts = $this->getNameParts($this->order->getBuyerName());
 
         return [
-            'prefix'     => $customerNameParts['prefix'],
-            'firstname'  => $customerNameParts['firstname'],
+            'prefix' => $customerNameParts['prefix'],
+            'firstname' => $customerNameParts['firstname'],
             'middlename' => $customerNameParts['middlename'],
-            'lastname'   => $customerNameParts['lastname'],
-            'suffix'     => $customerNameParts['suffix'],
+            'lastname' => $customerNameParts['lastname'],
+            'suffix' => $customerNameParts['suffix'],
             'country_id' => '',
-            'region'     => '',
-            'region_id'  => '',
-            'city'       => 'Amazon does not supply the complete billing Buyer information.',
-            'postcode'   => '',
-            'street'     => '',
-            'company'    => ''
+            'region' => '',
+            'region_id' => '',
+            'city' => 'Amazon does not supply the complete billing Buyer information.',
+            'postcode' => '',
+            'street' => '',
+            'company' => '',
         ];
     }
 
@@ -94,7 +95,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return false;
         }
 
-        if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
+        if (
+            $this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
             $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
         ) {
             return false;
@@ -135,7 +137,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             'channel_order_id' => $this->order->getAmazonOrderId(),
             'channel_final_fee' => 0,
             'cash_on_delivery_cost' => 0,
-            'transactions' => []
+            'transactions' => [],
         ];
 
         return $paymentData;
@@ -206,9 +208,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return [
-            'carrier_title'   => $this->getHelper('Module\Translation')->__('Amazon Shipping'),
+            'carrier_title' => $this->getHelper('Module\Translation')->__('Amazon Shipping'),
             'shipping_method' => $this->order->getShippingService() . $additionalData,
-            'shipping_price'  => $this->getBaseShippingPrice()
+            'shipping_price' => $this->getBaseShippingPrice(),
         ];
     }
 
@@ -257,7 +259,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
                 $this->order->getPromotionDiscountAmount()
             );
 
-            $comments[] =  $translation->__(
+            $comments[] = $translation->__(
                 '%value% promotion discount amount was subtracted from the total amount.',
                 $discount
             );
@@ -295,9 +297,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
             if ($item->getMagentoProduct()) {
                 $itemsGiftPrices[] = [
-                    'name'  => $item->getMagentoProduct()->getName(),
-                    'type'  => $item->getChildObject()->getGiftType(),
-                    'price' => $giftPrice
+                    'name' => $item->getMagentoProduct()->getName(),
+                    'type' => $item->getChildObject()->getGiftType(),
+                    'price' => $giftPrice,
                 ];
             }
         }
@@ -306,7 +308,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return [];
         }
 
-        $comment = '<u>'.
+        $comment = '<u>' .
             $this->getHelper('Module_Translation')->__('The following Items are purchased with gift wraps') .
             ':</u><br/>';
 
@@ -332,10 +334,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return [];
         }
 
-        $comment = '<u>'.
+        $comment = '<u>' .
             $this->getHelper('Module_Translation')->__(
                 'The following SKUs have zero price and can not be included in Magento order line items'
-            ).
+            ) .
             ':</u><br/>';
 
         foreach ($this->removedProxyItems as $item) {

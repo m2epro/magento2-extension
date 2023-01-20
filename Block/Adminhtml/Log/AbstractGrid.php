@@ -9,14 +9,14 @@
 namespace Ess\M2ePro\Block\Adminhtml\Log;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid as WidgetAbstractGrid;
-use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 
 abstract class AbstractGrid extends WidgetAbstractGrid
 {
-    const LISTING_ID_FIELD                = 'listing_id';
-    const LISTING_PRODUCT_ID_FIELD        = 'listing_product_id';
-    const LISTING_PARENT_PRODUCT_ID_FIELD = 'parent_listing_product_id';
-    const ORDER_ID_FIELD                  = 'order_id';
+    public const LISTING_ID_FIELD = 'listing_id';
+    public const LISTING_PRODUCT_ID_FIELD = 'listing_product_id';
+    public const LISTING_PARENT_PRODUCT_ID_FIELD = 'parent_listing_product_id';
+    public const ORDER_ID_FIELD = 'order_id';
 
     protected $resourceConnection;
 
@@ -81,12 +81,14 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     public function isListingLog()
     {
         $id = $this->getRequest()->getParam($this::LISTING_ID_FIELD);
+
         return !empty($id);
     }
 
     public function isListingProductLog()
     {
         $listingProductId = $this->getRequest()->getParam($this::LISTING_PRODUCT_ID_FIELD);
+
         return !empty($listingProductId);
     }
 
@@ -144,19 +146,19 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     protected function _getLogTypeList()
     {
         return [
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO    => $this->__('Info'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO => $this->__('Info'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__('Success'),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => $this->__('Error')
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__('Error'),
         ];
     }
 
     protected function _getLogInitiatorList()
     {
         return [
-            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN   => $this->__('Unknown'),
-            \Ess\M2ePro\Helper\Data::INITIATOR_USER      => $this->__('Manual'),
-            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION => $this->__('Automatic')
+            \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN => $this->__('Unknown'),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER => $this->__('Manual'),
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION => $this->__('Automatic'),
         ];
     }
 
@@ -166,16 +168,16 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     {
         switch ($row->getData('type')) {
             case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
-                $value = '<span style="color: green;">'.$value.'</span>';
+                $value = '<span style="color: green;">' . $value . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING:
-                $value = '<span style="color: orange; font-weight: bold;">'.$value.'</span>';
+                $value = '<span style="color: orange; font-weight: bold;">' . $value . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Synchronization\Log::TYPE_FATAL_ERROR:
             case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
-                 $value = '<span style="color: red; font-weight: bold;">'.$value.'</span>';
+                $value = '<span style="color: red; font-weight: bold;">' . $value . '</span>';
                 break;
 
             default:
@@ -232,10 +234,10 @@ HTML;
 
         if (isset($this->messageCount[$row[$this->entityIdFieldName]])) {
             $colorMap = [
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO    => 'gray',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO => 'gray',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'green',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'orange',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR   => 'red',
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'red',
             ];
 
             $count = $this->messageCount[$row[$this->entityIdFieldName]][$row['description']]['count'];
@@ -272,7 +274,7 @@ HTML;
     protected function _toHtml()
     {
         $this->jsTranslator->addTranslations([
-            'Description' => $this->__('Description')
+            'Description' => $this->__('Description'),
         ]);
 
         $this->js->addRequireJs(['l' => 'M2ePro/Log'], "window.LogObj = new Log();");

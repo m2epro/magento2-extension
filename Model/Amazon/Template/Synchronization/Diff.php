@@ -18,14 +18,14 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
     public function isReviseSettingsChanged()
     {
         return $this->isReviseQtyEnabled() ||
-               $this->isReviseQtyDisabled() ||
-               $this->isReviseQtySettingsChanged() ||
-               $this->isRevisePriceEnabled() ||
-               $this->isRevisePriceDisabled() ||
-               $this->isReviseDetailsDisabled() ||
-               $this->isReviseDetailsEnabled() ||
-               $this->isReviseImagesDisabled() ||
-               $this->isReviseImagesEnabled();
+            $this->isReviseQtyDisabled() ||
+            $this->isReviseQtySettingsChanged() ||
+            $this->isRevisePriceEnabled() ||
+            $this->isRevisePriceDisabled() ||
+            $this->isReviseDetailsDisabled() ||
+            $this->isReviseDetailsEnabled() ||
+            $this->isReviseImagesDisabled() ||
+            $this->isReviseImagesEnabled();
     }
 
     //########################################

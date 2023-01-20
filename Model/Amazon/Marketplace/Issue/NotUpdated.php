@@ -74,18 +74,19 @@ class NotUpdated implements \Ess\M2ePro\Model\Issue\LocatorInterface
             $tableName = $this->moduleDatabaseStructureHelper
                 ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
-            $queryStmt = $this->resourceConnection->getConnection()
-                                                  ->select()
-                                                  ->from(
-                                                      $tableName,
-                                                      ['marketplace_id', 'server_details_last_update_date']
-                                                  )
-                                                  ->where('client_details_last_update_date IS NOT NULL')
-                                                  ->where('server_details_last_update_date IS NOT NULL')
-                                                  ->where(
-                                                      'client_details_last_update_date < server_details_last_update_date'
-                                                  )
-                                                  ->query();
+            $queryStmt = $this->resourceConnection
+                ->getConnection()
+                ->select()
+                ->from(
+                    $tableName,
+                    ['marketplace_id', 'server_details_last_update_date']
+                )
+                ->where('client_details_last_update_date IS NOT NULL')
+                ->where('server_details_last_update_date IS NOT NULL')
+                ->where(
+                    'client_details_last_update_date < server_details_last_update_date'
+                )
+                ->query();
 
             $dictionaryData = [];
             while ($row = $queryStmt->fetch()) {

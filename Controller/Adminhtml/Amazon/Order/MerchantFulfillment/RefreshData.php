@@ -36,14 +36,15 @@ class RefreshData extends Order
         }
 
         $requestData = [
-            'shipment_id' => $orderFulfillmentData['shipment_id']
+            'shipment_id' => $orderFulfillmentData['shipment_id'],
         ];
 
         $responseData = [
-            'success' => false
+            'success' => false,
         ];
 
         try {
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'shipment',

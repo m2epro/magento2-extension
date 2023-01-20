@@ -10,15 +10,16 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
 use Ess\M2ePro\Model\ResourceModel\MSI\Listing\Product\Variation\StockDataResolver as MSIStockDataResolver;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation
- */
 class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
+    /** @var array  */
     protected $variationsProductsIds = [];
 
+    /** @var \Ess\M2ePro\Model\Magento\Product\Status  */
     protected $magentoProductStatus;
+    /** @var \Magento\CatalogInventory\Model\Configuration  */
     protected $catalogInventoryConfiguration;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\StockDataResolver|\Ess\M2ePro\Model\ResourceModel\MSI\Listing\Product\Variation\StockDataResolver|mixed  */
     protected $variationStockDataResolver;
 
     //########################################
@@ -131,20 +132,20 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         }
 
         $optionTable = $this->activeRecordFactory->getObject('Listing_Product_Variation_Option')->getResource()
-            ->getMainTable();
+                                                 ->getMainTable();
 
         $select = $this->getConnection()
-                        ->select()
-                        ->from(
-                            ['lpv' => $this->getMainTable()],
-                            ['variation_id' => 'id']
-                        )
-                        ->join(
-                            ['lpvo' => $optionTable],
-                            '`lpv`.`id` = `lpvo`.`listing_product_variation_id`',
-                            ['product_id']
-                        )
-                        ->where('`lpv`.`listing_product_id` = ?', (int)$listingProductId);
+                       ->select()
+                       ->from(
+                           ['lpv' => $this->getMainTable()],
+                           ['variation_id' => 'id']
+                       )
+                       ->join(
+                           ['lpvo' => $optionTable],
+                           '`lpv`.`id` = `lpvo`.`listing_product_variation_id`',
+                           ['product_id']
+                       )
+                       ->where('`lpv`.`listing_product_id` = ?', (int)$listingProductId);
 
         $result = [];
 
@@ -197,7 +198,6 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         $variationsProductsStocks = [];
         foreach ($variationsProductsIds as $key => $variationProductsIds) {
             foreach ($variationProductsIds as $id) {
-
                 for ($i = 0; $i < $stockItemsCount; $i++) {
                     if ($stockItems[$i]['product_id'] == $id) {
                         $stockAvailability = $this->getHelper('Magento\Product')->calculateStockAvailability(

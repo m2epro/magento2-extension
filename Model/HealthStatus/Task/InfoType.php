@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\HealthStatus\Task;
  */
 abstract class InfoType extends AbstractModel
 {
-    const TYPE = 'info';
+    public const TYPE = 'info';
 
     //########################################
 

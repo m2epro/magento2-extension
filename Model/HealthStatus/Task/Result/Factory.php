@@ -34,26 +34,27 @@ class Factory
         \Magento\Framework\ObjectManagerInterface $objectManager
     ) {
         $this->locationResolver = $locationResolver;
-        $this->_objectManager   = $objectManager;
-        $this->helperFactory    = $helperFactory;
-        $this->modelFactory     = $modelFactory;
+        $this->_objectManager = $objectManager;
+        $this->helperFactory = $helperFactory;
+        $this->modelFactory = $modelFactory;
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\HealthStatus\Task\AbstractModel $task
+     *
      * @return \Ess\M2ePro\Model\HealthStatus\Task\Result
      */
     public function create(\Ess\M2ePro\Model\HealthStatus\Task\AbstractModel $task)
     {
         return $this->_objectManager->create(TaskResult::class, [
-            'taskHash'                 => $this->helperFactory->getObject('Client')->getClassName($task),
-            'taskType'                 => $task->getType(),
+            'taskHash' => $this->helperFactory->getObject('Client')->getClassName($task),
+            'taskType' => $task->getType(),
             'taskMustBeShownIfSuccess' => $task->mustBeShownIfSuccess(),
-            'tabName'                  => $this->locationResolver->resolveTabName($task),
-            'fieldSetName'             => $this->locationResolver->resolveFieldSetName($task),
-            'fieldName'                => $this->locationResolver->resolveFieldName($task)
+            'tabName' => $this->locationResolver->resolveTabName($task),
+            'fieldSetName' => $this->locationResolver->resolveFieldSetName($task),
+            'fieldName' => $this->locationResolver->resolveFieldName($task),
         ]);
     }
 

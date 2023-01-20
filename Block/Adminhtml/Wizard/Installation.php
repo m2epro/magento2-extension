@@ -85,8 +85,8 @@ abstract class Installation extends AbstractWizard
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class, 'wizard.help.block')
                           ->setData(
                               [
-                              'no_collapse' => true,
-                              'no_hide'     => true,
+                                  'no_collapse' => true,
+                                  'no_hide' => true,
                               ]
                           );
 

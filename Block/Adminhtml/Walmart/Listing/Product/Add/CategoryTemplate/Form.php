@@ -46,11 +46,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_form',
-                'action' => $this->getUrl('*/*/categoryTemplateAssignType', ['_current' => true]),
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'action' => $this->getUrl('*/*/categoryTemplateAssignType', ['_current' => true]),
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $fieldset = $form->addFieldset(
@@ -65,7 +67,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'value' => '',
                 'field_extra_attributes' =>
-                    'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"'
+                    'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
         );
         $this->css->add(
@@ -94,8 +96,8 @@ CSS
                 'values' => [
                     [
                         'value' => 'same',
-                        'label' => 'All Products same Category Policy'
-                    ]
+                        'label' => 'All Products same Category Policy',
+                    ],
                 ],
                 'note' => <<<HTML
 <div style="padding-top: 3px; padding-left: 26px; font-weight: normal">
@@ -112,6 +114,7 @@ CSS
     {$this->__('Please select Category Policy.')}
 </label>
 HTML
+            ,
             ]
         );
 
@@ -124,13 +127,13 @@ HTML
                 'values' => [
                     [
                         'value' => 'category',
-                        'label' => 'Based on Magento Categories'
-                    ]
+                        'label' => 'Based on Magento Categories',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     $this->__(
                         'Category Policy will be set for Products based on their Magento Categories.'
-                    ).'</div>'
+                    ) . '</div>',
             ]
         );
 
@@ -143,12 +146,12 @@ HTML
                 'values' => [
                     [
                         'value' => 'manually',
-                        'label' => 'Set Manually for each Product'
-                    ]
+                        'label' => 'Set Manually for each Product',
+                    ],
                 ],
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     $this->__('Allows you to set Category Policy for each Product or a group of Products manually.')
-                          .'</div>'
+                    . '</div>',
             ]
         );
 
@@ -228,7 +231,8 @@ HTML
         loadTemplateCategoryGrid = function() {
 
             new Ajax.Request(
-                '{$this->getUrl('*/walmart_listing_product_template_category/viewGrid'
+                '{$this->getUrl(
+                '*/walmart_listing_product_template_category/viewGrid'
             )}', {
                 method: 'post',
                 parameters: {

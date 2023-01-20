@@ -8,15 +8,15 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder;
 
-use \Ess\M2ePro\Model\Magento\Product as MagentoProduct;
+use Ess\M2ePro\Model\Magento\Product as MagentoProduct;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty
  */
 class Qty extends AbstractModel
 {
-    const FULFILLMENT_MODE_AFN = 'AFN';
-    const FULFILLMENT_MODE_MFN = 'MFN';
+    public const FULFILLMENT_MODE_AFN = 'AFN';
+    public const FULFILLMENT_MODE_MFN = 'MFN';
 
     //########################################
 
@@ -41,8 +41,8 @@ class Qty extends AbstractModel
 
         if (!isset($this->validatorsData['handling_time'])) {
             $handlingTime = $this->getAmazonListingProduct()
-                ->getListingSource()
-                ->getHandlingTime();
+                                 ->getListingSource()
+                                 ->getHandlingTime();
             $this->cachedData['handling_time'] = $handlingTime;
         }
 
@@ -76,8 +76,10 @@ class Qty extends AbstractModel
     public function checkQtyWarnings()
     {
         $qtyMode = $this->getAmazonListing()->getAmazonSellingFormatTemplate()->getQtyMode();
-        if ($qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
-            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT) {
+        if (
+            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED ||
+            $qtyMode == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
+        ) {
             $listingProductId = $this->getListingProduct()->getId();
             $productId = $this->getAmazonListingProduct()->getActualMagentoProduct()->getProductId();
             $storeId = $this->getListing()->getStoreId();

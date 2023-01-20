@@ -16,11 +16,11 @@ use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
  */
 class Walmart extends IssueType
 {
-    const DIFF_CRITICAL_FACTOR = 1.50;
-    const DIFF_WARNING_FACTOR  = 1.00;
+    public const DIFF_CRITICAL_FACTOR = 1.50;
+    public const DIFF_WARNING_FACTOR = 1.00;
 
-    const MINIMUM_VALUE_OF_INTERVAL = 3600 * 12;
-    const MINIMUM_COUNT_OF_ORDERS   = 7;
+    public const MINIMUM_VALUE_OF_INTERVAL = 3600 * 12;
+    public const MINIMUM_COUNT_OF_ORDERS = 7;
 
     /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\Factory */
     private $resultFactory;
@@ -52,41 +52,45 @@ class Walmart extends IssueType
             return $result;
         }
 
-        $maxInterval     = $this->calculateMaxIntervalBetweenOrders();
+        $maxInterval = $this->calculateMaxIntervalBetweenOrders();
         $currentInterval = $this->getCurrentIntervalToLatestOrder();
 
         $result->setTaskData($currentInterval);
 
         if ($currentInterval >= $maxInterval * self::DIFF_WARNING_FACTOR) {
             $result->setTaskResult(TaskResult::STATE_WARNING);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-                <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 Channel orders have not been imported into M2E Pro for the last %interval% hours.
 Please make sure that the Cron Service and Server connection are properly configured,
 and the last M2E Pro installation/upgrade went well.
 If you need assistance, contact Support at <a href="support@m2epro.com">support@m2epro.com</a>.
 HTML
-                ,
-                ceil($currentInterval / 3600),
-                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200402'),
-                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887')
-            ]));
+                    ,
+                    ceil($currentInterval / 3600),
+                    $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200402'),
+                    $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887'),
+                ])
+            );
         }
 
         if ($currentInterval >= $maxInterval * self::DIFF_CRITICAL_FACTOR) {
             $result->setTaskResult(TaskResult::STATE_CRITICAL);
-            $result->setTaskMessage($this->getHelper('Module\Translation')->translate([
-                <<<HTML
+            $result->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 Channel orders have not been imported into M2E Pro for the last %interval% hours.
 Please make sure that the Cron Service and Server connection are properly configured,
 and the last M2E Pro installation/upgrade went well.
 If you need assistance, contact Support at <a href="support@m2epro.com">support@m2epro.com</a>.
 HTML
-                ,
-                ceil($currentInterval / 3600),
-                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200402'),
-                $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887')
-            ]));
+                    ,
+                    ceil($currentInterval / 3600),
+                    $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200402'),
+                    $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200887'),
+                ])
+            );
         }
 
         return $result;

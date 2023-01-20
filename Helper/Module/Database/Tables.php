@@ -33,7 +33,7 @@ class Tables
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Magento\Staging $stagingHelper
     ) {
-        $this->resourceConnection  = $resourceConnection;
+        $this->resourceConnection = $resourceConnection;
         $this->databaseHelper = $databaseHelper;
         $this->stagingHelper = $stagingHelper;
     }
@@ -75,12 +75,15 @@ class Tables
         $oldTable = $this->getFullName($oldTable);
         $newTable = $this->getFullName($newTable);
 
-        if ($this->resourceConnection->getConnection()->isTableExists($oldTable) &&
-            !$this->resourceConnection->getConnection()->isTableExists($newTable)) {
+        if (
+            $this->resourceConnection->getConnection()->isTableExists($oldTable) &&
+            !$this->resourceConnection->getConnection()->isTableExists($newTable)
+        ) {
             $this->resourceConnection->getConnection()->renameTable(
                 $oldTable,
                 $newTable
             );
+
             return true;
         }
 
@@ -95,9 +98,11 @@ class Tables
      */
     public function normalizeEavColumn($table, string $columnName): string
     {
-        if ($this->stagingHelper->isInstalled() &&
+        if (
+            $this->stagingHelper->isInstalled() &&
             $this->stagingHelper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE) &&
-            strpos($columnName, 'entity_id') !== false) {
+            strpos($columnName, 'entity_id') !== false
+        ) {
             $columnName = str_replace(
                 'entity_id',
                 $this->stagingHelper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE),

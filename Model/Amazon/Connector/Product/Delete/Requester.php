@@ -17,7 +17,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     public function getCommand()
     {
-        return ['product','delete','entities'];
+        return ['product', 'delete', 'entities'];
     }
 
     //########################################
@@ -41,8 +41,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
     protected function getLogsAction()
     {
         return !empty($this->params['remove']) ?
-              \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_AND_REMOVE_PRODUCT :
-              \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT;
+            \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_AND_REMOVE_PRODUCT :
+            \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT;
     }
 
     //########################################
@@ -99,8 +99,8 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
         }
 
         $childListingsProducts = $amazonListingProduct->getVariationManager()
-            ->getTypeModel()
-            ->getChildListingsProducts();
+                                                      ->getTypeModel()
+                                                      ->getChildListingsProducts();
 
         $filteredByStatusChildListingProducts = $this->filterChildListingProductsByStatus($childListingsProducts);
         $filteredByStatusNotLockedChildListingProducts = $this->filterLockedChildListingProducts(
@@ -109,6 +109,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         if (empty($this->params['remove']) && empty($filteredByStatusNotLockedChildListingProducts)) {
             $this->listingProduct->setData('no_child_for_processing', true);
+
             return false;
         }
 
@@ -116,6 +117,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
         if (count($childListingsProducts) != count($notLockedChildListingProducts)) {
             $this->listingProduct->setData('child_locked', true);
+
             return false;
         }
 
@@ -124,7 +126,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
                 'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             ]);
             $amazonListingProduct->addData([
-                'general_id'          => null,
+                'general_id' => null,
                 'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
             ]);
             $this->listingProduct->save();
@@ -155,11 +157,11 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
             $processingRunner->setParams(
                 [
                     'listing_product_id' => $childListingProduct->getId(),
-                    'configurator'       => $this->listingProduct->getActionConfigurator()->getSerializedData(),
-                    'action_type'        => $this->getActionType(),
-                    'lock_identifier'    => $this->getLockIdentifier(),
-                    'requester_params'   => array_merge($this->params, ['is_parent_action' => true]),
-                    'group_hash'         => $this->listingProduct->getProcessingAction()->getGroupHash(),
+                    'configurator' => $this->listingProduct->getActionConfigurator()->getSerializedData(),
+                    'action_type' => $this->getActionType(),
+                    'lock_identifier' => $this->getLockIdentifier(),
+                    'requester_params' => array_merge($this->params, ['is_parent_action' => true]),
+                    'group_hash' => $this->listingProduct->getProcessingAction()->getGroupHash(),
                 ]
             );
             $processingRunner->start();
@@ -173,6 +175,7 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Requester
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
+     *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      */
     protected function filterChildListingProductsByStatus(array $listingProducts)

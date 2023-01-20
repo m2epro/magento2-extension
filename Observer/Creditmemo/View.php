@@ -8,15 +8,12 @@
 
 namespace Ess\M2ePro\Observer\Creditmemo;
 
-/**
- * Class \Ess\M2ePro\Observer\Creditmemo\View
- */
 class View extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Magento\Customer\Model\CustomerFactory */
     protected $customerFactory;
+    /** @var \Magento\Framework\Registry */
     protected $registry;
-
-    //########################################
 
     public function __construct(
         \Magento\Customer\Model\CustomerFactory $customerFactory,
@@ -29,8 +26,6 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
         $this->registry = $registry;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
-
-    //########################################
 
     public function process()
     {
@@ -63,10 +58,8 @@ class View extends \Ess\M2ePro\Observer\AbstractModel
         $customer = $this->customerFactory->create()->load($customerId);
 
         $creditmemo->getOrder()->setData(
-            'customer_'.\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE,
+            'customer_' . \Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE,
             $customer->getData(\Ess\M2ePro\Model\Ebay\Order\ProxyObject::USER_ID_ATTRIBUTE_CODE)
         );
     }
-
-    //########################################
 }

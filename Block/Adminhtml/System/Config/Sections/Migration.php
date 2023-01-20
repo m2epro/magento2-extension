@@ -33,21 +33,21 @@ class Migration extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             self::HELP_BLOCK,
             [
                 'no_collapse' => true,
-                'no_hide'     => true,
-                'content'     => $this->__(
+                'no_hide' => true,
+                'content' => $this->__(
                     'Here you can start M2E Pro data migration from Magento v1.x.
                     Read the <a href="%url%" target="_blank">Migration Guide</a>
                     for more details.',
                     $this->moduleSupport->getDocumentationArticleUrl('x/Ov0kB')
-                )
+                ),
             ]
         );
 
         $fieldSet = $form->addFieldset(
             'migration_from_magento1',
             [
-                'legend'      => $this->__('Migration'),
-                'collapsable' => false
+                'legend' => $this->__('Migration'),
+                'collapsable' => false,
             ]
         );
 
@@ -55,13 +55,13 @@ class Migration extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'migration_button',
             self::BUTTON,
             [
-                'label'   => 'Migration from Magento v1.x',
+                'label' => 'Migration from Magento v1.x',
                 'content' => $this->__('Proceed'),
                 'onclick' => 'startMigrationFromMagento1Wizard()',
                 'tooltip' => $this->__(
                     'Inventory and Order synchronization stops. The Module interface becomes unavailable.<br>
                             <b>Note</b>: Once you confirm the migration running, it cannot be stopped.'
-                )
+                ),
             ]
         );
 
@@ -78,7 +78,7 @@ class Migration extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
     protected function _toHtml(): string
     {
         $popup = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Popup\MigrationPopup::class);
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Popup\MigrationPopup::class);
 
         return $popup->toHtml() . parent::_toHtml();
     }

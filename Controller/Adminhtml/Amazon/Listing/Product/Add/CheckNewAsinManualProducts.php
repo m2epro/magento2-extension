@@ -16,7 +16,7 @@ class CheckNewAsinManualProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon
     public function execute()
     {
         $listingProductsIds = $this->getListing()
-            ->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
+                                   ->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Collection $collection */
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
@@ -34,13 +34,15 @@ class CheckNewAsinManualProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon
         }
 
         $popup = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\SkipPopup::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Manual\SkipPopup::class
+                      );
 
         $this->setJsonContent([
             'total_count' => count($listingProductsIds),
             'failed_count' => count($data),
             'html' => $popup->toHtml(),
-            'continueUrl' => $this->getUrl('*/*/index', ['id' => $this->getRequest()->getParam('id'), 'step' => 5])
+            'continueUrl' => $this->getUrl('*/*/index', ['id' => $this->getRequest()->getParam('id'), 'step' => 5]),
         ]);
 
         return $this->getResult();

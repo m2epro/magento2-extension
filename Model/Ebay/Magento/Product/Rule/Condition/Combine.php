@@ -22,7 +22,6 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
     ) {
-
         parent::__construct($helperData, $helperFactory, $modelFactory, $context, $data);
         $this->setType('Ebay_Magento_Product_Rule_Condition_Combine');
     }
@@ -51,6 +50,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     protected function getCustomOptions()
     {
         $attributes = $this->getCustomOptionsAttributes();
+
         return !empty($attributes) ?
             $this->getOptions('Ebay_Magento_Product_Rule_Condition_Product', $attributes, ['ebay'])
             : [];
@@ -62,6 +62,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
     protected function getCustomOptionsAttributes()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             'ebay_item_id' => $helper->__('Item ID'),
             'ebay_online_title' => $helper->__('Title'),

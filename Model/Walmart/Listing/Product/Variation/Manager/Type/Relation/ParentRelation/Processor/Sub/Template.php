@@ -25,7 +25,6 @@ class Template extends AbstractModel
         $categoryTemplateId = $this->getProcessor()->getWalmartListingProduct()->getTemplateCategoryId();
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
             $walmartListingProduct = $listingProduct->getChildObject();
 

@@ -54,6 +54,7 @@ class Mutable extends AbstractModel
             $value,
             ['app_config_overrides']
         );
+
         return $this;
     }
 
@@ -75,6 +76,7 @@ class Mutable extends AbstractModel
         $this->helperFactory->getObject('Data_Cache_Runtime')->removeValue(
             $this->preparePath($path, $scope, $scopeCode)
         );
+
         return $this;
     }
 
@@ -83,6 +85,7 @@ class Mutable extends AbstractModel
     public function clear()
     {
         $this->helperFactory->getObject('Data_Cache_Runtime')->removeTagValues('app_config_overrides');
+
         return $this;
     }
 

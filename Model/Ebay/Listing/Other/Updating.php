@@ -10,12 +10,12 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Other;
 
 class Updating extends \Ess\M2ePro\Model\AbstractModel
 {
-    const EBAY_STATUS_ACTIVE = 'Active';
-    const EBAY_STATUS_ENDED = 'Ended';
-    const EBAY_STATUS_COMPLETED = 'Completed';
+    public const EBAY_STATUS_ACTIVE = 'Active';
+    public const EBAY_STATUS_ENDED = 'Ended';
+    public const EBAY_STATUS_COMPLETED = 'Completed';
 
-    const EBAY_DURATION_GTC         = 'GTC';
-    const EBAY_DURATION_DAYS_PREFIX = 'Days_';
+    public const EBAY_DURATION_GTC = 'GTC';
+    public const EBAY_DURATION_DAYS_PREFIX = 'Days_';
 
     /** @var \Ess\M2ePro\Model\Account|null */
     protected $account = null;
@@ -76,9 +76,9 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($responseData['items'] as $receivedItem) {
             $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection()
-                ->addFieldToFilter('item_id', $receivedItem['id'])
-                ->addFieldToFilter('account_id', $this->getAccount()->getId())
-                ->setPageSize(1);
+                                            ->addFieldToFilter('item_id', $receivedItem['id'])
+                                            ->addFieldToFilter('account_id', $this->getAccount()->getId())
+                                            ->setPageSize(1);
 
             /** @var \Ess\M2ePro\Model\Listing\Other $existObject */
             $existObject = $collection->getFirstItem();
@@ -95,28 +95,28 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             );
 
             $newData = [
-                'title'                  => (string)$receivedItem['title'],
-                'currency'               => (string)$receivedItem['currency'],
-                'online_price'           => (float)$receivedItem['currentPrice'],
-                'online_qty'             => (int)$receivedItem['quantity'],
-                'online_qty_sold'        => (int)$receivedItem['quantitySold'],
-                'online_bids'            => (int)$receivedItem['bidCount'],
-                'online_main_category'   => null,
+                'title' => (string)$receivedItem['title'],
+                'currency' => (string)$receivedItem['currency'],
+                'online_price' => (float)$receivedItem['currentPrice'],
+                'online_qty' => (int)$receivedItem['quantity'],
+                'online_qty_sold' => (int)$receivedItem['quantitySold'],
+                'online_bids' => (int)$receivedItem['bidCount'],
+                'online_main_category' => null,
                 'online_categories_data' => null,
-                'start_date'             => (string)$this->helperData
+                'start_date' => (string)$this->helperData
                     ->createGmtDateTime($receivedItem['startTime'])
                     ->format('Y-m-d H:i:s'),
-                'end_date'               => (string)$this->helperData
+                'end_date' => (string)$this->helperData
                     ->createGmtDateTime($receivedItem['endTime'])
-                    ->format('Y-m-d H:i:s')
+                    ->format('Y-m-d H:i:s'),
             ];
 
             if (!empty($receivedItem['categories'])) {
                 $categories = [
-                    'category_main_id'            => 0,
-                    'category_secondary_id'       => 0,
-                    'store_category_main_id'      => 0,
-                    'store_category_secondary_id' => 0
+                    'category_main_id' => 0,
+                    'category_secondary_id' => 0,
+                    'store_category_main_id' => 0,
+                    'store_category_secondary_id' => 0,
                 ];
 
                 foreach ($categories as $categoryKey => &$categoryValue) {
@@ -132,7 +132,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                     $itemMarketplace->getId()
                 );
 
-                $newData['online_main_category'] = $categoryPath.' ('.$categories['category_main_id'].')';
+                $newData['online_main_category'] = $categoryPath . ' (' . $categories['category_main_id'] . ')';
                 $newData['online_categories_data'] = $this->helperData->jsonEncode($categories);
             }
 
@@ -161,17 +161,20 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 $newData['online_qty'] = 1;
             }
 
-            if (($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
-                 $receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) &&
-                 $newData['online_qty'] == $newData['online_qty_sold']
+            if (
+                ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
+                    $receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) &&
+                $newData['online_qty'] == $newData['online_qty_sold']
             ) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
             } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
             } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
-            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
-                       $receivedItem['quantity'] - $receivedItem['quantitySold'] <= 0) {
+            } elseif (
+                $receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
+                $receivedItem['quantity'] - $receivedItem['quantitySold'] <= 0
+            ) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
             } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE) {
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
@@ -243,7 +246,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         $connection = $this->resourceConnection->getConnection();
 
         $receivedItemsByItemId = [];
-        $receivedItemsIds      = [];
+        $receivedItemsIds = [];
 
         foreach ($receivedItems as $receivedItem) {
             $receivedItemsIds[] = (string)$receivedItem['id'];
@@ -263,7 +266,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
             $collection->getSelect()->join(
                 ['eit' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()],
-                'main_table.product_id = eit.product_id AND eit.account_id = '.(int)$this->getAccount()->getId(),
+                'main_table.product_id = eit.product_id AND eit.account_id = ' . (int)$this->getAccount()->getId(),
                 ['item_id']
             );
             $collection->getSelect()->where('eit.item_id IN (?)', $partReceivedItemsIds);

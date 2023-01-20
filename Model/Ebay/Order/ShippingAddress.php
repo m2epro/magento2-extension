@@ -23,17 +23,18 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
     {
         $buyerName = $this->order->getChildObject()->getBuyerName();
         $recipientName = $this->getData('recipient_name');
+
         return [
-            'buyer_name'     => $buyerName,
+            'buyer_name' => $buyerName,
             'recipient_name' => $recipientName ? $recipientName : $buyerName,
-            'email'          => $this->getBuyerEmail(),
-            'country_id'     => $this->getData('country_code'),
-            'region'         => $this->getData('state'),
-            'city'           => $this->getData('city') ? $this->getData('city') : $this->getCountryName(),
-            'postcode'       => $this->getPostalCode(),
-            'telephone'      => $this->getPhone(),
-            'company'        => $this->getData('company'),
-            'street'         => $this->getStreet()
+            'email' => $this->getBuyerEmail(),
+            'country_id' => $this->getData('country_code'),
+            'region' => $this->getData('state'),
+            'city' => $this->getData('city') ? $this->getData('city') : $this->getCountryName(),
+            'postcode' => $this->getPostalCode(),
+            'telephone' => $this->getPhone(),
+            'company' => $this->getData('company'),
+            'street' => $this->getStreet(),
         ];
     }
 

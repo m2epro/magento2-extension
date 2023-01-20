@@ -62,6 +62,7 @@ class NewAsinPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             )}</p>
 
 HTML
+    ,
         ]);
 
         $this->setChild('popup_help_block', $helpBlock);
@@ -75,7 +76,7 @@ HTML
     public function getTitleHelpTipsHtml(): string
     {
         $helpLinkBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\PageHelpLink::class)->setData([
-            'page_help_link' => $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')
+            'page_help_link' => $this->supportHelper->getDocumentationArticleUrl('x/1QkVB'),
         ]);
 
         return $helpLinkBlock->toHtml();

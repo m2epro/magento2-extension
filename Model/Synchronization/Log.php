@@ -13,28 +13,28 @@ namespace Ess\M2ePro\Model\Synchronization;
  */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
-    const TYPE_FATAL_ERROR = 100;
+    public const TYPE_FATAL_ERROR = 100;
 
-    const TASK_ALL = 100;
-    const _TASK_ALL = 'All';
+    public const TASK_ALL = 100;
+    public const _TASK_ALL = 'All';
 
-    const TASK_OTHER = 0;
-    const _TASK_OTHER = 'Other';
+    public const TASK_OTHER = 0;
+    public const _TASK_OTHER = 'Other';
 
-    const TASK_LISTINGS = 2;
-    const _TASK_LISTINGS = 'M2E Pro Listings';
+    public const TASK_LISTINGS = 2;
+    public const _TASK_LISTINGS = 'M2E Pro Listings';
 
-    const TASK_OTHER_LISTINGS = 5;
-    const _TASK_OTHER_LISTINGS = 'Unmanaged Listings';
+    public const TASK_OTHER_LISTINGS = 5;
+    public const _TASK_OTHER_LISTINGS = 'Unmanaged Listings';
 
-    const TASK_ORDERS = 3;
-    const _TASK_ORDERS = 'Orders';
+    public const TASK_ORDERS = 3;
+    public const _TASK_ORDERS = 'Orders';
 
-    const TASK_MARKETPLACES = 4;
-    const _TASK_MARKETPLACES = 'Marketplaces';
+    public const TASK_MARKETPLACES = 4;
+    public const _TASK_MARKETPLACES = 'Marketplaces';
 
-    const TASK_REPRICING = 6;
-    const _TASK_REPRICING = 'Repricing';
+    public const TASK_REPRICING = 6;
+    public const _TASK_REPRICING = 'Repricing';
 
     /**
      * @var null|int
@@ -104,21 +104,21 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $detailedDescription = null
     ) {
         $dataForAdd = [
-            'description'          => $description,
+            'description' => $description,
             'detailed_description' => $detailedDescription,
-            'type'                 => (int)$type,
-            'additional_data'      => $this->getHelper('Data')->jsonEncode($additionalData),
+            'type' => (int)$type,
+            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
 
             'operation_history_id' => $this->operationHistoryId,
-            'task'                 => $this->task,
-            'initiator'            => $this->initiator,
-            'component_mode'       => $this->componentMode,
+            'task' => $this->task,
+            'initiator' => $this->initiator,
+            'component_mode' => $this->componentMode,
         ];
 
         $this->activeRecordFactory->getObject('Synchronization\Log')
-            ->setData($dataForAdd)
-            ->save()
-            ->getId();
+                                  ->setData($dataForAdd)
+                                  ->save()
+                                  ->getId();
     }
 
     public function clearMessages($task = null)
@@ -139,12 +139,12 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     public function setFatalErrorHandler()
     {
-        $temp = $this->getHelper('Data_GlobalData')->getValue(__CLASS__.'-'.__METHOD__);
+        $temp = $this->getHelper('Data_GlobalData')->getValue(__CLASS__ . '-' . __METHOD__);
         if (!empty($temp)) {
             return;
         }
 
-        $this->getHelper('Data_GlobalData')->setValue(__CLASS__.'-'.__METHOD__, true);
+        $this->getHelper('Data_GlobalData')->setValue(__CLASS__ . '-' . __METHOD__, true);
 
         $object = $this;
         // @codingStandardsIgnoreLine

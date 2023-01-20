@@ -21,27 +21,28 @@ class PageActions extends AbstractBlock
         $marketplaceSwitcherBlock = $this->getLayout()
                                          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class)
                                          ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'controller_name' => 'ebay_order'
-        ]);
+                                             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                                             'controller_name' => 'ebay_order',
+                                         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $accountSwitcherBlock = $this->getLayout()
                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class)
                                      ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'controller_name' => 'ebay_order'
-        ]);
+                                         'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                                         'controller_name' => 'ebay_order',
+                                     ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $orderStateSwitcherBlock = $this->getLayout()
                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter::class)
                                         ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'controller' => 'ebay_order'
-        ]);
+                                            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                                            'controller' => 'ebay_order',
+                                        ]);
+
         // ---------------------------------------
 
         return

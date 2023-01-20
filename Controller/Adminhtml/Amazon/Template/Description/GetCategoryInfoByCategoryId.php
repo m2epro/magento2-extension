@@ -20,22 +20,27 @@ class GetCategoryInfoByCategoryId extends Description
     public function execute()
     {
         $category = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
-            )
-            ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
-            ->where('category_id = ?', $this->getRequest()->getPost('category_id'))
-            ->query()
-            ->fetch();
+                                             ->from(
+                                                 $this->getHelper('Module_Database_Structure')
+                                                      ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
+                                             )
+                                             ->where(
+                                                 'marketplace_id = ?',
+                                                 $this->getRequest()->getPost('marketplace_id')
+                                             )
+                                             ->where('category_id = ?', $this->getRequest()->getPost('category_id'))
+                                             ->query()
+                                             ->fetch();
 
         if (!$category) {
             $this->setAjaxContent(null, false);
+
             return $this->getResult();
         }
 
         $this->formatCategoryRow($category);
         $this->setJsonContent($category);
+
         return $this->getResult();
     }
 

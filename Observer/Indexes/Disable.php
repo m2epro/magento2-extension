@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Observer\Indexes;
 
-/**
- * Class \Ess\M2ePro\Observer\Indexes\Disable
- */
 class Disable extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\Magento\Product\Index */
     protected $productIndex;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Product\Index $productIndex,

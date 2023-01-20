@@ -14,34 +14,34 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED        = 'channel_status_changed';
-    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED           = 'channel_qty_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED = 'channel_status_changed';
+    public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
     public const INSTRUCTION_TYPE_CHANNEL_REGULAR_PRICE_CHANGED = 'channel_regular_price_changed';
 
-    public const IS_AFN_CHANNEL_NO  = 0;
+    public const IS_AFN_CHANNEL_NO = 0;
     public const IS_AFN_CHANNEL_YES = 1;
 
-    public const IS_REPRICING_NO  = 0;
+    public const IS_REPRICING_NO = 0;
     public const IS_REPRICING_YES = 1;
 
-    public const VARIATION_PARENT_IS_AFN_STATE_ALL_NO  = 0;
+    public const VARIATION_PARENT_IS_AFN_STATE_ALL_NO = 0;
     public const VARIATION_PARENT_IS_AFN_STATE_PARTIAL = 1;
     public const VARIATION_PARENT_IS_AFN_STATE_ALL_YES = 2;
 
-    public const VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO  = 0;
+    public const VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO = 0;
     public const VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL = 1;
     public const VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES = 2;
 
-    public const IS_ISBN_GENERAL_ID_NO  = 0;
+    public const IS_ISBN_GENERAL_ID_NO = 0;
     public const IS_ISBN_GENERAL_ID_YES = 1;
 
-    public const IS_GENERAL_ID_OWNER_NO  = 0;
+    public const IS_GENERAL_ID_OWNER_NO = 0;
     public const IS_GENERAL_ID_OWNER_YES = 1;
 
-    public const SEARCH_SETTINGS_STATUS_IN_PROGRESS     = 1;
-    public const SEARCH_SETTINGS_STATUS_NOT_FOUND       = 2;
+    public const SEARCH_SETTINGS_STATUS_IN_PROGRESS = 1;
+    public const SEARCH_SETTINGS_STATUS_NOT_FOUND = 2;
     public const SEARCH_SETTINGS_STATUS_ACTION_REQUIRED = 3;
-    public const SEARCH_SETTINGS_IDENTIFIER_INVALID     = 4;
+    public const SEARCH_SETTINGS_IDENTIFIER_INVALID = 4;
 
     public const GENERAL_ID_STATE_SET = 0;
     public const GENERAL_ID_STATE_NOT_SET = 1;
@@ -487,13 +487,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                                                         'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
-            $variation  = reset($variations);
-            $options    = $variation->getOptions(true);
-            $option     = reset($options);
+            $variation = reset($variations);
+            $options = $variation->getOptions(true);
+            $option = reset($options);
 
             return $option->getMagentoProduct();
         }
@@ -503,6 +503,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product\Cache $instance
+     *
      * @return \Ess\M2ePro\Model\Magento\Product\Cache
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -533,11 +534,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getAmazonItem()
     {
         return $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
-                        ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
-                        ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
-                        ->addFieldToFilter('sku', $this->getSku())
-                        ->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
-                        ->getFirstItem();
+                                         ->addFieldToFilter('account_id', $this->getListing()->getAccountId())
+                                         ->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId())
+                                         ->addFieldToFilter('sku', $this->getSku())
+                                         ->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_DESC)
+                                         ->getFirstItem();
     }
 
     public function getVariationManager()
@@ -554,6 +555,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @param bool $asObjects
      * @param array $filters
      * @param bool $tryToGetFromStorage
+     *
      * @return array
      */
     public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
@@ -866,6 +868,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     /**
      * @param bool $magentoMode
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -881,7 +884,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -921,7 +924,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -962,7 +965,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception(
                     'There are no variations for a variation product.',
                     [
-                                                         'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -1003,7 +1006,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception(
                     'There are no variations for a variation product.',
                     [
-                                                         'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -1065,9 +1068,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         return [
-            'price'      => $salePrice,
+            'price' => $salePrice,
             'start_date' => $startDate,
-            'end_date'   => $endDate
+            'end_date' => $endDate,
         ];
     }
 
@@ -1171,7 +1174,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception(
                     'There are no variations for a variation product.',
                     [
-                         'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -1216,7 +1219,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                 throw new \Ess\M2ePro\Model\Exception\Logic(
                     'There are no variations for a variation product.',
                     [
-                        'listing_product_id' => $this->getId()
+                        'listing_product_id' => $this->getId(),
                     ]
                 );
             }
@@ -1229,7 +1232,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         if ($this->getAmazonSellingFormatTemplate()->isBusinessDiscountsModeTier()) {
             $src = $this->getAmazonSellingFormatTemplate()->getBusinessDiscountsSource();
             $src['tier_website_id'] = $this->getHelper('Magento\Store')
-                ->getWebsite($this->getListing()->getStoreId())->getId();
+                                           ->getWebsite($this->getListing()->getStoreId())->getId();
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
             $calculator = $this->amazonPriceCalculatorFactory->create();
@@ -1258,14 +1261,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $resultValue = [];
 
         foreach ($businessDiscounts as $businessDiscount) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
             $calculator = $this->amazonPriceCalculatorFactory->create();
             $calculator->setSource($businessDiscount->getSource())->setProduct($this->getParentObject());
             $calculator->setSourceModeMapping([
-                \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_PRODUCT   =>
+                \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_PRODUCT =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_PRODUCT,
-                \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_SPECIAL   =>
+                \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_SPECIAL =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_SPECIAL,
                 \Ess\M2ePro\Model\Listing\Product\PriceCalculator::MODE_ATTRIBUTE =>
                     \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_ATTRIBUTE,

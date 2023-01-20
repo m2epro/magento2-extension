@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -10,9 +11,6 @@ namespace Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 use Magento\InventoryApi\Api\Data\SourceItemInterface;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Save
- */
 class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
@@ -58,6 +56,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array ...$arguments
+     *
      * @return mixed
      */
     public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
@@ -69,6 +68,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     protected function processExecute($interceptor, \Closure $callback, array $arguments)
@@ -91,10 +91,9 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
         $result = $callback(...$arguments);
 
         foreach ($sourceItems as $sourceItem) {
-
             $sourceItemBefore = isset($sourceItemsBefore[$sourceItem->getSourceItemId()]) ?
-                                $sourceItemsBefore[$sourceItem->getSourceItemId()] :
-                                null;
+                $sourceItemsBefore[$sourceItem->getSourceItemId()] :
+                null;
             $affected = $this->msiAffectedProducts->getAffectedProductsBySourceAndSku(
                 $sourceItem->getSourceCode(),
                 $sourceItem->getSku()
@@ -130,7 +129,6 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
         }
 
         foreach ($affectedProducts as $listingProduct) {
-
             $this->logListingProductMessage(
                 $listingProduct,
                 $afterSourceItem,
@@ -157,7 +155,6 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
         }
 
         foreach ($affectedProducts as $listingProduct) {
-
             $this->logListingProductMessage(
                 $listingProduct,
                 $afterSourceItem,
@@ -187,7 +184,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
             $action,
             $this->getHelper('Module\Log')->encodeDescription(
                 'Value was changed from [%from%] to [%to%] in the "%source%" Source.',
-                ['!from' => $oldValue, '!to' => $newValue, '!source'=> $sourceItem->getSourceCode()]
+                ['!from' => $oldValue, '!to' => $newValue, '!source' => $sourceItem->getSourceCode()]
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );

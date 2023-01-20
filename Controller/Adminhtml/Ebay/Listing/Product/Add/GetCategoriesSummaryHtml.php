@@ -13,7 +13,6 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Category\Tree;
 
 class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
-
     public function execute()
     {
         $tempSession = $this->getSessionValue('source_categories');

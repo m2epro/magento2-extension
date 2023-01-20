@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-
 use Ess\M2ePro\Model\Walmart\Account;
 
 class Order extends AbstractForm
@@ -63,15 +62,15 @@ class Order extends AbstractForm
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
-        $this->orderConfig      = $orderConfig;
-        $this->customerGroup    = $customerGroup;
-        $this->taxClass         = $taxClass;
-        $this->supportHelper    = $supportHelper;
-        $this->storeWebsite     = $storeWebsite;
-        $this->dataHelper       = $dataHelper;
+        $this->orderConfig = $orderConfig;
+        $this->customerGroup = $customerGroup;
+        $this->taxClass = $taxClass;
+        $this->supportHelper = $supportHelper;
+        $this->storeWebsite = $storeWebsite;
+        $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
-        $this->magentoHelper    = $magentoHelper;
-        $this->storeHelper      = $storeHelper;
+        $this->magentoHelper = $magentoHelper;
+        $this->storeHelper = $storeHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -94,8 +93,11 @@ class Order extends AbstractForm
         // ---------------------------------------
 
         $productTaxClasses = $this->taxClass->getCollection()
-            ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT)
-            ->toOptionArray();
+                                            ->addFieldToFilter(
+                                                'class_type',
+                                                \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT
+                                            )
+                                            ->toOptionArray();
         $none = ['value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None')];
         array_unshift($productTaxClasses, $none);
 
@@ -126,15 +128,15 @@ The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'listed_by_m2e',
             [
-                'legend'      => $this->__('Product Is Listed By M2E Pro'),
-                'collapsable' => false
+                'legend' => $this->__('Product Is Listed By M2E Pro'),
+                'collapsable' => false,
             ]
         );
 
@@ -142,17 +144,17 @@ HTML
             'magento_orders_listings_mode',
             'select',
             [
-                'name'    => 'magento_orders_settings[listing][mode]',
-                'label'   => $this->__('Create Order in Magento'),
-                'values'  => [
+                'name' => 'magento_orders_settings[listing][mode]',
+                'label' => $this->__('Create Order in Magento'),
+                'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
-                'value'   => $formData['magento_orders_settings']['listing']['mode'],
+                'value' => $formData['magento_orders_settings']['listing']['mode'],
                 'tooltip' => $this->__(
                     'Enable to automatically create Magento Order if the Channel Order was placed for
                     the Item listed via M2E Pro.'
-                )
+                ),
             ]
         );
 
@@ -161,17 +163,17 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_listings_store_mode_container',
-                'name'         => 'magento_orders_settings[listing][store_mode]',
-                'label'        => $this->__('Magento Store View Source'),
-                'values'       => [
+                'name' => 'magento_orders_settings[listing][store_mode]',
+                'label' => $this->__('Magento Store View Source'),
+                'values' => [
                     Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT => $this->__('Use Store View from Listing'),
-                    Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM  => $this->__('Choose Store View Manually'),
+                    Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM => $this->__('Choose Store View Manually'),
                 ],
-                'value'        => $formData['magento_orders_settings']['listing']['store_mode'],
-                'tooltip'      => $this->__(
+                'value' => $formData['magento_orders_settings']['listing']['store_mode'],
+                'tooltip' => $this->__(
                     'Specify whether Magento Store View should be determined automatically
                     based on M2E Pro Listing settings or selected manually.'
-                )
+                ),
             ]
         );
 
@@ -179,23 +181,23 @@ HTML
             'magento_orders_listings_store_id',
             self::STORE_SWITCHER,
             [
-                'container_id'       => 'magento_orders_listings_store_id_container',
-                'name'               => 'magento_orders_settings[listing][store_id]',
-                'label'              => $this->__('Magento Store View'),
-                'required'           => true,
-                'value'              => !empty($ordersSettings['listing']['store_id'])
+                'container_id' => 'magento_orders_listings_store_id_container',
+                'name' => 'magento_orders_settings[listing][store_id]',
+                'label' => $this->__('Magento Store View'),
+                'required' => true,
+                'value' => !empty($ordersSettings['listing']['store_id'])
                     ? $ordersSettings['listing']['store_id'] : '',
-                'has_empty_option'   => true,
+                'has_empty_option' => true,
                 'has_default_option' => false,
-                'tooltip'            => $this->__('The Magento Store View that Orders will be placed in.')
+                'tooltip' => $this->__('The Magento Store View that Orders will be placed in.'),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_listings_other',
             [
-                'legend'      => $this->__('Product Is Listed By Any Other Software'),
-                'collapsable' => false
+                'legend' => $this->__('Product Is Listed By Any Other Software'),
+                'collapsable' => false,
             ]
         );
 
@@ -203,17 +205,17 @@ HTML
             'magento_orders_listings_other_mode',
             'select',
             [
-                'name'    => 'magento_orders_settings[listing_other][mode]',
-                'label'   => $this->__('Create Order in Magento'),
-                'values'  => [
+                'name' => 'magento_orders_settings[listing_other][mode]',
+                'label' => $this->__('Create Order in Magento'),
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value'   => $formData['magento_orders_settings']['listing_other']['mode'],
+                'value' => $formData['magento_orders_settings']['listing_other']['mode'],
                 'tooltip' => $this->__(
                     'Choose whether a Magento Order should be created if a Walmart Order is received for an item that
                     does <b>not</b> belong to the M2E Pro Listing.'
-                )
+                ),
             ]
         );
 
@@ -221,17 +223,17 @@ HTML
             'magento_orders_listings_other_store_id',
             self::STORE_SWITCHER,
             [
-                'container_id'       => 'magento_orders_listings_other_store_id_container',
-                'name'               => 'magento_orders_settings[listing_other][store_id]',
-                'label'              => $this->__('Magento Store View'),
-                'value'              => !empty($ordersSettings['listing_other']['store_id'])
+                'container_id' => 'magento_orders_listings_other_store_id_container',
+                'name' => 'magento_orders_settings[listing_other][store_id]',
+                'label' => $this->__('Magento Store View'),
+                'value' => !empty($ordersSettings['listing_other']['store_id'])
                     ? $ordersSettings['listing_other']['store_id'] : $this->storeHelper->getDefaultStoreId(),
-                'required'           => true,
-                'has_empty_option'   => true,
+                'required' => true,
+                'has_empty_option' => true,
                 'has_default_option' => false,
-                'tooltip'            => $this->__(
+                'tooltip' => $this->__(
                     'Select Magento Store View that will be associated with Magento Order.'
-                )
+                ),
             ]
         );
 
@@ -240,14 +242,14 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_listings_other_product_mode_container',
-                'name'         => 'magento_orders_settings[listing_other][product_mode]',
-                'label'        => $this->__('Product Not Found'),
-                'values'       => [
+                'name' => 'magento_orders_settings[listing_other][product_mode]',
+                'label' => $this->__('Product Not Found'),
+                'values' => [
                     Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE => $this->__('Do Not Create Order'),
                     Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT => $this->__('Create Product and Order'),
                 ],
-                'value'        => $formData['magento_orders_settings']['listing_other']['product_mode'],
-                'tooltip'      => $this->__('What has to be done if a Listed Product does not exist in Magento.')
+                'value' => $formData['magento_orders_settings']['listing_other']['product_mode'],
+                'tooltip' => $this->__('What has to be done if a Listed Product does not exist in Magento.')
                     . '<span id="magento_orders_listings_other_product_mode_note">'
                     . $this->__(
                         'Specify which action should be performed if the purchased Item does not have
@@ -256,7 +258,7 @@ HTML
                         If a Variational Item was purchased, M2E Pro will automatically create different
                         Simple Products for each Variation.'
                     )
-                    . '</span>'
+                    . '</span>',
             ]
         );
 
@@ -266,14 +268,14 @@ HTML
             [
                 'messages' => [
                     [
-                        'type'    => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
                             'Please note that a new Magento Product will be created
                             if the corresponding SKU is not found in your Catalog.'
-                        )
-                    ]
+                        ),
+                    ],
                 ],
-                'style'    => 'max-width:450px; margin-left:20%'
+                'style' => 'max-width:450px; margin-left:20%',
             ]
         );
 
@@ -287,19 +289,19 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_listings_other_product_tax_class_id_container',
-                'name'         => 'magento_orders_settings[listing_other][product_tax_class_id]',
-                'label'        => $this->__('Product Tax Class'),
-                'values'       => $values,
-                'value'        => $formData['magento_orders_settings']['listing_other']['product_tax_class_id'],
-                'tooltip'      => $this->__('Select the Tax Class which will be used for Products created by M2E Pro.')
+                'name' => 'magento_orders_settings[listing_other][product_tax_class_id]',
+                'label' => $this->__('Product Tax Class'),
+                'values' => $values,
+                'value' => $formData['magento_orders_settings']['listing_other']['product_tax_class_id'],
+                'tooltip' => $this->__('Select the Tax Class which will be used for Products created by M2E Pro.'),
             ]
         );
 
         $shipByDateFieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_shipping_information',
             [
-                'legend'      => $this->__('Shipping information'),
-                'collapsable' => true
+                'legend' => $this->__('Shipping information'),
+                'collapsable' => true,
             ]
         );
 
@@ -307,21 +309,21 @@ HTML
             'magento_orders_ship_by_date_settings',
             'select',
             [
-                'name'    => 'magento_orders_settings[shipping_information][ship_by_date]',
-                'label'   => $this->__('Import Ship by date to Magento order'),
-                'values'  => [
+                'name' => 'magento_orders_settings[shipping_information][ship_by_date]',
+                'label' => $this->__('Import Ship by date to Magento order'),
+                'values' => [
                     1 => $this->__('Yes'),
                     0 => $this->__('No'),
                 ],
-                'value'   => $formData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1,
+                'value' => $formData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1,
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_number',
             [
-                'legend'      => $this->__('Magento Order Number'),
-                'collapsable' => true
+                'legend' => $this->__('Magento Order Number'),
+                'collapsable' => true,
             ]
         );
 
@@ -329,17 +331,17 @@ HTML
             'magento_orders_number_source',
             'select',
             [
-                'name'    => 'magento_orders_settings[number][source]',
-                'label'   => $this->__('Source'),
-                'values'  => [
+                'name' => 'magento_orders_settings[number][source]',
+                'label' => $this->__('Source'),
+                'values' => [
                     Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO => $this->__('Magento'),
                     Account::MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL => $this->__('Walmart'),
                 ],
-                'value'   => $formData['magento_orders_settings']['number']['source'],
+                'value' => $formData['magento_orders_settings']['number']['source'],
                 'tooltip' => $this->__(
                     'Select whether Magento Order number should be generated based on your
                     Magento settings or Walmart Order number.'
-                )
+                ),
             ]
         );
 
@@ -348,10 +350,10 @@ HTML
             'text',
             [
                 'container_id' => 'magento_orders_number_prefix_container',
-                'name'         => 'magento_orders_settings[number][prefix][prefix]',
-                'label'        => $this->__('Prefix'),
-                'value'        => $formData['magento_orders_settings']['number']['prefix']['prefix'],
-                'maxlength'    => 5
+                'name' => 'magento_orders_settings[number][prefix][prefix]',
+                'label' => $this->__('Prefix'),
+                'value' => $formData['magento_orders_settings']['number']['prefix']['prefix'],
+                'maxlength' => 5,
             ]
         );
 
@@ -359,7 +361,7 @@ HTML
             'sample_magento_order_id',
             'hidden',
             [
-                'value' => $this->magentoHelper->getNextMagentoOrderId()
+                'value' => $this->magentoHelper->getNextMagentoOrderId(),
             ]
         );
 
@@ -367,7 +369,7 @@ HTML
             'sample_walmart_order_id',
             'hidden',
             [
-                'value' => '141-4423723-6495633'
+                'value' => '141-4423723-6495633',
             ]
         );
 
@@ -376,14 +378,14 @@ HTML
             'label',
             [
                 'label' => '',
-                'note'  => $this->__('e.g.') . ' <span id="order_number_example_container"></span>'
+                'note' => $this->__('e.g.') . ' <span id="order_number_example_container"></span>',
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_refund_and_cancellation',
             [
-                'legend'      => $this->__('Refund & Cancellation'),
+                'legend' => $this->__('Refund & Cancellation'),
                 'collapsable' => true,
             ]
         );
@@ -393,29 +395,29 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_refund_container',
-                'name'         => 'magento_orders_settings[refund_and_cancellation][refund_mode]',
-                'label'        => $this->__('Cancel or Refund if Credit Memo is Created'),
-                'values'       => [
+                'name' => 'magento_orders_settings[refund_and_cancellation][refund_mode]',
+                'label' => $this->__('Cancel or Refund if Credit Memo is Created'),
+                'values' => [
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'value'        => $formData['magento_orders_settings']['refund_and_cancellation']['refund_mode'],
-                'tooltip'      => $this->__(
+                'value' => $formData['magento_orders_settings']['refund_and_cancellation']['refund_mode'],
+                'tooltip' => $this->__(
                     'Enable the <i>Cancel or Refund if Credit Memo is Created</i> option to automatically cancel or
                      refund Walmart order after the Credit Memo is created for the associated Magento order. <br/><br/>
                      Walmart order will be <b>canceled</b> automatically if Credit Memo is created for all the items
                      in the associated Magento order. <br/><br/>
                      Walmart order can be <b>refunded</b> if it has <i>Shipped</i> or <i>Partially Shipped</i> status.
                      Refund is issued only for items indicated in the Credit Memo.'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_customer',
             [
-                'legend'      => $this->__('Customer Settings'),
-                'collapsable' => true
+                'legend' => $this->__('Customer Settings'),
+                'collapsable' => true,
             ]
         );
 
@@ -423,15 +425,15 @@ HTML
             'magento_orders_customer_mode',
             'select',
             [
-                'name'    => 'magento_orders_settings[customer][mode]',
-                'label'   => $this->__('Customer'),
-                'values'  => [
-                    Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST      => $this->__('Guest Account'),
+                'name' => 'magento_orders_settings[customer][mode]',
+                'label' => $this->__('Customer'),
+                'values' => [
+                    Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST => $this->__('Guest Account'),
                     Account::MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED => $this->__('Predefined Customer'),
-                    Account::MAGENTO_ORDERS_CUSTOMER_MODE_NEW        => $this->__('Create New'),
+                    Account::MAGENTO_ORDERS_CUSTOMER_MODE_NEW => $this->__('Create New'),
                 ],
-                'value'   => $formData['magento_orders_settings']['customer']['mode'],
-                'note'    => $this->__('Customer for which Magento Orders will be created.'),
+                'value' => $formData['magento_orders_settings']['customer']['mode'],
+                'note' => $this->__('Customer for which Magento Orders will be created.'),
                 'tooltip' => $this->__(
                     'Define Magento Customer for which Magento Order will be created: <br/><br/>
 
@@ -450,7 +452,7 @@ HTML
                      If this email already exists in Magento, the related Magento Customer will be
                      associated with Walmart Order. A new Customer will not be created.<br/>
                 '
-                )
+                ),
             ]
         );
 
@@ -459,12 +461,12 @@ HTML
             'text',
             [
                 'container_id' => 'magento_orders_customer_id_container',
-                'class'        => 'validate-digits M2ePro-account-customer-id',
-                'name'         => 'magento_orders_settings[customer][id]',
-                'label'        => $this->__('Customer ID'),
-                'value'        => $formData['magento_orders_settings']['customer']['id'],
-                'required'     => true,
-                'tooltip'      => $this->__('Enter Magento Customer ID.')
+                'class' => 'validate-digits M2ePro-account-customer-id',
+                'name' => 'magento_orders_settings[customer][id]',
+                'label' => $this->__('Customer ID'),
+                'value' => $formData['magento_orders_settings']['customer']['id'],
+                'required' => true,
+                'tooltip' => $this->__('Enter Magento Customer ID.'),
             ]
         );
 
@@ -478,12 +480,12 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_customer_new_website_id_container',
-                'name'         => 'magento_orders_settings[customer][website_id]',
-                'label'        => $this->__('Associate to Website'),
-                'values'       => $values,
-                'value'        => $formData['magento_orders_settings']['customer']['website_id'],
-                'required'     => true,
-                'tooltip'      => $this->__('Select Magento Website where a new Customer should be created.')
+                'name' => 'magento_orders_settings[customer][website_id]',
+                'label' => $this->__('Associate to Website'),
+                'values' => $values,
+                'value' => $formData['magento_orders_settings']['customer']['website_id'],
+                'required' => true,
+                'tooltip' => $this->__('Select Magento Website where a new Customer should be created.'),
             ]
         );
 
@@ -497,12 +499,12 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_customer_new_group_id_container',
-                'name'         => 'magento_orders_settings[customer][group_id]',
-                'label'        => $this->__('Customer Group'),
-                'values'       => $values,
-                'value'        => $formData['magento_orders_settings']['customer']['group_id'],
-                'required'     => true,
-                'tooltip'      => $this->__('Select Magento Customer Group where a new Customer should be created.')
+                'name' => 'magento_orders_settings[customer][group_id]',
+                'label' => $this->__('Customer Group'),
+                'values' => $values,
+                'value' => $formData['magento_orders_settings']['customer']['group_id'],
+                'required' => true,
+                'tooltip' => $this->__('Select Magento Customer Group where a new Customer should be created.'),
             ]
         );
 
@@ -517,27 +519,27 @@ HTML
             'multiselect',
             [
                 'container_id' => 'magento_orders_customer_new_notifications_container',
-                'name'         => 'magento_orders_settings[customer][notifications][]',
-                'label'        => $this->__('Send Emails When The Following Is Created'),
-                'values'       => [
+                'name' => 'magento_orders_settings[customer][notifications][]',
+                'label' => $this->__('Send Emails When The Following Is Created'),
+                'values' => [
                     ['label' => $this->__('Magento Order'), 'value' => 'order_created'],
                     ['label' => $this->__('Invoice'), 'value' => 'invoice_created'],
                 ],
-                'value'        => $value,
-                'tooltip'      => $this->__(
+                'value' => $value,
+                'tooltip' => $this->__(
                     '<p>Select certain conditions when the emails should be sent to Customer.
                     Hold Ctrl to select multiple options.</p>
                     <p><strong>Note:</strong> the related email type must be enabled in your Magento:
                     <i>System > Configuration > Sales Emails</i>.</p>'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_tax',
             [
-                'legend'      => $this->__('Order Tax Settings'),
-                'collapsable' => true
+                'legend' => $this->__('Order Tax Settings'),
+                'collapsable' => true,
             ]
         );
 
@@ -545,28 +547,28 @@ HTML
             'magento_orders_tax_mode',
             'select',
             [
-                'name'    => 'magento_orders_settings[tax][mode]',
-                'label'   => $this->__('Tax Source'),
-                'values'  => [
-                    Account::MAGENTO_ORDERS_TAX_MODE_NONE    => $this->__('None'),
+                'name' => 'magento_orders_settings[tax][mode]',
+                'label' => $this->__('Tax Source'),
+                'values' => [
+                    Account::MAGENTO_ORDERS_TAX_MODE_NONE => $this->__('None'),
                     Account::MAGENTO_ORDERS_TAX_MODE_CHANNEL => $this->__('Walmart'),
                     Account::MAGENTO_ORDERS_TAX_MODE_MAGENTO => $this->__('Magento'),
-                    Account::MAGENTO_ORDERS_TAX_MODE_MIXED   => $this->__('Walmart & Magento'),
+                    Account::MAGENTO_ORDERS_TAX_MODE_MIXED => $this->__('Walmart & Magento'),
                 ],
-                'value'   => $formData['magento_orders_settings']['tax']['mode'],
+                'value' => $formData['magento_orders_settings']['tax']['mode'],
                 'tooltip' => $this->__(
                     'Choose where the tax settings for your Magento Order will be taken from. See
                     <a href="%url%" target="_blank">this article</a> for more details.',
                     $this->supportHelper->getDocumentationArticleUrl('x/3oVcBQ#CalculationTaxSettings-TaxSource')
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_status_mapping',
             [
-                'legend'      => $this->__('Order Status Mapping'),
-                'collapsable' => true
+                'legend' => $this->__('Order Status Mapping'),
+                'collapsable' => true,
             ]
         );
 
@@ -574,17 +576,17 @@ HTML
             'magento_orders_status_mapping_mode',
             'select',
             [
-                'name'    => 'magento_orders_settings[status_mapping][mode]',
-                'label'   => $this->__('Status Mapping'),
-                'values'  => [
+                'name' => 'magento_orders_settings[status_mapping][mode]',
+                'label' => $this->__('Status Mapping'),
+                'values' => [
                     Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT => $this->__('Default Order Statuses'),
-                    Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM  => $this->__('Custom Order Statuses'),
+                    Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM => $this->__('Custom Order Statuses'),
                 ],
-                'value'   => $formData['magento_orders_settings']['status_mapping']['mode'],
+                'value' => $formData['magento_orders_settings']['status_mapping']['mode'],
                 'tooltip' => $this->__(
                     'Set the correspondence between Walmart and Magento order statuses.
                     The status of your Magento order will be updated based on these settings.'
-                )
+                ),
             ]
         );
 
@@ -593,7 +595,8 @@ HTML
             == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT
         );
 
-        if ($formData['magento_orders_settings']['status_mapping']['mode']
+        if (
+            $formData['magento_orders_settings']['status_mapping']['mode']
             == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT
         ) {
             $formData['magento_orders_settings']['status_mapping']['processing']
@@ -612,11 +615,11 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_status_mapping_processing_container',
-                'name'         => 'magento_orders_settings[status_mapping][processing]',
-                'label'        => $this->__('Order Status is Unshipped / Partially Shipped'),
-                'values'       => $statusList,
-                'value'        => $formData['magento_orders_settings']['status_mapping']['processing'],
-                'disabled'     => $isDisabledStatusStyle
+                'name' => 'magento_orders_settings[status_mapping][processing]',
+                'label' => $this->__('Order Status is Unshipped / Partially Shipped'),
+                'values' => $statusList,
+                'value' => $formData['magento_orders_settings']['status_mapping']['processing'],
+                'disabled' => $isDisabledStatusStyle,
             ]
         );
 
@@ -625,11 +628,11 @@ HTML
             'select',
             [
                 'container_id' => 'magento_orders_status_mapping_shipped_container',
-                'name'         => 'magento_orders_settings[status_mapping][shipped]',
-                'label'        => $this->__('Shipping Is Completed'),
-                'values'       => $statusList,
-                'value'        => $formData['magento_orders_settings']['status_mapping']['shipped'],
-                'disabled'     => $isDisabledStatusStyle
+                'name' => 'magento_orders_settings[status_mapping][shipped]',
+                'label' => $this->__('Shipping Is Completed'),
+                'values' => $statusList,
+                'value' => $formData['magento_orders_settings']['status_mapping']['shipped'],
+                'disabled' => $isDisabledStatusStyle,
             ]
         );
 

@@ -13,7 +13,7 @@ abstract class Order extends Base
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_sales') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon_sales');
+            $this->_authorization->isAllowed('Ess_M2ePro::amazon_sales');
     }
 
     protected function getProductOptionsDataFromPost()

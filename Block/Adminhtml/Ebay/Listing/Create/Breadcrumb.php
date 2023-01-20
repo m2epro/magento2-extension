@@ -24,15 +24,15 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
         $this->setSteps(
             [
                 [
-                    'id'          => 1,
-                    'title'       => $this->__('Step 1'),
-                    'description' => $this->__('General Settings')
+                    'id' => 1,
+                    'title' => $this->__('Step 1'),
+                    'description' => $this->__('General Settings'),
                 ],
                 [
-                    'id'          => 2,
-                    'title'       => $this->__('Step 2'),
-                    'description' => $this->__('Policies')
-                ]
+                    'id' => 2,
+                    'title' => $this->__('Step 2'),
+                    'description' => $this->__('Policies'),
+                ],
             ]
         );
     }

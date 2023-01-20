@@ -8,8 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
-use \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 class GetChooserBlockHtml extends Settings
 {
@@ -19,7 +19,9 @@ class GetChooserBlockHtml extends Settings
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser $chooserBlock */
         $chooserBlock = $this->getLayout()
-                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser::class);
+                             ->createBlock(
+                                 \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser::class
+                             );
         $chooserBlock->setAccountId($listing->getAccountId());
         $chooserBlock->setMarketplaceId($listing->getMarketplaceId());
         $chooserBlock->setCategoryMode($this->getRequest()->getParam('category_mode'));
@@ -64,7 +66,8 @@ class GetChooserBlockHtml extends Settings
                 !isset($first[$categoryType]['specific']) && $first[$categoryType]['specific'] = [];
                 !isset($categoryData['specific']) && $categoryData['specific'] = [];
 
-                if ($first[$categoryType]['template_id'] !== $categoryData['template_id'] ||
+                if (
+                    $first[$categoryType]['template_id'] !== $categoryData['template_id'] ||
                     $first[$categoryType]['is_custom_template'] !== $categoryData['is_custom_template'] ||
                     $first[$categoryType]['specific'] !== $categoryData['specific']
                 ) {
@@ -73,7 +76,8 @@ class GetChooserBlockHtml extends Settings
                     $resultData[$categoryType]['specific'] = [];
                 }
 
-                if ($first[$categoryType]['mode'] !== $categoryData['mode'] ||
+                if (
+                    $first[$categoryType]['mode'] !== $categoryData['mode'] ||
                     $first[$categoryType]['value'] !== $categoryData['value'] ||
                     $first[$categoryType]['path'] !== $categoryData['path']
                 ) {

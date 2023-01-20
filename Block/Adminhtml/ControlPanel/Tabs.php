@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs;
-use \Ess\M2ePro\Helper\View\ControlPanel as HelperControlPanel;
+use Ess\M2ePro\Helper\View\ControlPanel as HelperControlPanel;
 
 class Tabs extends AbstractHorizontalTabs
 {
@@ -54,10 +54,10 @@ class Tabs extends AbstractHorizontalTabs
 
         // ---------------------------------------
         $this->addTab(HelperControlPanel::TAB_OVERVIEW, [
-            'label'   => $this->translationHelper->__('Overview'),
+            'label' => $this->translationHelper->__('Overview'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Overview::class)
-                              ->toHtml()
+                              ->toHtml(),
         ]);
         // ---------------------------------------
         $params = ['label' => $this->translationHelper->__('Inspection')];
@@ -85,26 +85,26 @@ class Tabs extends AbstractHorizontalTabs
         // ---------------------------------------
 
         $this->addTab(HelperControlPanel::TAB_TOOLS_MODULE, [
-            'label'   => $this->translationHelper->__('Module Tools'),
+            'label' => $this->translationHelper->__('Module Tools'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ToolsModule::class)
                               ->toHtml(),
         ]);
 
         $this->addTab(HelperControlPanel::TAB_CRON, [
-            'label'   => $this->translationHelper->__('Cron'),
+            'label' => $this->translationHelper->__('Cron'),
             'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Cron::class)
-                                           ->toHtml(),
+                              ->toHtml(),
         ]);
 
         $this->addTab(HelperControlPanel::TAB_DEBUG, [
-            'label'   => $this->translationHelper->__('Debug'),
+            'label' => $this->translationHelper->__('Debug'),
             'content' => $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Debug::class)
-                                           ->toHtml(),
+                              ->toHtml(),
         ]);
 
         $this->addTab(HelperControlPanel::TAB_CHANGE_TRACKER, [
-            'label'   => $this->translationHelper->__('Change Tracker'),
+            'label' => $this->translationHelper->__('Change Tracker'),
             'content' => $this
                 ->getLayout()
                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\ChangeTracker::class)
@@ -138,6 +138,7 @@ function SetupManagementActionHandler() {
 window.setupManagementActionHandler = new SetupManagementActionHandler();
 JS
         );
+
         return parent::_toHtml() . '<div id="control_panel_tab_container"></div>';
     }
 

@@ -83,11 +83,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
             if ($templateManager->isHorizontalTemplate()) {
                 $snapshotBuilder = $this->modelFactory->getObject(
-                    'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    'Ebay_' . $templateManager->getTemplateModelName() . '_SnapshotBuilder'
                 );
             } else {
                 $snapshotBuilder = $this->modelFactory->getObject(
-                    $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    $templateManager->getTemplateModelName() . '_SnapshotBuilder'
                 );
             }
 
@@ -98,11 +98,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
             if ($templateManager->isHorizontalTemplate()) {
                 $snapshotBuilder = $this->modelFactory->getObject(
-                    'Ebay_'.$templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    'Ebay_' . $templateManager->getTemplateModelName() . '_SnapshotBuilder'
                 );
             } else {
                 $snapshotBuilder = $this->modelFactory->getObject(
-                    $templateManager->getTemplateModelName().'_SnapshotBuilder'
+                    $templateManager->getTemplateModelName() . '_SnapshotBuilder'
                 );
             }
 
@@ -112,9 +112,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             /** @var \Ess\M2ePro\Model\ActiveRecord\Diff $diff */
             if ($templateManager->isHorizontalTemplate()) {
-                $diff = $this->modelFactory->getObject('Ebay_'.$templateManager->getTemplateModelName().'_Diff');
+                $diff = $this->modelFactory->getObject('Ebay_' . $templateManager->getTemplateModelName() . '_Diff');
             } else {
-                $diff = $this->modelFactory->getObject($templateManager->getTemplateModelName().'_Diff');
+                $diff = $this->modelFactory->getObject($templateManager->getTemplateModelName() . '_Diff');
             }
 
             $diff->setNewSnapshot($newTemplateData);
@@ -123,11 +123,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\ChangeProcessorAbstract $changeProcessor */
             if ($templateManager->isHorizontalTemplate()) {
                 $changeProcessor = $this->modelFactory->getObject(
-                    'Ebay_'.$templateManager->getTemplateModelName().'_ChangeProcessor'
+                    'Ebay_' . $templateManager->getTemplateModelName() . '_ChangeProcessor'
                 );
             } else {
                 $changeProcessor = $this->modelFactory->getObject(
-                    $templateManager->getTemplateModelName().'_ChangeProcessor'
+                    $templateManager->getTemplateModelName() . '_ChangeProcessor'
                 );
             }
 
@@ -135,9 +135,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $diff,
                 [
                     [
-                        'id'     => $this->listingProduct->getId(),
-                        'status' => $this->listingProduct->getStatus()
-                    ]
+                        'id' => $this->listingProduct->getId(),
+                        'status' => $this->listingProduct->getStatus(),
+                    ],
                 ]
             );
         }
@@ -161,7 +161,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 );
 
                 /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
-                $snapshotBuilder = $this->modelFactory->getObject($templateModel.'_SnapshotBuilder');
+                $snapshotBuilder = $this->modelFactory->getObject($templateModel . '_SnapshotBuilder');
                 $snapshotBuilder->setModel($newTemplate);
 
                 $newTemplateSnapshot = $snapshotBuilder->getSnapshot();
@@ -182,7 +182,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 );
 
                 /** @var \Ess\M2ePro\Model\ActiveRecord\SnapshotBuilder $snapshotBuilder */
-                $snapshotBuilder = $this->modelFactory->getObject($templateModel.'_SnapshotBuilder');
+                $snapshotBuilder = $this->modelFactory->getObject($templateModel . '_SnapshotBuilder');
                 $snapshotBuilder->setModel($oldTemplate);
 
                 $oldTemplateSnapshot = $snapshotBuilder->getSnapshot();
@@ -192,19 +192,19 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         /** @var \Ess\M2ePro\Model\ActiveRecord\Diff $diff */
-        $diff = $this->modelFactory->getObject($templateModel.'_Diff');
+        $diff = $this->modelFactory->getObject($templateModel . '_Diff');
         $diff->setNewSnapshot($newTemplateSnapshot);
         $diff->setOldSnapshot($oldTemplateSnapshot);
 
         /** @var \Ess\M2ePro\Model\Template\ChangeProcessor\ChangeProcessorAbstract $changeProcessor */
-        $changeProcessor = $this->modelFactory->getObject($templateModel.'_ChangeProcessor');
+        $changeProcessor = $this->modelFactory->getObject($templateModel . '_ChangeProcessor');
         $changeProcessor->process(
             $diff,
             [
                 [
-                    'id'     => $this->listingProduct->getId(),
-                    'status' => $this->listingProduct->getStatus()
-                ]
+                    'id' => $this->listingProduct->getId(),
+                    'status' => $this->listingProduct->getStatus(),
+                ],
             ]
         );
     }

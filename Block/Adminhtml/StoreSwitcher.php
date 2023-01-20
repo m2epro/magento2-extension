@@ -8,13 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\StoreSwitcher
- */
 class StoreSwitcher extends Magento\AbstractBlock
 {
-    const DISPLAY_DEFAULT_STORE_MODE_UP   = 'up';
-    const DISPLAY_DEFAULT_STORE_MODE_DOWN = 'down';
+    public const DISPLAY_DEFAULT_STORE_MODE_UP = 'up';
+    public const DISPLAY_DEFAULT_STORE_MODE_DOWN = 'down';
 
     protected $_template = 'store_switcher.phtml';
 
@@ -123,6 +120,7 @@ class StoreSwitcher extends Magento\AbstractBlock
                 }
             }
         }
+
         return $websites;
     }
 
@@ -133,6 +131,7 @@ class StoreSwitcher extends Magento\AbstractBlock
         if (!$website instanceof \Magento\Store\Model\Website) {
             $website = $this->_websiteFactory->create()->load($website);
         }
+
         return $website->getGroupCollection();
     }
 
@@ -141,6 +140,7 @@ class StoreSwitcher extends Magento\AbstractBlock
         if (!$website instanceof \Magento\Store\Model\Website) {
             $website = $this->_storeManager->getWebsite($website);
         }
+
         return $website->getGroups();
     }
 
@@ -154,6 +154,7 @@ class StoreSwitcher extends Magento\AbstractBlock
         if (!empty($_storeIds)) {
             $stores->addIdFilter($_storeIds);
         }
+
         return $stores;
     }
 
@@ -170,6 +171,7 @@ class StoreSwitcher extends Magento\AbstractBlock
                 }
             }
         }
+
         return $stores;
     }
 
@@ -178,18 +180,21 @@ class StoreSwitcher extends Magento\AbstractBlock
         if ($url = $this->getData('switch_url')) {
             return $url;
         }
+
         return $this->getUrl('*/*/new', ['_current' => true, 'store' => null]);
     }
 
     public function getStoreId()
     {
         $selected = $this->getData('selected');
+
         return $selected ? $selected : 0;
     }
 
     public function setStoreIds($storeIds)
     {
         $this->_storeIds = $storeIds;
+
         return $this;
     }
 
@@ -201,12 +206,14 @@ class StoreSwitcher extends Magento\AbstractBlock
     public function getStoreSelectId()
     {
         $id = $this->getData('id');
+
         return $id ? $id : 'store_switcher';
     }
 
     public function getStoreSelectName()
     {
         $name = $this->getData('name');
+
         return $name ? $name : $this->getStoreSelectId();
     }
 
@@ -215,6 +222,7 @@ class StoreSwitcher extends Magento\AbstractBlock
         if ($this->getData('has_default_option') !== null) {
             $this->_hasDefaultOption = $this->getData('has_default_option');
         }
+
         return $this->_hasDefaultOption;
     }
 }

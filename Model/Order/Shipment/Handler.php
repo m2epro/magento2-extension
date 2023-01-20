@@ -16,11 +16,11 @@ use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCo
  */
 abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
-    const HANDLE_RESULT_FAILED    = -1;
-    const HANDLE_RESULT_SKIPPED   = 0;
-    const HANDLE_RESULT_SUCCEEDED = 1;
+    public const HANDLE_RESULT_FAILED = -1;
+    public const HANDLE_RESULT_SKIPPED = 0;
+    public const HANDLE_RESULT_SUCCEEDED = 1;
 
-    const CUSTOM_CARRIER_CODE = 'custom';
+    public const CUSTOM_CARRIER_CODE = 'custom';
 
     protected $activeRecordFactory = null;
     protected $carrierFactory = null;
@@ -81,6 +81,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Shipment $shipment
+     *
      * @return int
      * @throws \Exception
      */
@@ -108,6 +109,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -119,6 +121,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $items = $this->getItemToShipLoader($order, $shipmentItem)->loadItem();
+
         return $this->processStatusUpdates($order, $trackingDetails, $items)
             ? self::HANDLE_RESULT_SUCCEEDED
             : self::HANDLE_RESULT_FAILED;
@@ -130,6 +133,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Order $order
      * @param array $trackingDetails
      * @param array $items
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -147,6 +151,7 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Shipment $shipment
+     *
      * @return array
      */
     protected function getTrackingDetails(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
@@ -166,16 +171,17 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
         $carrier && $carrierTitle = $carrier->getConfigData('title');
 
         return [
-            'carrier_code'    => $carrierCode,
-            'carrier_title'   => $carrierTitle,
+            'carrier_code' => $carrierCode,
+            'carrier_title' => $carrierTitle,
             'shipping_method' => trim((string)$track->getData('title')),
-            'tracking_number' => $number
+            'tracking_number' => $number,
         ];
     }
 
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param array $trackingDetails
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

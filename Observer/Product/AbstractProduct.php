@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Observer\Product;
 
-/**
- * Class \Ess\M2ePro\Observer\Product\AbstractProduct
- */
 abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     protected $productFactory;
     /**
      * @var null|\Magento\Catalog\Model\Product
@@ -32,8 +30,6 @@ abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
      * @var null|\Ess\M2ePro\Model\Magento\Product
      */
     private $magentoProduct = null;
-
-    //########################################
 
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
@@ -83,8 +79,10 @@ abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
     protected function reloadProduct()
     {
         if ($this->getProductId() <= 0) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('To reload Product instance product_id should be
-                greater than 0.');
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'To reload Product instance product_id should be
+                greater than 0.'
+            );
         }
 
         $this->product = $this->productFactory->create()
@@ -133,8 +131,10 @@ abstract class AbstractProduct extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         if ($this->getProductId() <= 0) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('To load Magento Product instance product_id should be
-                greater than 0.');
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'To load Magento Product instance product_id should be
+                greater than 0.'
+            );
         }
 
         return $this->magentoProduct = $this->modelFactory->getObject('Magento\Product')

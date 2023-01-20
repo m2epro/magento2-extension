@@ -12,7 +12,7 @@ use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
 
 class Complete extends Base
 {
-    const MIGRATION_MESSAGE_IDENTIFIER = 'm2epro_migration_message';
+    public const MIGRATION_MESSAGE_IDENTIFIER = 'm2epro_migration_message';
 
     /** @var \Ess\M2ePro\Helper\Module\Maintenance */
     private $moduleMaintenanceHelper;
@@ -56,7 +56,8 @@ class Complete extends Base
 
         $currentWizardStatus = $wizard->getCurrentStatus();
 
-        if ($currentWizardStatus === MigrationFromMagento1::STATUS_UNEXPECTEDLY_COPIED &&
+        if (
+            $currentWizardStatus === MigrationFromMagento1::STATUS_UNEXPECTEDLY_COPIED &&
             !$this->tablesDownloader->isDownloadComplete()
         ) {
             try {
@@ -70,7 +71,6 @@ class Complete extends Base
                     $this->tablesDownloader->download();
                 }
             } catch (\Exception $exception) {
-
                 $this->exceptionHelper->process($exception);
                 $this->getMessageManager()->addErrorMessage($this->__($exception->getMessage()));
 

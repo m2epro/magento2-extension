@@ -80,8 +80,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-       // tax class id should be set before price calculation
-       return $this->setTaxClassIntoProduct($this->product);
+        // tax class id should be set before price calculation
+        return $this->setTaxClassIntoProduct($this->product);
     }
 
     // ---------------------------------------
@@ -92,15 +92,15 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $associatedProductId = reset($associatedProducts);
 
         $product = $this->productFactory->create()
-            ->setStoreId($this->quote->getStoreId())
-            ->load($associatedProductId);
+                                        ->setStoreId($this->quote->getStoreId())
+                                        ->load($associatedProductId);
 
         return $product->getId() ? $product : null;
     }
 
     //########################################
 
-   /**
+    /**
      * @return \Magento\Catalog\Model\Product
      */
     public function setTaxClassIntoProduct(\Magento\Catalog\Model\Product $product)
@@ -111,7 +111,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $hasRatesForCountry = $this->taxHelper->hasRatesForCountry($this->quote->getShippingAddress()->getCountryId());
         $calculationBasedOnOrigin = $this->taxHelper->isCalculationBasedOnOrigin($this->quote->getStore());
 
-        if ($proxyOrder->isTaxModeNone()
+        if (
+            $proxyOrder->isTaxModeNone()
             || ($proxyOrder->isTaxModeChannel() && $itemTaxRate <= 0)
             || ($proxyOrder->isTaxModeMagento() && !$hasRatesForCountry && !$calculationBasedOnOrigin)
             || ($proxyOrder->isTaxModeMixed() && $itemTaxRate <= 0 && $isOrderHasTax)
@@ -119,7 +120,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             return $product->setTaxClassId(\Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE);
         }
 
-        if ($proxyOrder->isTaxModeMagento()
+        if (
+            $proxyOrder->isTaxModeMagento()
             || $itemTaxRate <= 0
             || $itemTaxRate == $this->getProductTaxRate($product->getTaxClassId())
         ) {
@@ -138,6 +140,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
         $taxRule = $taxRuleBuilder->getRule();
         $productTaxClasses = $taxRule->getProductTaxClasses();
+
         // ---------------------------------------
 
         return $product->setTaxClassId(array_shift($productTaxClasses));
@@ -167,8 +170,10 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $request->setQty($this->proxyItem->getQty());
 
         // grouped and downloadable products doesn't have options
-        if ($this->proxyItem->getMagentoProduct()->isGroupedType() ||
-            $this->proxyItem->getMagentoProduct()->isDownloadableType()) {
+        if (
+            $this->proxyItem->getMagentoProduct()->isGroupedType() ||
+            $this->proxyItem->getMagentoProduct()->isDownloadableType()
+        ) {
             return $request;
         }
 
@@ -231,10 +236,10 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
 
     public function getAdditionalData(\Magento\Quote\Model\Quote\Item $quoteItem)
     {
-        $additionalData      = $this->proxyItem->getAdditionalData();
+        $additionalData = $this->proxyItem->getAdditionalData();
         $existAdditionalData = is_string($quoteItem->getAdditionalData())
-                               ? $this->getHelper('Data')->unserialize($quoteItem->getAdditionalData())
-                               : [];
+            ? $this->getHelper('Data')->unserialize($quoteItem->getAdditionalData())
+            : [];
 
         return $this->getHelper('Data')->serialize(array_merge($existAdditionalData, $additionalData));
     }

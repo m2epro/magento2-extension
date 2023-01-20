@@ -28,21 +28,28 @@ class GetCategoryInfoByCategoryId extends Category
     public function execute()
     {
         $category = $this->resourceConnection->getConnection()->select()
-            ->from(
-                $this->dbStructureHelper->getTableNameWithPrefix('m2epro_walmart_dictionary_category')
-            )
-            ->where('marketplace_id = ?', $this->getRequest()->getPost('marketplace_id'))
-            ->where('category_id = ?', $this->getRequest()->getPost('category_id'))
-            ->query()
-            ->fetch();
+                                             ->from(
+                                                 $this->dbStructureHelper->getTableNameWithPrefix(
+                                                     'm2epro_walmart_dictionary_category'
+                                                 )
+                                             )
+                                             ->where(
+                                                 'marketplace_id = ?',
+                                                 $this->getRequest()->getPost('marketplace_id')
+                                             )
+                                             ->where('category_id = ?', $this->getRequest()->getPost('category_id'))
+                                             ->query()
+                                             ->fetch();
 
         if (!$category) {
             $this->setAjaxContent(null, false);
+
             return $this->getResult();
         }
 
         $this->formatCategoryRow($category);
         $this->setJsonContent($category);
+
         return $this->getResult();
     }
 }

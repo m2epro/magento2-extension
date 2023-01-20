@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Revise;
  */
 class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request
 {
-    const PRODUCT_ID_UPDATE_METADATA_KEY = 'product_id_update_details';
+    public const PRODUCT_ID_UPDATE_METADATA_KEY = 'product_id_update_details';
 
     //########################################
 
@@ -21,7 +21,7 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
     {
         $data = array_merge(
             [
-                'sku'  => $this->getWalmartListingProduct()->getSku(),
+                'sku' => $this->getWalmartListingProduct()->getSku(),
                 'wpid' => $this->getWalmartListingProduct()->getWpid(),
             ],
             $this->getQtyData(),
@@ -57,7 +57,7 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
             if (!$isUpdated) {
                 $data['product_ids_data'][] = [
                     'type' => $changedType,
-                    'id'   => $changedValue,
+                    'id' => $changedValue,
                 ];
             }
 

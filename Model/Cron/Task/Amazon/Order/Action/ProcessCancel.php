@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action;
  */
 class ProcessCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/action/process_cancel';
+    public const NICK = 'amazon/order/action/process_cancel';
 
     /**
      * @var int (in seconds)
@@ -27,7 +27,7 @@ class ProcessCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $actionsProcessor = $this->modelFactory->getObject(
             'Amazon_Order_Action_Processor',
             [
-                'params' => ['action_type' => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_CANCEL]
+                'params' => ['action_type' => \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_CANCEL],
             ]
         );
         $actionsProcessor->process();

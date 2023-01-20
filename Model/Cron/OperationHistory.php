@@ -13,8 +13,11 @@ namespace Ess\M2ePro\Model\Cron;
  */
 class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 {
+    /** @var array  */
     private $timePoints = [];
+    /** @var int  */
     private $leftPadding = 0;
+    /** @var string  */
     private $bufferString = '';
 
     //########################################
@@ -53,8 +56,8 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 
     public function appendText($text = null)
     {
-        $text && $text = str_repeat(' ', $this->leftPadding).$text;
-        $this->bufferString .= (string)$text.PHP_EOL;
+        $text && $text = str_repeat(' ', $this->leftPadding) . $text;
+        $this->bufferString .= (string)$text . PHP_EOL;
     }
 
     // ---------------------------------------
@@ -62,7 +65,7 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
     public function saveBufferString()
     {
         $profilerData = (string)$this->getContentData('profiler');
-        $this->setContentData('profiler', $profilerData.$this->bufferString);
+        $this->setContentData('profiler', $profilerData . $this->bufferString);
         $this->bufferString = '';
     }
 
@@ -73,6 +76,7 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
         foreach ($this->timePoints as &$point) {
             if ($point['id'] == $id) {
                 $this->updateTimePoint($id);
+
                 return true;
             }
         }
@@ -80,7 +84,7 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
         $this->timePoints[] = [
             'id' => $id,
             'title' => $title,
-            'time' => microtime(true)
+            'time' => microtime(true),
         ];
 
         return true;
@@ -89,10 +93,9 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
     public function updateTimePoint($id)
     {
         foreach ($this->timePoints as $point) {
-
             if ($point['id'] == $id) {
-
                 $point['time'] = microtime(true);
+
                 return true;
             }
         }
@@ -103,14 +106,13 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
     public function saveTimePoint($id, $immediatelySave = true)
     {
         foreach ($this->timePoints as $point) {
-
             if ($point['id'] == $id) {
-
                 $this->appendText(
-                    $point['title'].': '.round(microtime(true) - $point['time'], 2).' sec.'
+                    $point['title'] . ': ' . round(microtime(true) - $point['time'], 2) . ' sec.'
                 );
 
                 $immediatelySave && $this->saveBufferString();
+
                 return true;
             }
         }
@@ -158,7 +160,6 @@ class OperationHistory extends \Ess\M2ePro\Model\OperationHistory
 INFO;
 
         if ($fatalInfo = $this->getContentData('fatal_error')) {
-
             $info .= <<<INFO
 
 {$offset}<span style="color: red; font-weight: bold;">Fatal: {$fatalInfo['message']}</span>
@@ -168,7 +169,6 @@ INFO;
         }
 
         if ($exceptions = $this->getContentData('exceptions')) {
-
             foreach ($exceptions as $exception) {
                 $info .= <<<INFO
 
@@ -195,13 +195,12 @@ INFO;
         $profilerInfo = $this->getProfilerInfo($nestingLevel);
 
         $childObjects = $this->activeRecordFactory->getObject('OperationHistory')->getCollection()
-                                ->addFieldToFilter('parent_id', $this->getObject()->getId())
-                                ->setOrder('start_date', 'ASC');
+                                                  ->addFieldToFilter('parent_id', $this->getObject()->getId())
+                                                  ->setOrder('start_date', 'ASC');
 
         $childObjects->getSize() > 0 && $nestingLevel++;
 
         foreach ($childObjects as $item) {
-
             $object = $this->activeRecordFactory->getObject('OperationHistory');
             $object->setObject($item);
 

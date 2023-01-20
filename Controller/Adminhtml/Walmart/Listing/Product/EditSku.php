@@ -25,7 +25,7 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
         if (empty($productId) || empty($value)) {
             $this->setJsonContent([
                 'result' => false,
-                'message' => $this->__('Wrong parameters.')
+                'message' => $this->__('Wrong parameters.'),
             ]);
 
             return $this->getResult();
@@ -37,7 +37,7 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
         if (!$listingProduct->getId()) {
             $this->setJsonContent([
                 'result' => false,
-                'message' => $this->__('Listing product does not exist.')
+                'message' => $this->__('Listing product does not exist.'),
             ]);
 
             return $this->getResult();
@@ -51,12 +51,13 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
         if ($lockManager->checkLocking()) {
             $this->setJsonContent(
                 [
-                    'result'  => false,
+                    'result' => false,
                     'message' => $this->__(
                         'Another Action is being processed. Try again when the Action is completed.'
-                    )
+                    ),
                 ]
             );
+
             return $this->getResult();
         }
 
@@ -64,7 +65,7 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
         if ($oldSku === $value) {
             $this->setJsonContent([
                 'result' => true,
-                'message' => ''
+                'message' => '',
             ]);
 
             return $this->getResult();
@@ -80,15 +81,15 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
         $scheduledAction->setData(
             [
                 'listing_product_id' => $listingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
-                'is_force'           => true,
-                'tag'                => '/details/',
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                'is_force' => true,
+                'tag' => '/details/',
+                'additional_data' => $this->getHelper('Data')->jsonEncode(
                     [
                         'params' => [
-                            'changed_sku'    => $value,
-                            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+                            'changed_sku' => $value,
+                            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
                         ],
                         'configurator' => $configurator->getSerializedData(),
                     ]
@@ -115,7 +116,7 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
 
         $this->setJsonContent([
             'result' => true,
-            'message' => ''
+            'message' => '',
         ]);
 
         return $this->getResult();

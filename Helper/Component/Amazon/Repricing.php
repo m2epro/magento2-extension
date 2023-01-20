@@ -79,6 +79,9 @@ class Repricing
         curl_setopt($curlObject, CURLOPT_CONNECTTIMEOUT, 15);
         curl_setopt($curlObject, CURLOPT_TIMEOUT, self::REQUEST_TIMEOUT);
 
+        curl_setopt($curlObject, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curlObject, CURLOPT_POSTREDIR, 1);
+
         $response = curl_exec($curlObject);
 
         $curlInfo = curl_getinfo($curlObject);

@@ -20,6 +20,7 @@ class GetCategoryGroupGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $grid = $this->getLayout()
                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AutoAction\Mode\Category\Group\Grid::class);
         $this->setAjaxContent($grid);
+
         return $this->getResult();
     }
 

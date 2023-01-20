@@ -33,6 +33,7 @@ class WalmartItemId extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstra
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return mixed
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)

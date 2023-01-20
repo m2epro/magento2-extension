@@ -13,10 +13,11 @@ namespace Ess\M2ePro\Model\Connector\Command\Pending\Processing;
  */
 abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
 {
-    const PENDING_REQUEST_MAX_LIFE_TIME = 43200;
+    public const PENDING_REQUEST_MAX_LIFE_TIME = 43200;
 
+    /** @var string|null  */
     private $responserModelName = null;
-
+    /** @var array  */
     private $responserParams = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Command\Pending\Responser $responser */
@@ -44,7 +45,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
         $params = parent::getParams();
 
         $params['responser_model_name'] = $this->getResponserModelName();
-        $params['responser_params']     = $this->getResponserParams();
+        $params['responser_params'] = $this->getResponserParams();
 
         return $params;
     }
@@ -54,6 +55,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
     public function setResponserModelName($modelName)
     {
         $this->responserModelName = $modelName;
+
         return $this;
     }
 
@@ -67,6 +69,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
     public function setResponserParams(array $params)
     {
         $this->responserParams = $params;
+
         return $this;
     }
 
@@ -98,7 +101,7 @@ abstract class Runner extends \Ess\M2ePro\Model\Processing\Runner
 
         return $this->responser = $this->modelFactory->getObject($this->getResponserModelName(), [
             'params' => $this->getResponserParams(),
-            'response' => $this->getResponse()
+            'response' => $this->getResponse(),
         ]);
     }
 

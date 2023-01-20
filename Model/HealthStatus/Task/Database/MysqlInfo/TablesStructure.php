@@ -35,6 +35,7 @@ class TablesStructure extends IssueType
 
     public function process()
     {
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getConnector('tables', 'get', 'diff');
 
@@ -61,28 +62,40 @@ class TablesStructure extends IssueType
 
     private function applyDiffResult(TaskResult $taskResult, $diffResult)
     {
-        if ($taskResult->getTaskResult() < TaskResult::STATE_CRITICAL
-            && $diffResult['severity'] == Connector::SEVERITY_CRITICAL) {
+        if (
+            $taskResult->getTaskResult() < TaskResult::STATE_CRITICAL
+            && $diffResult['severity'] == Connector::SEVERITY_CRITICAL
+        ) {
             $taskResult->setTaskResult(TaskResult::STATE_CRITICAL);
-            $taskResult->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
+            $taskResult->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 Some MySQL tables or their columns are missing. It can cause critical issues in Module work.
 Please contact Support at <a href="mailto:support@m2epro.com">support@m2epro.com</a> for a solution.
 HTML
-            ]));
+                ,
+                ])
+            );
+
             return;
         }
 
-        if ($taskResult->getTaskResult() < TaskResult::STATE_WARNING
-            && $diffResult['severity'] == Connector::SEVERITY_WARNING) {
+        if (
+            $taskResult->getTaskResult() < TaskResult::STATE_WARNING
+            && $diffResult['severity'] == Connector::SEVERITY_WARNING
+        ) {
             $taskResult->setTaskResult(TaskResult::STATE_WARNING);
-            $taskResult->setTaskMessage($this->getHelper('Module\Translation')->translate([
-            <<<HTML
+            $taskResult->setTaskMessage(
+                $this->getHelper('Module\Translation')->translate([
+                    <<<HTML
 Some MySQL tables or their columns may have incorrect definitions.
 If you face any unusual behavior of the Module, please contact Support at
 <a href="mailto:support@m2epro.com">support@m2epro.com</a>
 HTML
-            ]));
+                ,
+                ])
+            );
+
             return;
         }
     }

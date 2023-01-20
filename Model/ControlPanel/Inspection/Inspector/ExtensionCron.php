@@ -15,7 +15,7 @@ class ExtensionCron implements InspectorInterface
     /** @var Module */
     private $helperModule;
 
-    /** @var IssueFactory  */
+    /** @var IssueFactory */
     private $issueFactory;
 
     //########################################

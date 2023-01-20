@@ -55,6 +55,7 @@ class BeforeGetToken extends Account
         try {
             $backUrl = $this->getUrl('*/*/afterGetToken', ['_current' => true]);
 
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'account',
@@ -77,6 +78,7 @@ class BeforeGetToken extends Account
             $this->messageManager->addErrorMessage($error);
 
             $this->_redirect($this->getUrl('*/*/index'));
+
             return;
         }
 

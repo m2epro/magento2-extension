@@ -15,7 +15,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
 {
     private $stockConfiguration;
 
-    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterface|null  */
+    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterface|null */
     private $stockItem = null;
 
     /** @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor */
@@ -27,7 +27,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     /** @var bool */
     private $stockStatusChanged = false;
 
-    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface|null  */
+    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface|null */
     private $stockItemRepository = null;
 
     /** @var \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage */
@@ -45,10 +45,10 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository,
         \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage
     ) {
-        $this->stockConfiguration  = $stockConfiguration;
+        $this->stockConfiguration = $stockConfiguration;
         $this->indexStockProcessor = $indexStockProcessor;
-        $this->stockStateProvider  = $stockStateProvider;
-        $this->stockItem           = $stockItem;
+        $this->stockStateProvider = $stockStateProvider;
+        $this->stockItem = $stockItem;
         $this->stockItemRepository = $stockItemRepository;
         $this->stockRegistryStorage = $stockRegistryStorage;
 
@@ -106,6 +106,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     public function isAllowedQtyBelowZero()
     {
         $backordersStatus = $this->getStockItem()->getBackorders();
+
         return $backordersStatus == \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NONOTIFY ||
             $backordersStatus == \Magento\CatalogInventory\Model\Stock::BACKORDERS_YES_NOTIFY;
     }
@@ -113,6 +114,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $qty
      * @param bool $save
+     *
      * @return bool
      */
     public function addQty($qty, $save = true)

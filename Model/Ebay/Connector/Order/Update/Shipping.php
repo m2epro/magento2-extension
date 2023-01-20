@@ -20,6 +20,7 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
 
     /**
      * @param $action
+     *
      * @return $this|AbstractModel
      */
     public function setAction($action)
@@ -27,7 +28,7 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
         parent::setAction($action);
 
         if ($this->action == \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK) {
-            $this->carrierCode    = $this->params['carrier_code'];
+            $this->carrierCode = $this->params['carrier_code'];
             $this->trackingNumber = $this->params['tracking_number'];
         }
 
@@ -96,8 +97,8 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMod
             $this->order->addSuccessLog(
                 'Tracking number "%num%" for "%code%" has been sent to eBay.',
                 [
-                    '!num'  => $this->trackingNumber,
-                    '!code' => $this->carrierCode
+                    '!num' => $this->trackingNumber,
+                    '!code' => $this->carrierCode,
                 ]
             );
         }

@@ -14,7 +14,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected $_template = 'ebay/template/selling_format/charity.phtml';
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -42,21 +42,21 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         // ---------------------------------------
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label'   => $this->__('Add Charity'),
-                'onclick' => 'EbayTemplateSellingFormatObj.addCharityRow();',
-                'class' => 'action primary add_charity_button'
-            ]);
+                            ->setData([
+                                'label' => $this->__('Add Charity'),
+                                'onclick' => 'EbayTemplateSellingFormatObj.addCharityRow();',
+                                'class' => 'action primary add_charity_button',
+                            ]);
         $this->setChild('add_charity_button', $buttonBlock);
         // ---------------------------------------
 
         // ---------------------------------------
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'label'   => $this->__('Remove'),
-                'onclick' => 'EbayTemplateSellingFormatObj.removeCharityRow(this);',
-                'class' => 'delete icon-btn remove_charity_button'
-            ]);
+                            ->setData([
+                                'label' => $this->__('Remove'),
+                                'onclick' => 'EbayTemplateSellingFormatObj.removeCharityRow(this);',
+                                'class' => 'delete icon-btn remove_charity_button',
+                            ]);
         $this->setChild('remove_charity_button', $buttonBlock);
         // ---------------------------------------
     }
@@ -86,7 +86,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
         $dbSelect = $connection->select()
-            ->from($tableDictMarketplace, ['marketplace_id', 'charities']);
+                               ->from($tableDictMarketplace, ['marketplace_id', 'charities']);
 
         $data = $connection->fetchAssoc($dbSelect);
 

@@ -33,6 +33,7 @@ class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstrac
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return mixed
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
@@ -69,6 +70,7 @@ class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstrac
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,

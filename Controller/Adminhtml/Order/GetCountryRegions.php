@@ -34,16 +34,16 @@ class GetCountryRegions extends \Ess\M2ePro\Controller\Adminhtml\Order
 
             foreach ($regionsCollection as $region) {
                 $regions[] = [
-                    'id'    => $region->getData('region_id'),
+                    'id' => $region->getData('region_id'),
                     'value' => $region->getData('code'),
-                    'label' => $region->getData('default_name')
+                    'label' => $region->getData('default_name'),
                 ];
             }
 
             if (!empty($regions)) {
                 array_unshift($regions, [
                     'value' => '',
-                    'label' => $this->__('-- Please select --')
+                    'label' => $this->__('-- Please select --'),
                 ]);
             }
         }

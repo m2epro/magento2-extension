@@ -22,8 +22,8 @@ class Form extends AbstractForm
     public $templateModel;
     public $formData = [];
 
-    public $allAttributesByInputTypes     = [];
-    public $allAttributes             = [];
+    public $allAttributesByInputTypes = [];
+    public $allAttributes = [];
 
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;
@@ -75,22 +75,22 @@ class Form extends AbstractForm
         $this->setId('walmartTemplateSellingFormatEditForm');
         // ---------------------------------------
 
-        $this->templateModel   = $this->globalDataHelper->getValue('tmp_template');
-        $this->formData        = $this->getFormData();
+        $this->templateModel = $this->globalDataHelper->getValue('tmp_template');
+        $this->formData = $this->getFormData();
 
         $this->allAttributes = $this->magentoAttributeHelper->getAll();
         $this->allAttributesByInputTypes = [
-            'text'        => $this->magentoAttributeHelper
+            'text' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['text']),
             'text_select' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['text', 'select']),
-            'text_price'  => $this->magentoAttributeHelper
+            'text_price' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['text', 'price']),
-            'text_date'   => $this->magentoAttributeHelper
+            'text_date' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['text', 'date']),
             'text_weight' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['text', 'weight']),
-            'boolean'     => $this->magentoAttributeHelper
+            'boolean' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['boolean']),
         ];
     }
@@ -101,12 +101,14 @@ class Form extends AbstractForm
      */
     protected function _prepareForm(): Form
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id'      => 'edit_form',
-            'method'  => 'post',
-            'action'  => $this->getUrl('*/*/save'),
-            'enctype' => 'multipart/form-data'
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+                'method' => 'post',
+                'action' => $this->getUrl('*/*/save'),
+                'enctype' => 'multipart/form-data',
+            ],
+        ]);
 
         $form->addField(
             'walmart_template_selling_format_help',
@@ -125,7 +127,7 @@ class Form extends AbstractForm
 HTML
                     ,
                     $this->supportHelper->getDocumentationArticleUrl('x/cv1IB')
-                )
+                ),
             ]
         );
 
@@ -142,13 +144,13 @@ HTML
             'title',
             'text',
             [
-                'name'     => 'title',
-                'label'    => $this->__('Title'),
-                'title'    => $this->__('Title'),
-                'value'    => $this->formData['title'],
-                'class'    => 'input-text M2ePro-price-tpl-title',
+                'name' => 'title',
+                'label' => $this->__('Title'),
+                'title' => $this->__('Title'),
+                'value' => $this->formData['title'],
+                'class' => 'input-text M2ePro-price-tpl-title',
                 'required' => true,
-                'tooltip'  => $this->__('Policy Title for your internal use.')
+                'tooltip' => $this->__('Policy Title for your internal use.'),
             ]
         );
 
@@ -160,11 +162,11 @@ HTML
             'marketplace_id',
             'select',
             [
-                'name'     => 'marketplace_id',
-                'label'    => $this->__('Marketplace'),
-                'title'    => $this->__('Marketplace'),
-                'values'   => $this->getMarketplaceDataToOptions(),
-                'value'    => $this->formData['marketplace_id'],
+                'name' => 'marketplace_id',
+                'label' => $this->__('Marketplace'),
+                'title' => $this->__('Marketplace'),
+                'values' => $this->getMarketplaceDataToOptions(),
+                'value' => $this->formData['marketplace_id'],
                 'required' => true,
                 'disabled' => $isLockedMarketplace,
             ]
@@ -175,7 +177,7 @@ HTML
                 'marketplace_id_hidden',
                 'hidden',
                 [
-                    'name'  => 'marketplace_id',
+                    'name' => 'marketplace_id',
                     'value' => $this->formData['marketplace_id'],
                 ]
             );
@@ -188,7 +190,7 @@ HTML
             [
                 'legend' => $this->__('Quantity'),
                 'class' => 'm2epro-marketplace-depended-block',
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -200,7 +202,7 @@ HTML
                 $this->formData['qty_mode'],
                 [
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-                   \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER
+                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER,
                 ]
             )
         ) {
@@ -211,13 +213,13 @@ HTML
             'qty_mode',
             self::SELECT,
             [
-                'name'                     => 'qty_mode',
-                'container_id'             => 'qty_mode_tr',
-                'label'                    => $this->__('Quantity'),
-                'values'                   => $this->getQtyOptions(),
-                'value'                    => $defaultValue,
+                'name' => 'qty_mode',
+                'container_id' => 'qty_mode_tr',
+                'label' => $this->__('Quantity'),
+                'values' => $this->getQtyOptions(),
+                'value' => $defaultValue,
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__('Item Quantity available on Walmart.')
+                'tooltip' => $this->__('Item Quantity available on Walmart.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -226,7 +228,7 @@ HTML
             'hidden',
             [
                 'name' => 'qty_custom_attribute',
-                'value' => $this->formData['qty_custom_attribute']
+                'value' => $this->formData['qty_custom_attribute'],
             ]
         );
 
@@ -234,12 +236,12 @@ HTML
             'qty_custom_value',
             'text',
             [
-                'name'         => 'qty_custom_value',
+                'name' => 'qty_custom_value',
                 'container_id' => 'qty_custom_value_tr',
-                'label'        => $this->__('Quantity Value'),
-                'value'        => $this->formData['qty_custom_value'],
-                'class'        => 'validate-digits M2ePro-required-when-visible',
-                'required'     => true,
+                'label' => $this->__('Quantity Value'),
+                'value' => $this->formData['qty_custom_value'],
+                'class' => 'validate-digits M2ePro-required-when-visible',
+                'required' => true,
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );
@@ -250,7 +252,7 @@ HTML
         for ($i = 100; $i >= 5; $i -= 5) {
             $preparedAttributes[] = [
                 'value' => $i,
-                'label' => $i . ' %'
+                'label' => $i . ' %',
             ];
         }
 
@@ -268,7 +270,7 @@ HTML
                     <strong>For example</strong>, if QTY Percentage is set to 10% and
                     Magento Product Quantity is 100,<br>
                     the Item Quantity available on Walmart will be calculated as 100 * 10% = 10.'
-                )
+                ),
             ]
         );
 
@@ -286,8 +288,10 @@ HTML
                     SellingFormat::QTY_MODIFICATION_MODE_ON => $this->__('Enabled'),
                 ],
                 'value' => $this->formData['qty_modification_mode'],
-                'tooltip' => $this->__('Enable to set the minimum and maximum Item Quantity
-                                        values that will be submitted to Walmart.')
+                'tooltip' => $this->__(
+                    'Enable to set the minimum and maximum Item Quantity
+                                        values that will be submitted to Walmart.'
+                ),
             ]
         );
 
@@ -307,7 +311,7 @@ HTML
                     the Item will not be listed on Walmart.<br>
                     To be submitted, Magento Product QTY has to be equal or more than the value set
                     for Minimum Quantity to Be Listed.'
-                )
+                ),
             ]
         );
 
@@ -327,7 +331,7 @@ HTML
                      the listed Item will have maximum Quantity of 2.<br>
                      If Magento Product QTY is 1 and you set the Maximum Quantity to Be Listed of 3,
                      the listed Item will have maximum Quantity of 1.'
-                )
+                ),
             ]
         );
 
@@ -338,7 +342,7 @@ HTML
             [
                 'legend' => $this->__('Price'),
                 'class' => 'm2epro-marketplace-depended-block',
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -351,7 +355,7 @@ HTML
                 [
                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
                 ]
             )
         ) {
@@ -372,7 +376,7 @@ HTML
                 'value' => $defaultValue,
                 'class' => 'select-main',
                 'create_magento_attribute' => true,
-                'after_element_html' => $tooltipRegularPriceMode
+                'after_element_html' => $tooltipRegularPriceMode,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
@@ -381,7 +385,7 @@ HTML
             'hidden',
             [
                 'name' => 'price_custom_attribute',
-                'value' => $this->formData['price_custom_attribute']
+                'value' => $this->formData['price_custom_attribute'],
             ]
         );
 
@@ -401,7 +405,7 @@ HTML
                 'class' => 'select-main',
                 'values' => [
                     SellingFormat::PRICE_VARIATION_MODE_PARENT => $this->__('Main Product'),
-                    SellingFormat::PRICE_VARIATION_MODE_CHILDREN => $this->__('Associated Products')
+                    SellingFormat::PRICE_VARIATION_MODE_CHILDREN => $this->__('Associated Products'),
                 ],
                 'value' => $this->formData['price_variation_mode'],
                 'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
@@ -419,7 +423,7 @@ HTML
                 'class' => 'select-main',
                 'values' => [
                     SellingFormat::PROMOTIONS_MODE_NO => $this->__('Disabled'),
-                    SellingFormat::PROMOTIONS_MODE_YES => $this->__('Enabled')
+                    SellingFormat::PROMOTIONS_MODE_YES => $this->__('Enabled'),
                 ],
                 'value' => $this->formData['promotions_mode'],
                 'required' => true,
@@ -429,7 +433,7 @@ HTML
                     Comparison Price is used to calculate savings on Items. Remain the current
                     Item Prices or submit a new values.<br>
                     <strong>Note:</strong> Make sure that your Promotion dates do not overlap.'
-                )
+                ),
             ]
         );
 
@@ -439,7 +443,7 @@ HTML
             [
                 'text' => $this->getPromotionsHtml($form),
                 'css_class' => 'm2epro-fieldset-table',
-                'field_extra_attributes' => 'id="promotions_tr"'
+                'field_extra_attributes' => 'id="promotions_tr"',
             ]
         );
 
@@ -471,7 +475,7 @@ The final product price on Walmart will be calculated according to the following
 <strong>Note:</strong> Walmart considers the VAT rate value sent by M2E Pro as an additional price increase,
 not as a proper VAT rate.
 HTML
-                )
+                ),
             ]
         );
 
@@ -485,7 +489,7 @@ HTML
                 'value' => $this->formData['price_vat_percent'],
                 'class' => 'M2ePro-validate-vat-percent input-text',
                 'required' => true,
-                'field_extra_attributes' => 'style="display: none;"'
+                'field_extra_attributes' => 'style="display: none;"',
             ]
         );
 
@@ -496,7 +500,7 @@ HTML
             [
                 'legend' => $this->__('Details'),
                 'class' => 'm2epro-marketplace-depended-block',
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -507,7 +511,7 @@ HTML
             'hidden',
             [
                 'name' => 'lag_time_custom_attribute',
-                'value' => $this->formData['lag_time_custom_attribute']
+                'value' => $this->formData['lag_time_custom_attribute'],
             ]
         );
 
@@ -516,7 +520,7 @@ HTML
             'hidden',
             [
                 'name' => 'lag_time_value',
-                'value' => $this->formData['lag_time_value']
+                'value' => $this->formData['lag_time_value'],
             ]
         );
 
@@ -529,7 +533,8 @@ HTML
                 'values' => $this->getLagTimeOptions(),
                 'value' => '',
                 'required' => true,
-                'tooltip' => $this->__('
+                'tooltip' => $this->__(
+                    '
                     The number of days it takes to prepare the Item for shipment.<br><br>
 
                     <strong>Note:</strong> Sellers are required to provide up to 1 day Lag Time. Otherwise,
@@ -539,7 +544,8 @@ HTML
                     <br><br>
 
                     <strong>Note:</strong> any changes to the Lag Time value may take up to 24 hours to be reflected on
-                    the Channel due to the Walmart limitations.')
+                    the Channel due to the Walmart limitations.'
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -550,7 +556,7 @@ HTML
             [
                 'legend' => $this->__('Shipping'),
                 'class' => 'm2epro-marketplace-depended-block',
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -561,7 +567,7 @@ HTML
             'hidden',
             [
                 'name' => 'item_weight_custom_attribute',
-                'value' => $this->formData['item_weight_custom_attribute']
+                'value' => $this->formData['item_weight_custom_attribute'],
             ]
         );
 
@@ -581,8 +587,10 @@ HTML
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('The weight of the Item when it is packaged to ship.<br>
-                                <strong>Note:</strong> The Shipping Weight is set in pounds by default.')
+                'tooltip' => $this->__(
+                    'The weight of the Item when it is packaged to ship.<br>
+                                <strong>Note:</strong> The Shipping Weight is set in pounds by default.'
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -607,7 +615,7 @@ HTML
             'hidden',
             [
                 'name' => 'must_ship_alone_custom_attribute',
-                'value' => $this->formData['must_ship_alone_custom_attribute']
+                'value' => $this->formData['must_ship_alone_custom_attribute'],
             ]
         );
 
@@ -634,7 +642,7 @@ HTML
                      if a buyer orders one product with a quantity of 3,
                      there will be 3 separate Walmart orders for each item.
                     '
-                )
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
@@ -645,7 +653,7 @@ HTML
             'hidden',
             [
                 'name' => 'ships_in_original_packaging_custom_attribute',
-                'value' => $this->formData['ships_in_original_packaging_custom_attribute']
+                'value' => $this->formData['ships_in_original_packaging_custom_attribute'],
             ]
         );
 
@@ -667,8 +675,10 @@ HTML
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Specify whether the Item can be shipped in original
-                packaging without being put in an outer box or not.')
+                'tooltip' => $this->__(
+                    'Specify whether the Item can be shipped in original
+                packaging without being put in an outer box or not.'
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
@@ -683,7 +693,7 @@ HTML
                 'class' => 'select-main',
                 'values' => [
                     SellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO => $this->__('Disabled'),
-                    SellingFormat::SHIPPING_OVERRIDE_RULE_MODE_YES => $this->__('Enabled')
+                    SellingFormat::SHIPPING_OVERRIDE_RULE_MODE_YES => $this->__('Enabled'),
                 ],
                 'value' => $this->formData['shipping_override_rule_mode'],
                 'tooltip' => $this->__(
@@ -691,7 +701,7 @@ HTML
                     <strong>Note:</strong> When you set an override for one shipping method,
                     the other shipping methods will<br>
                     still be taken from the global shipping settings in your Seller Center.'
-                )
+                ),
             ]
         );
 
@@ -701,7 +711,7 @@ HTML
             [
                 'text' => $this->getShippingOverrideRuleHtml($form),
                 'css_class' => 'm2epro-fieldset-table',
-                'field_extra_attributes' => 'id="shipping_override_rule_tr"'
+                'field_extra_attributes' => 'id="shipping_override_rule_tr"',
             ]
         );
 
@@ -725,7 +735,7 @@ HTML
 
                         Read more details <a href="%url%" target="_blank">here</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/cv1IB')
-                )
+                ),
             ]
         );
 
@@ -736,7 +746,7 @@ HTML
             'hidden',
             [
                 'name' => 'sale_time_start_date_custom_attribute',
-                'value' => $this->formData['sale_time_start_date_custom_attribute']
+                'value' => $this->formData['sale_time_start_date_custom_attribute'],
             ]
         );
 
@@ -758,7 +768,7 @@ HTML
                 'values' => $this->getSaleTimeStartDateOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
-                'create_magento_attribute' => true
+                'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
@@ -782,7 +792,7 @@ HTML
             'hidden',
             [
                 'name' => 'sale_time_end_date_custom_attribute',
-                'value' => $this->formData['sale_time_end_date_custom_attribute']
+                'value' => $this->formData['sale_time_end_date_custom_attribute'],
             ]
         );
 
@@ -804,7 +814,7 @@ HTML
                 'values' => $this->getSaleTimeEndDateOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
-                'create_magento_attribute' => true
+                'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
@@ -828,7 +838,7 @@ HTML
             [
                 'legend' => $this->__('Attributes'),
                 'class' => 'm2epro-marketplace-depended-block',
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -846,7 +856,7 @@ HTML
                     ['value' => SellingFormat::ATTRIBUTES_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
                 ],
                 'value' => $this->formData['attributes_mode'],
-                'tooltip' => $this->__('Specify up to 5 additional features that describe your Item.')
+                'tooltip' => $this->__('Specify up to 5 additional features that describe your Item.'),
             ]
         );
 
@@ -865,13 +875,13 @@ HTML
     public function getMarketplaceDataToOptions()
     {
         $optionsResult = [
-            ['value' => '', 'label' => '', 'style' => 'display: none;']
+            ['value' => '', 'label' => '', 'style' => 'display: none;'],
         ];
 
         foreach ($this->walmartHelper->getMarketplacesAvailableForApiCreation() as $marketplace) {
             $optionsResult[] = [
                 'value' => $marketplace->getId(),
-                'label' => $this->escapeHtml($marketplace->getTitle())
+                'label' => $this->escapeHtml($marketplace->getTitle()),
             ];
         }
 
@@ -883,11 +893,11 @@ HTML
         $optionsResult = [
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT,
-                'label' => $this->__('Product Quantity')
+                'label' => $this->__('Product Quantity'),
             ],
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER,
-                'label' => $this->__('Custom Value')
+                'label' => $this->__('Custom Value'),
             ],
         ];
 
@@ -899,7 +909,7 @@ HTML
 
         $tmpOption = [
             'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED,
-            'label' => $this->__('QTY')
+            'label' => $this->__('QTY'),
         ];
 
         if ($this->formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED) {
@@ -916,19 +926,22 @@ HTML
         $optionsResult = [
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
-                'label' => $this->__('Product Price')
+                'label' => $this->__('Product Price'),
             ],
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
-                'label' => $this->__('Special Price')
-            ]
+                'label' => $this->__('Special Price'),
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
-            'price_custom_attribute',
-            'text_price'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'price_custom_attribute',
+                'text_price'
+            )
+        );
     }
 
     public function getLagTimeOptions()
@@ -937,19 +950,19 @@ HTML
             [
                 'value' => SellingFormat::LAG_TIME_MODE_RECOMMENDED,
                 'label' => $this->__('Same Day'),
-                'attrs' => ['attribute_code' => 0]
+                'attrs' => ['attribute_code' => 0],
             ],
         ];
 
         $recommendedOptions = [
             'value' => [],
-            'label' => 'Recommended Value'
+            'label' => 'Recommended Value',
         ];
         for ($i = 1; $i <= 30; $i++) {
             $option = [
                 'value' => SellingFormat::LAG_TIME_MODE_RECOMMENDED,
                 'label' => $this->__($i . ' day(s)'),
-                'attrs' => ['attribute_code' => $i]
+                'attrs' => ['attribute_code' => $i],
             ];
 
             if ($this->formData['lag_time_value'] == $i) {
@@ -961,11 +974,14 @@ HTML
 
         $optionsResult[] = $recommendedOptions;
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::LAG_TIME_MODE_CUSTOM_ATTRIBUTE,
-            'lag_time_custom_attribute',
-            'text_select'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                SellingFormat::LAG_TIME_MODE_CUSTOM_ATTRIBUTE,
+                'lag_time_custom_attribute',
+                'text_select'
+            )
+        );
     }
 
     public function getItemWeightModeOptions()
@@ -973,15 +989,18 @@ HTML
         $optionsResult = [
             [
                 'value' => SellingFormat::WEIGHT_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value')
-            ]
+                'label' => $this->__('Custom Value'),
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
-            'item_weight_custom_attribute',
-            'text_weight'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                SellingFormat::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
+                'item_weight_custom_attribute',
+                'text_weight'
+            )
+        );
     }
 
     public function getMustShipAloneOptions()
@@ -989,7 +1008,7 @@ HTML
         $options = [
             [
                 'value' => SellingFormat::MUST_SHIP_ALONE_MODE_YES,
-                'label' => $this->__('Yes')
+                'label' => $this->__('Yes'),
             ],
             [
                 'value' => SellingFormat::MUST_SHIP_ALONE_MODE_NO,
@@ -1006,19 +1025,22 @@ HTML
         $optionsResult = [
             [
                 'value' => SellingFormat::MUST_SHIP_ALONE_MODE_NONE,
-                'label' => $this->__('None')
+                'label' => $this->__('None'),
             ],
             [
                 'value' => $options,
-                'label' => 'Custom Value'
-            ]
+                'label' => 'Custom Value',
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::MUST_SHIP_ALONE_MODE_CUSTOM_ATTRIBUTE,
-            'must_ship_alone_custom_attribute',
-            'boolean'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                SellingFormat::MUST_SHIP_ALONE_MODE_CUSTOM_ATTRIBUTE,
+                'must_ship_alone_custom_attribute',
+                'boolean'
+            )
+        );
     }
 
     public function getShipsInOriginalPackagingOptions()
@@ -1026,7 +1048,7 @@ HTML
         $options = [
             [
                 'value' => SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NO,
-                'label' => $this->__('Yes')
+                'label' => $this->__('Yes'),
             ],
             [
                 'value' => SellingFormat::MUST_SHIP_ALONE_MODE_NO,
@@ -1043,19 +1065,22 @@ HTML
         $optionsResult = [
             [
                 'value' => SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE,
-                'label' => $this->__('None')
+                'label' => $this->__('None'),
             ],
             [
                 'value' => $options,
-                'label' => 'Custom Value'
-            ]
+                'label' => 'Custom Value',
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_CUSTOM_ATTRIBUTE,
-            'ships_in_original_packaging_custom_attribute',
-            'boolean'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                SellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_CUSTOM_ATTRIBUTE,
+                'ships_in_original_packaging_custom_attribute',
+                'boolean'
+            )
+        );
     }
 
     public function getSaleTimeStartDateOptions()
@@ -1063,19 +1088,22 @@ HTML
         $optionsResult = [
             [
                 'value' => SellingFormat::DATE_NONE,
-                'label' => $this->__('Immediate')
+                'label' => $this->__('Immediate'),
             ],
             [
                 'value' => SellingFormat::DATE_VALUE,
-                'label' => $this->__('Custom Value')
-            ]
+                'label' => $this->__('Custom Value'),
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::DATE_ATTRIBUTE,
-            'sale_time_start_date_custom_attribute',
-            'text_date'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                SellingFormat::DATE_ATTRIBUTE,
+                'sale_time_start_date_custom_attribute',
+                'text_date'
+            )
+        );
     }
 
     public function getSaleTimeEndDateOptions()
@@ -1083,19 +1111,22 @@ HTML
         $optionsResult = [
             [
                 'value' => SellingFormat::DATE_NONE,
-                'label' => $this->__('Endless')
+                'label' => $this->__('Endless'),
             ],
             [
                 'value' => SellingFormat::DATE_VALUE,
-                'label' => $this->__('Custom Value')
-            ]
+                'label' => $this->__('Custom Value'),
+            ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            SellingFormat::DATE_ATTRIBUTE,
-            'sale_time_end_date_custom_attribute',
-            'text_date'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                SellingFormat::DATE_ATTRIBUTE,
+                'sale_time_end_date_custom_attribute',
+                'text_date'
+            )
+        );
     }
 
     public function getPromotionsHtml($form)
@@ -1110,9 +1141,9 @@ HTML
     public function getShippingOverrideRuleHtml($form)
     {
         return $this->getLayout()->createBlock(ShippingOverrideRules::class)
-                     ->setParentForm($form)
-                     ->setAllAttributes($this->allAttributes)
-                     ->toHtml();
+                    ->setParentForm($form)
+                    ->setAllAttributes($this->allAttributes)
+                    ->toHtml();
     }
 
     public function appendAttributesFields(
@@ -1131,13 +1162,13 @@ HTML
                 'text',
                 [
                     'data' => [
-                        'name'  => $name . '_name[]',
+                        'name' => $name . '_name[]',
                         'value' => $value,
                         'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\'' . $name . '\',this)',
                         'class' => 'M2ePro-required-when-visible',
                         'css_class' => $name . '_tr no-margin-bottom',
                         'after_element_html' => ' /',
-                    ]
+                    ],
                 ]
             );
             $nameBlock->setId($name . '_name_' . $i);
@@ -1158,7 +1189,7 @@ HTML
                         'class' => 'M2ePro-required-when-visible',
                         'css_class' => $name . '_tr no-margin-bottom',
                         'tooltip' => $this->__('Max. 100 characters.'),
-                    ]
+                    ],
                 ]
             );
             $valueBlock->setId($name . '_value_' . $i);
@@ -1167,23 +1198,23 @@ HTML
             $button = $this->getLayout()
                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
                            ->addData([
-                'label' => $this->__('Insert'),
-                'destination_id' => $name . '_value_' . $i,
-                'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
-                'on_click_callback' => "WalmartTemplateSellingFormatObj.multi_element_keyup
+                               'label' => $this->__('Insert'),
+                               'destination_id' => $name . '_value_' . $i,
+                               'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
+                               'on_click_callback' => "WalmartTemplateSellingFormatObj.multi_element_keyup
                                         ('{$name}',$('{$name}_value_{$i}'));",
-                'class' => 'primary attributes-container-td',
-                'style' => 'display: inline-block; margin-left: 5px;',
-            ]);
+                               'class' => 'primary attributes-container-td',
+                               'style' => 'display: inline-block; margin-left: 5px;',
+                           ]);
 
             $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
                 'data' => [
                     'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
-                    'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                    'create_magento_attribute' => true
-                ]
+                    'class' => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true,
+                ],
             ])->addCustomAttribute('allowed_attribute_types', 'text,select')
-                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+                                                    ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
 
             $selectAttrBlock->setId('selectAttr_' . $name . '_value_' . $i);
             $selectAttrBlock->setForm($fieldSet->getForm());
@@ -1191,14 +1222,15 @@ HTML
             $fieldSet->addField(
                 'attributes_container_' . $i,
                 self::CUSTOM_CONTAINER,
-                [   'container_id' => 'custom_title_tr',
+                [
+                    'container_id' => 'custom_title_tr',
                     'label' => $this->__('Attributes (name / value) #%number%', $i + 1),
                     'title' => $this->__('Attributes (name / value) #%number%', $i + 1),
                     'style' => 'display: inline-block;',
                     'text' => $nameBlock->toHtml() . $valueBlock->toHtml(),
                     'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
                     'css_class' => 'attributes_tr',
-                    'field_extra_attributes' => 'style="display: none;"'
+                    'field_extra_attributes' => 'style="display: none;"',
                 ]
             );
         }
@@ -1249,7 +1281,7 @@ HTML
 
         $this->jsPhp->addConstants(
             $this->dataHelper
-                 ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride::class)
+                ->getClassConstants(\Ess\M2ePro\Model\Walmart\Template\SellingFormat\ShippingOverride::class)
         );
 
         $this->jsPhp->addConstants(
@@ -1258,17 +1290,17 @@ HTML
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Template_SellingFormat'));
         $this->jsUrl->addUrls([
-            'formSubmit'    => $this->getUrl(
+            'formSubmit' => $this->getUrl(
                 '*/walmart_template_sellingFormat/save',
                 ['_current' => true]
             ),
             'formSubmitNew' => $this->getUrl('*/walmart_template_sellingFormat/save'),
-            'deleteAction'  => $this->getUrl(
+            'deleteAction' => $this->getUrl(
                 '*/walmart_template_sellingFormat/delete',
                 ['_current' => true]
             ),
 
-            'm2epro_skin_url' => $this->getViewFileUrl('Ess_M2ePro')
+            'm2epro_skin_url' => $this->getViewFileUrl('Ess_M2ePro'),
         ]);
 
         $this->jsTranslator->addTranslations([
@@ -1327,11 +1359,11 @@ HTML
 
         $this->js->addRequireJs(
             [
-            'jQuery'           => 'jquery',
-            'attr'             => 'M2ePro/Attribute',
-            'attribute_button' => 'M2ePro/Plugin/Magento/Attribute/Button',
-            'sellingFormat'    => 'M2ePro/Walmart/Template/SellingFormat',
-        ],
+                'jQuery' => 'jquery',
+                'attr' => 'M2ePro/Attribute',
+                'attribute_button' => 'M2ePro/Plugin/Magento/Attribute/Button',
+                'sellingFormat' => 'M2ePro/Walmart/Template/SellingFormat',
+            ],
             <<<JS
 
         M2ePro.formData = {$formData};
@@ -1414,7 +1446,7 @@ JS
                 }
             ),
             'label' => 'Magento Attribute',
-            'attrs' => ['is_magento_attribute' => true]
+            'attrs' => ['is_magento_attribute' => true],
         ];
 
         return $optionsResult;
@@ -1430,7 +1462,7 @@ JS
         }
 
         $attributeLabel = $this->dataHelper
-                               ->escapeHtml($this->magentoAttributeHelper->getAttributeLabel($attributeCode));
+            ->escapeHtml($this->magentoAttributeHelper->getAttributeLabel($attributeCode));
 
         $result = ['value' => $value, 'label' => $attributeLabel];
 
@@ -1439,6 +1471,7 @@ JS
         }
 
         $result['attrs'] = ['attrbiute_code' => $attributeCode];
+
         return $result;
     }
 
@@ -1455,7 +1488,7 @@ JS
             $tmpOption = [
                 'value' => $value,
                 'label' => $helper->escapeHtml($attribute['label']),
-                'attrs' => ['attribute_code' => $attribute['code']]
+                'attrs' => ['attribute_code' => $attribute['code']],
             ];
 
             if (is_callable($conditionCallback) && $conditionCallback($attribute)) {
@@ -1495,11 +1528,11 @@ JS
         string $priceModifier
     ) {
         $block = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\PriceChange::class)
-            ->addData([
-              'price_type' => 'price',
-              'price_modifier' => $priceModifier,
-            ]);
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\PriceChange::class)
+                      ->addData([
+                          'price_type' => 'price',
+                          'price_modifier' => $priceModifier,
+                      ]);
 
         $fieldset->addField(
             'price_change_placement',

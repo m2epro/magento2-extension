@@ -29,16 +29,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'edit_form',
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+            ],
+        ]);
 
         $form->addField(
             'group_id',
             'hidden',
             [
                 'name' => 'id',
-                'value' => $this->formData['id']
+                'value' => $this->formData['id'],
             ]
         );
 
@@ -47,7 +49,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             'hidden',
             [
                 'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY
+                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY,
             ]
         );
 
@@ -62,7 +64,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                 'title' => $this->__('Title'),
                 'class' => 'M2ePro-required-when-visible M2ePro-validate-category-group-title',
                 'value' => $this->formData['title'],
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -75,11 +77,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                 'title' => $this->__('Product Assigned to Categories'),
                 'values' => [
                     ['label' => $this->__('No Action'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE],
-                    ['label' => $this->__('Add to the Listing'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD]
+                    ['label' => $this->__('Add to the Listing'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD],
                 ],
                 'value' => $this->formData['adding_mode'],
                 'tooltip' => $this->__('Action which will be applied automatically.'),
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
@@ -92,7 +94,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                 'title' => $this->__('Add not Visible Individually Products'),
                 'values' => [
                     ['label' => $this->__('No'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO],
-                    ['label' => $this->__('Yes'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES]
+                    [
+                        'label' => $this->__('Yes'),
+                        'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
+                    ],
                 ],
                 'value' => $this->formData['adding_add_not_visible'],
                 'field_extra_attributes' => 'id="adding_add_not_visible_field"',
@@ -103,7 +108,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                     If set to <strong>No</strong>, only Variation (i.e.
                     Parent) Magento Products will be added to the Listing Automatically,
                     excluding Child Products.'
-                )
+                ),
             ]
         );
 
@@ -112,11 +117,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $categoryTemplates = $collection->getData();
 
-        $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
+        $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($categoryTemplates as $template) {
             $tmp = [
                 'label' => $this->escapeHtml($template['title']),
-                'value' => $template['id']
+                'value' => $template['id'],
             ];
 
             $options[] = $tmp;
@@ -124,7 +129,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $url = $this->getUrl('*/walmart_template_category/new', [
             'marketplace_id' => $this->getListing()->getMarketplaceId(),
-            'close_on_save' => true
+            'close_on_save' => true,
         ]);
 
         $fieldSet->addField(
@@ -138,15 +143,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                 'value' => $this->formData['adding_category_template_id'],
                 'field_extra_attributes' => 'id="auto_action_walmart_add_and_assign_category_template"',
                 'required' => true,
-                'after_element_html' => $this->getTooltipHtml($this->__(
-                    'Select Category Policy you want to assign to Product(s).<br><br>
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        'Select Category Policy you want to assign to Product(s).<br><br>
                     <strong>Note:</strong> Submitting of Category data is required when you create a new offer
                     on Walmart. Category Policy must be assigned to Products before they are added to M2E Pro Listing.'
-                )) . '<a href="javascript: void(0);"
+                    )
+                ) . '<a href="javascript: void(0);"
                     style="vertical-align: inherit; margin-left: 65px;"
-                    onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
-                    ListingAutoActionObj.reloadCategoryTemplates);">'.$this->__('Add New').'
-                 </a>'
+                    onclick="ListingAutoActionObj.addNewTemplate(\'' . $url . '\',
+                    ListingAutoActionObj.reloadCategoryTemplates);">' . $this->__('Add New') . '
+                 </a>',
             ]
         );
 
@@ -162,16 +169,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                     ['label' => $this->__('Stop on Channel'), 'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP],
                     [
                         'label' => $this->__('Stop on Channel and Delete from Listing'),
-                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
                     ],
                 ],
                 'value' => $this->formData['deleting_mode'],
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
         $form->setUseContainer(true);
         $this->setForm($form);
+
         return $this;
     }
 
@@ -186,7 +194,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'adding_category_template_id' => null
+            'adding_category_template_id' => null,
         ];
     }
 
@@ -198,7 +206,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 
         $('adding_mode')
             .observe('change', ListingAutoActionObj.addingModeChange)

@@ -40,20 +40,20 @@ class Form extends AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'      => 'edit_form',
-                    'method'  => 'post',
-                    'action'  => 'javascript:void(0)',
+                    'id' => 'edit_form',
+                    'method' => 'post',
+                    'action' => 'javascript:void(0)',
                     'enctype' => 'multipart/form-data',
-                    'class'   => 'admin__scope-old'
-                ]
+                    'class' => 'admin__scope-old',
+                ],
             ]
         );
 
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'legend'      => $this->__('General'),
-                'collapsable' => false
+                'legend' => $this->__('General'),
+                'collapsable' => false,
             ]
         );
 
@@ -74,36 +74,36 @@ class Form extends AbstractForm
             'title',
             'text',
             [
-                'name'     => 'title',
-                'label'    => $this->__('Title'),
-                'value'    => $title,
+                'name' => 'title',
+                'label' => $this->__('Title'),
+                'value' => $title,
                 'required' => true,
-                'class'    => 'M2ePro-listing-title',
-                'tooltip'  => $this->__(
+                'class' => 'M2ePro-listing-title',
+                'tooltip' => $this->__(
                     'Create a descriptive and meaningful Title for your M2E Pro Listing. <br/>
                     This is used for reference within M2E Pro and will not appear on your Amazon Listings.'
-                )
+                ),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'amazon_settings_fieldset',
             [
-                'legend'      => $this->__('Amazon Settings'),
-                'collapsable' => false
+                'legend' => $this->__('Amazon Settings'),
+                'collapsable' => false,
             ]
         );
 
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection()
-            ->setOrder('title', 'ASC');
+                                                  ->setOrder('title', 'ASC');
 
         $accountsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)
-            ->columns(
-                [
-                    'value' => 'id',
-                    'label' => 'title'
-                ]
-            );
+                           ->columns(
+                               [
+                                   'value' => 'id',
+                                   'label' => 'title',
+                               ]
+                           );
 
         $accountSelectionDisabled = false;
 
@@ -113,8 +113,8 @@ class Form extends AbstractForm
                 'account_id_hidden',
                 'hidden',
                 [
-                    'name'  => 'account_id',
-                    'value' => $accountId
+                    'name' => 'account_id',
+                    'value' => $accountId,
                 ]
             );
             $accountSelectionDisabled = true;
@@ -125,14 +125,14 @@ class Form extends AbstractForm
             'select',
             [
                 'data' => [
-                    'html_id'  => 'account_id',
-                    'name'     => 'account_id',
-                    'style'    => 'width: 50%;',
-                    'value'    => $accountId,
-                    'values'   => $accounts,
+                    'html_id' => 'account_id',
+                    'name' => 'account_id',
+                    'style' => 'width: 50%;',
+                    'value' => $accountId,
+                    'values' => $accounts,
                     'required' => count($accounts) > 1,
-                    'disabled' => $accountSelectionDisabled
-                ]
+                    'disabled' => $accountSelectionDisabled,
+                ],
             ]
         );
         $accountSelect->setForm($form);
@@ -143,9 +143,9 @@ class Form extends AbstractForm
             'account_container',
             self::CUSTOM_CONTAINER,
             [
-                'label'              => $this->__('Account'),
-                'style'              => 'line-height: 32px; display: initial;',
-                'text'               => <<<HTML
+                'label' => $this->__('Account'),
+                'style' => 'line-height: 32px; display: initial;',
+                'text' => <<<HTML
     <span id="account_label"></span>
     {$accountSelect->toHtml()}
 HTML
@@ -153,15 +153,15 @@ HTML
                 'after_element_html' => $this->getLayout()
                                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                              ->setData(
-                    [
-                        'id'      => 'add_account_button',
-                        'label'   => $this->__('Add Another'),
-                        'style'   => 'margin-left: 5px;' . $isAddAccountButtonHidden,
-                        'onclick' => '',
-                        'class'   => 'primary'
-                    ]
-                )->toHtml(),
-                'tooltip'            => $this->__('This is the user name of your Amazon Account.')
+                                                 [
+                                                     'id' => 'add_account_button',
+                                                     'label' => $this->__('Add Another'),
+                                                     'style' => 'margin-left: 5px;' . $isAddAccountButtonHidden,
+                                                     'onclick' => '',
+                                                     'class' => 'primary',
+                                                 ]
+                                             )->toHtml(),
+                'tooltip' => $this->__('This is the user name of your Amazon Account.'),
             ]
         );
 
@@ -170,10 +170,10 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'css_class' => 'no-margin-bottom',
-                'label'     => $this->__('Marketplace'),
-                'text'      => '<span id="marketplace_title"></span><p class="note" id="marketplace_url"></p>',
+                'label' => $this->__('Marketplace'),
+                'text' => '<span id="marketplace_title"></span><p class="note" id="marketplace_url"></p>',
 
-                'field_extra_attributes' => 'id="marketplace_info" style="display: none; margin-top: 0px"'
+                'field_extra_attributes' => 'id="marketplace_info" style="display: none; margin-top: 0px"',
             ]
         );
 
@@ -181,16 +181,16 @@ HTML
             'marketplace_id',
             'hidden',
             [
-                'name'  => 'marketplace_id',
-                'value' => $marketplaceId
+                'name' => 'marketplace_id',
+                'value' => $marketplaceId,
             ]
         );
 
         $fieldset = $form->addFieldset(
             'magento_fieldset',
             [
-                'legend'      => $this->__('Magento Settings'),
-                'collapsable' => false
+                'legend' => $this->__('Magento Settings'),
+                'collapsable' => false,
             ]
         );
 
@@ -198,15 +198,15 @@ HTML
             'store_id',
             self::STORE_SWITCHER,
             [
-                'name'                       => 'store_id',
-                'label'                      => $this->__('Magento Store View'),
-                'value'                      => $storeId,
-                'required'                   => true,
-                'has_empty_option'           => true,
+                'name' => 'store_id',
+                'label' => $this->__('Magento Store View'),
+                'value' => $storeId,
+                'required' => true,
+                'has_empty_option' => true,
                 'display_default_store_mode' => StoreSwitcher::DISPLAY_DEFAULT_STORE_MODE_DOWN,
-                'tooltip'                    => $this->__(
+                'tooltip' => $this->__(
                     'Choose the Magento Store View you want to use for this M2E Pro Listing.'
-                )
+                ),
             ]
         );
 
@@ -235,7 +235,7 @@ HTML
                 '*/amazon_account/newAction',
                 [
                     'close_on_save' => true,
-                    'wizard'        => (bool)$this->getRequest()->getParam('wizard', false)
+                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
                 ]
             ),
             'amazon_account/newAction'
@@ -245,7 +245,7 @@ HTML
             $this->getUrl(
                 '*/amazon_synchronization_log/index',
                 [
-                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false)
+                    'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
                 ]
             ),
             'logViewUrl'

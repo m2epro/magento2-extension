@@ -86,9 +86,10 @@ class Item extends AbstractGrid
     protected function _prepareCollection()
     {
         $collection = $this->amazonFactory->getObject('Order_Item')->getCollection()
-            ->addFieldToFilter('order_id', $this->order->getId());
+                                          ->addFieldToFilter('order_id', $this->order->getId());
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -99,97 +100,97 @@ class Item extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('products', [
-            'header'    => $this->__('Product'),
-            'align'     => 'left',
-            'width'     => '*',
-            'index'     => 'product_id',
-            'frame_callback' => [$this, 'callbackColumnProduct']
+            'header' => $this->__('Product'),
+            'align' => 'left',
+            'width' => '*',
+            'index' => 'product_id',
+            'frame_callback' => [$this, 'callbackColumnProduct'],
         ]);
 
         $this->addColumn('stock_availability', [
-            'header'=> $this->__('Stock Availability'),
+            'header' => $this->__('Stock Availability'),
             'width' => '100px',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('original_price', [
-            'header'    => $this->__('Original Price'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnOriginalPrice']
+            'header' => $this->__('Original Price'),
+            'align' => 'left',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnOriginalPrice'],
         ]);
 
         $this->addColumn('qty_purchased', [
-            'header'    => $this->__('QTY'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'index'     => 'qty_purchased',
-            'frame_callback' => [$this, 'callbackColumnQty']
+            'header' => $this->__('QTY'),
+            'align' => 'left',
+            'width' => '80px',
+            'index' => 'qty_purchased',
+            'frame_callback' => [$this, 'callbackColumnQty'],
         ]);
 
         $this->addColumn('price', [
-            'header'    => $this->__('Price'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'index'     => 'price',
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'header' => $this->__('Price'),
+            'align' => 'left',
+            'width' => '80px',
+            'index' => 'price',
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('discount_amount', [
-            'header'    => $this->__('Promotions'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnDiscountAmount']
+            'header' => $this->__('Promotions'),
+            'align' => 'left',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnDiscountAmount'],
         ]);
 
         if ($this->activeRecordFactory->getObject('Amazon_Order')->getResource()->hasGifts($this->order->getId())) {
             $this->addColumn('gift_price', [
-                'header'    => $this->__('Gift Wrap Price'),
-                'align'     => 'left',
-                'width'     => '80px',
-                'index'     => 'gift_price',
-                'frame_callback' => [$this, 'callbackColumnGiftPrice']
+                'header' => $this->__('Gift Wrap Price'),
+                'align' => 'left',
+                'width' => '80px',
+                'index' => 'gift_price',
+                'frame_callback' => [$this, 'callbackColumnGiftPrice'],
             ]);
 
             $this->addColumn('gift_options', [
-                'header'    => $this->__('Gift Options'),
-                'align'     => 'left',
-                'width'     => '250px',
-                'filter'    => false,
-                'sortable'  => false,
-                'frame_callback' => [$this, 'callbackColumnGiftOptions']
+                'header' => $this->__('Gift Options'),
+                'align' => 'left',
+                'width' => '250px',
+                'filter' => false,
+                'sortable' => false,
+                'frame_callback' => [$this, 'callbackColumnGiftOptions'],
             ]);
         }
 
         $this->addColumn('tax_percent', [
-            'header'         => $this->__('Tax Percent'),
-            'align'          => 'left',
-            'width'          => '80px',
-            'filter'         => false,
-            'sortable'       => false,
-            'frame_callback' => [$this, 'callbackColumnTaxPercent']
+            'header' => $this->__('Tax Percent'),
+            'align' => 'left',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnTaxPercent'],
         ]);
 
         $this->addColumn('row_total', [
-            'header'    => $this->__('Row Total'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'frame_callback' => [$this, 'callbackColumnRowTotal']
+            'header' => $this->__('Row Total'),
+            'align' => 'left',
+            'width' => '80px',
+            'frame_callback' => [$this, 'callbackColumnRowTotal'],
         ]);
 
         return parent::_prepareColumns();
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -236,8 +237,8 @@ HTML;
         $productLink = '';
         if ($productId = $row->getData('product_id')) {
             $productUrl = $this->getUrl('catalog/product/edit', [
-                'id'    => $productId,
-                'store' => $row->getOrder()->getStoreId()
+                'id' => $productId,
+                'store' => $row->getOrder()->getStoreId(),
             ]);
             $productLink = <<<HTML
 <a href="{$productUrl}" class="external-link" target="_blank">{$translationHelper->__('View')}</a>
@@ -257,9 +258,11 @@ HTML;
         }
 
         $isPretendedToBeSimple = false;
-        if ($amazonOrderItem->getParentObject()->getMagentoProduct() !== null &&
+        if (
+            $amazonOrderItem->getParentObject()->getMagentoProduct() !== null &&
             $amazonOrderItem->getParentObject()->getMagentoProduct()->isGroupedType() &&
-            $amazonOrderItem->getChannelItem() !== null) {
+            $amazonOrderItem->getChannelItem() !== null
+        ) {
             $isPretendedToBeSimple = $amazonOrderItem->getChannelItem()->isGroupedProductModeSet();
         }
 
@@ -284,10 +287,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -298,7 +301,7 @@ HTML;
         /** @var \Ess\M2ePro\Model\Order\Item $row */
 
         if (!$row->isMagentoProductExists()) {
-            return '<span style="color: red;">'.$this->__('Product Not Found').'</span>';
+            return '<span style="color: red;">' . $this->__('Product Not Found') . '</span>';
         }
 
         if ($row->getMagentoProduct() === null) {
@@ -313,10 +316,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -334,10 +337,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -348,10 +351,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -370,10 +373,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -392,10 +395,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -424,17 +427,18 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function callbackColumnGiftOptions($value, $row, $column, $isExport)
     {
-        if ($row->getChildObject()->getData('gift_type') == '' &&
+        if (
+            $row->getChildObject()->getData('gift_type') == '' &&
             $row->getChildObject()->getData('gift_message') == ''
         ) {
             return $this->__('N/A');
@@ -457,10 +461,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -476,10 +480,10 @@ HTML;
     }
 
     /**
-     * @param string                                             $value
-     * @param \Ess\M2ePro\Model\Order\Item                       $row
+     * @param string $value
+     * @param \Ess\M2ePro\Model\Order\Item $row
      * @param \Magento\Backend\Block\Widget\Grid\Column\Extended $column
-     * @param bool                                               $isExport
+     * @param bool $isExport
      *
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic

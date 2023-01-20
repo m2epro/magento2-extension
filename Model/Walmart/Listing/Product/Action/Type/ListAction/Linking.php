@@ -36,31 +36,37 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): Linking
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
     /**
      * @param array $productIdentifiers
+     *
      * @return $this
      */
     public function setProductIdentifiers(array $productIdentifiers): Linking
     {
         $this->productIdentifiers = $productIdentifiers;
+
         return $this;
     }
 
     /**
      * @param $sku
+     *
      * @return $this
      */
     public function setSku($sku): Linking
     {
         $this->sku = $sku;
+
         return $this;
     }
 
@@ -75,11 +81,13 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         if (!$this->getVariationManager()->isRelationMode()) {
             $this->linkSimpleOrIndividualProduct();
+
             return true;
         }
 
         if ($this->getVariationManager()->isRelationChildType()) {
             $this->linkChildProduct();
+
             return true;
         }
 
@@ -94,17 +102,17 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
     public function createWalmartItem(): \Ess\M2ePro\Model\Walmart\Item
     {
         $data = [
-            'account_id'     => $this->getListingProduct()->getListing()->getAccountId(),
+            'account_id' => $this->getListingProduct()->getListing()->getAccountId(),
             'marketplace_id' => $this->getListingProduct()->getListing()->getMarketplaceId(),
-            'sku'            => $this->getSku(),
-            'product_id'     => $this->getListingProduct()->getProductId(),
-            'store_id'       => $this->getListingProduct()->getListing()->getStoreId(),
+            'sku' => $this->getSku(),
+            'product_id' => $this->getListingProduct()->getProductId(),
+            'store_id' => $this->getListingProduct()->getListing()->getStoreId(),
         ];
 
-        if ($this->getVariationManager()->isPhysicalUnit() &&
+        if (
+            $this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()
         ) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
             $typeModel = $this->getVariationManager()->getTypeModel();
             $data['variation_product_options'] = \Ess\M2ePro\Helper\Json::encode($typeModel->getProductOptions());
@@ -124,7 +132,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
             $additionalData = $this->getListingProduct()->getAdditionalData();
             $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode([
-                'grouped_product_mode' => $additionalData['grouped_product_mode']
+                'grouped_product_mode' => $additionalData['grouped_product_mode'],
             ]);
         }
 
@@ -171,13 +179,13 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         $productIdentifiers = $this->getProductIdentifiers();
 
         $this->getWalmartListingProduct()->addData([
-            'wpid'    => $productIdentifiers['wpid'],
+            'wpid' => $productIdentifiers['wpid'],
             'item_id' => $productIdentifiers['item_id'],
-            'gtin'    => $productIdentifiers['gtin'],
-            'upc'     => $productIdentifiers['upc'] ?? null,
-            'ean'     => $productIdentifiers['ean'] ?? null,
-            'isbn'    => $productIdentifiers['isbn'] ?? null,
-            'sku'     => $this->getSku(),
+            'gtin' => $productIdentifiers['gtin'],
+            'upc' => $productIdentifiers['upc'] ?? null,
+            'ean' => $productIdentifiers['ean'] ?? null,
+            'isbn' => $productIdentifiers['isbn'] ?? null,
+            'sku' => $this->getSku(),
         ]);
 
         $this->getListingProduct()->save();
@@ -199,9 +207,9 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var ParentRelation $parentTypeModel */
         $parentTypeModel = $typeModel->getParentListingProduct()
-            ->getChildObject()
-            ->getVariationManager()
-            ->getTypeModel();
+                                     ->getChildObject()
+                                     ->getVariationManager()
+                                     ->getTypeModel();
 
         $parentTypeModel->getProcessor()->process();
     }

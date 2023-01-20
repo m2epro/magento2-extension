@@ -40,6 +40,7 @@ class Unlink extends Account
 
         if ($accountId && $account === null) {
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
+
             return $this->_redirect('*/amazon_account/index');
         }
 

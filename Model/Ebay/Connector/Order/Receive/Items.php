@@ -13,9 +13,9 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Order\Receive;
  */
 class Items extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
-    const TIMEOUT_ERRORS_COUNT_TO_RISE = 3;
-    const TIMEOUT_RISE_ON_ERROR        = 30;
-    const TIMEOUT_RISE_MAX_VALUE       = 1500;
+    public const TIMEOUT_ERRORS_COUNT_TO_RISE = 3;
+    public const TIMEOUT_RISE_ON_ERROR = 30;
+    public const TIMEOUT_RISE_MAX_VALUE = 1500;
 
     //########################################
 

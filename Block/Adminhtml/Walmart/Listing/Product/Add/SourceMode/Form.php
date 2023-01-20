@@ -18,10 +18,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'edit_form',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $form->addField(
@@ -32,7 +34,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'After you set up M2E Pro Listing, you can add Magento Products into it.
                     You are able to select the products either from the entire Magento catalog or a
                     certain Magento category. To proceed, choose your option below.'
-                )
+                ),
             ]
         );
 
@@ -43,14 +45,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $defaultSource = $this->getRequest()
-            ->getParam('source', \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT);
+                              ->getParam(
+                                  'source',
+                                  \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT
+                              );
 
         $fieldset->addField(
             'block-title',
             'label',
             [
                 'value' => $this->__('Choose how you want to display Products for selection'),
-                'field_extra_attributes' => 'style="font-weight: bold;font-size:18px;margin-bottom:0px"'
+                'field_extra_attributes' => 'style="font-weight: bold;font-size:18px;margin-bottom:0px"',
 
             ]
         );
@@ -63,12 +68,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     [
                         'value' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT,
-                        'label' => 'Products List'
-                    ]
+                        'label' => 'Products List',
+                    ],
                 ],
                 'value' => $defaultSource,
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Products displayed as a list without any grouping.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Products displayed as a list without any grouping.') . '</div>',
             ]
         );
 
@@ -81,12 +86,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => [
                     [
                         'value' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY,
-                        'label' => 'Categories'
-                    ]
+                        'label' => 'Categories',
+                    ],
                 ],
                 'value' => $defaultSource,
-                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">'.
-                    $this->__('Products grouped by Magento Categories.').'</div>'
+                'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
+                    $this->__('Products grouped by Magento Categories.') . '</div>',
             ]
         );
 

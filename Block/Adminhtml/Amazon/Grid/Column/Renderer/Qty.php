@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
@@ -14,10 +14,10 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
@@ -70,12 +70,13 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 
             if ($rowObject->getData('is_afn_channel')) {
                 $qty = $rowObject->getData('online_afn_qty') ?? $translator->__('N/A');
+
                 return "AFN ($qty)";
             }
 
             $showReceiving = ($this->getColumn()->getData('show_receiving') !== null)
-                              ? $this->getColumn()->getData('show_receiving')
-                              : true;
+                ? $this->getColumn()->getData('show_receiving')
+                : true;
 
             if ($value === null || $value === '') {
                 if ($showReceiving) {
@@ -137,12 +138,12 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         $afnCountWord = !empty($additionalData['afn_count']) ? $additionalData['afn_count']
             : $translator->__('show');
 
-        $resultValue = $resultValue."&nbsp;<a href=\"javascript:void(0)\"
+        $resultValue = $resultValue . "&nbsp;<a href=\"javascript:void(0)\"
                            class=\"hover-underline\"
                            title=\"{$linkTitle}\"
                            onclick=\"ListingGridObj.variationProductManageHandler.openPopUp(
                             {$listingProductId}, '{$vpmt}', '{$filter}'
-                        )\">[".$afnCountWord."]</a>";
+                        )\">[" . $afnCountWord . "]</a>";
 
         return <<<HTML
     <div>{$value}</div>

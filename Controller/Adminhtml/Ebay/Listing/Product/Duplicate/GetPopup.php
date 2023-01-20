@@ -23,8 +23,9 @@ class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         if ($listingProduct === null) {
             $this->setJsonContent([
-                'error' => $this->__("Unable to load product ID [{$listingProductId}].")
+                'error' => $this->__("Unable to load product ID [{$listingProductId}]."),
             ]);
+
             return $this->getResult();
         }
 
@@ -34,8 +35,9 @@ class GetPopup extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $block->setListingProduct($listingProduct);
 
         $this->setJsonContent([
-            'html' => $block->toHtml()
+            'html' => $block->toHtml(),
         ]);
+
         return $this->getResult();
     }
 

@@ -109,6 +109,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         }
 
         $dataBuilder = $this->getDataBuilder('qty');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -127,6 +128,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         }
 
         $dataBuilder = $this->getDataBuilder('lagTime');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -140,6 +142,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
         }
 
         $dataBuilder = $this->getDataBuilder('price');
+
         return $dataBuilder->getBuilderData();
     }
 
@@ -181,12 +184,12 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
 
     /**
      * @param $type
+     *
      * @return \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
      */
     private function getDataBuilder($type)
     {
         if (!isset($this->dataBuilders[$type])) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel $dataBuilder */
             $dataBuilder = $this->modelFactory
                 ->getObject('Walmart\Listing\Product\Action\DataBuilder\\' . ucfirst($type));

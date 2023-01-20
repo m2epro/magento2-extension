@@ -33,6 +33,7 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Price
                 $value ? 'selected="selected"' : '') . '>' . $currency . '</option>';
         }
         $html .= '</select>';
+
         return $html;
     }
 }

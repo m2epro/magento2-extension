@@ -11,12 +11,11 @@ namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
- */
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
+    /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     //########################################
@@ -53,6 +52,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
     /**
      * @param $helperName
      * @param array $arguments
+     *
      * @return \Magento\Framework\App\Helper\AbstractHelper
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -83,8 +83,10 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
         /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
         $helper = $this->getHelper('Magento\Staging');
 
-        if ($helper->isInstalled() && $helper->isStagedTable($table) &&
-            strpos($cond, 'entity_id') !== false) {
+        if (
+            $helper->isInstalled() && $helper->isStagedTable($table) &&
+            strpos($cond, 'entity_id') !== false
+        ) {
             $linkField = $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE)
                 ? $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE)
                 : $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE);

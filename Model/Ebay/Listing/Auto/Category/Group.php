@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Listing\Auto\Category\Group getParentObject()
  */
+
 namespace Ess\M2ePro\Model\Ebay\Listing\Auto\Category;
 
 /**
@@ -57,11 +58,11 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
-        $this->categoryTemplateModel               = null;
-        $this->categorySecondaryTemplateModel      = null;
-        $this->storeCategoryTemplateModel          = null;
+        $this->categoryTemplateModel = null;
+        $this->categorySecondaryTemplateModel = null;
+        $this->storeCategoryTemplateModel = null;
         $this->storeCategorySecondaryTemplateModel = null;
-        $this->magentoProductModel                 = null;
+        $this->magentoProductModel = null;
 
         return parent::delete();
     }
@@ -250,7 +251,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function isAddingModeAddAndAssignCategory()
     {
         return $this->getParentObject()->getAddingMode() ==
-              \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY;
+            \Ess\M2ePro\Model\Ebay\Listing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY;
     }
 
     //########################################

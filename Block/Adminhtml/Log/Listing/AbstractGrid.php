@@ -61,11 +61,13 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function addMaxAllowedLogsCountExceededNotification($date)
     {
-        $notification = $this->dataHelper->escapeJs($this->__(
-            'Using a Grouped View Mode, the logs records which are not older than %date% are
+        $notification = $this->dataHelper->escapeJs(
+            $this->__(
+                'Using a Grouped View Mode, the logs records which are not older than %date% are
             displayed here in order to prevent any possible Performance-related issues.',
-            $this->_localeDate->formatDate($date, \IntlDateFormatter::MEDIUM, true)
-        ));
+                $this->_localeDate->formatDate($date, \IntlDateFormatter::MEDIUM, true)
+            )
+        );
 
         $this->js->add("M2ePro.formData.maxAllowedLogsCountExceededNotification = '{$notification}';");
     }

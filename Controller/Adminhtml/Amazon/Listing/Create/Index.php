@@ -55,6 +55,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->clearSession();
             $this->getRequest()->setParam('clear', null);
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
+
             return;
         }
         // ---------------------------------------
@@ -98,6 +99,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->setSessionValue('store_id', (int)$post['store_id']);
 
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 2]);
+
             return;
         }
 
@@ -108,8 +110,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         $this->setWizardStep('listingGeneral');
 
-        $this->addContent($this->getLayout()
-                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General::class));
+        $this->addContent(
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General::class)
+        );
     }
 
     // ---------------------------------------
@@ -119,6 +123,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         if ($this->getSessionValue('account_id') === null) {
             $this->clearSession();
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
+
             return;
         }
 
@@ -127,7 +132,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
             $dataKeys = array_keys(
                 $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form::class)
-                                  ->getDefaultFieldsValues()
+                     ->getDefaultFieldsValues()
             );
 
             $post = $this->getRequest()->getPost();
@@ -149,7 +154,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                     '*/amazon_listing/transferring/index',
                     [
                         'listing_id' => $listingId,
-                        'step'       => 3,
+                        'step' => 3,
                     ]
                 );
             }
@@ -165,9 +170,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->_redirect(
                 '*/amazon_listing_product_add/index',
                 [
-                    'id'          => $listing->getId(),
+                    'id' => $listing->getId(),
                     'new_listing' => 1,
-                    'wizard'      => $this->getRequest()->getParam('wizard')
+                    'wizard' => $this->getRequest()->getParam('wizard'),
                 ]
             );
         }
@@ -211,6 +216,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             'Listing was Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
         );
+
         // ---------------------------------------
 
         return $listing;
@@ -221,6 +227,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     protected function getMarketplaceId()
     {
         $accountObj = $this->amazonFactory->getCachedObjectLoaded('Account', (int)$this->getSessionValue('account_id'));
+
         return (int)$accountObj->getChildObject()->getMarketplaceId();
     }
 

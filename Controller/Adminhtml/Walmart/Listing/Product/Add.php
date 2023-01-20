@@ -12,7 +12,9 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 abstract class Add extends Main
 {
+    /** @var string  */
     protected $sessionKey = 'walmart_listing_product_add';
+    /** @var null  */
     protected $listing = null;
 
     protected function setSessionValue($key, $value)
@@ -67,13 +69,13 @@ abstract class Add extends Main
     {
         $connWrite = $this->resourceConnection->getConnection();
         $tableWalmartListingProduct = $this->activeRecordFactory->getObject('Walmart_Listing_Product')
-            ->getResource()->getMainTable();
+                                                                ->getResource()->getMainTable();
 
         $productsIds = array_chunk($productsIds, 1000);
         foreach ($productsIds as $productsIdsChunk) {
             $connWrite->update($tableWalmartListingProduct, [
-                'template_category_id' => $templateId
-            ], '`listing_product_id` IN ('.implode(',', $productsIdsChunk).')');
+                'template_category_id' => $templateId,
+            ], '`listing_product_id` IN (' . implode(',', $productsIdsChunk) . ')');
         }
     }
 
@@ -85,7 +87,7 @@ abstract class Add extends Main
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('id', ['in' => $ids]);
+                                           ->addFieldToFilter('id', ['in' => $ids]);
 
         foreach ($collection->getItems() as $listingProduct) {
             /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */

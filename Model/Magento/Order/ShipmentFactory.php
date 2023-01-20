@@ -11,7 +11,6 @@ namespace Ess\M2ePro\Model\Magento\Order;
 use Ess\M2ePro\Model\MSI\Magento\Order\Shipment as MSIShipment;
 use Magento\InventoryShippingAdminUi\Model\IsOrderSourceManageable;
 use Magento\InventoryShippingAdminUi\Model\IsWebsiteInMultiSourceMode;
-
 use Magento\InventorySalesApi\Model\GetSkuFromOrderItemInterface;
 use Magento\InventoryApi\Api\StockRepositoryInterface;
 use Magento\InventoryConfigurationApi\Api\GetStockItemConfigurationInterface;
@@ -43,6 +42,7 @@ class ShipmentFactory
     /**
      * @param \Magento\Sales\Model\Order $order
      * @param array $data
+     *
      * @return \Magento\Sales\Api\Data\ShipmentInterface
      */
     public function create(\Magento\Sales\Api\Data\OrderInterface $order, array $data = [])
@@ -56,6 +56,7 @@ class ShipmentFactory
 
     /**
      * @param \Magento\Sales\Model\Order $order
+     *
      * @return bool
      */
     private function isMsiMode(\Magento\Sales\Api\Data\OrderInterface $order)
@@ -65,8 +66,9 @@ class ShipmentFactory
         }
 
         $websiteId = (int)$order->getStore()->getWebsiteId();
+
         return $this->objectManager->get(IsWebsiteInMultiSourceMode::class)->execute($websiteId) &&
-               $this->isOrderSourceManageable($order);
+            $this->isOrderSourceManageable($order);
     }
 
     private function isOrderSourceManageable(\Magento\Sales\Api\Data\OrderInterface $order)

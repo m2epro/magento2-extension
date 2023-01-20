@@ -30,7 +30,6 @@ class Session implements ChannelInterface
 
     /**
      * @inheritDoc
-     *
      * @throws Logic
      */
     public function addMessage(DataObject $message): void

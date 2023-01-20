@@ -24,6 +24,7 @@ class Diff extends \Ess\M2ePro\Model\AbstractModel
     public function setNewSnapshot(array $snapshot)
     {
         $this->newSnapshot = $snapshot;
+
         return $this;
     }
 
@@ -35,6 +36,7 @@ class Diff extends \Ess\M2ePro\Model\AbstractModel
     public function setOldSnapshot(array $snapshot)
     {
         $this->oldSnapshot = $snapshot;
+
         return $this;
     }
 
@@ -52,7 +54,7 @@ class Diff extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    protected function isSettingsDifferent($keys, $groupKey = NULL)
+    protected function isSettingsDifferent($keys, $groupKey = null)
     {
         $newSnapshotData = $this->newSnapshot;
         if (null !== $groupKey && isset($newSnapshotData[$groupKey])) {

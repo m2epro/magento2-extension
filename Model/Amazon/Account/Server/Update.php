@@ -36,9 +36,9 @@ class Update
             'entityRequester',
             [
                 'account_server_hash' => $account->getServerHash(),
-                'token'               => $token,
-                'marketplace_id'      => $account->getMarketplace()->getNativeId(),
-                'merchant_id'         => $account->getMerchantId(),
+                'token' => $token,
+                'marketplace_id' => $account->getMarketplace()->getNativeId(),
+                'merchant_id' => $account->getMerchantId(),
             ]
         );
 

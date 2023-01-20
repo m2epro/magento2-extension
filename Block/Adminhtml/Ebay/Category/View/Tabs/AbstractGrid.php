@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs;
 
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs as CategoryViewTabs;
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser as Chooser;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs as CategoryViewTabs;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser as Chooser;
 
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
@@ -37,6 +37,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
             $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
             $collection->getSelect()->order($columnIndex . ' ' . strtoupper($column->getDir()));
         }
+
         return $this;
     }
 
@@ -47,12 +48,12 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
         $this->addColumn(
             'product_id',
             [
-                'header'    => $this->__('Product ID'),
-                'align'     => 'right',
-                'width'     => '100px',
-                'type'      => 'number',
-                'index'     => 'entity_id',
-                'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+                'header' => $this->__('Product ID'),
+                'align' => 'right',
+                'width' => '100px',
+                'type' => 'number',
+                'index' => 'entity_id',
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
 
             ]
         );
@@ -60,116 +61,116 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
         $this->addColumn(
             'name',
             [
-                'header'    => $this->__('Product Title / Product SKU'),
-                'align'     => 'left',
-                'width'     => '700px',
-                'type'      => 'text',
-                'index'     => 'online_title',
+                'header' => $this->__('Product Title / Product SKU'),
+                'align' => 'left',
+                'width' => '700px',
+                'type' => 'text',
+                'index' => 'online_title',
                 'frame_callback' => [$this, 'callbackColumnTitle'],
-                'filter_condition_callback' => [$this, 'callbackFilterTitle']
+                'filter_condition_callback' => [$this, 'callbackFilterTitle'],
             ]
         );
 
         $this->addColumn(
             'is_custom_template',
             [
-                'header'       => $this->__('Item Specifics'),
-                'width'        => '100px',
-                'index'        => 'is_custom_template',
+                'header' => $this->__('Item Specifics'),
+                'width' => '100px',
+                'index' => 'is_custom_template',
                 'filter_index' => 'is_custom_template',
-                'type'         => 'options',
-                'sortable'     => false,
-                'options'      => [
+                'type' => 'options',
+                'sortable' => false,
+                'options' => [
                     1 => $this->__('Custom'),
-                    0 => $this->__('Default')
-                ]
+                    0 => $this->__('Default'),
+                ],
             ]
         );
 
         $this->addColumn(
             'ebay_item_id',
             [
-                'header'    => $this->__('Item ID'),
-                'align'     => 'left',
-                'width'     => '100px',
-                'type'      => 'text',
-                'index'     => 'item_id',
-                'renderer'  => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class
+                'header' => $this->__('Item ID'),
+                'align' => 'left',
+                'width' => '100px',
+                'type' => 'text',
+                'index' => 'item_id',
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId::class,
             ]
         );
 
         $this->addColumn(
             'available_qty',
             [
-                'header'    => $this->__('Available QTY'),
-                'align'     => 'right',
-                'width'     => '100px',
-                'type'      => 'number',
-                'index'     => 'available_qty',
-                'filter_index'      => 'available_qty',
-                'renderer'          => OnlineQty::class,
+                'header' => $this->__('Available QTY'),
+                'align' => 'right',
+                'width' => '100px',
+                'type' => 'number',
+                'index' => 'available_qty',
+                'filter_index' => 'available_qty',
+                'renderer' => OnlineQty::class,
                 'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
-                'filter_condition_callback' => [$this, 'callbackFilterOnlineQty']
+                'filter_condition_callback' => [$this, 'callbackFilterOnlineQty'],
             ]
         );
 
         $this->addColumn(
             'online_qty_sold',
             [
-                'header'   => $this->__('Sold QTY'),
-                'align'    => 'right',
-                'width'    => '100px',
-                'type'     => 'number',
-                'index'    => 'online_qty_sold',
-                'renderer' => OnlineQty::class
+                'header' => $this->__('Sold QTY'),
+                'align' => 'right',
+                'width' => '100px',
+                'type' => 'number',
+                'index' => 'online_qty_sold',
+                'renderer' => OnlineQty::class,
             ]
         );
 
         $this->addColumn(
             'price',
             [
-                'header'    => $this->__('Price'),
-                'align'     =>'right',
-                'width'     => '100px',
-                'type'      => 'number',
-                'index'     => 'online_current_price',
+                'header' => $this->__('Price'),
+                'align' => 'right',
+                'width' => '100px',
+                'type' => 'number',
+                'index' => 'online_current_price',
                 'filter_index' => 'online_current_price',
                 'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\CurrentPrice::class,
-                'filter_condition_callback' => [$this, 'callbackFilterPrice']
+                'filter_condition_callback' => [$this, 'callbackFilterPrice'],
             ]
         );
 
         $this->addColumn(
             'end_date',
             [
-                'header'   => $this->__('End Date'),
-                'align'    => 'right',
-                'width'    => '100px',
-                'type'     => 'datetime',
-                'format'   => \IntlDateFormatter::MEDIUM,
-                'index'    => 'end_date',
-                'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class
+                'header' => $this->__('End Date'),
+                'align' => 'right',
+                'width' => '100px',
+                'type' => 'datetime',
+                'format' => \IntlDateFormatter::MEDIUM,
+                'index' => 'end_date',
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class,
             ]
         );
 
         $statusColumn = [
-            'header'       => $this->__('Status'),
-            'width'        => '100px',
-            'index'        => 'status',
+            'header' => $this->__('Status'),
+            'width' => '100px',
+            'index' => 'status',
             'filter_index' => 'status',
-            'type'         => 'options',
-            'sortable'     => false,
-            'options'      => [
+            'type' => 'options',
+            'sortable' => false,
+            'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => $this->__('Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN     => $this->__('Listed (Hidden)'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD       => $this->__('Sold'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED    => $this->__('Stopped'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED   => $this->__('Finished'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => $this->__('Pending')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Listed'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Listed (Hidden)'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => $this->__('Sold'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Stopped'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending'),
             ],
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Status::class,
-            'filter_condition_callback' => [$this, 'callbackFilterStatus']
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
         ];
 
         $this->addColumn('status', $statusColumn);
@@ -188,7 +189,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
             'editEbayCategory',
             [
                 'label' => $this->__('Edit'),
-                'url'   => ''
+                'url' => '',
             ]
         );
 
@@ -199,7 +200,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $title       = $row->getData('name');
+        $title = $row->getData('name');
         $onlineTitle = $row->getData('online_title');
 
         !empty($onlineTitle) && $title = $onlineTitle;
@@ -212,8 +213,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
 
         if ($sku === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('entity_id'))
-                ->getSku();
+                                      ->setProductId($row->getData('entity_id'))
+                                      ->getSku();
         }
 
         $onlineSku = $row->getData('online_sku');
@@ -237,10 +238,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'online_sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%'],
-                ['attribute'=>'online_title','like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
+                ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
             ]
         );
     }
@@ -330,7 +331,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
 
         $this->jsTranslator->addTranslations([
             'Category Settings' => $this->__('Category Settings'),
-            'Specifics' => $this->__('Specifics')
+            'Specifics' => $this->__('Specifics'),
         ]);
 
         $this->js->addOnReadyJs(

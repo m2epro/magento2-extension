@@ -41,7 +41,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('walmartListingViewGrid'.$this->listing['id']);
+        $this->setId('walmartListingViewGrid' . $this->listing['id']);
         // ---------------------------------------
 
         $this->showAdvancedFilterProductsOption = false;
@@ -66,13 +66,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['lp' => $lpTable],
             'product_id=entity_id',
             [
-                'id'              => 'id',
-                'status'          => 'status',
-                'component_mode'  => 'component_mode',
-                'additional_data' => 'additional_data'
+                'id' => 'id',
+                'status' => 'status',
+                'component_mode' => 'component_mode',
+                'additional_data' => 'additional_data',
             ],
             [
-                'listing_id' => (int)$this->listing['id']
+                'listing_id' => (int)$this->listing['id'],
             ]
         );
 
@@ -81,21 +81,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['wlp' => $wlpTable],
             'listing_product_id=id',
             [
-                'template_category_id'           => 'template_category_id',
-                'variation_child_statuses'       => 'variation_child_statuses',
-                'walmart_sku'                    => 'sku',
-                'gtin'                           => 'gtin',
-                'upc'                            => 'upc',
-                'ean'                            => 'ean',
-                'isbn'                           => 'isbn',
-                'wpid'                           => 'wpid',
-                'item_id'                        => 'item_id',
-                'online_qty'                     => 'online_qty',
-                'online_price'                   => 'online_price',
-                'is_variation_parent'            => 'is_variation_parent',
-                'is_online_price_invalid'        => 'is_online_price_invalid',
-                'online_start_date'              => 'online_start_date',
-                'online_end_date'                => 'online_end_date',
+                'template_category_id' => 'template_category_id',
+                'variation_child_statuses' => 'variation_child_statuses',
+                'walmart_sku' => 'sku',
+                'gtin' => 'gtin',
+                'upc' => 'upc',
+                'ean' => 'ean',
+                'isbn' => 'isbn',
+                'wpid' => 'wpid',
+                'item_id' => 'item_id',
+                'online_qty' => 'online_qty',
+                'online_price' => 'online_price',
+                'is_variation_parent' => 'is_variation_parent',
+                'is_online_price_invalid' => 'is_online_price_invalid',
+                'online_start_date' => 'online_start_date',
+                'online_end_date' => 'online_end_date',
             ],
             '{{table}}.variation_parent_id is NULL'
         );
@@ -105,7 +105,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['wtc' => $tdTable],
             'id=template_category_id',
             [
-                'template_category_title' => 'title'
+                'template_category_title' => 'title',
             ],
             null,
             'left'
@@ -123,24 +123,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'   => $this->__('Product ID'),
-            'align'    => 'right',
-            'width'    => '100px',
-            'type'     => 'number',
-            'index'    => 'entity_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
             'store_id' => $this->listing->getStoreId(),
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
         ]);
 
         $this->addColumn('name', [
-            'header'    => $this->__('Product Title / Product SKU'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'name',
+            'header' => $this->__('Product Title / Product SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
             'filter_index' => 'name',
-            'escape'       => false,
+            'escape' => false,
             'frame_callback' => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('sku', [
@@ -151,7 +151,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index' => 'walmart_sku',
             'filter_index' => 'walmart_sku',
             'show_edit_sku' => false,
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class,
         ]);
 
         $this->addColumn('gtin', [
@@ -161,10 +161,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type' => 'text',
             'index' => 'gtin',
             'show_edit_identifier' => false,
-            'marketplace_id'  => $this->listing->getMarketplaceId(),
+            'marketplace_id' => $this->listing->getMarketplaceId(),
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
             'filter_index' => 'gtin',
-            'filter_condition_callback' => [$this, 'callbackFilterGtin']
+            'filter_condition_callback' => [$this, 'callbackFilterGtin'],
         ]);
 
         $this->addColumn('category_template', [
@@ -174,22 +174,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type' => 'text',
             'index' => 'template_category_title',
             'filter_index' => 'template_category_title',
-            'frame_callback' => [$this, 'callbackColumnTemplateCategory']
+            'frame_callback' => [$this, 'callbackColumnTemplateCategory'],
         ]);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'left',
-            'width'     => '100px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'header' => $this->__('Actions'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'field' => 'id',
-            'no_link'  => true,
+            'no_link' => true,
             'group_order' => $this->getGroupOrder(),
-            'actions'     => $this->getColumnActionsItems()
+            'actions' => $this->getColumnActionsItems(),
         ]);
 
         return parent::_prepareColumns();
@@ -199,7 +199,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $groups = [
             'edit_template_category' => $this->__('Category Policy'),
-            'other' => $this->__('Other')
+            'other' => $this->__('Other'),
         ];
 
         return $groups;
@@ -210,19 +210,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $actions = [
             'assignTemplateCategory' => [
                 'caption' => $this->__('Use Another Category Policy'),
-                'group'   => 'edit_template_category',
-                'field'   => 'id',
-                'onclick_action' => 'ListingGridObj.actions[\'changeTemplateCategoryIdAction\']'
+                'group' => 'edit_template_category',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.actions[\'changeTemplateCategoryIdAction\']',
             ],
         ];
 
         $actions['remapProduct'] = [
-            'caption'            => $this->__('Link to another Magento Product'),
-            'group'              => 'other',
-            'field'              => 'id',
+            'caption' => $this->__('Link to another Magento Product'),
+            'group' => 'other',
+            'field' => 'id',
             'only_remap_product' => true,
-            'style'              => 'width: 255px',
-            'onclick_action'     => 'ListingGridObj.actions[\'remapProductAction\']'
+            'style' => 'width: 255px',
+            'onclick_action' => 'ListingGridObj.actions[\'remapProductAction\']',
         ];
 
         return $actions;
@@ -240,25 +240,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         $groups = [
             'category_policy' => $this->__('Category Policy'),
-            'other'           => $this->__('Other'),
+            'other' => $this->__('Other'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
 
         $this->getMassactionBlock()->addItem('changeTemplateCategoryId', [
-            'label'    => $this->__('Use Another'),
-            'url'      => ''
+            'label' => $this->__('Use Another'),
+            'url' => '',
         ], 'category_policy');
 
         $this->getMassactionBlock()->addItem('moving', [
-            'label'    => $this->__('Move Item(s) to Another Listing'),
-            'url'      => ''
+            'label' => $this->__('Move Item(s) to Another Listing'),
+            'url' => '',
         ], 'other');
 
         $this->getMassactionBlock()->addItem('duplicate', [
-            'label'    => $this->__('Duplicate'),
-            'url'      => ''
+            'label' => $this->__('Duplicate'),
+            'url' => '',
         ], 'other');
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -268,18 +269,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-        $value = '<span>'.$productTitle.'</span>';
+        $value = '<span>' . $productTitle . '</span>';
 
         $sku = $row->getData('sku');
 
         if ($row->getData('sku') === null) {
             $sku = $this->modelFactory->getObject('Magento\Product')
-                ->setProductId($row->getData('entity_id'))
-                ->getSku();
+                                      ->setProductId($row->getData('entity_id'))
+                                      ->getSku();
         }
 
-        $value .= '<br/><strong>'.$this->__('SKU') .
-            ':</strong> '.$this->dataHelper->escapeHtml($sku) . '<br/>';
+        $value .= '<br/><strong>' . $this->__('SKU') .
+            ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -345,7 +346,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         if ($row->getData('template_category_id')) {
             $url = $this->getUrl('*/walmart_template_category/edit', [
                 'id' => $row->getData('template_category_id'),
-                'close_on_save' => true
+                'close_on_save' => true,
             ]);
 
             $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_category_title'));
@@ -368,8 +369,8 @@ HTML;
 
         $collection->addFieldToFilter(
             [
-                ['attribute'=>'sku','like'=>'%'.$value.'%'],
-                ['attribute'=>'name', 'like'=>'%'.$value.'%']
+                ['attribute' => 'sku', 'like' => '%' . $value . '%'],
+                ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ]
         );
     }

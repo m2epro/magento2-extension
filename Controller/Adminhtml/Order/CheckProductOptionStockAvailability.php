@@ -34,6 +34,7 @@ class CheckProductOptionStockAvailability extends Order
 
         if (count($optionsData) == 0 || !$orderItem->getId()) {
             $this->setJsonContent(['is_in_stock' => false]);
+
             return $this->getResult();
         }
 
@@ -41,7 +42,7 @@ class CheckProductOptionStockAvailability extends Order
 
         foreach ($optionsData as $optionId => $optionData) {
             $optionId = (int)$optionId;
-            $valueId  = (int)$optionData['value_id'];
+            $valueId = (int)$optionData['value_id'];
 
             $associatedProducts["{$optionId}::{$valueId}"] = $optionData['product_ids'];
         }
@@ -57,6 +58,7 @@ class CheckProductOptionStockAvailability extends Order
 
             if (!$magentoProductTemp->isStockAvailability()) {
                 $this->setJsonContent(['is_in_stock' => false]);
+
                 return $this->getResult();
             }
         }

@@ -13,9 +13,11 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product;
  */
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var null  */
     private $logsActionId = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################
@@ -37,18 +39,19 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param int $action
      * @param array|\Ess\M2ePro\Model\Listing\Product $products
      * @param array $params
+     *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function process($action, $products, array $params = [])
     {
         $params = array_merge([
-            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
         ], $params);
 
         if (empty($params['logs_action_id'])) {
             $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
-                                       ->getResource()->getNextActionId();
+                                                            ->getResource()->getNextActionId();
             $params['logs_action_id'] = $this->logsActionId;
         } else {
             $this->logsActionId = $params['logs_action_id'];
@@ -73,8 +76,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $sortedProductsData
      * @param string $action
      * @param array $params
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     *
      * @return int
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function processGroupedProducts(
         array $sortedProductsData,
@@ -100,13 +104,15 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Listing\Product $product
      * @param string $action
      * @param array $params
+     *
      * @return int
      */
     protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = [])
     {
         try {
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-            $connectorName = 'Amazon\Connector\Product\\'.$this->getActionNick($action).'\Requester';
+            $connectorName = 'Amazon\Connector\Product\\' . $this->getActionNick($action) . '\Requester';
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Product\Requester $connector */
             $connector = $dispatcher->getCustomConnector($connectorName, $params);
@@ -148,7 +154,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             $products = [$products];
         }
 
-        $preparedProducts     = [];
+        $preparedProducts = [];
         $parentsForProcessing = [];
 
         foreach ($products as $listingProduct) {

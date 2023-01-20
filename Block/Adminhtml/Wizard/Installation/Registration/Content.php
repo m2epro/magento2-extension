@@ -100,7 +100,7 @@ HTML
         // ---------------------------------------
         $earlierFormData = [];
 
-        if($this->manager->isExistInfo()){
+        if ($this->manager->isExistInfo()) {
             $earlierFormDataObj = $this->manager->getInfo();
 
             $earlierFormData['email'] = $earlierFormDataObj->getEmail();
@@ -119,6 +119,7 @@ HTML
             'isLicenseStepFinished',
             !empty($earlierFormData) && $this->helperModuleLicense->getKey()
         );
+
         // ---------------------------------------
 
         return parent::_beforeToHtml();
@@ -129,13 +130,13 @@ HTML
         $form = $this->_formFactory->create([
             'data' => [
                 'id' => 'edit_form',
-            ]
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
             'block_notice_wizard_installation_step_license',
             [
-                'legend' => ''
+                'legend' => '',
             ]
         );
 
@@ -148,7 +149,7 @@ HTML
                 'value' => $this->getUserInfoValue('email'),
                 'class' => 'M2ePro-validate-email validate-length maximum-length-80',
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -161,7 +162,7 @@ HTML
                 'value' => $this->getUserInfoValue('firstname'),
                 'class' => 'validate-length maximum-length-40',
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -174,7 +175,7 @@ HTML
                 'value' => $this->getUserInfoValue('lastname'),
                 'class' => 'validate-length maximum-length-40',
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -187,7 +188,7 @@ HTML
                 'value' => $this->getUserInfoValue('phone'),
                 'class' => 'validate-length maximum-length-40',
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -201,7 +202,7 @@ HTML
                 'class' => 'validate-length maximum-length-40',
                 'values' => $this->getData('available_countries'),
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -214,7 +215,7 @@ HTML
                 'value' => $this->getUserInfoValue('city'),
                 'class' => 'validate-length maximum-length-40',
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -227,7 +228,7 @@ HTML
                 'value' => $this->getUserInfoValue('postal_code'),
                 'class' => 'validate-length maximum-length-40',
                 'required' => true,
-                'disabled' => $this->getData('isLicenseStepFinished')
+                'disabled' => $this->getData('isLicenseStepFinished'),
             ]
         );
 
@@ -250,10 +251,11 @@ CSS
                     'checked' => false,
                     'value' => 1,
                     'required' => true,
-                    'after_element_html' => $this->__(<<<HTML
+                    'after_element_html' => $this->__(
+                        <<<HTML
 &nbsp; I agree to terms and <a href="https://m2epro.com/privacy-policy" target="_blank">privacy policy</a>
 HTML
-                    )
+                    ),
                 ]
             );
         }
@@ -277,6 +279,7 @@ HTML
         }
 
         $notSelectedWord = $this->__('not selected');
+
         return <<<HTML
 <span style="font-style: italic; color: grey;">
     [{$notSelectedWord}]

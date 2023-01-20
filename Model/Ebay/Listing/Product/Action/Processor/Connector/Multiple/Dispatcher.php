@@ -18,6 +18,7 @@ class Dispatcher extends \Ess\M2ePro\Model\Ebay\Connector\Dispatcher
     /**
      * @param Command\VirtualWithoutCall[] $connectors
      * @param bool $asynchronous
+     *
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -28,7 +29,6 @@ class Dispatcher extends \Ess\M2ePro\Model\Ebay\Connector\Dispatcher
         $multipleConnection->setAsynchronous($asynchronous);
 
         foreach ($connectors as $key => $connector) {
-
             /** @var \Ess\M2ePro\Model\Connector\Connection\Multiple\RequestContainer $requestContainer */
             $requestContainer = $this->modelFactory->getObject('Connector_Connection_Multiple_RequestContainer');
             $requestContainer->setRequest($connector->getCommandConnection()->getRequest());

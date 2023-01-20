@@ -86,15 +86,15 @@ class Transferring extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             '',
             [
                 'data' => [
-                    'listing' => $this->listing
-                ]
+                    'listing' => $this->listing,
+                ],
             ]
         );
 
         if (!$block->getAccounts()->count()) {
             $this->setJsonContent(
                 [
-                    'error'   => true,
+                    'error' => true,
                     'message' => $this->getHelper('Module_Translation')->__(
                         <<<HTML
 To use the Sell on Another Marketplace feature properly,
@@ -105,7 +105,7 @@ Click <a href="%url%" target="_blank">here</a> to learn about the Sell on Anothe
 HTML
                         ,
                         $this->getHelper('Module_Support')->getDocumentationArticleUrl('x/sH2bB')
-                    )
+                    ),
                 ]
             );
 
@@ -125,9 +125,9 @@ HTML
             return $this->_redirect(
                 '*/amazon_listing/transferring/index',
                 [
-                    '_current'   => true,
+                    '_current' => true,
                     'listing_id' => $this->listing->getId(),
-                    'step'       => 3
+                    'step' => 3,
                 ]
             );
         }
@@ -137,9 +137,9 @@ HTML
             : $this->templateManager->getNotMarketplaceDependentTemplates();
 
         $sessionData = [
-            'account_id'     => (int)$this->getRequest()->getParam('account_id'),
+            'account_id' => (int)$this->getRequest()->getParam('account_id'),
             'marketplace_id' => (int)$this->getRequest()->getParam('marketplace_id'),
-            'store_id'       => (int)$this->getRequest()->getParam('store_id')
+            'store_id' => (int)$this->getRequest()->getParam('store_id'),
         ];
 
         foreach ($templates as $nick) {
@@ -189,10 +189,10 @@ HTML
         return $this->_redirect(
             '*/amazon_listing_create/index',
             [
-                '_current'      => true,
-                'step'          => 1,
+                '_current' => true,
+                'step' => 1,
                 'creation_mode' => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
-                'wizard'        => true
+                'wizard' => true,
             ]
         );
     }
@@ -209,8 +209,8 @@ HTML
             '',
             [
                 'data' => [
-                    'listing' => $this->listing
-                ]
+                    'listing' => $this->listing,
+                ],
             ]
         );
 

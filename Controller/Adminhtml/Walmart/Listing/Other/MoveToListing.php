@@ -74,29 +74,30 @@ class MoveToListing extends Main
             if (count($selectedProducts) == $errorsCount) {
                 $this->setJsonContent(
                     [
-                        'result'  => false,
+                        'result' => false,
                         'message' => $this->__(
                             'Products were not moved because they already exist in the selected Listing.'
-                        )
+                        ),
                     ]
                 );
+
                 return $this->getResult();
             }
 
             $this->setJsonContent(
                 [
-                    'result'   => true,
+                    'result' => true,
                     'isFailed' => true,
-                    'message'  => $this->__(
+                    'message' => $this->__(
                         'Some products were not moved because they already exist in the selected Listing.'
-                    )
+                    ),
                 ]
             );
         } else {
             $this->setJsonContent(
                 [
-                    'result'   => true,
-                    'message'  => $this->__('Product(s) was Moved.')
+                    'result' => true,
+                    'message' => $this->__('Product(s) was Moved.'),
                 ]
             );
         }

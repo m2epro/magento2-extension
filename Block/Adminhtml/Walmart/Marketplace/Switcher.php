@@ -21,9 +21,9 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher $accountSwitcher */
         $accountSwitcher = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Switcher::class)
-                                             ->setData([
-            'component_mode' => $this->getData('component_mode')
-        ]);
+                                ->setData([
+                                    'component_mode' => $this->getData('component_mode'),
+                                ]);
 
         if ($accountSwitcher->getSelectedParam() !== null) {
             $this->hasDefaultOption = false;

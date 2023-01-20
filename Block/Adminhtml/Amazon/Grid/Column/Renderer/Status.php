@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 use Ess\M2ePro\Model\Listing\Log;
@@ -16,7 +16,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
@@ -25,7 +25,7 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\View */
@@ -65,10 +65,10 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 
     public function render(\Magento\Framework\DataObject $row)
     {
-        $listingProductId  = (int)$row->getData('id');
-        $additionalData    = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+        $listingProductId = (int)$row->getData('id');
+        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
         $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
-        $isVariationGrid   = false;
+        $isVariationGrid = false;
 
         if ($this->getColumn() !== null && $this->getColumn()->getData('is_variation_grid') !== null) {
             $isVariationGrid = $this->getColumn()->getData('is_variation_grid');
@@ -107,11 +107,11 @@ HTML;
                 . $this->getScheduledTag($row)
                 . $this->getLockedTag($row);
         } else {
-            $statusUnknown   = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
+            $statusUnknown = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
             $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
-            $statusListed    = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-            $statusStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-            $statusBlocked   = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
+            $statusListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
+            $statusStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+            $statusBlocked = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
             $generalId = $row->getData('general_id');
             $variationChildStatuses = $row->getData('variation_child_statuses');
@@ -164,7 +164,7 @@ HTML;
 
                 $generalId = $row->getData('general_id');
                 if (!empty($generalId)) {
-                    $vpmt .= '('. $generalId .')';
+                    $vpmt .= '(' . $generalId . ')';
                 }
 
                 $productsCount = <<<HTML
@@ -174,7 +174,7 @@ HTML;
    href="javascript:void(0)">[{$productsCount}]</a>
 HTML;
 
-                $html .= $this->getProductStatus($status) . '&nbsp;'. $productsCount . '<br/>';
+                $html .= $this->getProductStatus($status) . '&nbsp;' . $productsCount . '<br/>';
             }
 
             $html .= $this->getScheduledTag($row) . $this->getLockedTag($row);
@@ -197,10 +197,10 @@ HTML;
                 return '<span style="color: green;">' . $translator->__('Active') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                return'<span style="color: red;">' . $translator->__('Inactive') . '</span>';
+                return '<span style="color: red;">' . $translator->__('Inactive') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                return'<span style="color: orange; font-weight: bold;">' .
+                return '<span style="color: orange; font-weight: bold;">' .
                     $translator->__('Incomplete') . '</span>';
         }
 
@@ -215,7 +215,7 @@ HTML;
          * @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $scheduledActionsCollection
          */
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
+                                                                ->getCollection();
         $scheduledActionsCollection->addFieldToFilter('listing_product_id', $row['id']);
 
         /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
@@ -238,8 +238,10 @@ HTML;
                 $reviseParts = [];
 
                 $additionalData = $scheduledAction->getAdditionalData();
-                if (!empty($additionalData['configurator']) &&
-                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])) {
+                if (
+                    !empty($additionalData['configurator']) &&
+                    !isset($this->parentAndChildReviseScheduledCache[$row->getData('id')])
+                ) {
                     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
                     $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
                     $configurator->setUnserializedData($additionalData['configurator']);
@@ -264,8 +266,8 @@ HTML;
                 }
 
                 if (!empty($reviseParts)) {
-                    $html .= '<br/><span style="color: #605fff">[Revise of '.implode(', ', $reviseParts)
-                        .' is Scheduled...]</span>';
+                    $html .= '<br/><span style="color: #605fff">[Revise of ' . implode(', ', $reviseParts)
+                        . ' is Scheduled...]</span>';
                 } else {
                     $html .= '<br/><span style="color: #605fff">[Revise is Scheduled...]</span>';
                 }
@@ -352,10 +354,10 @@ HTML;
         $listingProductId = $row->getData('id');
         if (!isset($this->lockedDataCache[$listingProductId])) {
             $objectLocks = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId)
-                ->getProcessingLocks();
+                                                     ->getProcessingLocks();
             $tempArray = [
                 'object_locks' => $objectLocks,
-                'in_action'    => !empty($objectLocks),
+                'in_action' => !empty($objectLocks),
             ];
             $this->lockedDataCache[$listingProductId] = $tempArray;
         }

@@ -65,7 +65,6 @@ class Factory
         string $className,
         \Ess\M2ePro\Model\Listing $listing
     ): \Ess\M2ePro\Model\Listing\Auto\Actions\Listing {
-
         return $this->objectManager->create(
             $className,
             ['listing' => $listing]

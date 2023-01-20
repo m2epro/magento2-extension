@@ -57,10 +57,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             throw new \Ess\M2ePro\Model\Exception\Logic('Marketplace ID is empty.');
         }
 
-        if ($this->rawData['country_mode'] == Shipping::COUNTRY_MODE_CUSTOM_VALUE &&
+        if (
+            $this->rawData['country_mode'] == Shipping::COUNTRY_MODE_CUSTOM_VALUE &&
             empty($this->rawData['country_custom_value']) ||
             $this->rawData['country_mode'] == Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE &&
-            empty($this->rawData['country_custom_attribute'])) {
+            empty($this->rawData['country_custom_attribute'])
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Country is empty.');
         }
 
@@ -147,7 +149,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'local_shipping_discount_promotional_mode',
             'international_shipping_mode',
             'international_shipping_discount_promotional_mode',
-            'cross_border_trade'
+            'cross_border_trade',
         ];
 
         foreach ($modes as $mode) {
@@ -181,7 +183,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'weight_mode',
             'weight_minor',
             'weight_major',
-            'weight_attribute'
+            'weight_attribute',
         ];
 
         foreach ($keys as $key) {
@@ -190,7 +192,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         $nullKeys = [
             'local_handling_cost',
-            'international_handling_cost'
+            'international_handling_cost',
         ];
 
         foreach ($nullKeys as $key) {
@@ -202,8 +204,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
     protected function canSaveCalculatedData()
     {
-        if ($this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_LOCAL ||
-            $this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_FREIGHT) {
+        if (
+            $this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_LOCAL ||
+            $this->rawData['local_shipping_mode'] == Shipping::SHIPPING_TYPE_FREIGHT
+        ) {
             return false;
         }
 
@@ -217,7 +221,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         $connection->delete(
             $this->activeRecordFactory->getObject('Ebay_Template_Shipping_Calculated')->getResource()->getMainTable(),
             [
-                'template_shipping_id = ?' => (int)$templateShippingId
+                'template_shipping_id = ?' => (int)$templateShippingId,
             ]
         );
 
@@ -286,14 +290,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             }
 
             $services[] = [
-                'template_shipping_id'  => $templateShippingId,
-                'cost_mode'             => $costMode,
-                'cost_value'            => $cost,
-                'shipping_value'        => $this->rawData['shipping_service'][$i],
-                'shipping_type'         => $shippingType,
+                'template_shipping_id' => $templateShippingId,
+                'cost_mode' => $costMode,
+                'cost_value' => $cost,
+                'shipping_value' => $this->rawData['shipping_service'][$i],
+                'shipping_type' => $shippingType,
                 'cost_additional_value' => $costAdditional,
-                'priority'              => $this->rawData['shipping_priority'][$i],
-                'locations'             => $this->getHelper('Data')->jsonEncode($locations)
+                'priority' => $this->rawData['shipping_priority'][$i],
+                'locations' => $this->getHelper('Data')->jsonEncode($locations),
             ];
         }
 
@@ -304,12 +308,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
     {
         $connection = $this->resourceConnection->getConnection();
         $etssTable = $this->activeRecordFactory->getObject('Ebay_Template_Shipping_Service')
-            ->getResource()->getMainTable();
+                                               ->getResource()->getMainTable();
 
         $connection->delete(
             $etssTable,
             [
-                'template_shipping_id = ?' => (int)$templateShippingId
+                'template_shipping_id = ?' => (int)$templateShippingId,
             ]
         );
 
@@ -363,7 +367,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'cross_border_trade' => Shipping::CROSS_BORDER_TRADE_NONE,
             'excluded_locations' => $this->getHelper('Data')->jsonEncode([]),
 
-            'local_shipping_mode' =>  Shipping::SHIPPING_TYPE_FLAT,
+            'local_shipping_mode' => Shipping::SHIPPING_TYPE_FLAT,
             'local_shipping_discount_promotional_mode' => 0,
             'local_shipping_discount_combined_profile_id' => $this->getHelper('Data')->jsonEncode([]),
             'local_shipping_rate_table_mode' => 0,
@@ -383,13 +387,13 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'package_size_value' => '',
             'package_size_attribute' => '',
 
-            'dimension_mode'   => ShippingCalculated::DIMENSION_NONE,
-            'dimension_width_value'  => '',
+            'dimension_mode' => ShippingCalculated::DIMENSION_NONE,
+            'dimension_width_value' => '',
             'dimension_length_value' => '',
-            'dimension_depth_value'  => '',
-            'dimension_width_attribute'  => '',
+            'dimension_depth_value' => '',
+            'dimension_width_attribute' => '',
             'dimension_length_attribute' => '',
-            'dimension_depth_attribute'  => '',
+            'dimension_depth_attribute' => '',
 
             'weight_mode' => ShippingCalculated::WEIGHT_NONE,
             'weight_minor' => '',
@@ -400,7 +404,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'international_handling_cost' => null,
             // ---------------------------------------
 
-            'services' => []
+            'services' => [],
         ];
     }
 

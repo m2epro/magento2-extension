@@ -29,7 +29,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'consumer_id',
             'client_id',
             'client_secret',
-            'private_key'
+            'private_key',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -43,7 +43,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'related_store_id',
 
             'other_listings_synchronization',
-            'other_listings_mapping_mode'
+            'other_listings_mapping_mode',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -73,7 +73,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'mapping_title_mode',
             'mapping_title_priority',
-            'mapping_title_attribute'
+            'mapping_title_attribute',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -136,7 +136,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempData['mapping_title_mode'])) {
             $mappingSettings['title']['mode'] = (int)$tempData['mapping_title_mode'];
 
-            if ($tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
+            if (
+                $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT ||
                 $tempData['mapping_title_mode'] == Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
             ) {
                 $mappingSettings['title']['priority'] = (int)$tempData['mapping_title_priority'];
@@ -167,7 +168,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'mode',
             'store_mode',
-            'store_id'
+            'store_id',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -185,7 +186,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'product_mode',
             'product_tax_class_id',
-            'store_id'
+            'store_id',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -220,7 +221,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             ? $this->rawData['magento_orders_settings'][$tempKey] : [];
 
         $keys = [
-            'mode'
+            'mode',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -251,7 +252,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         if (isset($tempSettings['mode'])) {
             $notificationsKeys = [
                 'order_created',
-                'invoice_created'
+                'invoice_created',
             ];
             $tempSettings = !empty($tempSettings['notifications']) ? $tempSettings['notifications'] : [];
             foreach ($notificationsKeys as $key) {
@@ -268,7 +269,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'mode',
             'processing',
-            'shipped'
+            'shipped',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -302,7 +303,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         // ---------------------------------------
         $keys = [
             'create_magento_invoice',
-            'create_magento_shipment'
+            'create_magento_shipment',
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -311,7 +312,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         }
 
         if (isset($this->rawData['other_carrier']) && isset($this->rawData['other_carrier_url'])) {
-
             $otherCarriers = [];
             $carriers = array_filter($this->rawData['other_carrier']);
             $carrierURLs = array_filter($this->rawData['other_carrier_url']);
@@ -319,7 +319,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             foreach ($carriers as $index => $code) {
                 $otherCarriers[] = [
                     'code' => $code,
-                    'url'  => isset($carrierURLs[$index]) ? $carrierURLs[$index] : ''
+                    'url' => isset($carrierURLs[$index]) ? $carrierURLs[$index] : '',
                 ];
             }
 
@@ -332,54 +332,54 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     public function getDefaultData()
     {
         return [
-            'title'          => '',
+            'title' => '',
             'marketplace_id' => 0,
-            'consumer_id'    => '',
-            'private_key'    => '',
-            'client_id'      => '',
-            'client_secret'  => '',
+            'consumer_id' => '',
+            'private_key' => '',
+            'client_id' => '',
+            'client_secret' => '',
 
             'related_store_id' => 0,
 
-            'other_listings_synchronization'  => 1,
-            'other_listings_mapping_mode'     => 0,
+            'other_listings_synchronization' => 1,
+            'other_listings_mapping_mode' => 0,
             'other_listings_mapping_settings' => [],
 
             'magento_orders_settings' => [
-                'listing'        => [
-                    'mode'       => 1,
+                'listing' => [
+                    'mode' => 1,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
-                    'store_id'   => null
+                    'store_id' => null,
                 ],
-                'listing_other'  => [
-                    'mode'                 => 1,
-                    'product_mode'         => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
+                'listing_other' => [
+                    'mode' => 1,
+                    'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id'             => null,
+                    'store_id' => null,
                 ],
-                'number'         => [
+                'number' => [
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
                         'prefix' => '',
-                    ]
+                    ],
                 ],
-                'tax'            => [
-                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED
+                'tax' => [
+                    'mode' => Account::MAGENTO_ORDERS_TAX_MODE_MIXED,
                 ],
-                'customer'       => [
-                    'mode'          => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
-                    'id'            => null,
-                    'website_id'    => null,
-                    'group_id'      => null,
+                'customer' => [
+                    'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,
+                    'id' => null,
+                    'website_id' => null,
+                    'group_id' => null,
                     'notifications' => [
                         'invoice_created' => false,
-                        'order_created'   => false
+                        'order_created' => false,
                     ],
                 ],
                 'status_mapping' => [
-                    'mode'       => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
+                    'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,
                     'processing' => Account::MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING,
-                    'shipped'    => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
+                    'shipped' => Account::MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED,
                 ],
                 'refund_and_cancellation' => [
                     'refund_mode' => 1,
@@ -388,9 +388,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'ship_by_date' => 1,
                 ],
             ],
-            'create_magento_invoice'  => 1,
+            'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,
-            'other_carriers'          => []
+            'other_carriers' => [],
         ];
     }
 

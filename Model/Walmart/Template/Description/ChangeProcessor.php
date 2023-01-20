@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\Description;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_description_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_description_change_processor';
 
     //########################################
 
@@ -32,8 +32,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
 
         if ($diff->isDetailsDifferent()) {
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
-                'priority'  => 5,
+                'type' => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'priority' => 5,
             ];
         }
 

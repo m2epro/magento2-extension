@@ -63,6 +63,7 @@ abstract class LogicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Var
     protected function getMagentoAttributes()
     {
         $magentoVariations = $this->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
+
         return array_keys($magentoVariations['set']);
     }
 

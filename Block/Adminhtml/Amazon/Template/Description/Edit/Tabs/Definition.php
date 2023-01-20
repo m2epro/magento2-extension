@@ -74,7 +74,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 $this->allAttributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             ),
-            'text_price'  => $this->magentoAttributeHelper
+            'text_price' => $this->magentoAttributeHelper
                 ->filterByInputTypes($this->allAttributes, ['text', 'price']),
         ];
     }
@@ -103,7 +103,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/YAMVB')
-                )
+                ),
             ]
         );
 
@@ -114,7 +114,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_general', [
-           'legend' => $this->__('General'), 'collapsable' => true
+            'legend' => $this->__('General'),
+            'collapsable' => true,
         ]);
 
         $fieldSet->addField(
@@ -130,7 +131,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ],
                 'value' => $this->formData['title_mode'],
                 'class' => 'select required-entry',
-                'tooltip' => $this->__('Item\'s Title that buyers will see on Amazon Listing.')
+                'tooltip' => $this->__('Item\'s Title that buyers will see on Amazon Listing.'),
             ]
         );
 
@@ -139,22 +140,22 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
             'data' => [
                 'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
-                'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                'create_magento_attribute' => true
-            ]
+                'class' => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                'create_magento_attribute' => true,
+            ],
         ])->addCustomAttribute('allowed_attribute_types', 'text,select')
-            ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+                                                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
 
         $selectAttrBlock->setId('selectAttr_title_template');
         $selectAttrBlock->setForm($this->_form);
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
-                                    ->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => 'title_template',
-            'class' => 'select_attributes_for_title_button primary',
-            'style' => 'display: inline-block;'
-        ]);
+                       ->addData([
+                           'label' => $this->__('Insert'),
+                           'destination_id' => 'title_template',
+                           'class' => 'select_attributes_for_title_button primary',
+                           'style' => 'display: inline-block;',
+                       ]);
 
         $fieldSet->addField(
             'title_template',
@@ -167,7 +168,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="custom_title_tr" style="display: none;"',
-                'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml()
+                'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
             ]
         );
 
@@ -182,15 +183,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[brand_custom_attribute]',
-                'value' => $this->formData['brand_custom_attribute']
+                'value' => $this->formData['brand_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['brand_mode'] == DefinitionTemplate::BRAND_MODE_NONE ||
-            $this->formData['brand_mode'] == DefinitionTemplate::BRAND_MODE_CUSTOM_VALUE) {
+        if (
+            $this->formData['brand_mode'] == DefinitionTemplate::BRAND_MODE_NONE ||
+            $this->formData['brand_mode'] == DefinitionTemplate::BRAND_MODE_CUSTOM_VALUE
+        ) {
             $defaultValue = $this->formData['brand_mode'];
         }
 
@@ -206,7 +209,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'required' => true,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Required for creating new ASIN/ISBN.')
+                'tooltip' => $this->__('Required for creating new ASIN/ISBN.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -233,15 +236,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[manufacturer_custom_attribute]',
-                'value' => $this->formData['manufacturer_custom_attribute']
+                'value' => $this->formData['manufacturer_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['manufacturer_mode'] == DefinitionTemplate::MANUFACTURER_MODE_NONE ||
-            $this->formData['manufacturer_mode'] == DefinitionTemplate::MANUFACTURER_MODE_CUSTOM_VALUE) {
+        if (
+            $this->formData['manufacturer_mode'] == DefinitionTemplate::MANUFACTURER_MODE_NONE ||
+            $this->formData['manufacturer_mode'] == DefinitionTemplate::MANUFACTURER_MODE_CUSTOM_VALUE
+        ) {
             $defaultValue = $this->formData['manufacturer_mode'];
         }
 
@@ -257,7 +262,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'select',
                 'required' => true,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Required for creating new ASIN/ISBN.')
+                'tooltip' => $this->__('Required for creating new ASIN/ISBN.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -284,17 +289,18 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[manufacturer_part_number_custom_attribute]',
-                'value' => $this->formData['manufacturer_part_number_custom_attribute']
+                'value' => $this->formData['manufacturer_part_number_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['manufacturer_part_number_mode']
-                            == DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_NONE ||
+        if (
             $this->formData['manufacturer_part_number_mode']
-                            == DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE
+            == DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_NONE ||
+            $this->formData['manufacturer_part_number_mode']
+            == DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE
         ) {
             $defaultValue = $this->formData['manufacturer_part_number_mode'];
         }
@@ -310,7 +316,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Manufacturer Part Number of the Product(s). Max. 40 characters.')
+                'tooltip' => $this->__('Manufacturer Part Number of the Product(s). Max. 40 characters.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -339,14 +345,15 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[item_package_quantity_custom_attribute]',
-                'value' => $this->formData['item_package_quantity_custom_attribute']
+                'value' => $this->formData['item_package_quantity_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['item_package_quantity_mode']
+        if (
+            $this->formData['item_package_quantity_mode']
             == DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_NONE ||
             $this->formData['item_package_quantity_mode']
             == DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_VALUE
@@ -364,8 +371,10 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'values' => $this->getPackageQuantityOptions(),
                 'value' => $defaultValue,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('The number of units included in the Item you are offering for sale,
-                <br/>such that each unit is packaged for individual sale.')
+                'tooltip' => $this->__(
+                    'The number of units included in the Item you are offering for sale,
+                <br/>such that each unit is packaged for individual sale.'
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -382,7 +391,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validate-greater-than',
                 'required' => true,
                 'field_extra_attributes' => 'id="item_package_quantity_custom_value_tr"',
-                'css_class' => 'entry-edit'
+                'css_class' => 'entry-edit',
             ]
         )->addCustomAttribute('min_value', 1);
 
@@ -393,15 +402,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[number_of_items_custom_attribute]',
-                'value' => $this->formData['number_of_items_custom_attribute']
+                'value' => $this->formData['number_of_items_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['number_of_items_mode'] == DefinitionTemplate::NUMBER_OF_ITEMS_MODE_NONE ||
-            $this->formData['number_of_items_mode'] == DefinitionTemplate::NUMBER_OF_ITEMS_MODE_CUSTOM_VALUE) {
+        if (
+            $this->formData['number_of_items_mode'] == DefinitionTemplate::NUMBER_OF_ITEMS_MODE_NONE ||
+            $this->formData['number_of_items_mode'] == DefinitionTemplate::NUMBER_OF_ITEMS_MODE_CUSTOM_VALUE
+        ) {
             $defaultValue = $this->formData['number_of_items_mode'];
         }
 
@@ -422,7 +433,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                      <strong>For ex.</strong>, if you are selling a case of 10 packages of socks,
                      and each package contains
                      <br/>3 pairs of socks, the case would have Package Quantity = 10 and Number of Items = 30.'
-                )
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -439,7 +450,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validate-greater-than',
                 'required' => true,
                 'field_extra_attributes' => 'id="number_of_items_custom_value_tr"',
-                'css_class' => 'entry-edit'
+                'css_class' => 'entry-edit',
             ]
         )->addCustomAttribute('min_value', 1);
 
@@ -450,7 +461,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_price', [
-            'legend' => $this->__('Price'), 'collapsable' => true
+            'legend' => $this->__('Price'),
+            'collapsable' => true,
         ]);
 
         // ---------------------------------------
@@ -460,7 +472,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[msrp_rrp_custom_attribute]',
-                'value' => $this->formData['msrp_rrp_custom_attribute']
+                'value' => $this->formData['msrp_rrp_custom_attribute'],
             ]
         );
 
@@ -487,7 +499,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                      MSRP term is used in the US, while in the UK it is known as RRP.<br/><br/>
                      <b>Note:</b> Title value is required for creation of all
                      Description Policies because of technical reasons.'
-                )
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
@@ -498,7 +510,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_image', [
-            'legend' => $this->__('Images'), 'collapsable' => true, 'class' => 'entry-edit'
+            'legend' => $this->__('Images'),
+            'collapsable' => true,
+            'class' => 'entry-edit',
         ]);
 
         // ---------------------------------------
@@ -508,15 +522,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[image_main_attribute]',
-                'value' => $this->formData['image_main_attribute']
+                'value' => $this->formData['image_main_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['image_main_mode'] == DefinitionTemplate::IMAGE_MAIN_MODE_NONE ||
-            $this->formData['image_main_mode'] == DefinitionTemplate::IMAGE_MAIN_MODE_PRODUCT) {
+        if (
+            $this->formData['image_main_mode'] == DefinitionTemplate::IMAGE_MAIN_MODE_NONE ||
+            $this->formData['image_main_mode'] == DefinitionTemplate::IMAGE_MAIN_MODE_PRODUCT
+        ) {
             $defaultValue = $this->formData['image_main_mode'];
         }
 
@@ -531,7 +547,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'required' => false,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Required for creating new ASIN/ISBN.')
+                'tooltip' => $this->__('Required for creating new ASIN/ISBN.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
@@ -542,7 +558,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[gallery_images_limit]',
-                'value' => $this->formData['gallery_images_limit']
+                'value' => $this->formData['gallery_images_limit'],
             ]
         );
 
@@ -553,7 +569,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[gallery_images_attribute]',
-                'value' => $this->formData['gallery_images_attribute']
+                'value' => $this->formData['gallery_images_attribute'],
             ]
         );
 
@@ -585,17 +601,18 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[image_variation_difference_attribute]',
-                'value' => $this->formData['image_variation_difference_attribute']
+                'value' => $this->formData['image_variation_difference_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['image_variation_difference_mode']
-                                == DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_NONE ||
+        if (
             $this->formData['image_variation_difference_mode']
-                                == DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT
+            == DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_NONE ||
+            $this->formData['image_variation_difference_mode']
+            == DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT
         ) {
             $defaultValue = $this->formData['image_variation_difference_mode'];
         }
@@ -611,8 +628,10 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'create_magento_attribute' => true,
                 'field_extra_attributes' => 'id="gallery_images_mode_tr"',
-                'tooltip' => $this->__('Allows to display Variations of Amazon Product by
-                the main images of Child Products.')
+                'tooltip' => $this->__(
+                    'Allows to display Variations of Amazon Product by
+                the main images of Child Products.'
+                ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
@@ -623,7 +642,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_description', [
-            'legend' => $this->__('Description'), 'collapsable' => true, 'class' => 'entry-edit'
+            'legend' => $this->__('Description'),
+            'collapsable' => true,
+            'class' => 'entry-edit',
         ]);
 
         // ---------------------------------------
@@ -639,17 +660,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ['value' => DefinitionTemplate::DESCRIPTION_MODE_NONE, 'label' => $this->__('None')],
                     [
                         'value' => DefinitionTemplate::DESCRIPTION_MODE_PRODUCT,
-                        'label' => $this->__('Product Description')
+                        'label' => $this->__('Product Description'),
                     ],
                     [
                         'value' => DefinitionTemplate::DESCRIPTION_MODE_SHORT,
-                        'label' => $this->__('Product Short Description')
+                        'label' => $this->__('Product Short Description'),
                     ],
                     ['value' => DefinitionTemplate::DESCRIPTION_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
                 ],
                 'value' => $this->formData['description_mode'],
                 'class' => 'required-entry',
-                'tooltip' => $this->__('Description is limited to 2\'000 characters.')
+                'tooltip' => $this->__('Description is limited to 2\'000 characters.'),
             ]
         );
 
@@ -660,7 +681,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         foreach ($this->allAttributes as $attribute) {
             $options[] = [
                 'value' => $attribute['code'],
-                'label' => $helper->escapeHtml($attribute['label'])
+                'label' => $helper->escapeHtml($attribute['label']),
             ];
         }
 
@@ -680,12 +701,12 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         );
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
-                                    ->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => 'description_template',
-            'class' => 'primary',
-            'style' => 'display: inline-block;'
-        ]);
+                       ->addData([
+                           'label' => $this->__('Insert'),
+                           'destination_id' => 'description_template',
+                           'class' => 'primary',
+                           'style' => 'display: inline-block;',
+                       ]);
 
         $fieldSet->addField(
             'selectAttr_description_template',
@@ -695,7 +716,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Product Attribute'),
                 'values' => $options,
                 'create_magento_attribute' => true,
-                'after_element_html' => $button->toHtml()
+                'after_element_html' => $button->toHtml(),
             ]
         );
 
@@ -706,7 +727,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_product_dimensions', [
-            'legend' => $this->__('Product Dimensions'), 'collapsable' => true, 'class' => 'entry-edit'
+            'legend' => $this->__('Product Dimensions'),
+            'collapsable' => true,
+            'class' => 'entry-edit',
         ]);
 
         // ---------------------------------------
@@ -722,40 +745,46 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ['value' => DefinitionTemplate::DIMENSION_VOLUME_MODE_NONE, 'label' => $this->__('None')],
                     [
                         'value' => DefinitionTemplate::DIMENSION_VOLUME_MODE_CUSTOM_VALUE,
-                        'label' => $this->__('Custom Value')
+                        'label' => $this->__('Custom Value'),
                     ],
                     [
                         'value' => DefinitionTemplate::DIMENSION_VOLUME_MODE_CUSTOM_ATTRIBUTE,
-                        'label' => $this->__('Custom Attribute')
+                        'label' => $this->__('Custom Attribute'),
                     ],
                 ],
                 'value' => $this->formData['item_dimensions_volume_mode'],
                 'class' => 'select',
-                'tooltip' => $this->__('Physical dimensions of Product without package')
+                'tooltip' => $this->__('Physical dimensions of Product without package'),
             ]
         );
 
         // ---------------------------------------
 
-        $lengthBlock = $this->elementFactory->create('text', ['data' => [
-            'name' => 'definition[item_dimensions_volume_length_custom_value]',
-            'value' => $this->escapeHtml($this->formData['item_dimensions_volume_length_custom_value']),
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than'
-        ]])->addCustomAttribute('min_value', '0.01');
+        $lengthBlock = $this->elementFactory->create('text', [
+            'data' => [
+                'name' => 'definition[item_dimensions_volume_length_custom_value]',
+                'value' => $this->escapeHtml($this->formData['item_dimensions_volume_length_custom_value']),
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than',
+            ],
+        ])->addCustomAttribute('min_value', '0.01');
         $lengthBlock->setForm($form);
 
-        $widthBlock = $this->elementFactory->create('text', ['data' => [
-            'name' => 'definition[item_dimensions_volume_width_custom_value]',
-            'value' => $this->escapeHtml($this->formData['item_dimensions_volume_width_custom_value']),
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than'
-        ]])->addCustomAttribute('min_value', '0.01');
+        $widthBlock = $this->elementFactory->create('text', [
+            'data' => [
+                'name' => 'definition[item_dimensions_volume_width_custom_value]',
+                'value' => $this->escapeHtml($this->formData['item_dimensions_volume_width_custom_value']),
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than',
+            ],
+        ])->addCustomAttribute('min_value', '0.01');
         $widthBlock->setForm($form);
 
-        $heightBlock = $this->elementFactory->create('text', ['data' => [
-            'name' => 'definition[item_dimensions_volume_height_custom_value]',
-            'value' => $this->escapeHtml($this->formData['item_dimensions_volume_height_custom_value']),
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than'
-        ]])->addCustomAttribute('min_value', '0.01');
+        $heightBlock = $this->elementFactory->create('text', [
+            'data' => [
+                'name' => 'definition[item_dimensions_volume_height_custom_value]',
+                'value' => $this->escapeHtml($this->formData['item_dimensions_volume_height_custom_value']),
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than',
+            ],
+        ])->addCustomAttribute('min_value', '0.01');
         $heightBlock->setForm($form);
 
         $fieldSet->addField(
@@ -766,8 +795,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Length x Width x Height'),
                 'style' => 'padding-top: 0;',
                 'text' => $lengthBlock->toHtml() . ' x '
-                          . $widthBlock->toHtml() . ' x '
-                          . $heightBlock->toHtml(),
+                    . $widthBlock->toHtml() . ' x '
+                    . $heightBlock->toHtml(),
                 'required' => true,
                 'field_extra_attributes' => 'id="item_dimensions_volume_custom_value_tr" style="display: none;"',
 
@@ -776,39 +805,45 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $lengthBlock = $this->elementFactory->create(self::SELECT, ['data' => [
-            'name' => 'definition[item_dimensions_volume_length_custom_attribute]',
-            'values' => $this->getDimensionsVolumeAttributesOptions(
-                'item_dimensions_volume_length_custom_attribute'
-            ),
-            'class' => 'M2ePro-required-when-visible',
-            'create_magento_attribute' => true,
-            'style' => 'width: 30%'
-        ]])->addCustomAttribute('allowed_attribute_types', 'text');
+        $lengthBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'name' => 'definition[item_dimensions_volume_length_custom_attribute]',
+                'values' => $this->getDimensionsVolumeAttributesOptions(
+                    'item_dimensions_volume_length_custom_attribute'
+                ),
+                'class' => 'M2ePro-required-when-visible',
+                'create_magento_attribute' => true,
+                'style' => 'width: 30%',
+            ],
+        ])->addCustomAttribute('allowed_attribute_types', 'text');
         $lengthBlock->setId('item_dimensions_volume_length_custom_attribute');
         $lengthBlock->setForm($form);
 
-        $widthBlock = $this->elementFactory->create(self::SELECT, ['data' => [
-            'name' => 'definition[item_dimensions_volume_width_custom_attribute]',
-            'values' => $this->getDimensionsVolumeAttributesOptions(
-                'item_dimensions_volume_width_custom_attribute'
-            ),
-            'class' => 'M2ePro-required-when-visible',
-            'create_magento_attribute' => true,
-            'style' => 'width: 30%'
-        ]])->addCustomAttribute('allowed_attribute_types', 'text');
+        $widthBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'name' => 'definition[item_dimensions_volume_width_custom_attribute]',
+                'values' => $this->getDimensionsVolumeAttributesOptions(
+                    'item_dimensions_volume_width_custom_attribute'
+                ),
+                'class' => 'M2ePro-required-when-visible',
+                'create_magento_attribute' => true,
+                'style' => 'width: 30%',
+            ],
+        ])->addCustomAttribute('allowed_attribute_types', 'text');
         $widthBlock->setId('item_dimensions_volume_width_custom_attribute');
         $widthBlock->setForm($form);
 
-        $heightBlock = $this->elementFactory->create(self::SELECT, ['data' => [
-            'name' => 'definition[item_dimensions_volume_height_custom_attribute]',
-            'values' => $this->getDimensionsVolumeAttributesOptions(
-                'item_dimensions_volume_height_custom_attribute'
-            ),
-            'class' => 'M2ePro-required-when-visible',
-            'create_magento_attribute' => true,
-            'style' => 'width: 30%'
-        ]])->addCustomAttribute('allowed_attribute_types', 'text');
+        $heightBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'name' => 'definition[item_dimensions_volume_height_custom_attribute]',
+                'values' => $this->getDimensionsVolumeAttributesOptions(
+                    'item_dimensions_volume_height_custom_attribute'
+                ),
+                'class' => 'M2ePro-required-when-visible',
+                'create_magento_attribute' => true,
+                'style' => 'width: 30%',
+            ],
+        ])->addCustomAttribute('allowed_attribute_types', 'text');
         $heightBlock->setId('item_dimensions_volume_height_custom_attribute');
         $heightBlock->setForm($form);
 
@@ -820,8 +855,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Length x Width x Height'),
                 'style' => 'padding-top: 0;',
                 'text' => $lengthBlock->toHtml() . ' x '
-                          . $widthBlock->toHtml() . ' x '
-                          . $heightBlock->toHtml(),
+                    . $widthBlock->toHtml() . ' x '
+                    . $heightBlock->toHtml(),
                 'required' => true,
                 'field_extra_attributes' => 'id="item_dimensions_volume_custom_attribute_tr" style="display: none;"',
             ]
@@ -834,7 +869,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[item_dimensions_volume_unit_of_measure_custom_value]',
-                'value' => $this->formData['item_dimensions_volume_unit_of_measure_custom_value']
+                'value' => $this->formData['item_dimensions_volume_unit_of_measure_custom_value'],
             ]
         );
 
@@ -845,7 +880,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[item_dimensions_volume_unit_of_measure_custom_attribute]',
-                'value' => $this->formData['item_dimensions_volume_unit_of_measure_custom_attribute']
+                'value' => $this->formData['item_dimensions_volume_unit_of_measure_custom_attribute'],
             ]
         );
 
@@ -867,7 +902,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'select M2ePro-required-when-visible',
                 'required' => true,
                 'create_magento_attribute' => true,
-                'field_extra_attributes'=>'id="item_dimensions_volume_unit_of_measure_mode_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="item_dimensions_volume_unit_of_measure_mode_tr" style="display: none;"',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -878,15 +913,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[item_dimensions_weight_custom_attribute]',
-                'value' => $this->formData['item_dimensions_weight_custom_attribute']
+                'value' => $this->formData['item_dimensions_weight_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['item_dimensions_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_NONE ||
-            $this->formData['item_dimensions_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE) {
+        if (
+            $this->formData['item_dimensions_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_NONE ||
+            $this->formData['item_dimensions_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE
+        ) {
             $defaultValue = $this->formData['item_dimensions_weight_mode'];
         }
 
@@ -901,7 +938,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'class' => 'select M2ePro-required-when-visible',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Physical weight of Products without package')
+                'tooltip' => $this->__('Physical weight of Products without package'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -927,7 +964,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[item_dimensions_weight_unit_of_measure_custom_value]',
-                'value' => $this->formData['item_dimensions_weight_unit_of_measure_custom_value']
+                'value' => $this->formData['item_dimensions_weight_unit_of_measure_custom_value'],
             ]
         );
 
@@ -938,7 +975,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[item_dimensions_weight_unit_of_measure_custom_attribute]',
-                'value' => $this->formData['item_dimensions_weight_unit_of_measure_custom_attribute']
+                'value' => $this->formData['item_dimensions_weight_unit_of_measure_custom_attribute'],
             ]
         );
 
@@ -960,7 +997,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'required' => true,
                 'class' => 'select M2ePro-required-when-visible',
                 'create_magento_attribute' => true,
-                'field_extra_attributes'=>'id="item_dimensions_weight_unit_of_measure_mode_tr" style="display: none;"',
+                'field_extra_attributes' => 'id="item_dimensions_weight_unit_of_measure_mode_tr" style="display: none;"',
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -971,7 +1008,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_package_dimensions', [
-            'legend' => $this->__('Package Dimensions'), 'collapsable' => true, 'class' => 'entry-edit'
+            'legend' => $this->__('Package Dimensions'),
+            'collapsable' => true,
+            'class' => 'entry-edit',
         ]);
 
         // ---------------------------------------
@@ -987,40 +1026,46 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ['value' => DefinitionTemplate::DIMENSION_VOLUME_MODE_NONE, 'label' => $this->__('None')],
                     [
                         'value' => DefinitionTemplate::DIMENSION_VOLUME_MODE_CUSTOM_VALUE,
-                        'label' => $this->__('Custom Value')
+                        'label' => $this->__('Custom Value'),
                     ],
                     [
                         'value' => DefinitionTemplate::DIMENSION_VOLUME_MODE_CUSTOM_ATTRIBUTE,
-                        'label' => $this->__('Custom Attribute')
+                        'label' => $this->__('Custom Attribute'),
                     ],
                 ],
                 'value' => $this->formData['package_dimensions_volume_mode'],
                 'class' => 'select',
-                'tooltip' => $this->__('Physical dimensions of package')
+                'tooltip' => $this->__('Physical dimensions of package'),
             ]
         );
 
         // ---------------------------------------
 
-        $lengthBlock = $this->elementFactory->create('text', ['data' => [
-            'name' => 'definition[package_dimensions_volume_length_custom_value]',
-            'value' => $this->escapeHtml($this->formData['package_dimensions_volume_length_custom_value']),
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than'
-        ]])->addCustomAttribute('min_value', '0.01');
+        $lengthBlock = $this->elementFactory->create('text', [
+            'data' => [
+                'name' => 'definition[package_dimensions_volume_length_custom_value]',
+                'value' => $this->escapeHtml($this->formData['package_dimensions_volume_length_custom_value']),
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than',
+            ],
+        ])->addCustomAttribute('min_value', '0.01');
         $lengthBlock->setForm($form);
 
-        $widthBlock = $this->elementFactory->create('text', ['data' => [
-            'name' => 'definition[package_dimensions_volume_width_custom_value]',
-            'value' => $this->escapeHtml($this->formData['package_dimensions_volume_width_custom_value']),
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than'
-        ]])->addCustomAttribute('min_value', '0.01');
+        $widthBlock = $this->elementFactory->create('text', [
+            'data' => [
+                'name' => 'definition[package_dimensions_volume_width_custom_value]',
+                'value' => $this->escapeHtml($this->formData['package_dimensions_volume_width_custom_value']),
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than',
+            ],
+        ])->addCustomAttribute('min_value', '0.01');
         $widthBlock->setForm($form);
 
-        $heightBlock = $this->elementFactory->create('text', ['data' => [
-            'name' => 'definition[package_dimensions_volume_height_custom_value]',
-            'value' => $this->escapeHtml($this->formData['package_dimensions_volume_height_custom_value']),
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than'
-        ]])->addCustomAttribute('min_value', '0.01');
+        $heightBlock = $this->elementFactory->create('text', [
+            'data' => [
+                'name' => 'definition[package_dimensions_volume_height_custom_value]',
+                'value' => $this->escapeHtml($this->formData['package_dimensions_volume_height_custom_value']),
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float M2ePro-validate-greater-than',
+            ],
+        ])->addCustomAttribute('min_value', '0.01');
         $heightBlock->setForm($form);
 
         $fieldSet->addField(
@@ -1031,8 +1076,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Length x Width x Height'),
                 'style' => 'padding-top: 0;',
                 'text' => $lengthBlock->toHtml() . ' x '
-                         . $widthBlock->toHtml() . ' x '
-                         . $heightBlock->toHtml(),
+                    . $widthBlock->toHtml() . ' x '
+                    . $heightBlock->toHtml(),
                 'required' => true,
                 'field_extra_attributes' => 'id="package_dimensions_volume_custom_value_tr" style="display: none;"',
 
@@ -1041,39 +1086,45 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $lengthBlock = $this->elementFactory->create(self::SELECT, ['data' => [
-            'name' => 'definition[package_dimensions_volume_length_custom_attribute]',
-            'values' => $this->getDimensionsVolumeAttributesOptions(
-                'package_dimensions_volume_length_custom_attribute'
-            ),
-            'class' => 'M2ePro-required-when-visible',
-            'create_magento_attribute' => true,
-            'style' => 'width: 30%'
-        ]])->addCustomAttribute('allowed_attribute_types', 'text');
+        $lengthBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'name' => 'definition[package_dimensions_volume_length_custom_attribute]',
+                'values' => $this->getDimensionsVolumeAttributesOptions(
+                    'package_dimensions_volume_length_custom_attribute'
+                ),
+                'class' => 'M2ePro-required-when-visible',
+                'create_magento_attribute' => true,
+                'style' => 'width: 30%',
+            ],
+        ])->addCustomAttribute('allowed_attribute_types', 'text');
         $lengthBlock->setId('package_dimensions_volume_length_custom_attribute');
         $lengthBlock->setForm($form);
 
-        $widthBlock = $this->elementFactory->create(self::SELECT, ['data' => [
-            'name' => 'definition[package_dimensions_volume_width_custom_attribute]',
-            'values' => $this->getDimensionsVolumeAttributesOptions(
-                'package_dimensions_volume_width_custom_attribute'
-            ),
-            'class' => 'M2ePro-required-when-visible',
-            'create_magento_attribute' => true,
-            'style' => 'width: 30%'
-        ]])->addCustomAttribute('allowed_attribute_types', 'text');
+        $widthBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'name' => 'definition[package_dimensions_volume_width_custom_attribute]',
+                'values' => $this->getDimensionsVolumeAttributesOptions(
+                    'package_dimensions_volume_width_custom_attribute'
+                ),
+                'class' => 'M2ePro-required-when-visible',
+                'create_magento_attribute' => true,
+                'style' => 'width: 30%',
+            ],
+        ])->addCustomAttribute('allowed_attribute_types', 'text');
         $widthBlock->setId('package_dimensions_volume_width_custom_attribute');
         $widthBlock->setForm($form);
 
-        $heightBlock = $this->elementFactory->create(self::SELECT, ['data' => [
-            'name' => 'definition[package_dimensions_volume_height_custom_attribute]',
-            'values' => $this->getDimensionsVolumeAttributesOptions(
-                'package_dimensions_volume_height_custom_attribute'
-            ),
-            'class' => 'M2ePro-required-when-visible',
-            'create_magento_attribute' => true,
-            'style' => 'width: 30%'
-        ]])->addCustomAttribute('allowed_attribute_types', 'text');
+        $heightBlock = $this->elementFactory->create(self::SELECT, [
+            'data' => [
+                'name' => 'definition[package_dimensions_volume_height_custom_attribute]',
+                'values' => $this->getDimensionsVolumeAttributesOptions(
+                    'package_dimensions_volume_height_custom_attribute'
+                ),
+                'class' => 'M2ePro-required-when-visible',
+                'create_magento_attribute' => true,
+                'style' => 'width: 30%',
+            ],
+        ])->addCustomAttribute('allowed_attribute_types', 'text');
         $heightBlock->setId('package_dimensions_volume_height_custom_attribute');
         $heightBlock->setForm($form);
 
@@ -1099,7 +1150,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[package_dimensions_volume_unit_of_measure_custom_value]',
-                'value' => $this->formData['package_dimensions_volume_unit_of_measure_custom_value']
+                'value' => $this->formData['package_dimensions_volume_unit_of_measure_custom_value'],
             ]
         );
 
@@ -1110,7 +1161,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[package_dimensions_volume_unit_of_measure_custom_attribute]',
-                'value' => $this->formData['package_dimensions_volume_unit_of_measure_custom_attribute']
+                'value' => $this->formData['package_dimensions_volume_unit_of_measure_custom_attribute'],
             ]
         );
 
@@ -1144,7 +1195,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_shipping_details', [
-            'legend' => $this->__('Shipping Details'), 'collapsable' => true, 'class' => 'entry-edit'
+            'legend' => $this->__('Shipping Details'),
+            'collapsable' => true,
+            'class' => 'entry-edit',
         ]);
 
         // ---------------------------------------
@@ -1154,15 +1207,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[package_weight_custom_attribute]',
-                'value' => $this->formData['package_weight_custom_attribute']
+                'value' => $this->formData['package_weight_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['package_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_NONE ||
-            $this->formData['package_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE) {
+        if (
+            $this->formData['package_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_NONE ||
+            $this->formData['package_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE
+        ) {
             $defaultValue = $this->formData['package_weight_mode'];
         }
 
@@ -1177,7 +1232,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'class' => 'select M2ePro-required-when-visible',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Package Weight of the Product(s).')
+                'tooltip' => $this->__('Package Weight of the Product(s).'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -1248,15 +1303,17 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'hidden',
             [
                 'name' => 'definition[shipping_weight_custom_attribute]',
-                'value' => $this->formData['shipping_weight_custom_attribute']
+                'value' => $this->formData['shipping_weight_custom_attribute'],
             ]
         );
 
         // ---------------------------------------
 
         $defaultValue = '';
-        if ($this->formData['shipping_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_NONE ||
-            $this->formData['shipping_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE) {
+        if (
+            $this->formData['shipping_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_NONE ||
+            $this->formData['shipping_weight_mode'] == DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE
+        ) {
             $defaultValue = $this->formData['shipping_weight_mode'];
         }
 
@@ -1271,7 +1328,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $defaultValue,
                 'create_magento_attribute' => true,
                 'class' => 'select M2ePro-required-when-visible',
-                'tooltip' => $this->__('Shipping Weight of the Product(s).')
+                'tooltip' => $this->__('Shipping Weight of the Product(s).'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -1342,7 +1399,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_keywords', [
-            'legend' => $this->__('Keywords'), 'collapsable' => true, 'class' => 'entry-edit'
+            'legend' => $this->__('Keywords'),
+            'collapsable' => true,
+            'class' => 'entry-edit',
         ]);
 
         // ---------------------------------------
@@ -1359,7 +1418,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ['value' => DefinitionTemplate::TARGET_AUDIENCE_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
                 ],
                 'value' => $this->formData['target_audience_mode'],
-                'tooltip' => $this->__('For whom the Product is intended.')
+                'tooltip' => $this->__('For whom the Product is intended.'),
             ]
         );
 
@@ -1385,7 +1444,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'value' => $this->formData['search_terms_mode'],
                 'tooltip' => $this->__(
                     'Provide specific Search Terms to help customers find your Product(s) on Amazon.'
-                )
+                ),
             ]
         );
 
@@ -1409,7 +1468,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ['value' => DefinitionTemplate::BULLET_POINTS_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
                 ],
                 'value' => $this->formData['bullet_points_mode'],
-                'tooltip' => $this->__('Allows highlighting some of the Product\'s most important qualities.')
+                'tooltip' => $this->__('Allows highlighting some of the Product\'s most important qualities.'),
             ]
         );
 
@@ -1438,11 +1497,11 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
                 'data' => [
                     'values' => $this->getClearAttributesByInputTypesOptions('text_select_multiselect'),
-                    'class'  => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                    'create_magento_attribute' => true
-                ]
+                    'class' => 'M2ePro-required-when-visible magento-attribute-custom-input',
+                    'create_magento_attribute' => true,
+                ],
             ])->addCustomAttribute('allowed_attribute_types', 'text,select,multiselect')
-                ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+                                                    ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
 
             $selectAttrBlock->setId('selectAttr_' . $name . '_' . $i);
             $selectAttrBlock->setForm($this->_form);
@@ -1466,7 +1525,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'field_extra_attributes' => 'style="display: none;"',
                     'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
                     'maxlength' => $maxlength,
-                    'tooltip' => $this->__('Max. ' . $maxlength . ' characters.')
+                    'tooltip' => $this->__('Max. ' . $maxlength . ' characters.'),
                 ]
             );
         }
@@ -1488,7 +1547,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                    {$this->__('Remove')}
                 </a>
 HTML
-            ,
+                ,
                 'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
             ]
         );
@@ -1524,7 +1583,7 @@ HTML
             $tmpOption = [
                 'value' => $value,
                 'label' => $helper->escapeHtml($attribute['label']),
-                'attrs' => ['attribute_code' => $attribute['code']]
+                'attrs' => ['attribute_code' => $attribute['code']],
             ];
 
             if (is_callable($conditionCallback) && $conditionCallback($attribute)) {
@@ -1542,11 +1601,13 @@ HTML
         $optionsResult = [
             ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']],
             'custom_opt_group' => [
-                'value' => [], 'label' => 'Custom Value'
+                'value' => [],
+                'label' => 'Custom Value',
             ],
             'attr_opt_group' => [
-                'value' => [], 'label' => 'Magento Attribute',
-                'attrs' => ['is_magento_attribute' => true]
+                'value' => [],
+                'label' => 'Magento Attribute',
+                'attrs' => ['is_magento_attribute' => true],
             ],
         ];
 
@@ -1554,7 +1615,7 @@ HTML
             $tmpOption = [
                 'value' => $valueMode,
                 'label' => $this->__($unitName),
-                'attrs' => ['attribute_code' => $unitName]
+                'attrs' => ['attribute_code' => $unitName],
             ];
 
             if ($this->formData[$valueName] == $unitName) {
@@ -1593,11 +1654,13 @@ HTML
         $optionsResult = [
             ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']],
             'custom_opt_group' => [
-                'value' => [], 'label' => 'Custom Value'
+                'value' => [],
+                'label' => 'Custom Value',
             ],
             'attr_opt_group' => [
-                'value' => [], 'label' => 'Magento Attribute',
-                'attrs' => ['is_magento_attribute' => true]
+                'value' => [],
+                'label' => 'Magento Attribute',
+                'attrs' => ['is_magento_attribute' => true],
             ],
         ];
 
@@ -1605,7 +1668,7 @@ HTML
             $tmpOption = [
                 'value' => $valueMode,
                 'label' => $this->__($unitName),
-                'attrs' => ['attribute_code' => $unitName]
+                'attrs' => ['attribute_code' => $unitName],
             ];
 
             if ($this->formData[$valueName] == $unitName) {
@@ -1658,7 +1721,7 @@ HTML
         foreach ($this->allAttributesByInputTypes['text_weight'] as $attribute) {
             $tmpOption = [
                 'value' => $attribute['code'],
-                'label' => $helper->escapeHtml($attribute['label'])
+                'label' => $helper->escapeHtml($attribute['label']),
             ];
 
             if ($attribute['code'] == $this->formData[$name]) {
@@ -1694,7 +1757,7 @@ HTML
                 }
             ),
             'label' => 'Magento Attribute',
-            'attrs' => ['is_magento_attribute' => true]
+            'attrs' => ['is_magento_attribute' => true],
         ];
 
         return $optionsResult;
@@ -1709,11 +1772,14 @@ HTML
             ['value' => DefinitionTemplate::BRAND_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::BRAND_MODE_CUSTOM_ATTRIBUTE,
-            'brand_custom_attribute',
-            'text_select'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::BRAND_MODE_CUSTOM_ATTRIBUTE,
+                'brand_custom_attribute',
+                'text_select'
+            )
+        );
     }
 
     public function getManufacturerOptions()
@@ -1723,11 +1789,14 @@ HTML
             ['value' => DefinitionTemplate::MANUFACTURER_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::MANUFACTURER_MODE_CUSTOM_ATTRIBUTE,
-            'manufacturer_custom_attribute',
-            'text_select'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::MANUFACTURER_MODE_CUSTOM_ATTRIBUTE,
+                'manufacturer_custom_attribute',
+                'text_select'
+            )
+        );
     }
 
     public function getManufacturerPartNumberOptions()
@@ -1736,28 +1805,34 @@ HTML
             ['value' => DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_NONE, 'label' => $this->__('None')],
             [
                 'value' => DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value')
+                'label' => $this->__('Custom Value'),
             ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE,
-            'manufacturer_part_number_custom_attribute',
-            'text_select'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE,
+                'manufacturer_part_number_custom_attribute',
+                'text_select'
+            )
+        );
     }
 
     public function getMsrpRrpOptions()
     {
         $optionsResult = [
-            ['value' => DefinitionTemplate::MSRP_RRP_MODE_NONE, 'label' => $this->__('None')]
+            ['value' => DefinitionTemplate::MSRP_RRP_MODE_NONE, 'label' => $this->__('None')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::MSRP_RRP_MODE_CUSTOM_ATTRIBUTE,
-            'msrp_rrp_custom_attribute',
-            'text_price'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::MSRP_RRP_MODE_CUSTOM_ATTRIBUTE,
+                'msrp_rrp_custom_attribute',
+                'text_price'
+            )
+        );
     }
 
     public function getPackageQuantityOptions()
@@ -1766,7 +1841,7 @@ HTML
             ['value' => DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_NONE, 'label' => $this->__('None')],
             [
                 'value' => DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value')
+                'label' => $this->__('Custom Value'),
             ],
         ];
 
@@ -1784,8 +1859,8 @@ HTML
                 ),
                 'attrs' => [
                     'selected' => 'selected',
-                    'attribute_code' => $this->formData['item_package_quantity_custom_attribute']
-                ]
+                    'attribute_code' => $this->formData['item_package_quantity_custom_attribute'],
+                ],
             ];
         }
 
@@ -1798,7 +1873,7 @@ HTML
                 }
             ),
             'label' => 'Magento Attribute',
-            'attrs' => ['is_magento_attribute' => true]
+            'attrs' => ['is_magento_attribute' => true],
         ];
 
         return $optionsResult;
@@ -1824,8 +1899,8 @@ HTML
                 ),
                 'attrs' => [
                     'selected' => 'selected',
-                    'attribute_code' => $this->formData['item_package_quantity_custom_attribute']
-                ]
+                    'attribute_code' => $this->formData['item_package_quantity_custom_attribute'],
+                ],
             ];
         }
 
@@ -1838,7 +1913,7 @@ HTML
                 }
             ),
             'label' => 'Magento Attribute',
-            'attrs' => ['is_magento_attribute' => true]
+            'attrs' => ['is_magento_attribute' => true],
         ];
 
         return $optionsResult;
@@ -1851,11 +1926,14 @@ HTML
             ['value' => DefinitionTemplate::IMAGE_MAIN_MODE_PRODUCT, 'label' => $this->__('Product Base Image')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::IMAGE_MAIN_MODE_ATTRIBUTE,
-            'image_main_attribute',
-            'text_images'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::IMAGE_MAIN_MODE_ATTRIBUTE,
+                'image_main_attribute',
+                'text_images'
+            )
+        );
     }
 
     public function getGalleryImageOptions()
@@ -1869,7 +1947,7 @@ HTML
             $tempOption = [
                 'value' => DefinitionTemplate::GALLERY_IMAGES_MODE_PRODUCT,
                 'label' => $i == 1 ? 1 : $this->__('Up to') . ' ' . $i,
-                'attrs' => ['attribute_code' => $i]
+                'attrs' => ['attribute_code' => $i],
             ];
 
             if ($this->formData['gallery_images_limit'] == $i) {
@@ -1898,7 +1976,7 @@ HTML
                 }
             ),
             'label' => 'Magento Attribute',
-            'attrs' => ['is_magento_attribute' => true]
+            'attrs' => ['is_magento_attribute' => true],
         ];
 
         return $optionsResult;
@@ -1910,15 +1988,18 @@ HTML
             ['value' => DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_NONE, 'label' => $this->__('None')],
             [
                 'value' => DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT,
-                'label' => $this->__('Product Base Image')
+                'label' => $this->__('Product Base Image'),
             ],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_ATTRIBUTE,
-            'image_variation_difference_attribute',
-            'text_images'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::IMAGE_VARIATION_DIFFERENCE_MODE_ATTRIBUTE,
+                'image_variation_difference_attribute',
+                'text_images'
+            )
+        );
     }
 
     public function getItemDimensionsWeightOptions()
@@ -1928,11 +2009,14 @@ HTML
             ['value' => DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
-            'item_dimensions_weight_custom_attribute',
-            'text_weight'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
+                'item_dimensions_weight_custom_attribute',
+                'text_weight'
+            )
+        );
     }
 
     public function getPackageWeightModeOptions()
@@ -1942,11 +2026,14 @@ HTML
             ['value' => DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
-            'package_weight_custom_attribute',
-            'text_weight'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
+                'package_weight_custom_attribute',
+                'text_weight'
+            )
+        );
     }
 
     public function getShippingWeightModeOptions()
@@ -1956,11 +2043,14 @@ HTML
             ['value' => DefinitionTemplate::WEIGHT_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
         ];
 
-        return array_merge($optionsResult, $this->getAttributeOptions(
-            DefinitionTemplate::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
-            'shipping_weight_custom_attribute',
-            'text_weight'
-        ));
+        return array_merge(
+            $optionsResult,
+            $this->getAttributeOptions(
+                DefinitionTemplate::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
+                'shipping_weight_custom_attribute',
+                'text_weight'
+            )
+        );
     }
 
     //########################################
@@ -2009,19 +2099,21 @@ HTML
     private function getMultiElementButton($type, $index)
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
-                                 ->addData([
-            'label' => $this->__('Insert'),
-            'destination_id' => $type . '_' . $index,
-            'on_click_callback' => "AmazonTemplateDescriptionDefinitionObj.multi_element_keyup('{$type}',{value:' '});",
-            'class' => 'primary attributes-container-td',
-            'style' => 'display: inline-block;',
-        ]);
+                    ->addData([
+                        'label' => $this->__('Insert'),
+                        'destination_id' => $type . '_' . $index,
+                        'on_click_callback' => "AmazonTemplateDescriptionDefinitionObj.multi_element_keyup('{$type}',{value:' '});",
+                        'class' => 'primary attributes-container-td',
+                        'style' => 'display: inline-block;',
+                    ]);
     }
 
     public function getForceAddedAttributeOption($attributeCode, $availableValues, $value = null)
     {
-        if (empty($attributeCode) ||
-            $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)) {
+        if (
+            empty($attributeCode) ||
+            $this->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $availableValues)
+        ) {
             return '';
         }
 
@@ -2035,6 +2127,7 @@ HTML
         }
 
         $result['attrs'] = ['attrbiute_code' => $attributeCode];
+
         return $result;
     }
 

@@ -43,8 +43,7 @@ class PriceTracker extends BasePriceTracker
                 'c_lpv',
                 $this->setChannelToTableName('m2epro_%s_listing_product_variation'),
                 'c_lpv.listing_product_variation_id = lpv.id'
-            )
-        ;
+            );
 
         return $query;
     }

@@ -23,7 +23,7 @@ class Suggested extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
     public function getRequestData()
     {
         return [
-            'query' => $this->params['query']
+            'query' => $this->params['query'],
         ];
     }
 

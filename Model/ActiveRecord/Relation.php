@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\ActiveRecord;
 
 /**
- * @method \Ess\M2ePro\Model\ActiveRecord\Relation load($id, $field=null)
+ * @method \Ess\M2ePro\Model\ActiveRecord\Relation load($id, $field = null)
  * @method \Ess\M2ePro\Model\ActiveRecord\Relation save()
  * @method \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Relation getResource()
  * @method \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Relation\Collection getCollection()
@@ -41,7 +41,6 @@ class Relation extends ActiveRecordAbstract
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-
         $this->parentObject = $parentModel;
         $this->childObject = $childModel;
 
@@ -115,6 +114,7 @@ class Relation extends ActiveRecordAbstract
 
     /**
      * @param null $tag
+     *
      * @return $this|ActiveRecordAbstract
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -122,11 +122,13 @@ class Relation extends ActiveRecordAbstract
     {
         $this->getParentObject()->lock($tag);
         $this->getChildObject()->lock($tag);
+
         return $this;
     }
 
     /**
      * @param bool $tag
+     *
      * @return $this|ActiveRecordAbstract
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -134,6 +136,7 @@ class Relation extends ActiveRecordAbstract
     {
         $this->getParentObject()->unlock($tag);
         $this->getParentObject()->unlock($tag);
+
         return $this;
     }
 
@@ -147,6 +150,7 @@ class Relation extends ActiveRecordAbstract
     {
         $this->getParentObject()->delete();
         $this->getChildObject()->delete();
+
         return true;
     }
 
@@ -163,6 +167,7 @@ class Relation extends ActiveRecordAbstract
     /**
      * @param array|string $key
      * @param null $value
+     *
      * @return $this
      */
     public function setData($key, $value = null)
@@ -181,21 +186,25 @@ class Relation extends ActiveRecordAbstract
 
             $this->getParentObject()->setData($parentData);
             $this->getChildObject()->setData($childData);
+
             return $this;
         }
 
         if ($this->getResource()->isModelContainField($this->getParentObject(), $key)) {
             $this->getParentObject()->setData($key, $value);
+
             return $this;
         }
 
         $this->getChildObject()->setData($key, $value);
+
         return $this;
     }
 
     /**
      * @param string $key
      * @param null $index
+     *
      * @return array|mixed
      */
     public function getData($key = '', $index = null)
@@ -216,6 +225,7 @@ class Relation extends ActiveRecordAbstract
 
     /**
      * @param null $key
+     *
      * @return $this
      */
     public function unsetData($key = null)
@@ -223,21 +233,25 @@ class Relation extends ActiveRecordAbstract
         if (null === $key) {
             $this->getParentObject()->unsetData();
             $this->getChildObject()->unsetData();
+
             return $this;
         }
 
         if ($this->getResource()->isModelContainField($this->getParentObject(), $key)) {
             $this->getParentObject()->unsetData($key);
+
             return $this;
         }
 
         $this->getChildObject()->unsetData($key);
+
         return $this;
     }
 
     /**
      * @param null $key
      * @param null $data
+     *
      * @return $this
      */
     public function setOrigData($key = null, $data = null)
@@ -245,20 +259,24 @@ class Relation extends ActiveRecordAbstract
         if (null === $key) {
             $this->getParentObject()->setOrigData();
             $this->getChildObject()->setOrigData();
+
             return $this;
         }
 
         if ($this->getResource()->isModelContainField($this->getParentObject(), $key)) {
             $this->getParentObject()->setOrigData($key, $data);
+
             return $this;
         }
 
         $this->getChildObject()->setOrigData($key, $data);
+
         return $this;
     }
 
     /**
      * @param null $key
+     *
      * @return array|mixed
      */
     public function getOrigData($key = null)
@@ -280,6 +298,7 @@ class Relation extends ActiveRecordAbstract
     public function toArray(array $arrAttributes = [])
     {
         $this->_data = $this->getData();
+
         return parent::toArray($arrAttributes);
     }
 

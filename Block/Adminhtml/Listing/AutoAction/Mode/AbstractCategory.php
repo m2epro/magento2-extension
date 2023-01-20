@@ -45,12 +45,13 @@ abstract class AbstractCategory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\CustomContainer::class,
             [
                 'text' => $containerHtml,
-                'field_extra_attributes' => 'style="width: 100%"'
+                'field_extra_attributes' => 'style="width: 100%"',
             ]
         );
 
         $form->setUseContainer(true);
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 
@@ -70,7 +71,8 @@ abstract class AbstractCategory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form
         // ---------------------------------------
 
         $skipConfirmation = $this->dataHelper->jsonEncode($groupGrid->getCollection()->getSize() == 0);
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
         var skipConfirmation = {$skipConfirmation};
 
         if (!skipConfirmation) {
@@ -87,7 +89,7 @@ JS
     protected function _toHtml()
     {
         return '<div id="additional_autoaction_title_text" style="display: none">' . $this->getBlockTitle() . '</div>'
-            . '<div id="block-content-wrapper"><div id="data_container">'.parent::_toHtml().'</div></div>';
+            . '<div id="block-content-wrapper"><div id="data_container">' . parent::_toHtml() . '</div></div>';
     }
 
     // ---------------------------------------

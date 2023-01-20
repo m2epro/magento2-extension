@@ -17,10 +17,10 @@ class CreateMagentoOrder extends Order
 {
     public function execute()
     {
-        $ids      = $this->getRequestIds();
-        $isForce  = (bool)$this->getRequest()->getParam('force');
+        $ids = $this->getRequestIds();
+        $isForce = (bool)$this->getRequest()->getParam('force');
         $warnings = 0;
-        $errors   = 0;
+        $errors = 0;
 
         foreach ($ids as $id) {
             /** @var \Ess\M2ePro\Model\Order $order */
@@ -62,7 +62,8 @@ class CreateMagentoOrder extends Order
                 $this->__(
                     '%count% Magento order(s) were not created. Please <a target="_blank" href="%url%">view Log</a>
                 for the details.',
-                    $errors, $this->getUrl('*/amazon_log_order')
+                    $errors,
+                    $this->getUrl('*/amazon_log_order')
                 )
             );
         }
@@ -70,7 +71,8 @@ class CreateMagentoOrder extends Order
         if ($warnings) {
             $this->messageManager->addWarning(
                 $this->__(
-                    '%count% Magento order(s) are already created for the selected amazon order(s).', $warnings
+                    '%count% Magento order(s) are already created for the selected amazon order(s).',
+                    $warnings
                 )
             );
         }

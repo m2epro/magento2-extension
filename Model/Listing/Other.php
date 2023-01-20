@@ -8,18 +8,17 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Other as AmazonListingOther;
-use \Ess\M2ePro\Model\Ebay\Listing\Other as EbayListingOther;
-use \Ess\M2ePro\Model\Walmart\Listing\Other as WalmartListingOther;
+use Ess\M2ePro\Model\Amazon\Listing\Other as AmazonListingOther;
+use Ess\M2ePro\Model\Ebay\Listing\Other as EbayListingOther;
+use Ess\M2ePro\Model\Walmart\Listing\Other as WalmartListingOther;
 
 /**
  * Class \Ess\M2ePro\Model\Listing\Other
- *
  * @method AmazonListingOther|EbayListingOther|WalmartListingOther getChildObject()
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    const MOVING_LISTING_PRODUCT_DESTINATION_KEY = 'moved_to_listing_product_id';
+    public const MOVING_LISTING_PRODUCT_DESTINATION_KEY = 'moved_to_listing_product_id';
 
     /**
      * @var \Ess\M2ePro\Model\Account
@@ -65,6 +64,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         $temp && $this->accountModel = null;
         $temp && $this->marketplaceModel = null;
         $temp && $this->magentoProductModel = null;
+
         return $temp;
     }
 
@@ -91,7 +91,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function setAccount(\Ess\M2ePro\Model\Account $instance)
     {
-         $this->accountModel = $instance;
+        $this->accountModel = $instance;
     }
 
     // ---------------------------------------
@@ -117,7 +117,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
      */
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $instance)
     {
-         $this->marketplaceModel = $instance;
+        $this->marketplaceModel = $instance;
     }
 
     // ---------------------------------------
@@ -137,8 +137,10 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         }
 
         return $this->magentoProductModel = $this->modelFactory->getObject('Magento_Product_Cache')
-            ->setStoreId($this->getChildObject()->getRelatedStoreId())
-            ->setProductId($this->getProductId());
+                                                               ->setStoreId(
+                                                                   $this->getChildObject()->getRelatedStoreId()
+                                                               )
+                                                               ->setProductId($this->getProductId());
     }
 
     /**
@@ -173,6 +175,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function getProductId()
     {
         $temp = $this->getData('product_id');
+
         return $temp === null ? null : (int)$temp;
     }
 
@@ -272,12 +275,12 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function unmapDeletedProduct($product)
     {
         $productId = $product instanceof \Magento\Catalog\Model\Product ?
-                        (int)$product->getId() : (int)$product;
+            (int)$product->getId() : (int)$product;
 
         $listingsOther = $this->activeRecordFactory->getObject('Listing\Other')
-                                    ->getCollection()
-                                    ->addFieldToFilter('product_id', $productId)
-                                    ->getItems();
+                                                   ->getCollection()
+                                                   ->addFieldToFilter('product_id', $productId)
+                                                   ->getItems();
 
         foreach ($listingsOther as $listingOther) {
             $listingOther->unmapProduct();
@@ -288,11 +291,12 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
 
     /**
      * @param int $productId
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function mapProduct($productId)
     {
-        $this->addData(['product_id'=>$productId])->save();
+        $this->addData(['product_id' => $productId])->save();
         $this->getChildObject()->afterMapProduct();
     }
 

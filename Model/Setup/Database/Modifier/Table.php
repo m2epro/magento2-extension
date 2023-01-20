@@ -9,18 +9,18 @@
 namespace Ess\M2ePro\Model\Setup\Database\Modifier;
 
 use Ess\M2ePro\Model\Exception\Setup;
-use \Magento\Framework\DB\Ddl\Table as DdlTable;
+use Magento\Framework\DB\Ddl\Table as DdlTable;
 
 /**
  * Class \Ess\M2ePro\Model\Setup\Database\Modifier\Table
  */
 class Table extends AbstractModifier
 {
-    const COMMIT_KEY_ADD_COLUMN    = 'add_column';
-    const COMMIT_KEY_DROP_COLUMN   = 'drop_column';
-    const COMMIT_KEY_CHANGE_COLUMN = 'change_column';
-    const COMMIT_KEY_ADD_INDEX     = 'add_index';
-    const COMMIT_KEY_DROP_INDEX    = 'drop_index';
+    public const COMMIT_KEY_ADD_COLUMN = 'add_column';
+    public const COMMIT_KEY_DROP_COLUMN = 'drop_column';
+    public const COMMIT_KEY_CHANGE_COLUMN = 'change_column';
+    public const COMMIT_KEY_ADD_INDEX = 'add_index';
+    public const COMMIT_KEY_DROP_INDEX = 'drop_index';
 
     protected $sqlForCommit = [];
     protected $columnsForCheckBeforeCommit = [];
@@ -40,6 +40,7 @@ class Table extends AbstractModifier
 
     /**
      * @param string $name
+     *
      * @return bool
      */
     public function isColumnExists($name)
@@ -52,6 +53,7 @@ class Table extends AbstractModifier
      * @param string $to
      * @param bool $renameIndex
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -114,6 +116,7 @@ class Table extends AbstractModifier
      * @param string|null $after
      * @param bool $addIndex
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -157,6 +160,7 @@ class Table extends AbstractModifier
      * @param string|null $default
      * @param string|null $after
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -201,6 +205,7 @@ class Table extends AbstractModifier
      * @param string|null $default
      * @param string|null $after
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -256,6 +261,7 @@ class Table extends AbstractModifier
      * @param string $name
      * @param bool $dropIndex
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -284,6 +290,7 @@ class Table extends AbstractModifier
 
     /**
      * @param string $name
+     *
      * @return bool
      * @throws Setup
      */
@@ -298,6 +305,7 @@ class Table extends AbstractModifier
      * @param string $from
      * @param string $to
      * @param bool $autoCommit
+     *
      * @return $this
      */
     public function renameIndex($from, $to, $autoCommit = true)
@@ -314,6 +322,7 @@ class Table extends AbstractModifier
     /**
      * @param string $name
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -335,6 +344,7 @@ class Table extends AbstractModifier
     /**
      * @param string $name
      * @param bool $autoCommit
+     *
      * @return $this
      * @throws Setup
      */
@@ -367,12 +377,12 @@ class Table extends AbstractModifier
             if (preg_match($pattern, $type, $matches) !== false && isset($matches['type'])) {
                 $typeMap = [
                     DdlTable::TYPE_SMALLINT => ['TINYINT', 'SMALLINT'],
-                    DdlTable::TYPE_INTEGER  => ['INT'],
-                    DdlTable::TYPE_FLOAT    => ['FLOAT'],
-                    DdlTable::TYPE_DECIMAL  => ['DECIMAL'],
+                    DdlTable::TYPE_INTEGER => ['INT'],
+                    DdlTable::TYPE_FLOAT => ['FLOAT'],
+                    DdlTable::TYPE_DECIMAL => ['DECIMAL'],
                     DdlTable::TYPE_DATETIME => ['DATETIME'],
-                    DdlTable::TYPE_TEXT     => ['VARCHAR', 'TEXT', 'LONGTEXT'],
-                    DdlTable::TYPE_BLOB     => ['BLOB', 'LONGBLOB'],
+                    DdlTable::TYPE_TEXT => ['VARCHAR', 'TEXT', 'LONGTEXT'],
+                    DdlTable::TYPE_BLOB => ['BLOB', 'LONGBLOB'],
                 ];
 
                 $size = null;
@@ -392,7 +402,7 @@ class Table extends AbstractModifier
                     }
 
                     if ($ddlType == DdlTable::TYPE_DECIMAL && strpos($size, ',') !== false) {
-                        list($precision, $scale) = array_map('trim', explode(',', $size, 2));
+                        [$precision, $scale] = array_map('trim', explode(',', $size, 2));
                         $definitionData['precision'] = (int)$precision;
                         $definitionData['scale'] = (int)$scale;
                     }
@@ -523,12 +533,13 @@ class Table extends AbstractModifier
             }
 
             foreach ($this->sqlForCommit as $key => $sqlData) {
-                if (!is_array($sqlData) || in_array(
+                if (
+                    !is_array($sqlData) || in_array(
                         $key,
                         [
                             self::COMMIT_KEY_ADD_INDEX,
                             self::COMMIT_KEY_DROP_INDEX,
-                            self::COMMIT_KEY_DROP_COLUMN
+                            self::COMMIT_KEY_DROP_COLUMN,
                         ]
                     )
                 ) {
@@ -563,7 +574,7 @@ class Table extends AbstractModifier
             self::COMMIT_KEY_CHANGE_COLUMN,
             self::COMMIT_KEY_DROP_COLUMN,
             self::COMMIT_KEY_ADD_INDEX,
-            self::COMMIT_KEY_DROP_INDEX
+            self::COMMIT_KEY_DROP_INDEX,
         ];
 
         $tempSql = '';
@@ -615,9 +626,9 @@ class Table extends AbstractModifier
 
         $result = array_change_key_case(
             $this->connection->select()
-                ->from('tables', ['row_format'], 'information_schema')
-                ->where('table_schema =?', $this->getHelper('Magento')->getDatabaseName())
-                ->where('table_name =?', $this->tableName)->query()->fetch()
+                             ->from('tables', ['row_format'], 'information_schema')
+                             ->where('table_schema =?', $this->getHelper('Magento')->getDatabaseName())
+                             ->where('table_name =?', $this->tableName)->query()->fetch()
         );
 
         $this->checkedTableRowFormat = true;

@@ -10,14 +10,11 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTabs;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs
- */
 class Tabs extends AbstractHorizontalTabs
 {
-    const TAB_ID_ITEM_SPECIFICS     = 'item_specifics';
-    const TAB_ID_PRODUCTS_PRIMARY   = 'products_primary';
-    const TAB_ID_PRODUCTS_SECONDARY = 'products_secondary';
+    public const TAB_ID_ITEM_SPECIFICS = 'item_specifics';
+    public const TAB_ID_PRODUCTS_PRIMARY = 'products_primary';
+    public const TAB_ID_PRODUCTS_SECONDARY = 'products_secondary';
 
     //########################################
 
@@ -48,18 +45,20 @@ class Tabs extends AbstractHorizontalTabs
     {
         $tab = [
             'label' => $this->__('Item Specific (Default)'),
-            'title' => $this->__('Item Specific (Default)')
+            'title' => $this->__('Item Specific (Default)'),
         ];
         if ($this->getActiveTab() == self::TAB_ID_ITEM_SPECIFICS) {
             $tab['content'] = $this->getLayout()
-                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit::class)
-                           ->toHtml();
+                                   ->createBlock(
+                                       \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ItemSpecific\Edit::class
+                                   )
+                                   ->toHtml();
         } else {
             $tab['url'] = $this->getUrl(
                 '*/ebay_category/view',
                 [
                     'active_tab' => self::TAB_ID_ITEM_SPECIFICS,
-                    'template_id' => $this->getTemplateCategoryId()
+                    'template_id' => $this->getTemplateCategoryId(),
                 ]
             );
         }
@@ -71,18 +70,20 @@ class Tabs extends AbstractHorizontalTabs
     {
         $tab = [
             'label' => $this->__('Primary Category'),
-            'title' => $this->__('Products with Primary Category')
+            'title' => $this->__('Products with Primary Category'),
         ];
         if ($this->getActiveTab() == self::TAB_ID_PRODUCTS_PRIMARY) {
             $tab['content'] = $this->getLayout()
-                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ProductsPrimary::class)
-                               ->toHtml();
+                                   ->createBlock(
+                                       \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ProductsPrimary::class
+                                   )
+                                   ->toHtml();
         } else {
             $tab['url'] = $this->getUrl(
                 '*/ebay_category/view',
                 [
                     'active_tab' => self::TAB_ID_PRODUCTS_PRIMARY,
-                    'template_id' => $this->getTemplateCategoryId()
+                    'template_id' => $this->getTemplateCategoryId(),
                 ]
             );
         }
@@ -94,18 +95,20 @@ class Tabs extends AbstractHorizontalTabs
     {
         $tab = [
             'label' => $this->__('Secondary Category'),
-            'title' => $this->__('Products with Secondary Category')
+            'title' => $this->__('Products with Secondary Category'),
         ];
         if ($this->getActiveTab() == self::TAB_ID_PRODUCTS_SECONDARY) {
             $tab['content'] = $this->getLayout()
-                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ProductsSecondary::class)
-                           ->toHtml();
+                                   ->createBlock(
+                                       \Ess\M2ePro\Block\Adminhtml\Ebay\Category\View\Tabs\ProductsSecondary::class
+                                   )
+                                   ->toHtml();
         } else {
             $tab['url'] = $this->getUrl(
                 '*/ebay_category/view',
                 [
                     'active_tab' => self::TAB_ID_PRODUCTS_SECONDARY,
-                    'template_id' => $this->getTemplateCategoryId()
+                    'template_id' => $this->getTemplateCategoryId(),
                 ]
             );
         }
@@ -121,7 +124,7 @@ class Tabs extends AbstractHorizontalTabs
         $allowedTabs = [
             self::TAB_ID_ITEM_SPECIFICS,
             self::TAB_ID_PRODUCTS_PRIMARY,
-            self::TAB_ID_PRODUCTS_SECONDARY
+            self::TAB_ID_PRODUCTS_SECONDARY,
         ];
 
         if (!in_array($activeTab, $allowedTabs)) {

@@ -62,7 +62,7 @@ class Feedback extends AbstractForm
      More detailed information about ability to work with this Page you can find
      <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $this->supportHelper->getDocumentationArticleUrl('x/pf0bB')
-                )
+                ),
             ]
         );
 
@@ -70,7 +70,7 @@ class Feedback extends AbstractForm
             'general',
             [
                 'legend' => $this->__('General'),
-                'collapsable' => false
+                'collapsable' => false,
             ]
         );
 
@@ -88,7 +88,7 @@ class Feedback extends AbstractForm
                 'value' => $formData['feedbacks_receive'],
                 'tooltip' => $this->__(
                     'Choose whether to Import Feedback from eBay Buyers into Magento.'
-                )
+                ),
             ]
         );
 
@@ -103,7 +103,7 @@ class Feedback extends AbstractForm
                 'values' => [
                     Account::FEEDBACKS_AUTO_RESPONSE_NONE => $this->__('Disabled'),
                     Account::FEEDBACKS_AUTO_RESPONSE_CYCLED => $this->__('Cycle Mode'),
-                    Account::FEEDBACKS_AUTO_RESPONSE_RANDOM => $this->__('Random Mode')
+                    Account::FEEDBACKS_AUTO_RESPONSE_RANDOM => $this->__('Random Mode'),
                 ],
                 'value' => $formData['feedbacks_auto_response'],
                 'tooltip' => $this->__(
@@ -112,7 +112,7 @@ class Feedback extends AbstractForm
                     <b>Disabled</b> means no automatic responses to Feedback will be made.'
                 ),
                 'field_extra_attributes' => 'id="feedbacks_auto_response_container" ' .
-                    (($formData['feedbacks_receive'] == 0) ? 'style="display: none;"' : '')
+                    (($formData['feedbacks_receive'] == 0) ? 'style="display: none;"' : ''),
             ]
         );
 
@@ -125,7 +125,7 @@ class Feedback extends AbstractForm
                 'label' => $this->__('Send to'),
                 'values' => [
                     0 => $this->__('All'),
-                    1 => $this->__('Positive')
+                    1 => $this->__('Positive'),
                 ],
                 'value' => $formData['feedbacks_auto_response_only_positive'],
                 'tooltip' => $this->__(
@@ -135,13 +135,14 @@ class Feedback extends AbstractForm
                 'field_extra_attributes' => 'id="feedbacks_auto_response_only_positive_container" ' .
                     (($formData['feedbacks_receive'] == 0 ||
                         $formData['feedbacks_auto_response'] == Account::FEEDBACKS_AUTO_RESPONSE_NONE) ?
-                        'style="display: none;"' : '')
+                        'style="display: none;"' : ''),
             ]
         );
 
         $this->setForm($form);
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     M2ePro.formData.feedbacks_receive = '{$feedbacksReceive}';
     M2ePro.formData.feedbacks_auto_response = '{$feedbacksAutoResponse}';
 
@@ -163,7 +164,8 @@ JS
 
     public function _toHtml()
     {
-        $this->css->add(<<<CSS
+        $this->css->add(
+            <<<CSS
 
 .grid-listing-column-ft_id {
     width: 70px;
@@ -209,11 +211,11 @@ CSS
         );
 
         $addBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'onclick' => 'EbayAccountObj.openFeedbackTemplatePopup();',
-                'label' => $this->__('Add Template'),
-                'class' => 'add_feedback_template_button primary'
-            ])->toHtml();
+                       ->setData([
+                           'onclick' => 'EbayAccountObj.openFeedbackTemplatePopup();',
+                           'label' => $this->__('Add Template'),
+                           'class' => 'add_feedback_template_button primary',
+                       ])->toHtml();
 
         $formData = $this->getData('form_data');
 

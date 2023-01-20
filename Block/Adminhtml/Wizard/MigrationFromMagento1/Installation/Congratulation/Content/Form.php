@@ -17,10 +17,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'edit_form',
-            'method' => 'post',
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+                'method' => 'post',
+            ],
+        ]);
 
         $fieldset = $form->addFieldset('general', ['legend' => '']);
 
@@ -39,13 +41,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     keep synchronization disabled. It can be enabled later under
                     <i>Stores > Settings > Configuration > M2E Pro > Advanced Settings > Automatic Synchronization</i>.
                     </p>'
-                )
+                ),
             ]
         );
 
         $this->jsUrl->addUrls([
             'migrationFromMagento1/finish' =>
-                $this->getUrl('m2epro/migrationFromMagento1/finish')
+                $this->getUrl('m2epro/migrationFromMagento1/finish'),
         ]);
 
         $form->setUseContainer(true);

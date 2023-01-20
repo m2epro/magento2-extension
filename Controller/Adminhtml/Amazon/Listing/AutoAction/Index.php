@@ -31,7 +31,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         );
         $this->helperDataGlobalData->setValue('listing', $listing);
 
-        $autoMode  = $this->getRequest()->getParam('auto_mode');
+        $autoMode = $this->getRequest()->getParam('auto_mode');
         empty($autoMode) && $autoMode = $listing->getAutoMode();
 
         switch ($autoMode) {
@@ -51,8 +51,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 
         $this->setJsonContent([
             'mode' => $autoMode,
-            'html' => $this->getLayout()->createBlock($blockName)->toHtml()
+            'html' => $this->getLayout()->createBlock($blockName)->toHtml(),
         ]);
+
         return $this->getResult();
     }
 }

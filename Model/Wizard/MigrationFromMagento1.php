@@ -15,14 +15,14 @@ use Ess\M2ePro\Model\Wizard;
  */
 class MigrationFromMagento1 extends Wizard
 {
-    const NICK = 'migrationFromMagento1';
+    public const NICK = 'migrationFromMagento1';
 
-    const STATUS_PREPARED            = 'prepared';
-    const STATUS_UNEXPECTEDLY_COPIED = 'unexpectedly_copied_from_m1';
-    const STATUS_IN_PROGRESS         = 'in_progress';
-    const STATUS_COMPLETED           = 'completed';
+    public const STATUS_PREPARED = 'prepared';
+    public const STATUS_UNEXPECTEDLY_COPIED = 'unexpectedly_copied_from_m1';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_COMPLETED = 'completed';
 
-    const STATUS_CONFIG_PATH         = 'm2epro/migrationFromMagento1/status';
+    public const STATUS_CONFIG_PATH = 'm2epro/migrationFromMagento1/status';
 
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
@@ -34,7 +34,7 @@ class MigrationFromMagento1 extends Wizard
     protected $steps = [
         'disableModule',
         'database',
-        'congratulation'
+        'congratulation',
     ];
 
     //########################################
@@ -84,12 +84,12 @@ class MigrationFromMagento1 extends Wizard
         if ($this->m1TablesPrefix === null) {
             $lastAddedTable = array_change_key_case(
                 $this->resourceConnection->getConnection()->select()
-                ->from('tables', ['TABLE_NAME'], 'information_schema')
-                ->where('table_schema =?', $this->getHelper('Magento')->getDatabaseName())
-                ->where('table_name like ?', '%m2epro_config')
-                ->order('CREATE_TIME DESC')
-                ->query()
-                ->fetch()
+                                         ->from('tables', ['TABLE_NAME'], 'information_schema')
+                                         ->where('table_schema =?', $this->getHelper('Magento')->getDatabaseName())
+                                         ->where('table_name like ?', '%m2epro_config')
+                                         ->order('CREATE_TIME DESC')
+                                         ->query()
+                                         ->fetch()
             );
             $this->m1TablesPrefix = (string)preg_replace('/m2epro_[A-Za-z0-9_]+$/', '', $lastAddedTable['table_name']);
         }
@@ -104,21 +104,22 @@ class MigrationFromMagento1 extends Wizard
     public function getCurrentStatus()
     {
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from(
-                $this->helperFactory->getObject('Module_Database_Structure')
-                    ->getTableNameWithPrefix('core_config_data'),
-                'value'
-            )
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', self::STATUS_CONFIG_PATH);
+                                           ->select()
+                                           ->from(
+                                               $this->helperFactory->getObject('Module_Database_Structure')
+                                                                   ->getTableNameWithPrefix('core_config_data'),
+                                               'value'
+                                           )
+                                           ->where('scope = ?', 'default')
+                                           ->where('scope_id = ?', 0)
+                                           ->where('path = ?', self::STATUS_CONFIG_PATH);
 
         return $this->resourceConnection->getConnection()->fetchOne($select);
     }
 
     /**
      * @param $status
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function setCurrentStatus($status)
@@ -127,10 +128,10 @@ class MigrationFromMagento1 extends Wizard
             $this->resourceConnection->getConnection()->insert(
                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
                 [
-                    'scope'    => 'default',
+                    'scope' => 'default',
                     'scope_id' => 0,
-                    'path'     => self::STATUS_CONFIG_PATH,
-                    'value'    => $status
+                    'path' => self::STATUS_CONFIG_PATH,
+                    'value' => $status,
                 ]
             );
         } else {
@@ -138,9 +139,9 @@ class MigrationFromMagento1 extends Wizard
                 $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('core_config_data'),
                 ['value' => $status],
                 [
-                    'scope = ?'    => 'default',
+                    'scope = ?' => 'default',
                     'scope_id = ?' => 0,
-                    'path = ?'     => self::STATUS_CONFIG_PATH,
+                    'path = ?' => self::STATUS_CONFIG_PATH,
                 ]
             );
         }
@@ -157,12 +158,13 @@ class MigrationFromMagento1 extends Wizard
         }
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($configTable, 'value')
-            ->where('`group` = ?', '/location/')
-            ->where('`key` = ?', 'domain');
+                                           ->select()
+                                           ->from($configTable, 'value')
+                                           ->where('`group` = ?', '/location/')
+                                           ->where('`key` = ?', 'domain');
 
         $possibleDomain = $this->resourceConnection->getConnection()->fetchOne($select);
+
         return $possibleDomain ? trim($possibleDomain, '/') : '';
     }
 
@@ -180,10 +182,10 @@ class MigrationFromMagento1 extends Wizard
         }
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($setupTable, 'version_to')
-            ->order('id DESC')
-            ->limit(1);
+                                           ->select()
+                                           ->from($setupTable, 'version_to')
+                                           ->order('id DESC')
+                                           ->limit(1);
 
         $lastUpgradeVersion = $this->resourceConnection->getConnection()->fetchOne($select);
 

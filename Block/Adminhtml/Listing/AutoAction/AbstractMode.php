@@ -41,6 +41,7 @@ abstract class AbstractMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->globalDataHelper->getValue('listing');
+
         return $listing->getStoreId() == \Magento\Store\Model\Store::DEFAULT_STORE_ID;
     }
 
@@ -48,6 +49,7 @@ abstract class AbstractMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->globalDataHelper->getValue('listing');
+
         return $this->magentoStoreHelper->getWebsiteName($listing->getStoreId());
     }
 
@@ -62,7 +64,7 @@ abstract class AbstractMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 <h3 id="block-title-top">{$this->getBlockTitle()}</h3>
 <div id="block-content-wrapper" style="margin-left: 26px">{$this->getBlockContent()}</div>
 HTML
-                . parent::_toHtml();
+            . parent::_toHtml();
     }
 
     protected function getBlockTitle()
@@ -76,7 +78,8 @@ HTML
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'id' => 'block_notice_listing_auto_action_mode',
-            'content' => $this->__(<<<HTML
+            'content' => $this->__(
+                <<<HTML
 <p>Choose the level at which Products should be automatically added or deleted.</p><br>
 
 <p><strong>Global</strong> will check for Products being added or deleted in Magento Catalog.</p>
@@ -92,7 +95,7 @@ Edit Settings > Auto Add/Remove Rules button in your M2E Pro Listing.</p>
 HTML
                 ,
                 $this->getHelpPageUrl()
-            )
+            ),
         ]);
 
         return $helpBlock;
@@ -109,7 +112,7 @@ HTML
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL,
                 'class' => 'admin__control-radio',
-                'after_element_html' => $this->__('Global (all Products)')
+                'after_element_html' => $this->__('Global (all Products)'),
             ]
         );
 
@@ -117,7 +120,7 @@ HTML
             'note_global',
             'note',
             [
-                'text' => $this->__('Acts when a Product is added or deleted from Magento Catalog.')
+                'text' => $this->__('Acts when a Product is added or deleted from Magento Catalog.'),
             ]
         );
 
@@ -129,7 +132,7 @@ HTML
                     'name' => 'auto_mode',
                     'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE,
                     'class' => 'admin__control-radio',
-                    'after_element_html' => $this->__('Website') . '&nbsp;('.$this->getWebsiteName().')'
+                    'after_element_html' => $this->__('Website') . '&nbsp;(' . $this->getWebsiteName() . ')',
                 ]
             );
 
@@ -140,7 +143,7 @@ HTML
                     'text' => $this->__(
                         'Acts when a Product is added to or deleted from the Website with regard
                          to the Store View specified for the M2E Pro Listing.'
-                    )
+                    ),
                 ]
             );
         }
@@ -152,7 +155,7 @@ HTML
                 'name' => 'auto_mode',
                 'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY,
                 'class' => 'admin__control-radio validate-one-required-by-name',
-                'after_element_html' => $this->__('Category')
+                'after_element_html' => $this->__('Category'),
             ]
         );
 
@@ -163,7 +166,7 @@ HTML
                 'text' => $this->__(
                     'Acts when the Product is added to or deleted from the
                      selected Magento Category.'
-                )
+                ),
             ]
         );
 
@@ -172,7 +175,7 @@ HTML
             'text',
             [
                 'class' => 'M2ePro-validate-mode',
-                'style' => 'display: none;'
+                'style' => 'display: none;',
             ]
         );
 

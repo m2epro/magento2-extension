@@ -12,7 +12,7 @@ class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 {
     protected function getCommand()
     {
-        return ['item','update','reviseManager'];
+        return ['item', 'update', 'reviseManager'];
     }
 
     protected function getActionType()

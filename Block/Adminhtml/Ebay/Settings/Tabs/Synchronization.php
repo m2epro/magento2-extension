@@ -64,8 +64,8 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
         $form = $this->_formFactory->create([
             'data' => [
                 'method' => 'post',
-                'action' => $this->getUrl('*/*/save')
-            ]
+                'action' => $this->getUrl('*/*/save'),
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
@@ -80,11 +80,11 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
             'instructions_mode',
             self::SELECT,
             [
-                'name'        => 'instructions_mode',
-                'label'       => $this->__('Enabled'),
+                'name' => 'instructions_mode',
+                'label' => $this->__('Enabled'),
                 'values' => [
                     0 => $this->__('No'),
-                    1 => $this->__('Yes')
+                    1 => $this->__('Yes'),
                 ],
                 'value' => $instructionsMode,
                 'tooltip' => $this->__(
@@ -92,7 +92,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
                      to enable/disable the data synchronization managed by the Synchronization Policy Rules.</p><br>
                      <p>However, it does not exclude the ability to manually manage
                      Items in Listings using the available List, Revise, Relist or Stop Action options.</p>'
-                )
+                ),
             ]
         );
 
@@ -125,8 +125,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
                 '*/ebay_synchronization/save'
             ),
             'synch_formSubmit' => $this->getUrl('*/ebay_synchronization/save'),
-            'logViewUrl' => $this->getUrl('*/ebay_synchronization_log/index', ['back'=>$this->dataHelper
-                ->makeBackUrlParam('*/ebay_synchronization/index')]),
+            'logViewUrl' => $this->getUrl('*/ebay_synchronization_log/index', [
+                'back' => $this->dataHelper
+                    ->makeBackUrlParam('*/ebay_synchronization/index'),
+            ]),
         ]);
 
         return parent::_toHtml();

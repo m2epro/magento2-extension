@@ -13,19 +13,19 @@ namespace Ess\M2ePro\Model\Template\Synchronization;
  */
 abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_synchronization_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_synchronization_change_processor';
 
-    const INSTRUCTION_TYPE_LIST_MODE_ENABLED       = 'template_synchronization_list_mode_enabled';
-    const INSTRUCTION_TYPE_LIST_MODE_DISABLED      = 'template_synchronization_list_mode_disabled';
-    const INSTRUCTION_TYPE_LIST_SETTINGS_CHANGED   = 'template_synchronization_list_settings_changed';
+    public const INSTRUCTION_TYPE_LIST_MODE_ENABLED = 'template_synchronization_list_mode_enabled';
+    public const INSTRUCTION_TYPE_LIST_MODE_DISABLED = 'template_synchronization_list_mode_disabled';
+    public const INSTRUCTION_TYPE_LIST_SETTINGS_CHANGED = 'template_synchronization_list_settings_changed';
 
-    const INSTRUCTION_TYPE_RELIST_MODE_ENABLED     = 'template_synchronization_relist_mode_enabled';
-    const INSTRUCTION_TYPE_RELIST_MODE_DISABLED    = 'template_synchronization_relist_mode_disabled';
-    const INSTRUCTION_TYPE_RELIST_SETTINGS_CHANGED = 'template_synchronization_relist_settings_changed';
+    public const INSTRUCTION_TYPE_RELIST_MODE_ENABLED = 'template_synchronization_relist_mode_enabled';
+    public const INSTRUCTION_TYPE_RELIST_MODE_DISABLED = 'template_synchronization_relist_mode_disabled';
+    public const INSTRUCTION_TYPE_RELIST_SETTINGS_CHANGED = 'template_synchronization_relist_settings_changed';
 
-    const INSTRUCTION_TYPE_STOP_MODE_ENABLED       = 'template_synchronization_stop_mode_enabled';
-    const INSTRUCTION_TYPE_STOP_MODE_DISABLED      = 'template_synchronization_stop_mode_disabled';
-    const INSTRUCTION_TYPE_STOP_SETTINGS_CHANGED   = 'template_synchronization_stop_settings_changed';
+    public const INSTRUCTION_TYPE_STOP_MODE_ENABLED = 'template_synchronization_stop_mode_enabled';
+    public const INSTRUCTION_TYPE_STOP_MODE_DISABLED = 'template_synchronization_stop_mode_disabled';
+    public const INSTRUCTION_TYPE_STOP_SETTINGS_CHANGED = 'template_synchronization_stop_settings_changed';
 
     //########################################
 
@@ -50,8 +50,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_LIST_MODE_ENABLED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_LIST_MODE_ENABLED,
+                'priority' => $priority,
             ];
         }
 
@@ -63,8 +63,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_LIST_MODE_DISABLED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_LIST_MODE_DISABLED,
+                'priority' => $priority,
             ];
         }
 
@@ -76,45 +76,49 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_LIST_SETTINGS_CHANGED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_LIST_SETTINGS_CHANGED,
+                'priority' => $priority,
             ];
         }
 
         if ($diff->isRelistModeEnabled()) {
             $priority = 5;
 
-            if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD ||
+            if (
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD ||
                 $status == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP ||
-                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED) {
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED
+            ) {
                 $priority = 50;
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_RELIST_MODE_ENABLED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_RELIST_MODE_ENABLED,
+                'priority' => $priority,
             ];
         }
 
         if ($diff->isRelistModeDisabled()) {
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_RELIST_MODE_DISABLED,
-                'priority' => 5
+                'type' => self::INSTRUCTION_TYPE_RELIST_MODE_DISABLED,
+                'priority' => 5,
             ];
         }
 
         if ($diff->isRelistSettingsChanged()) {
             $priority = 5;
 
-            if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD ||
+            if (
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD ||
                 $status == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP ||
-                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED) {
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED
+            ) {
                 $priority = 40;
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_RELIST_SETTINGS_CHANGED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_RELIST_SETTINGS_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -126,8 +130,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_STOP_MODE_ENABLED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_STOP_MODE_ENABLED,
+                'priority' => $priority,
             ];
         }
 
@@ -139,8 +143,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_STOP_MODE_DISABLED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_STOP_MODE_DISABLED,
+                'priority' => $priority,
             ];
         }
 
@@ -152,8 +156,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             }
 
             $data[] = [
-                'type'     => self::INSTRUCTION_TYPE_STOP_SETTINGS_CHANGED,
-                'priority' => $priority
+                'type' => self::INSTRUCTION_TYPE_STOP_SETTINGS_CHANGED,
+                'priority' => $priority,
             ];
         }
 

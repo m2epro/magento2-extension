@@ -56,7 +56,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->prepareCacheData();
 
         $collection = $this->walmartFactory->getObject('Listing\Other')->getCollection();
-        $collection->getSelect()->group(['account_id','marketplace_id']);
+        $collection->getSelect()->group(['account_id', 'marketplace_id']);
 
         // Set collection to grid
         $this->setCollection($collection);
@@ -67,52 +67,52 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('account', [
-            'header'    => $this->__('Account'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnAccount']
+            'header' => $this->__('Account'),
+            'align' => 'left',
+            'type' => 'text',
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnAccount'],
         ]);
 
         $this->addColumn('marketplace', [
-            'header'    => $this->__('Marketplace'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnMarketplace']
+            'header' => $this->__('Marketplace'),
+            'align' => 'left',
+            'type' => 'text',
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnMarketplace'],
         ]);
 
         $this->addColumn('products_total_count', [
-            'header'    => $this->__('Total Items'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'products_total_count',
+            'header' => $this->__('Total Items'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'products_total_count',
             'filter_index' => 'main_table.products_total_count',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnTotalProducts']
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnTotalProducts'],
         ]);
 
         $this->addColumn('products_active_count', [
-            'header'    => $this->__('Active Items'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'products_active_count',
+            'header' => $this->__('Active Items'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'products_active_count',
             'filter_index' => 'main_table.products_active_count',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnListedProducts']
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnListedProducts'],
         ]);
 
         $this->addColumn('products_inactive_count', [
-            'header'    => $this->__('Inactive Items'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'type'      => 'number',
-            'index'     => 'products_inactive_count',
+            'header' => $this->__('Inactive Items'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'products_inactive_count',
             'filter_index' => 'main_table.products_inactive_count',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnInactiveProducts']
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnInactiveProducts'],
         ]);
 
         return parent::_prepareColumns();
@@ -125,6 +125,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $accountTitle = $this->activeRecordFactory
             ->getObjectLoaded('Account', $row->getData('account_id'))
             ->getTitle();
+
         return $this->dataHelper->escapeHtml($accountTitle);
     }
 
@@ -133,6 +134,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $marketplaceTitle = $this->walmartFactory
             ->getObjectLoaded('Marketplace', $row->getData('marketplace_id'))
             ->getTitle();
+
         return $this->dataHelper->escapeHtml($marketplaceTitle);
     }
 
@@ -194,7 +196,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->getUrl('*/walmart_listing_other/view', [
             'account' => $row->getData('account_id'),
             'marketplace' => $row->getData('marketplace_id'),
-            'back'=> $this->dataHelper->makeBackUrlParam('*/walmart_listing_other/index')
+            'back' => $this->dataHelper->makeBackUrlParam('*/walmart_listing_other/index'),
         ]);
     }
 
@@ -210,9 +212,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'count' => new \Zend_Db_Expr('COUNT(id)'),
             'account_id',
             'marketplace_id',
-            'status'
+            'status',
         ]);
-        $collection->getSelect()->group(['account_id','marketplace_id','status']);
+        $collection->getSelect()->group(['account_id', 'marketplace_id', 'status']);
 
         foreach ($collection->getItems() as $item) {
             $key = $item->getData('account_id') . ',' . $item->getData('marketplace_id');
@@ -220,7 +222,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             empty($this->cacheData[$key]) && ($this->cacheData[$key] = [
                 'total_items' => 0,
                 'active_items' => 0,
-                'inactive_items' => 0
+                'inactive_items' => 0,
             ]);
 
             if ($item->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {

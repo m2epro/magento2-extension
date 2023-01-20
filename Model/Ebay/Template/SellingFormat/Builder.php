@@ -266,7 +266,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                     'organization_id' => (int)$this->rawData['charity']['organization_id'][$key],
                     'organization_name' => $this->rawData['charity']['organization_name'][$key],
                     'organization_custom' => (int)$this->rawData['charity']['organization_custom'][$key],
-                    'percentage' => (int)$this->rawData['charity']['percentage'][$key]
+                    'percentage' => (int)$this->rawData['charity']['percentage'][$key],
                 ];
             }
 
@@ -326,14 +326,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'qty_min_posted_value' => SellingFormat::QTY_MIN_POSTED_DEFAULT_VALUE,
             'qty_max_posted_value' => SellingFormat::QTY_MAX_POSTED_DEFAULT_VALUE,
 
-            'vat_mode'       => 0,
-            'vat_percent'    => 0,
+            'vat_mode' => 0,
+            'vat_percent' => 0,
             'tax_table_mode' => 0,
 
             'restricted_to_business' => SellingFormat::RESTRICTED_TO_BUSINESS_DISABLED,
 
-            'tax_category_mode'      => 0,
-            'tax_category_value'     => '',
+            'tax_category_mode' => 0,
+            'tax_category_value' => '',
             'tax_category_attribute' => '',
 
             'price_increase_vat_percent' => 0,
@@ -378,7 +378,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             'lot_size_mode' => 0,
             'lot_size_custom_value' => '',
-            'lot_size_attribute' => ''
+            'lot_size_attribute' => '',
         ];
     }
 
@@ -387,12 +387,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
      */
     private function getFixedPriceModifierData(): ?array
     {
-        if (!empty($this->rawData['fixed_price_modifier_mode'])
+        if (
+            !empty($this->rawData['fixed_price_modifier_mode'])
             && is_array($this->rawData['fixed_price_modifier_mode'])
         ) {
             $fixedPriceModifierData = [];
             foreach ($this->rawData['fixed_price_modifier_mode'] as $key => $fixedPriceModifierMode) {
-                if (!isset($this->rawData['fixed_price_modifier_value'][$key])
+                if (
+                    !isset($this->rawData['fixed_price_modifier_value'][$key])
                     || !is_string($this->rawData['fixed_price_modifier_value'][$key])
                     || !isset($this->rawData['fixed_price_modifier_attribute'][$key])
                     || !is_string($this->rawData['fixed_price_modifier_attribute'][$key])
@@ -403,12 +405,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 if ($fixedPriceModifierMode == SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE) {
                     $fixedPriceModifierData[] = [
                         'mode' => $fixedPriceModifierMode,
-                        'attribute_code' => $this->rawData['fixed_price_modifier_attribute'][$key]
+                        'attribute_code' => $this->rawData['fixed_price_modifier_attribute'][$key],
                     ];
                 } else {
                     $fixedPriceModifierData[] = [
                         'mode' => $fixedPriceModifierMode,
-                        'value' => $this->rawData['fixed_price_modifier_value'][$key]
+                        'value' => $this->rawData['fixed_price_modifier_value'][$key],
                     ];
                 }
             }

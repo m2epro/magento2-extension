@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Account
- */
 class Account extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     //########################################

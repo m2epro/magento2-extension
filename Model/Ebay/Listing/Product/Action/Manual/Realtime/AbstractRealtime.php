@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Realtime;
 
-use \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Result;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Result;
 
 abstract class AbstractRealtime extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\AbstractManual
 {

@@ -36,6 +36,7 @@ class LockManager extends \Ess\M2ePro\Model\AbstractModel
     public function setModel(ActiveRecordAbstract $model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -59,9 +60,9 @@ class LockManager extends \Ess\M2ePro\Model\AbstractModel
         $model->setData(
             [
                 'processing_id' => $processingId,
-                'model_name'    => $this->model->getResourceName(),
-                'object_id'     => $this->model->getId(),
-                'tag'           => $tag,
+                'model_name' => $this->model->getResourceName(),
+                'object_id' => $this->model->getId(),
+                'tag' => $tag,
             ]
         );
         $model->save();

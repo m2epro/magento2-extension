@@ -15,10 +15,11 @@ class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\
 {
     public function execute()
     {
-        $productsIds  = $this->getRequest()->getParam('products_ids');
+        $productsIds = $this->getRequest()->getParam('products_ids');
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -34,13 +35,13 @@ class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\
                 'type' => 'warning',
                 'text' => $this->__(
                     'The Shipping Policy was not assigned because the Products have In Action Status.'
-                )
+                ),
             ];
         }
 
         if (empty($productsIdsLocked)) {
             $this->setJsonContent([
-                'messages' => $messages
+                'messages' => $messages,
             ]);
 
             return $this->getResult();
@@ -55,7 +56,7 @@ class ViewPopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\
         $this->setJsonContent([
             'html' => $mainBlock->toHtml(),
             'messages' => $messages,
-            'products_ids' => implode(',', $productsIdsLocked)
+            'products_ids' => implode(',', $productsIdsLocked),
         ]);
 
         return $this->getResult();

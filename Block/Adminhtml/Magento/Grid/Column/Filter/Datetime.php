@@ -16,6 +16,7 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
      * Convert given date to default (UTC) timezone
      *
      * @param string $date
+     *
      * @return \DateTime|null
      */
     protected function _convertDate($date)
@@ -29,7 +30,7 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
             // $format   = $this->getColumn()->getFormat()?: \IntlDateFormatter::SHORT;
             $format = \IntlDateFormatter::SHORT;
             $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone()
-                                                                    : 'UTC';
+                : 'UTC';
 
             $timeStamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
                 $date,

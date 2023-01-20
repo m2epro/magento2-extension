@@ -52,17 +52,18 @@ class UnmapFromAsin extends Main
         $type = 'success';
 
         foreach ($productsIds as $productId) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $productId);
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
 
-            if (!$listingProduct->isNotListed() ||
+            if (
+                !$listingProduct->isNotListed() ||
                 $listingProduct->isSetProcessingLock('in_action') ||
                 ($amazonListingProduct->getVariationManager()->isVariationParent() &&
-                    $listingProduct->isSetProcessingLock('child_products_in_action'))) {
+                    $listingProduct->isSetProcessingLock('child_products_in_action'))
+            ) {
                 $type = 'error';
                 $message = $this->__(
                     'ASIN/ISBN or marker “New ASIN/ISBN” was not unassigned from some Items because those Items
@@ -102,8 +103,8 @@ class UnmapFromAsin extends Main
         }
 
         $this->setJsonContent([
-            'type'    => $type,
-            'message' => $message
+            'type' => $type,
+            'message' => $message,
         ]);
 
         return $this->getResult();

@@ -40,16 +40,18 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'edit_form',
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+            ],
+        ]);
 
         $form->addField(
             'group_id',
             'hidden',
             [
                 'name' => 'id',
-                'value' => $this->formData['id']
+                'value' => $this->formData['id'],
             ]
         );
 
@@ -58,7 +60,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
             'hidden',
             [
                 'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY
+                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_CATEGORY,
             ]
         );
 
@@ -73,7 +75,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
                 'title' => $this->__('Title'),
                 'class' => 'M2ePro-required-when-visible M2ePro-validate-category-group-title',
                 'value' => $this->formData['title'],
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -91,7 +93,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
                 'tooltip' => $this->__(
                     'Action which will be applied automatically.'
                 ),
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
@@ -104,7 +106,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
                 'title' => $this->__('Add not Visible Individually Products'),
                 'values' => [
                     ['label' => $this->__('No'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO],
-                    ['label' => $this->__('Yes'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES]
+                    ['label' => $this->__('Yes'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES],
                 ],
                 'value' => $this->formData['adding_add_not_visible'],
                 'field_extra_attributes' => 'id="adding_add_not_visible_field"',
@@ -115,7 +117,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
                     If set to <strong>No</strong>, only Variation (i.e.
                     Parent) Magento Products will be added to the Listing Automatically,
                     excluding Child Products.'
-                )
+                ),
             ]
         );
 
@@ -131,16 +133,17 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
                     ['label' => $this->__('Stop on Channel'), 'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP],
                     [
                         'label' => $this->__('Stop on Channel and Delete from Listing'),
-                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
                     ],
                 ],
                 'value' => $this->formData['deleting_mode'],
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
         $form->setUseContainer(true);
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 
@@ -189,10 +192,10 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
     public function getCategoriesFromOtherGroups()
     {
         $categories = $this->activeRecordFactory->getObject('Listing_Auto_Category_Group')->getResource()
-            ->getCategoriesFromOtherGroups(
-                $this->getRequest()->getParam('listing_id'),
-                $this->getRequest()->getParam('group_id')
-            );
+                                                ->getCategoriesFromOtherGroups(
+                                                    $this->getRequest()->getParam('listing_id'),
+                                                    $this->getRequest()->getParam('group_id')
+                                                );
 
         foreach ($categories as &$group) {
             $group['title'] = $this->dataHelper->escapeHtml($group['title']);
@@ -228,7 +231,8 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
         $magentoCategoryIdsFromOtherGroups = $this->dataHelper->jsonEncode(
             $this->getCategoriesFromOtherGroups()
         );
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
             ListingAutoActionObj.magentoCategoryIdsFromOtherGroups = {$magentoCategoryIdsFromOtherGroups};
 JS
         );
@@ -241,10 +245,13 @@ JS
         $selectedCategories = [];
         if ($this->getRequest()->getParam('group_id')) {
             $selectedCategories = $this->activeRecordFactory->getObject('Listing_Auto_Category')
-                ->getCollection()
-                ->addFieldToFilter('group_id', $this->getRequest()->getParam('group_id'))
-                ->addFieldToFilter('category_id', ['neq' => 0])
-                ->getColumnValues('category_id');
+                                                            ->getCollection()
+                                                            ->addFieldToFilter(
+                                                                'group_id',
+                                                                $this->getRequest()->getParam('group_id')
+                                                            )
+                                                            ->addFieldToFilter('category_id', ['neq' => 0])
+                                                            ->getColumnValues('category_id');
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree $block */
@@ -256,9 +263,9 @@ JS
         <div id="dialog_confirm_content" style="display: none;">
             <div>
                 {$this->__(
-                    'This Category is already used in the Rule %s.
+            'This Category is already used in the Rule %s.
                     If you press "Confirm" Button, Category will be removed from that Rule.'
-                )}
+        )}
             </div>
         </div>
 HTML;
@@ -268,8 +275,8 @@ HTML;
         );
 
         return '<div id="category_child_data_container">
-                    <div id="category_tree_container">'.$block->toHtml().'</div>
-                    <div id="category_form_container">'.parent::_toHtml().'</div>
+                    <div id="category_tree_container">' . $block->toHtml() . '</div>
+                    <div id="category_form_container">' . parent::_toHtml() . '</div>
                 </div><div style="clear: both;"></div>
                 <div><form id="validate_category_selection_form"><input type="hidden"
                             name="validate_category_selection"

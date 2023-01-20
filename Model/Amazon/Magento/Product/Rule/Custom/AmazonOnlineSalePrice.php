@@ -41,6 +41,7 @@ class AmazonOnlineSalePrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custo
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return mixed
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)

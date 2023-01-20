@@ -17,6 +17,7 @@ class GetChangePartsCompatibilityModePopupHtml extends \Ess\M2ePro\Controller\Ad
         $block->setListingId($this->getRequest()->getParam('listing_id'));
 
         $this->setAjaxContent($block);
+
         return $this->getResult();
     }
 }

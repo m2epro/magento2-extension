@@ -16,6 +16,7 @@ class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
 
         if (empty($productId)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -46,6 +47,7 @@ class GetListingProductBids extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listin
         $grid->setListingProduct($listingProduct);
 
         $this->setAjaxContent($grid);
+
         return $this->getResult();
     }
 }

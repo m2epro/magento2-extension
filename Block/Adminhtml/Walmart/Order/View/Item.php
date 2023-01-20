@@ -80,68 +80,69 @@ class Item extends AbstractGrid
     protected function _prepareCollection()
     {
         $collection = $this->walmartFactory->getObject('Order\Item')->getCollection()
-            ->addFieldToFilter('order_id', $this->order->getId());
+                                           ->addFieldToFilter('order_id', $this->order->getId());
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
     {
         $this->addColumn('products', [
-            'header'    => $this->__('Product'),
-            'align'     => 'left',
-            'width'     => '*',
-            'index'     => 'product_id',
-            'frame_callback' => [$this, 'callbackColumnProduct']
+            'header' => $this->__('Product'),
+            'align' => 'left',
+            'width' => '*',
+            'index' => 'product_id',
+            'frame_callback' => [$this, 'callbackColumnProduct'],
         ]);
 
         $this->addColumn('stock_availability', [
-            'header'=> $this->__('Stock Availability'),
+            'header' => $this->__('Stock Availability'),
             'width' => '100px',
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnIsInStock']
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('original_price', [
-            'header'    => $this->__('Original Price'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnOriginalPrice']
+            'header' => $this->__('Original Price'),
+            'align' => 'left',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnOriginalPrice'],
         ]);
 
         $this->addColumn('qty_purchased', [
-            'header'    => $this->__('QTY'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'index'     => 'qty_purchased',
-            'frame_callback' => [$this, 'callbackColumnQty']
+            'header' => $this->__('QTY'),
+            'align' => 'left',
+            'width' => '80px',
+            'index' => 'qty_purchased',
+            'frame_callback' => [$this, 'callbackColumnQty'],
         ]);
 
         $this->addColumn('price', [
-            'header'    => $this->__('Price'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'index'     => 'price',
-            'frame_callback' => [$this, 'callbackColumnPrice']
+            'header' => $this->__('Price'),
+            'align' => 'left',
+            'width' => '80px',
+            'index' => 'price',
+            'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 
         $this->addColumn('tax_percent', [
-            'header'    => $this->__('Tax Percent'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnTaxPercent']
+            'header' => $this->__('Tax Percent'),
+            'align' => 'left',
+            'width' => '80px',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnTaxPercent'],
         ]);
 
         $this->addColumn('row_total', [
-            'header'    => $this->__('Row Total'),
-            'align'     => 'left',
-            'width'     => '80px',
-            'frame_callback' => [$this, 'callbackColumnRowTotal']
+            'header' => $this->__('Row Total'),
+            'align' => 'left',
+            'width' => '80px',
+            'frame_callback' => [$this, 'callbackColumnRowTotal'],
         ]);
 
         return parent::_prepareColumns();
@@ -167,12 +168,12 @@ class Item extends AbstractGrid
 
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Listing\Product $item */
-            $sku    = (string)$item->getChildObject()->getSku();
+            $sku = (string)$item->getChildObject()->getSku();
             $itemId = (string)$item->getChildObject()->getItemId();
-            $wpid   = (string)$item->getChildObject()->getWpid();
+            $wpid = (string)$item->getChildObject()->getWpid();
 
             $itemId && $cache[$sku]['item_id'] = $itemId;
-            $wpid && $cache[$sku]['wpid']      = $wpid;
+            $wpid && $cache[$sku]['wpid'] = $wpid;
         }
         // ---------------------------------------
 
@@ -186,13 +187,13 @@ class Item extends AbstractGrid
 
         foreach ($collection->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Listing\Other $item */
-            $sku    = (string)$item->getChildObject()->getSku();
+            $sku = (string)$item->getChildObject()->getSku();
             $itemId = (string)$item->getChildObject()->getItemId();
-            $wpid   = (string)$item->getChildObject()->getWpid();
+            $wpid = (string)$item->getChildObject()->getWpid();
 
             if (empty($cache[$sku])) {
                 $itemId && $cache[$sku]['item_id'] = $itemId;
-                $wpid && $cache[$sku]['wpid']      = $wpid;
+                $wpid && $cache[$sku]['wpid'] = $wpid;
             }
         }
         // ---------------------------------------
@@ -242,8 +243,8 @@ HTML;
         $productLink = '';
         if ($row->getProductId()) {
             $productUrl = $this->getUrl('catalog/product/edit', [
-                'id'    => $row->getProductId(),
-                'store' => $row->getOrder()->getStoreId()
+                'id' => $row->getProductId(),
+                'store' => $row->getOrder()->getStoreId(),
             ]);
             $productLink = <<<HTML
 <a href="{$productUrl}" target="_blank">{$translationHelper->__('View')}</a>
@@ -263,9 +264,11 @@ HTML;
         }
 
         $isPretendedToBeSimple = false;
-        if ($walmartOrderItem->getParentObject()->getMagentoProduct() !== null &&
+        if (
+            $walmartOrderItem->getParentObject()->getMagentoProduct() !== null &&
             $walmartOrderItem->getParentObject()->getMagentoProduct()->isGroupedType() &&
-            $walmartOrderItem->getChannelItem() !== null) {
+            $walmartOrderItem->getChannelItem() !== null
+        ) {
             $isPretendedToBeSimple = $walmartOrderItem->getChannelItem()->isGroupedProductModeSet();
         }
 
@@ -293,7 +296,7 @@ HTML;
         /**@var \Ess\M2ePro\Model\Order\Item $row */
 
         if (!$row->isMagentoProductExists()) {
-            return '<span style="color: red;">'.$this->__('Product Not Found').'</span>';
+            return '<span style="color: red;">' . $this->__('Product Not Found') . '</span>';
         }
 
         if ($row->getMagentoProduct() === null) {
@@ -301,7 +304,7 @@ HTML;
         }
 
         if (!$row->getMagentoProduct()->isStockAvailability()) {
-            return '<span style="color: red;">'.$this->__('Out Of Stock').'</span>';
+            return '<span style="color: red;">' . $this->__('Out Of Stock') . '</span>';
         }
 
         return $this->__('In Stock');

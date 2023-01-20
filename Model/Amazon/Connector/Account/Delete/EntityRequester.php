@@ -28,7 +28,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
      */
     protected function getCommand()
     {
-        return ['account','delete','entity'];
+        return ['account', 'delete', 'entity'];
     }
 
     //########################################

@@ -73,24 +73,26 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         $collection = $this->activeRecordFactory->getObject('Walmart\Listing')->getCollection();
         $collection->getSelect()
-            ->where("main_table.auto_global_adding_category_template_id = {$this->getId()} OR
-                     main_table.auto_website_adding_category_template_id = {$this->getId()}");
+                   ->where(
+                       "main_table.auto_global_adding_category_template_id = {$this->getId()} OR
+                     main_table.auto_website_adding_category_template_id = {$this->getId()}"
+                   );
 
         return (bool)$this->activeRecordFactory->getObject('Walmart_Listing_Product')
                                                ->getCollection()
                                                ->addFieldToFilter('template_category_id', $this->getId())
                                                ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Walmart_Listing_Auto_Category_Group')
-                                               ->getCollection()
-                                               ->addFieldToFilter('adding_category_template_id', $this->getId())
-                                               ->getSize() ||
-               (bool)$collection->getSize();
+            (bool)$this->activeRecordFactory->getObject('Walmart_Listing_Auto_Category_Group')
+                                            ->getCollection()
+                                            ->addFieldToFilter('adding_category_template_id', $this->getId())
+                                            ->getSize() ||
+            (bool)$collection->getSize();
     }
 
     public function isLockedForCategoryChange()
     {
         $collection = $this->walmartFactory->getObject('Listing\Product')->getCollection()
-            ->addFieldToFilter('second_table.template_category_id', $this->getId());
+                                           ->addFieldToFilter('second_table.template_category_id', $this->getId());
 
         if ($collection->getSize() <= 0) {
             return false;
@@ -144,6 +146,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Walmart\Template\Category\Specific[]
      */
     public function getSpecifics($asObjects = false, array $filters = [])

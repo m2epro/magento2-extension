@@ -19,9 +19,12 @@ class Data extends AbstractBlock
 
     protected function _prepareLayout()
     {
-        $this->setChild('tabs', $this->getLayout()
-                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs::class)
+        $this->setChild(
+            'tabs',
+            $this->getLayout()
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs::class)
         );
+
         return parent::_prepareLayout();
     }
 }

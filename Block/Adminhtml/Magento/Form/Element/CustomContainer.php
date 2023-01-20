@@ -40,14 +40,15 @@ class CustomContainer extends AbstractElement
         $html = $this->getBeforeElementHtml()
             . '<div id="'
             . $this->getHtmlId()
-            . '" '.$this->getClass().
+            . '" ' . $this->getClass() .
             $this->serialize(
                 $this->getHtmlAttributes()
             )
-            .'>'
+            . '>'
             . $this->getText()
             . '</div>'
             . $this->getAfterElementHtml();
+
         return $html;
     }
 
@@ -61,7 +62,7 @@ class CustomContainer extends AbstractElement
         $cssClass = ' class="control-value admin__field-value ';
 
         if (isset($this->_data['container_class'])) {
-            return $cssClass . $this->_data['container_class'].'" ';
+            return $cssClass . $this->_data['container_class'] . '" ';
         }
 
         return $cssClass . '" ';

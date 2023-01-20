@@ -38,7 +38,7 @@ class CheckAuth extends Account
 
         $result = [
             'result' => false,
-            'reason' => null
+            'reason' => null,
         ];
 
         if ($merchantId && $token && $marketplaceId) {
@@ -49,10 +49,11 @@ class CheckAuth extends Account
             $params = [
                 'marketplace' => $marketplaceNativeId,
                 'merchant_id' => $merchantId,
-                'token'       => $token,
+                'token' => $token,
             ];
 
             try {
+                /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
                 $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
                 $connectorObj = $dispatcherObject->getVirtualConnector('account', 'check', 'access', $params);
                 $dispatcherObject->process($connectorObj);

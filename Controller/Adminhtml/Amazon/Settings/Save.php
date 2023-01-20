@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract;
-use \Ess\M2ePro\Model\Amazon\Template\SellingFormat\ChangeProcessor;
+use Ess\M2ePro\Model\Amazon\Template\SellingFormat\ChangeProcessor;
 
 class Save extends Settings
 {
@@ -27,7 +27,7 @@ class Save extends Settings
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context,
-        \Magento\Framework\App\ResourceConnection  $resource,
+        \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instruction
     ) {
@@ -45,6 +45,7 @@ class Save extends Settings
         $post = $this->getRequest()->getPostValue();
         if (!$post) {
             $this->setJsonContent(['success' => false]);
+
             return $this->getResult();
         }
 
@@ -57,6 +58,7 @@ class Save extends Settings
 
         $this->configuration->setConfigValues($this->getRequest()->getParams());
         $this->setJsonContent(['success' => true]);
+
         return $this->getResult();
     }
 

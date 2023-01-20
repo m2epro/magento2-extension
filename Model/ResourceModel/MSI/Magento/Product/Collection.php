@@ -101,8 +101,8 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
             ['it' => $this->indexNameResolver->execute($stockId)],
             'sku=sku',
             [
-                'stock_quantity'    => 'quantity',
-                'stock_is_in_stock' => 'is_salable'
+                'stock_quantity' => 'quantity',
+                'stock_is_in_stock' => 'is_salable',
             ],
             null,
             'left'
@@ -111,16 +111,16 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
             ['it_def' => $this->indexNameResolver->execute($this->defaultStockResolver->getId())],
             'sku=sku',
             [
-                'def_quantity'    => 'quantity',
-                'def_is_in_stock' => 'is_salable'
+                'def_quantity' => 'quantity',
+                'def_is_in_stock' => 'is_salable',
             ],
             null,
             'left'
         );
 
         $this->getSelect()->columns([
-            'qty'         => $this->getCheckSqlForQty(),
-            'is_in_stock' => $this->getCheckSqlForStock()
+            'qty' => $this->getCheckSqlForQty(),
+            'is_in_stock' => $this->getCheckSqlForStock(),
         ]);
     }
 
@@ -151,18 +151,18 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
     public function addAttributeToFilter($attribute, $condition = null, $joinType = 'inner')
     {
         if ($attribute == 'is_in_stock') {
-            $this->getSelect()->where($this->getCheckSqlForStock().' = ?', $condition);
+            $this->getSelect()->where($this->getCheckSqlForStock() . ' = ?', $condition);
 
             return $this;
         }
 
         if ($attribute == 'qty') {
             if (isset($condition['from'])) {
-                $this->getSelect()->where($this->getCheckSqlForQty().' >= ?', $condition['from']);
+                $this->getSelect()->where($this->getCheckSqlForQty() . ' >= ?', $condition['from']);
             }
 
             if (isset($condition['to'])) {
-                $this->getSelect()->where($this->getCheckSqlForQty().' <= ?', $condition['to']);
+                $this->getSelect()->where($this->getCheckSqlForQty() . ' <= ?', $condition['to']);
             }
 
             return $this;
@@ -176,7 +176,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
     public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
     {
         if ($attribute == 'qty') {
-            return $this->getSelect()->order($this->getCheckSqlForQty(). ' ' . $dir);
+            return $this->getSelect()->order($this->getCheckSqlForQty() . ' ' . $dir);
         }
 
         return parent::addAttributeToSort($attribute, $dir);

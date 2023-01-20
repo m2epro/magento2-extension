@@ -31,6 +31,7 @@ class Data
     private $serializerInterface;
     /** @var \Magento\Framework\App\RequestInterface */
     private $httpRequest;
+    /** @var mixed */
     private $phpSerialize;
 
     /**
@@ -519,7 +520,7 @@ class Data
      */
     public function jsonDecode($data, $throwError = false)
     {
-       return \Ess\M2ePro\Helper\Json::decode($data, $throwError);
+        return \Ess\M2ePro\Helper\Json::decode($data, $throwError);
     }
 
     // ----------------------------------------

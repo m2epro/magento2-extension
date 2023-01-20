@@ -9,14 +9,15 @@
 namespace Ess\M2ePro\Model\Amazon\Search;
 
 use Ess\M2ePro\Helper\Data\Product\Identifier;
+use Ess\M2ePro\Model\Amazon\Search\Settings as SearchSettings;
 
 class Settings extends \Ess\M2ePro\Model\AbstractModel
 {
     private const SEARCH_BY_ASIN = 'byAsin';
     private const SEARCH_BY_IDENTIFIER = 'byIdentifier';
 
-    private const STEP_GENERAL_ID    = 1;
-    private const STEP_WORLDWIDE_ID  = 2;
+    private const STEP_GENERAL_ID = 1;
+    private const STEP_WORLDWIDE_ID = 2;
 
     /** @var \Ess\M2ePro\Model\Amazon\Search\Settings\CounterOfFind */
     private $counterOfFind;
@@ -41,21 +42,25 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
     /**
      * @param $step
+     *
      * @return $this
      */
     public function setStep($step)
     {
         $this->step = $step;
+
         return $this;
     }
 
@@ -71,6 +76,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->step = $nextStep;
+
         return true;
     }
 
@@ -80,16 +86,19 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     public function resetStep()
     {
         $this->step = null;
+
         return $this;
     }
 
     /**
      * @param array $result
+     *
      * @return $this
      */
     public function setStepData(array $result)
     {
         $this->stepData = $result;
+
         return $this;
     }
 
@@ -118,7 +127,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             self::STEP_GENERAL_ID,
-            self::STEP_WORLDWIDE_ID
+            self::STEP_WORLDWIDE_ID,
         ];
     }
 
@@ -131,6 +140,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->getGeneralId() === null && $this->getWorldwideId() === null) {
             $this->setInvalidIdentifierStatus();
+
             return false;
         }
 
@@ -145,6 +155,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         if (!empty($this->stepData['result'])) {
             $this->processResult();
+
             return true;
         }
 
@@ -152,6 +163,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         if (!$this->setNextStep()) {
             $this->setNotFoundSearchStatus();
+
             return true;
         }
 
@@ -161,15 +173,14 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             return $this->process();
         }
 
-        // @codingStandardsIgnoreStart
         $requesters = [
-            self::SEARCH_BY_ASIN       => 'Amazon\Search\Settings\ByAsin\Requester',
-            self::SEARCH_BY_IDENTIFIER => 'Amazon\Search\Settings\ByIdentifier\Requester'
+            self::SEARCH_BY_ASIN => 'Amazon\Search\Settings\ByAsin\Requester',
+            self::SEARCH_BY_IDENTIFIER => 'Amazon\Search\Settings\ByIdentifier\Requester',
         ];
-        // @codingStandardsIgnoreEnd
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        /** @var SearchSettings\ByAsin\Requester | SearchSettings\ByIdentifier\Requester $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             $requesters[$this->getSearchMethod()],
             $this->getConnectorParams(),
@@ -193,7 +204,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         $type = $this->getIdentifierType($params['query']);
 
         $searchSettingsData = [
-            'type'  => $type,
+            'type' => $type,
             'value' => $params['query'],
         ];
 
@@ -208,6 +219,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             $amazonListingProduct->save();
 
             $this->counterOfFind->increment();
+
             return;
         }
 
@@ -221,21 +233,22 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             && (!Identifier::isISBN($generalId) || !Identifier::isISBN($params['query']))
         ) {
             $this->setNotFoundSearchStatus();
+
             return;
         }
 
         $generalIdSearchInfo = [
             'is_set_automatic' => true,
-            'type'             => $searchSettingsData['type'],
-            'value'            => $searchSettingsData['value'],
+            'type' => $searchSettingsData['type'],
+            'value' => $searchSettingsData['value'],
         ];
 
         $dataForUpdate = [
-            'general_id'             => $generalId,
+            'general_id' => $generalId,
             'general_id_search_info' => \Ess\M2ePro\Helper\Json::encode($generalIdSearchInfo),
-            'is_isbn_general_id'     => Identifier::isISBN($generalId),
+            'is_isbn_general_id' => Identifier::isISBN($generalId),
             'search_settings_status' => null,
-            'search_settings_data'   => null,
+            'search_settings_data' => null,
         ];
 
         $this->getListingProduct()->getChildObject()->addData($dataForUpdate)->save();
@@ -298,7 +311,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
             'query' => $this->getQueryParam(),
             'search_method' => $this->getSearchMethod(),
             'listing_product_id' => $this->getListingProduct()->getId(),
-            'variation_bad_parent_modify_child_to_simple' => true
+            'variation_bad_parent_modify_child_to_simple' => true,
         ];
 
         if ($this->getVariationManager()->isVariationParent()) {
@@ -376,6 +389,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($productGeneralId = $this->getAmazonListingProduct()->getGeneralId()) {
             $generalIdHasResolvedType = Identifier::isASIN($productGeneralId) || Identifier::isISBN($productGeneralId);
+
             return $generalIdHasResolvedType ? $productGeneralId : null;
         }
 
@@ -407,8 +421,8 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
     private function getSearchMethod(): string
     {
         $searchMethods = [
-            self::STEP_GENERAL_ID   => self::SEARCH_BY_ASIN,
-            self::STEP_WORLDWIDE_ID => self::SEARCH_BY_IDENTIFIER
+            self::STEP_GENERAL_ID => self::SEARCH_BY_ASIN,
+            self::STEP_WORLDWIDE_ID => self::SEARCH_BY_IDENTIFIER,
         ];
 
         $searchMethod = $searchMethods[$this->step];

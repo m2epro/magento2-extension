@@ -35,6 +35,7 @@ class AmazonIsRepricing extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Ab
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return int
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
@@ -42,8 +43,10 @@ class AmazonIsRepricing extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Ab
         $isRepricing = (int)$product->getData('is_repricing');
         $repricingState = (int)$product->getData('variation_parent_repricing_state');
 
-        if (($this->filterOperator == '==' && $this->filterCondition == AmazonListingProduct::IS_REPRICING_YES) ||
-            ($this->filterOperator == '!=' && $this->filterCondition == AmazonListingProduct::IS_REPRICING_NO)) {
+        if (
+            ($this->filterOperator == '==' && $this->filterCondition == AmazonListingProduct::IS_REPRICING_YES) ||
+            ($this->filterOperator == '!=' && $this->filterCondition == AmazonListingProduct::IS_REPRICING_NO)
+        ) {
             return $isRepricing;
         }
 
@@ -74,6 +77,7 @@ class AmazonIsRepricing extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Ab
     public function getOptions()
     {
         $helper = $this->helperFactory->getObject('Module\Translation');
+
         return [
             [
                 'value' => AmazonListingProduct::IS_REPRICING_NO,

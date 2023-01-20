@@ -33,6 +33,7 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
         if (empty($listingId) || empty($mode)) {
             $this->_forward('index');
+
             return;
         }
 
@@ -65,7 +66,7 @@ class CategoryTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
                 return $this->_redirect('*/walmart_listing_product_add/index', [
                     '_current' => true,
-                    'step' => 4
+                    'step' => 4,
                 ]);
             }
 

@@ -185,9 +185,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         if (isset($this->rawData['watermark_settings']['position'])) {
             $watermarkSettings['position'] = (int)$this->rawData['watermark_settings']['position'];
 
-            if (isset($this->rawData['old_watermark_settings']) &&
+            if (
+                isset($this->rawData['old_watermark_settings']) &&
                 $this->rawData['watermark_settings']['position'] !==
-                $this->rawData['old_watermark_settings']['position']) {
+                $this->rawData['old_watermark_settings']['position']
+            ) {
                 $hashChange = true;
             }
         }
@@ -195,8 +197,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         if (isset($this->rawData['watermark_settings']['scale'])) {
             $watermarkSettings['scale'] = (int)$this->rawData['watermark_settings']['scale'];
 
-            if (isset($this->rawData['old_watermark_settings']) &&
-                $this->rawData['watermark_settings']['scale'] !== $this->rawData['old_watermark_settings']['scale']) {
+            if (
+                isset($this->rawData['old_watermark_settings']) &&
+                $this->rawData['watermark_settings']['scale'] !== $this->rawData['old_watermark_settings']['scale']
+            ) {
                 $hashChange = true;
             }
         }
@@ -204,9 +208,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         if (isset($this->rawData['watermark_settings']['transparent'])) {
             $watermarkSettings['transparent'] = (int)$this->rawData['watermark_settings']['transparent'];
 
-            if (isset($this->rawData['old_watermark_settings']) &&
+            if (
+                isset($this->rawData['old_watermark_settings']) &&
                 $this->rawData['watermark_settings']['transparent'] !==
-                $this->rawData['old_watermark_settings']['transparent']) {
+                $this->rawData['old_watermark_settings']['transparent']
+            ) {
                 $hashChange = true;
             }
         }
@@ -214,9 +220,11 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         if (isset($this->rawData['watermark_settings']['opacity_level'])) {
             $watermarkSettings['opacity_level'] = (int)$this->rawData['watermark_settings']['opacity_level'];
 
-            if (isset($this->rawData['old_watermark_settings']) &&
+            if (
+                isset($this->rawData['old_watermark_settings']) &&
                 $this->rawData['watermark_settings']['opacity_level'] !==
-                $this->rawData['old_watermark_settings']['opacity_level']) {
+                $this->rawData['old_watermark_settings']['opacity_level']
+            ) {
                 $hashChange = true;
             }
         }
@@ -233,11 +241,13 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             if (isset($data['id'])) {
                 /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
-                $varDir = $this->modelFactory->getObject('VariablesDir', ['data' => [
-                    'child_folder' => 'ebay/template/description/watermarks'
-                ]]);
+                $varDir = $this->modelFactory->getObject('VariablesDir', [
+                    'data' => [
+                        'child_folder' => 'ebay/template/description/watermarks',
+                    ],
+                ]);
 
-                $watermarkPath = $varDir->getPath().(int)$data['id'].'.png';
+                $watermarkPath = $varDir->getPath() . (int)$data['id'] . '.png';
 
                 $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
                 if ($fileDriver->isFile($watermarkPath)) {
@@ -290,9 +300,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'product_details' => $this->getHelper('Data')->jsonEncode(
                 [
                     'brand' => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
-                    'mpn'   => ['mode' => Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''],
+                    'mpn' => ['mode' => Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''],
                     'include_ebay_details' => 1,
-                    'include_image'        => 1,
+                    'include_image' => 1,
                 ]
             ),
 
@@ -325,13 +335,13 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                     'opacity_level' => Description::WATERMARK_OPACITY_LEVEL_DEFAULT,
 
                     'hashes' => [
-                        'current'  => '',
+                        'current' => '',
                         'previous' => '',
-                    ]
+                    ],
                 ]
             ),
 
-            'watermark_image' => null
+            'watermark_image' => null,
         ];
     }
 }

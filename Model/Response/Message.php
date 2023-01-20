@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Response;
  */
 class Message extends \Ess\M2ePro\Model\AbstractModel
 {
-    const TEXT_KEY   = 'text';
-    const TYPE_KEY   = 'type';
+    public const TEXT_KEY = 'text';
+    public const TYPE_KEY = 'type';
 
-    const TYPE_ERROR   = 'error';
-    const TYPE_WARNING = 'warning';
-    const TYPE_SUCCESS = 'success';
-    const TYPE_NOTICE  = 'notice';
+    public const TYPE_ERROR = 'error';
+    public const TYPE_WARNING = 'warning';
+    public const TYPE_SUCCESS = 'success';
+    public const TYPE_NOTICE = 'notice';
 
     //########################################
 
@@ -51,8 +51,8 @@ class Message extends \Ess\M2ePro\Model\AbstractModel
     public function asArray()
     {
         return [
-            self::TEXT_KEY   => $this->text,
-            self::TYPE_KEY   => $this->type,
+            self::TEXT_KEY => $this->text,
+            self::TYPE_KEY => $this->type,
         ];
     }
 

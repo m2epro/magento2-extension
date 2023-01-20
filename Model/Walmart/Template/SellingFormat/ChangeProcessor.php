@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Walmart\Template\SellingFormat;
  */
 class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract
 {
-    const INSTRUCTION_INITIATOR = 'template_selling_format_change_processor';
+    public const INSTRUCTION_INITIATOR = 'template_selling_format_change_processor';
 
     //########################################
 
@@ -32,15 +32,15 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
 
         if ($diff->isQtyDifferent()) {
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-                'priority'  => 80,
+                'type' => self::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                'priority' => 80,
             ];
         }
 
         if ($diff->isLagTimeDifferent()) {
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_LAG_TIME_DATA_CHANGED,
-                'priority'  => 60,
+                'type' => self::INSTRUCTION_TYPE_LAG_TIME_DATA_CHANGED,
+                'priority' => 60,
             ];
         }
 
@@ -52,8 +52,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_PRICE_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -65,8 +65,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_PROMOTIONS_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 
@@ -78,8 +78,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Walmart\Template\ChangeProcessor
             }
 
             $data[] = [
-                'type'      => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
-                'priority'  => $priority,
+                'type' => self::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+                'priority' => $priority,
             ];
         }
 

@@ -12,7 +12,7 @@ class View
 {
     /** @var \Magento\Store\Api\Data\StoreInterface */
     private $defaultStore;
-    /** @var \Magento\Store\Model\StoreFactory  */
+    /** @var \Magento\Store\Model\StoreFactory */
     private $storeFactory;
     /** @var \Magento\Store\Model\StoreManagerInterface */
     private $storeManager;
@@ -64,6 +64,7 @@ class View
     public function isChildOfGroup($storeId, $groupId)
     {
         $store = $this->storeManager->getStore($storeId);
+
         return ($store->getStoreGroupId() == $groupId);
     }
 
@@ -141,8 +142,12 @@ class View
         } catch (\Exception $e) {
             if ($groupId) {
                 if (!$this->groupHelper->isChildOfWebsite($groupId, $websiteId)) {
-                    $error = $this->translationHelper->__('Group with id %group_id% doesn\'t belong to'.
-                        'website with %site_id%.', $groupId, $websiteId);
+                    $error = $this->translationHelper->__(
+                        'Group with id %group_id% doesn\'t belong to' .
+                        'website with %site_id%.',
+                        $groupId,
+                        $websiteId
+                    );
                     throw new \Ess\M2ePro\Model\Exception($error);
                 }
             } else {

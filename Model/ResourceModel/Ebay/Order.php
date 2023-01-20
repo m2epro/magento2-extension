@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Order
- */
 class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     //########################################
@@ -48,25 +46,26 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         // ---------------------------------------
         /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Order')
-            ->getCollection();
+                                          ->getCollection();
         $collection
             ->getSelect()
-                ->distinct(true)
-                ->join(
-                    ['moi' => $oiTable],
-                    '(`moi`.`order_id` = `main_table`.`id`)',
-                    []
-                )
-                ->join(
-                    ['meoi' => $eoiTable],
-                    '(`meoi`.`order_item_id` = `moi`.`id`)',
-                    []
-                )
-                ->where($whereSql)
-                ->where('`main_table`.`account_id` = ?', $accountId)
-                ->where('`main_table`.`reservation_state` != ?', \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED)
-                ->where('`second_table`.`cancellation_status` = 0')
-                ->order(['main_table.id ASC']);
+            ->distinct(true)
+            ->join(
+                ['moi' => $oiTable],
+                '(`moi`.`order_id` = `main_table`.`id`)',
+                []
+            )
+            ->join(
+                ['meoi' => $eoiTable],
+                '(`meoi`.`order_item_id` = `moi`.`id`)',
+                []
+            )
+            ->where($whereSql)
+            ->where('`main_table`.`account_id` = ?', $accountId)
+            ->where('`main_table`.`reservation_state` != ?', \Ess\M2ePro\Model\Order\Reserve::STATE_CANCELED)
+            ->where('`second_table`.`cancellation_status` = 0')
+            ->order(['main_table.id ASC']);
+
         // ---------------------------------------
 
         return $collection->getItems();
@@ -78,16 +77,16 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Order')
-            ->getCollection();
+                                          ->getCollection();
         $collection->addFieldToFilter('account_id', $accountId);
 
         $collection->addFieldToFilter('payment_status', [
-            'neq' => \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED
+            'neq' => \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED,
         ]);
 
         $collection->addFieldToFilter('purchase_create_date', [
             'from' => $startDate->format('Y-m-d H:i:s'),
-            'to'   => $endDate->format('Y-m-d H:i:s')
+            'to' => $endDate->format('Y-m-d H:i:s'),
         ]);
 
         $collection->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);

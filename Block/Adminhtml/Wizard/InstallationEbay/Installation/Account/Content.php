@@ -31,11 +31,14 @@ class Content extends AbstractForm
 
     protected function _prepareLayout()
     {
-        $this->getLayout()->getBlock('wizard.help.block')->setContent($this->__(<<<HTML
+        $this->getLayout()->getBlock('wizard.help.block')->setContent(
+            $this->__(
+                <<<HTML
 On this step, you should link your eBay Account with your M2E Pro.<br/><br/>
 You can proceed with both Live and Sandbox eBay Environments. Live environment is set by default.
 HTML
-        ));
+            )
+        );
 
         parent::_prepareLayout();
     }
@@ -45,7 +48,7 @@ HTML
         $form = $this->_formFactory->create([
             'data' => [
                 'id' => 'edit_form',
-            ]
+            ],
         ]);
 
         $fieldset = $form->addFieldset(
@@ -66,9 +69,9 @@ HTML
                             'If you do not have an existing account, you can click
                             <a href="%url%" target="_blank" class="external-link">here</a> to register one.',
                             $url
-                        )
-                    ]
-                ]
+                        ),
+                    ],
+                ],
             ]
         );
 
@@ -82,18 +85,18 @@ HTML
                 'values' => [
                     [
                         'value' => 'production',
-                        'label' => $this->__('Live Account')
+                        'label' => $this->__('Live Account'),
                     ],
                     [
                         'value' => 'sandbox',
-                        'label' => $this->__('Sandbox Account')
+                        'label' => $this->__('Sandbox Account'),
                     ],
                     [
                         'value' => '',
-                        'label' => ''
+                        'label' => '',
                     ],
                 ],
-                'value' => 'production'
+                'value' => 'production',
             ]
         );
 

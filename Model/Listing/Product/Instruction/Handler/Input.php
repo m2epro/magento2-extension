@@ -26,6 +26,7 @@ class Input extends \Ess\M2ePro\Model\AbstractModel
     public function setListingProduct(Product $listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -38,11 +39,13 @@ class Input extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Instruction[] $instructions
+     *
      * @return $this
      */
     public function setInstructions(array $instructions)
     {
         $this->instructions = $instructions;
+
         return $this;
     }
 

@@ -27,9 +27,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $tabsBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::class,
             '',
-            ['data' => [
-            'active_tab' => $activeTab
-            ]]
+            [
+                'data' => [
+                    'active_tab' => $activeTab,
+                ],
+            ]
         );
 
         if ($this->isAjax()) {

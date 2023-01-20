@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request as ListActionRequest;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request as ListActionRequest;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Request
@@ -21,7 +21,7 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
     {
         $data = array_merge(
             [
-                'sku' => $this->getAmazonListingProduct()->getSku()
+                'sku' => $this->getAmazonListingProduct()->getSku(),
             ],
             $this->getQtyData(),
             $this->getRegularPriceData(),
@@ -32,15 +32,15 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
 
         if ($this->getVariationManager()->isRelationChildType()) {
             $variationData = [
-                'parentage'  => ListActionRequest::PARENTAGE_CHILD,
+                'parentage' => ListActionRequest::PARENTAGE_CHILD,
                 'attributes' => $this->getVariationManager()->getTypeModel()->getChannelOptions(),
             ];
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $parentAmazonListingProduct */
             $parentAmazonListingProduct = $this->getVariationManager()
-                ->getTypeModel()
-                ->getParentListingProduct()
-                ->getChildObject();
+                                               ->getTypeModel()
+                                               ->getParentListingProduct()
+                                               ->getChildObject();
 
             $parentSku = $parentAmazonListingProduct->getSku();
             if (!empty($parentSku)) {

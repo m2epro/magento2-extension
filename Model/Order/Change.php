@@ -13,13 +13,13 @@ namespace Ess\M2ePro\Model\Order;
  */
 class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    const ACTION_UPDATE_PAYMENT = 'update_payment';
-    const ACTION_UPDATE_SHIPPING = 'update_shipping';
-    const ACTION_CANCEL = 'cancel';
-    const ACTION_REFUND = 'refund';
-    const ACTION_SEND_INVOICE = 'send_invoice';
+    public const ACTION_UPDATE_PAYMENT = 'update_payment';
+    public const ACTION_UPDATE_SHIPPING = 'update_shipping';
+    public const ACTION_CANCEL = 'cancel';
+    public const ACTION_REFUND = 'refund';
+    public const ACTION_SEND_INVOICE = 'send_invoice';
 
-    const MAX_ALLOWED_PROCESSING_ATTEMPTS = 3;
+    public const MAX_ALLOWED_PROCESSING_ATTEMPTS = 3;
 
     //########################################
 
@@ -84,7 +84,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             self::ACTION_UPDATE_SHIPPING,
             self::ACTION_CANCEL,
             self::ACTION_REFUND,
-            self::ACTION_SEND_INVOICE
+            self::ACTION_SEND_INVOICE,
         ];
     }
 
@@ -138,24 +138,24 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Order\Change $change */
         $change = $this->activeRecordFactory->getObject('Order\Change')
-            ->getCollection()
-            ->addFieldToFilter('order_id', $orderId)
-            ->addFieldToFilter('action', $action)
-            ->addFieldToFilter('component', $component)
-            ->addFieldToFilter('hash', $hash)
-            ->getFirstItem();
+                                            ->getCollection()
+                                            ->addFieldToFilter('order_id', $orderId)
+                                            ->addFieldToFilter('action', $action)
+                                            ->addFieldToFilter('component', $component)
+                                            ->addFieldToFilter('hash', $hash)
+                                            ->getFirstItem();
 
         if ($change->getId()) {
             return;
         }
 
         $change->addData([
-            'order_id'     => $orderId,
-            'action'       => $action,
-            'params'       => $this->getHelper('Data')->jsonEncode($params),
+            'order_id' => $orderId,
+            'action' => $action,
+            'params' => $this->getHelper('Data')->jsonEncode($params),
             'creator_type' => $creatorType,
-            'component'    => $component,
-            'hash'         => $hash
+            'component' => $component,
+            'hash' => $hash,
         ]);
         $change->save();
     }
@@ -165,6 +165,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public static function generateHash($orderId, $action, array $params)
     {
         $helper = \Magento\Framework\App\ObjectManager::getInstance()->get(\Ess\M2ePro\Helper\Data::class);
+
         return sha1($orderId . '-' . $action . '-' . $helper->serialize($params));
     }
 

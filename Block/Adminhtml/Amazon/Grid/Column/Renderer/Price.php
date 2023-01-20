@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
 use Ess\M2ePro\Block\Adminhtml\Traits;
 
@@ -14,11 +14,11 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-    /** @var \Magento\Framework\Locale\CurrencyInterface  */
+    /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
@@ -71,10 +71,10 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
             return $this->translationHelper->__('N/A');
         }
 
-        $onlineRegularPrice  = $rowObject->getData('online_regular_price');
+        $onlineRegularPrice = $rowObject->getData('online_regular_price');
         $onlineBusinessPrice = $rowObject->getData('online_business_price');
 
-        $repricingHtml ='';
+        $repricingHtml = '';
 
         if ((int)$rowObject->getData('is_repricing')) {
             $icon = 'repricing-enabled';
@@ -100,7 +100,8 @@ class Price extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 HTML;
         }
 
-        if (($onlineRegularPrice === null || $onlineRegularPrice === '') &&
+        if (
+            ($onlineRegularPrice === null || $onlineRegularPrice === '') &&
             ($onlineBusinessPrice === null || $onlineBusinessPrice === '')
         ) {
             return '<i style="color:gray;">receiving...</i>' . $repricingHtml;
@@ -118,14 +119,15 @@ HTML;
             $priceValue = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineRegularPrice);
         }
 
-        if ($rowObject->getData('is_repricing') &&
+        if (
+            $rowObject->getData('is_repricing') &&
             !$row->getData('is_repricing_disabled') &&
             !$row->getData('is_repricing_inactive')
         ) {
             $accountId = $this->getColumn()->getData('account_id');
             $sku = $rowObject->getData('amazon_sku');
 
-            $priceValue =<<<HTML
+            $priceValue = <<<HTML
 <a id="m2epro_repricing_price_value_{$sku}"
    class="m2epro-repricing-price-value"
    sku="{$sku}"
@@ -170,17 +172,18 @@ HTML;
                 $intervalHtml = $this->getTooltipHtml($intervalHtml, '', ['m2epro-field-tooltip-price-info']);
                 $salePriceValue = $this->localeCurrency->getCurrency($currency)->toCurrency($salePrice);
 
-                if ($currentTimestamp >= $startDateTimestamp &&
+                if (
+                    $currentTimestamp >= $startDateTimestamp &&
                     $currentTimestamp <= $endDateTimestamp &&
                     $salePrice < (float)$onlineRegularPrice
                 ) {
-                    $resultHtml .= '<span style="color: grey; text-decoration: line-through;">'.$priceValue.'</span>' .
-                                    $repricingHtml;
-                    $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.$salePriceValue;
+                    $resultHtml .= '<span style="color: grey; text-decoration: line-through;">' . $priceValue . '</span>' .
+                        $repricingHtml;
+                    $resultHtml .= '<br/>' . $intervalHtml . '&nbsp;' . $salePriceValue;
                 } else {
                     $resultHtml .= $priceValue . $repricingHtml;
-                    $resultHtml .= '<br/>'.$intervalHtml.
-                        '<span style="color:gray;">'.'&nbsp;'.$salePriceValue.'</span>';
+                    $resultHtml .= '<br/>' . $intervalHtml .
+                        '<span style="color:gray;">' . '&nbsp;' . $salePriceValue . '</span>';
                 }
             }
         }
@@ -199,15 +202,15 @@ HTML;
 
                 foreach ($businessDiscounts as $qty => $price) {
                     $price = $this->localeCurrency->getCurrency($currency)->toCurrency($price);
-                    $discountsHtml .= 'QTY >= '.(int)$qty.', price '.$price.'<br />';
+                    $discountsHtml .= 'QTY >= ' . (int)$qty . ', price ' . $price . '<br />';
                 }
 
                 $discountsHtml = $this->getTooltipHtml($discountsHtml, '', ['m2epro-field-tooltip-price-info']);
-                $businessPriceValue = $discountsHtml .'&nbsp;'. $businessPriceValue;
+                $businessPriceValue = $discountsHtml . '&nbsp;' . $businessPriceValue;
             }
 
             if (!empty($resultHtml)) {
-                $businessPriceValue = '<br />'.$businessPriceValue;
+                $businessPriceValue = '<br />' . $businessPriceValue;
             }
 
             $resultHtml .= $businessPriceValue;

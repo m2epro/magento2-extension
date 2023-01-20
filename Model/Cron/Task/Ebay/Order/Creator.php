@@ -56,6 +56,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Account $account
      * @param array $ordersData
+     *
      * @return \Ess\M2ePro\Model\Order[]
      */
     public function processEbayOrders(\Ess\M2ePro\Model\Account $account, array $ordersData)
@@ -88,6 +89,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Order[] $orders
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function processMagentoOrders($orders)
@@ -153,7 +155,6 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
     /**
      * This is going to protect from Magento Orders duplicates.
      * (Is assuming that there may be a parallel process that has already created Magento Order)
-     *
      * But this protection is not covering cases when two parallel cron processes are isolated by mysql transactions
      */
     public function isOrderChangedInParallelProcess(\Ess\M2ePro\Model\Order $order)

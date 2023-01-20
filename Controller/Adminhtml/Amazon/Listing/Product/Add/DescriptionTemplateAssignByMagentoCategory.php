@@ -18,10 +18,11 @@ class DescriptionTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\
     public function execute()
     {
         $listingProductsIds = $this->getListing()
-            ->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
+                                   ->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
 
         if (empty($listingProductsIds)) {
             $this->_forward('index');
+
             return;
         }
 
@@ -31,7 +32,9 @@ class DescriptionTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             $grid = $this->getLayout()
-                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Category\Grid::class);
+                         ->createBlock(
+                             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin\Category\Grid::class
+                         );
             $this->setAjaxContent($grid);
 
             return $this->getResult();

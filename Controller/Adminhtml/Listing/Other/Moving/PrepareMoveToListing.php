@@ -65,7 +65,7 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
             $this->setJsonContent(
                 [
-                    'result'  => false,
+                    'result' => false,
                     'message' => $this->__('Only Linked Products must be selected.'),
                 ]
             );
@@ -89,8 +89,8 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
             ->fetch();
 
         $response = [
-            'result'        => true,
-            'accountId'     => (int)$row['account_id'],
+            'result' => true,
+            'accountId' => (int)$row['account_id'],
             'marketplaceId' => (int)$row['marketplace_id'],
         ];
 

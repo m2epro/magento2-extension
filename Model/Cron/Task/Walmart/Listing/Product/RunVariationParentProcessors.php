@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product;
 
 use Ess\M2ePro\Helper\Component\Walmart;
-use \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass
     as MassProcessor;
 
 /**
@@ -17,7 +17,7 @@ use \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Pa
  */
 class RunVariationParentProcessors extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/listing/product/run_variation_parent_processors';
+    public const NICK = 'walmart/listing/product/run_variation_parent_processors';
 
     //####################################
 

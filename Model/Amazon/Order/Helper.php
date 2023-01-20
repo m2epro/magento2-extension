@@ -13,18 +13,19 @@ namespace Ess\M2ePro\Model\Amazon\Order;
  */
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
-    const AMAZON_STATUS_PENDING             = 'Pending';
-    const AMAZON_STATUS_UNSHIPPED           = 'Unshipped';
-    const AMAZON_STATUS_SHIPPED_PARTIALLY   = 'PartiallyShipped';
-    const AMAZON_STATUS_SHIPPED             = 'Shipped';
-    const AMAZON_STATUS_UNFULFILLABLE       = 'Unfulfillable';
-    const AMAZON_STATUS_CANCELED            = 'Canceled';
-    const AMAZON_STATUS_INVOICE_UNCONFIRMED = 'InvoiceUnconfirmed';
+    public const AMAZON_STATUS_PENDING = 'Pending';
+    public const AMAZON_STATUS_UNSHIPPED = 'Unshipped';
+    public const AMAZON_STATUS_SHIPPED_PARTIALLY = 'PartiallyShipped';
+    public const AMAZON_STATUS_SHIPPED = 'Shipped';
+    public const AMAZON_STATUS_UNFULFILLABLE = 'Unfulfillable';
+    public const AMAZON_STATUS_CANCELED = 'Canceled';
+    public const AMAZON_STATUS_INVOICE_UNCONFIRMED = 'InvoiceUnconfirmed';
 
     //########################################
 
     /**
      * @param $amazonOrderStatus
+     *
      * @return int
      */
     public function getStatus($amazonOrderStatus)

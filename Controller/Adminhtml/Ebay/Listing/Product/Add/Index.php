@@ -22,6 +22,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         if ((bool)$this->getRequest()->getParam('clear', false)) {
             $this->clear();
             $this->getRequest()->setParam('clear', null);
+
             return $this->_redirect('*/*/', ['_current' => true, 'step' => 1]);
         }
 
@@ -36,7 +37,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
                 return $this->stepOne();
         }
 
-        return $this->_redirect('*/*/index', ['_current' => true,'step' => 1]);
+        return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
     }
 
     //########################################
@@ -64,13 +65,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             if ($this->getRequest()->isXmlHttpRequest()) {
                 $this->setJsonContent([
                     'ajaxExpired' => 1,
-                    'ajaxRedirect' => $this->getUrl('*/*/index', ['_current' => true,'step' => 1])
+                    'ajaxRedirect' => $this->getUrl('*/*/index', ['_current' => true, 'step' => 1]),
                 ]);
+
                 return $this->getResult();
             } else {
                 return $this->_redirect(
                     '*/ebay_listing_product_category_settings/',
-                    ['_current' => true,'step' => 1]
+                    ['_current' => true, 'step' => 1]
                 );
             }
         }
@@ -98,6 +100,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Product\Grid::class)
                      ->toHtml()
             );
+
             return $this->getResult();
         }
 
@@ -216,7 +219,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $listingData = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
 
         $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
         $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
 
         $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(

@@ -43,6 +43,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->setData('qty_purchased', (int)$data['qty']);
         // ---------------------------------------
 
+        // ----------------------------------------
+        if (!empty($data['shipping_details']['tracking_details']['number'])) {
+            $this->setData('tracking_details', \Ess\M2ePro\Helper\Json::encode([
+                'number' => $data['shipping_details']['tracking_details']['number'],
+                'title' => $data['shipping_details']['tracking_details']['carrier'],
+            ]));
+        }
+        // ----------------------------------------
+
         /**
          * Walmart returns the same Order Item more than one time with single QTY. We will merge this data
          */
@@ -66,10 +75,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Order\Item $existItem */
         $existItem = $this->walmartFactory->getObject('Order\Item')->getCollection()
-            ->addFieldToFilter('walmart_order_item_id', $this->getData('walmart_order_item_id'))
-            ->addFieldToFilter('order_id', $this->getData('order_id'))
-            ->addFieldToFilter('sku', $this->getData('sku'))
-            ->getFirstItem();
+                                          ->addFieldToFilter(
+                                              'walmart_order_item_id',
+                                              $this->getData('walmart_order_item_id')
+                                          )
+                                          ->addFieldToFilter('order_id', $this->getData('order_id'))
+                                          ->addFieldToFilter('sku', $this->getData('sku'))
+                                          ->getFirstItem();
 
         $this->previousBuyerCancellationRequested = false;
         if ($existItem->getId()) {

@@ -13,17 +13,17 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist;
  */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
-    const INSTRUCTION_TYPE_CHECK_QTY         = 'success_relist_check_qty';
-    const INSTRUCTION_TYPE_CHECK_PRICE       = 'success_relist_check_price';
-    const INSTRUCTION_TYPE_CHECK_TITLE       = 'success_relist_check_title';
-    const INSTRUCTION_TYPE_CHECK_SUBTITLE    = 'success_relist_check_subtitle';
-    const INSTRUCTION_TYPE_CHECK_DESCRIPTION = 'success_relist_check_description';
-    const INSTRUCTION_TYPE_CHECK_IMAGES      = 'success_relist_check_images';
-    const INSTRUCTION_TYPE_CHECK_CATEGORIES  = 'success_relist_check_categories';
-    const INSTRUCTION_TYPE_CHECK_PARTS       = 'success_relist_check_parts';
-    const INSTRUCTION_TYPE_CHECK_SHIPPING    = 'success_relist_check_shipping';
-    const INSTRUCTION_TYPE_CHECK_RETURN      = 'success_relist_check_return';
-    const INSTRUCTION_TYPE_CHECK_OTHER       = 'success_relist_check_other';
+    public const INSTRUCTION_TYPE_CHECK_QTY = 'success_relist_check_qty';
+    public const INSTRUCTION_TYPE_CHECK_PRICE = 'success_relist_check_price';
+    public const INSTRUCTION_TYPE_CHECK_TITLE = 'success_relist_check_title';
+    public const INSTRUCTION_TYPE_CHECK_SUBTITLE = 'success_relist_check_subtitle';
+    public const INSTRUCTION_TYPE_CHECK_DESCRIPTION = 'success_relist_check_description';
+    public const INSTRUCTION_TYPE_CHECK_IMAGES = 'success_relist_check_images';
+    public const INSTRUCTION_TYPE_CHECK_CATEGORIES = 'success_relist_check_categories';
+    public const INSTRUCTION_TYPE_CHECK_PARTS = 'success_relist_check_parts';
+    public const INSTRUCTION_TYPE_CHECK_SHIPPING = 'success_relist_check_shipping';
+    public const INSTRUCTION_TYPE_CHECK_RETURN = 'success_relist_check_return';
+    public const INSTRUCTION_TYPE_CHECK_OTHER = 'success_relist_check_other';
 
     //########################################
 
@@ -33,7 +33,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-            'ebay_item_id' => $this->createEbayItem($response['ebay_item_id'])->getId()
+            'ebay_item_id' => $this->createEbayItem($response['ebay_item_id'])->getId(),
         ];
 
         $data = $this->appendStatusHiddenValue($data);
@@ -92,52 +92,52 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $instructionsData = [];
 
         foreach ($data['additional_data']['recheck_properties'] as $property) {
-            $instructionType     = null;
+            $instructionType = null;
             $instructionPriority = 0;
 
             switch ($property) {
                 case 'qty':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_QTY;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_QTY;
                     $instructionPriority = 80;
                     break;
 
                 case 'price_regular':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_PRICE;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_PRICE;
                     $instructionPriority = 60;
                     break;
 
                 case 'title':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_TITLE;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_TITLE;
                     $instructionPriority = 30;
                     break;
 
                 case 'subtitle':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_SUBTITLE;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_SUBTITLE;
                     $instructionPriority = 30;
                     break;
 
                 case 'description':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_DESCRIPTION;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_DESCRIPTION;
                     $instructionPriority = 30;
                     break;
 
                 case 'images':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_IMAGES;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_IMAGES;
                     $instructionPriority = 30;
                     break;
 
                 case 'shipping':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_SHIPPING;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_SHIPPING;
                     $instructionPriority = 30;
                     break;
 
                 case 'return':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_RETURN;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_RETURN;
                     $instructionPriority = 30;
                     break;
 
                 case 'other':
-                    $instructionType     = self::INSTRUCTION_TYPE_CHECK_OTHER;
+                    $instructionType = self::INSTRUCTION_TYPE_CHECK_OTHER;
                     $instructionPriority = 30;
                     break;
             }
@@ -148,9 +148,9 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
             $instructionsData[] = [
                 'listing_product_id' => $this->getListingProduct()->getId(),
-                'type'               => $instructionType,
-                'initiator'          => self::INSTRUCTION_INITIATOR,
-                'priority'           => $instructionPriority,
+                'type' => $instructionType,
+                'initiator' => self::INSTRUCTION_INITIATOR,
+                'priority' => $instructionPriority,
             ];
         }
 

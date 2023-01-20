@@ -33,7 +33,7 @@ class SetVariationTheme extends Main
     public function execute()
     {
         $listingProductId = $this->getRequest()->getParam('product_id');
-        $variationTheme   = $this->getRequest()->getParam('variation_theme', null);
+        $variationTheme = $this->getRequest()->getParam('variation_theme', null);
 
         if (empty($listingProductId) || $variationTheme === null) {
             return $this->getResponse()->setBody('You should provide correct parameters.');
@@ -64,7 +64,7 @@ class SetVariationTheme extends Main
         $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $marketplaceDetails->setMarketplaceId($amazonListingProduct->getMarketplace()->getId());
 
-        $themeAttributes   = $marketplaceDetails->getVariationThemeAttributes($productDataNick, $variationTheme);
+        $themeAttributes = $marketplaceDetails->getVariationThemeAttributes($productDataNick, $variationTheme);
         $productAttributes = $parentTypeModel->getProductAttributes();
 
         if (count($themeAttributes) != 1 || count($productAttributes) != 1) {
@@ -75,7 +75,7 @@ class SetVariationTheme extends Main
         }
 
         $productAttribute = reset($productAttributes);
-        $themeAttribute   = reset($themeAttributes);
+        $themeAttribute = reset($themeAttributes);
 
         $parentTypeModel->setMatchedAttributes([$productAttribute => $themeAttribute], true);
         $parentTypeModel->getProcessor()->process();

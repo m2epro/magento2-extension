@@ -73,10 +73,10 @@ class Handler extends AbstractModel implements HandlerInterface
 
         $scheduledActionData = [
             'listing_product_id' => $input->getListingProduct()->getId(),
-            'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-            'is_force'           => true,
-            'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
+            'is_force' => true,
+            'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
         ];
 
         $scheduledAction->addData($scheduledActionData);

@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\Category;
 
-use \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\CategoryMode as CategoryModeFilter;
-use \Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use \Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\CategoryMode as CategoryModeFilter;
+use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
+use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 
 /**
  * @method setCategoriesData()
@@ -44,7 +44,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             $data
         );
 
-        $this->componentEbayCategory     = $componentEbayCategory;
+        $this->componentEbayCategory = $componentEbayCategory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
@@ -74,7 +74,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $collection->addAttributeToSelect('name');
 
         $collection->addFieldToFilter([
-            ['attribute' => 'entity_id', 'in' => array_keys($this->getCategoriesData())]
+            ['attribute' => 'entity_id', 'in' => array_keys($this->getCategoriesData())],
         ]);
 
         $this->setCollection($collection);
@@ -87,49 +87,49 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('magento_category', [
-            'header'    => $this->__('Magento Category'),
-            'align'     => 'left',
-            'width'     => '500px',
-            'type'      => 'text',
-            'index'     => 'name',
-            'filter'    => false,
-            'sortable'  => false,
-            'frame_callback' => [$this, 'callbackColumnMagentoCategory']
+            'header' => $this->__('Magento Category'),
+            'align' => 'left',
+            'width' => '500px',
+            'type' => 'text',
+            'index' => 'name',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnMagentoCategory'],
         ]);
 
         $category = $this->componentEbayCategory
             ->getCategoryTitle(\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN);
 
         $this->addColumn('ebay_categories', [
-            'header'    => $this->__('eBay Categories'),
-            'align'     => 'left',
-            'width'     => '*',
-            'type'      => 'options',
-            'filter'    => CategoryModeFilter::class,
+            'header' => $this->__('eBay Categories'),
+            'align' => 'left',
+            'width' => '*',
+            'type' => 'options',
+            'filter' => CategoryModeFilter::class,
             'category_type' => eBayCategory::TYPE_EBAY_MAIN,
-            'index'     => 'category',
-            'options'   => [
+            'index' => 'category',
+            'options' => [
                 //Primary Category Selected
-                CategoryModeFilter::MODE_SELECTED     => $this->__('%1% Selected', $category),
+                CategoryModeFilter::MODE_SELECTED => $this->__('%1% Selected', $category),
                 //Primary Category Not Selected
                 CategoryModeFilter::MODE_NOT_SELECTED => $this->__('%1% Not Selected', $category),
                 //Primary Category Name/ID
-                CategoryModeFilter::MODE_TITLE        => $this->__('%1% Name/ID', $category)
+                CategoryModeFilter::MODE_TITLE => $this->__('%1% Name/ID', $category),
             ],
-            'sortable'       => false,
+            'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnCategories'],
             'filter_condition_callback' => [$this, 'callbackFilterEbayCategories'],
         ]);
 
         $this->addColumn('actions', [
-            'header'    => $this->__('Actions'),
-            'align'     => 'center',
-            'width'     => '100px',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter'    => false,
-            'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'actions'   => $this->getColumnActionsItems()
+            'header' => $this->__('Actions'),
+            'align' => 'center',
+            'width' => '100px',
+            'type' => 'text',
+            'sortable' => false,
+            'filter' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+            'actions' => $this->getColumnActionsItems(),
         ]);
 
         return parent::_prepareColumns();
@@ -143,12 +143,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         $this->getMassactionBlock()->addItem('editCategories', [
             'label' => $this->__('Edit Categories'),
-            'url'   => ''
+            'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('resetCategories', [
             'label' => $this->__('Reset Categories'),
-            'url'   => '',
+            'url' => '',
         ]);
 
         return parent::_prepareMassaction();
@@ -190,15 +190,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         }
 
         $categoryStat = [
-            'selected'  => [],
-            'blank'     => [],
-            'ebay'      => [],
+            'selected' => [],
+            'blank' => [],
+            'ebay' => [],
             'attribute' => [],
-            'path'      => []
+            'path' => [],
         ];
 
         foreach ($this->getCategoriesData() as $categoryId => $categoryData) {
-            if (!isset($categoryData[$categoryType]) ||
+            if (
+                !isset($categoryData[$categoryType]) ||
                 $categoryData[$categoryType]['mode'] == TemplateCategory::CATEGORY_MODE_NONE
             ) {
                 $categoryStat['blank'][] = $categoryId;
@@ -215,7 +216,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
                 $categoryStat['attribute'][] = $categoryId;
             }
 
-            if (!empty($filter['title']) &&
+            if (
+                !empty($filter['title']) &&
                 (strpos($categoryData[$categoryType]['path'], $filter['title']) !== false ||
                     strpos($categoryData[$categoryType]['value'], $filter['title']) !== false)
             ) {
@@ -240,17 +242,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         return [
             'editCategories' => [
                 'caption' => $this->__('Edit Categories'),
-                'field'   => 'id',
+                'field' => 'id',
                 'onclick_action' => "EbayListingProductCategorySettingsModeCategoryGridObj."
-                                    ."actions['editCategoriesAction']"
+                    . "actions['editCategoriesAction']",
             ],
 
             'resetCategories' => [
                 'caption' => $this->__('Reset Categories'),
-                'field'   => 'id',
+                'field' => 'id',
                 'onclick_action' => "EbayListingProductCategorySettingsModeCategoryGridObj."
-                                    ."actions['resetCategoriesAction']"
-            ]
+                    . "actions['resetCategoriesAction']",
+            ],
         ];
     }
 
@@ -276,16 +278,21 @@ JS
         }
 
         // ---------------------------------------
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Ebay_Listing_Product_Category_Settings',
-            ['_current' => true]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Ebay_Listing_Product_Category_Settings',
+                ['_current' => true]
+            )
+        );
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Category', ['_current' => true]));
 
-        $this->jsUrl->add($this->getUrl('*/ebay_listing_product_category_settings', [
-            'step' => 3,
-            '_current' => true
-        ]), 'ebay_listing_product_category_settings');
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_listing_product_category_settings', [
+                'step' => 3,
+                '_current' => true,
+            ]),
+            'ebay_listing_product_category_settings'
+        );
         // ---------------------------------------
 
         // ---------------------------------------
@@ -293,10 +300,13 @@ JS
         $this->jsTranslator->add('Category Settings', $this->__('Category Settings'));
         $this->jsTranslator->add('Specifics', $this->__('Specifics'));
 
-        $this->jsTranslator->add('select_relevant_category', $this->__(
-            "To proceed, the category data must be specified.
+        $this->jsTranslator->add(
+            'select_relevant_category',
+            $this->__(
+                "To proceed, the category data must be specified.
             Please select a relevant Primary eBay Category for at least one product."
-        ));
+            )
+        );
 
         // ---------------------------------------
 
@@ -332,7 +342,8 @@ JS
         }
 
         foreach ($categoriesData as $productId => $categoryData) {
-            if (isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) &&
+            if (
+                isset($categoryData[eBayCategory::TYPE_EBAY_MAIN]) &&
                 $categoryData[eBayCategory::TYPE_EBAY_MAIN]['mode'] !== TemplateCategory::CATEGORY_MODE_NONE
             ) {
                 if ($categoryData[eBayCategory::TYPE_EBAY_MAIN]['is_custom_template'] !== null) {

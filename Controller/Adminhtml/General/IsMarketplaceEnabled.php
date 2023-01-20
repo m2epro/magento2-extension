@@ -28,7 +28,7 @@ class IsMarketplaceEnabled extends \Ess\M2ePro\Controller\Adminhtml\Base
         $this->setJsonContent(
             [
                 'status' => $marketplaceObj->isStatusEnabled() &&
-                    $marketplaceObj->getResource()->isDictionaryExist($marketplaceObj)
+                    $marketplaceObj->getResource()->isDictionaryExist($marketplaceObj),
             ]
         );
 

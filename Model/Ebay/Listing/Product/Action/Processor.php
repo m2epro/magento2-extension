@@ -16,14 +16,14 @@ use Ess\M2ePro\Model\Exception\Logic;
  */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
-    const ACTION_MAX_LIFE_TIME = 86400;
+    public const ACTION_MAX_LIFE_TIME = 86400;
 
-    const MAX_PARALLEL_EXECUTION_PACK_SIZE = 10;
+    public const MAX_PARALLEL_EXECUTION_PACK_SIZE = 10;
 
-    const ONE_SERVER_CALL_INCREASE_TIME = 1;
-    const MAX_TOTAL_EXECUTION_TIME = 180;
+    public const ONE_SERVER_CALL_INCREASE_TIME = 1;
+    public const MAX_TOTAL_EXECUTION_TIME = 180;
 
-    const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/ebay/listing/product/action/first_connection_error/date/';
+    public const FIRST_CONNECTION_ERROR_DATE_REGISTRY_KEY = '/ebay/listing/product/action/first_connection_error/date/';
 
     /** @var \Magento\Framework\Event\ManagerInterface */
     protected $eventDispatcher;
@@ -82,11 +82,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected function removeMissedProcessingActions()
     {
         $actionCollection = $this->activeRecordFactory->getObject('Ebay_Listing_Product_Action_Processing')
-            ->getCollection();
+                                                      ->getCollection();
         $actionCollection->getSelect()->joinLeft(
             [
                 'p' => $this->getHelper('Module_Database_Structure')
-                    ->getTableNameWithPrefix('m2epro_processing')
+                            ->getTableNameWithPrefix('m2epro_processing'),
             ],
             'p.id = main_table.processing_id',
             []
@@ -112,8 +112,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $minimumAllowedDate->modify('- ' . self::ACTION_MAX_LIFE_TIME . ' seconds');
 
         $actionCollection = $this->activeRecordFactory->getObject('Ebay_Listing_Product_Action_Processing')
-            ->getCollection();
-        ;
+                                                      ->getCollection();
         $actionCollection->addFieldToFilter('create_date', ['lt' => $minimumAllowedDate->format('Y-m-d H:i:s')]);
 
         /** @var Processing[] $expiredActions */
@@ -181,6 +180,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Processing[] $actions
+     *
      * @throws Logic
      */
     protected function executeSerial(array $actions)
@@ -232,13 +232,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             );
 
             if ($iteration % 10 == 0) {
-
                 $this->eventDispatcher->dispatch(
                     \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_SET_DETAILS_EVENT_NAME,
                     [
                         'progress_nick' => \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessActions::NICK,
                         'percentage' => ceil($percentsForOneAction * $iteration),
-                        'total' => count($actions)
+                        'total' => count($actions),
                     ]
                 );
             }
@@ -247,6 +246,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Processing[] $actions
+     *
      * @throws \Ess\M2ePro\Model\Exception
      */
     protected function executeParallel(array $actions)
@@ -298,13 +298,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $dispatcher->processMultiple($connectors, true);
 
                 if ($processedActions % 10 == 0) {
-
                     $this->eventDispatcher->dispatch(
                         \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_SET_DETAILS_EVENT_NAME,
                         [
                             'progress_nick' => \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessActions::NICK,
                             'percentage' => ceil($percentsForOneAction * $processedActions),
-                            'total' => count($actions)
+                            'total' => count($actions),
                         ]
                     );
                 }
@@ -368,7 +367,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $combinedErrorMessages[$key] = [
                 "message" => $systemErrorMessage,
-                "count" => 1
+                "count" => 1,
             ];
         }
 
@@ -389,6 +388,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param Processing $action
      * @param Processing[] $actions
+     *
      * @return bool
      */
     protected function isActionCanBeAdded(Processing $action, array $actions)
@@ -415,6 +415,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Processing[] $actions
+     *
      * @return bool
      */
     private function isActionsSetFull(array $actions)
@@ -438,6 +439,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Processing[] $actions
+     *
      * @return int
      */
     protected function calculateSerialExecutionTime(array $actions)
@@ -454,6 +456,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param Processing[] $actions
+     *
      * @return int
      */
     protected function calculateParallelExecutionTime(array $actions)
@@ -473,6 +476,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param Processing[] $actions
      * @param bool $needDistribute
+     *
      * @return array
      */
     protected function groupForParallelExecution(array $actions, $needDistribute = false)

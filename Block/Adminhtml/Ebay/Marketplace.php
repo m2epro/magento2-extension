@@ -31,15 +31,15 @@ class Marketplace extends AbstractContainer
         $this->removeButton('back');
 
         $this->addButton('run_update_all', [
-            'label'     => $this->__('Update All Now'),
-            'onclick'   => 'MarketplaceObj.updateAction()',
-            'class'     => 'save update_all_marketplaces primary'
+            'label' => $this->__('Update All Now'),
+            'onclick' => 'MarketplaceObj.updateAction()',
+            'class' => 'save update_all_marketplaces primary',
         ]);
 
         $this->addButton('run_save_and_synch', [
-            'label'     => $this->__('Save'),
-            'onclick'   => 'MarketplaceObj.saveAction();',
-            'class'     => 'save save_and_update_marketplaces primary'
+            'label' => $this->__('Save'),
+            'onclick' => 'MarketplaceObj.saveAction();',
+            'class' => 'save save_and_update_marketplaces primary',
         ]);
     }
 
@@ -53,7 +53,7 @@ class Marketplace extends AbstractContainer
                 can sell your Items.</p><br>
                 <p><strong>Enable</strong> only those Marketplaces that you want to sell on.
                 High number of enabled Marketplaces will take longer to process the necessary data.</p>'
-            )
+            ),
         ]);
 
         return parent::_prepareLayout();

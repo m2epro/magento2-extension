@@ -49,23 +49,23 @@ class ModuleAndChannels extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sectio
             self::HELP_BLOCK,
             [
                 'no_collapse' => true,
-                'no_hide'     => true,
-                'content'     => $this->__(
+                'no_hide' => true,
+                'content' => $this->__(
                     <<<HTML
 <p>Here you can manage the Module and Automatic Synchronization running, enable Channels you want to sell on.
 Read the <a href="%url%" target="_blank">article</a> for more details.</p>
 HTML
                     ,
                     $this->moduleSupport->getDocumentationArticleUrl('x/KX50B')
-                )
+                ),
             ]
         );
 
         $fieldSet = $form->addFieldset(
             'configuration_settings_module',
             [
-                'legend'      => $this->__('Module'),
-                'collapsable' => false
+                'legend' => $this->__('Module'),
+                'collapsable' => false,
             ]
         );
 
@@ -77,10 +77,10 @@ HTML
                 'cron_mode_field',
                 self::STATE_CONTROL_BUTTON,
                 [
-                    'name'    => 'groups[module_mode][fields][cron_mode_field][value]',
-                    'label'   => $this->__('Automatic Synchronization'),
+                    'name' => 'groups[module_mode][fields][cron_mode_field][value]',
+                    'label' => $this->__('Automatic Synchronization'),
                     'content' => $isCronEnabled ? 'Disable' : 'Enable',
-                    'value'   => $isCronEnabled,
+                    'value' => $isCronEnabled,
                     'tooltip' => $this->__(
                         'Inventory and Order synchronization stops. The Module interface remains available.'
                     ),
@@ -93,10 +93,10 @@ HTML
             'module_mode_field',
             self::STATE_CONTROL_BUTTON,
             [
-                'name'    => 'groups[module_mode][fields][module_mode_field][value]',
-                'label'   => $this->__('Module Interface and Automatic Synchronization'),
+                'name' => 'groups[module_mode][fields][module_mode_field][value]',
+                'label' => $this->__('Module Interface and Automatic Synchronization'),
                 'content' => $isModuleEnabled ? 'Disable' : 'Enable',
-                'value'   => $isModuleEnabled,
+                'value' => $isModuleEnabled,
                 'tooltip' => $this->__(
                     'Inventory and Order synchronization stops. The Module interface becomes unavailable.'
                 ),
@@ -107,8 +107,8 @@ HTML
         $fieldSet = $form->addFieldset(
             'configuration_settings_channels',
             [
-                'legend'      => $this->__('Channels'),
-                'collapsable' => false
+                'legend' => $this->__('Channels'),
+                'collapsable' => false,
             ]
         );
 
@@ -120,10 +120,10 @@ HTML
             'ebay_mode_field',
             self::STATE_CONTROL_BUTTON,
             [
-                'name'    => 'groups[channels][fields][ebay_mode_field][value]',
-                'label'   => $this->__('eBay'),
+                'name' => 'groups[channels][fields][ebay_mode_field][value]',
+                'label' => $this->__('eBay'),
                 'content' => $isEbayEnabled ? 'Disable' : 'Enable',
-                'value'   => $isEbayEnabled,
+                'value' => $isEbayEnabled,
                 'tooltip' => $this->__('eBay Channel Status.'),
                 'onclick' => 'toggleEbayStatus()',
             ]
@@ -137,10 +137,10 @@ HTML
             'amazon_mode_field',
             self::STATE_CONTROL_BUTTON,
             [
-                'name'    => 'groups[channels][fields][amazon_mode_field][value]',
-                'label'   => $this->__('Amazon'),
+                'name' => 'groups[channels][fields][amazon_mode_field][value]',
+                'label' => $this->__('Amazon'),
                 'content' => $isAmazonEnabled ? 'Disable' : 'Enable',
-                'value'   => $isAmazonEnabled,
+                'value' => $isAmazonEnabled,
                 'tooltip' => $this->__('Amazon Channel Status.'),
                 'onclick' => 'toggleAmazonStatus()',
             ]
@@ -154,10 +154,10 @@ HTML
             'walmart_mode_field',
             self::STATE_CONTROL_BUTTON,
             [
-                'name'    => 'groups[channels][fields][walmart_mode_field][value]',
-                'label'   => $this->__('Walmart'),
+                'name' => 'groups[channels][fields][walmart_mode_field][value]',
+                'label' => $this->__('Walmart'),
                 'content' => $isWalmartEnabled ? 'Disable' : 'Enable',
-                'value'   => $isWalmartEnabled,
+                'value' => $isWalmartEnabled,
                 'tooltip' => $this->__('Walmart Channel Status.'),
                 'onclick' => 'toggleWalmartStatus()',
             ]
@@ -176,7 +176,7 @@ HTML
     protected function _toHtml(): string
     {
         $popup = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Popup\ModuleControlPopup::class);
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\System\Config\Popup\ModuleControlPopup::class);
 
         return $popup->toHtml() . parent::_toHtml();
     }

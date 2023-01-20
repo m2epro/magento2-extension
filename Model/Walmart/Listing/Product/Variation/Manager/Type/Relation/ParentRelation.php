@@ -47,8 +47,10 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getProcessor()
     {
         if ($this->processor === null) {
-            $this->processor = $this->modelFactory->getObject('Walmart\Listing\Product\Variation\Manager' .
-                '\Type\Relation\ParentRelation\Processor');
+            $this->processor = $this->modelFactory->getObject(
+                'Walmart\Listing\Product\Variation\Manager' .
+                '\Type\Relation\ParentRelation\Processor'
+            );
             $this->processor->setListingProduct($this->getListingProduct());
         }
 
@@ -145,6 +147,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
 
     /**
      * @param bool $save
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function resetProductAttributes($save = true)
@@ -516,6 +519,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
 
     /**
      * @param bool $freeOptionsFilter
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -531,7 +535,8 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
                 continue;
             }
 
-            if ($freeOptionsFilter
+            if (
+                $freeOptionsFilter
                 && ($childListingProduct->isLocked()
                     || $childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED)
             ) {
@@ -615,6 +620,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     /**
      * @param array $productOptions
      * @param array $channelOptions
+     *
      * @return \Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -622,13 +628,13 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function createChildListingProduct(array $productOptions, array $channelOptions)
     {
         $data = [
-            'listing_id'           => $this->getListingProduct()->getListingId(),
-            'product_id'           => $this->getListingProduct()->getProductId(),
-            'status'               => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-            'status_changer'       => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
+            'listing_id' => $this->getListingProduct()->getListingId(),
+            'product_id' => $this->getListingProduct()->getProductId(),
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
             'is_variation_product' => 1,
-            'is_variation_parent'  => 0,
-            'variation_parent_id'  => $this->getListingProduct()->getId(),
+            'is_variation_parent' => 0,
+            'variation_parent_id' => $this->getListingProduct()->getId(),
             'template_category_id' => $this->getWalmartListingProduct()->getTemplateCategoryId(),
         ];
 
@@ -640,10 +646,10 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         $instruction->setData(
             [
                 'listing_product_id' => $childListingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'type'               => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
-                'initiator'          => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
-                'priority'           => 70,
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'type' => \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_ADDED,
+                'initiator' => \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_ADDING_PRODUCT,
+                'priority' => 70,
 
             ]
         );
@@ -660,9 +666,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
 
         if (!empty($productOptions)) {
             $productVariation = $this->getListingProduct()
-                ->getMagentoProduct()
-                ->getVariationInstance()
-                ->getVariationTypeStandard($productOptions);
+                                     ->getMagentoProduct()
+                                     ->getVariationInstance()
+                                     ->getVariationTypeStandard($productOptions);
 
             if ($productVariation !== null) {
                 $childTypeModel->setProductVariation($productVariation);
@@ -676,6 +682,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
 
     /**
      * @param $listingProductId
+     *
      * @return bool
      */
     public function removeChildListingProduct($listingProductId)
@@ -720,7 +727,6 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         $this->getListingProduct()->save();
 
         foreach ($this->getChildListingsProducts() as $childListingProduct) {
-
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager $childVariationManager */
             $childVariationManager = $childListingProduct->getChildObject()->getVariationManager();
 
@@ -740,6 +746,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
     public function getRealMagentoAttributes()
     {
         $magentoVariations = $this->getRealMagentoVariations();
+
         return array_keys($magentoVariations['set']);
     }
 

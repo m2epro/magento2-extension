@@ -53,6 +53,7 @@ class Edit extends Account
 
         if ($id && !$account->getId()) {
             $this->messageManager->addError($this->__('Account does not exist.'));
+
             return $this->_redirect('*/walmart_account');
         }
 
@@ -60,6 +61,7 @@ class Edit extends Account
         if ($marketplaces->getSize() <= 0) {
             $message = 'You should select and update at least one Walmart marketplace.';
             $this->messageManager->addError($this->__($message));
+
             return $this->_redirect('*/walmart_account');
         }
 
@@ -75,11 +77,12 @@ class Edit extends Account
         $headerTextEdit = $this->__('Edit Account');
         $headerTextAdd = $this->__('Add Account');
 
-        if ($account &&
+        if (
+            $account &&
             $account->getId()
         ) {
             $headerText = $headerTextEdit;
-            $headerText .= ' "'.$this->dataHelper->escapeHtml($account->getTitle()).'"';
+            $headerText .= ' "' . $this->dataHelper->escapeHtml($account->getTitle()) . '"';
         } else {
             $headerText = $headerTextAdd;
         }
@@ -98,6 +101,7 @@ class Edit extends Account
     private function addLicenseMessage(\Ess\M2ePro\Model\Account $account)
     {
         try {
+            /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account', 'get', 'info', [
                 'account' => $account->getChildObject()->getServerHash(),
@@ -115,10 +119,11 @@ class Edit extends Account
         }
 
         $status = (bool)$response['info']['status'];
-        $note   = $response['info']['note'];
+        $note = $response['info']['note'];
 
         if ($status) {
             $this->addExtendedNoticeMessage($note);
+
             return;
         }
 

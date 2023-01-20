@@ -15,14 +15,14 @@ class Dispatcher
     private const DEFAULT_INTERVAL = 3600;
     private const MAX_MEMORY_LIMIT = 256;
     private const SERVER_TASKS_CLASS = [
-        Task\Messages::NAME                   => Task\Messages::class,
-        Task\License::NAME                    => Task\License::class,
-        Task\Settings::NAME                   => Task\Settings::class,
-        Task\Marketplaces::NAME               => Task\Marketplaces::class,
-        Task\Cron::NAME                       => Task\Cron::class,
-        Task\Statistic::NAME                  => Task\Statistic::class,
-        Task\Analytics::NAME                  => Task\Analytics::class,
-        Task\MaintenanceSchedule::NAME        => Task\MaintenanceSchedule::class,
+        Task\Messages::NAME => Task\Messages::class,
+        Task\License::NAME => Task\License::class,
+        Task\Settings::NAME => Task\Settings::class,
+        Task\Marketplaces::NAME => Task\Marketplaces::class,
+        Task\Cron::NAME => Task\Cron::class,
+        Task\Statistic::NAME => Task\Statistic::class,
+        Task\Analytics::NAME => Task\Analytics::class,
+        Task\MaintenanceSchedule::NAME => Task\MaintenanceSchedule::class,
         Task\ProductVariationVocabulary::NAME => Task\ProductVariationVocabulary::class,
     ];
 

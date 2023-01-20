@@ -84,7 +84,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
             // clear session data if user came back to the first step and changed the marketplace
             // ---------------------------------------
-            if ($this->getSessionValue('marketplace_id')
+            if (
+                $this->getSessionValue('marketplace_id')
                 && (int)$this->getSessionValue('marketplace_id') != (int)$post['marketplace_id']
             ) {
                 $this->clearSession();
@@ -112,7 +113,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     private function stepTwo()
     {
-        if ($this->getSessionValue('account_id') === null ||
+        if (
+            $this->getSessionValue('account_id') === null ||
             $this->getSessionValue('marketplace_id') === null
         ) {
             $this->clearSession();
@@ -146,7 +148,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                     '*/ebay_listing/transferring/index',
                     [
                         'listing_id' => $listingId,
-                        'step'       => 3,
+                        'step' => 3,
                     ]
                 );
 
@@ -156,6 +158,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             if ($this->isCreationModeListingOnly()) {
                 // closing window for Unmanaged products moving in new listing creation
                 $this->getRawResult()->setContents("<script>window.close();</script>");
+
                 return;
             }
 
@@ -165,14 +168,15 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $this->setWizardStep('sourceMode');
 
                 $this->_redirect('*/wizard_installationEbay');
+
                 return;
             }
 
             $this->_redirect(
                 '*/ebay_listing_product_add/sourceMode',
                 [
-                    'id'               => $listing->getId(),
-                    'listing_creation' => true
+                    'id' => $listing->getId(),
+                    'listing_creation' => true,
                 ]
             );
 

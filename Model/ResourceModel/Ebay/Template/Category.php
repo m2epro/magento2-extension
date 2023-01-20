@@ -24,9 +24,9 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
                     'marketplace_id',
                     'category_id',
                     'category_attribute',
-                    'is_custom_template'
+                    'is_custom_template',
                 ],
-                'title' => $this->helperFactory->getObject('Module\Translation')->__('CategoryTemplate with same data')
+                'title' => $this->helperFactory->getObject('Module\Translation')->__('CategoryTemplate with same data'),
             ]
         );
     }

@@ -15,19 +15,19 @@ use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
 class TablesStructureValidity implements InspectorInterface, FixerInterface
 {
-    const TABLE_MISSING   = 'table_missing';
-    const TABLE_REDUNDANT = 'table_redundant';
+    public const TABLE_MISSING = 'table_missing';
+    public const TABLE_REDUNDANT = 'table_redundant';
 
-    const COLUMN_MISSING   = 'column_missing';
-    const COLUMN_REDUNDANT = 'column_redundant';
-    const COLUMN_DIFFERENT = 'column_different';
+    public const COLUMN_MISSING = 'column_missing';
+    public const COLUMN_REDUNDANT = 'column_redundant';
+    public const COLUMN_DIFFERENT = 'column_different';
 
-    const FIX_INDEX    = 'index';
-    const FIX_COLUMN   = 'properties';
-    const DROP_COLUMN  = 'drop';
-    const CREATE_TABLE = 'create_table';
+    public const FIX_INDEX = 'index';
+    public const FIX_COLUMN = 'properties';
+    public const DROP_COLUMN = 'drop';
+    public const CREATE_TABLE = 'create_table';
 
-    /** @var HelperFactory  */
+    /** @var HelperFactory */
     private $helperFactory;
 
     /** @var ModelFactory */
@@ -55,11 +55,11 @@ class TablesStructureValidity implements InspectorInterface, FixerInterface
         FormKey $formKey,
         IssueFactory $issueFactory
     ) {
-        $this->helperFactory       = $helperFactory;
-        $this->modelFactory        = $modelFactory;
-        $this->urlBuilder          = $urlBuilder;
-        $this->resourceConnection  = $resourceConnection;
-        $this->formKey             = $formKey;
+        $this->helperFactory = $helperFactory;
+        $this->modelFactory = $modelFactory;
+        $this->urlBuilder = $urlBuilder;
+        $this->resourceConnection = $resourceConnection;
+        $this->formKey = $formKey;
         $this->issueFactory = $issueFactory;
     }
 
@@ -97,10 +97,12 @@ class TablesStructureValidity implements InspectorInterface, FixerInterface
 
     private function getDiff()
     {
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getConnector('tables', 'get', 'diff');
 
         $dispatcherObject->process($connectorObj);
+
         return $connectorObj->getResponseData();
     }
 
@@ -207,6 +209,7 @@ HTML;
 
         if (empty($columnInfo['key'])) {
             $writeConnection->dropIndex($tableName, $columnInfo['name']);
+
             return;
         }
 
@@ -317,9 +320,11 @@ HTML;
                 $definitionData['length'] = $size;
             }
 
-            if (($ddlType == DdlTable::TYPE_FLOAT || $ddlType == DdlTable::TYPE_DECIMAL) &&
-                strpos($size, ',') !== false) {
-                list($precision, $scale) = array_map('trim', explode(',', $size, 2));
+            if (
+                ($ddlType == DdlTable::TYPE_FLOAT || $ddlType == DdlTable::TYPE_DECIMAL) &&
+                strpos($size, ',') !== false
+            ) {
+                [$precision, $scale] = array_map('trim', explode(',', $size, 2));
                 $definitionData['precision'] = (int)$precision;
                 $definitionData['scale'] = (int)$scale;
             }
@@ -336,11 +341,11 @@ HTML;
             $definitionData['nullable'] = strpos(
                 strtolower($matches['nullable']),
                 'not null'
-            ) ==! false  ? false : true;
+            ) == !false ? false : true;
         }
 
         if (!empty($matches['default'])) {
-            list(,$defaultData) = explode(' ', trim($matches['default']), 2);
+            [, $defaultData] = explode(' ', trim($matches['default']), 2);
             $defaultData = trim($defaultData);
             $definitionData['default'] = strtolower($defaultData) == 'null' ? null : $defaultData;
         }
@@ -354,7 +359,7 @@ HTML;
         }
 
         if (!empty($matches['after'])) {
-            list(,$afterColumn) = explode(' ', trim($matches['after']), 2);
+            [, $afterColumn] = explode(' ', trim($matches['after']), 2);
             $definitionData['after'] = trim($afterColumn, " \t\n\r\0\x0B`");
         }
 
@@ -382,7 +387,7 @@ HTML;
 
         $table = $connection->newTable(
             $this->helperFactory->getObject('Module_Database_Structure')
-                ->getTableNameWithPrefix($tableName)
+                                ->getTableNameWithPrefix($tableName)
         );
 
         foreach ($columnsInfo as $columnInfo) {
@@ -390,12 +395,12 @@ HTML;
                 $this->convertArrayDefinitionToString($columnInfo)
             );
             $option = [
-                'unsigned'       => isset($columnDefinition['unsigned']) ? $columnDefinition['unsigned'] : null,
-                'precision'      => isset($columnDefinition['precision']) ? $columnDefinition['precision'] : null,
-                'scale'          => isset($columnDefinition['scale']) ? $columnDefinition['scale'] : null,
-                'primary'        => isset($columnDefinition['primary']) ? $columnDefinition['primary'] : null,
+                'unsigned' => isset($columnDefinition['unsigned']) ? $columnDefinition['unsigned'] : null,
+                'precision' => isset($columnDefinition['precision']) ? $columnDefinition['precision'] : null,
+                'scale' => isset($columnDefinition['scale']) ? $columnDefinition['scale'] : null,
+                'primary' => isset($columnDefinition['primary']) ? $columnDefinition['primary'] : null,
                 'auto_increment' => isset($columnDefinition['auto_increment'])
-                    ? $columnDefinition['auto_increment'] : null
+                    ? $columnDefinition['auto_increment'] : null,
             ];
 
             if (isset($columnDefinition['default'])) {

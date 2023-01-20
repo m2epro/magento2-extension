@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs
- */
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
-    const TAB_ID_MAIN = 'main';
+    public const TAB_ID_MAIN = 'main';
 
     //########################################
 
@@ -26,7 +23,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'title' => __('Main'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main::class)
-                              ->toHtml()
+                              ->toHtml(),
         ];
 
         $this->addTab(self::TAB_ID_MAIN, $tab);
@@ -40,7 +37,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'title' => __('Synchronization'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Synchronization::class)
-                              ->toHtml()
+                              ->toHtml(),
         ];
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);
@@ -55,6 +52,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
     protected function _beforeToHtml()
     {
         $this->jsUrl->add($this->getUrl('*/walmart/getGlobalMessages'), 'getGlobalMessages');
+
         return parent::_beforeToHtml();
     }
 

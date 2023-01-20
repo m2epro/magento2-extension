@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Model\Ebay\Motor;
 
 class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    const MODE_ITEM     = 1;
-    const MODE_FILTER   = 2;
+    public const MODE_ITEM = 1;
+    public const MODE_FILTER = 2;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
@@ -61,7 +61,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         $connection = $this->getResource()->getConnection();
         $filterGroupRelation = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+                                    ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
         $connection->delete($filterGroupRelation, ['group_id = ?' => $this->getId()]);
 
         return true;
@@ -116,7 +116,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
             \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
-            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_IT,
         ]);
     }
 
@@ -144,7 +144,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         $connection = $this->getResource()->getConnection();
         $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+                      ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
         $select = $connection->select();
         $select->from(['emftg' => $table], ['filter_id'])
@@ -155,6 +155,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @param array $itemsIds
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function removeItemsByIds($itemsIds)
@@ -190,6 +191,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     /**
      * @param array $filtersIds
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function removeFiltersByIds($filtersIds)
@@ -208,7 +210,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $connWrite = $this->getResource()->getConnection('core/write');
 
         $filterGroupRelation = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
+                                    ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
         $connWrite->delete(
             $filterGroupRelation,

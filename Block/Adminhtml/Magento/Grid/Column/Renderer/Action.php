@@ -16,7 +16,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
 {
     use Traits\RendererTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -47,7 +47,8 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
 
     protected function _prepareLayout()
     {
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     window.M2eProVarienGridAction = {
         execute: function (select, id) {
             if(!select.value || !select.value.isJSON()) {
@@ -102,11 +103,10 @@ JS
                     unset($actions[$columnName]);
                     $style = '';
                 }
-
             }
         }
 
-        if (sizeof($actions) == 1 && !$this->getColumn()->getNoLink()) {
+        if (count($actions) === 1 && !$this->getColumn()->getNoLink()) {
             foreach ($actions as $action) {
                 if (is_array($action)) {
                     return $this->_toLinkHtml($action, $row);
@@ -114,8 +114,8 @@ JS
             }
         }
 
-        $itemId     = $row->getId();
-        $field      = $this->getColumn()->getData('field');
+        $itemId = $row->getId();
+        $field = $this->getColumn()->getData('field');
         $groupOrder = $this->getColumn()->getGroupOrder();
 
         if (!empty($field)) {
@@ -141,7 +141,7 @@ HTML;
         foreach ($groupOrder as $groupId => $groupLabel) {
             $sorted[$groupId] = [
                 'label' => $groupLabel,
-                'actions' => []
+                'actions' => [],
             ];
 
             foreach ($actions as $actionId => $actionData) {
@@ -157,7 +157,7 @@ HTML;
 
     protected function renderOptions(array $actions, \Magento\Framework\DataObject $row)
     {
-        $outHtml           = '';
+        $outHtml = '';
         $notGroupedOptions = '';
 
         foreach ($actions as $groupId => $group) {
@@ -205,6 +205,7 @@ HTML;
         }
 
         $actionAttributes->setData($action);
+
         return '<a ' . $actionAttributes->serialize() . '>' . $actionCaption . '</a>';
     }
 
@@ -217,6 +218,7 @@ HTML;
      * @param array $action
      * @param string $actionCaption
      * @param \Magento\Framework\DataObject $row
+     *
      * @return \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
      */
     protected function _transformActionData(&$action, &$actionCaption, \Magento\Framework\DataObject $row)

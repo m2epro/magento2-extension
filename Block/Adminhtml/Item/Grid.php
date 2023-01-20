@@ -8,14 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Item;
 
-use \Magento\Backend\Block\Widget\Grid\Extended as WidgetGrid;
+use Magento\Backend\Block\Widget\Grid\Extended as WidgetGrid;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Item\Grid
- */
 class Grid extends WidgetGrid
 {
-
     /**
      * @var \Ess\M2ePro\Model\ItemFactory
      */
@@ -25,7 +21,6 @@ class Grid extends WidgetGrid
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
      * @param array $data
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -34,14 +29,10 @@ class Grid extends WidgetGrid
         \Ess\M2ePro\Model\ItemFactory $itemFactory,
         array $data = []
     ) {
-
         $this->_itemFactory = $itemFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
-    /**
-     * @return void
-     */
     protected function _construct()
     {
         parent::_construct();
@@ -51,7 +42,6 @@ class Grid extends WidgetGrid
         $this->setDefaultDir('DESC');
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
-//        $this->setVarNameFilter('item_filter');
     }
 
     //########################################
@@ -71,16 +61,16 @@ class Grid extends WidgetGrid
     {
         $this->addColumn('id', [
             'header' => 'ID',
-            'type'   => 'number',
-            'index'  => 'id',
-            'width'  => '50px'
+            'type' => 'number',
+            'index' => 'id',
+            'width' => '50px',
         ]);
 
         $this->addColumn('text', [
-            'header'       => 'Text',
-            'type'         => 'text',
-            'index'        => 'text',
-            'width'        => '350px',
+            'header' => 'Text',
+            'type' => 'text',
+            'index' => 'text',
+            'width' => '350px',
         ]);
 
         return parent::_prepareColumns();

@@ -52,9 +52,9 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->addButton(
             'back',
             [
-                'label'   => $this->__('Back'),
-                'class'   => 'back',
-                'onclick' => 'setLocation(\'' . $url . '\');'
+                'label' => $this->__('Back'),
+                'class' => 'back',
+                'onclick' => 'setLocation(\'' . $url . '\');',
             ]
         );
 
@@ -77,10 +77,10 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->addButton(
             'next',
             [
-                'id'      => 'ebay_listing_category_continue_btn',
-                'label'   => $this->__('Continue'),
-                'class'   => 'action-primary forward',
-                'onclick' => "EbayListingProductCategorySettingsModeProductGridObj.completeCategoriesDataStep(0, 1)"
+                'id' => 'ebay_listing_category_continue_btn',
+                'label' => $this->__('Continue'),
+                'class' => 'action-primary forward',
+                'onclick' => "EbayListingProductCategorySettingsModeProductGridObj.completeCategoriesDataStep(0, 1)",
             ]
         );
     }
@@ -97,7 +97,7 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
             [
-                'data' => ['listing' => $this->listing]
+                'data' => ['listing' => $this->listing],
             ]
         );
 
@@ -123,8 +123,10 @@ HTML;
     private function getPopupsHtml()
     {
         return $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\WarningPopup::class)
-            ->toHtml();
+                    ->createBlock(
+                        \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode\WarningPopup::class
+                    )
+                    ->toHtml();
     }
 
     //########################################

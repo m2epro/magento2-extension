@@ -35,6 +35,7 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
             );
             $this->listingProduct->getMagentoProduct()->enableCache();
         }
+
         return $this->listingProduct;
     }
 
@@ -42,9 +43,9 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
     {
         if ($this->magentoVariationsSets === null) {
             $temp = $this->getListingProduct()
-                ->getMagentoProduct()
-                ->getVariationInstance()
-                ->getVariationsTypeStandard();
+                         ->getMagentoProduct()
+                         ->getVariationInstance()
+                         ->getVariationsTypeStandard();
             $this->magentoVariationsSets = $temp['set'];
         }
 
@@ -55,9 +56,9 @@ abstract class Individual extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBl
     {
         if ($this->magentoVariationsCombinations === null) {
             $temp = $this->getListingProduct()
-                ->getMagentoProduct()
-                ->getVariationInstance()
-                ->getVariationsTypeStandard();
+                         ->getMagentoProduct()
+                         ->getVariationInstance()
+                         ->getVariationsTypeStandard();
             $this->magentoVariationsCombinations = $temp['variations'];
         }
 

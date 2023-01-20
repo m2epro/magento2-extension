@@ -39,6 +39,7 @@ class JsUrlRenderer extends AbstractRenderer
     public function addUrls(array $urls)
     {
         $this->jsUrls = array_merge($this->jsUrls, $urls);
+
         return $this;
     }
 

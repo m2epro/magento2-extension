@@ -34,12 +34,14 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
         $feedback = $this->globalDataHelper->getValue('feedback');
 
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'send_response_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post',
-                'class' => 'admin__scope-old'
-            ]]
+            [
+                'data' => [
+                    'id' => 'send_response_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                    'class' => 'admin__scope-old',
+                ],
+            ]
         );
 
         $form->addField(
@@ -47,7 +49,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             'hidden',
             [
                 'name' => 'feedback_id',
-                'value' => $feedback->getId()
+                'value' => $feedback->getId(),
             ]
         );
 
@@ -68,7 +70,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'value' => $transaction,
                 'href' => $url,
                 'target' => '_blank',
-                'class' => 'control-value'
+                'class' => 'control-value',
             ]
         );
 
@@ -82,7 +84,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'value' => $feedback->getEbayItemId(),
                 'href' => $url,
                 'target' => '_blank',
-                'class' => 'control-value external-link'
+                'class' => 'control-value external-link',
             ]
         );
 
@@ -91,12 +93,15 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             'note',
             [
                 'label' => $this->__('Buyer\'s Feedback'),
-                'text' => $feedback->getBuyerFeedbackText()
+                'text' => $feedback->getBuyerFeedbackText(),
             ]
         );
 
         $templates = $this->feedbackTemplateCollectionFactory->create()
-            ->addFieldToFilter('main_table.account_id', $feedback->getAccountId());
+                                                             ->addFieldToFilter(
+                                                                 'main_table.account_id',
+                                                                 $feedback->getAccountId()
+                                                             );
 
         $fieldset->addField(
             'feedback_template_type',
@@ -109,29 +114,31 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                     [
                         'value' => '',
                         'label' => '',
-                        'attrs' => ['style' => 'display: none']
+                        'attrs' => ['style' => 'display: none'],
                     ],
                     [
                         'value' => 'custom',
-                        'label' => $this->__('Custom')
+                        'label' => $this->__('Custom'),
                     ],
                     [
                         'value' => 'predefined',
-                        'label' => $this->__('Predefined Template')
-                    ]
+                        'label' => $this->__('Predefined Template'),
+                    ],
                 ],
                 'value' => $templates->getSize() > 0 ? '' : 'custom',
                 'required' => true,
                 'class' => 'M2ePro-required-when-visible',
-                'field_extra_attributes' => $templates->getSize() > 0  ? '' : 'style="display: none"'
+                'field_extra_attributes' => $templates->getSize() > 0 ? '' : 'style="display: none"',
             ]
         );
 
-        $templatesValue = [[
-            'value' => '',
-            'label' => '',
-            'attrs' => ['style' => 'display: none']
-        ]];
+        $templatesValue = [
+            [
+                'value' => '',
+                'label' => '',
+                'attrs' => ['style' => 'display: none'],
+            ],
+        ];
         foreach ($templates as $template) {
             $text = $template->getData('body');
 
@@ -141,7 +148,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
             $templatesValue[] = [
                 'value' => $template->getData('body'),
-                'label' =>  $text
+                'label' => $text,
             ];
         }
 
@@ -156,7 +163,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'values' => $templatesValue,
                 'required' => true,
                 'class' => 'M2ePro-required-when-visible',
-                'field_extra_attributes' => 'style="display: none"'
+                'field_extra_attributes' => 'style="display: none"',
             ]
         );
 
@@ -170,14 +177,15 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'label' => $this->__('Message'),
                 'required' => true,
                 'class' => 'M2ePro-validate-feedback-response-max-length',
-                'field_extra_attributes' => $templates->getSize() > 0  ? 'style="display: none"' : ''
+                'field_extra_attributes' => $templates->getSize() > 0 ? 'style="display: none"' : '',
             ]
         );
 
         $form->setUseContainer(true);
         $this->setForm($form);
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
     $('feedback_template_type').observe('change', function () {
 
         $('feedback_text_container').hide();

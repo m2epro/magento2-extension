@@ -16,6 +16,7 @@ class GetNotePopupHtml extends Order
     {
         $grid = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Popup::class);
         $this->setAjaxContent($grid->toHtml());
+
         return $this->getResult();
     }
 }

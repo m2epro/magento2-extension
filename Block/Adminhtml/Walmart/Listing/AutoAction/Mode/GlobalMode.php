@@ -45,7 +45,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->supportHelper->getDocumentationArticleUrl('x/af1IB')
-                )
+                ),
             ]
         );
 
@@ -54,7 +54,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             'hidden',
             [
                 'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL
+                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL,
             ]
         );
 
@@ -73,7 +73,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 ],
                 'value' => $this->formData['auto_global_adding_mode'],
                 'tooltip' => $this->__('Action which will be applied automatically.'),
-                'style' => 'width: 350px'
+                'style' => 'width: 350px',
             ]
         );
 
@@ -88,7 +88,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => $this->__('No')],
                     [
                         'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                        'label' => $this->__('Yes')
+                        'label' => $this->__('Yes'),
                     ],
                 ],
                 'value' => $this->formData['auto_global_adding_add_not_visible'],
@@ -100,7 +100,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     If set to <strong>No</strong>, only Variation (i.e.
                     Parent) Magento Products will be added to the Listing Automatically,
                     excluding Child Products.'
-                )
+                ),
             ]
         );
 
@@ -109,19 +109,19 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
 
         $categoryTemplates = $collection->getData();
 
-        $options = [['label' => '','value' => '', 'attrs' => ['class' => 'empty']]];
+        $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($categoryTemplates as $template) {
             $tmp = [
                 'label' => $this->escapeHtml($template['title']),
-                'value' => $template['id']
+                'value' => $template['id'],
             ];
 
             $options[] = $tmp;
         }
 
         $url = $this->getUrl('*/walmart_template_category/new', [
-            'marketplace_id'        => $this->getListing()->getMarketplaceId(),
-            'close_on_save' => true
+            'marketplace_id' => $this->getListing()->getMarketplaceId(),
+            'close_on_save' => true,
         ]);
 
         $fieldSet->addField(
@@ -135,15 +135,17 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 'value' => $this->formData['auto_global_adding_category_template_id'],
                 'field_extra_attributes' => 'id="auto_action_walmart_add_and_assign_category_template"',
                 'required' => true,
-                'after_element_html' => $this->getTooltipHtml($this->__(
-                    'Select Category Policy you want to assign to Product(s).<br><br>
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        'Select Category Policy you want to assign to Product(s).<br><br>
                     <strong>Note:</strong> Submitting of Category data is required when you create a new offer on
                     Walmart. Category Policy must be assigned to Products before they are added to M2E Pro Listing.'
-                )) . '<a href="javascript: void(0);"
+                    )
+                ) . '<a href="javascript: void(0);"
                         style="vertical-align: inherit; margin-left: 65px;"
-                        onclick="ListingAutoActionObj.addNewTemplate(\''.$url.'\',
-                        ListingAutoActionObj.reloadCategoryTemplates);">'.$this->__('Add New').'
-                     </a>'
+                        onclick="ListingAutoActionObj.addNewTemplate(\'' . $url . '\',
+                        ListingAutoActionObj.reloadCategoryTemplates);">' . $this->__('Add New') . '
+                     </a>',
             ]
         );
 
@@ -156,10 +158,12 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 'label' => $this->__('Product Deleted from Magento'),
                 'title' => $this->__('Product Deleted from Magento'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                        'label' => $this->__('Stop on Channel and Delete from Listing')],
+                    [
+                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
+                        'label' => $this->__('Stop on Channel and Delete from Listing'),
+                    ],
                 ],
-                'style' => 'width: 350px;'
+                'style' => 'width: 350px;',
             ]
         );
 
@@ -177,7 +181,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Walmart\Listing::class)
         );
 
-        $this->js->add(<<<JS
+        $this->js->add(
+            <<<JS
 
         $('adding_category_template_id').observe('change', function(el) {
             var options = $(el.target).select('.empty');

@@ -28,9 +28,9 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
     ) {
         parent::__construct($ebayFactory, $context);
 
-        $this->fileCsv               = $fileCsv;
+        $this->fileCsv = $fileCsv;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
-        $this->componentEbayMotors   = $componentEbayMotors;
+        $this->componentEbayMotors = $componentEbayMotors;
     }
 
     //########################################
@@ -43,6 +43,7 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 
         if (!$motorsType || empty($uploadedFiles['source']) || empty($uploadedFiles['source']['name'])) {
             $this->getMessageManager()->addError($this->__('Some of required fields are not filled up.'));
+
             return $this->_redirect('*/ebay_settings/index');
         }
 
@@ -75,6 +76,7 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         }
 
         $this->getMessageManager()->addSuccess("Added '{$added}' compatibility records.");
+
         return $this->_redirect('*/ebay_settings/index');
     }
 
@@ -84,11 +86,11 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $motorsType = $this->getRequest()->getParam('motors_type');
 
         $selectStmt = $this->resourceConnection->getConnection('core/read')
-            ->select()
-            ->from(
-                $helper->getDictionaryTable($motorsType),
-                [$helper->getIdentifierKey($motorsType)]
-            );
+                                               ->select()
+                                               ->from(
+                                                   $helper->getDictionaryTable($motorsType),
+                                                   [$helper->getIdentifierKey($motorsType)]
+                                               );
 
         if ($helper->isTypeBasedOnEpids($motorsType)) {
             $selectStmt->where('scope = ?', $helper->getEpidsScopeByType($motorsType));
@@ -125,20 +127,20 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
             }
 
             return [
-                'ktype'      => (int)$csvRow['ktype'],
-                'make'       => (isset($csvRow['make']) ? $csvRow['make'] : null),
-                'model'      => (isset($csvRow['model']) ? $csvRow['model'] : null),
-                'variant'    => (isset($csvRow['variant']) ? $csvRow['variant'] : null),
+                'ktype' => (int)$csvRow['ktype'],
+                'make' => (isset($csvRow['make']) ? $csvRow['make'] : null),
+                'model' => (isset($csvRow['model']) ? $csvRow['model'] : null),
+                'variant' => (isset($csvRow['variant']) ? $csvRow['variant'] : null),
                 'body_style' => (isset($csvRow['body_style']) ? $csvRow['body_style'] : null),
-                'type'       => (isset($csvRow['type']) ? $csvRow['type'] : null),
-                'from_year'  => (isset($csvRow['from_year']) ? (int)$csvRow['from_year'] : null),
-                'to_year'    => (isset($csvRow['to_year']) ? (int)$csvRow['to_year'] : null),
-                'engine'     => (isset($csvRow['engine']) ? $csvRow['engine'] : null),
-                'is_custom'  => 1
+                'type' => (isset($csvRow['type']) ? $csvRow['type'] : null),
+                'from_year' => (isset($csvRow['from_year']) ? (int)$csvRow['from_year'] : null),
+                'to_year' => (isset($csvRow['to_year']) ? (int)$csvRow['to_year'] : null),
+                'engine' => (isset($csvRow['engine']) ? $csvRow['engine'] : null),
+                'is_custom' => 1,
             ];
         }
 
-        $requiredColumns = ['epid','product_type','make','model','year'];
+        $requiredColumns = ['epid', 'product_type', 'make', 'model', 'year'];
         foreach ($requiredColumns as $columnName) {
             if (!isset($csvRow[$columnName])) {
                 return false;
@@ -146,17 +148,17 @@ class ImportMotorsData extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         }
 
         return [
-            'epid'         => $csvRow['epid'],
+            'epid' => $csvRow['epid'],
             'product_type' => (int)$csvRow['product_type'],
-            'make'         => $csvRow['make'],
-            'model'        => $csvRow['model'],
-            'year'         => (int)$csvRow['year'],
-            'trim'         => (isset($csvRow['trim']) ? $csvRow['trim'] : null),
-            'engine'       => (isset($csvRow['engine']) ? $csvRow['engine'] : null),
-            'submodel'     => (isset($csvRow['submodel']) ? $csvRow['submodel'] : null),
-            'street_name'  => (isset($csvRow['street_name']) ? $csvRow['street_name'] : null),
-            'is_custom'    => 1,
-            'scope'        => $helper->getEpidsScopeByType($motorsType)
+            'make' => $csvRow['make'],
+            'model' => $csvRow['model'],
+            'year' => (int)$csvRow['year'],
+            'trim' => (isset($csvRow['trim']) ? $csvRow['trim'] : null),
+            'engine' => (isset($csvRow['engine']) ? $csvRow['engine'] : null),
+            'submodel' => (isset($csvRow['submodel']) ? $csvRow['submodel'] : null),
+            'street_name' => (isset($csvRow['street_name']) ? $csvRow['street_name'] : null),
+            'is_custom' => 1,
+            'scope' => $helper->getEpidsScopeByType($motorsType),
         ];
     }
 }

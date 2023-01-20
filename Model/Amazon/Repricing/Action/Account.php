@@ -18,9 +18,9 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
     public function sendLinkActionData($backUrl)
     {
         $accountData = [
-            'merchant_id'      => $this->getAmazonAccount()->getMerchantId(),
+            'merchant_id' => $this->getAmazonAccount()->getMerchantId(),
             'marketplace_code' => $this->getAmazonAccount()->getMarketplace()->getCode(),
-            'additional_data'  => $this->getHelper('Magento\Admin')->getCurrentInfo(),
+            'additional_data' => $this->getHelper('Magento\Admin')->getCurrentInfo(),
         ];
 
         return $this->sendData(
@@ -36,7 +36,7 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
             $this->getAccount()
         );
 
-        $offers  = [];
+        $offers = [];
         foreach ($skus as $sku) {
             $offers[] = ['sku' => $sku];
         }
@@ -55,16 +55,16 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         $requestData = [
             'request' => [
                 'back_url' => [
-                    'url'    => $backUrl,
-                    'params' => []
-                ]
+                    'url' => $backUrl,
+                    'params' => [],
+                ],
             ],
             'data' => $this->getHelper('Data')->jsonEncode($data),
         ];
 
         if ($this->getAmazonAccount()->isRepricing()) {
             $requestData['request']['auth'] = [
-                'account_token' => $this->getAmazonAccountRepricing()->getToken()
+                'account_token' => $this->getAmazonAccountRepricing()->getToken(),
             ];
         }
 

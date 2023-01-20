@@ -34,7 +34,7 @@ class Handler extends AbstractModel implements \Ess\M2ePro\Model\Listing\Product
     public function process(\Ess\M2ePro\Model\Listing\Product\Instruction\Handler\Input $input)
     {
         $scheduledActionCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
+                                                               ->getCollection();
         $scheduledActionCollection->addFieldToFilter('listing_product_id', $input->getListingProduct()->getId());
 
         /** @var \Ess\M2ePro\Model\Listing\Product\ScheduledAction $scheduledAction */
@@ -51,7 +51,7 @@ class Handler extends AbstractModel implements \Ess\M2ePro\Model\Listing\Product
         }
 
         $params = [
-            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH,
         ];
 
         foreach ($this->getAllCheckers() as $checker) {
@@ -79,20 +79,23 @@ class Handler extends AbstractModel implements \Ess\M2ePro\Model\Listing\Product
 
     /**
      * @param $checkerNick
+     *
      * @return \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getCheckerModel($checkerNick)
     {
-        $checkerModelName = 'Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\\'.$checkerNick;
+        $checkerModelName = 'Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\\' . $checkerNick;
         $checkerModel = $this->modelFactory->getObject($checkerModelName);
 
-        if (!($checkerModel instanceof
-                \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel)) {
+        if (
+            !($checkerModel instanceof
+                \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel)
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 sprintf(
-                    'Checker model "%s" does not extends 
-                    "\Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel" 
+                    'Checker model "%s" does not extends
+                    "\Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel"
                     class',
                     $checkerModelName
                 )

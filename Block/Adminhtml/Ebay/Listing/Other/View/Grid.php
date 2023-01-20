@@ -92,24 +92,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns(
             [
-                'id'                   => 'main_table.id',
-                'account_id'           => 'main_table.account_id',
-                'marketplace_id'       => 'main_table.marketplace_id',
-                'product_id'           => 'main_table.product_id',
-                'title'                => 'second_table.title',
-                'sku'                  => 'second_table.sku',
-                'item_id'              => 'second_table.item_id',
-                'available_qty'        => new \Zend_Db_Expr(
+                'id' => 'main_table.id',
+                'account_id' => 'main_table.account_id',
+                'marketplace_id' => 'main_table.marketplace_id',
+                'product_id' => 'main_table.product_id',
+                'title' => 'second_table.title',
+                'sku' => 'second_table.sku',
+                'item_id' => 'second_table.item_id',
+                'available_qty' => new \Zend_Db_Expr(
                     '(second_table.online_qty - second_table.online_qty_sold)'
                 ),
-                'online_qty_sold'      => 'second_table.online_qty_sold',
-                'online_price'         => 'second_table.online_price',
+                'online_qty_sold' => 'second_table.online_qty_sold',
+                'online_price' => 'second_table.online_price',
                 'online_main_category' => 'second_table.online_main_category',
-                'status'               => 'main_table.status',
-                'start_date'           => 'second_table.start_date',
-                'end_date'             => 'second_table.end_date',
-                'currency'             => 'second_table.currency',
-                'account_mode'         => 'mea.mode'
+                'status' => 'main_table.status',
+                'start_date' => 'second_table.start_date',
+                'end_date' => 'second_table.end_date',
+                'currency' => 'second_table.currency',
+                'account_mode' => 'mea.mode',
             ]
         );
 
@@ -121,103 +121,103 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header'         => $this->__('Product ID'),
-            'align'          => 'left',
-            'type'           => 'number',
-            'width'          => '80px',
-            'index'          => 'product_id',
-            'filter_index'   => 'main_table.product_id',
+            'header' => $this->__('Product ID'),
+            'align' => 'left',
+            'type' => 'number',
+            'width' => '80px',
+            'index' => 'product_id',
+            'filter_index' => 'main_table.product_id',
             'frame_callback' => [$this, 'callbackColumnProductId'],
-            'filter'         => \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId::class,
-            'filter_condition_callback' => [$this, 'callbackFilterProductId']
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Grid\Column\Filter\ProductId::class,
+            'filter_condition_callback' => [$this, 'callbackFilterProductId'],
         ]);
 
         $this->addColumn('title', [
-            'header'                    => $this->__('Product Title / Product SKU / eBay Category'),
-            'align'                     => 'left',
-            'type'                      => 'text',
-            'index'                     => 'title',
-            'escape'                    => false,
-            'filter_index'              => 'second_table.title',
-            'frame_callback'            => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle']
+            'header' => $this->__('Product Title / Product SKU / eBay Category'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'title',
+            'escape' => false,
+            'filter_index' => 'second_table.title',
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $this->addColumn('item_id', [
-            'header'         => $this->__('Item ID'),
-            'align'          => 'left',
-            'width'          => '100px',
-            'type'           => 'text',
-            'index'          => 'item_id',
-            'filter_index'   => 'second_table.item_id',
-            'frame_callback' => [$this, 'callbackColumnItemId']
+            'header' => $this->__('Item ID'),
+            'align' => 'left',
+            'width' => '100px',
+            'type' => 'text',
+            'index' => 'item_id',
+            'filter_index' => 'second_table.item_id',
+            'frame_callback' => [$this, 'callbackColumnItemId'],
         ]);
 
         $this->addColumn('available_qty', [
-            'header'       => $this->__('Available QTY'),
-            'align'        => 'right',
-            'width'        => '50px',
-            'type'         => 'number',
-            'index'        => 'available_qty',
+            'header' => $this->__('Available QTY'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'index' => 'available_qty',
             'filter_index' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
-            'renderer'     => OnlineQty::class,
-            'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY
+            'renderer' => OnlineQty::class,
+            'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
         ]);
 
         $this->addColumn('online_qty_sold', [
-            'header'       => $this->__('Sold QTY'),
-            'align'        => 'right',
-            'width'        => '50px',
-            'type'         => 'number',
-            'index'        => 'online_qty_sold',
+            'header' => $this->__('Sold QTY'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'index' => 'online_qty_sold',
             'filter_index' => 'second_table.online_qty_sold',
-            'renderer'     => OnlineQty::class
+            'renderer' => OnlineQty::class,
         ]);
 
         $this->addColumn('online_price', [
-            'header'         => $this->__('Price'),
-            'align'          => 'right',
-            'width'          => '50px',
-            'type'           => 'number',
-            'index'          => 'online_price',
-            'filter_index'   => 'second_table.online_price',
-            'frame_callback' => [$this, 'callbackColumnOnlinePrice']
+            'header' => $this->__('Price'),
+            'align' => 'right',
+            'width' => '50px',
+            'type' => 'number',
+            'index' => 'online_price',
+            'filter_index' => 'second_table.online_price',
+            'frame_callback' => [$this, 'callbackColumnOnlinePrice'],
         ]);
 
         $this->addColumn('status', [
-            'header'       => $this->__('Status'),
-            'width'        => '100px',
-            'index'        => 'status',
+            'header' => $this->__('Status'),
+            'width' => '100px',
+            'index' => 'status',
             'filter_index' => 'main_table.status',
-            'type'         => 'options',
-            'sortable'     => false,
-            'options'      => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED   => $this->__('Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN   => $this->__('Listed (Hidden)'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD     => $this->__('Sold'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED  => $this->__('Stopped'),
+            'type' => 'options',
+            'sortable' => false,
+            'options' => [
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Listed'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Listed (Hidden)'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => $this->__('Sold'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Stopped'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED  => $this->__('Pending')
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending'),
             ],
-            'frame_callback' => [$this, 'callbackColumnStatus']
+            'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
 
         $this->addColumn('end_date', [
-            'header'       => $this->__('End Date'),
-            'align'        => 'right',
-            'width'        => '150px',
-            'type'         => 'datetime',
-            'filter'       => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
-            'filter_time'  => true,
-            'index'        => 'end_date',
+            'header' => $this->__('End Date'),
+            'align' => 'right',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'filter_time' => true,
+            'index' => 'end_date',
             'filter_index' => 'second_table.end_date',
-            'renderer'     => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class,
         ]);
 
         $back = $this->dataHelper->makeBackUrlParam('*/ebay_listing_other/view', [
             'account' => $this->getRequest()->getParam('account'),
             'marketplace' => $this->getRequest()->getParam('marketplace'),
-            'back' => $this->getRequest()->getParam('back')
+            'back' => $this->getRequest()->getParam('back'),
         ]);
 
         return parent::_prepareColumns();
@@ -233,26 +233,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->getMassactionBlock()->setGroups([
             'mapping' => $this->__('Linking'),
-            'other' => $this->__('Other')
+            'other' => $this->__('Other'),
         ]);
 
         $this->getMassactionBlock()->addItem('autoMapping', [
-            'label'   => $this->__('Link Item(s) Automatically'),
-            'url'     => ''
+            'label' => $this->__('Link Item(s) Automatically'),
+            'url' => '',
         ], 'mapping');
 
         $this->getMassactionBlock()->addItem('moving', [
-            'label'   => $this->__('Move Item(s) to Listing'),
-            'url'     => ''
+            'label' => $this->__('Move Item(s) to Listing'),
+            'url' => '',
         ], 'other');
         $this->getMassactionBlock()->addItem('removing', [
-            'label'   => $this->__('Remove Item(s)'),
-            'url'     => ''
+            'label' => $this->__('Remove Item(s)'),
+            'url' => '',
         ], 'other');
         $this->getMassactionBlock()->addItem('unmapping', [
-            'label'   => $this->__('Unlink Item(s)'),
-            'url'     => ''
+            'label' => $this->__('Unlink Item(s)'),
+            'url' => '',
         ], 'mapping');
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -277,28 +278,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
                                     onclick="ListingOtherMappingObj.openPopUp(
-                                    '. (int)$row->getId(). ',
-                                    \''. $productTitle. '\'
+                                    ' . (int)$row->getId() . ',
+                                    \'' . $productTitle . '\'
                                     );">' . $this->__('Link') . '</a>';
 
             return $htmlValue;
         }
 
         $htmlValue = '&nbsp<a href="'
-            .$this->getUrl(
+            . $this->getUrl(
                 'catalog/product/edit',
                 ['id' => $row->getData('product_id')]
             )
-            .'" target="_blank">'
-            .$row->getData('product_id')
-            .'</a>';
+            . '" target="_blank">'
+            . $row->getData('product_id')
+            . '</a>';
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
-            .' onclick="EbayListingOtherGridObj.movingHandler.getGridHtml('
-            .$this->dataHelper->jsonEncode([(int)$row->getData('id')])
-            .')">'
-            .$this->__('Move')
-            .'</a>';
+            . ' onclick="EbayListingOtherGridObj.movingHandler.getGridHtml('
+            . $this->dataHelper->jsonEncode([(int)$row->getData('id')])
+            . ')">'
+            . $this->__('Move')
+            . '</a>';
 
         return $htmlValue;
     }
@@ -370,16 +371,16 @@ HTML;
             \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => 'brown',
             \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => 'red',
             \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => 'blue',
-            \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 'orange'
+            \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 'orange',
         ];
 
         $status = $row->getData('status');
 
         if ($status !== null && isset($coloredStstuses[$status])) {
-            $value = '<span style="color: '.$coloredStstuses[$status].';">' . $value . '</span>';
+            $value = '<span style="color: ' . $coloredStstuses[$status] . ';">' . $value . '</span>';
         }
 
-        return $value.$this->getLockedTag($row);
+        return $value . $this->getLockedTag($row);
     }
 
     public function callbackColumnStartTime($value, $row, $column, $isExport)
@@ -440,7 +441,7 @@ HTML;
             'second_table.title LIKE ? OR
              second_table.sku LIKE ? OR
               second_table.online_main_category LIKE ?',
-            '%'.$value.'%'
+            '%' . $value . '%'
         );
     }
 
@@ -476,11 +477,12 @@ HTML;
 
     protected function _beforeToHtml()
     {
-
         if ($this->getRequest()->isXmlHttpRequest() || $this->getRequest()->getParam('isAjax')) {
-            $this->js->addRequireJs([
-                'jQuery' => 'jquery'
-            ], <<<JS
+            $this->js->addRequireJs(
+                [
+                'jQuery' => 'jquery',
+                ],
+                <<<JS
 
             EbayListingOtherGridObj.afterInitPage();
 JS

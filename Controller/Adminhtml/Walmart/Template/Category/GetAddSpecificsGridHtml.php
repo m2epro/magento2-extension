@@ -16,6 +16,7 @@ class GetAddSpecificsGridHtml extends Category
     {
         $gridBlock = $this->prepareGridBlock();
         $this->setAjaxContent($gridBlock->toHtml());
+
         return $this->getResult();
     }
 }

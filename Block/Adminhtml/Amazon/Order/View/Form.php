@@ -65,45 +65,45 @@ class Form extends AbstractContainer
         }
 
         $data = [
-            'class'   => 'primary',
-            'label'   => $this->__('Edit'),
+            'class' => 'primary',
+            'label' => $this->__('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
         ];
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                         ->setData($data);
+                            ->setData($data);
         $this->setChild('edit_shipping_info', $buttonBlock);
 
         if ($magentoOrder !== null && $magentoOrder->hasShipments() && !$this->order->getChildObject()->isPrime()) {
             $url = $this->getUrl('*/order/resubmitShippingInfo', ['id' => $this->order->getId()]);
             $data = [
-                'class'   => 'primary',
-                'label'   => $this->__('Resend Shipping Information'),
+                'class' => 'primary',
+                'label' => $this->__('Resend Shipping Information'),
                 'onclick' => 'setLocation(\'' . $url . '\');',
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('resubmit_shipping_info', $buttonBlock);
         }
 
         if ($this->order->getChildObject()->canSendMagentoCreditmemo()) {
             $documentType = \Ess\M2ePro\Model\Amazon\Order\Invoice::DOCUMENT_TYPE_CREDIT_NOTE;
             $data = [
-                'class'   => 'primary',
-                'label'   => $this->__('Resend Credit Memo'),
+                'class' => 'primary',
+                'label' => $this->__('Resend Credit Memo'),
                 'onclick' => "AmazonOrderObj.resendInvoice({$this->order->getId()}, '{$documentType}');",
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('resend_document', $buttonBlock);
         } elseif ($this->order->getChildObject()->canSendMagentoInvoice()) {
             $documentType = \Ess\M2ePro\Model\Amazon\Order\Invoice::DOCUMENT_TYPE_INVOICE;
             $data = [
-                'class'   => 'primary',
-                'label'   => $this->__('Resend Invoice'),
+                'class' => 'primary',
+                'label' => $this->__('Resend Invoice'),
                 'onclick' => "AmazonOrderObj.resendInvoice({$this->order->getId()}, '{$documentType}');",
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('resend_document', $buttonBlock);
         }
 
@@ -113,33 +113,34 @@ class Form extends AbstractContainer
         $this->shippingAddress = $shippingAddress->getData();
         $this->shippingAddress['country_name'] = $shippingAddress->getCountryName();
 
-        if (!$this->order->getChildObject()->isCanceled()
+        if (
+            !$this->order->getChildObject()->isCanceled()
             && !$this->order->getChildObject()->isPending()
             && !$this->order->getChildObject()->isFulfilledByAmazon()
             && $this->order->getMarketplace()->getChildObject()->isMerchantFulfillmentAvailable()
         ) {
             $data = [
-                'class'   => 'primary',
-                'label'   => $this->__('Use Amazon\'s Shipping Services'),
-                'onclick' => "AmazonOrderMerchantFulfillmentObj.getPopupAction({$this->order->getId()});"
+                'class' => 'primary',
+                'label' => $this->__('Use Amazon\'s Shipping Services'),
+                'onclick' => "AmazonOrderMerchantFulfillmentObj.getPopupAction({$this->order->getId()});",
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData($data);
+                                ->setData($data);
             $this->setChild('use_amazons_shipping_services', $buttonBlock);
         }
 
         $buttonAddNoteBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData(
-                [
-                    'label'   => $this->__('Add Note'),
-                    'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
-                    'class'   => 'order_note_btn',
-                ]
-            );
+                                   ->setData(
+                                       [
+                                           'label' => $this->__('Add Note'),
+                                           'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
+                                           'class' => 'order_note_btn',
+                                       ]
+                                   );
 
         $this->jsUrl->addUrls(
             [
-                'order/getDebugInformation'  => $this->getUrl(
+                'order/getDebugInformation' => $this->getUrl(
                     '*/order/getDebugInformation/',
                     ['id' => $this->getRequest()->getParam('id')]
                 ),
@@ -147,7 +148,7 @@ class Form extends AbstractContainer
                     '*/amazon_order_shippingAddress/edit/',
                     ['id' => $this->getRequest()->getParam('id')]
                 ),
-                'saveShippingAddress'        => $this->getUrl(
+                'saveShippingAddress' => $this->getUrl(
                     '*/amazon_order_shippingAddress/save',
                     ['id' => $this->getRequest()->getParam('id')]
                 ),
@@ -161,17 +162,21 @@ class Form extends AbstractContainer
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Controller\Adminhtml\Order\EditItem::class)
         );
 
-        $this->setChild('shipping_address',
+        $this->setChild(
+            'shipping_address',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress::class)
         );
-        $this->setChild('item',
+        $this->setChild(
+            'item',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\View\Item::class)
         );
-        $this->setChild('item_edit',
+        $this->setChild(
+            'item_edit',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Item\Edit::class)
         );
         $this->setChild('log', $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\View\Log\Grid::class));
-        $this->setChild('order_note_grid',
+        $this->setChild(
+            'order_note_grid',
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class)
         );
         $this->setChild('add_note_button', $buttonAddNoteBlock);
@@ -217,9 +222,9 @@ class Form extends AbstractContainer
         }
 
         return $this->modelFactory->getObject('Currency')->getConvertRateFromBase(
-                $this->order->getChildObject()->getCurrency(),
-                $store
-            ) != 0;
+            $this->order->getChildObject()->getCurrency(),
+            $store
+        ) != 0;
     }
 
     public function formatPrice($currencyName, $priceValue)
@@ -239,15 +244,15 @@ class Form extends AbstractContainer
 
         $this->jsTranslator->addTranslations(
             [
-                'View Full Order Log'                                  => $this->__('View Full Order Log'),
-                'Amazon\'s Shipping Services'                          => $this->__('Amazon\'s Shipping Services'),
-                'Please select an option.'                             => $this->__('Please select an option.'),
-                'This is a required fields.'                           => $this->__('This is a required fields.'),
+                'View Full Order Log' => $this->__('View Full Order Log'),
+                'Amazon\'s Shipping Services' => $this->__('Amazon\'s Shipping Services'),
+                'Please select an option.' => $this->__('Please select an option.'),
+                'This is a required fields.' => $this->__('This is a required fields.'),
                 'Please enter a number greater than 0 in this fields.' =>
                     $this->__('Please enter a number greater than 0 in this fields.'),
-                'Are you sure you want to create Shipment now?'        =>
+                'Are you sure you want to create Shipment now?' =>
                     $this->__('Are you sure you want to create Shipment now?'),
-                'Please enter a valid date.'                           => $this->__('Please enter a valid date.'),
+                'Please enter a valid date.' => $this->__('Please enter a valid date.'),
             ]
         );
 

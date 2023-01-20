@@ -23,6 +23,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Shipment $shipment
+     *
      * @return array
      */
     protected function getTrackingDetails(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)

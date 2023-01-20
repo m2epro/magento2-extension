@@ -49,10 +49,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                     'button' => [
                         'event' => 'save',
                         'target' => '#edit_form',
-                        'eventData' => ['action' => ['args' => [
-                            'back' => 'edit',
-                        ]]]
-                    ]
+                        'eventData' => [
+                            'action' => [
+                                'args' => [
+                                    'back' => 'edit',
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
@@ -60,12 +64,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'save' => [
                     'label' => $this->__('Save And Back'),
                     'data_attribute' => [
-                        'mage-init' => ['button' => [
-                            'event' => 'save',
-                            'target' => '#edit_form'
-                        ]],
+                        'mage-init' => [
+                            'button' => [
+                                'event' => 'save',
+                                'target' => '#edit_form',
+                            ],
+                        ],
                     ],
-                ]
+                ],
             ],
         ];
 

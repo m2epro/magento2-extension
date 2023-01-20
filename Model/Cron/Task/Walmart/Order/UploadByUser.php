@@ -8,14 +8,14 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Walmart\Order;
 
-use \Ess\M2ePro\Helper\Component\Walmart;
+use Ess\M2ePro\Helper\Component\Walmart;
 
 /**
  * Class \Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser
  */
 class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'walmart/order/upload_by_user';
+    public const NICK = 'walmart/order/upload_by_user';
 
     //########################################
 
@@ -56,7 +56,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator->setValidateAccountCreateDate(false);
 
         foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account **/
+            /** @var \Ess\M2ePro\Model\Account $account * */
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser\Manager $manager */
             $manager = $this->modelFactory->getObject('Cron_Task_Walmart_Order_UploadByUser_Manager');
@@ -76,7 +76,8 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
                 $manager->setCurrentFromDate($responseData['to_create_date']);
 
-                if ($manager->getCurrentFromDate()->getTimestamp() >= $manager->getToDate()->getTimestamp() ||
+                if (
+                    $manager->getCurrentFromDate()->getTimestamp() >= $manager->getToDate()->getTimestamp() ||
                     empty($responseData['items'])
                 ) {
                     $manager->clear();
@@ -99,7 +100,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Cron\Task\Walmart\Order\UploadByUser\Manager $manager,
         \Ess\M2ePro\Model\Account $account
     ) {
-        $toTime   = $manager->getToDate();
+        $toTime = $manager->getToDate();
         $fromTime = $manager->getCurrentFromDate();
         $fromTime === null && $fromTime = $manager->getFromDate();
 
@@ -114,9 +115,9 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 'get',
                 'items',
                 [
-                    'account'          => $account->getChildObject()->getServerHash(),
+                    'account' => $account->getChildObject()->getServerHash(),
                     'from_create_date' => $fromTime->format('Y-m-d H:i:s'),
-                    'to_create_date'   => $toTime->format('Y-m-d H:i:s')
+                    'to_create_date' => $toTime->format('Y-m-d H:i:s'),
                 ]
             );
             $dispatcherObject->process($connectorObj);
@@ -139,8 +140,8 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         } while (!empty($responseData['items']));
 
         return [
-            'items'          => call_user_func_array('array_merge', $orders),
-            'to_create_date' => $responseData['to_create_date']
+            'items' => call_user_func_array('array_merge', $orders),
+            'to_create_date' => $responseData['to_create_date'],
         ];
     }
 
@@ -156,7 +157,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-                                           : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),

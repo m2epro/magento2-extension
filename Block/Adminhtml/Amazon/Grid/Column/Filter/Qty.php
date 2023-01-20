@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
@@ -23,10 +23,10 @@ class Qty extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
         $filterValue = (string)$this->getValue('afn');
 
         $filterValue === '' && $anySelected = ' selected="selected" ';
-        $filterValue === '0' && $noSelected  = ' selected="selected" ';
+        $filterValue === '0' && $noSelected = ' selected="selected" ';
         $filterValue === '1' && $yesSelected = ' selected="selected" ';
 
-        $isEnabled  = AmazonListingProduct::IS_AFN_CHANNEL_YES;
+        $isEnabled = AmazonListingProduct::IS_AFN_CHANNEL_YES;
         $isDisabled = AmazonListingProduct::IS_AFN_CHANNEL_NO;
 
         $html = <<<HTML
@@ -62,11 +62,14 @@ HTML;
             return $this->getData('value', $index);
         }
         $value = $this->getData('value');
-        if ((isset($value['from']) && $value['from'] !== '') ||
+        if (
+            (isset($value['from']) && $value['from'] !== '') ||
             (isset($value['to']) && $value['to'] !== '') ||
-            (isset($value['afn']) && $value['afn'] !== '')) {
+            (isset($value['afn']) && $value['afn'] !== '')
+        ) {
             return $value;
         }
+
         return null;
     }
 

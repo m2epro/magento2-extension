@@ -21,6 +21,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
 
     /**
      * @param array $responseData
+     *
      * @return array|void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Zend_Db_Statement_Exception
@@ -44,7 +45,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $tempLog->setComponentMode($this->getComponentMode());
 
         /** @var \Ess\M2ePro\Helper\Data $dataHelper */
-        $dataHelper      = $this->helperFactory->getObject('Data');
+        $dataHelper = $this->helperFactory->getObject('Data');
         /** @var \Ess\M2ePro\Helper\Component\Walmart $componentHelper */
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
@@ -68,50 +69,56 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 );
 
                 $newData = [
-                    'upc'                     => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
-                    'gtin'                    => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
-                    'wpid'                    => (string)$receivedItem['wpid'],
-                    'item_id'                 => (string)$receivedItem['item_id'],
-                    'online_qty'              => (int)$receivedItem['qty'],
-                    'publish_status'          => (string)$receivedItem['publish_status'],
-                    'lifecycle_status'        => (string)$receivedItem['lifecycle_status'],
-                    'status_change_reasons'   => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
+                    'upc' => !empty($receivedItem['upc']) ? (string)$receivedItem['upc'] : null,
+                    'gtin' => !empty($receivedItem['gtin']) ? (string)$receivedItem['gtin'] : null,
+                    'wpid' => (string)$receivedItem['wpid'],
+                    'item_id' => (string)$receivedItem['item_id'],
+                    'online_qty' => (int)$receivedItem['qty'],
+                    'publish_status' => (string)$receivedItem['publish_status'],
+                    'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
+                    'status_change_reasons' => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
                     'is_online_price_invalid' => $isOnlinePriceInvalid,
-                    'is_missed_on_channel'    => false,
+                    'is_missed_on_channel' => false,
                 ];
 
                 $newData['status'] = $componentHelper->getResultProductStatus(
-                    $receivedItem['publish_status'], $receivedItem['lifecycle_status'], $newData['online_qty']
+                    $receivedItem['publish_status'],
+                    $receivedItem['lifecycle_status'],
+                    $newData['online_qty']
                 );
 
                 $existingData = [
-                    'upc'                     => !empty($existingItem['upc']) ? (string)$existingItem['upc'] : null,
-                    'gtin'                    => !empty($existingItem['gtin']) ? (string)$existingItem['gtin'] : null,
-                    'wpid'                    => (string)$existingItem['wpid'],
-                    'item_id'                 => (string)$existingItem['item_id'],
-                    'online_qty'              => (int)$existingItem['online_qty'],
-                    'status'                  => (int)$existingItem['status'],
-                    'publish_status'          => (string)$existingItem['publish_status'],
-                    'lifecycle_status'        => (string)$existingItem['lifecycle_status'],
-                    'status_change_reasons'   => (string)$existingItem['status_change_reasons'],
+                    'upc' => !empty($existingItem['upc']) ? (string)$existingItem['upc'] : null,
+                    'gtin' => !empty($existingItem['gtin']) ? (string)$existingItem['gtin'] : null,
+                    'wpid' => (string)$existingItem['wpid'],
+                    'item_id' => (string)$existingItem['item_id'],
+                    'online_qty' => (int)$existingItem['online_qty'],
+                    'status' => (int)$existingItem['status'],
+                    'publish_status' => (string)$existingItem['publish_status'],
+                    'lifecycle_status' => (string)$existingItem['lifecycle_status'],
+                    'status_change_reasons' => (string)$existingItem['status_change_reasons'],
                     'is_online_price_invalid' => (bool)$existingItem['is_online_price_invalid'],
-                    'is_missed_on_channel'    => (bool)$existingItem['is_missed_on_channel'],
+                    'is_missed_on_channel' => (bool)$existingItem['is_missed_on_channel'],
                 ];
 
                 $existingAdditionalData = $dataHelper->jsonDecode($existingItem['additional_data']);
-                $lastSynchDates         = !empty($existingAdditionalData['last_synchronization_dates'])
+                $lastSynchDates = !empty($existingAdditionalData['last_synchronization_dates'])
                     ? $existingAdditionalData['last_synchronization_dates']
                     : [];
 
                 if (!empty($lastSynchDates['qty']) && !empty($receivedItem['actual_on_date'])) {
                     if ($this->isProductInfoOutdated($lastSynchDates['qty'], $receivedItem['actual_on_date'])) {
                         unset(
-                            $newData['online_qty'], $newData['status'],
-                            $newData['lifecycle_status'], $newData['publish_status']
+                            $newData['online_qty'],
+                            $newData['status'],
+                            $newData['lifecycle_status'],
+                            $newData['publish_status']
                         );
                         unset(
-                            $existingData['online_qty'], $existingData['status'],
-                            $existingData['lifecycle_status'], $existingData['publish_status']
+                            $existingData['online_qty'],
+                            $existingData['status'],
+                            $existingData['lifecycle_status'],
+                            $existingData['publish_status']
                         );
                     }
                 }
@@ -119,12 +126,16 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 if (!empty($lastSynchDates['price']) && !empty($receivedItem['actual_on_date'])) {
                     if ($this->isProductInfoOutdated($lastSynchDates['price'], $receivedItem['actual_on_date'])) {
                         unset(
-                            $newData['status'], $newData['lifecycle_status'],
-                            $newData['publish_status'], $newData['is_online_price_invalid']
+                            $newData['status'],
+                            $newData['lifecycle_status'],
+                            $newData['publish_status'],
+                            $newData['is_online_price_invalid']
                         );
                         unset(
-                            $existingData['status'], $existingData['lifecycle_status'],
-                            $existingData['publish_status'], $existingData['is_online_price_invalid']
+                            $existingData['status'],
+                            $existingData['lifecycle_status'],
+                            $existingData['publish_status'],
+                            $existingData['is_online_price_invalid']
                         );
                     }
                 }
@@ -138,15 +149,15 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 if ($this->isDataChanged($existingData, $newData, 'status')) {
                     $instructionsData[] = [
                         'listing_product_id' => $existingItem['listing_product_id'],
-                        'type'               => Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-                        'initiator'          => Responser::INSTRUCTION_INITIATOR,
-                        'priority'           => 80,
+                        'type' => Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
+                        'initiator' => Responser::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
                     ];
 
                     $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
 
                     $statusChangedFrom = $componentHelper->getHumanTitleByListingProductStatus($existingData['status']);
-                    $statusChangedTo   = $componentHelper->getHumanTitleByListingProductStatus($newData['status']);
+                    $statusChangedTo = $componentHelper->getHumanTitleByListingProductStatus($newData['status']);
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
                         $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
@@ -164,9 +175,9 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                 if ($this->isDataChanged($existingData, $newData, 'online_qty')) {
                     $instructionsData[] = [
                         'listing_product_id' => $existingItem['listing_product_id'],
-                        'type'               => Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                        'initiator'          => Responser::INSTRUCTION_INITIATOR,
-                        'priority'           => 80,
+                        'type' => Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
+                        'initiator' => Responser::INSTRUCTION_INITIATOR,
+                        'priority' => 80,
                     ];
 
                     $tempLogMessages[] = $this->helperFactory->getObject('Module_Translation')->__(
@@ -260,6 +271,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
     /**
      * @param $lastDate
      * @param $actualOnDate
+     *
      * @return bool
      * @throws \Exception
      */

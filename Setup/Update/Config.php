@@ -256,7 +256,10 @@ class Config extends AbstractConfig
                 'FixWalmartChildListingId'
             ],
             'y23_m01' => [
-                'FixEbayQtyReservationDays'
+                'FixEbayQtyReservationDays',
+                'ChangeRepricerBaseUrl',
+                'WalmartTrackingDetails',
+                'RemoveConfigConvertLinebreaks',
             ],
         ];
     }

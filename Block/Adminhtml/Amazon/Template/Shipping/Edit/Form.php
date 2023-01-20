@@ -45,12 +45,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form = $this->_formFactory->create(
             [
                 'data' => [
-                    'id'      => 'edit_form',
-                    'method'  => 'post',
-                    'action'  => $this->getUrl('*/*/save'),
+                    'id' => 'edit_form',
+                    'method' => 'post',
+                    'action' => $this->getUrl('*/*/save'),
                     'enctype' => 'multipart/form-data',
-                    'class'   => 'admin__scope-old'
-                ]
+                    'class' => 'admin__scope-old',
+                ],
             ]
         );
 
@@ -58,14 +58,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $attributes = $this->magentoAttributeHelper->getAll();
         $attributesByInputTypes = [
-            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
+            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
         ];
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_shipping_general',
             [
-                'legend'      => $this->__('General'),
-                'collapsable' => false
+                'legend' => $this->__('General'),
+                'collapsable' => false,
             ]
         );
 
@@ -73,11 +73,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'title',
             'text',
             [
-                'name'     => 'title',
-                'label'    => $this->__('Title'),
-                'value'    => $formData['title'],
-                'class'    => 'M2ePro-shipping-tpl-title',
-                'tooltip'  => $this->__('Short meaningful Policy Title for your internal use.'),
+                'name' => 'title',
+                'label' => $this->__('Title'),
+                'value' => $formData['title'],
+                'class' => 'M2ePro-shipping-tpl-title',
+                'tooltip' => $this->__('Short meaningful Policy Title for your internal use.'),
                 'required' => true,
             ]
         );
@@ -85,15 +85,16 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_shipping_channel',
             [
-                'legend'      => $this->__('Channel'),
-                'collapsable' => false
+                'legend' => $this->__('Channel'),
+                'collapsable' => false,
             ]
         );
 
         $preparedAttributes = [];
         foreach ($attributesByInputTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
-            if ($formData['template_name_mode'] == Shipping::TEMPLATE_NAME_ATTRIBUTE
+            if (
+                $formData['template_name_mode'] == Shipping::TEMPLATE_NAME_ATTRIBUTE
                 && $formData['template_name_attribute'] == $attribute['code']
             ) {
                 $attrs['selected'] = 'selected';
@@ -109,22 +110,22 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'template_name_mode',
             self::SELECT,
             [
-                'container_id'             => 'template_name_mode_tr',
-                'label'                    => $this->__('Template Name'),
-                'class'                    => 'select-main',
-                'name'                     => 'template_name_mode',
-                'values'                   => [
+                'container_id' => 'template_name_mode_tr',
+                'label' => $this->__('Template Name'),
+                'class' => 'select-main',
+                'name' => 'template_name_mode',
+                'values' => [
                     Shipping::TEMPLATE_NAME_VALUE => $this->__('Custom Value'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'is_magento_attribute' => true
-                        ]
-                    ]
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
                 ],
                 'create_magento_attribute' => true,
-                'tooltip'                  => $this->__('Template Name which you would like to be used.')
+                'tooltip' => $this->__('Template Name which you would like to be used.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -141,10 +142,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'container_id' => 'template_name_custom_value_tr',
-                'label'        => $this->__('Template Name Value'),
-                'name'         => 'template_name_value',
-                'value'        => $formData['template_name_value'],
-                'required'     => true
+                'label' => $this->__('Template Name Value'),
+                'name' => 'template_name_value',
+                'value' => $formData['template_name_value'],
+                'required' => true,
             ]
         );
 
@@ -165,7 +166,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         More detailed information about ability to work with this Page
         you can find <a target="_blank" href="%url%">here</a>',
                     $this->supportHelper->getDocumentationArticleUrl('x/6-0kB')
-                )
+                ),
             ]
         );
 
@@ -180,21 +181,21 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $this->jsUrl->addUrls(
             [
-                'formSubmit'    => $this->getUrl(
+                'formSubmit' => $this->getUrl(
                     '*/amazon_template_shipping/save',
                     [
-                        '_current'      => $this->getRequest()->getParam('id'),
-                        'close_on_save' => $this->getRequest()->getParam('close_on_save')
+                        '_current' => $this->getRequest()->getParam('id'),
+                        'close_on_save' => $this->getRequest()->getParam('close_on_save'),
                     ]
                 ),
                 'formSubmitNew' => $this->getUrl('*/amazon_template_shipping/save'),
-                'deleteAction'  => $this->getUrl(
+                'deleteAction' => $this->getUrl(
                     '*/amazon_template_shipping/delete',
                     [
-                        'id'            => $this->getRequest()->getParam('id'),
-                        'close_on_save' => $this->getRequest()->getParam('close_on_save')
+                        'id' => $this->getRequest()->getParam('id'),
+                        'close_on_save' => $this->getRequest()->getParam('close_on_save'),
                     ]
-                )
+                ),
             ]
         );
 

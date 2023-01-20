@@ -18,11 +18,13 @@ class Form extends AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
-            ['data' => [
-                'id' => 'variation_manager_sku_form',
-                'action' => 'javascript:void(0)',
-                'method' => 'post'
-            ]]
+            [
+                'data' => [
+                    'id' => 'variation_manager_sku_form',
+                    'action' => 'javascript:void(0)',
+                    'method' => 'post',
+                ],
+            ]
         );
 
         $fieldset = $form->addFieldset(
@@ -36,7 +38,7 @@ class Form extends AbstractForm
             [
                 'name' => 'sku',
                 'label' => $this->__('SKU'),
-                'required' => true
+                'required' => true,
             ]
         );
 
@@ -49,14 +51,16 @@ class Form extends AbstractForm
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__('
+            'content' => $this->__(
+                '
             In order to prove that this is your Product, you need to provide SKU of the respective Product
             in your Amazon Inventory. Please follow the Rules below to avoid issues:
             <ul class="list">
                 <li>The SKU has to be related to Parent Product in your Amazon Inventory;</li>
                 <li>ASIN(s)/ISBN(s) in M2E Pro and in Amazon Inventory have to be the same;</li>
                 <li>The Product in the Amazon Inventory has to be visible via Amazon API.</li>
-            </ul>')
+            </ul>'
+            ),
         ]);
 
         return '<div id="manage_variation_sku_popup">' .

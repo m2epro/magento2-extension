@@ -18,16 +18,16 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
     protected function getCustomFilters()
     {
         $amazonFilters = [
-            'amazon_sku'               => 'AmazonSku',
-            'amazon_general_id'        => 'AmazonGeneralId',
-            'is_general_id_owner'      => 'AmazonGeneralIdOwner',
-            'amazon_online_qty'        => 'AmazonOnlineQty',
-            'amazon_online_price'      => 'AmazonOnlinePrice',
+            'amazon_sku' => 'AmazonSku',
+            'amazon_general_id' => 'AmazonGeneralId',
+            'is_general_id_owner' => 'AmazonGeneralIdOwner',
+            'amazon_online_qty' => 'AmazonOnlineQty',
+            'amazon_online_price' => 'AmazonOnlinePrice',
             'amazon_online_sale_price' => 'AmazonOnlineSalePrice',
-            'amazon_is_afn_chanel'     => 'AmazonIsAfnChanel',
-            'amazon_is_repricing'      => 'AmazonIsRepricing',
-            'amazon_status'            => 'AmazonStatus',
-            'amazon_general_id_state'  => 'AmazonGeneralIdState'
+            'amazon_is_afn_chanel' => 'AmazonIsAfnChanel',
+            'amazon_is_repricing' => 'AmazonIsRepricing',
+            'amazon_status' => 'AmazonStatus',
+            'amazon_general_id_state' => 'AmazonGeneralIdState',
         ];
 
         return array_merge_recursive(
@@ -38,6 +38,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 
     /**
      * @param $filterId
+     *
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
     protected function getCustomFilterInstance($filterId, $isReadyToCache = true)
@@ -57,21 +58,23 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         }
 
         $model = $this->modelFactory->getObject(
-            'Amazon\Magento\Product\Rule\Custom\\'.$customFilters[$filterId],
+            'Amazon\Magento\Product\Rule\Custom\\' . $customFilters[$filterId],
             [
-                'filterOperator'  => $this->getData('operator'),
-                'filterCondition' => $this->getData('value')
+                'filterOperator' => $this->getData('operator'),
+                'filterCondition' => $this->getData('value'),
             ]
         );
 
         $isReadyToCache && $this->_customFiltersCache[$filterId] = $model;
+
         return $model;
     }
 
     /**
      * If param is array validate each values till first true result
      *
-     * @param   mixed $validatedValue product attribute value
+     * @param mixed $validatedValue product attribute value
+     *
      * @return  bool
      */
 
@@ -178,7 +181,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             case '!{}':
                 if (is_scalar($validatedValue) && is_array($value)) {
                     foreach ($value as $item) {
-                        if (stripos($validatedValue, $item)!==false) {
+                        if (stripos($validatedValue, $item) !== false) {
                             $result = true;
                             break;
                         }
@@ -202,7 +205,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             case '()':
             case '!()':
                 if (is_array($validatedValue)) {
-                    $result = count(array_intersect($validatedValue, (array)$value))>0;
+                    $result = count(array_intersect($validatedValue, (array)$value)) > 0;
                 } else {
                     $value = (array)$value;
                     foreach ($value as $item) {

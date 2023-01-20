@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
-use \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as QtyBuilder;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Qty as QtyBuilder;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Validator
@@ -34,6 +34,7 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
         if (!empty($params['switch_to']) && !$this->getConfigurator()->isQtyAllowed()) {
             $this->addMessage('Fulfillment mode can not be switched if QTY feed is not allowed.');
+
             return false;
         }
 
@@ -52,19 +53,23 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                 } else {
                     if ($params['switch_to'] === QtyBuilder::FULFILLMENT_MODE_AFN) {
                         $this->addMessage('You cannot switch Fulfillment because it is applied now.');
+
                         return false;
                     }
                 }
             } else {
                 if (!empty($params['switch_to']) && $params['switch_to'] === QtyBuilder::FULFILLMENT_MODE_MFN) {
                     $this->addMessage('You cannot switch Fulfillment because it is applied now.');
+
                     return false;
                 }
             }
         }
 
-        if ($this->getAmazonListingProduct()->isAfnChannel() &&
-            $this->getAmazonListingProduct()->isExistShippingTemplate()) {
+        if (
+            $this->getAmazonListingProduct()->isAfnChannel() &&
+            $this->getAmazonListingProduct()->isExistShippingTemplate()
+        ) {
             $this->addMessage(
                 'The Shipping Settings will not be sent for this Product because it is an FBA Item.
                 Amazon will handle the delivery of the Order.',
@@ -80,10 +85,12 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             return false;
         }
 
-        if (!$this->getAmazonListingProduct()->isAfnChannel() &&
+        if (
+            !$this->getAmazonListingProduct()->isAfnChannel() &&
             (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isRevisable())
         ) {
             $this->addMessage('Item is not Listed or not available');
+
             return false;
         }
 
@@ -102,10 +109,12 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
 
     protected function validateParentListingProduct()
     {
-        if ((!$this->getConfigurator()->isDetailsAllowed() && !$this->getConfigurator()->isImagesAllowed()) ||
-             !$this->getAmazonListingProduct()->isExistDescriptionTemplate()
+        if (
+            (!$this->getConfigurator()->isDetailsAllowed() && !$this->getConfigurator()->isImagesAllowed()) ||
+            !$this->getAmazonListingProduct()->isExistDescriptionTemplate()
         ) {
             $this->addMessage('There was no need for this action. It was skipped.');
+
             return false;
         }
 

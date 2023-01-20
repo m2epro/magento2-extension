@@ -31,8 +31,9 @@ class Save extends Order
 
         if (!$post->count()) {
             $this->setJsonContent([
-                'success' => false
+                'success' => false,
             ]);
+
             return $this->getResult();
         }
 
@@ -44,7 +45,7 @@ class Save extends Order
         $data = [];
         $keys = [
             'buyer_name',
-            'buyer_email'
+            'buyer_email',
         ];
 
         foreach ($keys as $key) {
@@ -64,7 +65,7 @@ class Save extends Order
             'country_code',
             'state',
             'postal_code',
-            'phone'
+            'phone',
         ];
 
         foreach ($keys as $key) {
@@ -89,7 +90,7 @@ class Save extends Order
             'success' => true,
             'html' => $this->getLayout()
                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Order\Edit\ShippingAddress::class)
-                           ->toHtml()
+                           ->toHtml(),
         ]);
 
         return $this->getResult();

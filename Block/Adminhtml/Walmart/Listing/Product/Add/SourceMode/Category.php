@@ -51,7 +51,8 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         if ($this->getRequest()->getParam('back') === null) {
             $url = $this->getUrl('*/walmart_listing_product_add/index', [
                 'id' => $this->getRequest()->getParam('id'),
-                'wizard' => $this->getRequest()->getParam('wizard')
+                'wizard' => $this->getRequest()->getParam('wizard'),
+                'new_listing' => $this->getRequest()->getParam('new_listing', 0),
             ]);
         } else {
             $url = $this->dataHelper->getBackUrl(
@@ -59,41 +60,43 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             );
         }
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => 'ListingProductGridObj.backClick(\'' . $url . '\')',
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => 'ListingProductGridObj.backClick(\'' . $url . '\')',
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('auto_action', [
-            'label'     => $this->__('Auto Add/Remove Rules'),
-            'onclick'   => 'ListingAutoActionObj.loadAutoActionHtml();',
-            'class'     => 'action-primary'
+            'label' => $this->__('Auto Add/Remove Rules'),
+            'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
+            'class' => 'action-primary',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl(
-            '*/walmart_listing_product_add/exitToListing',
-            ['id' => $this->getRequest()->getParam('id')]
-        );
-        $confirm =
-            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
-            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
-        $this->addButton(
-            'exit_to_listing',
-            [
-                'label' => $this->__('Cancel'),
-                'onclick' => "confirmSetLocation('$confirm', '$url');",
-                'class' => 'action-primary',
-            ]
-        );
+        if ($this->getRequest()->getParam('new_listing')) {
+            $url = $this->getUrl(
+                '*/walmart_listing_product_add/exitToListing',
+                ['id' => $this->getRequest()->getParam('id')]
+            );
+            $confirm =
+                '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
+                . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+            $this->addButton(
+                'exit_to_listing',
+                [
+                    'label' => $this->__('Cancel'),
+                    'onclick' => "confirmSetLocation('$confirm', '$url');",
+                    'class' => 'action-primary',
+                ]
+            );
+        }
 
         $this->addButton('add_products_mode_category_continue', [
-            'label'     => $this->__('Continue'),
-            'onclick'   => 'add_category_products()',
-            'class'     => 'action-primary forward'
+            'label' => $this->__('Continue'),
+            'onclick' => 'add_category_products()',
+            'class' => 'action-primary forward',
         ]);
         // ---------------------------------------
     }
@@ -119,15 +122,20 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             ['data' => ['listing' => $listing]]
         );
 
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions(
-            'Walmart_Listing_AutoAction',
-            ['listing_id' => $this->getRequest()->getParam('id')]
-        ));
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions(
+                'Walmart_Listing_AutoAction',
+                ['listing_id' => $this->getRequest()->getParam('id')]
+            )
+        );
 
         $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
-        $this->jsUrl->add($this->getUrl('*/' . $path, [
-            'marketplace_id' => $listing->getMarketplaceId()
-        ]), $path);
+        $this->jsUrl->add(
+            $this->getUrl('*/' . $path, [
+                'marketplace_id' => $listing->getMarketplaceId(),
+            ]),
+            $path
+        );
 
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
@@ -136,7 +144,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
             'Based on Magento Categories' => $this->__('Based on Magento Categories'),
             'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-            'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.')
+            'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
         ]);
 
         $this->js->addOnReadyJs(
@@ -152,23 +160,25 @@ JS
         );
 
         $hideOthersListingsProductsFilterBlock = $this->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter::class)
-            ->setData([
-            'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-            'controller' => 'walmart_listing_product_add'
-        ]);
+                                                      ->createBlock(
+                                                          \Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter::class
+                                                      )
+                                                      ->setData([
+                                                          'component_mode' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                                                          'controller' => 'walmart_listing_product_add',
+                                                      ]);
 
         return $viewHeaderBlock->toHtml()
-               . '<div class="filter_block">'
-               . $hideOthersListingsProductsFilterBlock->toHtml()
-               . '</div>'
-               . parent::getGridHtml();
+            . '<div class="filter_block">'
+            . $hideOthersListingsProductsFilterBlock->toHtml()
+            . '</div>'
+            . parent::getGridHtml();
     }
 
     protected function _toHtml()
     {
-        return '<div id="add_products_progress_bar"></div>'.
-            '<div id="add_products_container">'.
+        return '<div id="add_products_progress_bar"></div>' .
+            '<div id="add_products_container">' .
             parent::_toHtml() .
             '</div>';
     }

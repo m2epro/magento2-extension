@@ -64,16 +64,18 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         $select = $this->resourceConnection->getConnection()
-            ->select()
-            ->from($this->getHelper('Module_Database_Structure')
-                            ->getTableNameWithPrefix('catalog_product_website'))
-            ->where('product_id IN (?)', $productIds);
+                                           ->select()
+                                           ->from(
+                                               $this->getHelper('Module_Database_Structure')
+                                                    ->getTableNameWithPrefix('catalog_product_website')
+                                           )
+                                           ->where('product_id IN (?)', $productIds);
 
         $currentProductWebsites = $this->resourceConnection->getConnection()->fetchAll($select);
 
         $websiteUpdates = $this->activeRecordFactory->getObject('Magento_Product_Websites_Update')->getCollection()
-            ->addFieldToFilter('product_id', ['in' => $productIds])
-            ->getItems();
+                                                    ->addFieldToFilter('product_id', ['in' => $productIds])
+                                                    ->getItems();
 
         $addWebsiteUpdates = [];
         $deleteWebsiteUpdates = [];
@@ -104,15 +106,16 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
 
                 if (!$websiteUpdate && $websiteCheckByAction) {
                     $addWebsiteUpdates[] = [
-                        'product_id'  => $productId,
-                        'action'      => $action,
-                        'website_id'  => $websiteId,
-                        'create_date' => $this->getHelper('Data')->getCurrentGmtDate()
+                        'product_id' => $productId,
+                        'action' => $action,
+                        'website_id' => $websiteId,
+                        'create_date' => $this->getHelper('Data')->getCurrentGmtDate(),
                     ];
                     continue;
                 }
 
-                if ($websiteUpdate &&
+                if (
+                    $websiteUpdate &&
                     $websiteUpdate->getAction() != $action &&
                     $websiteCheckByAction
                 ) {
@@ -123,22 +126,22 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         $table = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_magento_product_websites_update');
+                      ->getTableNameWithPrefix('m2epro_magento_product_websites_update');
 
         if (!empty($deleteWebsiteUpdates)) {
             $this->resourceConnection->getConnection()
-                ->delete(
-                    $table,
-                    '`id` IN (' . implode(',', $deleteWebsiteUpdates) . ')'
-                );
+                                     ->delete(
+                                         $table,
+                                         '`id` IN (' . implode(',', $deleteWebsiteUpdates) . ')'
+                                     );
         }
 
         if (!empty($addWebsiteUpdates)) {
             $this->resourceConnection->getConnection()
-                ->insertMultiple(
-                    $table,
-                    $addWebsiteUpdates
-                );
+                                     ->insertMultiple(
+                                         $table,
+                                         $addWebsiteUpdates
+                                     );
         }
     }
 

@@ -21,11 +21,11 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Cate
             [
                 'data' => [
                     'selected_specifics' => $this->getRequest()->getParam('selected_specifics'),
-                    'marketplace_id'     => $this->getRequest()->getParam('marketplace_id'),
-                    'template_id'        => $this->getRequest()->getParam('template_id'),
-                    'category_mode'      => $this->getRequest()->getParam('category_mode'),
-                    'category_value'     => $this->getRequest()->getParam('category_value')
-                ]
+                    'marketplace_id' => $this->getRequest()->getParam('marketplace_id'),
+                    'template_id' => $this->getRequest()->getParam('template_id'),
+                    'category_mode' => $this->getRequest()->getParam('category_mode'),
+                    'category_value' => $this->getRequest()->getParam('category_value'),
+                ],
             ]
         );
 

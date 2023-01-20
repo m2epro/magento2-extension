@@ -52,10 +52,10 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             [
                 [
                     'listing_product_id' => $this->getListingProduct()->getId(),
-                    'type'               => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
-                    'initiator'          => self::INSTRUCTION_INITIATOR,
-                    'priority'           => 80
-                ]
+                    'type' => ChangeProcessor::INSTRUCTION_TYPE_QTY_DATA_CHANGED,
+                    'initiator' => self::INSTRUCTION_INITIATOR,
+                    'priority' => 80,
+                ],
             ]
         );
     }

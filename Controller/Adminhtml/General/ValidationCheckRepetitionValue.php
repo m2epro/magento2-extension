@@ -20,21 +20,22 @@ class ValidationCheckRepetitionValue extends \Ess\M2ePro\Controller\Adminhtml\Ge
         $dataValue = $this->getRequest()->getParam('data_value', '');
 
         if ($model == '' || $dataField == '' || $dataValue == '') {
-            $this->setJsonContent(['result'=>false]);
+            $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
         $collection = $this->activeRecordFactory->getObject($model)->getCollection();
 
         if ($dataField != '' && $dataValue != '') {
-            $collection->addFieldToFilter($dataField, ['in'=>[$dataValue]]);
+            $collection->addFieldToFilter($dataField, ['in' => [$dataValue]]);
         }
 
         $idField = $this->getRequest()->getParam('id_field', 'id');
         $idValue = $this->getRequest()->getParam('id_value', '');
 
         if ($idField != '' && $idValue != '') {
-            $collection->addFieldToFilter($idField, ['nin'=>[$idValue]]);
+            $collection->addFieldToFilter($idField, ['nin' => [$idValue]]);
         }
 
         if ($component) {
@@ -48,7 +49,8 @@ class ValidationCheckRepetitionValue extends \Ess\M2ePro\Controller\Adminhtml\Ge
             $collection->addFieldToFilter($filterField, $filterValue);
         }
 
-        $this->setJsonContent(['result'=>!(bool)$collection->getSize()]);
+        $this->setJsonContent(['result' => !(bool)$collection->getSize()]);
+
         return $this->getResult();
     }
 }

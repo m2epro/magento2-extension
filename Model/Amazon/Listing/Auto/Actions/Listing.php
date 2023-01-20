@@ -30,6 +30,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     /**
      * @param \Magento\Catalog\Model\Product $product
      * @param int $deletingMode
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function deleteProduct(\Magento\Catalog\Model\Product $product, int $deletingMode): void
@@ -74,10 +75,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                 $instruction->setData(
                     [
                         'listing_product_id' => $listingProduct->getId(),
-                        'component'          => $listingProduct->getComponentMode(),
-                        'type'               => $instructionType,
-                        'initiator'          => self::INSTRUCTION_INITIATOR,
-                        'priority'           => $listingProduct->isStoppable() ? 60 : 0,
+                        'component' => $listingProduct->getComponentMode(),
+                        'type' => $instructionType,
+                        'initiator' => self::INSTRUCTION_INITIATOR,
+                        'priority' => $listingProduct->isStoppable() ? 60 : 0,
                     ]
                 );
                 $instruction->save();
@@ -109,8 +110,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
     ) {
         $logData = [
-            'reason'     => __METHOD__,
-            'rule_id'    => $categoryGroup->getId(),
+            'reason' => __METHOD__,
+            'rule_id' => $categoryGroup->getId(),
             'rule_title' => $categoryGroup->getTitle(),
         ];
         $listingProduct = $this->getListing()->addProduct(
@@ -270,8 +271,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $possibleThemes = $detailsModel->getVariationThemes($amazonDescriptionTemplate->getProductDataNick());
 
         $productAttributes = $amazonListingProduct->getVariationManager()
-            ->getTypeModel()
-            ->getProductAttributes();
+                                                  ->getTypeModel()
+                                                  ->getProductAttributes();
 
         foreach ($possibleThemes as $theme) {
             if (count($theme['attributes']) != count($productAttributes)) {

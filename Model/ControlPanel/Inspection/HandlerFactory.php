@@ -28,7 +28,7 @@ class HandlerFactory
      *
      * @return \Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface
      */
-    public function create(\Ess\M2ePro\Model\ControlPanel\Inspection\Definition  $definition)
+    public function create(\Ess\M2ePro\Model\ControlPanel\Inspection\Definition $definition)
     {
         return $this->objectManager->create($definition->getHandler());
     }

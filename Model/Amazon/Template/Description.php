@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template;
 
-use \Ess\M2ePro\Model\Amazon\Template\Description\Definition;
+use Ess\M2ePro\Model\Amazon\Template\Description\Definition;
 
 /**
  * @method \Ess\M2ePro\Model\Template\Description getParentObject()
@@ -53,16 +53,18 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
         $collection = $this->activeRecordFactory->getObject('Amazon\Listing')->getCollection();
         $collection->getSelect()
-            ->where("main_table.auto_global_adding_description_template_id = {$this->getId()} OR
-                     main_table.auto_website_adding_description_template_id = {$this->getId()}");
+                   ->where(
+                       "main_table.auto_global_adding_description_template_id = {$this->getId()} OR
+                     main_table.auto_website_adding_description_template_id = {$this->getId()}"
+                   );
 
         return (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Product')->getCollection()
-                        ->addFieldToFilter('template_description_id', $this->getId())
-                        ->getSize() ||
-               (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Auto_Category_Group')->getCollection()
-                        ->addFieldToFilter('adding_description_template_id', $this->getId())
-                        ->getSize() ||
-               (bool)$collection->getSize();
+                                               ->addFieldToFilter('template_description_id', $this->getId())
+                                               ->getSize() ||
+            (bool)$this->activeRecordFactory->getObject('Amazon_Listing_Auto_Category_Group')->getCollection()
+                                            ->addFieldToFilter('adding_description_template_id', $this->getId())
+                                            ->getSize() ||
+            (bool)$collection->getSize();
     }
 
     /**
@@ -71,12 +73,12 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function isLockedForCategoryChange()
     {
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product')
-            ->getCollection()
-            ->addFieldToFilter('template_description_id', $this->getId())
-            ->addFieldToFilter(
-                'is_general_id_owner',
-                \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
-            );
+                                          ->getCollection()
+                                          ->addFieldToFilter('template_description_id', $this->getId())
+                                          ->addFieldToFilter(
+                                              'is_general_id_owner',
+                                              \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+                                          );
 
         if ($collection->getSize() <= 0) {
             return false;
@@ -106,16 +108,19 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function isLockedForNewAsinCreation()
     {
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product')
-            ->getCollection()
-            ->addFieldToFilter('template_description_id', $this->getId())
-            ->addFieldToFilter(
-                'is_general_id_owner',
-                \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
-            );
+                                          ->getCollection()
+                                          ->addFieldToFilter('template_description_id', $this->getId())
+                                          ->addFieldToFilter(
+                                              'is_general_id_owner',
+                                              \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
+                                          );
 
         $collection->getSelect()
-            ->where("(`is_variation_parent` = 0 AND `status` = ?) OR
-                     (`is_variation_parent` = 1)", \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
+                   ->where(
+                       "(`is_variation_parent` = 0 AND `status` = ?) OR
+                     (`is_variation_parent` = 1)",
+                       \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+                   );
 
         return (bool)$collection->getSize();
     }
@@ -125,6 +130,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function save()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_description');
+
         return parent::save();
     }
 
@@ -142,9 +148,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
             $specific->delete();
         }
 
-        $this->marketplaceModel           = null;
+        $this->marketplaceModel = null;
         $this->descriptionDefinitionModel = null;
-        $this->descriptionSourceModels    = [];
+        $this->descriptionSourceModels = [];
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_description');
 
@@ -182,6 +188,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function setDefinitionTemplate(Definition $descriptionDefinitionModel)
     {
         $this->descriptionDefinitionModel = $descriptionDefinitionModel;
+
         return $this;
     }
 
@@ -205,6 +212,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\Amazon\Template\Description\Specific[]
      */
     public function getSpecifics($asObjects = false, array $filters = [])
@@ -235,6 +243,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return \Ess\M2ePro\Model\Amazon\Template\Description\Source
      */
     public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)

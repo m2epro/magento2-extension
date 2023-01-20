@@ -56,11 +56,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
     }
 
-   //########################################
+    //########################################
 
     protected function _prepareCollection()
     {
-        $magentoHelper   = $this->helperFactory->getObject('Magento');
+        $magentoHelper = $this->helperFactory->getObject('Magento');
         $structureHelper = $this->databaseHelper;
 
         $tablesList = $magentoHelper->getMySqlTables();
@@ -80,17 +80,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $tableRow = [
                 'table_name' => $tableName,
-                'component'  => '',
-                'is_exist'   => $isExists = $structureHelper->isTableExists($tableName),
-                'records'    => 0,
-                'size'       => 0,
-                'model'      => $structureHelper->getTableModel($tableName)
+                'component' => '',
+                'is_exist' => $isExists = $structureHelper->isTableExists($tableName),
+                'records' => 0,
+                'size' => 0,
+                'model' => $structureHelper->getTableModel($tableName),
             ];
 
             if ($tableRow['is_exist']) {
                 $tableRow['component'] = $structureHelper->getTableComponent($tableName);
-                $tableRow['size']      = $structureHelper->getDataLength($tableName);
-                $tableRow['records']   = $structureHelper->getCountOfRecords($tableName);
+                $tableRow['size'] = $structureHelper->getDataLength($tableName);
+                $tableRow['records'] = $structureHelper->getCountOfRecords($tableName);
             }
 
             $collection->addItem(new \Magento\Framework\DataObject($tableRow));
@@ -105,9 +105,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('table_name', [
-            'header'    => $this->__('Table Name'),
-            'align'     => 'left',
-            'index'     => 'table_name',
+            'header' => $this->__('Table Name'),
+            'align' => 'left',
+            'index' => 'table_name',
             'filter_index' => 'table_name',
             'frame_callback' => [$this, 'callbackColumnTableName'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
@@ -117,31 +117,31 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $options = array_merge($options, $this->helperFactory->getObject('Component')->getComponentsTitles());
 
         $this->addColumn('component', [
-            'header'    => $this->__('Component'),
-            'align'     => 'right',
-            'width'     => '120px',
-            'index'     => 'component',
-            'type'      => 'options',
-            'options'   => $options,
+            'header' => $this->__('Component'),
+            'align' => 'right',
+            'width' => '120px',
+            'index' => 'component',
+            'type' => 'options',
+            'options' => $options,
             'filter_index' => 'component',
             'filter_condition_callback' => [$this, 'callbackFilterMatch'],
         ]);
 
         $this->addColumn('records', [
-            'header'    => $this->__('Records'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'index'     => 'records',
-            'type'      => 'number',
-            'filter'    => false,
+            'header' => $this->__('Records'),
+            'align' => 'right',
+            'width' => '100px',
+            'index' => 'records',
+            'type' => 'number',
+            'filter' => false,
         ]);
 
         $this->addColumn('size', [
-            'header'    => $this->__('Size (Mb)'),
-            'align'     => 'right',
-            'width'     => '100px',
-            'index'     => 'size',
-            'filter'    => false,
+            'header' => $this->__('Size (Mb)'),
+            'align' => 'right',
+            'width' => '100px',
+            'index' => 'size',
+            'filter' => false,
         ]);
 
         return parent::_prepareColumns();
@@ -176,10 +176,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set truncate action
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('truncate', [
-            'label'    => $this->__('Truncate Table(s)'),
-            'url'      => $this->getUrl('*/controlPanel_database/truncateTables'),
-            'confirm'  => $this->__('Are you sure?')
+            'label' => $this->__('Truncate Table(s)'),
+            'url' => $this->getUrl('*/controlPanel_database/truncateTables'),
+            'confirm' => $this->__('Are you sure?'),
         ]);
+
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -189,7 +190,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/controlPanel/databaseTab', ['_current'=>true]);
+        return $this->getUrl('*/controlPanel/databaseTab', ['_current' => true]);
     }
 
     public function getRowUrl($row)
@@ -211,6 +212,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($this->getCollection() && $column->getFilterConditionCallback()) {
             call_user_func($column->getFilterConditionCallback(), $this->getCollection(), $column);
         }
+
         return $this;
     }
 

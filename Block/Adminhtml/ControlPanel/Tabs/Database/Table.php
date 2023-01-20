@@ -12,7 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 class Table extends AbstractContainer
 {
-    /** @var \Magento\Framework\Stdlib\CookieManagerInterface  */
+    /** @var \Magento\Framework\Stdlib\CookieManagerInterface */
     private $cookieManager;
 
     /** @var \Ess\M2ePro\Helper\View\ControlPanel */
@@ -50,8 +50,10 @@ class Table extends AbstractContainer
         $component = $this->getRequest()->getParam('component');
 
         $title = $this->__('Manage Table "%table_name%"', $tableName);
-        if ($this->isMergeModeEnabled() && $component &&
-            $this->databaseHelper->isTableHorizontalParent($tableName)) {
+        if (
+            $this->isMergeModeEnabled() && $component &&
+            $this->databaseHelper->isTableHorizontalParent($tableName)
+        ) {
             $title .= " [merged {$component} data]";
         }
 
@@ -72,24 +74,24 @@ class Table extends AbstractContainer
         // ---------------------------------------
         $url = $this->controlPanelHelper->getPageDatabaseTabUrl();
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'onclick'   => "window.open('{$url}','_blank')",
-            'class'     => 'back'
+            'label' => $this->__('Back'),
+            'onclick' => "window.open('{$url}','_blank')",
+            'class' => 'back',
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $url = $this->getUrl('*/controlPanel_tools/magento', ['action' => 'clearMagentoCache']);
         $this->addButton('additional-actions', [
-            'label'      => $this->__('Additional Actions'),
-            'onclick'    => '',
-            'class'      => 'action-secondary',
+            'label' => $this->__('Additional Actions'),
+            'onclick' => '',
+            'class' => 'action-secondary',
             'sort_order' => 100,
             'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
-            'options'    => [
+            'options' => [
                 'clear-cache' => [
-                    'label'   => $this->__('Flush Cache'),
-                    'onclick' => "window.open('{$url}', '_blank');"
+                    'label' => $this->__('Flush Cache'),
+                    'onclick' => "window.open('{$url}', '_blank');",
                 ],
             ],
         ]);
@@ -98,18 +100,18 @@ class Table extends AbstractContainer
         // ---------------------------------------
         $url = $this->getUrl('*/*/truncateTables', ['tables' => $tableName]);
         $this->addButton('delete_all', [
-            'label'      => $this->__('Truncate Table'),
-            'onclick'    => 'deleteConfirm(\'Are you sure?\', \''.$url.'\')',
-            'class'      => 'action-error',
+            'label' => $this->__('Truncate Table'),
+            'onclick' => 'deleteConfirm(\'Are you sure?\', \'' . $url . '\')',
+            'class' => 'action-error',
             'sort_order' => 80,
         ]);
         // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('add_row', [
-            'label'      => $this->__('Append Row'),
-            'onclick'    => 'ControlPanelDatabaseGridObj.openTableCellsPopup(\'add\')',
-            'class'      => 'action-success',
+            'label' => $this->__('Append Row'),
+            'onclick' => 'ControlPanelDatabaseGridObj.openTableCellsPopup(\'add\')',
+            'class' => 'action-success',
             'sort_order' => 90,
         ]);
         // ---------------------------------------
@@ -117,14 +119,16 @@ class Table extends AbstractContainer
         // ---------------------------------------
         $helper = $this->databaseHelper;
 
-        if ($helper->isTableHorizontalChild($tableName) ||
-            ($helper->isTableHorizontalParent($tableName) && $this->isMergeModeEnabled() && $component)) {
+        if (
+            $helper->isTableHorizontalChild($tableName) ||
+            ($helper->isTableHorizontalParent($tableName) && $this->isMergeModeEnabled() && $component)
+        ) {
             $labelAdd = $this->isMergeModeEnabled() ? 'disable' : 'enable';
 
             $this->addButton('merge_mode', [
-                'label'      => $this->__("Join Full Collection [{$labelAdd}]"),
-                'onclick'    => 'ControlPanelDatabaseGridObj.switchMergeMode()',
-                'class'      => !$this->isMergeModeEnabled() ? 'action-success' : 'action-warning',
+                'label' => $this->__("Join Full Collection [{$labelAdd}]"),
+                'onclick' => 'ControlPanelDatabaseGridObj.switchMergeMode()',
+                'class' => !$this->isMergeModeEnabled() ? 'action-success' : 'action-warning',
                 'sort_order' => 70,
             ]);
         }
@@ -136,6 +140,7 @@ class Table extends AbstractContainer
     public function isMergeModeEnabled()
     {
         $key = \Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Grid::MERGE_MODE_COOKIE_KEY;
+
         return (bool)$this->cookieManager->getCookie($key);
     }
 

@@ -35,7 +35,7 @@ class RemoveAddedProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listi
             $this->getListing()->setSettings('additional_data', $additionalData)->save();
 
             return $this->_redirect('*/walmart_listing_other/view', [
-                'account'     => $this->getListing()->getAccountId(),
+                'account' => $this->getListing()->getAccountId(),
                 'marketplace' => $this->getListing()->getMarketplaceId(),
             ]);
         }
@@ -44,8 +44,8 @@ class RemoveAddedProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listi
             'step' => 2,
             'id' => $this->getRequest()->getParam('id'),
             '_query' => [
-                'source' => $this->sessionHelper->getValue('products_source')
-            ]
+                'source' => $this->sessionHelper->getValue('products_source'),
+            ],
         ]);
     }
 }

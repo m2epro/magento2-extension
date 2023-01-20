@@ -33,6 +33,7 @@ class WalmartSku extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractM
 
     /**
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return mixed
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)

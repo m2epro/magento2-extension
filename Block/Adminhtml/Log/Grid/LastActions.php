@@ -26,9 +26,9 @@ abstract class LastActions extends AbstractBlock
 
     public static $actionsSortOrder = [
         LogModel::TYPE_SUCCESS => 1,
-        LogModel::TYPE_ERROR   => 2,
+        LogModel::TYPE_ERROR => 2,
         LogModel::TYPE_WARNING => 3,
-        LogModel::TYPE_INFO    => 4,
+        LogModel::TYPE_INFO => 4,
     ];
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -214,10 +214,10 @@ abstract class LastActions extends AbstractBlock
     {
         if (!$this->hasData('tips') || !is_array($this->getData('tips'))) {
             return [
-                LogModel::TYPE_SUCCESS  => 'Last Action was completed.',
-                LogModel::TYPE_ERROR    => 'Last Action was completed with error(s).',
-                LogModel::TYPE_WARNING  => 'Last Action was completed with warning(s).',
-                LogModel::TYPE_INFO => 'Last Action was completed with info(s).'
+                LogModel::TYPE_SUCCESS => 'Last Action was completed.',
+                LogModel::TYPE_ERROR => 'Last Action was completed with error(s).',
+                LogModel::TYPE_WARNING => 'Last Action was completed with warning(s).',
+                LogModel::TYPE_INFO => 'Last Action was completed with info(s).',
             ];
         }
 
@@ -229,9 +229,9 @@ abstract class LastActions extends AbstractBlock
         if (!$this->hasData('icons') || !is_array($this->getData('icons'))) {
             return [
                 LogModel::TYPE_SUCCESS => 'success',
-                LogModel::TYPE_ERROR   => 'error',
+                LogModel::TYPE_ERROR => 'error',
                 LogModel::TYPE_WARNING => 'warning',
-                LogModel::TYPE_INFO    => 'info',
+                LogModel::TYPE_INFO => 'info',
             ];
         }
 
@@ -294,12 +294,14 @@ abstract class LastActions extends AbstractBlock
         }
 
         $this->tip = $this->dataHelper->escapeHtml($tip);
-        $this->iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/log_statuses/'.$icon.'.png');
+        $this->iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/log_statuses/' . $icon . '.png');
         $this->rows = $rows;
         // ---------------------------------------
 
-        $this->jsPhp->addConstants($this->dataHelper
-            ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class));
+        $this->jsPhp->addConstants(
+            $this->dataHelper
+                ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
+        );
 
         // ---------------------------------------
 

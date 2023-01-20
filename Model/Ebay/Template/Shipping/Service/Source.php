@@ -28,11 +28,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     *
      * @return $this
      */
     public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
         $this->magentoProduct = $magentoProduct;
+
         return $this;
     }
 
@@ -48,11 +50,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Ess\M2ePro\Model\Ebay\Template\Shipping\Service $instance
+     *
      * @return $this
      */
     public function setShippingServiceTemplate(\Ess\M2ePro\Model\Ebay\Template\Shipping\Service $instance)
     {
         $this->shippingServiceTemplateModel = $instance;
+
         return $this;
     }
 
@@ -68,6 +72,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param null $storeForConvertingAttributeTypePrice
+     *
      * @return float
      */
     public function getCost($storeForConvertingAttributeTypePrice = null)
@@ -96,6 +101,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param null $storeForConvertingAttributeTypePrice
+     *
      * @return float
      */
     public function getCostAdditional($storeForConvertingAttributeTypePrice = null)
@@ -131,10 +137,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $currency = $this->getShippingServiceTemplate()
-            ->getShippingTemplate()
-            ->getMarketplace()
-            ->getChildObject()
-            ->getCurrency();
+                         ->getShippingTemplate()
+                         ->getMarketplace()
+                         ->getChildObject()
+                         ->getCurrency();
 
         return $this->getHelper('Magento\Attribute')->convertAttributeTypePriceFromStoreToMarketplace(
             $this->getMagentoProduct(),

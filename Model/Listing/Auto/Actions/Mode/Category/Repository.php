@@ -27,7 +27,7 @@ class Repository
 
     /** @var \Ess\M2ePro\Model\Listing[] */
     private $cacheListing = [];
-    /** @var \Ess\M2ePro\Model\Listing\Auto\Category\Group[][]  */
+    /** @var \Ess\M2ePro\Model\Listing\Auto\Category\Group[][] */
     private $cacheAutoCategoryGroups = [];
     /** @var int[] */
     private $cacheStoreWebsiteId = [];
@@ -103,8 +103,8 @@ class Repository
     {
         $groups = [];
         foreach ($items as $item) {
-            $groups[$item['listing_id']]['category_ids'][] =  $item['category_id'];
-            $groups[$item['listing_id']]['group_ids'][] =  $item['group_id'];
+            $groups[$item['listing_id']]['category_ids'][] = $item['category_id'];
+            $groups[$item['listing_id']]['group_ids'][] = $item['group_id'];
         }
 
         $groupSet = $this->groupSetFactory->create();
@@ -151,6 +151,7 @@ class Repository
 
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $listingId);
+
         return $this->cacheListing[$listingId] = $listing;
     }
 

@@ -24,7 +24,9 @@ abstract class AbstractVerticalTabs extends AbstractTabs
 
     /**
      * Magento method
+     *
      * @param string $parentTab
+     *
      * @return string
      */
     public function getAccordion($parentTab)
@@ -35,6 +37,7 @@ abstract class AbstractVerticalTabs extends AbstractTabs
                 $html .= $this->getChildBlock('child-tab')->setTab($childTab)->toHtml();
             }
         }
+
         return $html;
     }
 }

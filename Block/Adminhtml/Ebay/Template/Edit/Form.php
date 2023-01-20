@@ -56,12 +56,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(['data' => [
-            'id' => 'edit_form',
-            'action' => 'javascript:void(0)',
-            'method' => 'post',
-            'enctype' => 'multipart/form-data'
-        ]]);
+        $form = $this->_formFactory->create([
+            'data' => [
+                'id' => 'edit_form',
+                'action' => 'javascript:void(0)',
+                'method' => 'post',
+                'enctype' => 'multipart/form-data',
+            ],
+        ]);
 
         $fieldset = $form->addFieldset(
             'general_fieldset',
@@ -79,12 +81,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'title' => $this->__('Title'),
                 'value' => $templateData['title'],
                 'class' => 'input-text validate-title-uniqueness',
-                'required' => true
+                'required' => true,
             ]
         );
 
         $templateNick = $this->getTemplateNick();
-        if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING
+        if (
+            $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING
             || $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY
         ) {
             if ($this->getRequest()->getParam('marketplace_id', false) !== false) {
@@ -92,8 +95,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'marketplace_id_hidden',
                     'hidden',
                     [
-                        'name'  => 'marketplace_id',
-                        'value' => $templateData['marketplace_id']
+                        'name' => 'marketplace_id',
+                        'value' => $templateData['marketplace_id'],
                     ]
                 );
             }
@@ -102,19 +105,20 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'marketplace_id',
                 'select',
                 [
-                    'name' => $this->getTemplateNick().'[marketplace_id]',
+                    'name' => $this->getTemplateNick() . '[marketplace_id]',
                     'label' => $this->__('Marketplace'),
                     'title' => $this->__('Marketplace'),
                     'values' => $this->getMarketplaceDataToOptions(),
                     'value' => $templateData['marketplace_id'],
                     'required' => true,
-                    'disabled' => !empty($templateData['marketplace_id'])
+                    'disabled' => !empty($templateData['marketplace_id']),
                 ]
             );
         }
 
         $form->setUseContainer(true);
         $this->setForm($form);
+
         return $this;
     }
 
@@ -124,9 +128,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $nick = $this->getTemplateNick();
         $templateData = $this->globalDataHelper->getValue("ebay_template_{$nick}");
+
         return array_merge([
             'title' => '',
-            'marketplace_id' => ($marketplaceId !== false) ? $marketplaceId : ''
+            'marketplace_id' => ($marketplaceId !== false) ? $marketplaceId : '',
         ], $templateData->getData());
     }
 
@@ -166,13 +171,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     public function getMarketplaceDataToOptions()
     {
         $optionsResult = [
-            ['value' => '', 'label' => '']
+            ['value' => '', 'label' => ''],
         ];
         $helper = $this->dataHelper;
         foreach ($this->getEnabledMarketplaces() as $marketplace) {
             $optionsResult[] = [
                 'value' => $marketplace->getId(),
-                'label' => $helper->escapeHtml($marketplace->getTitle())
+                'label' => $helper->escapeHtml($marketplace->getTitle()),
             ];
         }
 
@@ -192,23 +197,23 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'id' => $this->getTemplateId(),
                     'nick' => $nick,
                     'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
-                    'data_force' => true
+                    'data_force' => true,
                 ]
             ),
             'ebay_template/isTitleUnique' => $this->getUrl(
                 '*/ebay_template/isTitleUnique',
                 [
                     'id' => $this->getTemplateId(),
-                    'nick' => $nick
+                    'nick' => $nick,
                 ]
             ),
             'deleteAction' => $this->getUrl(
                 '*/ebay_template/delete',
                 [
                     'id' => $this->getTemplateId(),
-                    'nick' => $nick
+                    'nick' => $nick,
                 ]
-            )
+            ),
         ]);
 
         $this->jsTranslator->addTranslations([
@@ -217,10 +222,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'Save Policy' => $this->__('Save Policy'),
         ]);
 
-        $this->js->addRequireJs([
+        $this->js->addRequireJs(
+            [
             'form' => 'M2ePro/Ebay/Template/Edit/Form',
-            'jquery' => 'jquery'
-        ], <<<JS
+            'jquery' => 'jquery',
+            ],
+            <<<JS
 
         window.EbayTemplateEditObj = new EbayTemplateEdit();
         EbayTemplateEditObj.templateNick = '{$this->getTemplateNick()}';

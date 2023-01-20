@@ -45,6 +45,7 @@ class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implement
 
     /**
      * @param \Magento\Quote\Model\Quote\Address\RateRequest $request
+     *
      * @return bool|\Magento\Shipping\Model\Rate\Result
      */
     public function collectRates(\Magento\Quote\Model\Quote\Address\RateRequest $request)
@@ -76,6 +77,7 @@ class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implement
 
     /**
      * @param \Magento\Framework\DataObject $request
+     *
      * @return bool
      */
     public function checkAvailableShipCountries(\Magento\Framework\DataObject $request)
@@ -89,7 +91,6 @@ class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implement
 
     /**
      * Get allowed shipping methods
-     *
      * @return array
      */
     public function getAllowedMethods()
@@ -99,7 +100,6 @@ class Shipping extends \Magento\Shipping\Model\Carrier\AbstractCarrier implement
 
     /**
      * Check if carrier has shipping tracking option available
-     *
      * @return boolean
      */
     public function isTrackingAvailable()

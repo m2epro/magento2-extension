@@ -33,10 +33,10 @@ class MapToAsin extends Main
 
     public function execute()
     {
-        $productId   = $this->getRequest()->getParam('product_id');
-        $generalId   = $this->getRequest()->getParam('general_id');
+        $productId = $this->getRequest()->getParam('product_id');
+        $generalId = $this->getRequest()->getParam('general_id');
         $optionsData = $this->getRequest()->getParam('options_data');
-        $searchType  = $this->getRequest()->getParam('search_type');
+        $searchType = $this->getRequest()->getParam('search_type');
         $searchValue = $this->getRequest()->getParam('search_value');
 
         if (empty($productId) || empty($generalId)) {
@@ -45,7 +45,8 @@ class MapToAsin extends Main
             return $this->getResult();
         }
 
-        if (!$this->getHelper('Component\Amazon')->isASIN($generalId) &&
+        if (
+            !$this->getHelper('Component\Amazon')->isASIN($generalId) &&
             !$this->helperData->isISBN($generalId)
         ) {
             $this->setAjaxContent('General ID has invalid format.', false);
@@ -84,7 +85,7 @@ class MapToAsin extends Main
         if (!empty($searchType) && !empty($searchValue)) {
             $generalIdSearchInfo = [
                 'is_set_automatic' => false,
-                'type'  => $searchType,
+                'type' => $searchType,
                 'value' => $searchValue,
             ];
 
@@ -273,7 +274,8 @@ class MapToAsin extends Main
                 continue;
             }
 
-            if ($this->vocabularyHelper->isOptionExistsInLocalStorage(
+            if (
+                $this->vocabularyHelper->isOptionExistsInLocalStorage(
                     $productOption,
                     $channelOption,
                     $channelAttribute
@@ -282,7 +284,8 @@ class MapToAsin extends Main
                 continue;
             }
 
-            if ($this->vocabularyHelper->isOptionExistsInServerStorage(
+            if (
+                $this->vocabularyHelper->isOptionExistsInServerStorage(
                     $productOption,
                     $channelOption,
                     $channelAttribute

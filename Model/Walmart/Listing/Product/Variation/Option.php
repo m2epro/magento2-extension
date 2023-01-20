@@ -246,23 +246,29 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abst
 
             $attribute = strtolower($this->getParentObject()->getAttribute());
 
-            if (strtolower($tempAttribute->getData('default_title')) != $attribute &&
+            if (
+                strtolower($tempAttribute->getData('default_title')) != $attribute &&
                 strtolower($tempAttribute->getData('store_title')) != $attribute &&
-                strtolower($tempAttribute->getData('title')) != $attribute) {
+                strtolower($tempAttribute->getData('title')) != $attribute
+            ) {
                 continue;
             }
 
             foreach ($tempAttribute->getValues() as $tempOption) {
                 $option = strtolower($this->getParentObject()->getOption());
 
-                if (strtolower($tempOption->getData('default_title')) != $option &&
+                if (
+                    strtolower($tempOption->getData('default_title')) != $option &&
                     strtolower($tempOption->getData('store_title')) != $option &&
-                    strtolower($tempOption->getData('title')) != $option) {
+                    strtolower($tempOption->getData('title')) != $option
+                ) {
                     continue;
                 }
 
-                if ($tempOption->getData('sku') !== null &&
-                    $tempOption->getData('sku') !== false) {
+                if (
+                    $tempOption->getData('sku') !== null &&
+                    $tempOption->getData('sku') !== false
+                ) {
                     $tempSku = $tempOption->getData('sku');
                 }
 

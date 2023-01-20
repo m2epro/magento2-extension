@@ -13,19 +13,20 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
  */
 class Logger extends \Ess\M2ePro\Model\AbstractModel
 {
-    private $action    = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
-
-    private $actionId  = null;
-
+    /** @var int  */
+    private $action = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
+    /** @var null  */
+    private $actionId = null;
+    /** @var int  */
     private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
     /**
      * @var \Ess\M2ePro\Model\Amazon\Listing\Log
      */
     private $listingLog = null;
-
+    /** @var int  */
     private $status = \Ess\M2ePro\Helper\Data::STATUS_SUCCESS;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
 
     //########################################
@@ -123,7 +124,6 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     private function getListingLog()
     {
         if ($this->listingLog === null) {
-
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Log $listingLog */
             $listingLog = $this->activeRecordFactory->getObject('Amazon_Listing_Log');
 
@@ -139,21 +139,25 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($message->isError()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
         }
 
         if ($message->isWarning()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_WARNING);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
         }
 
         if ($message->isSuccess()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
         }
 
         if ($message->isNotice()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
+
             return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO;
         }
 

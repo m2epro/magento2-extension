@@ -15,13 +15,13 @@ class CheckMessages extends Base
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_configuration_templates') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::walmart_configuration_templates');
+            $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates') ||
+            $this->_authorization->isAllowed('Ess_M2ePro::walmart_configuration_templates');
     }
 
     public function execute()
     {
-        $id   = $this->getRequest()->getParam('id');
+        $id = $this->getRequest()->getParam('id');
         $nick = $this->getRequest()->getParam('nick');
         $data = $this->getRequest()->getParam($nick);
         $component = $this->getRequest()->getParam('component_mode');
@@ -62,6 +62,7 @@ class CheckMessages extends Base
 
         if ($template === null || empty($templateData)) {
             $this->setJsonContent(['messages' => '']);
+
             return $this->getResult();
         }
 
@@ -75,6 +76,7 @@ class CheckMessages extends Base
         $messagesBlock->setData('store_id', $this->getRequest()->getParam('store_id'));
 
         $this->setJsonContent(['messages' => $messagesBlock->getMessagesHtml()]);
+
         return $this->getResult();
     }
 }

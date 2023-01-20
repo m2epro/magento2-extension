@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model;
 
-use \Ess\M2ePro\Model\Listing\Product as Listing_Product;
+use Ess\M2ePro\Model\Listing\Product as Listing_Product;
 
 /**
  * Class \Ess\M2ePro\Model\StopQueue
@@ -45,6 +45,7 @@ class StopQueue extends ActiveRecord\AbstractModel
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @param int $actionType
+     *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -77,8 +78,8 @@ class StopQueue extends ActiveRecord\AbstractModel
         }
 
         $addedData = [
-            'component_mode'  => $listingProduct->getComponentMode(),
-            'is_processed'    => 0,
+            'component_mode' => $listingProduct->getComponentMode(),
+            'is_processed' => 0,
             'additional_data' => $this->getHelper('Data')->jsonEncode(['request_data' => $requestData]),
         ];
 
@@ -99,10 +100,10 @@ class StopQueue extends ActiveRecord\AbstractModel
             $ebayAccount = $ebayListingProduct->getEbayAccount();
 
             $data = [
-                'account'     => $ebayAccount->getServerHash(),
+                'account' => $ebayAccount->getServerHash(),
                 'marketplace' => $ebayListingProduct->getMarketplace()->getNativeId(),
-                'item_id'     => $ebayListingProduct->getEbayItem()->getItemId(),
-                'action_type' => $actionType
+                'item_id' => $ebayListingProduct->getEbayItem()->getItemId(),
+                'action_type' => $actionType,
             ];
         }
 
@@ -112,9 +113,9 @@ class StopQueue extends ActiveRecord\AbstractModel
             $amazonAccount = $amazonListingProduct->getAmazonAccount();
 
             $data = [
-                'account'     => $amazonAccount->getServerHash(),
-                'sku'         => $amazonListingProduct->getSku(),
-                'action_type' => $actionType
+                'account' => $amazonAccount->getServerHash(),
+                'sku' => $amazonListingProduct->getSku(),
+                'action_type' => $actionType,
             ];
         }
 
@@ -124,10 +125,10 @@ class StopQueue extends ActiveRecord\AbstractModel
             $walmartAccount = $walmartListingProduct->getWalmartAccount();
 
             $data = [
-                'account'     => $walmartAccount->getServerHash(),
-                'sku'         => $walmartListingProduct->getSku(),
-                'wpid'        => $walmartListingProduct->getWpid(),
-                'action_type' => $actionType
+                'account' => $walmartAccount->getServerHash(),
+                'sku' => $walmartListingProduct->getSku(),
+                'wpid' => $walmartListingProduct->getWpid(),
+                'action_type' => $actionType,
             ];
         }
 

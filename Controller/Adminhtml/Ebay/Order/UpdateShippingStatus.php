@@ -29,6 +29,7 @@ class UpdateShippingStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 
         if (count($ids) == 0) {
             $this->messageManager->addError($this->__('Please select Order(s).'));
+
             return false;
         }
 
@@ -51,7 +52,7 @@ class UpdateShippingStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 
             if ($shipmentsCollection->getSize() === 0) {
                 $order->getChildObject()->updateShippingStatus([]) ? $hasSucceeded = true
-                                                                   : $hasFailed = true;
+                    : $hasFailed = true;
                 continue;
             }
 
@@ -61,10 +62,10 @@ class UpdateShippingStatus extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
                     continue;
                 }
 
-                $result  = $handler->handle($order, $shipment);
+                $result = $handler->handle($order, $shipment);
 
                 $result == \Ess\M2ePro\Model\Order\Shipment\Handler::HANDLE_RESULT_SUCCEEDED ? $hasSucceeded = true
-                                                                                             : $hasFailed = true;
+                    : $hasFailed = true;
             }
         }
 

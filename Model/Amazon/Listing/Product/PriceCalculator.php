@@ -37,11 +37,13 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 
     /**
      * @param bool $value
+     *
      * @return PriceCalculator
      */
     public function setIsSalePrice($value)
     {
         $this->isSalePrice = (bool)$value;
+
         return $this;
     }
 

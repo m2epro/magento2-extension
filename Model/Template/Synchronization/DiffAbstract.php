@@ -18,15 +18,15 @@ abstract class DiffAbstract extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDifferent()
     {
         return $this->isListModeEnabled() ||
-               $this->isListModeDisabled() ||
-               $this->isListSettingsChanged() ||
-               $this->isRelistModeEnabled() ||
-               $this->isRelistModeDisabled() ||
-               $this->isRelistSettingsChanged() ||
-               $this->isStopModeEnabled() ||
-               $this->isStopModeDisabled() ||
-               $this->isStopSettingsChanged() ||
-               $this->isReviseSettingsChanged();
+            $this->isListModeDisabled() ||
+            $this->isListSettingsChanged() ||
+            $this->isRelistModeEnabled() ||
+            $this->isRelistModeDisabled() ||
+            $this->isRelistSettingsChanged() ||
+            $this->isStopModeEnabled() ||
+            $this->isStopModeDisabled() ||
+            $this->isStopSettingsChanged() ||
+            $this->isReviseSettingsChanged();
     }
 
     //########################################
@@ -57,7 +57,7 @@ abstract class DiffAbstract extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'list_qty_calculated',
             'list_qty_calculated_value',
             'list_advanced_rules_mode',
-            'list_advanced_rules_filters'
+            'list_advanced_rules_filters',
         ];
 
         return $this->isSettingsDifferent($keys);
@@ -92,7 +92,7 @@ abstract class DiffAbstract extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'relist_qty_calculated',
             'relist_qty_calculated_value',
             'relist_advanced_rules_mode',
-            'relist_advanced_rules_filters'
+            'relist_advanced_rules_filters',
         ];
 
         return $this->isSettingsDifferent($keys);
@@ -126,7 +126,7 @@ abstract class DiffAbstract extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'stop_qty_calculated',
             'stop_qty_calculated_value',
             'stop_advanced_rules_mode',
-            'stop_advanced_rules_filters'
+            'stop_advanced_rules_filters',
         ];
 
         return $this->isSettingsDifferent($keys);

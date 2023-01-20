@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote;
 
-/**
- * Class \Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\TotalsCollectorList
- */
 class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     /**
@@ -23,9 +20,8 @@ class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
      */
     protected $storeManager;
 
+    /** @var array  */
     protected $collectorsByStores = [];
-
-    //########################################
 
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -34,7 +30,7 @@ class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->totalCollectorFactory = $totalCollectorFactory;
-        $this->storeManager          = $storeManager;
+        $this->storeManager = $storeManager;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -50,9 +46,11 @@ class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     /**
      * \Magento\Quote\Model\Quote\TotalsCollectorList may cache the totalCollector for the incorrect Store View
+     *
      * @param \Magento\Quote\Model\Quote\TotalsCollectorList $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      */
     protected function processGetCollectors($interceptor, \Closure $callback, array $arguments)
@@ -64,7 +62,6 @@ class TotalsCollectorList extends \Ess\M2ePro\Plugin\AbstractPlugin
         }
 
         if (empty($this->collectorsByStores[$storeId])) {
-
             /** @var \Magento\Quote\Model\Quote\Address\Total\Collector $totalCollector */
             $totalCollector = $this->totalCollectorFactory->create(
                 ['store' => $this->storeManager->getStore($storeId)]

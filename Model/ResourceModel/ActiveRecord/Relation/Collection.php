@@ -89,7 +89,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
             \Ess\M2ePro\Model\ActiveRecord\Relation::class,
             [
                 'parentObject' => $parentModel,
-                'childObject'  => $childModel
+                'childObject' => $childModel,
             ]
         );
     }
@@ -146,7 +146,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $removeChildTableWildcard = false;
         $columns = [];
         foreach ($this->_select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $fieldData) {
-            list($tableAlias, $fieldName, $alias) = $fieldData;
+            [$tableAlias, $fieldName, $alias] = $fieldData;
             /**
              * By default addFieldToSelect() method set all fields under main_table
              * We need split main_table and second table fields
@@ -171,6 +171,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         }
 
         $this->_select->setPart(\Magento\Framework\DB\Select::COLUMNS, $columns);
+
         return $this;
     }
 

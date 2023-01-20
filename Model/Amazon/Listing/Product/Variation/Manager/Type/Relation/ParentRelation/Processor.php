@@ -12,13 +12,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     private $listingProduct = null;
-
+    /** @var null|int  */
     private $marketplaceId = null;
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $typeModel */
     private $typeModel = null;
 
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
 
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
@@ -26,7 +26,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
     private $descriptionTemplate = null;
-
+    /** @var null  */
     private $possibleThemes = null;
 
     public function __construct(
@@ -62,11 +62,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct($listingProduct)
     {
         $this->listingProduct = $listingProduct;
+
         return $this;
     }
 
@@ -110,7 +112,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private function getProcessorModel($processorName)
     {
         $model = $this->modelFactory->getObject(
-            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\\'.$processorName
+            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\\' . $processorName
         );
         $model->setProcessor($this);
 
@@ -143,17 +145,17 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public function getMagentoProductVariations()
     {
         return $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationsTypeStandard();
+                    ->getMagentoProduct()
+                    ->getVariationInstance()
+                    ->getVariationsTypeStandard();
     }
 
     public function getProductVariation(array $options)
     {
         return $this->getListingProduct()
-            ->getMagentoProduct()
-            ->getVariationInstance()
-            ->getVariationTypeStandard($options);
+                    ->getMagentoProduct()
+                    ->getVariationInstance()
+                    ->getVariationTypeStandard($options);
     }
 
     /**
@@ -166,14 +168,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->typeModel = $this->getAmazonListingProduct()
-            ->getVariationManager()
-            ->getTypeModel();
+                                       ->getVariationManager()
+                                       ->getTypeModel();
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $childListingProduct
+     *
      * @return bool
      */
     public function tryToRemoveChildListingProduct(\Ess\M2ePro\Model\Listing\Product $childListingProduct)
@@ -227,10 +230,10 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $marketPlaceId = $this->getMarketplaceId();
 
         $possibleThemes = $this->modelFactory->getObject('Amazon_Marketplace_Details')
-            ->setMarketplaceId($marketPlaceId)
-            ->getVariationThemes(
-                $this->getAmazonDescriptionTemplate()->getProductDataNick()
-            );
+                                             ->setMarketplaceId($marketPlaceId)
+                                             ->getVariationThemes(
+                                                 $this->getAmazonDescriptionTemplate()->getProductDataNick()
+                                             );
 
         $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];

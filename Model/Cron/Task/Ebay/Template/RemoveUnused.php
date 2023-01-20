@@ -15,14 +15,14 @@ use Ess\M2ePro\Helper\Component\Ebay\Category as EbayCategory;
  */
 class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/template/remove_unused';
+    public const NICK = 'ebay/template/remove_unused';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 3600;
 
-    const SAFE_CREATE_DATE_INTERVAL = 86400;
+    public const SAFE_CREATE_DATE_INTERVAL = 86400;
 
     //########################################
 
@@ -56,14 +56,25 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $listingTable = $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->getMainTable();
         $listingProductTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')
-            ->getResource()->getMainTable();
+                                                         ->getResource()->getMainTable();
 
         $unionSelectListingTemplate = $connection->select()
-            ->from($listingTable, ['result_field'=>$templateManager->getTemplateIdColumnName()])
-            ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
-        $unionSelectListingProductTemplate = $connection->select()
-            ->from($listingProductTable, ['result_field'=>$templateManager->getTemplateIdColumnName()])
-            ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
+                                                 ->from(
+                                                     $listingTable,
+                                                     ['result_field' => $templateManager->getTemplateIdColumnName()]
+                                                 )
+                                                 ->where($templateManager->getTemplateIdColumnName() . ' IS NOT NULL');
+        $unionSelectListingProductTemplate = $connection
+            ->select()
+            ->from(
+                $listingProductTable,
+                [
+                    'result_field' => $templateManager->getTemplateIdColumnName(),
+                ]
+            )
+            ->where(
+                $templateManager->getTemplateIdColumnName() . ' IS NOT NULL'
+            );
 
         $unionSelect = $connection->select()->union(
             [
@@ -98,80 +109,80 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $listingTable = $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->getMainTable();
         $listingProductTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')
-            ->getResource()->getMainTable();
+                                                         ->getResource()->getMainTable();
         $listingAutoCategoryGroupTable = $this->activeRecordFactory->getObject('Ebay_Listing_Auto_Category_Group')
-            ->getResource()->getMainTable();
+                                                                   ->getResource()->getMainTable();
 
         $listingAutoGlobal = $connection->select()
-            ->from(
-                $listingTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                        ->from(
+                                            $listingTable,
+                                            [
+                                                'result_field' => new \Zend_Db_Expr(
+                                                    'IF (
                             auto_global_adding_template_category_id,
                             auto_global_adding_template_category_id,
                             auto_global_adding_template_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('auto_global_adding_template_category_id IS NOT NULL')
-            ->orWhere('auto_global_adding_template_category_secondary_id IS NOT NULL');
+                                                ),
+                                            ]
+                                        )
+                                        ->where('auto_global_adding_template_category_id IS NOT NULL')
+                                        ->orWhere('auto_global_adding_template_category_secondary_id IS NOT NULL');
 
         $listingAutoWebsite = $connection->select()
-            ->from(
-                $listingTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                         ->from(
+                                             $listingTable,
+                                             [
+                                                 'result_field' => new \Zend_Db_Expr(
+                                                     'IF (
                             auto_website_adding_template_category_id,
                             auto_website_adding_template_category_id,
                             auto_website_adding_template_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('auto_website_adding_template_category_id IS NOT NULL')
-            ->orWhere('auto_website_adding_template_category_secondary_id IS NOT NULL');
+                                                 ),
+                                             ]
+                                         )
+                                         ->where('auto_website_adding_template_category_id IS NOT NULL')
+                                         ->orWhere('auto_website_adding_template_category_secondary_id IS NOT NULL');
 
         $listingAutoCategory = $connection->select()
-            ->from(
-                $listingAutoCategoryGroupTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                          ->from(
+                                              $listingAutoCategoryGroupTable,
+                                              [
+                                                  'result_field' => new \Zend_Db_Expr(
+                                                      'IF (
                             adding_template_category_id,
                             adding_template_category_id,
                             adding_template_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('adding_template_category_id IS NOT NULL')
-            ->orWhere('adding_template_category_secondary_id IS NOT NULL');
+                                                  ),
+                                              ]
+                                          )
+                                          ->where('adding_template_category_id IS NOT NULL')
+                                          ->orWhere('adding_template_category_secondary_id IS NOT NULL');
 
         $listingProduct = $connection->select()
-            ->from(
-                $listingProductTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                     ->from(
+                                         $listingProductTable,
+                                         [
+                                             'result_field' => new \Zend_Db_Expr(
+                                                 'IF (
                             template_category_id,
                             template_category_id,
                             template_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('template_category_id IS NOT NULL')
-            ->orWhere('template_category_secondary_id IS NOT NULL');
+                                             ),
+                                         ]
+                                     )
+                                     ->where('template_category_id IS NOT NULL')
+                                     ->orWhere('template_category_secondary_id IS NOT NULL');
 
         $unionSelect = $connection->select()->union(
             [
                 $listingAutoGlobal,
                 $listingAutoWebsite,
                 $listingAutoCategory,
-                $listingProduct
+                $listingProduct,
             ]
         );
 
@@ -224,80 +235,84 @@ class RemoveUnused extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $listingTable = $this->activeRecordFactory->getObject('Ebay\Listing')->getResource()->getMainTable();
         $listingProductTable = $this->activeRecordFactory->getObject('Ebay_Listing_Product')
-            ->getResource()->getMainTable();
+                                                         ->getResource()->getMainTable();
         $listingAutoCategoryGroupTable = $this->activeRecordFactory->getObject('Ebay_Listing_Auto_Category_Group')
-            ->getResource()->getMainTable();
+                                                                   ->getResource()->getMainTable();
 
         $listingAutoGlobal = $connection->select()
-            ->from(
-                $listingTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                        ->from(
+                                            $listingTable,
+                                            [
+                                                'result_field' => new \Zend_Db_Expr(
+                                                    'IF (
                             auto_global_adding_template_store_category_id,
                             auto_global_adding_template_store_category_id,
                             auto_global_adding_template_store_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('auto_global_adding_template_store_category_id IS NOT NULL')
-            ->orWhere('auto_global_adding_template_store_category_secondary_id IS NOT NULL');
+                                                ),
+                                            ]
+                                        )
+                                        ->where('auto_global_adding_template_store_category_id IS NOT NULL')
+                                        ->orWhere(
+                                            'auto_global_adding_template_store_category_secondary_id IS NOT NULL'
+                                        );
 
         $listingAutoWebsite = $connection->select()
-            ->from(
-                $listingTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                         ->from(
+                                             $listingTable,
+                                             [
+                                                 'result_field' => new \Zend_Db_Expr(
+                                                     'IF (
                             auto_website_adding_template_store_category_id,
                             auto_website_adding_template_store_category_id,
                             auto_website_adding_template_store_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('auto_website_adding_template_store_category_id IS NOT NULL')
-            ->orWhere('auto_website_adding_template_store_category_secondary_id IS NOT NULL');
+                                                 ),
+                                             ]
+                                         )
+                                         ->where('auto_website_adding_template_store_category_id IS NOT NULL')
+                                         ->orWhere(
+                                             'auto_website_adding_template_store_category_secondary_id IS NOT NULL'
+                                         );
 
         $listingAutoCategory = $connection->select()
-            ->from(
-                $listingAutoCategoryGroupTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                          ->from(
+                                              $listingAutoCategoryGroupTable,
+                                              [
+                                                  'result_field' => new \Zend_Db_Expr(
+                                                      'IF (
                             adding_template_store_category_id,
                             adding_template_store_category_id,
                             adding_template_store_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('adding_template_store_category_id IS NOT NULL')
-            ->orWhere('adding_template_store_category_secondary_id IS NOT NULL');
+                                                  ),
+                                              ]
+                                          )
+                                          ->where('adding_template_store_category_id IS NOT NULL')
+                                          ->orWhere('adding_template_store_category_secondary_id IS NOT NULL');
 
         $listingProduct = $connection->select()
-            ->from(
-                $listingProductTable,
-                [
-                    'result_field' => new \Zend_Db_Expr(
-                        'IF (
+                                     ->from(
+                                         $listingProductTable,
+                                         [
+                                             'result_field' => new \Zend_Db_Expr(
+                                                 'IF (
                             template_store_category_id,
                             template_store_category_id,
                             template_store_category_secondary_id
                         )'
-                    )
-                ]
-            )
-            ->where('template_store_category_id IS NOT NULL')
-            ->orWhere('template_store_category_secondary_id IS NOT NULL');
+                                             ),
+                                         ]
+                                     )
+                                     ->where('template_store_category_id IS NOT NULL')
+                                     ->orWhere('template_store_category_secondary_id IS NOT NULL');
 
         $unionSelect = $connection->select()->union(
             [
                 $listingAutoGlobal,
                 $listingAutoWebsite,
                 $listingAutoCategory,
-                $listingProduct
+                $listingProduct,
             ]
         );
 

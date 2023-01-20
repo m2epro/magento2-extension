@@ -47,7 +47,8 @@ class MysqlTables extends AbstractBlock
         foreach ($this->getTablesList() as $category => $tables) {
             foreach ($tables as $tableName) {
                 $tablesInfo[$category][$tableName] = [
-                    'count' => 0, 'url'   => '#'
+                    'count' => 0,
+                    'url' => '#',
                 ];
 
                 if (!$helper->isTableReady($tableName)) {

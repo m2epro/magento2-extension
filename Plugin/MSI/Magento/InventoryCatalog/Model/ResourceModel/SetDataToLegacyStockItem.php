@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Plugin\MSI\Magento\InventoryCatalog\Model\ResourceModel;
 
-/**
- * Class \Ess\M2ePro\Plugin\MSI\Magento\InventoryCatalog\Model\ResourceModel\SetDataToLegacyStockItem
- */
 class SetDataToLegacyStockItem extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    const PRODUCTS_FOR_REINDEX_REGISTRY_KEY = 'msi_products_for_reindex';
+    public const PRODUCTS_FOR_REINDEX_REGISTRY_KEY = 'msi_products_for_reindex';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
@@ -39,6 +36,7 @@ class SetDataToLegacyStockItem extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param mixed ...$arguments
+     *
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -51,6 +49,7 @@ class SetDataToLegacyStockItem extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param $interceptor
      * @param \Closure $callback
      * @param array $arguments
+     *
      * @return mixed
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

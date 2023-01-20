@@ -25,6 +25,7 @@ class ViewGrid extends Main
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 

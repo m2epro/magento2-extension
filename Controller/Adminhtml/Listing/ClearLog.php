@@ -29,6 +29,7 @@ class ClearLog extends \Ess\M2ePro\Controller\Adminhtml\Listing
         if (count($ids) == 0) {
             $this->getMessageManager()->addError($this->__('Please select Item(s) to clear.'));
             $this->_redirect('*/*/index');
+
             return;
         }
 

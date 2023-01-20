@@ -36,6 +36,7 @@ class Stock extends AbstractModel
      * - Regular engine: Index table has status with no applied "Manage Stock" setting
      *
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return int
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
@@ -74,11 +75,11 @@ class Stock extends AbstractModel
         return [
             [
                 'value' => 1,
-                'label' => __('In Stock')
+                'label' => __('In Stock'),
             ],
             [
                 'value' => 0,
-                'label' => __('Out Of Stock')
+                'label' => __('Out Of Stock'),
             ],
         ];
     }

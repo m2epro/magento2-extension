@@ -44,7 +44,7 @@ class CreateNewChild extends Main
         $childListingProduct = $parentTypeModel->createChildListingProduct($productOptions, []);
 
         $addedProductOptions = $childListingProduct->getChildObject()->getVariationManager()
-            ->getTypeModel()->getProductOptions();
+                                                   ->getTypeModel()->getProductOptions();
 
         // Don't use $childListingProduct anymore, because it might be removed after calling the following method
         $parentTypeModel->getProcessor()->process();
@@ -76,12 +76,12 @@ class CreateNewChild extends Main
 
             $this->setJsonContent([
                 'type' => 'error',
-                'msg'  => $message
+                'msg' => $message,
             ]);
         } else {
             $this->setJsonContent([
                 'type' => 'success',
-                'msg'  => $this->__('New Walmart Child Product was created.')
+                'msg' => $this->__('New Walmart Child Product was created.'),
             ]);
         }
 

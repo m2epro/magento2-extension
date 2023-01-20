@@ -27,27 +27,31 @@ namespace Ess\M2ePro\PublicServices\Product;
 
 use Magento\Framework\Event\Observer;
 
-/**
- * Class \Ess\M2ePro\PublicServices\Product\ObjectChange
- */
 class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 {
-    const VERSION = '1.0.1';
+    public const VERSION = '1.0.1';
 
+    /** @var \Magento\Catalog\Model\ProductFactory  */
     private $productFactory;
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
     private $stockRegistry;
 
+    /** @var \Ess\M2ePro\Observer\Product\AddUpdate\BeforeFactory  */
     private $observerProductSaveBeforeFactory;
+    /** @var \Ess\M2ePro\Observer\Product\AddUpdate\AfterFactory  */
     private $observerProductSaveAfterFactory;
+    /** @var \Ess\M2ePro\Observer\StockItem\Save\BeforeFactory  */
     private $observerStockItemSaveBeforeFactory;
+    /** @var \Ess\M2ePro\Observer\StockItem\Save\AfterFactory  */
     private $observerStockItemSaveAfterFactory;
 
-    protected $productObservers   = [];
+    /** @var array  */
+    protected $productObservers = [];
+    /** @var array  */
     protected $stockItemObservers = [];
 
+    /** @var \Ess\M2ePro\PublicServices\Product\SqlChange  */
     protected $sqlChange;
-
-    //########################################
 
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
@@ -62,13 +66,13 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
         array $data = []
     ) {
         $this->productFactory = $productFactory;
-        $this->stockRegistry  = $stockRegistry;
-        $this->sqlChange      = $sqlChange;
+        $this->stockRegistry = $stockRegistry;
+        $this->sqlChange = $sqlChange;
 
-        $this->observerProductSaveBeforeFactory   = $observerProductSaveBeforeFactory;
-        $this->observerProductSaveAfterFactory    = $observerProductSaveAfterFactory;
+        $this->observerProductSaveBeforeFactory = $observerProductSaveBeforeFactory;
+        $this->observerProductSaveAfterFactory = $observerProductSaveAfterFactory;
         $this->observerStockItemSaveBeforeFactory = $observerStockItemSaveBeforeFactory;
-        $this->observerStockItemSaveAfterFactory  = $observerStockItemSaveAfterFactory;
+        $this->observerStockItemSaveAfterFactory = $observerStockItemSaveAfterFactory;
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -97,7 +101,7 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
      */
     public function flushObservers()
     {
-        $this->productObservers   = [];
+        $this->productObservers = [];
         $this->stockItemObservers = [];
 
         return $this;
@@ -108,12 +112,14 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Magento\Catalog\Model\Product|int $product
      * @param int $storeId
+     *
      * @return $this
      */
     public function observeProduct($product, $storeId = 0)
     {
         if ($this->helperFactory->getObject('Magento')->isMSISupportingVersion()) {
             $productId = $product instanceof \Magento\Catalog\Model\Product ? $product->getId() : (int)$product;
+
             return $this->sqlChange->markProductChanged($productId);
         }
 
@@ -127,7 +133,7 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
             $product = $model;
         }
 
-        $key = $product->getId().'##'.$storeId;
+        $key = $product->getId() . '##' . $storeId;
 
         $productObserver = $this->prepareProductObserver($product);
         $this->observerProductSaveBeforeFactory->create()->execute($productObserver);
@@ -143,15 +149,18 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Magento\Catalog\Model\Product|int $product
      * @param int $storeId
+     *
      * @return bool
      */
     public function isProductObserved($product, $storeId = 0)
     {
         $productId = $product instanceof \Magento\Catalog\Model\Product ? $product->getId() : $product;
-        $key = $productId.'##'.$storeId;
+        $key = $productId . '##' . $storeId;
 
-        if (array_key_exists($key, $this->productObservers) ||
-            array_key_exists($key, $this->stockItemObservers)) {
+        if (
+            array_key_exists($key, $this->productObservers) ||
+            array_key_exists($key, $this->stockItemObservers)
+        ) {
             return true;
         }
 

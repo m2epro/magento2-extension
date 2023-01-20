@@ -44,16 +44,16 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\RealTi
 
         if ($this->params['marketplace_id'] == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA) {
             $requestData = [
-                'title'          => $this->account->getTitle(),
-                'consumer_id'    => $this->params['consumer_id'],
-                'private_key'    => $this->params['private_key'],
+                'title' => $this->account->getTitle(),
+                'consumer_id' => $this->params['consumer_id'],
+                'private_key' => $this->params['private_key'],
                 'marketplace_id' => $marketplaceObject->getNativeId(),
             ];
         } else {
             $requestData = [
-                'title'          => $this->account->getTitle(),
-                'client_id'      => $this->params['client_id'],
-                'client_secret'  => $this->params['client_secret'],
+                'title' => $this->account->getTitle(),
+                'client_id' => $this->params['client_id'],
+                'client_secret' => $this->params['client_secret'],
                 'marketplace_id' => $marketplaceObject->getNativeId(),
             ];
         }
@@ -77,7 +77,8 @@ class EntityRequester extends \Ess\M2ePro\Model\Walmart\Connector\Command\RealTi
     protected function validateResponse()
     {
         $responseData = $this->getResponse()->getResponseData();
-        if ((empty($responseData['hash']) || !isset($responseData['info'])) &&
+        if (
+            (empty($responseData['hash']) || !isset($responseData['info'])) &&
             !$this->getResponse()->getMessages()->hasErrorEntities()
         ) {
             return false;

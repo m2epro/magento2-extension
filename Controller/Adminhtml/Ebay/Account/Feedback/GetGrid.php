@@ -21,11 +21,12 @@ class GetGrid extends Account
 
         if (empty($id)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
         $response = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Feedback\Grid::class)
-                                      ->toHtml();
+                         ->toHtml();
 
         $this->setAjaxContent($response);
 

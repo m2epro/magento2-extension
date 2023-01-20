@@ -52,12 +52,11 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $accounts = $this->ebayFactory->getObject('Account')->getCollection();
         $accounts->addFieldToFilter('other_listings_synchronization', 1);
         foreach ($accounts->getItems() as $account) {
-
             /** @var \Ess\M2ePro\Model\Lock\Item\Manager $lockItemManager */
             $lockItemManager = $this->modelFactory->getObject(
                 'Lock_Item_Manager',
                 [
-                    'nick' => SynchronizeData::LOCK_ITEM_PREFIX . '_' . $account->getId()
+                    'nick' => SynchronizeData::LOCK_ITEM_PREFIX . '_' . $account->getId(),
                 ]
             );
 
@@ -72,10 +71,10 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->addButton(
             'reset_other_listings',
             [
-                'label'    => $this->__($label),
-                'onclick'  => "ListingOtherObj.showResetPopup('{$url}');",
-                'class'    => 'action-primary',
-                'disabled' => $disabled
+                'label' => $this->__($label),
+                'onclick' => "ListingOtherObj.showResetPopup('{$url}');",
+                'class' => 'action-primary',
+                'disabled' => $disabled,
             ]
         );
     }
@@ -99,7 +98,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 them into M2E Pro Listings.</p>
 
 HTML
-                )
+                ),
             ]
         );
 

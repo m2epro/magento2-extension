@@ -15,10 +15,10 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
     use Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory  */
+    /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
@@ -50,13 +50,13 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         $translator = $this->translationHelper;
 
         return [
-            Log::ACTION_LIST_PRODUCT_ON_COMPONENT   => $translator->__('List'),
+            Log::ACTION_LIST_PRODUCT_ON_COMPONENT => $translator->__('List'),
             Log::ACTION_RELIST_PRODUCT_ON_COMPONENT => $translator->__('Relist'),
             Log::ACTION_REVISE_PRODUCT_ON_COMPONENT => $translator->__('Revise'),
-            Log::ACTION_STOP_PRODUCT_ON_COMPONENT   => $translator->__('Stop'),
-            Log::ACTION_REMAP_LISTING_PRODUCT       => $translator->__('Relink'),
-            Log::ACTION_STOP_AND_REMOVE_PRODUCT     => $translator->__('Stop on Channel / Remove from Listing'),
-            Log::ACTION_CHANNEL_CHANGE              => $translator->__('External Change')
+            Log::ACTION_STOP_PRODUCT_ON_COMPONENT => $translator->__('Stop'),
+            Log::ACTION_REMAP_LISTING_PRODUCT => $translator->__('Relink'),
+            Log::ACTION_STOP_AND_REMOVE_PRODUCT => $translator->__('Stop on Channel / Remove from Listing'),
+            Log::ACTION_CHANNEL_CHANGE => $translator->__('External Change'),
         ];
     }
 
@@ -72,14 +72,22 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         // Get last messages
         // ---------------------------------------
         $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
-                ['action_id','action','type','description','create_date','initiator','listing_product_id']
-            )
-            ->where('`action_id` IS NOT NULL')
-            ->where('`action` IN (?)', $availableActionsId)
-            ->order(['id DESC'])
-            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
+                               ->from(
+                                   $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
+                                   [
+                                       'action_id',
+                                       'action',
+                                       'type',
+                                       'description',
+                                       'create_date',
+                                       'initiator',
+                                       'listing_product_id',
+                                   ]
+                               )
+                               ->where('`action_id` IS NOT NULL')
+                               ->where('`action` IN (?)', $availableActionsId)
+                               ->order(['id DESC'])
+                               ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
         if ($this->isVariationParent()) {
             $dbSelect->where('`listing_product_id` = ? OR `parent_listing_product_id` = ?', $listingProductId);
@@ -101,13 +109,13 @@ class Listing extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     protected function getLastActions($listingProductId, $logs)
     {
         $summary = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActions::class)
-                                     ->setData([
-            'entity_id'           => $listingProductId,
-            'logs'                => $logs,
-            'available_actions'   => $this->getAvailableActions(),
-            'view_help_handler'   => "{$this->getJsHandler()}.viewItemHelp",
-            'hide_help_handler'   => "{$this->getJsHandler()}.hideItemHelp"
-        ]);
+                        ->setData([
+                            'entity_id' => $listingProductId,
+                            'logs' => $logs,
+                            'available_actions' => $this->getAvailableActions(),
+                            'view_help_handler' => "{$this->getJsHandler()}.viewItemHelp",
+                            'hide_help_handler' => "{$this->getJsHandler()}.hideItemHelp",
+                        ]);
 
         return $summary->toHtml();
     }

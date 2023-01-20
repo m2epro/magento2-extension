@@ -27,11 +27,13 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         $sku = $this->getSku();
         if (empty($sku)) {
             $this->addMessage('SKU is not provided. Please, check Listing Settings.');
+
             return false;
         }
 
         if (strlen($sku) > \Ess\M2ePro\Helper\Component\Walmart::SKU_MAX_LENGTH) {
             $this->addMessage('The length of SKU must be less than 50 characters.');
+
             return false;
         }
 

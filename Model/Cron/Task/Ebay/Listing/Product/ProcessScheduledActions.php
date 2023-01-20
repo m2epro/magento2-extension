@@ -10,23 +10,23 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product;
 
 class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'ebay/listing/product/process_scheduled_actions';
+    public const NICK = 'ebay/listing/product/process_scheduled_actions';
 
-    const LIST_PRIORITY               = 25;
-    const RELIST_PRIORITY             = 125;
-    const STOP_PRIORITY               = 1000;
-    const REVISE_QTY_PRIORITY         = 500;
-    const REVISE_PRICE_PRIORITY       = 250;
-    const REVISE_TITLE_PRIORITY       = 50;
-    const REVISE_SUBTITLE_PRIORITY    = 50;
-    const REVISE_DESCRIPTION_PRIORITY = 50;
-    const REVISE_IMAGES_PRIORITY      = 50;
-    const REVISE_CATEGORIES_PRIORITY  = 50;
-    const REVISE_PARTS_PRIORITY       = 50;
-    const REVISE_PAYMENT_PRIORITY     = 50;
-    const REVISE_SHIPPING_PRIORITY    = 50;
-    const REVISE_RETURN_PRIORITY      = 50;
-    const REVISE_OTHER_PRIORITY       = 50;
+    public const LIST_PRIORITY = 25;
+    public const RELIST_PRIORITY = 125;
+    public const STOP_PRIORITY = 1000;
+    public const REVISE_QTY_PRIORITY = 500;
+    public const REVISE_PRICE_PRIORITY = 250;
+    public const REVISE_TITLE_PRIORITY = 50;
+    public const REVISE_SUBTITLE_PRIORITY = 50;
+    public const REVISE_DESCRIPTION_PRIORITY = 50;
+    public const REVISE_IMAGES_PRIORITY = 50;
+    public const REVISE_CATEGORIES_PRIORITY = 50;
+    public const REVISE_PARTS_PRIORITY = 50;
+    public const REVISE_PAYMENT_PRIORITY = 50;
+    public const REVISE_SHIPPING_PRIORITY = 50;
+    public const REVISE_RETURN_PRIORITY = 50;
+    public const REVISE_OTHER_PRIORITY = 50;
 
     /**
      * @return bool
@@ -100,8 +100,8 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     \Ess\M2ePro\Model\Cron\Strategy\AbstractModel::PROGRESS_SET_DETAILS_EVENT_NAME,
                     [
                         'progress_nick' => self::NICK,
-                        'percentage'    => ceil($percentsForOneAction * $iteration),
-                        'total'         => count($scheduledActions)
+                        'percentage' => ceil($percentsForOneAction * $iteration),
+                        'total' => count($scheduledActions),
                     ]
                 );
             }
@@ -140,6 +140,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /**
      * @param $limit
+     *
      * @return array|\Magento\Framework\DataObject[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -184,7 +185,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         $scheduledActionsCollection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')
-            ->getCollection();
+                                                                ->getCollection();
         $scheduledActionsCollection->addFieldToFilter('id', array_unique($scheduledActionsIds));
 
         return $scheduledActionsCollection->getItems();
@@ -203,10 +204,10 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::LIST_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST
-            );
+                          ->getScheduledActionsPreparedCollection(
+                              self::LIST_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_LIST
+                          );
     }
 
     /**
@@ -220,10 +221,10 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::RELIST_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
-            );
+                          ->getScheduledActionsPreparedCollection(
+                              self::RELIST_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST
+                          );
     }
 
     /**
@@ -237,11 +238,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_QTY_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('qty');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_QTY_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('qty');
     }
 
     /**
@@ -255,11 +256,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_PRICE_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('price');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_PRICE_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('price');
     }
 
     /**
@@ -273,11 +274,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_TITLE_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('title');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_TITLE_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('title');
     }
 
     /**
@@ -291,11 +292,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_SUBTITLE_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('subtitle');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_SUBTITLE_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('subtitle');
     }
 
     /**
@@ -309,11 +310,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_DESCRIPTION_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('description');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_DESCRIPTION_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('description');
     }
 
     /**
@@ -327,11 +328,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_IMAGES_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('images');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_IMAGES_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('images');
     }
 
     /**
@@ -345,11 +346,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_CATEGORIES_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('categories');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_CATEGORIES_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('categories');
     }
 
     /**
@@ -364,11 +365,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             ->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_PARTS_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('parts');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_PARTS_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('parts');
     }
 
     /**
@@ -382,11 +383,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_PAYMENT_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('payment');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_PAYMENT_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('payment');
     }
 
     /**
@@ -400,11 +401,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_SHIPPING_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('shipping');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_SHIPPING_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('shipping');
     }
 
     /**
@@ -418,11 +419,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_RETURN_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('return');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_RETURN_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('return');
     }
 
     /**
@@ -436,11 +437,11 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::REVISE_OTHER_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-            )
-            ->addTagFilter('other');
+                          ->getScheduledActionsPreparedCollection(
+                              self::REVISE_OTHER_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+                          )
+                          ->addTagFilter('other');
     }
 
     /**
@@ -454,10 +455,10 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
 
         return $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-            ->getScheduledActionsPreparedCollection(
-                self::STOP_PRIORITY,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
-            );
+                          ->getScheduledActionsPreparedCollection(
+                              self::STOP_PRIORITY,
+                              \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                          );
     }
 
     //####################################

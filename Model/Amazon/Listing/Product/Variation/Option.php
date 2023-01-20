@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Listing\Product\Variation\Option getParentObject()
  */
+
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation;
 
 /**
@@ -29,7 +30,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
     public function afterSave()
     {
         $listingProductId = $this->getListingProduct()->getId();
-        $variationId      = $this->getListingProductVariation()->getId();
+        $variationId = $this->getListingProductVariation()->getId();
 
         $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
@@ -41,7 +42,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
     public function beforeDelete()
     {
         $listingProductId = $this->getListingProduct()->getId();
-        $variationId      = $this->getListingProductVariation()->getId();
+        $variationId = $this->getListingProductVariation()->getId();
 
         $this->getHelper('Data_Cache_Runtime')->removeTagValues(
             "listing_product_{$listingProductId}_variation_{$variationId}_options"
@@ -245,23 +246,29 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
 
             $attribute = strtolower($this->getParentObject()->getAttribute());
 
-            if (strtolower($tempAttribute->getData('default_title')) != $attribute &&
+            if (
+                strtolower($tempAttribute->getData('default_title')) != $attribute &&
                 strtolower($tempAttribute->getData('store_title')) != $attribute &&
-                strtolower($tempAttribute->getData('title')) != $attribute) {
+                strtolower($tempAttribute->getData('title')) != $attribute
+            ) {
                 continue;
             }
 
             foreach ($tempAttribute->getValues() as $tempOption) {
                 $option = strtolower($this->getParentObject()->getOption());
 
-                if (strtolower($tempOption->getData('default_title')) != $option &&
+                if (
+                    strtolower($tempOption->getData('default_title')) != $option &&
                     strtolower($tempOption->getData('store_title')) != $option &&
-                    strtolower($tempOption->getData('title')) != $option) {
+                    strtolower($tempOption->getData('title')) != $option
+                ) {
                     continue;
                 }
 
-                if ($tempOption->getData('sku') !== null &&
-                    $tempOption->getData('sku') !== false) {
+                if (
+                    $tempOption->getData('sku') !== null &&
+                    $tempOption->getData('sku') !== false
+                ) {
                     $tempSku = $tempOption->getData('sku');
                 }
 

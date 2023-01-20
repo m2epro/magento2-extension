@@ -8,20 +8,17 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
-/**
- * Class \Ess\M2ePro\Observer\Product\AddUpdate\Before
- */
 class Before extends AbstractAddUpdate
 {
+    /** @var array */
     public static $proxyStorage = [];
 
+    /** @var \Ess\M2ePro\Observer\Product\AddUpdate\Before\ProxyFactory */
     private $proxyFactory = null;
     /**
      * @var null|\Ess\M2ePro\Observer\Product\AddUpdate\Before\Proxy
      */
     private $proxy = null;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Observer\Product\AddUpdate\Before\ProxyFactory $proxyFactory,

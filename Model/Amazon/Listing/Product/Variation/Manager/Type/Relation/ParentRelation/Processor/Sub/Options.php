@@ -55,10 +55,11 @@ class Options extends AbstractModel
             /** @var ChildRelation $typeModel */
             $typeModel = $amazonListingProduct->getVariationManager()->getTypeModel();
 
-            if (!$typeModel->isActualProductAttributes() ||
+            if (
+                !$typeModel->isActualProductAttributes() ||
                 !$typeModel->isActualMatchedAttributes() ||
                 ($typeModel->isVariationProductMatched() &&
-                !$typeModel->isActualProductVariation())
+                    !$typeModel->isActualProductVariation())
             ) {
                 $typeModel->resetProductVariation();
             }
@@ -70,7 +71,7 @@ class Options extends AbstractModel
                 }
 
                 $currentChannelOptions = $channelVariations[$amazonListingProduct->getGeneralId()];
-                $childChannelOptions   = $typeModel->getChannelOptions();
+                $childChannelOptions = $typeModel->getChannelOptions();
 
                 if ($currentChannelOptions != $childChannelOptions) {
                     $typeModel->setChannelVariation($currentChannelOptions);
@@ -82,7 +83,8 @@ class Options extends AbstractModel
                 continue;
             }
 
-            if ($typeModel->isVariationProductMatched() && $typeModel->isVariationChannelMatched() &&
+            if (
+                $typeModel->isVariationProductMatched() && $typeModel->isVariationChannelMatched() &&
                 count($typeModel->getProductOptions()) != count($typeModel->getChannelOptions())
             ) {
                 $this->getProcessor()->tryToRemoveChildListingProduct($listingProduct);
@@ -161,7 +163,8 @@ class Options extends AbstractModel
                 continue;
             }
 
-            if ($childListingProduct->isLocked()
+            if (
+                $childListingProduct->isLocked()
                 || $childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
             ) {
                 continue;
@@ -355,14 +358,16 @@ class Options extends AbstractModel
             /** @var ChildRelation $childTypeModel */
             $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
 
-            if ($type == 'product' &&
+            if (
+                $type == 'product' &&
                 $childTypeModel->isVariationProductMatched() &&
                 $options == $childTypeModel->getProductOptions()
             ) {
                 return $childListingProduct;
             }
 
-            if ($type == 'channel' &&
+            if (
+                $type == 'channel' &&
                 $childTypeModel->isVariationChannelMatched() &&
                 $options == $childTypeModel->getChannelOptions()
             ) {

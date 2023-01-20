@@ -13,23 +13,25 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Option;
  */
 class Resolver extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var array  */
     private $sourceOption = [];
-
+    /** @var array  */
     private $destinationOptions = [];
-
+    /** @var array  */
     private $matchedAttributes = [];
-
+    /** @var null  */
     private $resolvedGeneralId = null;
 
     //########################################
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setSourceOption(array $options)
     {
-        $this->sourceOption      = $options;
+        $this->sourceOption = $options;
         $this->resolvedGeneralId = null;
 
         return $this;
@@ -37,12 +39,13 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $options
+     *
      * @return $this
      */
     public function setDestinationOptions(array $options)
     {
         $this->destinationOptions = $options;
-        $this->resolvedGeneralId  = null;
+        $this->resolvedGeneralId = null;
 
         return $this;
     }
@@ -51,11 +54,13 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $matchedAttributes
+     *
      * @return $this
      */
     public function setMatchedAttributes(array $matchedAttributes)
     {
         $this->matchedAttributes = $matchedAttributes;
+
         return $this;
     }
 

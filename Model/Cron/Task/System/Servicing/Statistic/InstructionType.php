@@ -10,12 +10,12 @@ namespace Ess\M2ePro\Model\Cron\Task\System\Servicing\Statistic;
 
 class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/servicing/statistic/instruction_type';
+    public const NICK = 'system/servicing/statistic/instruction_type';
 
-    const REGISTRY_KEY_DATA = '/system/servicing/statistic/instruction_type/type_timing/';
-    const REGISTRY_KEY_LAST_LAUNCH = '/system/servicing/statistic/instruction_type/last_launch/';
+    public const REGISTRY_KEY_DATA = '/system/servicing/statistic/instruction_type/type_timing/';
+    public const REGISTRY_KEY_LAST_LAUNCH = '/system/servicing/statistic/instruction_type/last_launch/';
 
-    const DEFAULT_TIME_LIMIT = 300;
+    public const DEFAULT_TIME_LIMIT = 300;
 
     /** @var \Ess\M2ePro\Model\Registry\Manager $registryManager */
     private $registryManager;
@@ -60,9 +60,11 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        if (!$this->statisticManager->isTaskEnabled(
-            \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager::TASK_LISTING_PRODUCT_INSTRUCTION_TYPE
-        )) {
+        if (
+            !$this->statisticManager->isTaskEnabled(
+                \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager::TASK_LISTING_PRODUCT_INSTRUCTION_TYPE
+            )
+        ) {
             return;
         }
 
@@ -133,12 +135,14 @@ class InstructionType extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $date = $this->currentDateTime->format('Y-m-d');
         $tableName = $this->listingProductInstruction->getMainTable();
 
-        $typeQty = $this->listingProductInstruction->getConnection()->query("
+        $typeQty = $this->listingProductInstruction->getConnection()->query(
+            "
             SELECT `type`, COUNT(*) as `qty`
             FROM `{$tableName}`
             WHERE `create_date` BETWEEN '{$startTime}' AND '{$endTime}'
             GROUP BY `type`
-         ")->fetchAll(\PDO::FETCH_ASSOC);
+         "
+        )->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($typeQty as $item) {
             $type = $item['type'];

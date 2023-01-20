@@ -32,6 +32,7 @@ class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazo
         }
 
         $this->setJsonContent($descriptionTemplates);
+
         return $this->getResult();
     }
 

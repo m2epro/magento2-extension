@@ -23,6 +23,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
 
             if (!$order->getId()) {
                 $this->getMessageManager()->addError($this->__('Listing does not exist.'));
+
                 return $this->_redirect('*/*/index');
             }
 
@@ -35,6 +36,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Order
 
         $this->setPageHelpLink('x/gv1IB');
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Log\Order::class));
+
         return $this->getResult();
     }
 }

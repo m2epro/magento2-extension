@@ -13,15 +13,16 @@ namespace Ess\M2ePro\Model\Connector\Connection;
  */
 class Response extends \Ess\M2ePro\Model\AbstractModel
 {
-    const SERVER_MAINTENANCE_CODE = 3;
+    public const SERVER_MAINTENANCE_CODE = 3;
 
+    /** @var array  */
     protected $data = [];
 
     /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messages */
     protected $messages = null;
-
+    /** @var string  */
     protected $resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS;
-
+    /** @var null  */
     protected $requestTime = null;
 
     //########################################
@@ -30,11 +31,13 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
     {
         $response = json_decode($data, true);
 
-        if (!is_array($response) ||
+        if (
+            !is_array($response) ||
             !isset($response['data']) || !is_array($response['data']) ||
             !isset($response['response']['result']['messages']) ||
             !is_array($response['response']['result']['messages']) ||
-            !isset($response['response']['result']['type'])) {
+            !isset($response['response']['result']['type'])
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Connection\InvalidResponse(
                 'Invalid Response Format.',
                 ['response' => $data]
@@ -102,6 +105,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
     public function setRequestTime($requestTime)
     {
         $this->requestTime = $requestTime;
+
         return $this;
     }
 
@@ -143,16 +147,19 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($resultType !== null) {
             $this->resultType = $resultType;
+
             return;
         }
 
         if ($this->getMessages()->hasErrorEntities()) {
             $this->resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR;
+
             return;
         }
 
         if ($this->getMessages()->hasWarningEntities()) {
             $this->resultType = \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING;
+
             return;
         }
 

@@ -35,6 +35,7 @@ abstract class AffectedListingsProductsAbstract extends \Ess\M2ePro\Model\Abstra
     public function setModel(\Ess\M2ePro\Model\ActiveRecord\AbstractModel $model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -71,6 +72,7 @@ abstract class AffectedListingsProductsAbstract extends \Ess\M2ePro\Model\Abstra
 
     /**
      * @param array $filters
+     *
      * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
      */
     abstract public function loadCollection(array $filters = []);

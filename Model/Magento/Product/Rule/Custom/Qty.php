@@ -36,6 +36,7 @@ class Qty extends AbstractModel
      * - Regular engine: Index table has 0 QTY for complex products (bundle, configurable, grouped)
      *
      * @param \Magento\Catalog\Model\Product $product
+     *
      * @return float
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -48,7 +49,8 @@ class Qty extends AbstractModel
             return $magentoProduct->isBundleType() ? 0 : $magentoProduct->getQty();
         }
 
-        if ($magentoProduct->isBundleType() ||
+        if (
+            $magentoProduct->isBundleType() ||
             $magentoProduct->isConfigurableType() ||
             $magentoProduct->isGroupedType()
         ) {

@@ -117,9 +117,9 @@ class NotListed extends AbstractModel
         $scheduledAction->addData(
             [
                 'listing_product_id' => $this->input->getListingProduct()->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+                'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
             ]
         );
 
@@ -257,7 +257,7 @@ class NotListed extends AbstractModel
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
-                    'prefix'   => \Ess\M2ePro\Model\Amazon\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX
+                    'prefix' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::LIST_ADVANCED_RULES_PREFIX,
                 ]
             );
             $ruleModel->loadFromSerialized($amazonSynchronizationTemplate->getListAdvancedRulesFilters());

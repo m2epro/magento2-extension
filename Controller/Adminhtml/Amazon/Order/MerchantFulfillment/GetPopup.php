@@ -30,18 +30,19 @@ class GetPopup extends Order
             $orderId
         );
 
-
         $orderFulfillmentData = $order->getChildObject()->getMerchantFulfillmentData();
         $orderItems = $order->getItemsCollection()->getItems();
 
         $responseData = [
             'status' => true,
-            'html'   => ''
+            'html' => '',
         ];
 
         if (!empty($orderFulfillmentData)) {
             $popUp = $this->getLayout()
-                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Information::class);
+                          ->createBlock(
+                              \Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Information::class
+                          );
 
             $popUp->setData('fulfillment_details', $orderFulfillmentData);
             $popUp->setData('order_items', $orderItems);
@@ -56,8 +57,10 @@ class GetPopup extends Order
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Message::class);
             $popUp->setData('message', 'fbaError');
             $responseData['status'] = false;
-        } elseif ($order->getChildObject()->isCanceled() || $order->getChildObject()->isPending() ||
-            $order->getChildObject()->isShipped()) {
+        } elseif (
+            $order->getChildObject()->isCanceled() || $order->getChildObject()->isPending() ||
+            $order->getChildObject()->isShipped()
+        ) {
             $popUp = $this->getLayout()
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Message::class);
             $popUp->setData('message', 'statusError');
@@ -72,8 +75,8 @@ class GetPopup extends Order
                         'order_items' => $orderItems,
                         'order_currency' => $order->getChildObject()->getCurrency(),
                         'declared_value' => $order->getChildObject()->getSubtotalPrice(),
-                        'delivery_date_to' => $order->getChildObject()->getDeliveryDateTo()
-                    ]
+                        'delivery_date_to' => $order->getChildObject()->getDeliveryDateTo(),
+                    ],
                 ]
             );
         }

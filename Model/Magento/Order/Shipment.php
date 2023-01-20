@@ -21,10 +21,10 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    /** @var \Magento\Framework\DB\TransactionFactory  */
+    /** @var \Magento\Framework\DB\TransactionFactory */
     protected $transactionFactory;
 
-    /** @var \Ess\M2ePro\Model\Magento\Order\Shipment\DocumentFactory  */
+    /** @var \Ess\M2ePro\Model\Magento\Order\Shipment\DocumentFactory */
     protected $shipmentDocumentFactory;
 
     //########################################
@@ -45,11 +45,13 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param \Magento\Sales\Model\Order $magentoOrder
+     *
      * @return $this
      */
     public function setMagentoOrder(\Magento\Sales\Model\Order $magentoOrder)
     {
         $this->magentoOrder = $magentoOrder;
+
         return $this;
     }
 
@@ -70,7 +72,6 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Magento\Framework\DB\Transaction $transaction */
         $transaction = $this->transactionFactory->create();
         foreach ($this->shipments as $shipment) {
-
             // it is necessary for updating qty_shipped field in sales_flat_order_item table
             $shipment->getOrder()->setIsInProcess(true);
 

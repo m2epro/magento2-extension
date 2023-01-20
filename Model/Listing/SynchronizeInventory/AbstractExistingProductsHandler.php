@@ -31,11 +31,14 @@ abstract class AbstractExistingProductsHandler extends AbstractHandler
 
     /**
      * @param array $ids
+     *
      * @return \Zend_Db_Statement_Interface
      */
     protected function getPdoStatementExistingListings(array $ids)
     {
-        $ids = array_map(function ($id) { return (string) $id; }, $ids);
+        $ids = array_map(function ($id) {
+            return (string)$id;
+        }, $ids);
 
         $select = clone $this->getPreparedProductsCollection()->getSelect();
         $select->where("`second_table`.`{$this->getInventoryIdentifier()}` IN (?)", $ids);
@@ -45,6 +48,7 @@ abstract class AbstractExistingProductsHandler extends AbstractHandler
 
     /**
      * @param array $parentIds
+     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function processParentProcessors(array $parentIds)
@@ -78,6 +82,7 @@ abstract class AbstractExistingProductsHandler extends AbstractHandler
      * @param array $existData
      * @param array $newData
      * @param $key
+     *
      * @return bool
      */
     protected function isDataChanged($existData, $newData, $key)

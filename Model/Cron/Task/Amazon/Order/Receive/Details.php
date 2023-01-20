@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive;
  */
 class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/order/receive/details';
+    public const NICK = 'amazon/order/receive/details';
 
     /** @var int $interval (in seconds) */
     protected $interval = 86400;
@@ -63,7 +63,6 @@ class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($permittedAccounts as $account) {
-
             $this->getOperationHistory()->addText('Starting account "' . $account->getTitle() . '"');
 
             $this->getOperationHistory()->addTimePoint(
@@ -100,6 +99,7 @@ class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'Account'
         )->getCollection();
+
         return $accountsCollection->getItems();
     }
 
@@ -144,6 +144,7 @@ class Details extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
+        /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive\Details\Requester $connectorObj */
         $connectorObj = $dispatcherObject->getCustomConnector(
             'Cron_Task_Amazon_Order_Receive_Details_Requester',
             ['items' => $amazonOrdersIds],

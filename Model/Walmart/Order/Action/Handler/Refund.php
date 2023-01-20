@@ -19,8 +19,10 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
 
     public function isNeedProcess()
     {
-        if (!$this->getWalmartOrder()->isShipped() &&
-            !$this->getWalmartOrder()->isPartiallyShipped()) {
+        if (
+            !$this->getWalmartOrder()->isShipped() &&
+            !$this->getWalmartOrder()->isPartiallyShipped()
+        ) {
             return false;
         }
 
@@ -52,30 +54,32 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         foreach ($params['items'] as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
-                ->getCollection()
-                ->addFieldToFilter('order_id', $this->getOrder()->getId())
-                ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
-                ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('order_id', $this->getOrder()->getId())
+                                              ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
+                                              ->getFirstItem();
 
-            if ($orderItem->getId() !== null &&
-                $orderItem->getChildObject()->getStatus() != OrderItem::STATUS_SHIPPED) {
+            if (
+                $orderItem->getId() !== null &&
+                $orderItem->getChildObject()->getStatus() != OrderItem::STATUS_SHIPPED
+            ) {
                 continue;
             }
 
             $resultItems[] = [
-                'number'  => $itemData['item_id'],
-                'qty'     => $itemData['qty'],
+                'number' => $itemData['item_id'],
+                'qty' => $itemData['qty'],
                 'product' => [
                     'price' => $itemData['prices']['product'],
-                    'tax'   => $itemData['taxes']['product'],
+                    'tax' => $itemData['taxes']['product'],
                 ],
             ];
         }
 
         return [
             'channel_order_id' => $this->getWalmartOrder()->getWalmartOrderId(),
-            'currency'         => $this->getWalmartOrder()->getCurrency(),
-            'items'            => $resultItems,
+            'currency' => $this->getWalmartOrder()->getCurrency(),
+            'items' => $resultItems,
         ];
     }
 
@@ -83,6 +87,7 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
     {
         if (!isset($responseData['result']) || !$responseData['result']) {
             $this->processError();
+
             return;
         }
 
@@ -92,10 +97,10 @@ class Refund extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractMode
         foreach ($params as $itemData) {
             /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
             $orderItem = $this->walmartFactory->getObject('Order_Item')
-                ->getCollection()
-                ->addFieldToFilter('order_id', $this->getOrder()->getId())
-                ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
-                ->getFirstItem();
+                                              ->getCollection()
+                                              ->addFieldToFilter('order_id', $this->getOrder()->getId())
+                                              ->addFieldToFilter('walmart_order_item_id', $itemData['item_id'])
+                                              ->getFirstItem();
 
             /**
              * Walmart returns the same Order Item more than one time with single QTY. That data was merged.

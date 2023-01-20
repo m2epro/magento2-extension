@@ -18,18 +18,18 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
     protected function getCustomFilters()
     {
         $walmartFilters = [
-            'walmart_sku'                  => 'WalmartSku',
-            'walmart_gtin'                 => 'WalmartGtin',
-            'walmart_upc'                  => 'WalmartUpc',
-            'walmart_ean'                  => 'WalmartEan',
-            'walmart_isbn'                 => 'WalmartIsbn',
-            'walmart_wpid'                 => 'WalmartWpid',
-            'walmart_item_id'              => 'WalmartItemId',
-            'walmart_online_qty'           => 'WalmartOnlineQty',
-            'walmart_online_price'         => 'WalmartOnlinePrice',
-            'walmart_start_date'           => 'WalmartStartDate',
-            'walmart_end_date'             => 'WalmartEndDate',
-            'walmart_status'               => 'WalmartStatus',
+            'walmart_sku' => 'WalmartSku',
+            'walmart_gtin' => 'WalmartGtin',
+            'walmart_upc' => 'WalmartUpc',
+            'walmart_ean' => 'WalmartEan',
+            'walmart_isbn' => 'WalmartIsbn',
+            'walmart_wpid' => 'WalmartWpid',
+            'walmart_item_id' => 'WalmartItemId',
+            'walmart_online_qty' => 'WalmartOnlineQty',
+            'walmart_online_price' => 'WalmartOnlinePrice',
+            'walmart_start_date' => 'WalmartStartDate',
+            'walmart_end_date' => 'WalmartEndDate',
+            'walmart_status' => 'WalmartStatus',
             'walmart_online_price_invalid' => 'WalmartOnlinePriceInvalid',
         ];
 
@@ -42,6 +42,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
     /**
      * @param $filterId
      * @param $isReadyToCache
+     *
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
     protected function getCustomFilterInstance($filterId, $isReadyToCache = true)
@@ -64,19 +65,21 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         $model = $this->modelFactory->getObject(
             'Walmart\Magento\Product\Rule\Custom\\' . $customFilters[$filterId],
             [
-                'filterOperator'  => $this->getData('operator'),
-                'filterCondition' => $this->getData('value')
+                'filterOperator' => $this->getData('operator'),
+                'filterCondition' => $this->getData('value'),
             ]
         );
 
         $isReadyToCache && $this->_customFiltersCache[$filterId] = $model;
+
         return $model;
     }
 
     /**
      * If param is array validate each values till first true result
      *
-     * @param   mixed $validatedValue product attribute value
+     * @param mixed $validatedValue product attribute value
+     *
      * @return  bool
      */
 

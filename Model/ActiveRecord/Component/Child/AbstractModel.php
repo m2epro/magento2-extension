@@ -15,7 +15,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
     protected $parentObject = null;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
     protected $parentFactory;
 
     //########################################
@@ -82,7 +82,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
             throw new \Ess\M2ePro\Model\Exception\Logic('Set Component Mode first');
         }
 
-        $modelName = str_replace('Ess\M2ePro\Model\ResourceModel\\'.ucwords($tempMode).'\\', '', $this->_resourceName);
+        $modelName = str_replace(
+            'Ess\M2ePro\Model\ResourceModel\\' . ucwords($tempMode) . '\\',
+            '',
+            $this->_resourceName
+        );
 
         if ($this->isCacheLoading()) {
             $this->parentObject = $this->activeRecordFactory->getCachedObjectLoaded($modelName, $this->getId());
@@ -104,6 +108,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
      * @param bool $asObjects
      * @param array $filters
      * @param array $sort
+     *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

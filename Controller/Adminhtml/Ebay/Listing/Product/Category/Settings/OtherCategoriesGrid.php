@@ -21,7 +21,9 @@ class OtherCategoriesGrid extends Settings
     {
         $categoriesData = $this->getSessionValue($this->getSessionDataKey());
         $block = $this->getLayout()
-          ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Other\Product\Grid::class);
+                      ->createBlock(
+                          \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Other\Product\Grid::class
+                      );
         $block->setCategoriesData($categoriesData);
 
         $this->setAjaxContent($block);

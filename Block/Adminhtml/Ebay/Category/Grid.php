@@ -8,14 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Category;
 
-use \Ess\M2ePro\Model\Ebay\Template\Category as Template;
+use Ess\M2ePro\Model\Ebay\Template\Category as Template;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
@@ -37,10 +37,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         array $data = []
     ) {
-        $this->ebayFactory               = $ebayFactory;
-        $this->resourceConnection        = $resourceConnection;
+        $this->ebayFactory = $ebayFactory;
+        $this->resourceConnection = $resourceConnection;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
-        $this->magentoAttributeHelper    = $magentoAttributeHelper;
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->databaseHelper = $databaseHelper;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -66,18 +66,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'main_table.category_mode',
                 'main_table.category_id',
                 'main_table.category_attribute',
-                'main_table.marketplace_id'
+                'main_table.marketplace_id',
             ]
         );
 
         $collection->getSelect()->joinLeft(
             [
                 'edc' => $this->databaseHelper
-                    ->getTableNameWithPrefix('m2epro_ebay_dictionary_category')
+                    ->getTableNameWithPrefix('m2epro_ebay_dictionary_category'),
             ],
             'edc.category_id = main_table.category_id AND edc.marketplace_id = main_table.marketplace_id',
             [
-                'state' => new \Zend_Db_Expr('IF(edc.category_id, 1, 0)')
+                'state' => new \Zend_Db_Expr('IF(edc.category_id, 1, 0)'),
             ]
         );
 
@@ -85,80 +85,97 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $connection = $this->resourceConnection->getConnection();
 
         $selectPrimary = $connection->select()
-            ->from(
-                ['elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
-                [new \Zend_Db_Expr('COUNT(listing_product_id)')]
-            )->joinLeft(
-                [
-                    'etc1' =>
-                        $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable()
-                ],
-                'elp.template_category_id = etc1.id',
-                []
-            )
-            ->where(
-                str_replace(
-                    ['%ali%', '%ebay_mode%'],
-                    ['etc1', Template::CATEGORY_MODE_EBAY],
-                    'IF(%ali%.category_mode = %ebay_mode%, %ali%.category_id, %ali%.category_attribute) = IF(
+                                    ->from(
+                                        [
+                                            'elp' => $this->activeRecordFactory->getObject('Ebay_Listing_Product')
+                                                                               ->getResource()
+                                                                               ->getMainTable(),
+                                        ],
+                                        [new \Zend_Db_Expr('COUNT(listing_product_id)')]
+                                    )->joinLeft(
+                                        [
+                                        'etc1' =>
+                                        $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable(),
+                                        ],
+                                        'elp.template_category_id = etc1.id',
+                                        []
+                                    )
+                                    ->where(
+                                        str_replace(
+                                            ['%ali%', '%ebay_mode%'],
+                                            ['etc1', Template::CATEGORY_MODE_EBAY],
+                                            'IF(%ali%.category_mode = %ebay_mode%, %ali%.category_id, %ali%.category_attribute) = IF(
                         main_table.category_mode = %ebay_mode%, main_table.category_id, main_table.category_attribute
                     )'
-                )
-            )
-            ->where('main_table.marketplace_id = etc1.marketplace_id');
+                                        )
+                                    )
+                                    ->where('main_table.marketplace_id = etc1.marketplace_id');
 
         $selectSecondary = $connection->select()
-            ->from(
-                ['elp2' =>
-                    $this->activeRecordFactory->getObject('Ebay_Listing_Product')->getResource()->getMainTable()],
-                [new \Zend_Db_Expr('COUNT(listing_product_id)')]
-            )
-            ->joinLeft(
-                [
-                    'etc2' =>
-                        $this->activeRecordFactory->getObject('Ebay_Template_Category')->getResource()->getMainTable()
-                ],
-                'elp2.template_category_secondary_id = etc2.id',
-                []
-            )
-            ->where(
-                str_replace(
-                    ['%ali%', '%ebay_mode%'],
-                    ['etc2', Template::CATEGORY_MODE_EBAY],
-                    'IF(%ali%.category_mode = %ebay_mode%, %ali%.category_id, %ali%.category_attribute) = IF(
+                                      ->from(
+                                          [
+                                              'elp2' =>
+                                                  $this->activeRecordFactory->getObject('Ebay_Listing_Product')
+                                                                            ->getResource()
+                                                                            ->getMainTable(),
+                                          ],
+                                          [new \Zend_Db_Expr('COUNT(listing_product_id)')]
+                                      )
+                                      ->joinLeft(
+                                          [
+                                              'etc2' =>
+                                                  $this->activeRecordFactory->getObject('Ebay_Template_Category')
+                                                                            ->getResource()
+                                                                            ->getMainTable(),
+                                          ],
+                                          'elp2.template_category_secondary_id = etc2.id',
+                                          []
+                                      )
+                                      ->where(
+                                          str_replace(
+                                              ['%ali%', '%ebay_mode%'],
+                                              ['etc2', Template::CATEGORY_MODE_EBAY],
+                                              'IF(%ali%.category_mode = %ebay_mode%, %ali%.category_id, %ali%.category_attribute) = IF(
                         main_table.category_mode = %ebay_mode%, main_table.category_id, main_table.category_attribute
                     )'
-                )
-            )
-            ->where('main_table.marketplace_id = etc2.marketplace_id');
+                                          )
+                                      )
+                                      ->where('main_table.marketplace_id = etc2.marketplace_id');
 
         $collection->getSelect()->columns(
             [
-                'template_category_id_count'           => $selectPrimary,
-                'template_category_secondary_id_count' => $selectSecondary
+                'template_category_id_count' => $selectPrimary,
+                'template_category_secondary_id_count' => $selectSecondary,
             ]
         );
 
         //----------------------------------------
 
         $selectSpecificsTotal = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Ebay_Template_Category_Specific')->getResource()->getMainTable(),
-                [new \Zend_Db_Expr('COUNT(id)')]
-            )
-            ->where('template_category_id = main_table.id');
+                                           ->from(
+                                               $this->activeRecordFactory->getObject('Ebay_Template_Category_Specific')
+                                                                         ->getResource()
+                                                                         ->getMainTable(),
+                                               [new \Zend_Db_Expr('COUNT(id)')]
+                                           )
+                                           ->where('template_category_id = main_table.id');
 
         $collection->getSelect()->columns(
             ['template_category_specifics_count' => $selectSpecificsTotal]
         );
 
         $selectSpecificsUsed = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Ebay_Template_Category_Specific')->getResource()->getMainTable(),
-                [new \Zend_Db_Expr('COUNT(id)')]
-            )
-            ->where('template_category_id = main_table.id')
-            ->where('value_mode != ?', \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE);
+                                          ->from(
+                                              $this->activeRecordFactory->getObject('Ebay_Template_Category_Specific')
+                                                                        ->getResource()
+                                                                        ->getMainTable(),
+                                              [new \Zend_Db_Expr('COUNT(id)')]
+                                          )
+                                          ->where('template_category_id = main_table.id')
+                                          ->where(
+                                              'value_mode != ?',
+                                              \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE
+                                          );
 
         $collection->getSelect()->columns(
             ['template_category_specifics_used_count' => $selectSpecificsUsed]
@@ -167,6 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         //----------------------------------------
 
         $this->setCollection($collection);
+
         return parent::_prepareCollection();
     }
 
@@ -175,11 +193,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn(
             'path',
             [
-                'header'         => $this->__('Title'),
-                'align'          => 'left',
-                'type'           => 'text',
-                'escape'         => true,
-                'index'          => 'main_table.category_path',
+                'header' => $this->__('Title'),
+                'align' => 'left',
+                'type' => 'text',
+                'escape' => true,
+                'index' => 'main_table.category_path',
                 'frame_callback' => [$this, 'callbackColumnPath'],
                 'filter_condition_callback' => [$this, 'callbackFilterPath'],
             ]
@@ -188,16 +206,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn(
             'marketplace',
             [
-                'header'        => $this->__('Marketplace'),
-                'align'         => 'left',
-                'type'          => 'options',
-                'width'         => '150px',
-                'index'         => 'marketplace_id',
-                'filter_index'  => 'main_table.marketplace_id',
-                'options'       => $this->ebayFactory->getObject('Marketplace')->getCollection()
-                    ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-                    ->setOrder('sorder', 'ASC')
-                    ->toOptionHash()
+                'header' => $this->__('Marketplace'),
+                'align' => 'left',
+                'type' => 'options',
+                'width' => '150px',
+                'index' => 'marketplace_id',
+                'filter_index' => 'main_table.marketplace_id',
+                'options' => $this->ebayFactory->getObject('Marketplace')->getCollection()
+                                               ->addFieldToFilter(
+                                                   'status',
+                                                   \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE
+                                               )
+                                               ->setOrder('sorder', 'ASC')
+                                               ->toOptionHash(),
             ]
         );
 
@@ -205,10 +226,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'products_primary',
             [
                 'header' => $this->__('Products: Primary'),
-                'align'  => 'left',
-                'type'   => 'text',
-                'width'  => '100px',
-                'index'  => 'template_category_id_count',
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '100px',
+                'index' => 'template_category_id_count',
                 'filter' => false,
             ]
         );
@@ -217,10 +238,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'products_secondary',
             [
                 'header' => $this->__('Products: Secondary'),
-                'align'  => 'left',
-                'type'   => 'text',
-                'width'  => '100px',
-                'index'  => 'template_category_secondary_id_count',
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '100px',
+                'index' => 'template_category_secondary_id_count',
                 'filter' => false,
             ]
         );
@@ -229,10 +250,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'specifics_total',
             [
                 'header' => $this->__('Specifics: Total'),
-                'align'  => 'left',
-                'type'   => 'text',
-                'width'  => '100px',
-                'index'  => 'template_category_specifics_count',
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '100px',
+                'index' => 'template_category_specifics_count',
                 'filter' => false,
             ]
         );
@@ -241,10 +262,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'specifics_used',
             [
                 'header' => $this->__('Specifics: Used'),
-                'align'  => 'left',
-                'type'   => 'text',
-                'width'  => '100px',
-                'index'  => 'template_category_specifics_used_count',
+                'align' => 'left',
+                'type' => 'text',
+                'width' => '100px',
+                'index' => 'template_category_specifics_used_count',
                 'filter' => false,
             ]
         );
@@ -252,15 +273,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn(
             'state',
             [
-                'header'        => $this->__('State'),
-                'align'         => 'left',
-                'type'          => 'options',
-                'index'         => 'state',
-                'width'         => '150px',
-                'sortable'      => false,
+                'header' => $this->__('State'),
+                'align' => 'left',
+                'type' => 'options',
+                'index' => 'state',
+                'width' => '150px',
+                'sortable' => false,
                 'filter_condition_callback' => [$this, 'callbackFilterState'],
-                'frame_callback'=> [$this, 'callbackColumnState'],
-                'options'       => [
+                'frame_callback' => [$this, 'callbackColumnState'],
+                'options' => [
                     1 => $this->__('Active'),
                     0 => $this->__('Removed'),
                 ],
@@ -270,27 +291,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn(
             'actions',
             [
-                'header'    => $this->__('Actions'),
-                'align'     => 'left',
-                'width'     => '70px',
-                'type'      => 'action',
-                'index'     => 'actions',
-                'filter'    => false,
-                'sortable'  => false,
-                'renderer'  => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-                'getter'    => 'getTemplateId',
-                'actions'   => [
+                'header' => $this->__('Actions'),
+                'align' => 'left',
+                'width' => '70px',
+                'type' => 'action',
+                'index' => 'actions',
+                'filter' => false,
+                'sortable' => false,
+                'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
+                'getter' => 'getTemplateId',
+                'actions' => [
                     [
-                        'caption'   => $this->__('View'),
-                        'url'       => [
+                        'caption' => $this->__('View'),
+                        'url' => [
                             'base' => '*/ebay_category/view',
                             'params' => [
                                 'template_id' => '$id',
-                            ]
+                            ],
                         ],
-                        'field' => 'id'
+                        'field' => 'id',
                     ],
-                ]
+                ],
             ]
         );
 
@@ -305,9 +326,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->getMassactionBlock()->addItem(
             'delete',
             [
-                'label'   => $this->__('Remove'),
-                'url'     => $this->getUrl('*/ebay_category/delete'),
-                'confirm' => $this->__('Are you sure?')
+                'label' => $this->__('Remove'),
+                'url' => $this->getUrl('*/ebay_category/delete'),
+                'confirm' => $this->__('Are you sure?'),
             ]
         );
 
@@ -326,7 +347,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value .= ' (' . $row->getData('category_id') . ')';
 
         if ($mode == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE) {
-            $value = $this->__('Magento Attribute') .' > '.
+            $value = $this->__('Magento Attribute') . ' > ' .
                 $this->magentoAttributeHelper->getAttributeLabel($row->getData('category_attribute'));
         }
 
@@ -353,7 +374,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $collection->getSelect()->where(
             'main_table.category_path LIKE ? OR main_table.category_id LIKE ? OR main_table.category_attribute LIKE ?',
-            '%'. $value . '%'
+            '%' . $value . '%'
         );
     }
 
@@ -367,12 +388,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($value == 1) {
             $collection->getSelect()->where(
                 '(edc.category_id IS NOT NULL) OR
-                (main_table.category_mode = '.\Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE.')'
+                (main_table.category_mode = ' . \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE . ')'
             );
         } else {
             $collection->getSelect()->where(
                 '(edc.category_id IS NULL) AND
-                (main_table.category_mode != '.\Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE.')'
+                (main_table.category_mode != ' . \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_ATTRIBUTE . ')'
             );
         }
     }

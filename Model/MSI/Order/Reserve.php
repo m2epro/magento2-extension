@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author     M2E Pro Developers Team
  * @copyright  M2E LTD
@@ -18,13 +19,13 @@ use Magento\InventorySalesApi\Api\PlaceReservationsForSalesEventInterface;
  */
 class Reserve extends \Ess\M2ePro\Model\AbstractModel
 {
-    const EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED = 'm2epro_compensating_after_fba_order_created';
-    const EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED = 'm2epro_compensating_after_fba_order_shipped';
+    public const EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED = 'm2epro_compensating_after_fba_order_created';
+    public const EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED = 'm2epro_compensating_after_fba_order_shipped';
 
-    const EVENT_TYPE_MAGENTO_RESERVATION_PLACED   = 'm2epro_reservation_placed';
-    const EVENT_TYPE_MAGENTO_RESERVATION_RELEASED = 'm2epro_reservation_released';
+    public const EVENT_TYPE_MAGENTO_RESERVATION_PLACED = 'm2epro_reservation_placed';
+    public const EVENT_TYPE_MAGENTO_RESERVATION_RELEASED = 'm2epro_reservation_released';
 
-    const M2E_ORDER_OBJECT_TYPE = 'm2epro_order';
+    public const M2E_ORDER_OBJECT_TYPE = 'm2epro_order';
 
     // ---------------------------------------
 
@@ -53,10 +54,10 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
-        $this->salesEventFactory   = $objectManager->get(SalesEventInterfaceFactory::class);
+        $this->salesEventFactory = $objectManager->get(SalesEventInterfaceFactory::class);
         $this->salesChannelFactory = $objectManager->get(SalesChannelInterfaceFactory::class);
-        $this->itemsToSellFactory  = $objectManager->get(ItemToSellInterfaceFactory::class);
-        $this->placeReserve        = $objectManager->get(PlaceReservationsForSalesEventInterface::class);
+        $this->itemsToSellFactory = $objectManager->get(ItemToSellInterfaceFactory::class);
+        $this->placeReserve = $objectManager->get(PlaceReservationsForSalesEventInterface::class);
     }
 
     //########################################
@@ -66,16 +67,15 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         $salesChannel = $this->salesChannelFactory->create([
             'data' => [
                 'type' => SalesChannelInterface::TYPE_WEBSITE,
-                'code' => $this->getHelper('Magento\Store')->getWebsite($storeId)->getCode()
-            ]
+                'code' => $this->getHelper('Magento\Store')->getWebsite($storeId)->getCode(),
+            ],
         ]);
 
         $convertedItems = [];
         foreach ($itemsToSell as $itemToSell) {
-
             $convertedItems[] = $this->itemsToSellFactory->create([
                 'sku' => $itemToSell['sku'],
-                'qty' => $itemToSell['qty']
+                'qty' => $itemToSell['qty'],
             ]);
         }
 

@@ -36,16 +36,16 @@ class Integration extends Command
     {
         if ($this->getRequest()->getParam('print')) {
             $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
-            $lp               = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId);
-            $componentMode    = $lp->getComponentMode();
-            $requestType      = $this->getRequest()->getParam('request_type');
+            $lp = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId);
+            $componentMode = $lp->getComponentMode();
+            $requestType = $this->getRequest()->getParam('request_type');
 
             if ($componentMode == 'ebay') {
                 $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
-                    'Ebay_Listing_Product_Action_Type_'.$requestType.'_Request'
+                    'Ebay_Listing_Product_Action_Type_' . $requestType . '_Request'
                 );
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
@@ -59,7 +59,7 @@ class Integration extends Command
 
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
-                    'Amazon_Listing_Product_Action_Type_'.$requestType.'_Request'
+                    'Amazon_Listing_Product_Action_Type_' . $requestType . '_Request'
                 );
                 $request->setParams([]);
                 $request->setListingProduct($lp);
@@ -67,9 +67,9 @@ class Integration extends Command
 
                 if ($requestType == 'ListAction') {
                     $request->setCachedData([
-                        'sku'        => 'placeholder',
+                        'sku' => 'placeholder',
                         'general_id' => 'placeholder',
-                        'list_type'  => 'placeholder'
+                        'list_type' => 'placeholder',
                     ]);
                 }
 
@@ -86,7 +86,7 @@ class Integration extends Command
 
                 /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Request $request */
                 $request = $this->modelFactory->getObject(
-                    'Walmart_Listing_Product_Action_Type_'.$requestType.'_Request'
+                    'Walmart_Listing_Product_Action_Type_' . $requestType . '_Request'
                 );
                 $request->setParams(['sku' => $skuResolver->resolve()]);
                 $request->setListingProduct($lp);
@@ -151,7 +151,7 @@ HTML;
                 $lp->setChildMode(Ebay::NICK);
 
                 /**@var \Ess\M2ePro\Model\Listing\Product $lp */
-               // $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
+                // $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
 
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
@@ -175,8 +175,8 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>NotListed</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetList: '.json_encode($checker->isMeetListRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetList: ' . json_encode($checker->isMeetListRequirements()) . '<br><br>';
                 //--
 
                 //--
@@ -186,8 +186,8 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>Inactive</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetRelist: '.json_encode($checker->isMeetRelistRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetRelist: ' . json_encode($checker->isMeetRelistRequirements()) . '<br><br>';
                 //--
 
                 //--
@@ -197,28 +197,33 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>Active</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetStop: '.json_encode($checker->isMeetStopRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetStop: ' . json_encode($checker->isMeetStopRequirements()) . '<br><br>';
 
-                $html .= 'isMeetReviseQty: '.json_encode($checker->isMeetReviseQtyRequirements()).'<br>';
-                $html .= 'isMeetRevisePrice: '.json_encode($checker->isMeetRevisePriceRequirements()).'<br>';
-                $html .= 'isMeetReviseTitle: '.json_encode($checker->isMeetReviseTitleRequirements()).'<br>';
-                $html .= 'isMeetReviseSubtitle: '.json_encode($checker->isMeetReviseSubtitleRequirements()).'<br>';
-                $html .='isMeetReviseDescription: '.json_encode($checker->isMeetReviseDescriptionRequirements()).'<br>';
-                $html .= 'isMeetReviseImages: '.json_encode($checker->isMeetReviseImagesRequirements()).'<br>';
-                $html .= 'isMeetReviseCategories: '.json_encode($checker->isMeetReviseCategoriesRequirements()).'<br>';
-                $html .= 'isMeetReviseShipping: '.json_encode($checker->isMeetReviseShippingRequirements()).'<br>';
-                $html .= 'isMeetReviseReturn: '.json_encode($checker->isMeetReviseReturnRequirements()).'<br>';
-                $html .= 'isMeetReviseOther: '.json_encode($checker->isMeetReviseOtherRequirements()).'<br><br>';
+                $html .= 'isMeetReviseQty: ' . json_encode($checker->isMeetReviseQtyRequirements()) . '<br>';
+                $html .= 'isMeetRevisePrice: ' . json_encode($checker->isMeetRevisePriceRequirements()) . '<br>';
+                $html .= 'isMeetReviseTitle: ' . json_encode($checker->isMeetReviseTitleRequirements()) . '<br>';
+                $html .= 'isMeetReviseSubtitle: ' . json_encode($checker->isMeetReviseSubtitleRequirements()) . '<br>';
+                $html .= 'isMeetReviseDescription: ' . json_encode(
+                    $checker->isMeetReviseDescriptionRequirements()
+                ) . '<br>';
+                $html .= 'isMeetReviseImages: ' . json_encode($checker->isMeetReviseImagesRequirements()) . '<br>';
+                $html .= 'isMeetReviseCategories: ' . json_encode(
+                    $checker->isMeetReviseCategoriesRequirements()
+                ) . '<br>';
+                $html .= 'isMeetReviseShipping: ' . json_encode($checker->isMeetReviseShippingRequirements()) . '<br>';
+                $html .= 'isMeetReviseReturn: ' . json_encode($checker->isMeetReviseReturnRequirements()) . '<br>';
+                $html .= 'isMeetReviseOther: ' . json_encode($checker->isMeetReviseOtherRequirements()) . '<br><br>';
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $elp */
                 $elp = $lp->getChildObject();
-                $html .= 'isSetCategoryTemplate: ' .json_encode($elp->isSetCategoryTemplate()).'<br>';
-                $html .= 'isInAction: ' .json_encode($lp->isSetProcessingLock('in_action')). '<br><br>';
+                $html .= 'isSetCategoryTemplate: ' . json_encode($elp->isSetCategoryTemplate()) . '<br>';
+                $html .= 'isInAction: ' . json_encode($lp->isSetProcessingLock('in_action')) . '<br><br>';
 
                 $magentoProduct = $lp->getMagentoProduct();
-                $html .= 'isStatusEnabled: ' .json_encode($magentoProduct->isStatusEnabled()).'<br>';
-                $html .= 'isStockAvailability: ' .json_encode($magentoProduct->isStockAvailability()).'<br>';
+                $html .= 'isStatusEnabled: ' . json_encode($magentoProduct->isStatusEnabled()) . '<br>';
+                $html .= 'isStockAvailability: ' . json_encode($magentoProduct->isStockAvailability()) . '<br>';
+
                 //--
 
                 return $this->getResponse()->setBody($html);
@@ -249,8 +254,8 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>NotListed</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetList: '.json_encode($checker->isMeetListRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetList: ' . json_encode($checker->isMeetListRequirements()) . '<br><br>';
                 //--
 
                 //--
@@ -260,8 +265,8 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>Inactive</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetRelist: '.json_encode($checker->isMeetRelistRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetRelist: ' . json_encode($checker->isMeetRelistRequirements()) . '<br><br>';
                 //--
 
                 //--
@@ -271,20 +276,25 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>Active</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetStop: '.json_encode($checker->isMeetStopRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetStop: ' . json_encode($checker->isMeetStopRequirements()) . '<br><br>';
 
-                $html .= 'isMeetReviseQty: '.json_encode($checker->isMeetReviseQtyRequirements()).'<br>';
-                $html .= 'isMeetRevisePriceReg: '.json_encode($checker->isMeetRevisePriceRegularRequirements()).'<br>';
-                $html .= 'isMeetRevisePriceBus: '.json_encode($checker->isMeetRevisePriceBusinessRequirements()).'<br>';
-                $html .= 'isMeetReviseDetails: '.json_encode($checker->isMeetReviseDetailsRequirements()).'<br>';
-                $html .= 'isMeetReviseImages: '.json_encode($checker->isMeetReviseImagesRequirements()).'<br><br>';
+                $html .= 'isMeetReviseQty: ' . json_encode($checker->isMeetReviseQtyRequirements()) . '<br>';
+                $html .= 'isMeetRevisePriceReg: ' . json_encode(
+                    $checker->isMeetRevisePriceRegularRequirements()
+                ) . '<br>';
+                $html .= 'isMeetRevisePriceBus: ' . json_encode(
+                    $checker->isMeetRevisePriceBusinessRequirements()
+                ) . '<br>';
+                $html .= 'isMeetReviseDetails: ' . json_encode($checker->isMeetReviseDetailsRequirements()) . '<br>';
+                $html .= 'isMeetReviseImages: ' . json_encode($checker->isMeetReviseImagesRequirements()) . '<br><br>';
                 //--
 
                 //--
                 $magentoProduct = $lp->getMagentoProduct();
-                $html .= 'isStatusEnabled: '.json_encode($magentoProduct->isStatusEnabled()).'<br>';
-                $html .= 'isStockAvailability: '.json_encode($magentoProduct->isStockAvailability()).'<br>';
+                $html .= 'isStatusEnabled: ' . json_encode($magentoProduct->isStatusEnabled()) . '<br>';
+                $html .= 'isStockAvailability: ' . json_encode($magentoProduct->isStockAvailability()) . '<br>';
+
                 //--
 
                 return $this->getResponse()->setBody($html);
@@ -315,8 +325,8 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>NotListed</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetList: '.json_encode($checker->isMeetListRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetList: ' . json_encode($checker->isMeetListRequirements()) . '<br><br>';
                 //--
 
                 //--
@@ -326,8 +336,8 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>Inactive</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetRelist: '.json_encode($checker->isMeetRelistRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetRelist: ' . json_encode($checker->isMeetRelistRequirements()) . '<br><br>';
                 //--
 
                 //--
@@ -337,19 +347,22 @@ HTML;
                 $checker->setInput($checkerInput);
 
                 $html .= '<b>Active</b><br>';
-                $html .= 'isAllowed: '.json_encode($checker->isAllowed()).'<br>';
-                $html .= 'isMeetStop: '.json_encode($checker->isMeetStopRequirements()).'<br><br>';
+                $html .= 'isAllowed: ' . json_encode($checker->isAllowed()) . '<br>';
+                $html .= 'isMeetStop: ' . json_encode($checker->isMeetStopRequirements()) . '<br><br>';
 
-                $html .= 'isMeetReviseQty: '.json_encode($checker->isMeetReviseQtyRequirements()).'<br>';
-                $html .= 'isMeetRevisePrice: '.json_encode($checker->isMeetRevisePriceRequirements()).'<br>';
-                $html .= 'isMeetRevisePromotions: '.json_encode($checker->isMeetRevisePromotionsRequirements()).'<br>';
-                $html .= 'isMeetReviseDetails: '.json_encode($checker->isMeetReviseDetailsRequirements()).'<br>';
+                $html .= 'isMeetReviseQty: ' . json_encode($checker->isMeetReviseQtyRequirements()) . '<br>';
+                $html .= 'isMeetRevisePrice: ' . json_encode($checker->isMeetRevisePriceRequirements()) . '<br>';
+                $html .= 'isMeetRevisePromotions: ' . json_encode(
+                    $checker->isMeetRevisePromotionsRequirements()
+                ) . '<br>';
+                $html .= 'isMeetReviseDetails: ' . json_encode($checker->isMeetReviseDetailsRequirements()) . '<br>';
                 //--
 
                 //--
                 $magentoProduct = $lp->getMagentoProduct();
-                $html .= 'isStatusEnabled: '.json_encode($magentoProduct->isStatusEnabled()).'<br>';
-                $html .= 'isStockAvailability: '.json_encode($magentoProduct->isStockAvailability()).'<br>';
+                $html .= 'isStatusEnabled: ' . json_encode($magentoProduct->isStatusEnabled()) . '<br>';
+                $html .= 'isStockAvailability: ' . json_encode($magentoProduct->isStockAvailability()) . '<br>';
+
                 //--
 
                 return $this->getResponse()->setBody($html);
@@ -389,7 +402,6 @@ HTML;
     public function getPrintOrderQuoteDataAction()
     {
         if ($this->getRequest()->getParam('print')) {
-
             /** @var \Ess\M2ePro\Model\Order $order */
             $orderId = $this->getRequest()->getParam('order_id');
             $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
@@ -397,6 +409,7 @@ HTML;
             if (!$order->getId()) {
                 $this->getMessageManager()->addError('Unable to load order instance.');
                 $this->_redirect($this->controlPanelHelper->getPageModuleTabUrl());
+
                 return;
             }
 
@@ -421,7 +434,7 @@ HTML;
                 $shippingAddressData['cached_items_nominal'],
                 $shippingAddressData['cached_items_nonnominal']
             );
-            $billingAddressData  = $quote->getBillingAddress()->getData();
+            $billingAddressData = $quote->getBillingAddress()->getData();
             unset(
                 $billingAddressData['cached_items_all'],
                 $billingAddressData['cached_items_nominal'],
@@ -440,14 +453,20 @@ HTML;
 
             $magentoQuoteManager->save($quote->setIsActive(false));
 
-            return print_r(json_decode(json_encode([
-                'Grand Total'           => $quote->getGrandTotal(),
-                'Shipping Amount'       => $quote->getShippingAddress()->getShippingAmount(),
-                'Quote Data'            => $quoteData,
-                'Shipping Address Data' => $shippingAddressData,
-                'Billing Address Data'  => $billingAddressData,
-                'Items'                 => $items
-            ]), true), true);
+            return print_r(
+                json_decode(
+                    json_encode([
+                        'Grand Total' => $quote->getGrandTotal(),
+                        'Shipping Amount' => $quote->getShippingAddress()->getShippingAmount(),
+                        'Quote Data' => $quoteData,
+                        'Shipping Address Data' => $shippingAddressData,
+                        'Billing Address Data' => $billingAddressData,
+                        'Items' => $items,
+                    ]),
+                    true
+                ),
+                true
+            );
         }
 
         $formKey = $this->formKey->getFormKey();

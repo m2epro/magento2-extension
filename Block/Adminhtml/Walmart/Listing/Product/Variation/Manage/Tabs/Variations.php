@@ -48,6 +48,7 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
      * @return $this
      */
     public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -56,6 +57,7 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
 
         return $this;
     }
+
     /**
      * @return \Ess\M2ePro\Model\Listing\Product
      */
@@ -78,12 +80,12 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
     protected function _toHtml()
     {
         return '<div id="listing_product_variation_progress_bar"></div>' .
-        '<div id="listing_product_variation_action_messages_container"></div>' .
-        '<div id="listing_product_variation_errors_summary_container" class="errors_summary" style="display: none;">
+            '<div id="listing_product_variation_action_messages_container"></div>' .
+            '<div id="listing_product_variation_errors_summary_container" class="errors_summary" style="display: none;">
         </div>' .
-        '<div id="listing_product_variation_content_container">' .
-        parent::_toHtml() .
-        '</div>';
+            '<div id="listing_product_variation_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 
     //########################################
@@ -121,19 +123,19 @@ JS
         $items = [];
 
         $backUrl = $this->dataHelper->makeBackUrlParam('*/walmart_listing/view', [
-            'id' => $this->getListingProduct()->getListingId()
+            'id' => $this->getListingProduct()->getListingId(),
         ]);
 
         // ---------------------------------------
         $url = $this->getUrl('*/walmart_listing/edit', [
             'id' => $this->getListingProduct()->getListingId(),
             'back' => $backUrl,
-            'tab' => 'selling'
+            'tab' => 'selling',
         ]);
         $items[] = [
             'label' => $this->__('Selling'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
-            'default' => true
+            'default' => true,
         ];
         // ---------------------------------------
 
@@ -141,19 +143,20 @@ JS
         $url = $this->getUrl('*/walmart_listing/edit', [
             'id' => $this->getListingProduct()->getListingId(),
             'back' => $backUrl,
-            'tab' => 'search'
+            'tab' => 'search',
         ]);
         $items[] = [
             'label' => $this->__('Search'),
-            'onclick' => 'window.open(\'' . $url . '\',\'_blank\');'
+            'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
         ];
         // ---------------------------------------
 
         // ---------------------------------------
         $items[] = [
             'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-            'label' => $this->__('Auto Add/Remove Rules')
+            'label' => $this->__('Auto Add/Remove Rules'),
         ];
+
         // ---------------------------------------
 
         return $items;
@@ -166,7 +169,7 @@ JS
         $items = [];
 
         $backUrl = $this->dataHelper->makeBackUrlParam('*/walmart_listing/view', [
-            'id' => $this->getListingProduct()->getListingId()
+            'id' => $this->getListingProduct()->getListingId(),
         ]);
 
         // ---------------------------------------
@@ -176,12 +179,12 @@ JS
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'clear' => 1,
             'step' => 2,
-            'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT
+            'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_PRODUCT,
         ]);
         $items[] = [
             'label' => $this->__('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
-            'default' => true
+            'default' => true,
         ];
         // ---------------------------------------
 
@@ -192,12 +195,13 @@ JS
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'clear' => 1,
             'step' => 2,
-            'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY
+            'source' => \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::MODE_CATEGORY,
         ]);
         $items[] = [
             'label' => $this->__('From Categories'),
-            'onclick' => "setLocation('" . $url . "')"
+            'onclick' => "setLocation('" . $url . "')",
         ];
+
         // ---------------------------------------
 
         return $items;

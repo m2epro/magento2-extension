@@ -78,7 +78,7 @@ class Attribute extends AbstractHelper
         foreach ($attributeCollection->getItems() as $attribute) {
             $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
-                'label' => $attribute['frontend_label']
+                'label' => $attribute['frontend_label'],
             ];
         }
 
@@ -88,8 +88,8 @@ class Attribute extends AbstractHelper
     public function getAllAsObjects()
     {
         $attributes = $this->getPreparedAttributeCollection()
-            ->addVisibleFilter()
-            ->getItems();
+                           ->addVisibleFilter()
+                           ->getItems();
 
         return $attributes;
     }
@@ -99,8 +99,8 @@ class Attribute extends AbstractHelper
     public function getByCode($code, $returnType = self::RETURN_TYPE_ARRAYS)
     {
         $attributeCollection = $this->getPreparedAttributeCollection()
-            ->addVisibleFilter()
-            ->setCodeFilter($code);
+                                    ->addVisibleFilter()
+                                    ->setCodeFilter($code);
 
         $attributes = $this->_convertCollectionToReturnType($attributeCollection, $returnType);
         if ($returnType != self::RETURN_TYPE_ARRAYS) {
@@ -111,7 +111,7 @@ class Attribute extends AbstractHelper
         foreach ($attributeCollection->getItems() as $attribute) {
             $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
-                'label' => $attribute['frontend_label']
+                'label' => $attribute['frontend_label'],
             ];
         }
 
@@ -138,8 +138,8 @@ class Attribute extends AbstractHelper
         }
 
         $attributeCollection = $this->getPreparedAttributeCollection()
-            ->addVisibleFilter()
-            ->setAttributeSetFilter($attributeSetIds);
+                                    ->addVisibleFilter()
+                                    ->setAttributeSetFilter($attributeSetIds);
 
         $attributeCollection->getSelect()->group('entity_attribute.attribute_id');
 
@@ -152,7 +152,7 @@ class Attribute extends AbstractHelper
         foreach ($attributes as $attribute) {
             $resultAttributes[] = [
                 'code' => $attribute['attribute_code'],
-                'label' => $attribute['frontend_label']
+                'label' => $attribute['frontend_label'],
             ];
         }
 
@@ -193,9 +193,9 @@ class Attribute extends AbstractHelper
         }
 
         $attributesData = $this->getPreparedAttributeCollection()
-            ->addVisibleFilter()
-            ->addFieldToFilter('main_table.attribute_id', ['in' => $attributes])
-            ->toArray();
+                               ->addVisibleFilter()
+                               ->addFieldToFilter('main_table.attribute_id', ['in' => $attributes])
+                               ->toArray();
 
         $resultAttributes = [];
         foreach ($attributesData['items'] as $attribute) {
@@ -211,6 +211,7 @@ class Attribute extends AbstractHelper
     public function getGeneralFromAllAttributeSets()
     {
         $allAttributeSets = $this->magentoAttributeSetHelper->getAll(self::RETURN_TYPE_IDS);
+
         return $this->getGeneralFromAttributeSets($allAttributeSets);
     }
 
@@ -223,8 +224,8 @@ class Attribute extends AbstractHelper
         }
 
         $attributeCollection = $this->getPreparedAttributeCollection()
-            ->addVisibleFilter()
-            ->setInAllAttributeSetsFilter($attributeSetIds);
+                                    ->addVisibleFilter()
+                                    ->setInAllAttributeSetsFilter($attributeSetIds);
 
         /**
          * We can't use $attributeCollection->getAllIds().
@@ -288,25 +289,28 @@ class Attribute extends AbstractHelper
     {
         $connection = $this->resourceConnection->getConnection();
 
-        $cpTable  = $this->dbStructureHelper->getTableNameWithPrefix('catalog_product_entity');
-        $saTable  = $this->dbStructureHelper
+        $cpTable = $this->dbStructureHelper->getTableNameWithPrefix('catalog_product_entity');
+        $saTable = $this->dbStructureHelper
             ->getTableNameWithPrefix('catalog_product_super_attribute');
-        $aTable   = $this->dbStructureHelper->getTableNameWithPrefix('eav_attribute');
+        $aTable = $this->dbStructureHelper->getTableNameWithPrefix('eav_attribute');
 
         $select = $connection->select()
-            ->distinct(true)
-            ->from(['p' => $cpTable], null)
-            ->join(
-                ['sa' => $saTable],
-                'p.entity_id = sa.product_id',
-                null
-            )
-            ->join(
-                ['a' => $aTable],
-                'sa.attribute_id = a.attribute_id',
-                ['label' => 'frontend_label', 'code' => 'attribute_code']
-            )
-            ->where('p.type_id = ?', \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE);
+                             ->distinct(true)
+                             ->from(['p' => $cpTable], null)
+                             ->join(
+                                 ['sa' => $saTable],
+                                 'p.entity_id = sa.product_id',
+                                 null
+                             )
+                             ->join(
+                                 ['a' => $aTable],
+                                 'sa.attribute_id = a.attribute_id',
+                                 ['label' => 'frontend_label', 'code' => 'attribute_code']
+                             )
+                             ->where(
+                                 'p.type_id = ?',
+                                 \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE
+                             );
 
         if (!empty($attributeSetIds)) {
             $select->where('e.attribute_set_id IN ?', $attributeSetIds);
@@ -344,15 +348,15 @@ class Attribute extends AbstractHelper
         $entityTypeId = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getId();
         $dbSelect = $connection->select();
         $dbSelect->from($tableName)
-            ->where('attribute_code in (\''.implode('\',\'', $attributeCodes).'\')')
-            ->where('entity_type_id = ?', $entityTypeId);
+                 ->where('attribute_code in (\'' . implode('\',\'', $attributeCodes) . '\')')
+                 ->where('entity_type_id = ?', $entityTypeId);
         $fetchResult = $connection->fetchAll($dbSelect);
 
         $result = [];
         foreach ($fetchResult as $attribute) {
             $result[] = [
                 'label' => $attribute['frontend_label'],
-                'code'  => $attribute['attribute_code']
+                'code' => $attribute['attribute_code'],
             ];
         }
 
@@ -370,6 +374,7 @@ class Attribute extends AbstractHelper
                 return true;
             }
         }
+
         return false;
     }
 
@@ -399,7 +404,7 @@ class Attribute extends AbstractHelper
         }
 
         $attributeCollection = $this->getPreparedAttributeCollection()
-            ->addFieldToFilter('attribute_code', ['in' => $attributeCodes]);
+                                    ->addFieldToFilter('attribute_code', ['in' => $attributeCodes]);
 
         if (!empty($frontendInputTypes)) {
             $attributeCollection->addFieldToFilter('frontend_input', ['in' => $frontendInputTypes]);
@@ -458,9 +463,14 @@ class Attribute extends AbstractHelper
         }
 
         $attributesCollection = $this->eavEntityAttributeColFactory->create()
-            ->setEntityTypeFilter($this->productResource->getTypeId())
-            ->addFieldToFilter('attribute_code', ['in' => $missingAttributes])
-            ->addSetInfo(true);
+                                                                   ->setEntityTypeFilter(
+                                                                       $this->productResource->getTypeId()
+                                                                   )
+                                                                   ->addFieldToFilter(
+                                                                       'attribute_code',
+                                                                       ['in' => $missingAttributes]
+                                                                   )
+                                                                   ->addSetInfo(true);
 
         $attributeSets = $this->magentoAttributeSetHelper
             ->getFromProducts(
@@ -486,7 +496,6 @@ class Attribute extends AbstractHelper
     /**
      * Now Magento returns strange combined QTY and StockStatus Attribute. This attribute will not work for
      * Tracking of Attributes and we will skip it.
-     *
      * @return \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
      */
     private function getPreparedAttributeCollection()

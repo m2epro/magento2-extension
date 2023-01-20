@@ -46,15 +46,17 @@ class Browse extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $helpBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\HelpBlock::class,
             '',
-            ['data' => [
-            'content' => $this->__(
-                'If you cannot find necessary Category, try to
+            [
+                'data' => [
+                    'content' => $this->__(
+                        'If you cannot find necessary Category, try to
                 <a href="javascript:void(0)"
                    onclick="AmazonTemplateDescriptionCategoryChooserObj.refreshAmazonCategories()">
                 Update Amazon Marketplaces data</a>.'
-            ),
-            'no_collapse' => true,
-            ]]
+                    ),
+                    'no_collapse' => true,
+                ],
+            ]
         );
 
         $this->setChild('help_block', $helpBlock);

@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Indiv
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual\Edit;
+
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Variation\Individual\GetEditPopup
  */
@@ -22,7 +23,7 @@ class GetEditPopup extends Main
         if (!$listingProductId) {
             $this->setJsonContent([
                 'type' => 'error',
-                'message' => $this->__('Listing Product must be specified.')
+                'message' => $this->__('Listing Product must be specified.'),
             ]);
 
             return $this->getResult();
@@ -34,7 +35,7 @@ class GetEditPopup extends Main
 
         $this->setJsonContent([
             'type' => 'success',
-            'html' => $variationEditBlock->toHtml()
+            'html' => $variationEditBlock->toHtml(),
         ]);
 
         return $this->getResult();

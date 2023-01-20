@@ -57,7 +57,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             if ($this->isAjax()) {
                 $this->setJsonContent([
                     'success' => false,
-                    'message' => $message
+                    'message' => $message,
                 ]);
 
                 return $this->getResult();
@@ -78,16 +78,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         $this->messageManager->addSuccess($this->__('Account was saved'));
 
-        return $this->_redirect($this->helperData->getBackUrl(
-            'list',
-            [],
-            [
-                'edit' => [
-                    'id'                => $account->getId(),
-                    '_current'          => true
+        return $this->_redirect(
+            $this->helperData->getBackUrl(
+                'list',
+                [],
+                [
+                    'edit' => [
+                        'id' => $account->getId(),
+                        '_current' => true,
+                    ],
                 ]
-            ]
-        ));
+            )
+        );
     }
 
     //########################################

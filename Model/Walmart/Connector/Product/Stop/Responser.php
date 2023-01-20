@@ -41,6 +41,7 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Product\Responser
     {
         if (empty($this->params['params']['remove'])) {
             parent::processParentProcessor();
+
             return;
         }
 

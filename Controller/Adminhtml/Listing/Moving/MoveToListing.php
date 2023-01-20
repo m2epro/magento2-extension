@@ -42,7 +42,7 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
         );
 
         $variationUpdaterModel = ucwords($targetListing->getComponentMode())
-            .'\Listing\Product\Variation\Updater';
+            . '\Listing\Product\Variation\Updater';
 
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater $variationUpdaterObject */
         $variationUpdaterObject = $this->modelFactory->getObject($variationUpdaterModel);
@@ -50,7 +50,6 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         $errorsCount = 0;
         foreach ($selectedProducts as $listingProductId) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProductInstance */
             $listingProduct = $this->parentFactory
                 ->getObjectLoaded($componentMode, 'Listing\Product', $listingProductId);
@@ -81,14 +80,13 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
             );
 
             if (count($selectedProducts) == $errorsCount) {
-
                 $this->setJsonContent(
                     [
-                        'result'  => false,
+                        'result' => false,
                         'message' => $this->__(
                             'Products were not Moved. <a target="_blank" href="%url%">View Log</a> for details.',
                             $logViewUrl
-                        )
+                        ),
                     ]
                 );
 
@@ -97,22 +95,21 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
             $this->setJsonContent(
                 [
-                    'result'   => true,
+                    'result' => true,
                     'isFailed' => true,
-                    'message'  => $this->__(
+                    'message' => $this->__(
                         '%errors_count% product(s) were not Moved.
                         Please <a target="_blank" href="%url%">view Log</a> for the details.',
                         $errorsCount,
                         $logViewUrl
-                    )
+                    ),
                 ]
             );
-
         } else {
             $this->setJsonContent(
                 [
-                    'result'  => true,
-                    'message' => $this->__('Product(s) was Moved.')
+                    'result' => true,
+                    'message' => $this->__('Product(s) was Moved.'),
                 ]
             );
         }

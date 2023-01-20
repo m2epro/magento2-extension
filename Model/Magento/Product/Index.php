@@ -27,7 +27,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
-        $this->indexerFactory      = $indexerFactory;
+        $this->indexerFactory = $indexerFactory;
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
@@ -51,7 +51,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
     public function getIndexes()
     {
         return [
-            'cataloginventory_stock'
+            'cataloginventory_stock',
         ];
     }
 
@@ -112,6 +112,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $indexer->reindexAll();
+
         return true;
     }
 
@@ -128,7 +129,7 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
     public function isDisabledIndex($code)
     {
         return (bool)(int)$this->getHelper('Module')->getConfig()
-                            ->getGroupValue('/product/index/'.$code.'/', 'disabled');
+                               ->getGroupValue('/product/index/' . $code . '/', 'disabled');
     }
 
     // ---------------------------------------
@@ -136,13 +137,13 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
     public function rememberDisabledIndex($code)
     {
         $this->getHelper('Module')->getConfig()
-            ->setGroupValue('/product/index/'.$code.'/', 'disabled', 1);
+             ->setGroupValue('/product/index/' . $code . '/', 'disabled', 1);
     }
 
     public function forgetDisabledIndex($code)
     {
         $this->getHelper('Module')->getConfig()
-            ->setGroupValue('/product/index/'.$code.'/', 'disabled', 0);
+             ->setGroupValue('/product/index/' . $code . '/', 'disabled', 0);
     }
 
     // ---------------------------------------
@@ -150,19 +151,19 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
     public function isEnabledIndex($code)
     {
         return (bool)(int)$this->getHelper('Module')->getConfig()
-            ->getGroupValue('/product/index/'.$code.'/', 'enabled');
+                               ->getGroupValue('/product/index/' . $code . '/', 'enabled');
     }
 
     public function rememberEnabledIndex($code)
     {
         $this->getHelper('Module')->getConfig()
-            ->setGroupValue('/product/index/'.$code.'/', 'enabled', 1);
+             ->setGroupValue('/product/index/' . $code . '/', 'enabled', 1);
     }
 
     public function forgetEnabledIndex($code)
     {
         $this->getHelper('Module')->getConfig()
-            ->setGroupValue('/product/index/'.$code.'/', 'enabled', 0);
+             ->setGroupValue('/product/index/' . $code . '/', 'enabled', 0);
     }
 
     //########################################

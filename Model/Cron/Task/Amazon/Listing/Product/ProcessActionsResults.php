@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\ProcessActionsResults
- */
 class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'amazon/listing/product/process_actions_results';
-
-    //####################################
+    public const NICK = 'amazon/listing/product/process_actions_results';
 
     protected function performActions()
     {
@@ -23,20 +18,18 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->executeCompletedRequestsPendingSingle();
     }
 
-    //####################################
-
     protected function completeExpiredActions()
     {
         /**
          * @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Action\Processing\Collection $actionCollection
          */
         $actionCollection = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Action_Processing')
-            ->getCollection();
+                                                      ->getCollection();
         $actionCollection->addFieldToFilter('request_pending_single_id', ['notnull' => true]);
         $actionCollection->getSelect()->joinLeft(
             [
                 'rps' => $this->activeRecordFactory->getObject('Request_Pending_Single')
-                ->getResource()->getMainTable()
+                                                   ->getResource()->getMainTable(),
             ],
             'rps.id = main_table.request_pending_single_id',
             []
@@ -61,13 +54,14 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function executeCompletedRequestsPendingSingle()
     {
         $requestIds = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Action_Processing')->getResource()
-            ->getUniqueRequestPendingSingleIds();
+                                                ->getUniqueRequestPendingSingleIds();
         if (empty($requestIds)) {
             return;
         }
 
+        /** @var \Ess\M2ePro\Model\ResourceModel\Request\Pending\Single\Collection $requestPendingSingleCollection */
         $requestPendingSingleCollection = $this->activeRecordFactory->getObject('Request_Pending_Single')
-            ->getCollection();
+                                                                    ->getCollection();
         $requestPendingSingleCollection->addFieldToFilter('id', ['in' => $requestIds]);
         $requestPendingSingleCollection->addFieldToFilter('is_completed', 1);
 
@@ -78,15 +72,16 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($requestPendingSingleObjects as $requestId => $requestPendingSingle) {
+            /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Action\Processing\Collection $actionCollection */
             $actionCollection = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Action_Processing')
-                ->getCollection();
+                                                          ->getCollection();
             $actionCollection->setRequestPendingSingleIdFilter($requestId);
             $actionCollection->setInProgressFilter();
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Processing[] $actions */
             $actions = $actionCollection->getItems();
 
-            $resultData     = $requestPendingSingle->getResultData();
+            $resultData = $requestPendingSingle->getResultData();
             $resultMessages = $requestPendingSingle->getResultMessages();
 
             foreach ($actions as $action) {
@@ -106,14 +101,14 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //####################################
+    // ----------------------------------------
 
     protected function getResponseData(array $responseData, $listingProductId)
     {
         $data = [];
 
-        if (!empty($responseData['asins'][$listingProductId.'-id'])) {
-            $data['asins'] = $responseData['asins'][$listingProductId.'-id'];
+        if (!empty($responseData['asins'][$listingProductId . '-id'])) {
+            $data['asins'] = $responseData['asins'][$listingProductId . '-id'];
         }
 
         return $data;
@@ -131,8 +126,8 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $messages = array_merge($messages, $responseData['messages']['0-id']);
         }
 
-        if (!empty($responseData['messages'][$relatedId.'-id'])) {
-            $messages = array_merge($messages, $responseData['messages'][$relatedId.'-id']);
+        if (!empty($responseData['messages'][$relatedId . '-id'])) {
+            $messages = array_merge($messages, $responseData['messages'][$relatedId . '-id']);
         }
 
         return $messages;
@@ -162,6 +157,4 @@ class ProcessActionsResults extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $action->delete();
     }
-
-    //####################################
 }

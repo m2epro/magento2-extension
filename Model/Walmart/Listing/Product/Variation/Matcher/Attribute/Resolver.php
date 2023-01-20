@@ -28,6 +28,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $attribute
      * @param array $names
+     *
      * @return $this
      */
     public function addSourceAttribute($attribute, array $names)
@@ -45,6 +46,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $attribute
      * @param array $names
+     *
      * @return $this
      */
     public function addDestinationAttribute($attribute, array $names)
@@ -71,7 +73,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($this->sourceAttributes as $sourceAttribute) {
-            if (!empty($this->resolvedAttributes[$sourceAttribute]) &&
+            if (
+                !empty($this->resolvedAttributes[$sourceAttribute]) &&
                 in_array($this->resolvedAttributes[$sourceAttribute], $this->destinationAttributes)
             ) {
                 continue;
@@ -84,7 +87,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             foreach ($this->destinationAttributes as $destinationAttribute) {
                 $destinationNames = $this->destinationAttributesNames[$destinationAttribute];
 
-                if (!empty(array_intersect($sourceNames, $destinationNames)) &&
+                if (
+                    !empty(array_intersect($sourceNames, $destinationNames)) &&
                     !in_array($destinationAttribute, $this->resolvedAttributes)
                 ) {
                     $this->resolvedAttributes[$sourceAttribute] = $destinationAttribute;

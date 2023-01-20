@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Cron\Task\System\ConnectorCommandPending;
  */
 class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
-    const NICK = 'system/connector_command_pending/process_single';
+    public const NICK = 'system/connector_command_pending/process_single';
 
     //####################################
 
@@ -29,7 +29,7 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function removeMissedProcessingItems()
     {
         $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Single')
-            ->getCollection();
+                                                ->getCollection();
         $collection->getSelect()->joinLeft(
             ['p' => $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable()],
             'p.id = main_table.processing_id',
@@ -56,11 +56,11 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function completeExpiredItems()
     {
         $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Single')
-            ->getCollection();
+                                                ->getCollection();
         $collection->getSelect()->joinLeft(
             [
                 'rps' => $this->activeRecordFactory->getObject('Request_Pending_Single')->getResource()
-                ->getMainTable()
+                                                   ->getMainTable(),
             ],
             'rps.id = main_table.request_pending_single_id',
             []
@@ -88,7 +88,7 @@ class ProcessSingle extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     protected function processCompletedItems()
     {
         $collection = $this->activeRecordFactory->getObject('Connector_Command_Pending_Processing_Single')
-            ->getCollection();
+                                                ->getCollection();
         $collection->setCompletedRequestPendingSingleFilter();
         $collection->setNotCompletedProcessingFilter();
 

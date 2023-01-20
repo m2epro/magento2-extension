@@ -11,7 +11,6 @@ namespace Ess\M2ePro\Observer\Listing\Product\Delete;
 /**
  * Class \Ess\M2ePro\Observer\Listing\Product\Delete\Before
  */
-
 class Before extends \Ess\M2ePro\Observer\AbstractModel
 {
     //########################################
@@ -23,7 +22,7 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
 
         /** @var \Ess\M2ePro\Model\Listing\Product\Indexer\VariationParent\Manager $manager */
         $manager = $this->modelFactory->getObject('Listing_Product_Indexer_VariationParent_Manager', [
-            'listing' => $listingProduct->getListing()
+            'listing' => $listingProduct->getListing(),
         ]);
         $manager->markInvalidated();
     }

@@ -11,20 +11,15 @@ namespace Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App;
 use Magento\Framework\Message\MessageInterface;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
-/**
- * Class \Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App\FrontController
- */
 class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
-    const MESSAGE_IDENTIFIER = 'm2epro_health_status_front_controller_message';
+    public const MESSAGE_IDENTIFIER = 'm2epro_health_status_front_controller_message';
 
     /** @var \Magento\Framework\Message\ManagerInterface */
     protected $messageManager;
 
     /** @var \Magento\Framework\UrlInterface */
     protected $urlBuilder;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -33,7 +28,7 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Magento\Framework\UrlInterface $urlBuilder
     ) {
         $this->messageManager = $messageManager;
-        $this->urlBuilder     = $urlBuilder;
+        $this->urlBuilder = $urlBuilder;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -54,7 +49,7 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
         }
 
         if ($this->shouldBeAdded($request)) {
-            $currentStatus  = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
+            $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
             $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
 
             switch ($currentStatus->get()) {
@@ -74,7 +69,7 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             $this->messageManager->addMessage(
                 $this->messageManager->createMessage($messageType, self::MESSAGE_IDENTIFIER)
-                     ->setText($messageBuilder->build())
+                                     ->setText($messageBuilder->build())
             );
         }
 

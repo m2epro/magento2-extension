@@ -68,9 +68,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     protected function _getLogTypeList()
     {
         return [
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING       => $this->__('Warning'),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR         => $this->__('Error'),
-            \Ess\M2ePro\Model\Synchronization\Log::TYPE_FATAL_ERROR => $this->__('Fatal Error')
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__('Error'),
+            \Ess\M2ePro\Model\Synchronization\Log::TYPE_FATAL_ERROR => $this->__('Fatal Error'),
         ];
     }
 
@@ -93,67 +93,67 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->addColumn(
             'create_date',
             [
-                'header'      => $this->__('Date'),
-                'align'       => 'left',
-                'type'        => 'datetime',
-                'filter'      => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+                'header' => $this->__('Date'),
+                'align' => 'left',
+                'type' => 'datetime',
+                'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
                 'filter_time' => true,
-                'format'      => \IntlDateFormatter::MEDIUM,
-                'index'       => 'create_date'
+                'format' => \IntlDateFormatter::MEDIUM,
+                'index' => 'create_date',
             ]
         );
 
         $this->addColumn(
             'task',
             [
-                'header'                    => $this->__('Task'),
-                'align'                     => 'left',
-                'type'                      => 'options',
-                'index'                     => 'task',
-                'sortable'                  => false,
-                'filter_index'              => 'task',
+                'header' => $this->__('Task'),
+                'align' => 'left',
+                'type' => 'options',
+                'index' => 'task',
+                'sortable' => false,
+                'filter_index' => 'task',
                 'filter_condition_callback' => [$this, 'callbackFilterTask'],
-                'option_groups'             => $this->getActionTitles(),
-                'options'                   => $this->actionsTitles
+                'option_groups' => $this->getActionTitles(),
+                'options' => $this->actionsTitles,
             ]
         );
 
         $this->addColumn(
             'description',
             [
-                'header'         => $this->__('Message'),
-                'align'          => 'left',
-                'type'           => 'text',
-                'string_limit'   => 350,
-                'index'          => 'description',
-                'filter_index'   => 'main_table.description',
-                'frame_callback' => [$this, 'callbackColumnDescription']
+                'header' => $this->__('Message'),
+                'align' => 'left',
+                'type' => 'text',
+                'string_limit' => 350,
+                'index' => 'description',
+                'filter_index' => 'main_table.description',
+                'frame_callback' => [$this, 'callbackColumnDescription'],
             ]
         );
 
         $this->addColumn(
             'detailed_description',
             [
-                'header'         => $this->__('Detailed'),
-                'align'          => 'left',
-                'type'           => 'text',
-                'string_limit'   => 65000,
-                'index'          => 'detailed_description',
-                'filter_index'   => 'main_table.detailed_description',
-                'frame_callback' => [$this, 'callbackColumnDescription']
+                'header' => $this->__('Detailed'),
+                'align' => 'left',
+                'type' => 'text',
+                'string_limit' => 65000,
+                'index' => 'detailed_description',
+                'filter_index' => 'main_table.detailed_description',
+                'frame_callback' => [$this, 'callbackColumnDescription'],
             ]
         );
 
         $this->addColumn(
             'type',
             [
-                'header'         => $this->__('Type'),
-                'index'          => 'type',
-                'align'          => 'right',
-                'type'           => 'options',
-                'sortable'       => false,
-                'options'        => $this->_getLogTypeList(),
-                'frame_callback' => [$this, 'callbackColumnType']
+                'header' => $this->__('Type'),
+                'index' => 'type',
+                'align' => 'right',
+                'type' => 'options',
+                'sortable' => false,
+                'options' => $this->_getLogTypeList(),
+                'frame_callback' => [$this, 'callbackColumnType'],
             ]
         );
 
@@ -213,31 +213,31 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
         $skipForAmazon = [];
         $skipForEbay = [
-            \Ess\M2ePro\Model\Synchronization\Log::TASK_REPRICING
+            \Ess\M2ePro\Model\Synchronization\Log::TASK_REPRICING,
         ];
         $skipForWalmart = [
-            \Ess\M2ePro\Model\Synchronization\Log::TASK_REPRICING
+            \Ess\M2ePro\Model\Synchronization\Log::TASK_REPRICING,
         ];
 
         foreach ($this->actionsTitles as $value => $label) {
             if (!in_array($value, $skipForEbay)) {
                 $ebayTitles[] = [
                     'label' => $label,
-                    'value' => \Ess\M2ePro\Helper\View\Ebay::NICK . '_' . $value
+                    'value' => \Ess\M2ePro\Helper\View\Ebay::NICK . '_' . $value,
                 ];
             }
 
             if (!in_array($value, $skipForAmazon)) {
                 $amazonTitles[] = [
                     'label' => $label,
-                    'value' => \Ess\M2ePro\Helper\View\Amazon::NICK . '_' . $value
+                    'value' => \Ess\M2ePro\Helper\View\Amazon::NICK . '_' . $value,
                 ];
             }
 
             if (!in_array($value, $skipForWalmart)) {
                 $walmartTitles[] = [
                     'label' => $label,
-                    'value' => \Ess\M2ePro\Helper\View\Walmart::NICK . '_' . $value
+                    'value' => \Ess\M2ePro\Helper\View\Walmart::NICK . '_' . $value,
                 ];
             }
         }
@@ -245,15 +245,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $commonTitles = [
             [
                 'label' => 'All Integrations',
-                'value' => self::OPTION_ALL_LOGS
-            ]
+                'value' => self::OPTION_ALL_LOGS,
+            ],
         ];
 
         return [
             ['label' => $this->__('General'), 'value' => $commonTitles],
             ['label' => $this->__('eBay Task'), 'value' => $ebayTitles],
             ['label' => $this->__('Amazon Task'), 'value' => $amazonTitles],
-            ['label' => $this->__('Walmart Task'), 'value' => $walmartTitles]
+            ['label' => $this->__('Walmart Task'), 'value' => $walmartTitles],
         ];
     }
 }

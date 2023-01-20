@@ -10,11 +10,9 @@ namespace Ess\M2ePro\Block\Adminhtml;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\RequirementsPopup
- */
 class RequirementsPopup extends AbstractBlock
 {
+    /** @var string  */
     protected $_template = 'requirements_popup.phtml';
 
     //########################################
@@ -36,7 +34,8 @@ class RequirementsPopup extends AbstractBlock
             'general/requirementsPopupClose' => $this->getUrl('*/general/requirementsPopupClose'),
         ]);
 
-        $this->js->addOnReadyJs(<<<JS
+        $this->js->addOnReadyJs(
+            <<<JS
 require([
     'M2ePro/RequirementsPopup'
 ], function(){

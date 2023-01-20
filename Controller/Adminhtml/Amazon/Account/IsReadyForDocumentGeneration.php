@@ -11,12 +11,11 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\IsReadyForDocumentGeneration
- */
 class IsReadyForDocumentGeneration extends Account
 {
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface  */
     protected $scopeConfig;
+    /** @var \Magento\Store\Model\StoreManagerInterface  */
     protected $storeManager;
 
     public function __construct(
@@ -42,6 +41,7 @@ class IsReadyForDocumentGeneration extends Account
 
         if ($id && $account === null) {
             $this->setAjaxContent('You should provide correct parameters.', false);
+
             return $this->getResult();
         }
 
@@ -66,7 +66,8 @@ class IsReadyForDocumentGeneration extends Account
                 $this->storeManager->getStore($accountStoreId)
             );
 
-            if (empty($storeData['name']) ||
+            if (
+                empty($storeData['name']) ||
                 empty($storeData['country_id']) ||
                 empty($storeData['street_line1']) ||
                 empty($storeData['city']) ||
@@ -88,7 +89,8 @@ class IsReadyForDocumentGeneration extends Account
                         $this->storeManager->getStore($listing->getStoreId())
                     );
 
-                    if (empty($storeData['name']) ||
+                    if (
+                        empty($storeData['name']) ||
                         empty($storeData['country_id']) ||
                         empty($storeData['street_line1']) ||
                         empty($storeData['city']) ||
@@ -101,7 +103,8 @@ class IsReadyForDocumentGeneration extends Account
             } else {
                 $storeData = $this->scopeConfig->getValue('general/store_information');
 
-                if (empty($storeData['name']) ||
+                if (
+                    empty($storeData['name']) ||
                     empty($storeData['country_id']) ||
                     empty($storeData['street_line1']) ||
                     empty($storeData['city']) ||
@@ -115,7 +118,7 @@ class IsReadyForDocumentGeneration extends Account
         $this->setJsonContent(
             [
                 'success' => true,
-                'result' => $result
+                'result' => $result,
             ]
         );
 

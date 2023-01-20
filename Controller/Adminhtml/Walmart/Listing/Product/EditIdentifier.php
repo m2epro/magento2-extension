@@ -26,7 +26,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
         if (empty($productId) || empty($type) || empty($value) || !in_array($type, $allowedTypes)) {
             $this->setJsonContent([
                 'result' => false,
-                'message' => $this->__('Wrong parameters.')
+                'message' => $this->__('Wrong parameters.'),
             ]);
 
             return $this->getResult();
@@ -38,7 +38,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
         if (!$listingProduct->getId()) {
             $this->setJsonContent([
                 'result' => false,
-                'message' => $this->__('Listing product does not exist.')
+                'message' => $this->__('Listing product does not exist.'),
             ]);
 
             return $this->getResult();
@@ -52,12 +52,13 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
         if ($lockManager->checkLocking()) {
             $this->setJsonContent(
                 [
-                    'result'  => false,
+                    'result' => false,
                     'message' => $this->__(
                         'Another Action is being processed. Try again when the Action is completed.'
-                    )
+                    ),
                 ]
             );
+
             return $this->getResult();
         }
 
@@ -65,7 +66,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
         if ($oldIdentifier === $value) {
             $this->setJsonContent([
                 'result' => true,
-                'message' => ''
+                'message' => '',
             ]);
 
             return $this->getResult();
@@ -81,18 +82,18 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
         $scheduledAction->setData(
             [
                 'listing_product_id' => $listingProduct->getId(),
-                'component'          => \Ess\M2ePro\Helper\Component\Walmart::NICK,
-                'action_type'        => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
-                'is_force'           => true,
-                'tag'                => '/details/',
-                'additional_data'    => $this->getHelper('Data')->jsonEncode(
+                'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+                'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
+                'is_force' => true,
+                'tag' => '/details/',
+                'additional_data' => $this->getHelper('Data')->jsonEncode(
                     [
                         'params' => [
                             'changed_identifier' => [
-                                'type'  => $type,
+                                'type' => $type,
                                 'value' => $value,
                             ],
-                            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
+                            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
                         ],
                         'configurator' => $configurator->getSerializedData(),
                     ]
@@ -119,7 +120,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
 
         $this->setJsonContent([
             'result' => true,
-            'message' => ''
+            'message' => '',
         ]);
 
         return $this->getResult();

@@ -47,8 +47,9 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
             if ($listing === null) {
                 $this->setJsonContent([
                     'status' => false,
-                    'message' => $this->__('Listing does not exist.')
+                    'message' => $this->__('Listing does not exist.'),
                 ]);
+
                 return $this->getResult();
             }
         } elseif ($listingProductId) {
@@ -62,8 +63,9 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
             if ($listingProduct === null) {
                 $this->setJsonContent([
                     'status' => false,
-                    'message' => $this->__('Listing product does not exist.')
+                    'message' => $this->__('Listing product does not exist.'),
                 ]);
+
                 return $this->getResult();
             }
         }
@@ -83,8 +85,7 @@ class Grid extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
 
         if ($viewMode === View\Switcher::VIEW_MODE_GROUPED) {
             $gridClass = \Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View\Grouped\Grid::class;
-        }
-        else {
+        } else {
             $gridClass = \Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View\Separated\Grid::class;
         }
 

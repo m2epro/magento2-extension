@@ -36,8 +36,8 @@ class ResendInvoice extends Order
                 [
                     'msg' => [
                         'type' => 'success',
-                        'text' => $this->__('Order Invoice will be sent to Amazon.')
-                    ]
+                        'text' => $this->__('Order Invoice will be sent to Amazon.'),
+                    ],
                 ]
             );
         }
@@ -48,8 +48,8 @@ class ResendInvoice extends Order
                 [
                     'msg' => [
                         'type' => 'success',
-                        'text' => $this->__('Order Credit Memo will be sent to Amazon.')
-                    ]
+                        'text' => $this->__('Order Credit Memo will be sent to Amazon.'),
+                    ],
                 ]
             );
         }

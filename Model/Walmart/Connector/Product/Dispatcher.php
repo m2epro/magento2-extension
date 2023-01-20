@@ -38,12 +38,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param int $action
      * @param array|\Ess\M2ePro\Model\Listing\Product $products
      * @param array $params
+     *
      * @return int
      */
     public function process($action, $products, array $params = [])
     {
         $params = array_merge([
-            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
         ], $params);
 
         if (empty($params['logs_action_id'])) {
@@ -73,8 +74,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param array $sortedProductsData
      * @param string $action
      * @param array $params
-     * @throws \LogicException
+     *
      * @return int
+     * @throws \LogicException
      */
     protected function processGroupedProducts(
         array $sortedProductsData,
@@ -100,11 +102,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      * @param \Ess\M2ePro\Model\Listing\Product $product
      * @param string $action
      * @param array $params
+     *
      * @return int
      */
     protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = [])
     {
         try {
+            /** @var \Ess\M2ePro\Model\Walmart\Connector\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Dispatcher');
             $connectorName = 'Walmart\Connector\Product\\' . $this->getActionNick($action) . '\Requester';
 

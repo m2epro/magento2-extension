@@ -15,6 +15,7 @@ class SaveNote extends \Ess\M2ePro\Controller\Adminhtml\Order
         $noteText = $this->getRequest()->getParam('note');
         if ($noteText === null) {
             $this->setJsonContent(['result' => false]);
+
             return $this->getResult();
         }
 
@@ -31,6 +32,7 @@ class SaveNote extends \Ess\M2ePro\Controller\Adminhtml\Order
         $noteModel->save();
 
         $this->setJsonContent(['result' => true]);
+
         return $this->getResult();
     }
 }

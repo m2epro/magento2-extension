@@ -19,11 +19,11 @@ use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    const STATUS_CREATED = 'created';
-    const STATUS_ACKNOWLEDGED = 'acknowledged';
-    const STATUS_SHIPPED = 'shipped';
-    const STATUS_SHIPPED_PARTIALLY = 'shippedPartially';
-    const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_CREATED = 'created';
+    public const STATUS_ACKNOWLEDGED = 'acknowledged';
+    public const STATUS_SHIPPED = 'shipped';
+    public const STATUS_SHIPPED_PARTIALLY = 'shippedPartially';
+    public const STATUS_CANCELLED = 'cancelled';
 
     /** @var \Ess\M2ePro\Model\Walmart\Item $channelItem */
     private $channelItem = null;
@@ -76,7 +76,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     public function getProxy()
     {
         return $this->modelFactory->getObject('Walmart_Order_Item_ProxyObject', [
-            'item' => $this
+            'item' => $this,
         ]);
     }
 
@@ -106,11 +106,22 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     public function getChannelItem()
     {
         if ($this->channelItem === null) {
-            $this->channelItem = $this->activeRecordFactory->getObject('Walmart\Item')->getCollection()
-                ->addFieldToFilter('account_id', $this->getParentObject()->getOrder()->getAccountId())
-                ->addFieldToFilter('marketplace_id', $this->getParentObject()->getOrder()->getMarketplaceId())
+            $this->channelItem = $this->activeRecordFactory
+                ->getObject('Walmart\Item')
+                ->getCollection()
+                ->addFieldToFilter(
+                    'account_id',
+                    $this->getParentObject()->getOrder()->getAccountId()
+                )
+                ->addFieldToFilter(
+                    'marketplace_id',
+                    $this->getParentObject()->getOrder()->getMarketplaceId()
+                )
                 ->addFieldToFilter('sku', $this->getSku())
-                ->setOrder('create_date', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC)
+                ->setOrder(
+                    'create_date',
+                    \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC
+                )
                 ->getFirstItem();
         }
 
@@ -218,6 +229,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
                 ? $this->getWalmartAccount()->getMagentoOrdersListingsStoreId()
                 : $this->getChannelItem()->getStoreId();
         }
+
         // ---------------------------------------
 
         return $this->getWalmartAccount()->getMagentoOrdersListingsOtherStoreId();
@@ -272,15 +284,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         $sku = $this->getSku();
         if ($sku != '' && strlen($sku) <= \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
             $product = $this->productFactory->create()
-                ->setStoreId($this->getWalmartOrder()->getAssociatedStoreId())
-                ->getCollection()
-                ->addAttributeToSelect('sku')
-                ->addAttributeToFilter('sku', $sku)
-                ->getFirstItem();
+                                            ->setStoreId($this->getWalmartOrder()->getAssociatedStoreId())
+                                            ->getCollection()
+                                            ->addAttributeToSelect('sku')
+                                            ->addAttributeToFilter('sku', $sku)
+                                            ->getFirstItem();
 
             if ($product->getId()) {
                 $this->_eventManager->dispatch('ess_associate_walmart_order_item_to_product', [
-                    'product'    => $product,
+                    'product' => $product,
                     'order_item' => $this->getParentObject(),
                 ]);
 
@@ -292,7 +304,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         $product = $this->createProduct();
 
         $this->_eventManager->dispatch('ess_associate_walmart_order_item_to_product', [
-            'product'    => $product,
+            'product' => $product,
             'order_item' => $this->getParentObject(),
         ]);
 
@@ -306,9 +318,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     private function createProduct()
     {
         if (!$this->getWalmartAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
-            throw new ProductCreationDisabled($this->getHelper('Module\Translation')->__(
-                'Product creation is disabled in "Account > Orders > Product Not Found".'
-            ));
+            throw new ProductCreationDisabled(
+                $this->getHelper('Module\Translation')->__(
+                    'Product creation is disabled in "Account > Orders > Product Not Found".'
+                )
+            );
         }
 
         $storeId = $this->getWalmartAccount()->getMagentoOrdersListingsOtherStoreId();
@@ -335,14 +349,14 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         }
 
         $productData = [
-            'title'             => $this->getTitle(),
-            'sku'               => $sku,
-            'description'       => '',
+            'title' => $this->getTitle(),
+            'sku' => $sku,
+            'description' => '',
             'short_description' => '',
-            'qty'               => $this->getQtyForNewProduct(),
-            'price'             => $this->getPrice(),
-            'store_id'          => $storeId,
-            'tax_class_id'     => $this->getWalmartAccount()->getMagentoOrdersListingsOtherProductTaxClassId()
+            'qty' => $this->getQtyForNewProduct(),
+            'price' => $this->getPrice(),
+            'store_id' => $storeId,
+            'tax_class_id' => $this->getWalmartAccount()->getMagentoOrdersListingsOtherProductTaxClassId(),
         ];
 
         // Create product in magento
@@ -363,10 +377,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     private function getQtyForNewProduct()
     {
         $otherListing = $this->walmartFactory->getObject('Listing\Other')->getCollection()
-            ->addFieldToFilter('account_id', $this->getParentObject()->getOrder()->getAccountId())
-            ->addFieldToFilter('marketplace_id', $this->getParentObject()->getOrder()->getMarketplaceId())
-            ->addFieldToFilter('sku', $this->getSku())
-            ->getFirstItem();
+                                             ->addFieldToFilter(
+                                                 'account_id',
+                                                 $this->getParentObject()->getOrder()->getAccountId()
+                                             )
+                                             ->addFieldToFilter(
+                                                 'marketplace_id',
+                                                 $this->getParentObject()->getOrder()->getMarketplaceId()
+                                             )
+                                             ->addFieldToFilter('sku', $this->getSku())
+                                             ->getFirstItem();
 
         if ((int)$otherListing->getOnlineQty() > $this->getQtyPurchased()) {
             return $otherListing->getOnlineQty();
@@ -389,6 +409,14 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     public function isBuyerCancellationPossible(): bool
     {
         $status = $this->getStatus();
+
         return $status === self::STATUS_CREATED || $status === self::STATUS_ACKNOWLEDGED;
+    }
+
+    public function getTrackingDetails(): array
+    {
+        $trackingDetails = $this->getSettings('tracking_details');
+
+        return is_array($trackingDetails) ? $trackingDetails : [];
     }
 }

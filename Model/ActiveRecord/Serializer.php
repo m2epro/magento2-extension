@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\ActiveRecord;
  */
 class Serializer extends \Ess\M2ePro\Model\AbstractModel
 {
-    const SETTING_FIELD_TYPE_JSON          = 'json';
-    const SETTING_FIELD_TYPE_SERIALIZATION = 'serialization';
+    public const SETTING_FIELD_TYPE_JSON = 'json';
+    public const SETTING_FIELD_TYPE_SERIALIZATION = 'serialization';
 
     /** @var ActiveRecordAbstract */
     protected $model;
@@ -24,6 +24,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
     public function setModel(ActiveRecordAbstract $model)
     {
         $this->model = $model;
+
         return $this;
     }
 
@@ -56,7 +57,8 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
             $settings = $this->getHelper('Data')->phpUnserialize($settings);
         } else {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                'Encoding type "%encode_type%" is not supported.', $encodeType
+                'Encoding type "%encode_type%" is not supported.',
+                $encodeType
             );
         }
 
@@ -75,7 +77,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
     public function getSetting(
         $fieldName,
         $settingNamePath,
-        $defaultValue = NULL,
+        $defaultValue = null,
         $encodeType = self::SETTING_FIELD_TYPE_JSON
     ) {
         if (empty($settingNamePath)) {
@@ -105,7 +107,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param string $fieldName
-     * @param array  $settings
+     * @param array $settings
      * @param string $encodeType
      *
      * @return ActiveRecordAbstract
@@ -126,11 +128,13 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
             $settings = $this->getHelper('Data')->phpSerialize($settings);
         } else {
             throw new \Ess\M2ePro\Model\Exception\Logic(
-                'Encoding type "%encode_type%" is not supported.', $encodeType
+                'Encoding type "%encode_type%" is not supported.',
+                $encodeType
             );
         }
 
         $this->model->setData((string)$fieldName, $settings);
+
         return $this->model;
     }
 
@@ -141,7 +145,6 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
      * @param string $encodeType
      *
      * @return ActiveRecordAbstract
-     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function setSetting(

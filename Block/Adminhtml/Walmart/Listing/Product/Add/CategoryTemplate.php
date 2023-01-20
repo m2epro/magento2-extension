@@ -55,12 +55,12 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
         $url = $this->getUrl('*/*/removeAddedProducts', [
             'step' => 1,
-            '_current' => true
+            '_current' => true,
         ]);
         $this->addButton('back', [
-            'label'     => $this->__('Back'),
-            'class'     => 'back',
-            'onclick'   => 'setLocation(\'' . $url . '\');'
+            'label' => $this->__('Back'),
+            'class' => 'back',
+            'onclick' => 'setLocation(\'' . $url . '\');',
         ]);
 
         $url = $this->getUrl(
@@ -80,9 +80,9 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
         );
 
         $this->addButton('next', [
-            'label'     => $this->__('Continue'),
-            'class'     => 'action-primary forward',
-            'onclick'   => "categoryTemplateModeFormSubmit()"
+            'label' => $this->__('Continue'),
+            'class' => 'action-primary forward',
+            'onclick' => "categoryTemplateModeFormSubmit()",
         ]);
     }
 

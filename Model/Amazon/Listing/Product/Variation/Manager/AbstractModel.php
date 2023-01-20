@@ -22,10 +22,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
      */
     private $variationManager = null;
-
+    /** @var bool  */
     private $isCacheEnabled = false;
-
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
 
     //########################################

@@ -30,6 +30,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
 
         if (!$post = $this->getRequest()->getPostValue() || empty($ids)) {
             $this->setAjaxContent('', false);
+
             return $this->getResult();
         }
 
@@ -38,6 +39,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
 
         if ($collection->getSize() == 0) {
             $this->setAjaxContent('', false);
+
             return $this->getResult();
         }
 

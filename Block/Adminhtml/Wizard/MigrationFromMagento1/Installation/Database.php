@@ -22,7 +22,7 @@ class Database extends Installation
         parent::_construct();
 
         $this->jsUrl->addUrls([
-            'migrationFromMagento1/complete' => $this->getUrl('m2epro/migrationFromMagento1/complete')
+            'migrationFromMagento1/complete' => $this->getUrl('m2epro/migrationFromMagento1/complete'),
         ]);
 
         $this->updateButton('continue', 'onclick', 'MigrationFromMagento1Obj.complete();');

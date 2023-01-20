@@ -27,10 +27,10 @@ class ListingTutorial extends Installation
         $this->addButton(
             'skip',
             [
-                'label'   => $this->__('Skip'),
-                'class'   => 'primary',
-                'id'      => 'skip',
-                'onclick' => "WizardObj.skip('{$this->getUrl('*/wizard_installationAmazon/skip')}');"
+                'label' => $this->__('Skip'),
+                'class' => 'primary',
+                'id' => 'skip',
+                'onclick' => "WizardObj.skip('{$this->getUrl('*/wizard_installationAmazon/skip')}');",
             ],
             1,
             1

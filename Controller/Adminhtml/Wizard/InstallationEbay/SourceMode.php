@@ -21,7 +21,7 @@ class SourceMode extends InstallationEbay
             [
                 'wizard' => true,
                 'id' => $listingId,
-                'listing_creation' => true
+                'listing_creation' => true,
             ]
         );
     }

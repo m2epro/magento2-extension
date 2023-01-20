@@ -8,19 +8,18 @@
 
 namespace Ess\M2ePro\Model\Template;
 
-use \Ess\M2ePro\Model\Amazon\Template\Synchronization as AmazonTemplateSynchronization;
-use \Ess\M2ePro\Model\Ebay\Template\Synchronization as EbayTemplateSynchronization;
-use \Ess\M2ePro\Model\Walmart\Template\Synchronization as WalmartTemplateSynchronization;
+use Ess\M2ePro\Model\Amazon\Template\Synchronization as AmazonTemplateSynchronization;
+use Ess\M2ePro\Model\Ebay\Template\Synchronization as EbayTemplateSynchronization;
+use Ess\M2ePro\Model\Walmart\Template\Synchronization as WalmartTemplateSynchronization;
 
 /**
  * Class \Ess\M2ePro\Model\Template\Synchronization
- *
  * @method AmazonTemplateSynchronization|EbayTemplateSynchronization|WalmartTemplateSynchronization getChildObject()
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    const QTY_MODE_NONE = 0;
-    const QTY_MODE_YES  = 1;
+    public const QTY_MODE_NONE = 0;
+    public const QTY_MODE_YES = 1;
 
     //########################################
 
@@ -42,12 +41,14 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ab
     public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
+
         return parent::save($reloadOnCreate);
     }
 
     public function delete()
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('template_synchronization');
+
         return parent::delete();
     }
 

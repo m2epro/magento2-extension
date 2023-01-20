@@ -36,6 +36,7 @@ class GoToItem extends Account
 
         if ($feedbackId === null) {
             $this->getMessageManager()->addError($this->__('Feedback is not defined.'));
+
             return $this->_redirect('*/ebay_account/index');
         }
 

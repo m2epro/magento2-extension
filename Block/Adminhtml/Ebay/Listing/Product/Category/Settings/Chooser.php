@@ -44,24 +44,28 @@ HTML;
     public function setMarketplaceId($marketplaceId)
     {
         $this->_marketplaceId = $marketplaceId;
+
         return $this;
     }
 
     public function setAccountId($accountId)
     {
         $this->_accountId = $accountId;
+
         return $this;
     }
 
     public function setCategoriesData(array $data)
     {
         $this->_categoriesData = $data;
+
         return $this;
     }
 
     public function setCategoryMode($mode)
     {
         $this->_categoryMode = $mode;
+
         return $this;
     }
 

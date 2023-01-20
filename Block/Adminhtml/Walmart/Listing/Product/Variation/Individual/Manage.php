@@ -44,7 +44,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variati
             'label' => $this->__('Add Another Variation'),
             'onclick' => '',
             'class' => 'action primary',
-            'id' => 'add_more_variation_button'
+            'id' => 'add_more_variation_button',
         ]);
         $this->setChild('add_more_variation_button', $buttonBlock);
 
@@ -55,7 +55,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variati
             'label' => $this->__('Generate All Variations'),
             'onclick' => $onClick,
             'class' => 'action primary',
-            'id' => 'variation_manage_generate_all'
+            'id' => 'variation_manage_generate_all',
         ]);
         $this->setChild('variation_manage_generate_all', $buttonBlock);
 
@@ -64,7 +64,7 @@ class Manage extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variati
             'label' => $this->__('Generate Non-Existing Variations'),
             'onclick' => $onClick,
             'class' => 'action primary',
-            'id' => 'variation_manage_generate_unique'
+            'id' => 'variation_manage_generate_unique',
         ]);
         $this->setChild('variation_manage_generate_unique', $buttonBlock);
     }

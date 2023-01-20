@@ -13,8 +13,8 @@ namespace Ess\M2ePro\Model\Cron\Runner;
  */
 class Magento extends AbstractModel
 {
-    const MIN_DISTRIBUTION_EXECUTION_TIME = 300;
-    const MAX_DISTRIBUTION_WAIT_INTERVAL  = 59;
+    public const MIN_DISTRIBUTION_EXECUTION_TIME = 300;
+    public const MAX_DISTRIBUTION_WAIT_INTERVAL = 59;
 
     //########################################
 

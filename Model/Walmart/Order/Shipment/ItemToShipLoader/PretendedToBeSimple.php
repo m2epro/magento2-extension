@@ -81,7 +81,7 @@ class PretendedToBeSimple extends DefaultObject implements ItemToShipLoaderInter
         foreach ($orderItemIds as $orderItemId) {
             $items[] = [
                 'walmart_order_item_id' => $orderItemId,
-                'qty'                   => 1
+                'qty' => 1,
             ];
         }
 

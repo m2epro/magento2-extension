@@ -48,7 +48,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Get collection of synchronizations
         $collection = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')->getCollection()
-            ->addFieldToFilter('main_table.account_id', $accountData->getId());
+                                                ->addFieldToFilter('main_table.account_id', $accountData->getId());
 
         $this->setCollection($collection);
 
@@ -58,50 +58,50 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('ft_title', [
-            'header'    => $this->__('Message'),
-            'align'     => 'left',
-            'type'      => 'text',
-            'index'     => 'body',
-            'filter'    => false,
-            'escape'    => true,
+            'header' => $this->__('Message'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'body',
+            'filter' => false,
+            'escape' => true,
             'filter_index' => 'main_table.body',
-            'frame_callback' => [$this, 'callbackBody']
+            'frame_callback' => [$this, 'callbackBody'],
         ]);
 
         $this->addColumn('ft_create_date', [
-            'header'    => $this->__('Creation Date'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'datetime',
-            'filter'    => false,
-            'format'    => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('Creation Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => false,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'     => 'create_date',
-            'filter_index' => 'main_table.create_date'
+            'index' => 'create_date',
+            'filter_index' => 'main_table.create_date',
         ]);
 
         $this->addColumn('ft_update_date', [
-            'header'    => $this->__('Update Date'),
-            'align'     => 'left',
-            'width'     => '150px',
-            'type'      => 'datetime',
-            'filter'    => false,
-            'format'    => \IntlDateFormatter::MEDIUM,
+            'header' => $this->__('Update Date'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'datetime',
+            'filter' => false,
+            'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
-            'index'     => 'update_date',
-            'filter_index' => 'main_table.update_date'
+            'index' => 'update_date',
+            'filter_index' => 'main_table.update_date',
         ]);
 
         $this->addColumn('ft_action_delete', [
-            'header'    => $this->__('Delete'),
-            'align'     => 'left',
-            'width'     => '50px',
-            'type'      => 'action',
-            'index'     => 'actions',
-            'filter'    => false,
-            'sortable'  => false,
-            'getter'    => 'getId',
-            'frame_callback' => [$this, 'callbackActionDelete']
+            'header' => $this->__('Delete'),
+            'align' => 'left',
+            'width' => '50px',
+            'type' => 'action',
+            'index' => 'actions',
+            'filter' => false,
+            'sortable' => false,
+            'getter' => 'getId',
+            'frame_callback' => [$this, 'callbackActionDelete'],
         ]);
 
         return parent::_prepareColumns();
@@ -124,18 +124,18 @@ HTML;
     public function callbackActionDelete($value, $row, $column, $isExport)
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-            ->setData([
-                'onclick' => 'EbayAccountObj.feedbacksDeleteAction(\''.$row->getData('id').'\');',
-                'label' => $this->__('Delete'),
-                'class' => 'action-default scalable delete icon-btn'
-            ])->toHtml();
+                    ->setData([
+                        'onclick' => 'EbayAccountObj.feedbacksDeleteAction(\'' . $row->getData('id') . '\');',
+                        'label' => $this->__('Delete'),
+                        'class' => 'action-default scalable delete icon-btn',
+                    ])->toHtml();
     }
 
     //########################################
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/ebay_account_feedback_template/getGrid', ['_current'=>true]);
+        return $this->getUrl('*/ebay_account_feedback_template/getGrid', ['_current' => true]);
     }
 
     public function getRowUrl($row)

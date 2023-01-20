@@ -53,6 +53,7 @@ class CreateShippingOffer extends Order
         $showTryAgainBtn = false;
 
         try {
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(
                 'shipment',
@@ -74,7 +75,7 @@ class CreateShippingOffer extends Order
 
             $order->addData(
                 [
-                    'merchant_fulfillment_data'  => $this->getHelper('Data')->jsonEncode($response),
+                    'merchant_fulfillment_data' => $this->getHelper('Data')->jsonEncode($response),
                     'merchant_fulfillment_label' => $labelContent,
                 ]
             )->save();
@@ -91,7 +92,7 @@ class CreateShippingOffer extends Order
         $this->setAjaxContent($popup->toHtml());
         $this->setJsonContent([
             'show_try_again_btn' => $showTryAgainBtn,
-            'html' => $popup->toHtml()
+            'html' => $popup->toHtml(),
         ]);
 
         return $this->getResult();

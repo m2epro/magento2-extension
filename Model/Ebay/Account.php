@@ -12,59 +12,59 @@ use Ess\M2ePro\Model\Exception\Logic;
 
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    const MODE_SANDBOX    = 0;
-    const MODE_PRODUCTION = 1;
+    public const MODE_SANDBOX = 0;
+    public const MODE_PRODUCTION = 1;
 
-    const FEEDBACKS_AUTO_RESPONSE_NONE   = 0;
-    const FEEDBACKS_AUTO_RESPONSE_CYCLED = 1;
-    const FEEDBACKS_AUTO_RESPONSE_RANDOM = 2;
+    public const FEEDBACKS_AUTO_RESPONSE_NONE = 0;
+    public const FEEDBACKS_AUTO_RESPONSE_CYCLED = 1;
+    public const FEEDBACKS_AUTO_RESPONSE_RANDOM = 2;
 
-    const OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE             = 0;
-    const OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT          = 1;
-    const OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE = 2;
+    public const OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE = 0;
+    public const OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT = 1;
+    public const OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_NONE             = 0;
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT          = 1;
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID       = 2;
-    const OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE = 3;
+    public const OTHER_LISTINGS_MAPPING_SKU_MODE_NONE = 0;
+    public const OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT = 1;
+    public const OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID = 2;
+    public const OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE = 3;
 
-    const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE             = 0;
-    const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE = 1;
+    public const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_NONE = 0;
+    public const OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE = 1;
 
-    const OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY     = 1;
-    const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY   = 2;
-    const OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY = 3;
+    public const OTHER_LISTINGS_MAPPING_SKU_DEFAULT_PRIORITY = 1;
+    public const OTHER_LISTINGS_MAPPING_TITLE_DEFAULT_PRIORITY = 2;
+    public const OTHER_LISTINGS_MAPPING_ITEM_ID_DEFAULT_PRIORITY = 3;
 
-    const MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT = 0;
-    const MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM  = 1;
+    public const MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT = 0;
+    public const MAGENTO_ORDERS_LISTINGS_STORE_MODE_CUSTOM = 1;
 
-    const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE = 0;
-    const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT = 1;
+    public const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE = 0;
+    public const MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT = 1;
 
-    const MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO = 'magento';
-    const MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL = 'channel';
+    public const MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO = 'magento';
+    public const MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL = 'channel';
 
-    const MAGENTO_ORDERS_CREATE_CHECKOUT          = 2;
-    const MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID = 4;
+    public const MAGENTO_ORDERS_CREATE_CHECKOUT = 2;
+    public const MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID = 4;
 
-    const MAGENTO_ORDERS_TAX_MODE_NONE    = 0;
-    const MAGENTO_ORDERS_TAX_MODE_CHANNEL = 1;
-    const MAGENTO_ORDERS_TAX_MODE_MAGENTO = 2;
-    const MAGENTO_ORDERS_TAX_MODE_MIXED   = 3;
+    public const MAGENTO_ORDERS_TAX_MODE_NONE = 0;
+    public const MAGENTO_ORDERS_TAX_MODE_CHANNEL = 1;
+    public const MAGENTO_ORDERS_TAX_MODE_MAGENTO = 2;
+    public const MAGENTO_ORDERS_TAX_MODE_MIXED = 3;
 
-    const MAGENTO_ORDERS_CUSTOMER_MODE_GUEST      = 0;
-    const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
-    const MAGENTO_ORDERS_CUSTOMER_MODE_NEW        = 2;
+    public const MAGENTO_ORDERS_CUSTOMER_MODE_GUEST = 0;
+    public const MAGENTO_ORDERS_CUSTOMER_MODE_PREDEFINED = 1;
+    public const MAGENTO_ORDERS_CUSTOMER_MODE_NEW = 2;
 
-    const USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS                         = 0;
-    const USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT = 1;
+    public const USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS = 0;
+    public const USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT = 1;
 
-    const MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT = 0;
-    const MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM  = 1;
+    public const MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT = 0;
+    public const MAGENTO_ORDERS_STATUS_MAPPING_MODE_CUSTOM = 1;
 
-    const MAGENTO_ORDERS_STATUS_MAPPING_NEW     = 'pending';
-    const MAGENTO_ORDERS_STATUS_MAPPING_PAID    = 'processing';
-    const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
+    public const MAGENTO_ORDERS_STATUS_MAPPING_NEW = 'pending';
+    public const MAGENTO_ORDERS_STATUS_MAPPING_PAID = 'processing';
+    public const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
     private $componentEbayCategory;
@@ -99,6 +99,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->shippingTemplateCollectionFactory = $shippingTemplateCollectionFactory;
         $this->componentEbayCategory = $componentEbayCategory;
     }
+
     public function _construct()
     {
         parent::_construct();
@@ -123,10 +124,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         $storeCategoriesTable = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
+                                     ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $this->getResource()->getConnection()
-            ->delete($storeCategoriesTable, ['account_id = ?' => $this->getId()]);
+             ->delete($storeCategoriesTable, ['account_id = ?' => $this->getId()]);
 
         $storeCategoryTemplates = $this->getStoreCategoryTemplates(true);
         foreach ($storeCategoryTemplates as $storeCategoryTemplate) {
@@ -165,6 +166,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -176,6 +178,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -187,6 +190,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -198,6 +202,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @param bool $asObjects
      * @param array $filters
+     *
      * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -214,8 +219,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function hasFeedbackTemplate()
     {
         return (bool)$this->activeRecordFactory->getObject('Ebay_Feedback_Template')->getCollection()
-            ->addFieldToFilter('account_id', $this->getId())
-            ->getSize();
+                                               ->addFieldToFilter('account_id', $this->getId())
+                                               ->getSize();
     }
 
     //########################################
@@ -565,6 +570,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /**
      * @param int $marketplaceId
+     *
      * @return int
      */
     public function getRelatedStoreId($marketplaceId)
@@ -1007,6 +1013,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isRefundEnabled()
     {
         $setting = $this->getSetting('magento_orders_settings', ['refund_and_cancellation', 'refund_mode']);
+
         return (bool)$setting;
     }
 
@@ -1106,6 +1113,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return;
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector(
             'account',
@@ -1188,13 +1196,13 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $connection = $this->getResource()->getConnection();
 
         $tableAccountStoreCategories = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
+                                            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $dbSelect = $connection->select()
-            ->from($tableAccountStoreCategories, '*')
-            ->where('`account_id` = ?', (int)$this->getId())
-            ->where('`category_id` = ?', (int)$id)
-            ->order(['sorder ASC']);
+                               ->from($tableAccountStoreCategories, '*')
+                               ->where('`account_id` = ?', (int)$this->getId())
+                               ->where('`category_id` = ?', (int)$id)
+                               ->order(['sorder ASC']);
 
         $categories = $connection->fetchAll($dbSelect);
 
@@ -1207,14 +1215,14 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getEbayStoreCategories()
     {
         $tableAccountStoreCategories = $this->getHelper('Module_Database_Structure')
-            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
+                                            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $connRead = $this->getResource()->getConnection();
 
         $dbSelect = $connRead->select()
-            ->from($tableAccountStoreCategories, '*')
-            ->where('`account_id` = ?', (int)$this->getId())
-            ->order(['sorder ASC']);
+                             ->from($tableAccountStoreCategories, '*')
+                             ->where('`account_id` = ?', (int)$this->getId())
+                             ->order(['sorder ASC']);
 
         return $connRead->fetchAll($dbSelect);
     }
@@ -1226,11 +1234,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         foreach ($data as $node) {
             if ($node['parent_id'] == $rootId) {
                 $children[] = [
-                    'id'        => $node['category_id'],
-                    'text'      => $node['title'],
+                    'id' => $node['category_id'],
+                    'text' => $node['title'],
                     'allowDrop' => false,
                     'allowDrag' => false,
-                    'children'  => [],
+                    'children' => [],
                 ];
             }
         }

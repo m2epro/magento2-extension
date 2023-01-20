@@ -18,10 +18,10 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     /** @var \Magento\Framework\Data\Tree\Node */
     protected $currentNode;
 
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
-    /** @var \Magento\Catalog\Model\ResourceModel\Category\TreeFactory  */
+    /** @var \Magento\Catalog\Model\ResourceModel\Category\TreeFactory */
     protected $categoryTreeFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
@@ -62,7 +62,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     public function getRoot($parentNodeCategory = null, $recursionLevel = 3)
     {
         $this->_categoryTree = $this->categoryTreeFactory->create();
-        ;
+
         return parent::getRoot($parentNodeCategory, $recursionLevel);
     }
 
@@ -71,6 +71,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     public function setSelectedIds(array $ids)
     {
         $this->selectedIds = $ids;
+
         return $this;
     }
 
@@ -83,12 +84,14 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     {
         $category = $this->_categoryFactory->create()->load($categoryId);
         $node = $this->getRoot($category, 1)->getTree()->getNodeById($categoryId);
+
         return $this->setCurrentNode($node);
     }
 
     public function setCurrentNode(\Magento\Framework\Data\Tree\Node $currentNode)
     {
         $this->currentNode = $currentNode;
+
         return $this;
     }
 
@@ -107,6 +110,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     public function setGridId($gridId)
     {
         $this->gridId = $gridId;
+
         return $this;
     }
 
@@ -119,7 +123,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 
     public function getLoadTreeUrl()
     {
-        return $this->getUrl('*/*/getCategoriesJson', ['_current'=>true]);
+        return $this->getUrl('*/*/getCategoriesJson', ['_current' => true]);
     }
 
     //########################################
@@ -130,9 +134,9 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 
         if (!$collection) {
             $collection = $this->_categoryFactory->create()
-                ->getCollection()
-                ->addAttributeToSelect('name')
-                ->addAttributeToSelect('is_active');
+                                                 ->getCollection()
+                                                 ->addAttributeToSelect('name')
+                                                 ->addAttributeToSelect('is_active');
 
             $this->loadProductsCount($collection);
 
@@ -164,6 +168,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     {
         $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
         $json = \Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : []);
+
         return $json;
     }
 
@@ -173,14 +178,14 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     {
         // create a node from data array
         if (is_array($node)) {
-            $node = new \Magento\Framework\Data\Tree\Node($node, 'entity_id', new \Magento\Framework\Data\Tree);
+            $node = new \Magento\Framework\Data\Tree\Node($node, 'entity_id', new \Magento\Framework\Data\Tree());
         }
 
         $node->loadChildren();
 
         $item = [];
         $item['text'] = $this->buildNodeName($node);
-        $item['id']  = $node->getId();
+        $item['id'] = $node->getId();
         $item['cls'] = 'folder ' . ($node->getIsActive() ? 'active-category' : 'no-active-category');
         $item['path'] = $node->getData('path');
         $item['allowDrop'] = false;
@@ -197,7 +202,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 
             if (!($node->getLevel() > 1 && !$isParent)) {
                 foreach ($node->getChildren() as $child) {
-                    $item['children'][] = $this->_getNodeJson($child, $level+1);
+                    $item['children'][] = $this->_getNodeJson($child, $level + 1);
                 }
             }
         }
@@ -235,6 +240,7 @@ HTML;
     public function getCategoryChildrenJson($categoryId)
     {
         $this->setCurrentNodeById($categoryId);
+
         return $this->getTreeJson($this->_categoryFactory->create()->load($categoryId));
     }
 
@@ -249,17 +255,17 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
 
         $dbSelect = $collection->getConnection()->select()
-             ->from(
-                 $this->databaseHelper
-                     ->getTableNameWithPrefix('catalog_category_product'),
-                 'category_id'
-             )
-             ->where('`product_id` IN(?)', $this->getSelectedIds());
+                               ->from(
+                                   $this->databaseHelper
+                                       ->getTableNameWithPrefix('catalog_category_product'),
+                                   'category_id'
+                               )
+                               ->where('`product_id` IN(?)', $this->getSelectedIds());
 
         $affectedCategoriesCount = $collection->getSelectCountSql()
-            ->where('entity_id IN ('.$dbSelect->__toString().')')
-            ->query()
-            ->fetchColumn();
+                                              ->where('entity_id IN (' . $dbSelect->__toString() . ')')
+                                              ->query()
+                                              ->fetchColumn();
 
         $this->setData('affected_categories_count', (int)$affectedCategoriesCount);
 
@@ -283,7 +289,7 @@ HTML;
         $select->joinLeft(
             [
                 'ccp' => $this->databaseHelper
-                    ->getTableNameWithPrefix('catalog_category_product')
+                    ->getTableNameWithPrefix('catalog_category_product'),
             ],
             "e.entity_id = ccp.category_id AND ccp.product_id IN ({$ids})",
             ['product_id']
@@ -323,7 +329,7 @@ HTML;
         return $this->dataHelper->jsonEncode([
             'category_products' => $this->getProductsCountForEachCategory(),
             'total_products_count' => count($this->getSelectedIds()),
-            'total_categories_count' => $this->getAffectedCategoriesCount()
+            'total_categories_count' => $this->getAffectedCategoriesCount(),
         ]);
     }
 
@@ -353,14 +359,14 @@ HTML;
         $select = $collection->getConnection()->select();
         $select->from(
             [
-                    'main_table' => $this->databaseHelper
-                        ->getTableNameWithPrefix('catalog_category_product')
-                ],
+                'main_table' => $this->databaseHelper
+                    ->getTableNameWithPrefix('catalog_category_product'),
+            ],
             ['category_id', new \Zend_Db_Expr('COUNT(main_table.product_id)')]
         )
-            ->where($collection->getConnection()->quoteInto('main_table.category_id IN(?)', array_keys($items)))
-            ->where('main_table.product_id NOT IN ('.$excludeProductsSelect.')')
-            ->group('main_table.category_id');
+               ->where($collection->getConnection()->quoteInto('main_table.category_id IN(?)', array_keys($items)))
+               ->where('main_table.product_id NOT IN (' . $excludeProductsSelect . ')')
+               ->group('main_table.category_id');
 
         $counts = $collection->getConnection()->fetchPairs($select);
 

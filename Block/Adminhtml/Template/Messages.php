@@ -24,7 +24,8 @@ class Messages extends AbstractBlock
     {
         $block = $this;
 
-        if ($templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING &&
+        if (
+            $templateNick == \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING &&
             $componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK
         ) {
             $block = $this->getLayout()
@@ -118,6 +119,7 @@ HTML;
     public function setTemplateNick($templateNick)
     {
         $this->templateNick = $templateNick;
+
         return $this;
     }
 
@@ -135,6 +137,7 @@ HTML;
     public function setComponentMode($componentMode)
     {
         $this->componentMode = $componentMode;
+
         return $this;
     }
 

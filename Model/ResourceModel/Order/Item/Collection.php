@@ -9,6 +9,7 @@
 /**
  * @method \Ess\M2ePro\Model\Order\Item[] getItems()
  */
+
 namespace Ess\M2ePro\Model\ResourceModel\Order\Item;
 
 /**

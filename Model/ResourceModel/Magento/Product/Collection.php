@@ -27,11 +27,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     /** @var bool */
     private $isLeftJoinsImportant = false;
-    /** @var bool  */
+    /** @var bool */
     protected $listingProductMode = false;
     /** @var \Magento\Framework\DB\Select|null */
     private $customCountSelect = null;
-    /** @var bool  */
+    /** @var bool */
     protected $isNeedToInjectPrices = false;
 
     /**
@@ -132,6 +132,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $value = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $value);
         }
         $this->listing = $value;
+
         return $this;
     }
 
@@ -146,12 +147,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         $this->componentMode = $componentMode;
+
         return $this;
     }
 
     public function setIsNeedToInjectPrices($value)
     {
         $this->isNeedToInjectPrices = $value;
+
         return $this;
     }
 
@@ -212,7 +215,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
             $this->_totalRecords = $this->getConnection()->fetchOne($query, $this->_bindParams);
         }
-        return intval($this->_totalRecords);
+
+        return (int)($this->_totalRecords);
     }
 
     /**
@@ -222,7 +226,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     protected function _getClearSelect()
     {
         $havingColumns = $this->getHavingColumns();
-        $parentSelect  = parent::_getClearSelect();
+        $parentSelect = parent::_getClearSelect();
 
         if (empty($havingColumns)) {
             return $parentSelect;
@@ -276,6 +280,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         if ($attribute === 'min_online_price' || $attribute === 'max_online_price') {
             $this->getSelect()->order($attribute . ' ' . $dir);
+
             return $this;
         }
 
@@ -286,11 +291,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     public function joinIndexerParent()
     {
-        if (!in_array($this->listing->getComponentMode(), [
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            \Ess\M2ePro\Helper\Component\Walmart::NICK
-        ])) {
+        if (
+            !in_array($this->listing->getComponentMode(), [
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            ])
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 "This component is not supported [{$this->listing->getComponentMode()}]"
             );
@@ -298,7 +305,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         /** @var \Ess\M2ePro\Model\Listing\Product\Indexer\VariationParent\Manager $manager */
         $manager = $this->modelFactory->getObject('Listing_Product_Indexer_VariationParent_Manager', [
-            'listing' => $this->listing
+            'listing' => $this->listing,
         ]);
         $manager->prepare();
 
@@ -322,7 +329,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             ['indexer' => $resource->getMainTable()],
             '(`alp`.`listing_product_id` = `indexer`.`listing_product_id`)',
             [
-                'min_online_regular_price' => new \Zend_Db_Expr('IF(
+                'min_online_regular_price' => new \Zend_Db_Expr(
+                    'IF(
                     (`indexer`.`min_regular_price` IS NULL),
                     IF(
                       `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
@@ -333,8 +341,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                       `alp`.`online_regular_price`
                     ),
                     `indexer`.`min_regular_price`
-                )'),
-                'max_online_regular_price' => new \Zend_Db_Expr('IF(
+                )'
+                ),
+                'max_online_regular_price' => new \Zend_Db_Expr(
+                    'IF(
                     (`indexer`.`max_regular_price` IS NULL),
                     IF(
                       `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
@@ -345,18 +355,24 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                       `alp`.`online_regular_price`
                     ),
                     `indexer`.`max_regular_price`
-                )'),
-                'min_online_business_price' => new \Zend_Db_Expr('IF(
+                )'
+                ),
+                'min_online_business_price' => new \Zend_Db_Expr(
+                    'IF(
                     (`indexer`.`min_business_price` IS NULL),
                     `alp`.`online_business_price`,
                     `indexer`.`min_business_price`
-                )'),
-                'max_online_business_price' => new \Zend_Db_Expr('IF(
+                )'
+                ),
+                'max_online_business_price' => new \Zend_Db_Expr(
+                    'IF(
                     (`indexer`.`max_business_price` IS NULL),
                     `alp`.`online_business_price`,
                     `indexer`.`max_business_price`
-                )'),
-                'min_online_price' => new \Zend_Db_Expr('IF(
+                )'
+                ),
+                'min_online_price' => new \Zend_Db_Expr(
+                    'IF(
                     (`indexer`.`min_regular_price` IS NULL AND `indexer`.`min_business_price` IS NULL),
                     IF(
                        `alp`.`online_regular_price` IS NULL,
@@ -375,8 +391,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                         `indexer`.`min_business_price`,
                         `indexer`.`min_regular_price`
                     )
-                )'),
-                'max_online_price' => new \Zend_Db_Expr('IF(
+                )'
+                ),
+                'max_online_price' => new \Zend_Db_Expr(
+                    'IF(
                     `indexer`.`max_regular_price` IS NULL AND `indexer`.`max_business_price` IS NULL,
                     IF(
                       `alp`.`online_regular_price` IS NULL,
@@ -395,7 +413,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                         `indexer`.`max_business_price`,
                         `indexer`.`max_regular_price`
                     )
-                )'),
+                )'
+                ),
             ]
         );
     }
@@ -411,16 +430,20 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             ['indexer' => $resource->getMainTable()],
             '(`elp`.`listing_product_id` = `indexer`.`listing_product_id`)',
             [
-                'min_online_price' => new \Zend_Db_Expr('IF(
+                'min_online_price' => new \Zend_Db_Expr(
+                    'IF(
                     `indexer`.`min_price` IS NULL,
                     `elp`.`online_current_price`,
                     `indexer`.`min_price`
-                )'),
-                'max_online_price' => new \Zend_Db_Expr('IF(
+                )'
+                ),
+                'max_online_price' => new \Zend_Db_Expr(
+                    'IF(
                     `indexer`.`max_price` IS NULL,
                     `elp`.`online_current_price`,
                     `indexer`.`max_price`
-                )'),
+                )'
+                ),
             ]
         );
     }
@@ -435,17 +458,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             ['indexer' => $resource->getMainTable()],
             '(`wlp`.`listing_product_id` = `indexer`.`listing_product_id`)',
             [
-                'min_online_price' => new \Zend_Db_Expr('IF(
+                'min_online_price' => new \Zend_Db_Expr(
+                    'IF(
                 `indexer`.`min_price` IS NULL,
                 `wlp`.`online_price`,
                 `indexer`.`min_price`
-            )'),
+            )'
+                ),
 
-                'max_online_price' => new \Zend_Db_Expr('IF(
+                'max_online_price' => new \Zend_Db_Expr(
+                    'IF(
                 `indexer`.`max_price` IS NULL,
                 `wlp`.`online_price`,
                 `indexer`.`max_price`
-            )'),
+            )'
+                ),
             ]
         );
     }
@@ -465,11 +492,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     private function injectParentPrices()
     {
-        if (!in_array($this->listing->getComponentMode(), [
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            \Ess\M2ePro\Helper\Component\Walmart::NICK
-        ])) {
+        if (
+            !in_array($this->listing->getComponentMode(), [
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                \Ess\M2ePro\Helper\Component\Amazon::NICK,
+                \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            ])
+        ) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 "This component is not supported [{$this->listing->getComponentMode()}]"
             );
@@ -489,8 +518,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $listingProductsData = [];
         foreach ($this as $product) {
             $listingProductsData[(int)$product->getData('id')] = [
-                'min_online_regular_price'  => $product->getData('online_regular_price'),
-                'max_online_regular_price'  => $product->getData('online_regular_price'),
+                'min_online_regular_price' => $product->getData('online_regular_price'),
+                'max_online_regular_price' => $product->getData('online_regular_price'),
                 'min_online_business_price' => $product->getData('online_business_price'),
                 'max_online_business_price' => $product->getData('online_business_price'),
             ];
@@ -511,8 +540,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $data = $this->getConnection()->fetchAll($selectStmt);
         foreach ($data as $row) {
             $listingProductsData[(int)$row['variation_parent_id']] = [
-                'min_online_regular_price'  => $row['variation_min_regular_price'],
-                'max_online_regular_price'  => $row['variation_max_regular_price'],
+                'min_online_regular_price' => $row['variation_min_regular_price'],
+                'max_online_regular_price' => $row['variation_max_regular_price'],
                 'min_online_business_price' => $row['variation_min_business_price'],
                 'max_online_business_price' => $row['variation_max_business_price'],
             ];
@@ -617,16 +646,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->joinTable(
             [
                 'cisi' => $this->helperFactory->getObject('Module_Database_Structure')
-                                    ->getTableNameWithPrefix('cataloginventory_stock_item')
+                                              ->getTableNameWithPrefix('cataloginventory_stock_item'),
             ],
             'product_id=entity_id',
             [
-                'qty'         => 'qty',
-                'is_in_stock' => 'is_in_stock'
+                'qty' => 'qty',
+                'is_in_stock' => 'is_in_stock',
             ],
             [
-                'stock_id'   => $this->helperFactory->getObject('Magento\Stock')->getStockId($this->getStoreId()),
-                'website_id' => $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($this->getStoreId())
+                'stock_id' => $this->helperFactory->getObject('Magento\Stock')->getStockId($this->getStoreId()),
+                'website_id' => $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($this->getStoreId()),
             ],
             'left'
         );
@@ -644,9 +673,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
         $helper = $this->helperFactory->getObject('Magento\Staging');
 
-        if ($helper->isInstalled() &&
+        if (
+            $helper->isInstalled() &&
             $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE) &&
-            strpos($bind, 'entity_id') !== false) {
+            strpos($bind, 'entity_id') !== false
+        ) {
             $bind = str_replace(
                 'entity_id',
                 $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE),
@@ -660,12 +691,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Extension for self::addFieldToFilter() with attribute for sub query
      *
-     * @see self::addFieldToFilter()
      * @param string $attribute
      * @param mixed $condition
      * @param string $joinType
      *
      * @return string
+     * @see self::addFieldToFilter()
      */
     protected function _getAttributeConditionSql($attribute, $condition, $joinType = 'inner')
     {

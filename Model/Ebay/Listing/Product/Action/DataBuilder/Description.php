@@ -25,7 +25,7 @@ class Description extends AbstractModel
         $this->processNotFoundAttributes('Description');
 
         return [
-            'description' => $data
+            'description' => $data,
         ];
     }
 

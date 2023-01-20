@@ -18,10 +18,10 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isDifferent()
     {
         return $this->isQtyDifferent() ||
-               $this->isConditionDifferent() ||
-               $this->isDetailsDifferent() ||
-               $this->isImagesDifferent() ||
-               $this->isSkuSettingsDifferent();
+            $this->isConditionDifferent() ||
+            $this->isDetailsDifferent() ||
+            $this->isImagesDifferent() ||
+            $this->isSkuSettingsDifferent();
     }
 
     //########################################
