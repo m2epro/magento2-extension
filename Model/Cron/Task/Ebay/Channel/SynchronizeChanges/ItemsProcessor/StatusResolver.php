@@ -8,16 +8,11 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor\StatusResolver
- */
 class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 {
     public const EBAY_STATUS_ACTIVE = 'Active';
     public const EBAY_STATUS_ENDED = 'Ended';
     public const EBAY_STATUS_COMPLETED = 'Completed';
-
-    public const SKIP_FLAG_KEY = 'skip_first_completed_status_on_sync';
 
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct;
@@ -32,7 +27,18 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
     /** @var null  */
     protected $productAdditionalData = null;
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\Listing\Product\ScheduledStopAction */
+    private $scheduledStopActionHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Ebay\Listing\Product\ScheduledStopAction $scheduledStopActionHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->scheduledStopActionHelper = $scheduledStopActionHelper;
+    }
 
     public function resolveStatus(
         $channelQty,
@@ -72,8 +78,6 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    //########################################
-
     protected function handleActiveStatus()
     {
         if ($this->channelQty - $this->channelQtySold <= 0) {
@@ -87,8 +91,12 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        if ($this->channelQty - $this->channelQtySold > 0 && $this->statusCompletedIsAlreadySkipped()) {
-            $this->unsetSkipFlag();
+        $listingProductId = (int)$this->listingProduct->getId();
+        if (
+            $this->channelQty - $this->channelQtySold > 0
+            && $this->scheduledStopActionHelper->isStopActionScheduled($listingProductId)
+        ) {
+            $this->scheduledStopActionHelper->removeScheduledStopAction($listingProductId);
         }
 
         $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
@@ -100,12 +108,16 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        if ($this->channelQty - $this->channelQtySold > 0) {
-            if ($this->statusCompletedIsAlreadySkipped()) {
-                $this->unsetSkipFlag();
+        if (
+            $this->channelQty - $this->channelQtySold > 0
+            && $this->listingProduct->getChildObject()->isOnlineDurationGtc()
+        ) {
+            $listingProductId = (int)$this->listingProduct->getId();
+            if ($this->scheduledStopActionHelper->isStopActionScheduled($listingProductId)) {
+                $this->scheduledStopActionHelper->removeScheduledStopAction($listingProductId);
                 $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
             } else {
-                $this->setSkipFlag();
+                $this->scheduledStopActionHelper->scheduleStopAction($listingProductId);
                 $this->productStatus = $this->listingProduct->getStatus();
             }
 
@@ -117,12 +129,18 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected function handleEndedStatus()
     {
+        $listingProductId = (int)$this->listingProduct->getId();
+        if (
+            $this->listingProduct->getChildObject()->isOnlineDurationGtc()
+            && $this->scheduledStopActionHelper->isStopActionScheduled($listingProductId)
+        ) {
+            $this->scheduledStopActionHelper->removeScheduledStopAction($listingProductId);
+        }
+
         if (!$this->setProductStatusSold()) {
             $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
         }
     }
-
-    // ---------------------------------------
 
     protected function setProductStatusSold()
     {
@@ -134,31 +152,6 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 
         return false;
     }
-
-    //########################################
-
-    public function statusCompletedIsAlreadySkipped()
-    {
-        $additionalData = $this->listingProduct->getAdditionalData();
-
-        return isset($additionalData[self::SKIP_FLAG_KEY]);
-    }
-
-    protected function setSkipFlag()
-    {
-        $additionalData = $this->listingProduct->getAdditionalData();
-        $additionalData[self::SKIP_FLAG_KEY] = true;
-        $this->productAdditionalData = $this->getHelper('Data')->jsonEncode($additionalData);
-    }
-
-    protected function unsetSkipFlag()
-    {
-        $additionalData = $this->listingProduct->getAdditionalData();
-        unset($additionalData[self::SKIP_FLAG_KEY]);
-        $this->productAdditionalData = $this->getHelper('Data')->jsonEncode($additionalData);
-    }
-
-    //########################################
 
     public function getProductStatus()
     {
@@ -174,6 +167,4 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->productAdditionalData;
     }
-
-    //########################################
 }

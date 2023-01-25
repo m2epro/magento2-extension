@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Magento\Product;
 
-use Magento\Catalog\Model\ResourceModel\Product\Collection;
-
 class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'magento/product/detect_special_price_end_date';
@@ -19,7 +17,7 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
 
     /** @var \Ess\M2ePro\PublicServices\Product\SqlChange */
     protected $publicService;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory  */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory  */
     protected $listingProductCollectionFactory;
     /** @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory  */
     protected $catalogProductCollectionFactory;
@@ -32,7 +30,7 @@ class DetectSpecialPriceEndDate extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
     public function __construct(
         \Ess\M2ePro\Helper\Module $module,
         \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $catalogProductCollectionFactory,
         \Ess\M2ePro\PublicServices\Product\SqlChange $publicService,
         \Ess\M2ePro\Helper\Data $helperData,

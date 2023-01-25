@@ -10,13 +10,13 @@ namespace Ess\M2ePro\Model\Listing\Auto\Actions\Mode\DuplicateProducts;
 
 class Repository
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory */
     private $listingProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
     private $listingResource;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing $listingResource
     ) {
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;

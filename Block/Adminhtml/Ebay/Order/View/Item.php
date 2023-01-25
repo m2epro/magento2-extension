@@ -12,9 +12,16 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 class Item extends AbstractGrid
 {
+    /** @var \Magento\Catalog\Model\Product */
     protected $productModel;
+
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
+
+    /** @var \Magento\Tax\Model\Calculation */
     protected $taxCalculator;
 
     /** @var \Ess\M2ePro\Model\Order */
@@ -160,8 +167,6 @@ class Item extends AbstractGrid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     /**
      * @param string $value
      * @param \Ess\M2ePro\Model\Order\Item $row
@@ -211,7 +216,7 @@ HTML;
 HTML;
         }
 
-        $eBayLink && $productLink && $eBayLink .= '&nbsp;|&nbsp;';
+        $productLink && $eBayLink .= '&nbsp;|&nbsp;';
         $jsTemplate = <<<HTML
 <a class="gray" href="javascript:void(0);" onclick="
 {OrderEditItemObj.%s('{$this->getId()}', {$row->getId()});}
@@ -316,7 +321,7 @@ HTML;
             return '0%';
         }
 
-        $taxDetails = $this->dataHelper->jsonDecode($taxDetails);
+        $taxDetails = \Ess\M2ePro\Helper\Json::decode($taxDetails);
         if (empty($taxDetails)) {
             return '0%';
         }
@@ -326,7 +331,7 @@ HTML;
 
     public function callbackColumnEbayCollectTax($value, $row, $column, $isExport)
     {
-        $collectTax = $this->dataHelper->jsonDecode($row->getData('tax_details'));
+        $collectTax = \Ess\M2ePro\Helper\Json::decode($row->getChildObject()->getData('tax_details'));
 
         if (isset($collectTax['ebay_collect_taxes'])) {
             return $this->modelFactory->getObject('Currency')->formatPrice(
@@ -344,7 +349,7 @@ HTML;
 
         $taxDetails = $row->getChildObject()->getData('tax_details');
         if (!empty($taxDetails)) {
-            $taxDetails = $this->dataHelper->jsonDecode($taxDetails);
+            $taxDetails = \Ess\M2ePro\Helper\Json::decode($taxDetails);
 
             if (!empty($taxDetails['amount'])) {
                 $total += $taxDetails['amount'];
@@ -366,6 +371,4 @@ HTML;
     {
         return $this->getUrl('*/*/orderItemGrid', ['_current' => true]);
     }
-
-    //########################################
 }

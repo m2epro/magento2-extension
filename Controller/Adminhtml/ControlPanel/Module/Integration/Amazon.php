@@ -21,7 +21,7 @@ class Amazon extends Command
     private $phpEnvironmentRequest;
     /** @var \Magento\Catalog\Model\ProductFactory  */
     private $productFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory */
     private $listingProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
     private $listingResource;
@@ -41,7 +41,7 @@ class Amazon extends Command
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Item $amazonItemResource,
         \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\LinkingFactory $amazonLinkingFactory,

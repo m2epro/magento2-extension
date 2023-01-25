@@ -260,6 +260,7 @@ class Config extends AbstractConfig
                 'ChangeRepricerBaseUrl',
                 'WalmartTrackingDetails',
                 'RemoveConfigConvertLinebreaks',
+                'EbayListingProductScheduledStopAction',
             ],
         ];
     }

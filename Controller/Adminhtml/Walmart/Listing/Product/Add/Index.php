@@ -16,20 +16,20 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
     private $sessionHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory */
     private $listingProductCollectionFactory;
 
     /**
      * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
      * @param \Ess\M2ePro\Helper\Data\GlobalData $globalData
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
      * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
      */
     public function __construct(
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {

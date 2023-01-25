@@ -14,13 +14,13 @@ class DuplicateProducts
     private $repository;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $ebayConfig;
-    /** @var \Ess\M2ePro\Model\Listing\LogFactory */
+    /** @var \Ess\M2ePro\Model\Listing\Log\Factory */
     private $logFactory;
 
     public function __construct(
         DuplicateProducts\Repository $repository,
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $ebayConfig,
-        \Ess\M2ePro\Model\Listing\LogFactory $logFactory
+        \Ess\M2ePro\Model\Listing\Log\Factory $logFactory
     ) {
         $this->repository = $repository;
         $this->ebayConfig = $ebayConfig;

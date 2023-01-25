@@ -427,15 +427,16 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @param string $coefficient
      * @param int $priceVariationMode
      *
-     * @return PriceCalculator
+     * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing\PriceCalculator
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getPriceCalculator(
         array $source,
         $sourceModeMapping = null,
         $coefficient = null,
         $priceVariationMode = null
-    ) {
-        /** @var PriceCalculator $calculator */
+    ): Repricing\PriceCalculator {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_Repricing_PriceCalculator');
         $sourceModeMapping !== null && $calculator->setSourceModeMapping($sourceModeMapping);
         $calculator->setSource($source)->setProduct($this->getListingProduct());

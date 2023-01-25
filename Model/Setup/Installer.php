@@ -4239,6 +4239,46 @@ class Installer
                                                               ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayIndexerListingProductVariationParentTable);
 
+        $ebayListingProductScheduledStopActionTable = $this->getConnection()
+            ->newTable($this->getFullTableName('ebay_listing_product_scheduled_stop_action'))
+            ->addColumn(
+                'id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ]
+            )
+            ->addColumn(
+                'listing_product_id',
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'nullable' => false
+                ]
+            )
+            ->addColumn(
+                'create_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'process_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($ebayListingProductScheduledStopActionTable);
+
         $ebayMarketplaceTable = $this->getConnection()->newTable($this->getFullTableName('ebay_marketplace'))
                                      ->addColumn(
                                          'marketplace_id',

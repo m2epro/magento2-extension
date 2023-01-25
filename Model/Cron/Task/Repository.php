@@ -134,6 +134,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group' => self::GROUP_EBAY,
             'can-work-parallel' => true,
         ],
+        \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\ProcessScheduledStopActions::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'group' => self::GROUP_EBAY,
+        ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\RemovePotentialDuplicates::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group' => self::GROUP_EBAY,

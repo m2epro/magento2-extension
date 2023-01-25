@@ -18,7 +18,7 @@ class Repository
     private $autoCategoryGroupCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group */
     private $autoCategoryGroupResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory */
     private $listingProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
@@ -36,7 +36,7 @@ class Repository
         \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Category\GroupSetFactory $groupSetFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\CollectionFactory $autoCategoryCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group $autoCategoryGroupResource,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group\CollectionFactory $autoCategoryGroupCollFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager

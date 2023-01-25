@@ -88,22 +88,24 @@ class Updating extends AbstractModel
             return false;
         }
 
-        if ($regularPrice > $maxPrice) {
+        if ($maxPrice !== null && $regularPrice !== null && $regularPrice > $maxPrice) {
             $this->logListingProductMessage(
                 $listingProductRepricing->getListingProduct(),
                 $this->translation->__(
-                    'Item price was not updated. Regular Price must be equal to or lower than the Max Price value.'
+                    'Item price was not updated. Regular Price (value) must be equal to or lower than the
+                    Max Price(value) value.'
                 )
             );
 
             return false;
         }
 
-        if ($regularPrice < $minPrice) {
+        if ($minPrice !== null && $regularPrice !== null && $regularPrice < $minPrice) {
             $this->logListingProductMessage(
                 $listingProductRepricing->getListingProduct(),
                 $this->translation->__(
-                    'Item price was not updated. Regular Price must be equal to or higher than the Min Price value.'
+                    'Item price was not updated. Regular Price(value) must be equal to or higher than the
+                    Min Price(value) value.'
                 )
             );
 
