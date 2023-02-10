@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
+use Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory;
+
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Order getResource()
@@ -43,6 +45,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     /** @var null|float  */
     private $grandTotalPrice = null;
 
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory */
+    private $productPriceTaxFactory;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     protected $amazonHelper;
 
@@ -50,16 +54,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     protected $amazonFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        Order\Tax\ProductPriceTaxFactory                                              $productPriceTaxFactory,
+        \Ess\M2ePro\Helper\Component\Amazon                            $amazonHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
-        \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
-        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
-        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory                $shipmentFactory,
+        \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory          $shippingAddressFactory,
+        \Magento\Sales\Model\Order\Email\Sender\OrderSender            $orderSender,
+        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender          $invoiceSender,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory        $parentFactory,
+        \Ess\M2ePro\Model\Factory                                      $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory                         $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory                                     $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
@@ -78,6 +83,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $data
         );
 
+        $this->productPriceTaxFactory = $productPriceTaxFactory;
         $this->amazonHelper = $amazonHelper;
         $this->amazonFactory = $amazonFactory;
         $this->shipmentFactory = $shipmentFactory;
@@ -266,18 +272,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getProductPriceTaxRate()
     {
-        $taxAmount = $this->getProductPriceTaxAmount() + $this->getGiftPriceTaxAmount();
-        if ($taxAmount <= 0) {
-            return 0;
-        }
-
-        if ($this->getSubtotalPrice() - $this->getPromotionDiscountAmount() <= 0) {
-            return 0;
-        }
-
-        $taxRate = ($taxAmount / ($this->getSubtotalPrice() - $this->getPromotionDiscountAmount())) * 100;
-
-        return round($taxRate, 4);
+        return $this->productPriceTaxFactory->createByOrder($this)->getTaxRateValue();
     }
 
     /**

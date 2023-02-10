@@ -35,6 +35,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => self::COMPONENT_GENERAL,
             'group' => self::GROUP_SYSTEM,
         ],
+        \Ess\M2ePro\Model\Cron\Task\System\FixItemTables::NICK => [
+            'component' => self::COMPONENT_GENERAL,
+            'group' => self::GROUP_SYSTEM,
+        ],
         \Ess\M2ePro\Model\Cron\Task\System\ConnectorCommandPending\ProcessPartial::NICK => [
             'component' => self::COMPONENT_GENERAL,
             'group' => self::GROUP_SYSTEM,

@@ -45,6 +45,7 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function processItemsChanges()
     {
+        /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor $itemsProcessor */
         $itemsProcessor = $this->modelFactory->getObject('Cron_Task_Ebay_Channel_SynchronizeChanges_ItemsProcessor');
 
         $synchronizationLog = $this->getSynchronizationLog();
@@ -62,6 +63,7 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function processOrdersChanges()
     {
+        /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\OrdersProcessor $ordersProcessor */
         $ordersProcessor = $this->modelFactory->getObject('Cron_Task_Ebay_Channel_SynchronizeChanges_OrdersProcessor');
 
         $synchronizationLog = $this->getSynchronizationLog();

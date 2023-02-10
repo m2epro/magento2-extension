@@ -105,6 +105,7 @@ class Save extends \Ess\M2ePro\Plugin\AbstractPlugin
         $oldValue,
         $newValue
     ) {
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode($listing->getComponentMode());
 

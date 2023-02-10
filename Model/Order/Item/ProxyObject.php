@@ -12,9 +12,6 @@ use Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
 use Ess\M2ePro\Model\Amazon\Order\Item as AmazonItem;
 use Ess\M2ePro\Model\Walmart\Order\Item as WalmartItem;
 
-/**
- * Class \Ess\M2ePro\Model\Order\Item\ProxyObject
- */
 abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var EbayItem|AmazonItem|WalmartItem */
@@ -28,8 +25,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     protected $additionalData = [];
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $item,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -40,13 +35,9 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    //########################################
-
     abstract public function getOriginalPrice();
 
     abstract public function getOriginalQty();
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Order\ProxyObject
@@ -55,8 +46,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->item->getParentObject()->getOrder()->getProxy();
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Order\Item\ProxyObject $that
@@ -131,8 +120,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->item->getParentObject()->pretendedToBeSimple();
     }
 
-    //########################################
-
     public function getProduct()
     {
         return $this->item->getParentObject()->getProduct();
@@ -148,8 +135,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->item->getParentObject()->getMagentoProduct();
     }
 
-    //########################################
-
     public function getOptions()
     {
         return $this->item->getParentObject()->getAssociatedOptions();
@@ -159,8 +144,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->item->getParentObject()->getAssociatedProducts();
     }
-
-    //########################################
 
     public function getBasePrice()
     {
@@ -215,8 +198,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->getOriginalQty();
     }
 
-    //########################################
-
     public function hasTax()
     {
         return $this->getProxyOrder()->hasTax();
@@ -232,28 +213,31 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->getProxyOrder()->isVatTax();
     }
 
+    /**
+     * @return int|float
+     */
     public function getTaxRate()
     {
         return $this->getProxyOrder()->getProductPriceTaxRate();
     }
 
-    //########################################
+    /**
+     * @return \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface|null
+     */
+    public function getProductPriceTax(): ?\Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+    {
+        return $this->getProxyOrder()->getProductPriceTax();
+    }
 
     public function getWasteRecyclingFee()
     {
         return 0.0;
     }
 
-    //########################################
-
     public function getGiftMessage()
     {
         return null;
     }
 
-    //########################################
-
     abstract public function getAdditionalData();
-
-    //########################################
 }

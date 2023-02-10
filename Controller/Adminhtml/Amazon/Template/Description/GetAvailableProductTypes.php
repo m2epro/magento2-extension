@@ -42,6 +42,7 @@ class GetAvailableProductTypes extends Description
             ];
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $model */
         $model = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $model->setMarketplaceId($marketplaceId);
 

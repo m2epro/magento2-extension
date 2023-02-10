@@ -112,6 +112,7 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
         \Magento\InventorySalesApi\Api\Data\SalesChannelInterface $salesChannel,
         \Magento\InventorySalesApi\Api\Data\ItemToSellInterface $item
     ) {
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode($listingProduct->getComponentMode());
 

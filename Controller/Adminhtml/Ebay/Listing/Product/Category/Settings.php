@@ -127,9 +127,11 @@ abstract class Settings extends Listing
                 }
 
                 if ($this->componentEbayCategory->isEbayCategoryType($categoryType)) {
+                    /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
                     $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
                     $builder = $this->modelFactory->getObject('Ebay_Template_Category_Builder');
                 } else {
+                    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $template */
                     $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
                     $builder = $this->modelFactory->getObject('Ebay_Template_StoreCategory_Builder');
                 }
@@ -296,6 +298,7 @@ abstract class Settings extends Listing
                     ];
 
                     if ($categoryType === eBayCategory::TYPE_EBAY_MAIN) {
+                        /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
                         $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
                         $template->loadByCategoryValue(
                             $sessionData[$id][$categoryType]['value'],
@@ -354,6 +357,7 @@ abstract class Settings extends Listing
         foreach ($tempData as $categoryId => $data) {
             !isset($previousCategoriesData[$categoryId]) && $previousCategoriesData[$categoryId] = [];
             if (!empty($data['mode']) && !empty($data['value']) && !empty($data['path'])) {
+                /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
                 $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
                 $template->loadByCategoryValue(
                     $data['value'],
@@ -380,6 +384,7 @@ abstract class Settings extends Listing
         foreach ($tempData as $categoryId => $data) {
             !isset($previousCategoriesData[$categoryId]) && $previousCategoriesData[$categoryId] = [];
             if (!empty($data['mode']) && !empty($data['value']) && !empty($data['path'])) {
+                /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $template */
                 $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
                 $template->loadByCategoryValue(
                     $data['value'],

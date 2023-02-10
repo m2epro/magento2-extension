@@ -12,25 +12,18 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Order\ShippingAddress
- */
 abstract class ShippingAddress extends \Magento\Framework\DataObject
 {
+    /** @var \Magento\Directory\Model\CountryFactory */
     protected $countryFactory;
     /** @var \Ess\M2ePro\Model\Order */
     protected $order;
-
     /** @var \Magento\Directory\Model\Country */
     protected $country;
-
     /** @var \Magento\Directory\Model\Region */
     protected $region;
-
     /** @var \Magento\Directory\Helper\Data */
     protected $directoryHelper;
-
-    //########################################
 
     public function __construct(
         \Magento\Directory\Model\CountryFactory $countryFactory,
@@ -43,8 +36,6 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         $this->order = $order;
         parent::__construct($data);
     }
-
-    //########################################
 
     abstract public function getRawData();
 
@@ -74,29 +65,15 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
 
             $this->region = $countryRegions->getFirstItem();
 
-            if ($this->isRegionValidationRequired() && !$this->region->getId()) {
+            $isRegionRequired = $this->directoryHelper->isRegionRequired($this->getCountry()->getId());
+            if ($isRegionRequired && !$this->region->getId()) {
                 throw new \Ess\M2ePro\Model\Exception(
                     sprintf('State/Region "%s" in the shipping address is invalid.', $this->getState())
                 );
             }
-
-            $isRegionRequired = $this->directoryHelper->isRegionRequired($this->getCountry()->getId());
-
-            if ($isRegionRequired && !$this->region->getId()) {
-                $countryRegions = $this->getCountry()->getRegionCollection();
-                $this->region = $countryRegions->getFirstItem();
-            }
         }
 
         return $this->region;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRegionValidationRequired()
-    {
-        return false;
     }
 
     public function getCountryName()
@@ -165,6 +142,4 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
 
         return false;
     }
-
-    //########################################
 }

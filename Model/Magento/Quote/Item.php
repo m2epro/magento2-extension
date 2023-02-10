@@ -8,9 +8,8 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
-/**
- * Class \Ess\M2ePro\Model\Magento\Quote\Item
- */
+use Ess\M2ePro\Model\Magento\Quote\Total\RoundTaxPercent;
+
 class Item extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $taxHelper;
@@ -101,12 +100,15 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
+     * @param \Magento\Catalog\Model\Product $product
+     *
      * @return \Magento\Catalog\Model\Product
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function setTaxClassIntoProduct(\Magento\Catalog\Model\Product $product)
     {
         $proxyOrder = $this->proxyItem->getProxyOrder();
-        $itemTaxRate = $this->proxyItem->getTaxRate();
+        $itemTaxRate = $this->getTaxRateOfProxyItem();
         $isOrderHasTax = $this->proxyItem->getProxyOrder()->hasTax();
         $hasRatesForCountry = $this->taxHelper->hasRatesForCountry($this->quote->getShippingAddress()->getCountryId());
         $calculationBasedOnOrigin = $this->taxHelper->isCalculationBasedOnOrigin($this->quote->getStore());
@@ -144,6 +146,33 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
 
         return $product->setTaxClassId(array_shift($productTaxClasses));
+    }
+
+    /**
+     * @return float|int
+     */
+    private function getTaxRateOfProxyItem()
+    {
+        $productPriceTax = $this->proxyItem->getProductPriceTax();
+
+        if (empty($productPriceTax)) {
+            return $this->proxyItem->getTaxRate();
+        }
+
+        $rateValue = $productPriceTax->getTaxRateValue();
+        if (!$productPriceTax->isEnabledRoundingOfTaxRateValue()) {
+            return $rateValue;
+        }
+
+        $notRoundedTaxRateValue = $productPriceTax->getNotRoundedTaxRateValue();
+        if ($rateValue !== $notRoundedTaxRateValue) {
+            $this->quote->setData(
+                RoundTaxPercent::PRODUCT_PRICE_TAX_DATA_KEY,
+                $productPriceTax
+            );
+        }
+
+        return $notRoundedTaxRateValue;
     }
 
     private function getProductTaxRate($productTaxClassId)

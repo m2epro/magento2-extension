@@ -73,6 +73,8 @@ define([
                     this.reloadParams.rule = "";
                 }
 
+                ProductGridObj.clearUrlFromFilter();
+
                 this.reload(this.addVarToUrl(this.filterVar, base64_encode(Form.serializeElements(elements))));
             }
         },
@@ -86,6 +88,8 @@ define([
                 reloadParam.match('^rule|^hide') && delete this.reloadParams[reloadParam];
             }
             this.reloadParams.rule = "";
+
+            ProductGridObj.clearUrlFromFilter();
 
             this.reload(this.addVarToUrl(this.filterVar, ''));
         },
@@ -160,9 +164,35 @@ define([
                 return false;
             }
             return selectedProducts;
+        },
+
+        clearUrlFromFilter: function () {
+            var url = window.location.href;
+            url = this.replaceFilter(url);
+
+            if (url) {
+                window.history.pushState("", "", url);
+
+                for (var child of $$('.store-switcher-all')) {
+                    url = child.firstElementChild.getAttribute('href');
+                    url = this.replaceFilter(url);
+                    if (url) {
+                        child.firstElementChild.setAttribute("href", url);
+                    }
+                }
+            }
+        },
+
+        replaceFilter: function (url) {
+            var urlParts = url.split('/');
+            var index = urlParts.indexOf('filter');
+
+            if (index !== -1) {
+                urlParts.splice(index, 2);
+                return urlParts.join('/');
+            }
+
+            return '';
         }
-
-        // ---------------------------------------
     });
-
 });

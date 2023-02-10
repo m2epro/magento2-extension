@@ -8,17 +8,12 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product;
 
-use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager;
 use Ess\M2ePro\Model\Exception;
-use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Listing\Product;
 use Ess\M2ePro\Model\Magento\Product\Cache;
 use Ess\M2ePro\Model\Amazon\Account\Repricing as AccountRepricing;
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
- */
 class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /** @var Product $listingProductModel */
@@ -27,8 +22,6 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     private $regularPriceCache = null;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -55,17 +48,21 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         );
     }
 
-    //########################################
-
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing::class);
     }
 
-    //########################################
-
-    public function setListingProduct(Product $listingProduct)
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     *
+     * @return $this
+     */
+    public function setListingProduct(Product $listingProduct): self
     {
         $this->listingProductModel = $listingProduct;
 
@@ -73,7 +70,8 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     }
 
     /**
-     * @return Product
+     * @return \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel|\Ess\M2ePro\Model\Listing\Product|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getListingProduct()
     {
@@ -88,33 +86,36 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     }
 
     /**
-     * @return AmazonListingProduct
-     * @throws Logic
+     * @return \Ess\M2ePro\Model\Amazon\Listing\Product
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getAmazonListingProduct()
+    public function getAmazonListingProduct(): AmazonListingProduct
     {
         return $this->getListingProduct()->getChildObject();
     }
 
     /**
-     * @return Cache
+     * @return \Ess\M2ePro\Model\Magento\Product\Cache
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getMagentoProduct()
+    public function getMagentoProduct(): Cache
     {
         return $this->getAmazonListingProduct()->getMagentoProduct();
     }
 
     /**
-     * @return Cache
-     * @throws Exception
+     * @return \Ess\M2ePro\Model\Magento\Product\Cache
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getActualMagentoProduct()
+    public function getActualMagentoProduct(): Cache
     {
         return $this->getAmazonListingProduct()->getActualMagentoProduct();
     }
 
     /**
-     * @return Manager
+     * @return \Ess\M2ePro\Model\AbstractModel|\Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getVariationManager()
     {
@@ -122,19 +123,18 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     }
 
     /**
-     * @return AccountRepricing
+     * @return \Ess\M2ePro\Model\Amazon\Account\Repricing
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getAccountRepricing()
+    public function getAccountRepricing(): AccountRepricing
     {
         return $this->getAmazonListingProduct()->getAmazonAccount()->getRepricing();
     }
 
-    //########################################
-
     /**
      * @return int
      */
-    public function getListingProductId()
+    public function getListingProductId(): int
     {
         return (int)$this->getData('listing_product_id');
     }
@@ -142,7 +142,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @return bool
      */
-    public function isOnlineDisabled()
+    public function isOnlineDisabled(): bool
     {
         return (bool)$this->getData('is_online_disabled');
     }
@@ -150,7 +150,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @return bool
      */
-    public function isOnlineInactive()
+    public function isOnlineInactive(): bool
     {
         return (bool)$this->getData('is_online_inactive');
     }
@@ -158,44 +158,18 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @return bool
      */
-    public function isOnlineManaged()
+    public function isOnlineManaged(): bool
     {
         return !$this->isOnlineDisabled() && !$this->isOnlineInactive();
     }
 
     /**
-     * @return float|int
-     */
-    public function getOnlineRegularPrice()
-    {
-        return $this->getData('online_regular_price');
-    }
-
-    /**
-     * @return float|int
-     */
-    public function getOnlineMinPrice()
-    {
-        return $this->getData('online_min_price');
-    }
-
-    /**
-     * @return float|int
-     */
-    public function getOnlineMaxPrice()
-    {
-        return $this->getData('online_max_price');
-    }
-
-    /**
      * @return bool
      */
-    public function isProcessRequired()
+    public function isProcessRequired(): bool
     {
         return (bool)$this->getData('is_process_required');
     }
-
-    //########################################
 
     /**
      * @return float|int
@@ -224,13 +198,16 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @return bool
      */
-    public function getLastUpdatedIsDisabled()
+    public function getLastUpdatedIsDisabled(): bool
     {
         return (bool)$this->getData('last_updated_is_disabled');
     }
 
-    //########################################
-
+    /**
+     * @return float|int|mixed
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getRegularPrice()
     {
         if ($this->regularPriceCache !== null) {
@@ -239,24 +216,26 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $source = $this->getAccountRepricing()->getRegularPriceSource();
         $sourceModeMapping = [
-            PriceCalculator::MODE_NONE => AccountRepricing::PRICE_MODE_MANUAL,
-            PriceCalculator::MODE_PRODUCT => AccountRepricing::PRICE_MODE_PRODUCT,
-            PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
-            PriceCalculator::MODE_SPECIAL => AccountRepricing::PRICE_MODE_SPECIAL,
+            Product\PriceCalculator::MODE_NONE => AccountRepricing::PRICE_MODE_MANUAL,
+            Product\PriceCalculator::MODE_PRODUCT => AccountRepricing::PRICE_MODE_PRODUCT,
+            Product\PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
+            Product\PriceCalculator::MODE_SPECIAL => AccountRepricing::PRICE_MODE_SPECIAL,
         ];
         $coefficient = $this->getAccountRepricing()->getRegularPriceCoefficient();
         $variationMode = $this->getAccountRepricing()->getRegularPriceVariationMode();
+        $modifier = [];
 
         if ($source['mode'] == AccountRepricing::REGULAR_PRICE_MODE_PRODUCT_POLICY) {
             $amazonSellingFormatTemplate = $this->getAmazonListingProduct()->getAmazonSellingFormatTemplate();
 
             $source = $amazonSellingFormatTemplate->getRegularPriceSource();
             $sourceModeMapping = null;
-            $coefficient = $amazonSellingFormatTemplate->getRegularPriceCoefficient();
+            $coefficient = null;
             $variationMode = $amazonSellingFormatTemplate->getRegularPriceVariationMode();
+            $modifier = $amazonSellingFormatTemplate->getRegularPriceModifier();
         }
 
-        $calculator = $this->getPriceCalculator($source, $sourceModeMapping, $coefficient, $variationMode);
+        $calculator = $this->getPriceCalculator($source, $sourceModeMapping, $coefficient, $variationMode, $modifier);
 
         if (
             $this->getVariationManager()->isPhysicalUnit() &&
@@ -280,6 +259,11 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->regularPriceCache = $calculator->getProductValue();
     }
 
+    /**
+     * @return float|int|mixed
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getMinPrice()
     {
         $source = $this->getAccountRepricing()->getMinPriceSource();
@@ -298,10 +282,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         $sourceModeMapping = [
-            PriceCalculator::MODE_NONE => AccountRepricing::PRICE_MODE_MANUAL,
-            PriceCalculator::MODE_PRODUCT => AccountRepricing::PRICE_MODE_PRODUCT,
-            PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
-            PriceCalculator::MODE_SPECIAL => AccountRepricing::PRICE_MODE_SPECIAL,
+            Product\PriceCalculator::MODE_NONE => AccountRepricing::PRICE_MODE_MANUAL,
+            Product\PriceCalculator::MODE_PRODUCT => AccountRepricing::PRICE_MODE_PRODUCT,
+            Product\PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
+            Product\PriceCalculator::MODE_SPECIAL => AccountRepricing::PRICE_MODE_SPECIAL,
         ];
 
         $calculator = $this->getPriceCalculator(
@@ -333,6 +317,11 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $calculator->getProductValue();
     }
 
+    /**
+     * @return float|int|mixed
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function getMaxPrice()
     {
         $source = $this->getAccountRepricing()->getMaxPriceSource();
@@ -351,10 +340,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         $sourceModeMapping = [
-            PriceCalculator::MODE_NONE => AccountRepricing::PRICE_MODE_MANUAL,
-            PriceCalculator::MODE_PRODUCT => AccountRepricing::PRICE_MODE_PRODUCT,
-            PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
-            PriceCalculator::MODE_SPECIAL => AccountRepricing::PRICE_MODE_SPECIAL,
+            Product\PriceCalculator::MODE_NONE => AccountRepricing::PRICE_MODE_MANUAL,
+            Product\PriceCalculator::MODE_PRODUCT => AccountRepricing::PRICE_MODE_PRODUCT,
+            Product\PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
+            Product\PriceCalculator::MODE_SPECIAL => AccountRepricing::PRICE_MODE_SPECIAL,
         ];
 
         $calculator = $this->getPriceCalculator(
@@ -386,8 +375,11 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $calculator->getProductValue();
     }
 
-    //########################################
-
+    /**
+     * @return bool|mixed|null
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function isDisabled()
     {
         $source = $this->getAccountRepricing()->getDisableSource();
@@ -405,7 +397,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $isDisabled = !$this->getAmazonListingProduct()->getMagentoProduct()->isStatusEnabled();
         if ($isDisabled) {
-            return $isDisabled;
+            return true;
         }
 
         if (
@@ -413,28 +405,28 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $this->getMagentoProduct()->isBundleType() ||
             $this->getMagentoProduct()->isDownloadableType()
         ) {
-            return $isDisabled;
+            return false;
         }
 
         return !$this->getActualMagentoProduct()->isStatusEnabled();
     }
 
-    //########################################
-
     /**
      * @param array $source
-     * @param array $sourceModeMapping
-     * @param string $coefficient
-     * @param int $priceVariationMode
+     * @param array|null $sourceModeMapping
+     * @param string|null $coefficient
+     * @param int|null $priceVariationMode
+     * @param array $modifier
      *
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing\PriceCalculator
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getPriceCalculator(
         array $source,
-        $sourceModeMapping = null,
-        $coefficient = null,
-        $priceVariationMode = null
+        array $sourceModeMapping = null,
+        string $coefficient = null,
+        int $priceVariationMode = null,
+        array $modifier = []
     ): Repricing\PriceCalculator {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing\PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon_Listing_Product_Repricing_PriceCalculator');
@@ -442,10 +434,17 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $calculator->setSource($source)->setProduct($this->getListingProduct());
         $calculator->setCoefficient($coefficient);
         $calculator->setPriceVariationMode($priceVariationMode);
+        $calculator->setModifier($modifier);
 
         return $calculator;
     }
 
+    /**
+     * @param array $source
+     *
+     * @return float|int|mixed|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic|\Ess\M2ePro\Model\Exception
+     */
     private function calculateModificationValueBasedOnRegular(array $source)
     {
         $regularPrice = $this->getRegularPrice();
@@ -471,6 +470,4 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         return $value;
     }
-
-    //########################################
 }

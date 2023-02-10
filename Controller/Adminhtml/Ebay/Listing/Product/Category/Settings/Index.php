@@ -278,6 +278,7 @@ class Index extends Settings
 
         $sameData = $ebayListing->getLastPrimaryCategory(['ebay_primary_category', 'mode_same']);
         if (!empty($sameData['mode']) && !empty($sameData['value']) && !empty($sameData['path'])) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
             $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
             $template->loadByCategoryValue(
                 $sameData['value'],
@@ -302,6 +303,7 @@ class Index extends Settings
 
         $sameData = $ebayListing->getLastPrimaryCategory(['ebay_store_primary_category', 'mode_same']);
         if (!empty($sameData['mode']) && !empty($sameData['value']) && !empty($sameData['path'])) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $template */
             $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
             $template->loadByCategoryValue(
                 $sameData['value'],

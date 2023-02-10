@@ -281,6 +281,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     protected function initializeVariations()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater $variationUpdater */
         $variationUpdater = $this->modelFactory->getObject('Ebay_Listing_Product_Variation_Updater');
         $variationUpdater->process($this->listingProduct);
         $variationUpdater->afterMassProcessEvent();

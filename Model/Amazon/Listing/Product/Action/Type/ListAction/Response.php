@@ -93,6 +93,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $typeModel = $variationManager->getTypeModel();
 
         if ($variationManager->isRelationParentType()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
             $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $detailsModel->setMarketplaceId($this->getMarketplace()->getId());
 

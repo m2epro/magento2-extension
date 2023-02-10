@@ -6,6 +6,7 @@
     <section name="quote">
         <group name="totals">
             <item name="waste_recycling_fee" instance="Ess\M2ePro\Model\Magento\Quote\Total\WasteRecyclingFee" sort_order="225"/>
+            <item name="round_tax_percent" instance="Ess\M2ePro\Model\Magento\Quote\Total\RoundTaxPercent" sort_order="551"/>
         </group>
     </section>
 

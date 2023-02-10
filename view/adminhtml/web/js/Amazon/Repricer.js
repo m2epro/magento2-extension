@@ -227,9 +227,9 @@ define([
             }
         },
 
-        saveAndEditClick: function(url, skipValidation)
+        saveAndEditClick: function(url)
         {
-            if (typeof skipValidation == 'undefined' && !this.isValidForm()) {
+            if (!this.isValidForm()) {
                 return;
             }
 
@@ -238,6 +238,26 @@ define([
             }
 
             this.submitForm(url);
+        },
+
+        saveAndCloseClick: function() {
+            if (!this.isValidForm()) {
+                return;
+            }
+
+            new Ajax.Request(M2ePro.url.get('formSubmit'), {
+                method: 'post',
+                parameters: Form.serialize($('edit_form')),
+                onSuccess: function(transport) {
+                    var result = transport.responseText.evalJSON();
+
+                    if (result.status) {
+                        window.close();
+                    } else {
+                        console.error('Repricer Settings Saving Error');
+                    }
+                }
+            });
         },
     });
 });

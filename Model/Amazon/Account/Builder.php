@@ -270,6 +270,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'amazon_collect_for_uk',
             'amazon_collect_for_eea',
             'import_tax_id_in_magento_order',
+            'round_of_rate_value'
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -444,6 +445,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'amazon_collect_for_uk' => Account::SKIP_TAX_FOR_UK_SHIPMENT_NONE,
                     'amazon_collect_for_eea' => 0,
                     'import_tax_id_in_magento_order' => 0,
+                    'round_of_rate_value' => Account::MAGENTO_ORDERS_TAX_ROUND_OF_RATE_NO,
                 ],
                 'customer' => [
                     'mode' => Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,

@@ -35,28 +35,49 @@ class Edit extends AbstractContainer
         $this->removeButton('edit');
         // ---------------------------------------
 
-        $url = $this->getUrl('*/amazon_repricer_settings/index');
-        $this->addButton('back', [
-            'label' => $this->__('Back'),
-            'onclick' => 'AmazonRepricerObj.backClick(\'' . $url . '\')',
-            'class' => 'back',
-        ]);
+        $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
-        $saveButtons = [
-            'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
-            'class' => 'add',
-            'button_class' => '',
-            'onclick' => 'AmazonRepricerObj.saveAndEditClick(\'\',)',
-            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
-            'options' => [
-                'save' => [
-                    'label' => $this->__('Save And Back'),
-                    'onclick' => 'AmazonRepricerObj.saveClick()',
-                    'class' => 'action-primary',
+        if ($isSaveAndClose) {
+            $this->removeButton('back');
+
+            $saveButtons = [
+                'id' => 'save_and_close',
+                'label' => $this->__('Save And Close'),
+                'class' => 'add',
+                'onclick' => 'AmazonRepricerObj.saveAndCloseClick()',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+                'options' => [
+                    'save' => [
+                        'label' => $this->__('Save And Continue Edit'),
+                        'onclick' => 'AmazonRepricerObj.saveAndEditClick()',
+                    ],
                 ],
-            ],
-        ];
+            ];
+        } else {
+            $url = $this->getUrl('*/amazon_repricer_settings/index');
+
+            $this->addButton('back', [
+                'label' => $this->__('Back'),
+                'onclick' => 'AmazonRepricerObj.backClick(\'' . $url . '\')',
+                'class' => 'back',
+            ]);
+
+            $saveButtons = [
+                'id' => 'save_and_continue',
+                'label' => $this->__('Save And Continue Edit'),
+                'class' => 'add',
+                'button_class' => '',
+                'onclick' => 'AmazonRepricerObj.saveAndEditClick()',
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+                'options' => [
+                    'save' => [
+                        'label' => $this->__('Save And Back'),
+                        'onclick' => 'AmazonRepricerObj.saveClick()',
+                        'class' => 'action-primary',
+                    ],
+                ],
+            ];
+        }
 
         $this->addButton('save_buttons', $saveButtons);
     }

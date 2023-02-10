@@ -9,14 +9,39 @@
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 /**
- * Class \Ess\M2ePro\Model\Amazon\Order\ProxyObject
+ * @property \Ess\M2ePro\Model\Amazon\Order $order
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
     /** @var \Ess\M2ePro\Model\Amazon\Order\Item\ProxyObject[] */
     protected $removedProxyItems = [];
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory */
+    private $productPriceTaxFactory;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory $productPriceTaxFactory,
+        \Ess\M2ePro\Model\Currency $currency,
+        \Ess\M2ePro\Model\Magento\Payment $payment,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
+        \Magento\Customer\Model\CustomerFactory $customerFactory,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory
+    ) {
+        parent::__construct(
+            $currency,
+            $payment,
+            $order,
+            $customerFactory,
+            $customerRepository,
+            $helperFactory,
+            $modelFactory,
+            $userInfoFactory
+        );
+
+        $this->productPriceTaxFactory = $productPriceTaxFactory;
+    }
 
     /**
      * @return mixed
@@ -50,8 +75,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $prefix;
     }
 
-    //########################################
-
     /**
      * @return array
      */
@@ -68,14 +91,14 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return parent::getBillingAddressData();
         }
 
-        $customerNameParts = $this->getNameParts($this->order->getBuyerName());
+        $customerUserInfo = $this->createUserInfoFromRawName($this->order->getBuyerName());
 
         return [
-            'prefix' => $customerNameParts['prefix'],
-            'firstname' => $customerNameParts['firstname'],
-            'middlename' => $customerNameParts['middlename'],
-            'lastname' => $customerNameParts['lastname'],
-            'suffix' => $customerNameParts['suffix'],
+            'prefix' => $customerUserInfo->getPrefix(),
+            'firstname' => $customerUserInfo->getFirstName(),
+            'middlename' => $customerUserInfo->getMiddleName(),
+            'lastname' => $customerUserInfo->getLastName(),
+            'suffix' => $customerUserInfo->getSuffix(),
             'country_id' => '',
             'region' => '',
             'region_id' => '',
@@ -107,10 +130,12 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getAddressData()
     {
-        parent::getAddressData(); // init $this->addressData
+        parent::getAddressData();
 
         $amazonAccount = $this->order->getAmazonAccount();
         $data = $amazonAccount->getData('magento_orders_settings');
@@ -122,8 +147,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $this->addressData;
     }
-
-    //########################################
 
     /**
      * @return array
@@ -142,8 +165,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $paymentData;
     }
-
-    //########################################
 
     /**
      * @return array
@@ -227,8 +248,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $price;
     }
-
-    //########################################
 
     /**
      * @return string[]
@@ -387,8 +406,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return empty($comment) ? [] : [$comment];
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -413,14 +430,20 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return false;
     }
 
-    // ---------------------------------------
-
     /**
      * @return float|int
      */
     public function getProductPriceTaxRate()
     {
-        return $this->order->getProductPriceTaxRate();
+        return $this->getProductPriceTax()->getTaxRateValue();
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface|null
+     */
+    public function getProductPriceTax(): ?\Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+    {
+        return $this->productPriceTaxFactory->createByOrder($this->order);
     }
 
     /**
@@ -430,6 +453,4 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     {
         return $this->order->getShippingPriceTaxRate();
     }
-
-    //########################################
 }

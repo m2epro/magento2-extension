@@ -782,6 +782,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addInstruction(\Ess\M2ePro\Model\Listing\Product $listingProduct, $type, $priority)
     {
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [
@@ -801,6 +802,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 

@@ -207,6 +207,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $model->addData($data);
         $model->save();
 
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($model->getComponentMode());
         $tempLog->addListingMessage(

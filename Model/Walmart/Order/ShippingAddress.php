@@ -39,7 +39,9 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
         $email = $this->order->getChildObject()->getData('buyer_email');
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $email = str_replace(' ', '-', strtolower($this->order->getChildObject()->getBuyerName()));
+            $email = strtolower($this->order->getChildObject()->getBuyerName());
+            $email = str_replace(' ', '-', $email);
+            $email = preg_replace("/[^a-z0-9-]/", '', $email);
             $email = mb_convert_encoding($email, "ASCII");
             $email .= \Ess\M2ePro\Model\Magento\Customer::FAKE_EMAIL_POSTFIX;
         }
@@ -67,18 +69,6 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
         }
 
         return $phone;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRegionValidationRequired()
-    {
-        if (!$this->getCountry()->getId() || strtoupper($this->getCountry()->getId()) != 'US') {
-            return false;
-        }
-
-        return $this->getCountry()->getRegions()->getSize() > 0;
     }
 
     protected function getState()

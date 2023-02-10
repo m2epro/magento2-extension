@@ -219,6 +219,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         $oldValue,
         $newValue
     ) {
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode($listingProduct->getComponentMode());
 

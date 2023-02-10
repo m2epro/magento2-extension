@@ -2643,7 +2643,7 @@ class Installer
         $moduleConfig->insert('/support/', 'documentation_url', 'https://m2e.atlassian.net/wiki/');
         $moduleConfig->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/');
         $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
-        $moduleConfig->insert('/support/', 'support_url', 'https://m2epro.freshdesk.com');
+        $moduleConfig->insert('/support/', 'support_url', 'https://help.m2epro.com');
         $moduleConfig->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl);
         $moduleConfig->insert('/support/', 'contact_email', 'support@m2epro.com');
         $moduleConfig->insert('/general/configuration/', 'listing_product_inspector_mode', '0');

@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form\DiscountTable;
+use Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit\Form\RepricerTable;
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
@@ -972,6 +973,55 @@ HTML
                 [
                     'text' => $discountTableBlock->toHtml(),
                     'css_class' => 'm2epro-fieldset-table',
+                ]
+            );
+        }
+
+        $fieldSet = $form->addFieldset(
+            'magento_block_amazon_template_selling_format_repricer',
+            [
+                'legend' => $this->__('Repricer'),
+                'collapsable' => false,
+            ]
+        );
+
+        $url = $this->getUrl('*/amazon_repricer_settings/index');
+
+        if ($this->activeRecordFactory->getObject('Amazon_Account_Repricing')->getCollection()->getSize() > 0) {
+            $repricerTableBlock = $this->getLayout()->createBlock(RepricerTable::class);
+
+            $fieldSet->addField(
+                'repricer_table_container',
+                self::CUSTOM_CONTAINER,
+                [
+                    'text' => $repricerTableBlock->toHtml(),
+                    'css_class' => 'm2epro-fieldset-table',
+                ]
+            );
+
+            $fieldSet->addField(
+                'repricer_connect_account',
+                self::CUSTOM_CONTAINER,
+                [
+                    'label' => __(''),
+                    'text' => $this->__(
+                        '<p>Click <a href="%url%" target="_blank">here</a>
+                               to manage your Repricer configurations</p>',
+                        $url
+                    )
+                ]
+            );
+        } else {
+            $fieldSet->addField(
+                'repricer_connect_account',
+                self::CUSTOM_CONTAINER,
+                [
+                    'label' => __(''),
+                    'text' => $this->__(
+                        '<p><a href="%url%" target="_blank">Connect</a>
+                            your Amazon account(s) to Repricer to enable the service for your offers</p>',
+                        $url
+                    )
                 ]
             );
         }

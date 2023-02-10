@@ -395,6 +395,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function processListingsProductsUpdates()
     {
+        /** @var \Ess\M2ePro\Model\Listing\Log $logger */
         $logger = $this->activeRecordFactory->getObject('Listing\Log');
         $logger->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
 
@@ -441,6 +442,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                     $parentsForProcessing[$parentListingProduct->getId()] = $parentListingProduct;
                 }
 
+                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
                 $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
                 $instruction->setData(
                     [

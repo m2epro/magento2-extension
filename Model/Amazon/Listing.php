@@ -1062,6 +1062,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $amazonItem->save();
 
         if ($amazonListingOther->isRepricing()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing $listingProductRepricing */
             $listingProductRepricing = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing');
             $listingProductRepricing->setData(
                 [
@@ -1074,6 +1075,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $listingProductRepricing->save();
         }
 
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [

@@ -70,6 +70,7 @@ abstract class Listing
                     $instructionType = self::INSTRUCTION_TYPE_STOP_AND_REMOVE;
                 }
 
+                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
                 $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
                 $instruction->setData(
                     [
@@ -127,6 +128,7 @@ abstract class Listing
      */
     protected function logAddedToMagentoProduct(Product $listingProduct)
     {
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getListing()->getComponentMode());
         $tempLog->addProductMessage(

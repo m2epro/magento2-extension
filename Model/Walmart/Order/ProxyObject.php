@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Order\ProxyObject
+ * @property \Ess\M2ePro\Model\Walmart\Order $order
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {

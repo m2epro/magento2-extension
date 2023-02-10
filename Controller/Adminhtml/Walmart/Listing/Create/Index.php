@@ -63,6 +63,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
                                         ->addData($post)
                                         ->save();
 
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($listing->getComponentMode());
         $tempLog->addListingMessage(

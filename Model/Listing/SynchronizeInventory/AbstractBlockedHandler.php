@@ -47,6 +47,7 @@ abstract class AbstractBlockedHandler extends AbstractHandler
      */
     protected function markNotReceivedListingProductsAsBlocked()
     {
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
 

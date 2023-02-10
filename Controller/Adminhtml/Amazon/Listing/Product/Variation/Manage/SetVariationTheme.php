@@ -61,6 +61,7 @@ class SetVariationTheme extends Main
 
         $productDataNick = $amazonListingProduct->getAmazonDescriptionTemplate()->getProductDataNick();
 
+        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $marketplaceDetails */
         $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $marketplaceDetails->setMarketplaceId($amazonListingProduct->getMarketplace()->getId());
 

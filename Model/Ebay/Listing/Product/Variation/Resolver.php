@@ -80,6 +80,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
             $this->processExistedVariations();
         } catch (\Exception $exception) {
+            /** @var \Ess\M2ePro\Model\Response\Message $message */
             $message = $this->modelFactory->getObject('Response\Message');
             $message->initFromException($exception);
 
@@ -163,6 +164,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function prepareModuleVariations()
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater $variationUpdater */
         $variationUpdater = $this->modelFactory->getObject('Ebay_Listing_Product_Variation_Updater');
         $variationUpdater->process($this->listingProduct);
 
@@ -805,6 +807,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addError($messageText)
     {
+        /** @var \Ess\M2ePro\Model\Response\Message $message */
         $message = $this->modelFactory->getObject('Response\Message');
         $message->initFromPreparedData($messageText, $message::TYPE_ERROR);
 
@@ -813,6 +816,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addWarning($messageText)
     {
+        /** @var \Ess\M2ePro\Model\Response\Message $message */
         $message = $this->modelFactory->getObject('Response\Message');
         $message->initFromPreparedData($messageText, $message::TYPE_WARNING);
 
@@ -821,6 +825,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected function addNotice($messageText)
     {
+        /** @var \Ess\M2ePro\Model\Response\Message $message */
         $message = $this->modelFactory->getObject('Response\Message');
         $message->initFromPreparedData($messageText, $message::TYPE_NOTICE);
 

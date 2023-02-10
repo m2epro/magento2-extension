@@ -879,6 +879,43 @@ HTML
         );
 
         $fieldset->addField(
+            'magento_orders_tax_amazon_round_of_rate_value',
+            'select',
+            [
+                'container_id' => 'magento_orders_tax_round_of_rate_value_container',
+                'name' => 'magento_orders_settings[tax][round_of_rate_value]',
+                'label' => $this->__('Tax Rate rounding'),
+                'style' => 'max-width: 240px;',
+                'values' => [
+                    Account::MAGENTO_ORDERS_TAX_ROUND_OF_RATE_NO => $this->__('No'),
+                    Account::MAGENTO_ORDERS_TAX_ROUND_OF_RATE_YES => $this->__('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['tax']['round_of_rate_value'],
+                'after_element_html' => $this->getTooltipHtml(
+                    $this->__(
+                        "Enable to round the decimal places of Tax Rates before they're shown in your Magento order"
+                    )
+                ),
+            ]
+        );
+
+        $form->addField(
+            'magento_orders_tax_amazon_round_of_rate_value_confirmation_popup_template',
+            self::CUSTOM_CONTAINER,
+            [
+                'text' => __(
+                    'By activating rounding of the tax rate,'
+                    . ' you are confirming that all rate numbers with decimals'
+                    . ' can be converted to the nearest non-decimal value - for instance,'
+                    . ' 7.43% is rounded down to 7%, while 8.6% will become 9.'
+                    . ' Since it has been rounded off from its original value,'
+                    . ' the new percentage may not precisely reflect order costs calculations.'
+                ),
+                'style' => 'display: none;',
+            ]
+        );
+
+        $fieldset->addField(
             'magento_orders_tax_excluded_countries',
             'hidden',
             [

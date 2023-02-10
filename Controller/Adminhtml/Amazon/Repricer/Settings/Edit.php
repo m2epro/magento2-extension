@@ -58,7 +58,7 @@ class Edit extends Repricer
 
         $this->helperDataGlobalData->setValue('edit_account', $account);
 
-        $headerText = $this->__('Additional Settings') . ' "' . $this->helperData->escapeHtml(
+        $headerText = $this->__('Additional Repricer Settings') . ' "' . $this->helperData->escapeHtml(
             $account->getTitle()
         ) . '"';
 

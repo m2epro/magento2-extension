@@ -107,6 +107,7 @@ class SetGeneralIdOwner extends Main
                 return $data;
             }
 
+            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
             $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
             $themes = $detailsModel->getVariationThemes(

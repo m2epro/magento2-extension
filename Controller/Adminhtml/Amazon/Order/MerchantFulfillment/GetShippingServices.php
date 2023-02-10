@@ -136,22 +136,7 @@ class GetShippingServices extends Order
             $preparedPackageData['dimensions']['unit_of_measure'] = $post['package_dimension_measure'];
         }
 
-        if ($post['package_weight_source'] == MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_VALUE) {
-            $preparedPackageData['weight'] = [
-                'value' => $post['package_weight_custom_value'],
-                'unit_of_measure' => $post['package_weight_measure'],
-            ];
-        } elseif ($post['package_weight_source'] == MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_ATTRIBUTE) {
-            /** @var \Ess\M2ePro\Model\Order\Item $item */
-            $item = $order->getItemsCollection()->getFirstItem();
-
-            $preparedPackageData['weight'] = [
-                'value' => $item->getMagentoProduct()->getAttributeValue(
-                    $post['package_weight_custom_attribute']
-                ),
-                'unit_of_measure' => $post['package_weight_measure'],
-            ];
-        }
+        $preparedPackageData['weight'] = $this->getWeightPackageData($post, $order);
 
         $preparedShipmentData = [];
         $preparedShipmentData['info'] = [
@@ -236,5 +221,40 @@ class GetShippingServices extends Order
         $this->setAjaxContent($popup);
 
         return $this->getResult();
+    }
+
+    /**
+     * @param array $post
+     * @param \Ess\M2ePro\Model\Order $order
+     *
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    private function getWeightPackageData(array $post, \Ess\M2ePro\Model\Order $order): array
+    {
+        if (
+            empty($post['package_weight_source'])
+            || $post['package_weight_source'] == MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_VALUE
+        ) {
+            return [
+                'value' => $post['package_weight_custom_value'],
+                'unit_of_measure' => $post['package_weight_measure'],
+            ];
+        }
+
+        if ($post['package_weight_source'] == MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_ATTRIBUTE) {
+            /** @var \Ess\M2ePro\Model\Order\Item $item */
+            $item = $order->getItemsCollection()->getFirstItem();
+            $value = $item->getMagentoProduct()->getAttributeValue(
+                $post['package_weight_custom_attribute']
+            );
+
+            return [
+                'value' => $value,
+                'unit_of_measure' => $post['package_weight_measure'],
+            ];
+        }
+
+        throw new \Ess\M2ePro\Model\Exception('Unresolved weight source');
     }
 }

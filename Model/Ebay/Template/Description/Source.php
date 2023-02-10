@@ -13,7 +13,7 @@ namespace Ess\M2ePro\Model\Ebay\Template\Description;
  */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
-    public const GALLERY_IMAGES_COUNT_MAX = 11;
+    public const GALLERY_IMAGES_COUNT_MAX = 23;
     public const VARIATION_IMAGES_COUNT_MAX = 12;
 
     /**

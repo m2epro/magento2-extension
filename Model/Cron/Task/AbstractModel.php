@@ -174,6 +174,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getSynchronizationLog()
     {
+        /** @var \Ess\M2ePro\Model\Synchronization\Log $synchronizationLog */
         $synchronizationLog = $this->activeRecordFactory->getObject('Synchronization_Log');
         $synchronizationLog->setInitiator($this->initiator);
         $synchronizationLog->setOperationHistoryId($this->getOperationHistory()->getId());

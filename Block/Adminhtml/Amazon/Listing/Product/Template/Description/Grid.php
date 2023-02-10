@@ -169,6 +169,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $variationProductsIds = $this->getVariationsProductsIds();
             if (!empty($variationProductsIds)) {
+                /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
                 $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
                 $detailsModel->setMarketplaceId($this->getMarketplaceId());
 

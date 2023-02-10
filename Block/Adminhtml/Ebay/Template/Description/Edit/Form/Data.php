@@ -442,7 +442,7 @@ class Data extends AbstractForm
         );
 
         $preparedImages = [];
-        for ($i = 1; $i <= Description::GALLERY_IMAGES_COUNT_MAX; $i++) {
+        for ($i = 1; $i <= Description\Source::GALLERY_IMAGES_COUNT_MAX; $i++) {
             $attrs = ['attribute_code' => $i];
 
             if (
@@ -501,7 +501,7 @@ class Data extends AbstractForm
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Adds small thumbnails that appear under the large Base Image.
-                     You can add up to 11 additional photos to each Listing on eBay.
+                     You can add up to 23 additional photos to each Listing on eBay.
                         <br/><b>Note:</b> Text, Multiple Select or Dropdown type Attribute can be used.
                         The value of Attribute must contain absolute urls.
                         <br/>In Text type Attribute urls must be separated with comma.

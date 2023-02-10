@@ -38,6 +38,7 @@ class SetSwatchImagesAttribute extends Main
         $typeModel = $walmartListingProduct->getVariationManager()->getTypeModel();
 
         foreach ($typeModel->getChildListingsProducts() as $childListingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
             $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
             $instruction->setData(
                 [

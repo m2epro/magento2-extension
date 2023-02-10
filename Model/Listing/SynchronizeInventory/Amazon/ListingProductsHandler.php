@@ -44,6 +44,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
      */
     protected function updateReceivedListingProducts()
     {
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
 

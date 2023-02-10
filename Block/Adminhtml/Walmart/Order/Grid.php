@@ -383,6 +383,7 @@ HTML;
                 $product = $item->getProduct();
             } catch (\Ess\M2ePro\Model\Exception $e) {
                 $product = null;
+                /** @var \Ess\M2ePro\Model\Order\Log $logModel */
                 $logModel = $this->activeRecordFactory->getObject('Order\Log');
                 $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
 

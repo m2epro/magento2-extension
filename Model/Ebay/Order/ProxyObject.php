@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 /**
- * Class \Ess\M2ePro\Model\Ebay\Order\ProxyObject
+ * @property \Ess\M2ePro\Model\Ebay\Order $order
  */
 class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
@@ -21,17 +21,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     /** @var \Magento\Eav\Model\Entity\AttributeFactory */
     private $attributeFactory;
 
-    //########################################
-
     public function __construct(
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
-        \Magento\Customer\Model\Options $options,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory,
         \Magento\Tax\Model\Calculation $taxCalculation,
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory
     ) {
@@ -42,22 +40,18 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $currency,
             $payment,
             $order,
-            $options,
             $customerFactory,
             $customerRepository,
             $helperFactory,
-            $modelFactory
+            $modelFactory,
+            $userInfoFactory
         );
     }
-
-    //########################################
 
     public function getChannelOrderNumber()
     {
         return $this->order->getEbayOrderId();
     }
-
-    //########################################
 
     /**
      * @return string
@@ -73,8 +67,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $prefix;
     }
-
-    //########################################
 
     /**
      * @return \Magento\Customer\Api\Data\CustomerInterface
@@ -158,10 +150,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return null;
     }
 
-    //########################################
-
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getAddressData()
     {
@@ -176,19 +168,19 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         $addressData = [];
 
-        $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
-        $addressData['prefix'] = $recipientNameParts['prefix'];
-        $addressData['firstname'] = $recipientNameParts['firstname'];
-        $addressData['middlename'] = $recipientNameParts['middlename'];
-        $addressData['lastname'] = $recipientNameParts['lastname'];
-        $addressData['suffix'] = $recipientNameParts['suffix'];
+        $recipientUserInfo = $this->createUserInfoFromRawName($rawAddressData['recipient_name']);
+        $addressData['prefix'] = $recipientUserInfo->getPrefix();
+        $addressData['firstname'] = $recipientUserInfo->getFirstName();
+        $addressData['middlename'] = $recipientUserInfo->getMiddleName();
+        $addressData['lastname'] = $recipientUserInfo->getLastName();
+        $addressData['suffix'] = $recipientUserInfo->getSuffix();
 
-        $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
-        $addressData['customer_prefix'] = $customerNameParts['prefix'];
-        $addressData['customer_firstname'] = $customerNameParts['firstname'];
-        $addressData['customer_middlename'] = $customerNameParts['middlename'];
-        $addressData['customer_lastname'] = $customerNameParts['lastname'];
-        $addressData['customer_suffix'] = $customerNameParts['suffix'];
+        $customerUserInfo = $this->createUserInfoFromRawName($rawAddressData['buyer_name']);
+        $addressData['customer_prefix'] = $customerUserInfo->getPrefix();
+        $addressData['customer_firstname'] = $customerUserInfo->getFirstName();
+        $addressData['customer_middlename'] = $customerUserInfo->getMiddleName();
+        $addressData['customer_lastname'] = $customerUserInfo->getLastName();
+        $addressData['customer_suffix'] = $customerUserInfo->getSuffix();
 
         $addressData['email'] = $rawAddressData['email'];
         $addressData['country_id'] = $rawAddressData['country_id'];
@@ -248,14 +240,14 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             return parent::getAddressData();
         }
 
-        $customerNameParts = $this->getNameParts($this->order->getBuyerName());
+        $customerUserInfo = $this->createUserInfoFromRawName($this->order->getBuyerName());
 
         return [
-            'prefix' => $customerNameParts['prefix'],
-            'firstname' => $customerNameParts['firstname'],
-            'middlename' => $customerNameParts['middlename'],
-            'lastname' => $customerNameParts['lastname'],
-            'suffix' => $customerNameParts['suffix'],
+            'prefix' => $customerUserInfo->getPrefix(),
+            'firstname' => $customerUserInfo->getFirstName(),
+            'middlename' => $customerUserInfo->getMiddleName(),
+            'lastname' => $customerUserInfo->getLastName(),
+            'suffix' => $customerUserInfo->getSuffix(),
             'country_id' => '',
             'region' => '',
             'region_id' => '',
@@ -284,8 +276,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return true;
     }
-
-    //########################################
 
     /**
      * @return array
@@ -331,8 +321,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $paymentTransactions;
     }
-
-    //########################################
 
     /**
      * @return array
@@ -424,8 +412,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $price;
     }
 
-    //########################################
-
     /**
      * @return array
      */
@@ -449,8 +435,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $comments;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -514,8 +498,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $this->getProductPriceTaxRate();
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -527,6 +509,4 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         return $this->order->getEbayAccount()->isMagentoOrdersTaxModeNone();
     }
-
-    //########################################
 }

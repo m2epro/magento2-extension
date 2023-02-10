@@ -26,12 +26,12 @@ class FixBrokenUrl extends AbstractFeature
         }
 
         $messages['default_values_in_sync_policy']['text'] = <<<HTML
-<a href="https://m2epro.freshdesk.com/support/solutions/articles/9000218949" target="_blank">Magento Multi-Source Inventory feature</a>
+<a href="https://help.m2epro.com/support/solutions/articles/9000218949" target="_blank">Magento Multi-Source Inventory feature</a>
 enabled by default starting from Magento v2.3.
 If you’re using the feature now or planning to use it in the future,
 it’s highly recommended to reset Relist when Quantity option to Less or Equal to 1 and Stop
 When Quantity option to Is 0.
-Otherwise, it may <a href="https://m2epro.freshdesk.com/support/solutions/articles/9000199813" target="_blank">
+Otherwise, it may <a href="https://help.m2epro.com/support/solutions/articles/9000199813" target="_blank">
 affect actual product data updates and lead to overselling</a>.
 <br/>
 <br/>

@@ -519,6 +519,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->getChildObject()->addData($data)->save();
         $this->getChildObject()->mapChannelItemProduct();
 
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [

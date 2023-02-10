@@ -154,6 +154,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 // When additional action runs using processing, there is no status for it
                 if (is_array($logsActionId) && $isRealTime) {
                     $this->logsActionId = max($logsActionId);
+                    /** @var \Ess\M2ePro\Model\Listing\Log $listingLog */
                     $listingLog = $this->activeRecordFactory->getObject('Listing\Log');
                     $result = $this->listingLogResource->getStatusByActionId(
                         $listingLog,
@@ -238,6 +239,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $action,
         $params
     ): void {
+        /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 

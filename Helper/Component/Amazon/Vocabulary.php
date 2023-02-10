@@ -148,6 +148,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\Module\Product\Variation\Vocabulary
                 continue;
             }
 
+            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $marketplaceDetails */
             $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $marketplaceDetails->setMarketplaceId($newListingProduct->getListing()->getMarketplaceId());
 

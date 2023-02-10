@@ -41,33 +41,37 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     /** @var array */
     protected $addressData = [];
 
-    /** @var \Magento\Customer\Model\Options */
-    protected $options;
+    /** @var \Ess\M2ePro\Model\Order\UserInfoFactory */
+    private $userInfoFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
-        \Magento\Customer\Model\Options $options,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory
     ) {
         $this->currency = $currency;
         $this->payment = $payment;
         $this->order = $order;
-        $this->options = $options;
+        $this->userInfoFactory = $userInfoFactory;
 
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    // ----------------------------------------
+    public function createUserInfoFromRawName(string $rawName): UserInfo
+    {
+        return $this->userInfoFactory->create($rawName, $this->getStore());
+    }
 
     /**
      * @return \Ess\M2ePro\Model\Order\Item\ProxyObject[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getItems()
     {
@@ -128,8 +132,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $items;
     }
 
-    //########################################
-
     /**
      * @param \Magento\Store\Api\Data\StoreInterface $store
      *
@@ -155,8 +157,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->store;
     }
 
-    //########################################
-
     /**
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -181,8 +181,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->getCheckoutMethod() == self::CHECKOUT_GUEST;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -212,8 +210,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     }
 
     abstract public function getChannelOrderNumber();
-
-    //########################################
 
     public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated()
     {
@@ -275,8 +271,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return null;
     }
 
-    //########################################
-
     public function getCustomerFirstName()
     {
         $addressData = $this->getAddressData();
@@ -298,29 +292,28 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $addressData['email'];
     }
 
-    //########################################
-
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getAddressData()
     {
         if (empty($this->addressData)) {
             $rawAddressData = $this->order->getShippingAddress()->getRawData();
+            $recipientUserInfo = $this->createUserInfoFromRawName($rawAddressData['recipient_name']);
+            $this->addressData['prefix'] = $recipientUserInfo->getPrefix();
+            $this->addressData['firstname'] = $recipientUserInfo->getFirstName();
+            $this->addressData['middlename'] = $recipientUserInfo->getMiddleName();
+            $this->addressData['lastname'] = $recipientUserInfo->getLastName();
+            $this->addressData['suffix'] = $recipientUserInfo->getSuffix();
 
-            $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
-            $this->addressData['prefix'] = $recipientNameParts['prefix'];
-            $this->addressData['firstname'] = $recipientNameParts['firstname'];
-            $this->addressData['middlename'] = $recipientNameParts['middlename'];
-            $this->addressData['lastname'] = $recipientNameParts['lastname'];
-            $this->addressData['suffix'] = $recipientNameParts['suffix'];
-
-            $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
-            $this->addressData['customer_prefix'] = $customerNameParts['prefix'];
-            $this->addressData['customer_firstname'] = $customerNameParts['firstname'];
-            $this->addressData['customer_middlename'] = $customerNameParts['middlename'];
-            $this->addressData['customer_lastname'] = $customerNameParts['lastname'];
-            $this->addressData['customer_suffix'] = $customerNameParts['suffix'];
+            $customerUserInfo = $this->createUserInfoFromRawName($rawAddressData['buyer_name']);
+            $this->addressData['customer_prefix'] = $customerUserInfo->getPrefix();
+            $this->addressData['customer_firstname'] = $customerUserInfo->getFirstName();
+            $this->addressData['customer_middlename'] = $customerUserInfo->getMiddleName();
+            $this->addressData['customer_lastname'] = $customerUserInfo->getLastName();
+            $this->addressData['customer_suffix'] = $customerUserInfo->getSuffix();
 
             $this->addressData['email'] = $rawAddressData['email'];
             $this->addressData['country_id'] = $rawAddressData['country_id'];
@@ -339,6 +332,8 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getBillingAddressData()
     {
@@ -352,55 +347,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     {
         return false;
     }
-
-    //########################################
-
-    /**
-     * @param $fullName
-     *
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    protected function getNameParts($fullName)
-    {
-        $fullName = trim($fullName);
-        $parts = explode(' ', $fullName);
-
-        $currentInfo = [
-            'prefix' => null,
-            'middlename' => null,
-            'suffix' => null,
-        ];
-
-        if (count($parts) > 2) {
-            $prefixOptions = $this->options->getNamePrefixOptions($this->getStore());
-            if (is_array($prefixOptions) && in_array($parts[0], $prefixOptions)) {
-                $currentInfo['prefix'] = array_shift($parts);
-            }
-        }
-
-        $partsCount = count($parts);
-        if ($partsCount > 2) {
-            $suffixOptions = $this->options->getNameSuffixOptions($this->getStore());
-            if (is_array($suffixOptions) && in_array($parts[$partsCount - 1], $suffixOptions)) {
-                $currentInfo['suffix'] = array_pop($parts);
-            }
-        }
-
-        $partsCount = count($parts);
-        if ($partsCount > 2) {
-            $middleName = array_slice($parts, 1, $partsCount - 2);
-            $currentInfo['middlename'] = implode(' ', $middleName);
-            $parts = [$parts[0], $parts[$partsCount - 1]];
-        }
-
-        $currentInfo['firstname'] = isset($parts[0]) ? $parts[0] : 'NA';
-        $currentInfo['lastname'] = isset($parts[1]) ? $parts[1] : $currentInfo['firstname'];
-
-        return $currentInfo;
-    }
-
-    //########################################
 
     /**
      * @return mixed
@@ -420,11 +366,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->currency->convertPriceToBaseCurrency($price, $this->getCurrency(), $this->getStore());
     }
 
-    //########################################
-
     abstract public function getPaymentData();
-
-    //########################################
 
     abstract public function getShippingData();
 
@@ -435,21 +377,28 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $this->convertPriceToBase($this->getShippingPrice());
     }
 
-    //########################################
-
     abstract public function hasTax();
 
     abstract public function isSalesTax();
 
     abstract public function isVatTax();
 
-    // ---------------------------------------
-
+    /**
+     * @return float|int
+     * @deprecated
+     * @see \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+     */
     abstract public function getProductPriceTaxRate();
 
-    abstract public function getShippingPriceTaxRate();
+    /**
+     * @return \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface|null
+     */
+    public function getProductPriceTax(): ?\Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+    {
+        return null;
+    }
 
-    // ---------------------------------------
+    abstract public function getShippingPriceTaxRate();
 
     /**
      * @return bool|null
@@ -500,8 +449,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return null;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -540,8 +487,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
             !$this->isTaxModeMagento();
     }
 
-    //########################################
-
     public function getWasteRecyclingFee()
     {
         $resultFee = 0.0;
@@ -552,8 +497,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
         return $resultFee;
     }
-
-    //########################################
 
     /**
      * @throws \Ess\M2ePro\Model\Exception
@@ -589,8 +532,6 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
             $item->save();
         }
     }
-
-    //########################################
 
     /**
      * @return array
@@ -648,6 +589,4 @@ COMMENT;
 
         return $comments;
     }
-
-    //########################################
 }

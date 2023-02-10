@@ -808,6 +808,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         );
         $listingOtherProduct->save();
 
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [

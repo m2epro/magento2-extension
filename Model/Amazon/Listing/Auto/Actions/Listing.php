@@ -71,6 +71,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                     $instructionType = self::INSTRUCTION_TYPE_STOP_AND_REMOVE;
                 }
 
+                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
                 $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
                 $instruction->setData(
                     [

@@ -197,6 +197,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         $oldValue,
         $newValue
     ) {
+        /** @var \Ess\M2ePro\Model\Listing\Log $log */
         $log = $this->activeRecordFactory->getObject('Listing\Log');
         $log->setComponentMode($listingProduct->getComponentMode());
 

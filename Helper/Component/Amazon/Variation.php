@@ -240,6 +240,7 @@ class Variation
 
     public function filterParentProductsByVariationTheme($productsIds)
     {
+        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
         $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
 
         foreach ($productsIds as $key => $productId) {

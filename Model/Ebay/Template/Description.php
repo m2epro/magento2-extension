@@ -95,7 +95,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const WATERMARK_OPACITY_LEVEL_DEFAULT = 30;
 
     public const WATERMARK_CACHE_TIME = 604800; // 7 days
-    public const GALLERY_IMAGES_COUNT_MAX = 11;
 
     public const INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED = 'magento_static_block_in_description_changed';
 

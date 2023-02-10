@@ -42,6 +42,7 @@ class Qty extends AbstractModel
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
         $magentoProduct->setProduct($product);
 

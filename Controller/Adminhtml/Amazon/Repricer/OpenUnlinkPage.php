@@ -57,7 +57,7 @@ class OpenUnlinkPage extends Account
         if ($serverRequestToken === false) {
             $this->getMessageManager()->addError(
                 $this->__(
-                    'M2E Pro cannot to connect to the Amazon Repricing Service. Please try again later.'
+                    'M2E Pro cannot connect to Amazon Repricer. Please try again later.'
                 )
             );
 

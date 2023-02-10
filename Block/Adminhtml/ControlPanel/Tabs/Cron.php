@@ -29,6 +29,7 @@ class Cron extends AbstractForm
 
     protected function _beforeToHtml()
     {
+        /** @var \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo */
         $taskRepo = $this->modelFactory->getObject('Cron_Task_Repository');
 
         $tasks = [];

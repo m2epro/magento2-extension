@@ -642,6 +642,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         $childListingProduct = $this->walmartFactory->getObject('Listing\Product')->setData($data);
         $childListingProduct->save();
 
+        /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
             [

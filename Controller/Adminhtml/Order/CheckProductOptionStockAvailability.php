@@ -53,6 +53,7 @@ class CheckProductOptionStockAvailability extends Order
         );
 
         foreach ($associatedProducts as $productId) {
+            /** @var \Ess\M2ePro\Model\Magento\Product $magentoProductTemp */
             $magentoProductTemp = $this->modelFactory->getObject('Magento\Product');
             $magentoProductTemp->setProductId($productId);
 

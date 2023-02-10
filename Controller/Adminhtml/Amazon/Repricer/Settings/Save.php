@@ -94,10 +94,23 @@ class Save extends Repricer
             $this->repricingAffectedListingsProducts->getObjectsData(['id', 'status'])
         );
 
+        if ($this->isAjax()) {
+            $this->setJsonContent([
+                'status' => true,
+            ]);
+
+            return $this->getResult();
+        }
+
         $this->messageManager->addSuccess($this->__('Settings was saved'));
 
-        $routerParams = ['id' => $account->getId(), '_current' => true];
-
-        return $this->_redirect($this->helperData->getBackUrl('list', [], ['edit' => $routerParams]));
+        return $this->_redirect(
+            $this->helperData->getBackUrl('*/amazon_repricer_settings/index', [], [
+                'edit' => [
+                    'id' => $account->getId(),
+                    'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+                ],
+            ])
+        );
     }
 }

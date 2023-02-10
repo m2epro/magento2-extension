@@ -148,6 +148,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $categoryGroup->delete();
         }
 
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
         $tempLog->addListingMessage(
@@ -512,6 +513,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
         // Add message for listing log
         // ---------------------------------------
+        /** @var \Ess\M2ePro\Model\Listing\Log $tempLog */
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
         $tempLog->addProductMessage(
@@ -589,6 +591,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         \Ess\M2ePro\Model\Listing $sourceListing,
         $checkHasProduct = true
     ) {
+        /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
         $logModel->setComponentMode($this->getComponentMode());
         $actionId = $logModel->getResource()->getNextActionId();

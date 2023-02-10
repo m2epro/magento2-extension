@@ -128,7 +128,7 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         $allAttributes = $this->magentoAttributeHelper->getAll();
 
         $attributesByInputTypes = [
-            'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text']),
+            'text' => $this->magentoAttributeHelper->filterByInputTypes($allAttributes, ['text', 'weight']),
         ];
 
         $form = $this->_formFactory->create(
@@ -563,14 +563,21 @@ HTML
                 'text',
                 [
                     'data' => [
-                        'name' => 'fulfillment_package_weight',
+                        'name' => 'package_weight_custom_value',
                         'value' => $this->getData('total_weight') > 0 ? $this->getData('total_weight') : '',
                         'class' => 'M2ePro-required-when-visible validate-greater-than-zero',
                     ],
                 ]
             );
-            $packageWeightInput->setId('fulfillment_package_weight');
+            $packageWeightInput->setId('package_weight_custom_value');
             $packageWeightInput->setForm($form);
+
+            $tooltipHtml = $this->getTooltipHtml(
+                $this->__(
+                    'Enter a Weight Value and select the appropriate Measurement Units. Please, note the selected
+                        Measurement Units will be Saved Up till the next Changes are Made.'
+                )
+            );
 
             $fieldset->addField(
                 'package_weight_container',
@@ -582,13 +589,10 @@ HTML
                     'text' => <<<HTML
 {$packageWeightInput->toHtml()}
 {$measureSelect->toHtml()}
+{$tooltipHtml}
 HTML
                     ,
                     'required' => true,
-                    'tooltip' => $this->__(
-                        'Enter a Weight Value and select the appropriate Measurement Units. Please, note the selected
-                        Measurement Units will be Saved Up till the next Changes are Made.'
-                    ),
                 ]
             );
         }

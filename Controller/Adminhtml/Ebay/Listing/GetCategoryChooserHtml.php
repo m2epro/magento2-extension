@@ -108,6 +108,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         // @codingStandardsIgnoreLine
         $tempTemplate = $collection->getFirstItem();
 
+        /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */
         $template = $this->activeRecordFactory->getObject('Ebay_Template_Category');
         $template->loadByCategoryValue(
             $tempTemplate->getCategoryValue(),
@@ -156,6 +157,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
         // @codingStandardsIgnoreLine
         $tempTemplate = $collection->getFirstItem();
 
+        /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory $template */
         $template = $this->activeRecordFactory->getObject('Ebay_Template_StoreCategory');
         $template->loadByCategoryValue(
             $tempTemplate->getCategoryValue(),

@@ -19,7 +19,7 @@ class Index extends Repricer
     {
         if ($this->getRequest()->getParam('warning', false)) {
             $this->getMessageManager()->addWarning(
-                $this->__('To start using Repricer, please link at least one Amazon marketplace first.')
+                $this->__('To start using Repricer, please connect at least one Amazon marketplace.')
             );
         }
 

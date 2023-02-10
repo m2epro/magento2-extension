@@ -40,6 +40,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public const MAGENTO_ORDERS_TAX_MODE_MAGENTO = 2;
     public const MAGENTO_ORDERS_TAX_MODE_MIXED = 3;
 
+    public const MAGENTO_ORDERS_TAX_ROUND_OF_RATE_YES = 1;
+    public const MAGENTO_ORDERS_TAX_ROUND_OF_RATE_NO = 0;
+
     public const SKIP_TAX_FOR_UK_SHIPMENT_NONE = 0;
     public const SKIP_TAX_FOR_UK_SHIPMENT = 1;
     public const SKIP_TAX_FOR_UK_SHIPMENT_WITH_CERTAIN_PRICE = 2;
@@ -789,6 +792,25 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'amazon_collect_for_eea'], 0);
 
         return $setting == 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabledRoundingOfTaxRateValue(): bool
+    {
+        if (
+            $this->isMagentoOrdersTaxModeMixed()
+            || $this->isMagentoOrdersTaxModeChannel()
+        ) {
+            return (bool)$this->getSetting(
+                'magento_orders_settings',
+                ['tax', 'round_of_rate_value'],
+                self::MAGENTO_ORDERS_TAX_ROUND_OF_RATE_NO
+            );
+        }
+
+        return false;
     }
 
     // ---------------------------------------

@@ -180,6 +180,9 @@ define([
             $('magento_orders_tax_amazon_collects_for_eea_shipment')
                 .observe('change', AmazonAccountObj.magentoOrdersTaxSkipTaxInEEAOrders)
                 .simulate('change');
+
+            $('magento_orders_tax_amazon_round_of_rate_value')
+                    .observe('change', AmazonAccountObj.magentoOrderTaxRoundOfRateValueChange)
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
         },
 
@@ -573,9 +576,11 @@ define([
                 $('magento_orders_tax_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_TAX_MODE_MIXED')) {
                 $('magento_orders_tax_amazon_collects_container').show();
                 $('magento_orders_tax_amazon_collects_for_uk_shipment_container').show();
+                $('magento_orders_tax_round_of_rate_value_container').show();
             } else {
                 $('magento_orders_tax_amazon_collects_container').hide();
                 $('magento_orders_tax_amazon_collects_for_uk_shipment_container').hide();
+                $('magento_orders_tax_round_of_rate_value_container').hide();
             }
 
             if ($('marketplace_id').value != M2ePro.php.constant('Ess_M2ePro_Helper_Component_Amazon::MARKETPLACE_US')) {
@@ -597,6 +602,40 @@ define([
             } else {
                 $('show_excluded_countries_button').hide();
             }
+        },
+
+        magentoOrderTaxRoundOfRateValueChange : function () {
+            if (this.value == 0) {
+                return;
+            }
+
+            var popup = jQuery('#magento_orders_tax_amazon_round_of_rate_value_confirmation_popup_template').clone();
+            var field = this;
+
+            popup.confirm({
+                title: M2ePro.translator.translate('Are you sure?'),
+                actions: {
+                    confirm: function () {
+                        field.selectedIndex = 1;
+                    },
+                    cancel: function () {
+                        field.selectedIndex = 0;
+                    }
+                },
+                buttons: [{
+                    text: M2ePro.translator.translate('Cancel'),
+                    class: 'action-secondary action-dismiss',
+                    click: function (event) {
+                        this.closeModal(event);
+                    }
+                }, {
+                    text: M2ePro.translator.translate('Confirm'),
+                    class: 'action-primary action-accept',
+                    click: function (event) {
+                        this.closeModal(event, true);
+                    }
+                }]
+            });
         },
 
         magentoOrdersStatusMappingModeChange: function() {

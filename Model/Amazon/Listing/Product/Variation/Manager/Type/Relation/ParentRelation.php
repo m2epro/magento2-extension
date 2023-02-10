@@ -275,6 +275,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         }
 
         if ($this->hasChannelTheme()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $marketplaceDetails */
             $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $marketplaceDetails->setMarketplaceId($this->getListingProduct()->getListing()->getMarketplaceId());
 
@@ -431,6 +432,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         }
 
         if ($this->getChannelTheme()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $marketplaceDetails */
             $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $marketplaceDetails->setMarketplaceId($this->getListingProduct()->getListing()->getMarketplaceId());
 
