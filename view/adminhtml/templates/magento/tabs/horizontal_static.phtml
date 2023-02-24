@@ -1,0 +1,30 @@
+<?php
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalStaticTabs $block */
+$tabs = $block->getTabs();
+
+if (empty($tabs)) {
+    return;
+}
+?>
+
+<div class="m2epro-tabs-horizontal m2epro-tabs-horizontal-static">
+    <div class="ui-tabs ui-corner-all ui-widget ui-widget-content">
+        <ul class="tabs-horiz" style="display: block;">
+            <?php foreach ($tabs as $tab): ?>
+                <li class="ui-state-default ui-corner-top  <?= /* @noEscape */ $tab['is_active'] ? 'ui-state-active' : ''; ?>">
+                    <a href="<?= /* @noEscape */ $tab['url']; ?>" title="<?= /* @noEscape */ $tab['title']; ?>" class="tab-item-link ui-tabs-anchor">
+                        <span><?= /* @noEscape */ $tab['content']; ?></span>
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>

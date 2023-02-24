@@ -68,7 +68,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         } catch (\Ess\M2ePro\Model\Exception\Logic $e) {
             $this->getMessageManager()->addError($this->__('Listing does not exist.'));
 
-            return $this->_redirect('*/ebay_listing/index');
+            return $this->_redirect('*/ebay_listing/itemsByListing');
         }
 
         $productAddIds = $listing->getChildObject()->getData('product_add_ids');

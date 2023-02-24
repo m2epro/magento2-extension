@@ -28,18 +28,6 @@ class Form extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration
-     * @param \Magento\Customer\Model\Group $customerGroup
-     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Magento\Customer\Model\Group $customerGroup,
@@ -1167,7 +1155,7 @@ JS
     /**
      * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
      * @param string $priceType
-     * @param string $priceModifier
+     * @param string|null $priceModifier
      *
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
@@ -1175,13 +1163,13 @@ JS
     private function appendPriceChangeElements(
         \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
         string $priceType,
-        string $priceModifier
-    ) {
+        ?string $priceModifier
+    ): void {
         $block = $this->getLayout()
                       ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\PriceChange::class)
                       ->addData([
                           'price_type' => $priceType,
-                          'price_modifier' => $priceModifier,
+                          'price_modifier' => (string)$priceModifier,
                       ]);
 
         $fieldset->addField(

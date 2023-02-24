@@ -110,13 +110,13 @@
 
 /*#magento_block_ebay_template_payment_form_data_managed_payments .admin__field-control,*/
 /*#magento_block_ebay_template_payment_form_data_paypal .admin__field-control,*/
-/*#pay_pal_immediate_payment_container > .admin__field-control {*/
+/*#paypal_immediate_payment_container > .admin__field-control {*/
     /*margin-top: 9px;*/
 /*}*/
 
 .addafter[for="managed_payments_mode"],
 .addafter[for="pay_pal_mode"],
-.addafter[for="pay_pal_immediate_payment"]:before {
+.addafter[for="paypal_immediate_payment"]:before {
     margin-top: 9px;
 }
 

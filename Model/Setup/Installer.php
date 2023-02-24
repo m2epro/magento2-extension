@@ -2592,6 +2592,67 @@ class Installer
                                ->setOption('collate', 'utf8_general_ci')
                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($archivedEntity);
+
+        $tagTable = $this->getConnection()->newTable($this->getFullTableName('tag'))
+                         ->addColumn(
+                             'id',
+                             Table::TYPE_INTEGER,
+                             null,
+                             ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+                         )
+                         ->addColumn(
+                             'nick',
+                             Table::TYPE_TEXT,
+                             255,
+                             ['nullable' => false]
+                         )
+                         ->setOption('type', 'INNODB')
+                         ->setOption('charset', 'utf8')
+                         ->setOption('collate', 'utf8_general_ci')
+                         ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($tagTable);
+
+        $listingProductTagRelationTable = $this->getConnection()->newTable(
+            $this->getFullTableName('listing_product_tag_relation')
+        )
+                                               ->addColumn(
+                                                   'id',
+                                                   Table::TYPE_INTEGER,
+                                                   null,
+                                                   [
+                                                       'unsigned' => true,
+                                                       'primary' => true,
+                                                       'nullable' => false,
+                                                       'auto_increment' => true,
+                                                   ]
+                                               )
+                                               ->addColumn(
+                                                   'listing_product_id',
+                                                   Table::TYPE_INTEGER,
+                                                   null,
+                                                   [
+                                                       'unsigned' => true,
+                                                       'nullable' => false,
+                                                   ]
+                                               )
+                                               ->addColumn(
+                                                   'tag_id',
+                                                   Table::TYPE_INTEGER,
+                                                   null,
+                                                   [
+                                                       'unsigned' => true,
+                                                       'nullable' => false,
+                                                   ]
+                                               )
+                                               ->addIndex('listing_product_id', 'listing_product_id')
+                                               ->addIndex('tag_id', 'tag_id')
+                                               ->setOption('type', 'INNODB')
+                                               ->setOption('charset', 'utf8')
+                                               ->setOption('collate', 'utf8_general_ci')
+                                               ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($listingProductTagRelationTable);
     }
 
     /**
@@ -2715,6 +2776,14 @@ class Installer
                     'type' => 1,
                     'priority' => 5,
                 ],
+            ]
+        );
+
+        $this->getConnection()->insertMultiple(
+            $this->getFullTableName('tag'),
+            [
+                ['nick' => 'has_error'],
+                ['nick' => 'missing_item_specific'],
             ]
         );
     }
@@ -5918,6 +5987,12 @@ class Installer
                                                )
                                                ->addColumn(
                                                    'ignore_variations',
+                                                   Table::TYPE_SMALLINT,
+                                                   null,
+                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                               )
+                                               ->addColumn(
+                                                   'paypal_immediate_payment',
                                                    Table::TYPE_SMALLINT,
                                                    null,
                                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]

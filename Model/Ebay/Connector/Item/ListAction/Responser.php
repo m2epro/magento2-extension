@@ -17,11 +17,10 @@ use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
     /** @var \Magento\Framework\Locale\CurrencyInterface */
-    protected $localeCurrency;
-
-    //########################################
+    private $localeCurrency;
 
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -34,8 +33,8 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         EbayVariation\Resolver $variationResolver,
         array $params = []
     ) {
-        $this->localeCurrency = $localeCurrency;
         parent::__construct(
+            $tagBuffer,
             $helperData,
             $walmartFactory,
             $amazonFactory,
@@ -47,9 +46,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $variationResolver,
             $params
         );
-    }
 
-    //########################################
+        $this->localeCurrency = $localeCurrency;
+    }
 
     protected function getSuccessfulMessage()
     {

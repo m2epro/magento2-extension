@@ -15,9 +15,7 @@
 
                     <resource id="Ess_M2ePro::ebay_listings" title="Listings" sortOrder="1">
                         <resource id="Ess_M2ePro::ebay_listings_m2epro" title="M2E Pro" sortOrder="1" />
-                        <resource id="Ess_M2ePro::ebay_listings_other" title="Unmanaged" sortOrder="2" />
-                        <resource id="Ess_M2ePro::ebay_listings_search" title="Search Products" sortOrder="3" />
-                        <resource id="Ess_M2ePro::ebay_listings_logs" title="Logs &#38; Events" sortOrder="4" />
+                        <resource id="Ess_M2ePro::ebay_listings_logs" title="Logs &#38; Events" sortOrder="2" />
                     </resource>
 
                     <!-- ebay sales acl -->

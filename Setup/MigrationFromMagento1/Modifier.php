@@ -217,6 +217,8 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y22_m08\MoveAmazonProductIdentifiers::class,
             \Ess\M2ePro\Setup\Update\y22_m10\AmazonWalmartSellingPolicyPriceModifier::class,
             \Ess\M2ePro\Setup\Update\y23_m01\EbayListingProductScheduledStopAction::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AddTags::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AddImmediatePaymentColumn::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

@@ -8,23 +8,30 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
+    /**
+     * @ingeritdoc
+     */
     public function execute()
     {
-        if ($this->getRequest()->getQuery('ajax')) {
-            $this->setAjaxContent(
-                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid::class)
+        if ($this->isAjax()) {
+            /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing\Grid $grid */
+            $grid = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing\Grid::class
             );
+            $this->setAjaxContent($grid);
 
             return $this->getResult();
         }
 
-        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing::class));
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing $block */
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing::class
+        );
+        $this->addContent($block);
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend(__('Items By Listing'));
         $this->setPageHelpLink('x/Fv8UB');
 
         return $this->getResult();

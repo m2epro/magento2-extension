@@ -25,33 +25,26 @@ class Data
     private $dir;
     /** @var \Magento\Backend\Model\UrlInterface */
     private $urlBuilder;
+    /** @var \Ess\M2ePro\Helper\Url */
+    private $urlHelper;
     /** @var \Magento\Framework\ObjectManagerInterface */
     private $objectManager;
     /** @var \Magento\Framework\Serialize\SerializerInterface */
     private $serializerInterface;
-    /** @var \Magento\Framework\App\RequestInterface */
-    private $httpRequest;
     /** @var mixed */
     private $phpSerialize;
 
-    /**
-     * @param \Magento\Framework\Module\Dir $dir
-     * @param \Magento\Backend\Model\UrlInterface $urlBuilder
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
-     * @param \Magento\Framework\App\RequestInterface $httpRequest
-     */
     public function __construct(
         \Magento\Framework\Module\Dir $dir,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
+        \Ess\M2ePro\Helper\Url $urlHelper,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Magento $magentoHelper,
-        \Magento\Framework\App\RequestInterface $httpRequest
+        \Ess\M2ePro\Helper\Magento $magentoHelper
     ) {
         $this->dir = $dir;
         $this->urlBuilder = $urlBuilder;
+        $this->urlHelper = $urlHelper;
         $this->objectManager = $objectManager;
-        $this->httpRequest = $httpRequest;
 
         if (version_compare($magentoHelper->getVersion(), '2.4.3', '<')) {
             $this->phpSerialize = version_compare($magentoHelper->getVersion(), '2.3.5', '>=')
@@ -748,12 +741,12 @@ class Data
      * @param array $backParams
      *
      * @return string
+     * @deprecated
+     * @see \Ess\M2ePro\Helper\Url::makeBackUrlParam
      */
-    public function makeBackUrlParam($backIdOrRoute, array $backParams = []): string
+    public function makeBackUrlParam(string $backIdOrRoute, array $backParams = []): string
     {
-        $paramsString = !empty($backParams) ? '|' . http_build_query($backParams, '', '&') : '';
-
-        return base64_encode($backIdOrRoute . $paramsString);
+        return $this->urlHelper->makeBackUrlParam($backIdOrRoute, $backParams);
     }
 
     /**
@@ -761,17 +754,15 @@ class Data
      * @param array $defaultBackParams
      *
      * @return string
+     * @deprecated
+     * @see \Ess\M2ePro\Helper\Url::getBackUrlParam
      */
     public function getBackUrlParam(
-        $defaultBackIdOrRoute = 'index',
+        string $defaultBackIdOrRoute = 'index',
         array $defaultBackParams = []
-    ) {
-        $requestParams = $this->httpRequest->getParams();
-
-        return $requestParams['back'] ?? $this->makeBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
+    ): string {
+        return $this->urlHelper->getBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
     }
-
-    // ---------------------------------------
 
     /**
      * @param string $defaultBackIdOrRoute
@@ -779,48 +770,19 @@ class Data
      * @param array $extendedRoutersParams
      *
      * @return string
+     * @deprecated
+     * @see \Ess\M2ePro\Helper\Url::getBackUrl
      */
     public function getBackUrl(
-        $defaultBackIdOrRoute = 'index',
+        string $defaultBackIdOrRoute = 'index',
         array $defaultBackParams = [],
         array $extendedRoutersParams = []
-    ) {
-        $back = $this->getBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
-        $back = base64_decode($back);
-
-        $params = [];
-
-        if (strpos($back, '|') !== false) {
-            $route = substr($back, 0, strpos($back, '|'));
-            parse_str(substr($back, strpos($back, '|') + 1), $params);
-        } else {
-            $route = $back;
-        }
-
-        $extendedRoutersParamsTemp = [];
-        foreach ($extendedRoutersParams as $extRouteName => $extParams) {
-            if ($route == $extRouteName) {
-                $params = array_merge($params, $extParams);
-            } else {
-                $extendedRoutersParamsTemp[$route] = $params;
-            }
-        }
-        $extendedRoutersParams = $extendedRoutersParamsTemp;
-
-        $route == 'index' && $route = '*/*/index';
-        $route == 'list' && $route = '*/*/index';
-        $route == 'edit' && $route = '*/*/edit';
-        $route == 'view' && $route = '*/*/view';
-
-        foreach ($extendedRoutersParams as $extRouteName => $extParams) {
-            if ($route == $extRouteName) {
-                $params = array_merge($params, $extParams);
-            }
-        }
-
-        $params['_escape_params'] = false;
-
-        return $this->urlBuilder->getUrl($route, $params);
+    ): string {
+        return $this->urlHelper->getBackUrl(
+            $defaultBackIdOrRoute,
+            $defaultBackParams,
+            $extendedRoutersParams
+        );
     }
 
     // ----------------------------------------

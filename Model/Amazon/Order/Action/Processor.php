@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Amazon\Order\Action;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Order\Action\Processor
- */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
@@ -26,8 +23,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     protected $helperData;
     /** @var mixed|null  */
     private $actionType = null;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
@@ -52,9 +47,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->actionType = $params['action_type'];
     }
 
-    //########################################
-
-    public function process()
+    public function process(): void
     {
         $this->removeMissedProcessingActions();
 
@@ -78,7 +71,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function processAction($merchantId)
     {
@@ -188,7 +181,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                                   ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param $merchantId
@@ -279,7 +272,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function removeMissedProcessingActions()
     {
@@ -299,6 +292,4 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $action->delete();
         }
     }
-
-    //########################################
 }

@@ -74,7 +74,7 @@ class Data extends AbstractForm
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    protected function _prepareForm()
+    protected function _prepareForm(): Data
     {
         $attributes = $this->globalDataHelper->getValue('ebay_attributes');
 
@@ -837,6 +837,35 @@ class Data extends AbstractForm
             [
                 'text' => $this->getPriceTableHtml(),
                 'css_class' => 'm2epro-fieldset-table',
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
+            'magento_block_ebay_template_payment_form_data_paypal',
+            [
+                'legend' => $this->__('Payments'),
+                'collapsable' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'paypal_immediate_payment',
+            self::SELECT,
+            [
+                'name' => 'selling_format[paypal_immediate_payment]',
+                'label' => $this->__('Require Immediate Payment'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value'   => $formData['paypal_immediate_payment'],
+                'after_element_html' => '<label for="pay_pal_mode"></label>' . $this->getTooltipHtml($this->__(
+                    'Select this option if you want the buyer to pay immediately. Your item will remain
+                            available for others to buy until the payment is complete.
+Since the buyer must pay immediately, they wont be able to contact you with Request total price from seller.
+This means your listing must include the shipping costs to all locations where you do ship, and discount rules if you
+offer discounts.'
+                ), true)
             ]
         );
 

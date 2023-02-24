@@ -167,8 +167,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
         $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
 
+        if ($idsSelect->getPart(\Magento\Framework\DB\Select::HAVING) === []) {
+            $idsSelect->reset(\Magento\Framework\DB\Select::COLUMNS);
+        }
+
         if (!$this->listingProductMode) {
-            // some of filtered field using HAVING (QTY for ex.) so we can't reset selecting columns
             $idsSelect->columns('e.' . $this->getEntity()->getIdFieldName());
             $idsSelect->limit($limit, $offset);
             if (!$this->isLeftJoinsImportant) {

@@ -13,9 +13,6 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\SellingFormat
- */
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     public const LISTING_TYPE_AUCTION = 1;
@@ -1421,6 +1418,14 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     }
 
     // ---------------------------------------
+
+    /**
+     * @return int
+     */
+    public function getPayPalImmediatePayment(): int
+    {
+        return (int)$this->getData('paypal_immediate_payment');
+    }
 
     /**
      * @return bool

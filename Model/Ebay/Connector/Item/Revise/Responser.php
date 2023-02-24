@@ -17,9 +17,10 @@ use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
     /** @var \Magento\Framework\Locale\CurrencyInterface */
-    protected $localeCurrency;
+    private $localeCurrency;
 
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -32,8 +33,8 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         EbayVariation\Resolver $variationResolver,
         array $params = []
     ) {
-        $this->localeCurrency = $localeCurrency;
         parent::__construct(
+            $tagBuffer,
             $helperData,
             $walmartFactory,
             $amazonFactory,
@@ -45,9 +46,9 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $variationResolver,
             $params
         );
-    }
 
-    // ----------------------------------------
+        $this->localeCurrency = $localeCurrency;
+    }
 
     /**
      * @return string
@@ -113,8 +114,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         return implode(', ', $sequenceStrings) . ' were Revised';
     }
-
-    //########################################
 
     protected function processCompleted(array $data = [], array $params = [])
     {
@@ -265,8 +264,6 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
     }
 
-    //########################################
-
     /**
      * @return void|null
      * @throws \Ess\M2ePro\Model\Exception
@@ -277,31 +274,26 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         $responseMessages = $this->getResponse()->getMessages()->getEntities();
 
         if (
-            $this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
-            $this->getConfigurator()->isIncludingMode()
+            $this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH
+            && $this->getConfigurator()->isIncludingMode()
+            && $this->isProductIdentifierNeeded($responseMessages)
         ) {
-            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
-
-            if ($this->isProductIdentifierNeeded($responseMessages)) {
-                /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-                $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-                $message->initFromPreparedData(
-                    $this->getHelper('Module\Translation')->__(
-                        'It has been detected that the Category you are using is going to require the Product Identifiers
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromPreparedData(
+                $this->getHelper('Module\Translation')->__(
+                    'It has been detected that the Category you are using is going to require the Product Identifiers
                 to be specified (UPC, EAN, ISBN, etc.). Full Revise will be automatically performed to send
                 the value(s) of the required Identifier(s) based on the settings
                 provided in the eBay Catalog Identifiers section of the Description Policy.'
-                    ),
-                    Message::TYPE_WARNING
-                );
+                ),
+                Message::TYPE_WARNING
+            );
+            $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
-                $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
-                $this->processAdditionalAction($this->getActionType(), $configurator);
-            } elseif ($this->isNewRequiredSpecificNeeded($responseMessages)) {
-                $configurator->allowCategories();
-                $this->processAdditionalAction($this->getActionType(), $configurator);
-            }
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
+            $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
+            $this->processAdditionalAction($this->getActionType(), $configurator);
         }
 
         if ($this->isVariationErrorAppeared($responseMessages) && $this->getRequestDataObject()->hasVariations()) {
@@ -311,5 +303,15 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         parent::eventAfterExecuting();
     }
 
-    //########################################
+    /**
+     * @inheritDoc
+     */
+    protected function calculateTagByMessage(
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer
+    ): void {
+        if ($this->isNewRequiredSpecificNeeded($message)) {
+            $tagBuffer->addTag($this->listingProduct, \Ess\M2ePro\Model\Tag::NICK_EBAY_MISSING_ITEM_SPECIFIC);
+        }
+    }
 }

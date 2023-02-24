@@ -253,7 +253,7 @@ class Config extends AbstractConfig
                 'RemoveRepricingDisablingConfig',
             ],
             'y22_m11' => [
-                'FixWalmartChildListingId'
+                'FixWalmartChildListingId',
             ],
             'y23_m01' => [
                 'FixEbayQtyReservationDays',
@@ -262,6 +262,10 @@ class Config extends AbstractConfig
                 'RemoveConfigConvertLinebreaks',
                 'EbayListingProductScheduledStopAction',
                 'UpdateConfigSupportUrl',
+            ],
+            'y23_m02' => [
+                'AddImmediatePaymentColumn',
+                'AddTags',
             ],
         ];
     }

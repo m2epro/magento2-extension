@@ -8,23 +8,22 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\SellingFormat\Diff
- */
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    //########################################
-
-    public function isDifferent()
+    /**
+     * @return bool
+     */
+    public function isDifferent(): bool
     {
         return $this->isQtyDifferent() ||
             $this->isPriceDifferent() ||
             $this->isOtherDifferent();
     }
 
-    //########################################
-
-    public function isQtyDifferent()
+    /**
+     * @return bool
+     */
+    public function isQtyDifferent(): bool
     {
         $keys = [
             'qty_mode',
@@ -39,7 +38,10 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isPriceDifferent()
+    /**
+     * @return bool
+     */
+    public function isPriceDifferent(): bool
     {
         $keys = [
             'price_increase_vat_percent',
@@ -67,7 +69,10 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isOtherDifferent()
+    /**
+     * @return bool
+     */
+    public function isOtherDifferent(): bool
     {
         $keys = [
             'best_offer_mode',
@@ -87,10 +92,9 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'lot_size_mode',
             'lot_size_custom_value',
             'lot_size_attribute',
+            'paypal_immediate_payment',
         ];
 
         return $this->isSettingsDifferent($keys);
     }
-
-    //########################################
 }

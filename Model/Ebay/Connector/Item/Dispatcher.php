@@ -10,49 +10,55 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item;
 
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var int */
-    private $logsActionId;
-
-    private $activeRecordFactory;
-    private $ebayFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
-    private $listingLogResource;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Module\Exception */
-    private $exceptionHelper;
+    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Buffer */
+    private $tagBuffer;
     /** @var \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory */
     private $dispatcherFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
+    private $listingLogResource;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
+    private $ebayFactory;
+
+    /** @var int|null */
+    private $logsActionId = null;
 
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
         \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory $dispatcherFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         parent::__construct($helperFactory, $modelFactory);
+
+        $this->tagBuffer = $tagBuffer;
+        $this->dispatcherFactory = $dispatcherFactory;
+        $this->listingLogResource = $listingLogResource;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->dataHelper = $dataHelper;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
-        $this->listingLogResource = $listingLogResource;
-        $this->dataHelper = $dataHelper;
-        $this->exceptionHelper = $exceptionHelper;
-        $this->dispatcherFactory = $dispatcherFactory;
     }
-
-    // ----------------------------------------
 
     /**
      * @param int $action
-     * @param array|\Ess\M2ePro\Model\Listing\Product $products
+     * @param \Ess\M2ePro\Model\Listing\Product[]|\Ess\M2ePro\Model\Listing\Product|int[]|int $products
      * @param array $params
      *
      * @return int
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function process($action, $products, array $params = [])
+    public function process(int $action, $products, array $params = []): int
     {
         $params = array_merge([
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
@@ -73,6 +79,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $this->processAccountsMarketplaces($sortedProducts, $action, $isRealTime, $params);
     }
 
+    /**
+     * @return int
+     */
     public function getLogsActionId(): int
     {
         return (int)$this->logsActionId;
@@ -82,23 +91,23 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @param array $sortedProducts
-     * @param string $action
+     * @param int $action
      * @param bool $isRealTime
      * @param array $params
      *
      * @return int
-     * @throws \LogicException
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function processAccountsMarketplaces(
         array $sortedProducts,
-        $action,
-        bool $isRealTime,
-        array $params
+        int $action,
+        bool $isRealTime = false,
+        array $params = []
     ): int {
         $results = [];
 
         foreach ($sortedProducts as $accountId => $accountProducts) {
-            /** @var \Ess\M2ePro\Model\Listing\Product[] $products */
             foreach ($accountProducts as $marketplaceId => $products) {
                 if (empty($products)) {
                     continue;
@@ -107,6 +116,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 try {
                     $result = $this->processProducts($products, $action, $isRealTime, $params);
                 } catch (\Throwable $exception) {
+
+                    /** @var \Ess\M2ePro\Model\Listing\Product $product */
                     foreach ($products as $product) {
                         $this->logListingProductException($product, $exception, $action, $params);
                     }
@@ -120,25 +131,35 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
+        $this->tagBuffer->flush();
         return $this->dataHelper->getMainStatus($results);
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Listing\Product[] $products
-     * @param $action
+     * @param array $products
+     * @param int $action
      * @param bool $isRealTime
      * @param array $params
      *
      * @return int
      * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function processProducts(array $products, $action, bool $isRealTime, array $params): int
-    {
+    private function processProducts(
+        array $products,
+        int $action,
+        bool $isRealTime = false,
+        array $params = []
+    ): int {
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
         $dispatcher = $this->dispatcherFactory->create();
         $connectorName = 'Ebay\Connector\Item\\' . $this->getActionNick($action) . '\Requester';
 
         $results = [];
+
+        if (!$this->isAdditionalDispatch($params)) {
+            $this->clearErrorsTags($products);
+        }
 
         foreach ($products as $product) {
             try {
@@ -163,6 +184,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 } else {
                     $this->logsActionId = $logsActionId;
                 }
+
+                if ($result === \Ess\M2ePro\Helper\Data::STATUS_ERROR) {
+                    $this->tagBuffer->addTag($product, \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR);
+                }
             } catch (\Throwable $exception) {
                 $this->logListingProductException($product, $exception, $action, $params);
                 $this->exceptionHelper->process($exception);
@@ -179,7 +204,39 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     // ----------------------------------------
 
     /**
-     * @param $products
+     * @param array $params
+     *
+     * @return bool
+     */
+    private function isAdditionalDispatch(array $params): bool
+    {
+        return $params['is_additional_action'] ?? false;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function clearErrorsTags(array $listingProducts): void
+    {
+        foreach ($listingProducts as $listingProduct) {
+            $this->tagBuffer->removeTags(
+                $listingProduct,
+                [
+                    \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR,
+                    \Ess\M2ePro\Model\Tag::NICK_EBAY_MISSING_ITEM_SPECIFIC,
+                ]
+            );
+        }
+
+        $this->tagBuffer->flush();
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product|\Ess\M2ePro\Model\Listing\Product[]|int[]|int $products
      *
      * @return \Ess\M2ePro\Model\Listing\Product[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -233,13 +290,21 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     // ----------------------------------------
 
-    protected function logListingProductException(
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param \Throwable $exception
+     * @param int $action
+     * @param array $params
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function logListingProductException(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
         \Throwable $exception,
-        $action,
-        $params
+        int $action,
+        array $params
     ): void {
-        /** @var \Ess\M2ePro\Model\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 
@@ -258,7 +323,12 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    protected function recognizeInitiatorForLogging(array $params)
+    /**
+     * @param array $params
+     *
+     * @return int
+     */
+    private function recognizeInitiatorForLogging(array $params): int
     {
         $statusChanger = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN;
         isset($params['status_changer']) && $statusChanger = $params['status_changer'];
@@ -274,7 +344,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $initiator;
     }
 
-    protected function recognizeActionForLogging($action, array $params)
+    /**
+     * @param int $action
+     * @param array $params
+     *
+     * @return int
+     */
+    private function recognizeActionForLogging(int $action, array $params): int
     {
         $logAction = \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN;
 
@@ -300,9 +376,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         return $logAction;
     }
 
-    // ----------------------------------------
-
-    private function getActionNick($action): string
+    /**
+     * @param int $action
+     *
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getActionNick(int $action): string
     {
         switch ($action) {
             case \Ess\M2ePro\Model\Listing\Product::ACTION_LIST:

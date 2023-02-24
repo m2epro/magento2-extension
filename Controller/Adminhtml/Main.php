@@ -83,6 +83,11 @@ abstract class Main extends Base
         return parent::addLeft($block);
     }
 
+    /**
+     * @param \Magento\Framework\View\Element\AbstractBlock|\Magento\Framework\View\Element\BlockInterface $block
+     *
+     * @return $this|\Ess\M2ePro\Controller\Adminhtml\Base|\Magento\Framework\App\ResponseInterface
+     */
     protected function addContent(\Magento\Framework\View\Element\AbstractBlock $block)
     {
         if (

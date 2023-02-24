@@ -50,12 +50,8 @@ class Magento
     private $objectManager;
     /** @var \Magento\Framework\App\CacheInterface */
     private $appCache;
-    /** @var \Magento\SalesSequence\Model\Manager */
-    private $sequenceManager;
     /** @var \Magento\Framework\Composer\ComposerInformation */
     private $composerInformation;
-    /** @var \Ess\M2ePro\Helper\Magento\Store */
-    private $magentoStoreHelper;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
     /** @var \Magento\Framework\App\RequestInterface */
@@ -68,7 +64,6 @@ class Magento
     /**
      * @param \Magento\Framework\UrlInterface $urlBuilder
      * @param \Magento\Framework\App\RequestInterface $request
-     * @param \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper
      * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
      * @param \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile
      * @param \Magento\Framework\Filesystem $filesystem
@@ -84,14 +79,12 @@ class Magento
      * @param \Magento\Directory\Model\CountryFactory $countryFactory
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      * @param \Magento\Framework\App\CacheInterface $appCache
-     * @param \Magento\SalesSequence\Model\Manager $sequenceManager
      * @param \Magento\Framework\Composer\ComposerInformation $composerInformation
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Framework\App\RequestInterface $request,
-        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile,
         \Magento\Framework\Filesystem $filesystem,
@@ -107,7 +100,6 @@ class Magento
         \Magento\Directory\Model\CountryFactory $countryFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\CacheInterface $appCache,
-        \Magento\SalesSequence\Model\Manager $sequenceManager,
         \Magento\Framework\Composer\ComposerInformation $composerInformation
     ) {
         $this->deploymentVersionStorageFile = $deploymentVersionStorageFile;
@@ -124,9 +116,7 @@ class Magento
         $this->countryFactory = $countryFactory;
         $this->objectManager = $objectManager;
         $this->appCache = $appCache;
-        $this->sequenceManager = $sequenceManager;
         $this->composerInformation = $composerInformation;
-        $this->magentoStoreHelper = $magentoStoreHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->request = $request;
         $this->urlBuilder = $urlBuilder;
@@ -532,12 +522,7 @@ class Magento
 
     public function getNextMagentoOrderId()
     {
-        $sequence = $this->sequenceManager->getSequence(
-            \Magento\Sales\Model\Order::ENTITY,
-            $this->magentoStoreHelper->getDefaultStoreId()
-        );
-
-        return $sequence->getNextValue();
+        return '000000001';
     }
 
     // ----------------------------------------

@@ -14,10 +14,8 @@ class View extends AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
     private $listing;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
@@ -87,11 +85,13 @@ class View extends AbstractContainer
         }
 
         // ---------------------------------------
+        $backUrl = $this->dataHelper->getBackUrl('*/ebay_listing/allItems');
+
         $this->addButton(
             'back',
             [
                 'label' => $this->__('Back'),
-                'onclick' => 'setLocation(\'' . $this->getUrl('*/ebay_listing/index') . '\');',
+                'onclick' => 'setLocation(\'' . $backUrl . '\');',
                 'class' => 'back',
             ]
         );
@@ -145,8 +145,6 @@ class View extends AbstractContainer
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     protected function _toHtml()
     {
         return '<div id="listing_view_progress_bar"></div>' .
@@ -155,8 +153,6 @@ class View extends AbstractContainer
             parent::_toHtml() .
             '</div>';
     }
-
-    //########################################
 
     public function getGridHtml()
     {
@@ -252,8 +248,6 @@ JS
             parent::getGridHtml();
     }
 
-    //########################################
-
     protected function getSettingsButtonDropDownItems()
     {
         $items = [];
@@ -283,8 +277,6 @@ JS
 
         return $items;
     }
-
-    //########################################
 
     public function getAddProductsDropDownItems()
     {
@@ -321,6 +313,4 @@ JS
 
         return $items;
     }
-
-    //########################################
 }

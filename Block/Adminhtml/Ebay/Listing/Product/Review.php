@@ -97,13 +97,10 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         // ---------------------------------------
         if ($this->getSource() === SourceModeBlock::MODE_OTHER) {
-            $url = $this->getUrl('*/ebay_listing_other/view', [
-                'account' => $listing->getAccountId(),
-                'marketplace' => $listing->getMarketplaceId(),
-            ]);
+            $url = $this->getUrl('*/ebay_listing_unmanaged/index');
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                 ->setData([
-                                    'label' => $this->__('Back to Unmanaged Listing'),
+                                    'label' => $this->__('Back to Unmanaged Items'),
                                     'onclick' => 'setLocation(\'' . $url . '\');',
                                     'class' => 'primary go',
                                 ]);

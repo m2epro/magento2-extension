@@ -190,11 +190,9 @@ $status = $this->getStatus();
 
             <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
                 <strong class="admin__collapsible-title"><?php echo $block->__('Buyer Information'); ?></strong>
-                <?php if (!$block->order->getChildObject()->isUseClickAndCollect()): ?>
-                    <div style="float: right; margin-bottom: -15px; margin-top: -5px;">
-                        <?php echo $block->getChildHtml('edit_shipping_info'); ?>
-                    </div>
-                <?php endif; ?>
+                <div style="float: right; margin-bottom: -15px; margin-top: -5px;">
+                    <?php echo $block->getChildHtml('edit_shipping_info'); ?>
+                </div>
             </div>
 
             <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">

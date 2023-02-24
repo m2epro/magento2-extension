@@ -1,0 +1,15 @@
+.ebay-dashboard-text {
+    font-size: 18px;
+}
+
+.ebay-dashboard-img-wrapper {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ebay-dashboard-img-wrapper > img {
+    margin-right: 10px;
+}

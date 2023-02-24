@@ -15,10 +15,11 @@ class Delete extends Listing
     public function execute()
     {
         $ids = $this->getRequestIds();
+        $backUrl = '*/ebay_listing/index';
 
         if (count($ids) == 0) {
             $this->getMessageManager()->addError($this->__('Please select Item(s) to remove.'));
-            $this->_redirect('*/*/index');
+            $this->_redirect($backUrl);
 
             return;
         }
@@ -43,6 +44,6 @@ class Delete extends Listing
         );
         $locked && $this->getMessageManager()->addError($tempString);
 
-        $this->_redirect('*/ebay_listing/index');
+        $this->_redirect($backUrl);
     }
 }

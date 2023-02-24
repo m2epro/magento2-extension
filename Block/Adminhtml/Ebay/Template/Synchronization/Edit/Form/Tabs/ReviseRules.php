@@ -293,8 +293,8 @@ HTML
                     1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically revises Item Condition, Condition Note, Lot Size, Taxation, Best Offer, and Charity
-                    information on eBay when the related data is modified in Policy Templates.'
+                    'Automatically revises Item Condition, Condition Note, Lot Size, Taxation, Best Offer, Charity
+                    information, and Immediate Payment on eBay when the related data is modified in Policy Templates.'
                 ),
             ]
         );

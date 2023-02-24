@@ -24,26 +24,29 @@ class Other extends AbstractModel
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
-    public function getBuilderData()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getBuilderData(): array
     {
         $data = array_merge(
             $this->getConditionData(),
             $this->getConditionNoteData(),
             $this->getVatTaxData(),
             $this->getCharityData(),
-            $this->getLotSizeData()
+            $this->getLotSizeData(),
+            $this->getPaymentData()
         );
 
         return $data;
     }
 
-    //########################################
-
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getConditionData()
+    protected function getConditionData(): array
     {
         $this->searchNotFoundAttributes();
         $data = $this->getEbayListingProduct()->getDescriptionTemplateSource()->getCondition();
@@ -61,7 +64,7 @@ class Other extends AbstractModel
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getConditionNoteData()
+    protected function getConditionNoteData(): array
     {
         $this->searchNotFoundAttributes();
         $data = $this->getEbayListingProduct()->getDescriptionTemplateSource()->getConditionNote();
@@ -76,7 +79,7 @@ class Other extends AbstractModel
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getVatTaxData()
+    protected function getVatTaxData(): array
     {
         $data = [
             'tax_category' => $this->getEbayListingProduct()->getSellingFormatTemplateSource()->getTaxCategory(),
@@ -100,7 +103,7 @@ class Other extends AbstractModel
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getCharityData()
+    protected function getCharityData(): array
     {
         $charity = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getCharity();
 
@@ -118,7 +121,7 @@ class Other extends AbstractModel
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getLotSizeData()
+    public function getLotSizeData(): array
     {
         $categoryFeatures = $this->componentEbayCategoryEbay->getFeatures(
             $this->getEbayListingProduct()->getCategoryTemplateSource()->getCategoryId(),
@@ -134,5 +137,22 @@ class Other extends AbstractModel
         ];
     }
 
-    //########################################
+    /**
+     * @return array[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getPaymentData(): array
+    {
+        $payPalImmediatePayment = $this->getEbayListingProduct()
+                                       ->getEbaySellingFormatTemplate()
+                                       ->getPayPalImmediatePayment();
+
+        return [
+            'payment' => [
+                'paypal' => [
+                    'immediate_payment' => $payPalImmediatePayment
+                ],
+            ],
+        ];
+    }
 }

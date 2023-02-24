@@ -26,6 +26,6 @@ class Skip extends InstallationEbay
     {
         $this->magentoHelper->clearMenuCache();
         $this->setStatus(Wizard::STATUS_SKIPPED);
-        $this->_redirect("*/ebay_listing/index/");
+        $this->_redirect("*/ebay_listing/index");
     }
 }

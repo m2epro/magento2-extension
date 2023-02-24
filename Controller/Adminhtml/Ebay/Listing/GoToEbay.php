@@ -25,8 +25,7 @@ class GoToEbay extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro') ||
-            $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_other');
+        return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro');
     }
 
     public function execute()

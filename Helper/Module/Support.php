@@ -72,6 +72,22 @@ class Support
     }
 
     /**
+     * @return string
+     */
+    public function getPrivacyPolicyUrl(): string
+    {
+        return $this->getWebsiteUrl() . 'privacy';
+    }
+
+    /**
+     * @return string
+     */
+    public function getTermsAndConditionsUrl(): string
+    {
+        return $this->getWebsiteUrl() . 'terms-and-conditions';
+    }
+
+    /**
      * @return mixed|null
      */
     public function getClientsPortalUrl()

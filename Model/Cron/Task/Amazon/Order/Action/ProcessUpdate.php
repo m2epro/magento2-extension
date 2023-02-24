@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action\ProcessUpdate
- */
 class ProcessUpdate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'amazon/order/action/process_update';
@@ -20,10 +17,9 @@ class ProcessUpdate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected $interval = 3600;
 
-    //####################################
-
-    public function performActions()
+    protected function performActions(): void
     {
+        /** @var \Ess\M2ePro\Model\Amazon\Order\Action\Processor $actionsProcessor */
         $actionsProcessor = $this->modelFactory->getObject(
             'Amazon_Order_Action_Processor',
             [
@@ -32,6 +28,4 @@ class ProcessUpdate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
         $actionsProcessor->process();
     }
-
-    //####################################
 }

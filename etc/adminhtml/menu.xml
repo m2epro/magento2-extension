@@ -9,13 +9,16 @@
 
         <add id="Ess_M2ePro::ebay" title="Integration" module="Ess_M2ePro" sortOrder="31" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::ebay" />
 
+        <!-- ebay dashboard -->
+
+        <add id="Ess_M2ePro::ebay_dashboard" module="Ess_M2ePro" sortOrder="5" parent="Ess_M2ePro::ebay" title="Overview" resource="Ess_M2ePro::ebay"/>
+        <add id="Ess_M2ePro::ebay_dashboard_m2epro" title="Dashboard [coming soon…]" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_dashboard" action="m2epro/ebay_dashboard/index" resource="Ess_M2ePro::ebay"/>
+
         <!-- ebay listings -->
 
         <add id="Ess_M2ePro::ebay_listings" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay" title="Listings" resource="Ess_M2ePro::ebay_listings" />
-        <add id="Ess_M2ePro::ebay_listings_m2epro" title="M2E Pro" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing/index" resource="Ess_M2ePro::ebay_listings_m2epro" />
-        <add id="Ess_M2ePro::ebay_listings_other" title="Unmanaged" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing_other/index" resource="Ess_M2ePro::ebay_listings_other" />
-        <add id="Ess_M2ePro::ebay_listings_search" title="Search Products" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing_search/index" resource="Ess_M2ePro::ebay_listings_search" />
-        <add id="Ess_M2ePro::ebay_listings_logs" title="Logs &#38; Events" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_log_listing_product/index" resource="Ess_M2ePro::ebay_listings_logs" />
+        <add id="Ess_M2ePro::ebay_listings_m2epro" title="Items" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing/index" resource="Ess_M2ePro::ebay_listings_m2epro" />
+        <add id="Ess_M2ePro::ebay_listings_logs" title="Logs &#38; Events" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_log_listing_product/index" resource="Ess_M2ePro::ebay_listings_logs" />
 
         <!-- ebay sales -->
 

@@ -82,7 +82,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $collection->joinStockItem();
 
         // ---------------------------------------
-        $collection->getSelect()->distinct();
+        $collection->getSelect()->group('e.entity_id');
         // ---------------------------------------
 
         // Set filter store

@@ -48,9 +48,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('edit');
 
         if ($this->getRequest()->getParam('back')) {
-            $url = $this->dataHelper->getBackUrl(
-                '*/ebay_listing/index'
-            );
+            $url = $this->dataHelper->getBackUrl();
             $this->addButton(
                 'back',
                 [

@@ -8,23 +8,15 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Description\Source
- */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     public const GALLERY_IMAGES_COUNT_MAX = 23;
     public const VARIATION_IMAGES_COUNT_MAX = 12;
 
-    /**
-     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
-     */
-    private $magentoProduct = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Template\Description $descriptionTemplateModel
-     */
-    private $descriptionTemplateModel = null;
+    /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
+    private $magentoProduct;
+    /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplateModel */
+    private $descriptionTemplateModel;
 
     protected $driverPool;
     protected $gd2AdapterFactory;
@@ -33,8 +25,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     protected $storeManager;
     protected $emailTemplateFilter;
     protected $filterManager;
-
-    //########################################
 
     public function __construct(
         \Magento\Framework\Filesystem\DriverPool $driverPool,
@@ -57,14 +47,12 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
     }
 
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
      *
      * @return $this
      */
-    public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct): self
     {
         $this->magentoProduct = $magentoProduct;
 
@@ -74,19 +62,17 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Magento\Product
      */
-    public function getMagentoProduct()
+    public function getMagentoProduct(): ?\Ess\M2ePro\Model\Magento\Product
     {
         return $this->magentoProduct;
     }
-
-    // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Template\Description $instance
      *
      * @return $this
      */
-    public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance)
+    public function setDescriptionTemplate(\Ess\M2ePro\Model\Template\Description $instance): self
     {
         $this->descriptionTemplateModel = $instance;
 
@@ -96,25 +82,25 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Template\Description
      */
-    public function getDescriptionTemplate()
+    public function getDescriptionTemplate(): ?\Ess\M2ePro\Model\Template\Description
     {
         return $this->descriptionTemplateModel;
     }
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Template\Description
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getEbayDescriptionTemplate()
+    public function getEbayDescriptionTemplate(): \Ess\M2ePro\Model\Ebay\Template\Description
     {
         return $this->getDescriptionTemplate()->getChildObject();
     }
 
-    //########################################
-
     /**
      * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         $src = $this->getEbayDescriptionTemplate()->getTitleSource();
 
@@ -142,8 +128,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getSubTitle()
+    public function getSubTitle(): string
     {
         $subTitle = '';
         $src = $this->getEbayDescriptionTemplate()->getSubTitleSource();
@@ -162,9 +149,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return string
-     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception|\Magento\Framework\Exception\FileSystemException
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         $src = $this->getEbayDescriptionTemplate()->getDescriptionSource();
 
@@ -193,10 +180,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return str_replace(['<![CDATA[', ']]>'], '', $description);
     }
 
-    //########################################
-
     /**
      * @return int|string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getCondition()
     {
@@ -215,8 +201,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getConditionNote()
+    public function getConditionNote(): string
     {
         $note = '';
         $src = $this->getEbayDescriptionTemplate()->getConditionNoteSource();
@@ -231,9 +218,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $note;
     }
 
-    // ---------------------------------------
-
-    public function getProductDetail($type)
+    /**
+     * @param $type
+     *
+     * @return string|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getProductDetail($type): ?string
     {
         if (!$this->getEbayDescriptionTemplate()->isProductDetailsModeAttribute($type)) {
             return null;
@@ -248,12 +239,11 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $this->getMagentoProduct()->getAttributeValue($attribute);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Magento\Product\Image|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic|\Magento\Framework\Exception\FileSystemException
      */
-    public function getMainImage()
+    public function getMainImage(): ?\Ess\M2ePro\Model\Magento\Product\Image
     {
         $image = null;
 
@@ -275,8 +265,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return \Ess\M2ePro\Model\Magento\Product\Image[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic|\Magento\Framework\Exception\FileSystemException
      */
-    public function getGalleryImages()
+    public function getGalleryImages(): array
     {
         if ($this->getEbayDescriptionTemplate()->isImageMainModeNone()) {
             return [];
@@ -362,8 +353,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return \Ess\M2ePro\Model\Magento\Product\Image[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic|\Magento\Framework\Exception\FileSystemException
      */
-    public function getVariationImages()
+    public function getVariationImages(): array
     {
         if (
             $this->getEbayDescriptionTemplate()->isImageMainModeNone() ||
@@ -426,15 +418,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return array_slice($variationImages, 0, $limitVariationImages);
     }
 
-    //########################################
-
     /**
      * @param string $str
      * @param int $length
      *
      * @return string
      */
-    private function cutLongTitles($str, $length = 80)
+    private function cutLongTitles(string $str, int $length = 80): string
     {
         $str = trim($str);
 
@@ -445,12 +435,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $this->filterManager->truncate($str, ['length' => $length]);
     }
 
-    // ---------------------------------------
-
     /**
-     * @param \Ess\M2ePro\Model\Magento\Product\Image $imageObj
+     * @param $imageObj
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function addWatermarkIfNeed($imageObj)
+    public function addWatermarkIfNeed($imageObj): void
     {
         if (!$this->getEbayDescriptionTemplate()->isWatermarkEnabled()) {
             return;
@@ -535,6 +527,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $watermarkOriginalHeight = $watermark->getOriginalHeight();
         $watermarkOriginalWidth = $watermark->getOriginalWidth();
 
+        if ((int)$imageOriginalHeight === 0 || (int)$watermarkOriginalHeight === 0) {
+            return;
+        }
+
         if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeStretch()) {
             $image->setWatermarkPosition(\Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_STRETCH);
         }
@@ -573,7 +569,21 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $image->setWatermarkImageOpacity($opacity);
-        $image->watermark($watermarkPath);
+
+        /**
+         * Fix magento resize bug
+         * @link https://github.com/magento/magento2/issues/35535
+         * @link https://github.com/magento/magento2/commit/5131a551e96c6495c3b01ee5e728e211bb994d39
+         */
+        set_error_handler(function () {
+            return true;
+        }, E_DEPRECATED);
+        try {
+            $image->watermark($watermarkPath);
+        } finally {
+            restore_error_handler();
+        }
+
         $image->save($markingImagePath);
 
         if (!$fileDriver->isFile($markingImagePath)) {
@@ -585,7 +595,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                  ->resetHash();
     }
 
-    private function addWatermarkForCustomDescription(&$description)
+    /**
+     * @param $description
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
+    private function addWatermarkForCustomDescription(&$description): void
     {
         if (strpos($description, 'm2e_watermark') !== false) {
             preg_match_all('/<(img|a) [^>]*\bm2e_watermark[^>]*>/i', $description, $tagsArr);
@@ -626,6 +643,4 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             }
         }
     }
-
-    //########################################
 }

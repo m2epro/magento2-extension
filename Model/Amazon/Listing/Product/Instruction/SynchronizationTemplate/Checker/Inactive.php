@@ -152,7 +152,7 @@ class Inactive extends AbstractModel
 
         $amazonSynchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
 
-        if (!$amazonSynchronizationTemplate->isRelistMode()) {
+        if (!$amazonSynchronizationTemplate->isRelistMode() || $amazonListingProduct->isAfnChannel()) {
             return false;
         }
 

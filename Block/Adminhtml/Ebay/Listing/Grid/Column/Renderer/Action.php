@@ -8,8 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing\Grid as ListingGrid;
 use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
-use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid as ListingGrid;
 
 /**
  * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action

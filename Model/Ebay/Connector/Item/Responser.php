@@ -41,9 +41,11 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     protected $isSuccess = false;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Buffer */
+    private $tagBuffer;
 
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -69,6 +71,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         $this->variationResolver = $variationResolver;
         $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $this->params['product']['id']);
         $this->helperData = $helperData;
+        $this->tagBuffer = $tagBuffer;
     }
 
     //########################################
@@ -96,11 +99,30 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     public function eventAfterExecuting()
     {
+        parent::eventAfterExecuting();
+
+        $responseMessages = $this->getResponse()->getMessages()->getEntities();
+        foreach ($responseMessages as $message) {
+            $this->calculateTagByMessage($message, $this->tagBuffer);
+        }
+
+        $this->tagBuffer->flush();
+
         if ($this->isTemporaryErrorAppeared($this->getResponse()->getMessages()->getEntities())) {
             $this->getResponseObject()->throwRepeatActionInstructions();
         }
+    }
 
-        parent::eventAfterExecuting();
+    /**
+     * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message $message
+     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer
+     *
+     * @return void
+     */
+    protected function calculateTagByMessage(
+        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer
+    ): void {
     }
 
     //########################################
@@ -228,8 +250,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /**
      * @param Message[] $messages
-     *
      * @return Message|bool
+     *
      * 21919301: (UPC/EAN/ISBN) is missing a value. Enter a value and try again.
      */
     protected function isProductIdentifierNeeded(array $messages)
@@ -244,20 +266,14 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     }
 
     /**
-     * @param Message[] $messages
+     * @param Message $message
      *
-     * @return Message|bool
+     * @return bool
      * 21919303: The item specific Type is missing. Add Type to this listing, enter a valid value, and then try again.
      */
-    protected function isNewRequiredSpecificNeeded(array $messages)
+    protected function isNewRequiredSpecificNeeded(Message $message): bool
     {
-        foreach ($messages as $message) {
-            if ($message->getCode() == 21919303) {
-                return $message;
-            }
-        }
-
-        return false;
+        return $message->getCode() == 21919303;
     }
 
     /**
@@ -611,7 +627,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         );
 
         $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Item_Dispatcher');
-        $dispatcher->process($actionType, [$listingProduct], $params);
+        $status = $dispatcher->process($actionType, [$listingProduct], $params);
 
         $logsActionId = $this->params['logs_action_id'];
         if (!is_array($logsActionId)) {
@@ -621,6 +637,8 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         $logsActionId[] = $dispatcher->getLogsActionId();
 
         $this->params['logs_action_id'] = $logsActionId;
+
+        return $status;
     }
 
     //########################################

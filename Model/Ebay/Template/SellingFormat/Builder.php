@@ -12,21 +12,11 @@ use Ess\M2ePro\Model\Ebay\Template\SellingFormat as SellingFormat;
 
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
-    ) {
-        parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
-        $this->helperData = $helperData;
-    }
-
-    protected function prepareData()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function prepareData(): array
     {
         $data = parent::prepareData();
 
@@ -132,7 +122,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         $fixedPriceModifierData = $this->getFixedPriceModifierData();
         if ($fixedPriceModifierData !== null) {
-            $data['fixed_price_modifier'] = $this->helperData->jsonEncode($fixedPriceModifierData);
+            $data['fixed_price_modifier'] = \Ess\M2ePro\Helper\Json::encode($fixedPriceModifierData);
         }
 
         if (isset($this->rawData['fixed_price_custom_attribute'])) {
@@ -252,6 +242,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['best_offer_reject_attribute'] = $this->rawData['best_offer_reject_attribute'];
         }
 
+        if (isset($this->rawData['paypal_immediate_payment'])) {
+            $data['paypal_immediate_payment'] = $this->rawData['paypal_immediate_payment'];
+        }
+
         $data['charity'] = null;
 
         if (!empty($this->rawData['charity']) && !empty($this->rawData['charity']['marketplace_id'])) {
@@ -271,7 +265,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             }
 
             if (!empty($charities)) {
-                $data['charity'] = $this->helperData->jsonEncode($charities);
+                $data['charity'] = \Ess\M2ePro\Helper\Json::encode($charities);
             }
         }
 
@@ -282,9 +276,13 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    //########################################
-
-    private function getFormattedPriceCoefficient($priceCoeff, $priceCoeffMode)
+    /**
+     * @param $priceCoeff
+     * @param $priceCoeffMode
+     *
+     * @return string
+     */
+    private function getFormattedPriceCoefficient($priceCoeff, $priceCoeffMode): string
     {
         if ($priceCoeffMode == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE) {
             return '';
@@ -304,9 +302,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $sign . $priceCoeff . $measuringSystem;
     }
 
-    //########################################
-
-    public function getDefaultData()
+    /**
+     * @return array
+     */
+    public function getDefaultData(): array
     {
         return [
 
@@ -379,6 +378,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'lot_size_mode' => 0,
             'lot_size_custom_value' => '',
             'lot_size_attribute' => '',
+
+            'paypal_immediate_payment' => 0,
         ];
     }
 
