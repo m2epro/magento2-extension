@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalStaticTabs
 {
     private const ALL_ITEMS_TAB_ID = 'all_items';
+    private const ITEMS_BY_ISSUE_TAB_ID = 'items_by_issue';
     private const ITEMS_BY_LISTING_TAB_ID = 'items_by_listing';
     private const UNMANAGED_ITEMS_TAB_ID = 'unmanaged_items';
 
@@ -30,6 +31,15 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalSt
             $this->getUrl('*/ebay_listing/index')
         );
         $this->registerCssForTab(self::ITEMS_BY_LISTING_TAB_ID, $cssMb20);
+
+        // ---------------------------------------
+
+        $this->addTab(
+            self::ITEMS_BY_ISSUE_TAB_ID,
+            $this->__('Items By Issue'),
+            $this->getUrl('*/ebay_listing/itemsByIssue')
+        );
+        $this->registerCssForTab(self::ITEMS_BY_ISSUE_TAB_ID, $cssMb20);
 
         // ---------------------------------------
 
@@ -58,6 +68,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalSt
     public function activateItemsByListingTab(): void
     {
         $this->setActiveTabId(self::ITEMS_BY_LISTING_TAB_ID);
+    }
+
+    /**
+     * @return void
+     */
+    public function activateItemsByIssueTab(): void
+    {
+        $this->setActiveTabId(self::ITEMS_BY_ISSUE_TAB_ID);
     }
 
     /**

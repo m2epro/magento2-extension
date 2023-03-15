@@ -270,7 +270,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'amazon_collect_for_uk',
             'amazon_collect_for_eea',
             'import_tax_id_in_magento_order',
-            'round_of_rate_value'
+            'round_of_rate_value',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -358,6 +358,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'ship_by_date',
             'update_without_track',
+            'shipping_address_region_override',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -479,6 +480,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 'shipping_information' => [
                     'ship_by_date' => 1,
                     'update_without_track' => 1,
+                    'shipping_address_region_override' => 1,
                 ],
             ],
 

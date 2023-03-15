@@ -6,10 +6,6 @@
  * @license    Commercial use is forbidden
  */
 
-/**
- * Provides simple API to work with address information from the order.
- */
-
 namespace Ess\M2ePro\Model\Order;
 
 abstract class ShippingAddress extends \Magento\Framework\DataObject
@@ -39,6 +35,8 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
 
     abstract public function getRawData();
 
+    abstract protected function isRegionOverrideRequired(): bool;
+
     public function getCountry()
     {
         if ($this->country === null) {
@@ -53,6 +51,9 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         return $this->country;
     }
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception
+     */
     public function getRegion()
     {
         if (!$this->getCountry()->getId()) {
@@ -62,15 +63,21 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         if ($this->region === null) {
             $countryRegions = $this->getCountry()->getRegionCollection();
             $countryRegions->getSelect()->where('code = ? OR default_name = ?', $this->getState());
-
             $this->region = $countryRegions->getFirstItem();
+        }
 
-            $isRegionRequired = $this->directoryHelper->isRegionRequired($this->getCountry()->getId());
-            if ($isRegionRequired && !$this->region->getId()) {
+        $isRegionRequired = $this->directoryHelper->isRegionRequired($this->getCountry()->getId());
+        if ($isRegionRequired && !$this->region->getId()) {
+            if (!$this->isRegionOverrideRequired()) {
                 throw new \Ess\M2ePro\Model\Exception(
-                    sprintf('State/Region "%s" in the shipping address is invalid.', $this->getState())
+                    sprintf('Invalid Region/State value "%s" in the Shipping Address.', $this->getState())
                 );
             }
+
+            $countryRegions = $this->getCountry()->getRegionCollection();
+            $this->region = $countryRegions->getFirstItem();
+            $msg = ' Invalid Region/State value: "%s" in the Shipping Address is overridden by "%s".';
+            $this->order->addInfoLog(sprintf($msg, $this->getState(), $this->region->getDefaultName()), [], [], true);
         }
 
         return $this->region;

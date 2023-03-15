@@ -36,7 +36,7 @@ class ReviseAction extends AbstractRealtime
     {
         $result = [];
         foreach ($listingsProducts as $product) {
-            $checkerResult = $this->reviseChecker->fullCalculate($product);
+            $checkerResult = $this->reviseChecker->calculateForManualAction($product);
 
             if (empty($checkerResult->getConfigurator()->getAllowedDataTypes())) {
                 $this->writeLog($product);

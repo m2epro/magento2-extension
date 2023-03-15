@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Order\ShippingAddress
- */
 class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 {
-    //########################################
-
     /**
      * @return array
      */
@@ -82,5 +77,14 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
         return preg_replace('/[^ \w]+/', '', $state);
     }
 
-    //########################################
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function isRegionOverrideRequired(): bool
+    {
+        /** @var \Ess\M2ePro\Model\Walmart\Account $account */
+        $account = $this->order->getAccount()->getChildObject();
+
+        return $account->isRegionOverrideRequired();
+    }
 }

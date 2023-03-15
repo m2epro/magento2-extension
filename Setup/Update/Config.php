@@ -266,6 +266,7 @@ class Config extends AbstractConfig
             'y23_m02' => [
                 'AddImmediatePaymentColumn',
                 'AddTags',
+                'AddErrorCodeColumnForTags',
             ],
         ];
     }

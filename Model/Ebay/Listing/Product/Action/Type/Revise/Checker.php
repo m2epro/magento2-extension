@@ -59,7 +59,7 @@ class Checker
         $this->configuratorFactory = $configuratorFactory;
     }
 
-    public function fullCalculate(\Ess\M2ePro\Model\Listing\Product $listingProduct): Checker\Result
+    public function calculateForManualAction(\Ess\M2ePro\Model\Listing\Product $listingProduct): Checker\Result
     {
         $configurator = $this->configuratorFactory->create();
         $configurator->disableAll();
@@ -68,57 +68,57 @@ class Checker
 
         $tags = [];
 
-        if ($this->isNeedReviseForQty($ebayListingProduct)) {
+        if ($this->isQtyReviseEnabled($ebayListingProduct)) {
             $configurator->allowQty()->allowVariations();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_QTY;
         }
 
-        if ($this->isNeedReviseForPrice($ebayListingProduct)) {
+        if ($this->isPriceReviseEnabled($ebayListingProduct)) {
             $configurator->allowPrice()->allowVariations();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_PRICE;
         }
 
-        if ($this->isNeedReviseForTitle($ebayListingProduct)) {
+        if ($this->isTitleReviseEnabled($ebayListingProduct)) {
             $configurator->allowTitle();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_TITLE;
         }
 
-        if ($this->isNeedReviseForSubtitle($ebayListingProduct)) {
+        if ($this->isSubtitleReviseEnabled($ebayListingProduct)) {
             $configurator->allowSubtitle();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_SUBTITLE;
         }
 
-        if ($this->isNeedReviseForDescription($ebayListingProduct)) {
+        if ($this->isDescriptionReviseEnabled($ebayListingProduct)) {
             $configurator->allowDescription();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_DESCRIPTION;
         }
 
-        if ($this->isNeedReviseForImages($ebayListingProduct)) {
+        if ($this->isImagesReviseEnabled($ebayListingProduct)) {
             $configurator->allowImages();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_IMAGES;
         }
 
-        if ($this->isNeedReviseForCategories($ebayListingProduct)) {
+        if ($this->isCategoriesReviseEnabled($ebayListingProduct)) {
             $configurator->allowCategories();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_CATEGORIES;
         }
 
-        if ($this->isNeedReviseForParts($ebayListingProduct)) {
+        if ($this->isPartsReviseEnabled($ebayListingProduct)) {
             $configurator->allowParts();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_PARTS;
         }
 
-        if ($this->isNeedReviseForShipping($ebayListingProduct)) {
+        if ($this->isShippingReviseEnabled($ebayListingProduct)) {
             $configurator->allowShipping();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_SHIPPING;
         }
 
-        if ($this->isNeedReviseForReturn($ebayListingProduct)) {
+        if ($this->isReturnReviseEnabled($ebayListingProduct)) {
             $configurator->allowReturn();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_RETURN;
         }
 
-        if ($this->isNeedReviseForOther($ebayListingProduct)) {
+        if ($this->isOtherReviseEnabled($ebayListingProduct)) {
             $configurator->allowOther();
             $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_OTHER;
         }
@@ -136,7 +136,7 @@ class Checker
     {
         $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
-        if (!$ebaySynchronizationTemplate->isReviseUpdateQty()) {
+        if (!$this->isQtyReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -186,9 +186,7 @@ class Checker
      */
     public function isNeedReviseForPrice(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdatePrice()) {
+        if (!$this->isPriceReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -238,9 +236,7 @@ class Checker
      */
     public function isNeedReviseForTitle(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateTitle()) {
+        if (!$this->isTitleReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -262,9 +258,7 @@ class Checker
      */
     public function isNeedReviseForSubtitle(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateSubtitle()) {
+        if (!$this->isSubtitleReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -287,9 +281,7 @@ class Checker
      */
     public function isNeedReviseForDescription(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateDescription()) {
+        if (!$this->isDescriptionReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -314,9 +306,7 @@ class Checker
      */
     public function isNeedReviseForImages(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateImages()) {
+        if (!$this->isImagesReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -341,9 +331,7 @@ class Checker
      */
     public function isNeedReviseForCategories(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateCategories()) {
+        if (!$this->isCategoriesReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -363,9 +351,7 @@ class Checker
      */
     public function isNeedReviseForParts(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateParts()) {
+        if (!$this->isPartsReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -386,9 +372,7 @@ class Checker
      */
     public function isNeedReviseForShipping(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateShipping()) {
+        if (!$this->isShippingReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -413,9 +397,7 @@ class Checker
      */
     public function isNeedReviseForReturn(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateReturn()) {
+        if (!$this->isReturnReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -440,9 +422,7 @@ class Checker
      */
     public function isNeedReviseForOther(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
     {
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
-        if (!$ebaySynchronizationTemplate->isReviseUpdateOther()) {
+        if (!$this->isOtherReviseEnabled($ebayListingProduct)) {
             return false;
         }
 
@@ -456,5 +436,82 @@ class Checker
         );
 
         return $hashOtherData !== $ebayListingProduct->getOnlineOtherData();
+    }
+
+    private function isQtyReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateQty();
+    }
+
+    private function isPriceReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdatePrice();
+    }
+
+    private function isTitleReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateTitle();
+    }
+
+    private function isSubtitleReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateSubtitle();
+    }
+
+    private function isDescriptionReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateDescription();
+    }
+
+    private function isImagesReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateImages();
+    }
+
+    private function isCategoriesReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateCategories();
+    }
+
+    private function isPartsReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateParts();
+    }
+
+    private function isShippingReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateShipping();
+    }
+
+    private function isReturnReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateReturn();
+    }
+
+    private function isOtherReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseUpdateOther();
     }
 }

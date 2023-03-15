@@ -167,7 +167,7 @@ class Identifier
         try {
             $validator = new \Zend_Validate_Barcode($adapters[$type][$length]);
             $result = $validator->isValid($worldWideId);
-        } catch (\Zend_Validate_Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
 

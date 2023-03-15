@@ -31,10 +31,21 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
      */
     public function getSelectCountSql()
     {
-        $sql = parent::getSelectCountSql();
-        $sql->reset(\Magento\Framework\DB\Select::GROUP);
+        $this->_renderFilters();
 
-        return $sql;
+        $originSelect = clone $this->getSelect();
+        $originSelect->reset(\Magento\Framework\DB\Select::ORDER);
+        $originSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
+        $originSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
+        $originSelect->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $originSelect->columns(['*']);
+
+        $countSelect = clone $originSelect;
+        $countSelect->reset();
+        $countSelect->from($originSelect, null);
+        $countSelect->columns(new \Zend_Db_Expr('COUNT(*)'));
+
+        return $countSelect;
     }
 
     //########################################

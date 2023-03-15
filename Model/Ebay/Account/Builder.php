@@ -341,8 +341,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['magento_orders_settings']['shipping_information']['ship_by_date']
-            = (int)($this->rawData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1);
+        // Shipping information
+        // ---------------------------------------
+        $tempKey = 'shipping_information';
+        $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
+            ? $this->rawData['magento_orders_settings'][$tempKey] : [];
+
+        $keys = [
+            'ship_by_date',
+            'shipping_address_region_override',
+        ];
+        foreach ($keys as $key) {
+            if (isset($tempSettings[$key])) {
+                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            }
+        }
 
         $data['magento_orders_settings'] = $this
             ->getHelper('Data')
@@ -447,6 +460,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ],
                 'shipping_information' => [
                     'ship_by_date' => 1,
+                    'shipping_address_region_override' => 1,
                 ],
             ],
 

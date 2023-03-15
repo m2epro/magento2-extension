@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AllItems;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option as ProductVariationOption;
 use Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite;
+use Ess\M2ePro\Block\Adminhtml\Tag\Switcher as TagSwitcher;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -28,6 +29,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $productVarOptionCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation */
     private $listingProductVariationResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
+    private $tagRelationResource;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
@@ -48,6 +51,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ResourceModel\Ebay\Marketplace $ebayMarketplaceResource,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Item $ebayItemResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation $listingProductVariationResource,
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
         ProductVariationOption\CollectionFactory $productVarOptionCollectionFactory,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
@@ -67,6 +71,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->ebayItemResource = $ebayItemResource;
         $this->listingResource = $listingResource;
         $this->listingProductVariationResource = $listingProductVariationResource;
+        $this->tagRelationResource = $tagRelationResource;
         $this->productVarOptionCollectionFactory = $productVarOptionCollectionFactory;
         $this->databaseHelper = $databaseHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -121,6 +126,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'additional_data' => 'additional_data',
             ]
         );
+
+        if ($tagId = $this->getRequest()->getParam(TagSwitcher::TAG_ID_REQUEST_PARAM_KEY, false)) {
+            $collection->joinTable(
+                ['tr' => $this->tagRelationResource->getMainTable()],
+                'listing_product_id=id',
+                ['tag_id' => 'tag_id'],
+                ['tag_id' => $tagId]
+            );
+        }
+
         $collection->joinTable(
             ['elp' => $this->ebayListingProductResource->getMainTable()],
             'listing_product_id=id',
@@ -167,11 +182,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'left'
         );
 
-        if ($accountId = (int)$this->getRequest()->getParam('ebayAccount', false)) {
+        if ($accountId = $this->getRequest()->getParam('ebayAccount', false)) {
             $collection->getSelect()->where('l.account_id = ?', $accountId);
         }
 
-        if ($marketplaceId = (int)$this->getRequest()->getParam('ebayMarketplace', false)) {
+        if ($marketplaceId = $this->getRequest()->getParam('ebayMarketplace', false)) {
             $collection->getSelect()->where('l.marketplace_id = ?', $marketplaceId);
         }
 

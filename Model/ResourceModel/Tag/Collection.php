@@ -25,6 +25,16 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     /**
      * @return \Ess\M2ePro\Model\Tag[]
      */
+    public function getItemsWithoutHasErrorsTag(): array
+    {
+        $this->getSelect()->where('nick != (?)', \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR);
+
+        return $this->getAll();
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Tag[]
+     */
     public function getAll(): array
     {
         return $this->getItems();

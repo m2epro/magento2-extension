@@ -82,8 +82,8 @@ class UserInfoFactory
             $parts = [$parts[0], $parts[$partsCount - 1]];
         }
 
-        $firstName = $parts[0] ?? 'NA';
-        $lastName = $parts[1] ?? $firstName;
+        $firstName =  empty($parts[0]) ? 'NA' : $parts[0];
+        $lastName = empty($parts[1]) ? $firstName : $parts[1];
 
         return new UserInfo($firstName, $middleName, $lastName, $prefix, $suffix);
     }

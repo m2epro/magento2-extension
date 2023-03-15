@@ -1100,12 +1100,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (bool)$this->getData('remote_fulfillment_program_mode');
     }
 
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    public function isRegionOverrideRequired(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'shipping_address_region_override'],
+            1
+        );
+    }
 }

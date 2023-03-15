@@ -12,6 +12,7 @@ class Tag extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     public const ID_FIELD = 'id';
     public const NICK_FIELD = 'nick';
+    public const ERROR_CODE_FIELD = 'error_code';
 
     /**
      * @inerhitDoc

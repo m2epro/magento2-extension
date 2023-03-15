@@ -913,13 +913,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     {
         return $this->getSettings('other_carriers');
     }
-
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    public function isRegionOverrideRequired(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'shipping_address_region_override'],
+            1
+        );
+    }
 }

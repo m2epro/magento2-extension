@@ -297,7 +297,7 @@ HTML
             ]
         );
 
-        $shipByDateFieldset = $form->addFieldset(
+        $shippingInfoFieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_shipping_information',
             [
                 'legend' => $this->__('Shipping information'),
@@ -305,7 +305,7 @@ HTML
             ]
         );
 
-        $shipByDateFieldset->addField(
+        $shippingInfoFieldset->addField(
             'magento_orders_ship_by_date_settings',
             'select',
             [
@@ -316,6 +316,25 @@ HTML
                     0 => $this->__('No'),
                 ],
                 'value' => $formData['magento_orders_settings']['shipping_information']['ship_by_date'] ?? 1,
+            ]
+        );
+
+        $value = $formData['magento_orders_settings']['shipping_information']['shipping_address_region_override'] ?? 1;
+        $shippingInfoFieldset->addField(
+            'magento_orders_order_validation_shipping_address_region_override',
+            'select',
+            [
+                'name' => 'magento_orders_settings[shipping_information][shipping_address_region_override]',
+                'label' => $this->__('Override invalid Region/State required value'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $value,
+                'tooltip' => $this->__(
+                    'When enabled, the invalid Region/State value will be replaced with an alternative one to create
+                     an order in Magento.'
+                ),
             ]
         );
 

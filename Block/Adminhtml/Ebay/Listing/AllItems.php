@@ -64,29 +64,34 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
      */
     private function getFilterBlockHtml(): string
     {
-        $controllerName = $this->getRequest()->getControllerName();
-
-        $marketplaceSwitcherBlock = $this->getLayout()
-                                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class)
-                                         ->setData([
-                                             'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
-                                             'controller_name' => $controllerName,
-                                         ]);
-
-        $accountSwitcherBlock = $this->getLayout()
-                                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class)
-                                     ->setData([
-                                         'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
-                                         'controller_name' =>  $controllerName,
-                                     ]);
+        $marketplaceSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class);
+        $accountSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class);
+        $tagSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Tag\Switcher::class);
 
         return <<<HTML
 <div class="page-main-actions">
     <div class="filter_block">
         {$accountSwitcherBlock->toHtml()}
         {$marketplaceSwitcherBlock->toHtml()}
+        {$tagSwitcherBlock->toHtml()}
     </div>
 </div>
 HTML;
+    }
+
+    /**
+     * @param string $switcherClass
+     *
+     * @return \Ess\M2ePro\Block\Adminhtml\Component\Switcher
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function createSwitcher(string $switcherClass): \Ess\M2ePro\Block\Adminhtml\Switcher
+    {
+        return $this->getLayout()
+                    ->createBlock($switcherClass)
+                    ->setData([
+                        'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
+                        'controller_name' => $this->getRequest()->getControllerName(),
+                    ]);
     }
 }

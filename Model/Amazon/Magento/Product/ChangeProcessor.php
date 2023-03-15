@@ -34,6 +34,10 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
 
     public function getInstructionsDataByAttributes(array $attributes)
     {
+        if (empty($attributes)) {
+            return [];
+        }
+
         $data = [];
 
         if (array_intersect($attributes, $this->getQtyTrackingAttributes())) {

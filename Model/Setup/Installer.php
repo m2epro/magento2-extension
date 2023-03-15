@@ -2606,6 +2606,12 @@ class Installer
                              255,
                              ['nullable' => false]
                          )
+                         ->addColumn(
+                             'error_code',
+                             Table::TYPE_TEXT,
+                             100,
+                             ['nullable' => true]
+                         )
                          ->setOption('type', 'INNODB')
                          ->setOption('charset', 'utf8')
                          ->setOption('collate', 'utf8_general_ci')
@@ -2782,8 +2788,14 @@ class Installer
         $this->getConnection()->insertMultiple(
             $this->getFullTableName('tag'),
             [
-                ['nick' => 'has_error'],
-                ['nick' => 'missing_item_specific'],
+                [
+                    'nick' => 'has_error',
+                    'error_code' => null,
+                ],
+                [
+                    'nick' => 'missing_item_specific',
+                    'error_code' => '21919303',
+                ],
             ]
         );
     }

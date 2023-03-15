@@ -480,6 +480,25 @@ HTML
             ]
         );
 
+        $value = $formData['magento_orders_settings']['shipping_information']['shipping_address_region_override'] ?? 1;
+        $shipByDateFieldset->addField(
+            'magento_orders_shipping_information_shipping_address_region_override',
+            'select',
+            [
+                'name' => 'magento_orders_settings[shipping_information][shipping_address_region_override]',
+                'label' => $this->__('Override invalid Region/State required value'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $value,
+                'tooltip' => $this->__(
+                    'When enabled, the invalid Region/State value will be replaced with an alternative one to create
+                     an order in Magento.'
+                ),
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_number',
             [

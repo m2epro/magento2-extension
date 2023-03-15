@@ -49,7 +49,7 @@ class ReviseAction extends AbstractSchedule
         \Ess\M2ePro\Model\Listing\Product $product,
         array $params
     ): ?\Ess\M2ePro\Model\Listing\Product\ScheduledAction {
-        $checkerResult = $this->reviseChecker->fullCalculate($product);
+        $checkerResult = $this->reviseChecker->calculateForManualAction($product);
         if (empty($checkerResult->getTags())) {
             $this->writeLog($product);
 

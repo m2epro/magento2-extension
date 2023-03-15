@@ -136,7 +136,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function validate()
     {
-        $validatorAttrCode = new \Zend_Validate_Regex(['pattern' => '/^[a-z][a-z_0-9]{1,254}$/']);
+        $validatorAttrCode = new \Laminas\Validator\Regex(['pattern' => '/^[a-z][a-z_0-9]{1,254}$/']);
         if (!$validatorAttrCode->isValid($this->code)) {
             return false;
         }

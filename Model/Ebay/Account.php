@@ -1300,5 +1300,12 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return true;
     }
 
-    //########################################
+    public function isRegionOverrideRequired(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'shipping_address_region_override'],
+            1
+        );
+    }
 }

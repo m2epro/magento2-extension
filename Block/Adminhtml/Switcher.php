@@ -21,8 +21,14 @@ abstract class Switcher extends Magento\AbstractBlock
 
     //########################################
 
+    /**
+     * @return string
+     */
     abstract public function getLabel();
 
+    /**
+     * @return void
+     */
     abstract protected function loadItems();
 
     //########################################

@@ -83,9 +83,8 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory
     public function getTreeJson($parentNodeCategory = null)
     {
         $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, 0));
-        $json = \Zend_Json::encode(isset($rootArray['children']) ? $rootArray['children'] : []);
 
-        return $json;
+        return \Ess\M2ePro\Helper\Json::encode($rootArray['children'] ?? []);
     }
 
     public function _getNodeJson($node, $level = 0)

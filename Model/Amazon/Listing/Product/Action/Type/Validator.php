@@ -282,9 +282,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $this->getConfigurator()->disallowRegularPrice();
 
             $this->addMessage(
-                'This product is used by Amazon Repricing Tool.
-                 The Price cannot be updated through the M2E Pro.',
-                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+                'Price of this Product is managed by Amazon Repricer, it isn\'t updated by M2E Pro.',
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_NOTICE
             );
 
             return true;

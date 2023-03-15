@@ -31,4 +31,12 @@ class Tag extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     {
         return $this->getDataByKey(Resource::NICK_FIELD);
     }
+
+    /**
+     * @return string|null
+     */
+    public function getErrorCode(): ?string
+    {
+        return $this->getDataByKey(Resource::ERROR_CODE_FIELD);
+    }
 }

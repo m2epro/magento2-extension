@@ -20,6 +20,8 @@ class Repricing
     public const COMMAND_SYNCHRONIZE_USER_CHANGES = 'synchronize/userChanges';
     public const COMMAND_GOTO_SERVICE = 'goto_service';
 
+    private const HTTP_STATUS_CODE_503 = 503;
+
     private const REQUEST_TIMEOUT = 300;
 
     /** @var \Ess\M2ePro\Helper\Data */
@@ -89,6 +91,12 @@ class Repricing
 
         curl_close($curlObject);
 
+        if ($this->isMaintenance($curlInfo)) {
+            throw new \Ess\M2ePro\Model\Exception\Connection(
+                'Scheduled maintenance is in progress. The action will be completed after the system update.'
+            );
+        }
+
         if ($response === false) {
             throw new Connection(
                 $this->moduleTranslation->__(
@@ -97,7 +105,7 @@ class Repricing
                 ),
                 [
                     'curl_error_number' => $errorNumber,
-                    'curl_info'         => $curlInfo,
+                    'curl_info' => $curlInfo,
                 ]
             );
         }
@@ -108,15 +116,15 @@ class Repricing
                 'The Action was not completed because server responded with an incorrect response.',
                 [
                     'raw_response' => $response,
-                    'curl_info'    => $curlInfo,
+                    'curl_info' => $curlInfo,
                 ]
             );
         }
 
         return [
             'curl_error_number' => $errorNumber,
-            'curl_info'         => $curlInfo,
-            'response'          => $responseDecoded,
+            'curl_info' => $curlInfo,
+            'response' => $responseDecoded,
         ];
     }
 
@@ -133,6 +141,7 @@ class Repricing
     /**
      * @param $command
      * @param $serverRequestToken
+     *
      * @return string
      */
     public function prepareActionUrl($command, $serverRequestToken): string
@@ -142,6 +151,7 @@ class Repricing
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
+     *
      * @return false|string
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -156,5 +166,15 @@ class Repricing
         return $this->getBaseUrl() . self::COMMAND_GOTO_SERVICE . '?' . http_build_query([
                 'account_token' => $amazonAccount->getRepricing()->getToken(),
             ]);
+    }
+
+    /**
+     * @param $curlInfo
+     *
+     * @return bool
+     */
+    private function isMaintenance($curlInfo): bool
+    {
+        return $curlInfo['http_code'] === self::HTTP_STATUS_CODE_503;
     }
 }
