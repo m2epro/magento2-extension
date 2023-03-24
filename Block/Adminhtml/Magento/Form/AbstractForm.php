@@ -71,7 +71,16 @@ abstract class AbstractForm extends Generic
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
-
+    
+    public function getForm()
+    {
+        if ($this->_form == null) {
+            return $this->_formFactory->create();
+        } else {
+            return $this->_form;
+        }
+    }
+    
     protected function _prepareLayout()
     {
         parent::_prepareLayout();
