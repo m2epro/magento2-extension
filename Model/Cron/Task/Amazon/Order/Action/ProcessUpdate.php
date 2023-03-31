@@ -12,10 +12,8 @@ class ProcessUpdate extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'amazon/order/action/process_update';
 
-    /**
-     * @var int (in seconds)
-     */
-    protected $interval = 3600;
+    /** @var int (in seconds) */
+    protected $interval = 300;
 
     protected function performActions(): void
     {

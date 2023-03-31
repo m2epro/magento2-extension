@@ -90,9 +90,9 @@ class Support
     /**
      * @return mixed|null
      */
-    public function getClientsPortalUrl()
+    public function getAccountsUrl()
     {
-        return $this->config->getGroupValue('/support/', 'clients_portal_url');
+        return $this->config->getGroupValue('/support/', 'accounts_url');
     }
 
     /**

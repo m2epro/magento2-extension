@@ -10,99 +10,83 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $moduleDatabaseStructure;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory */
+    private $listingCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account */
+    private $accountResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
+    private $marketplaceResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product */
+    private $walmartListingProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
+    private $listingProductResource;
+    /** @var \Ess\M2ePro\Helper\Url */
+    private $urlHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructure,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product $walmartListingProductResource,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
+        \Ess\M2ePro\Helper\Url $urlHelper,
         array $data = []
     ) {
         $this->walmartFactory = $walmartFactory;
-        $this->moduleDatabaseStructure = $moduleDatabaseStructure;
         parent::__construct($viewHelper, $context, $backendHelper, $dataHelper, $data);
+        $this->listingCollectionFactory = $listingCollectionFactory;
+        $this->accountResource = $accountResource;
+        $this->marketplaceResource = $marketplaceResource;
+        $this->walmartListingProductResource = $walmartListingProductResource;
+        $this->listingProductResource = $listingProductResource;
+        $this->urlHelper = $urlHelper;
     }
 
     public function _construct()
     {
         parent::_construct();
-
-        // Initialization block
-        // ---------------------------------------
         $this->setId('walmartListingGrid');
-        // ---------------------------------------
     }
 
     protected function _prepareCollection()
     {
-        // Get collection of listings
-        $collection = $this->walmartFactory->getObject('Listing')->getCollection();
+        $collection = $this->listingCollectionFactory->createWithWalmartChildMode();
 
-        // Set global filters
-        // ---------------------------------------
-        $filterSellingFormatTemplate = $this->getRequest()->getParam('filter_walmart_selling_format_template');
-        $filterDescriptionTemplate = $this->getRequest()->getParam('filter_walmart_description_template');
-        $filterSynchronizationTemplate = $this->getRequest()->getParam('filter_walmart_synchronization_template');
+        $collection->getSelect()->join(
+            ['a' => $this->accountResource->getMainTable()],
+            'a.id = main_table.account_id',
+            ['account_title' => 'title']
+        );
+        $collection->getSelect()->join(
+            ['m' => $this->marketplaceResource->getMainTable()],
+            'm.id = main_table.marketplace_id',
+            ['marketplace_title' => 'title']
+        );
 
-        if ($filterSellingFormatTemplate != 0) {
-            $collection->addFieldToFilter(
-                'second_table.template_selling_format_id',
-                (int)$filterSellingFormatTemplate
-            );
-        }
+        $select = $collection->getConnection()->select();
 
-        if ($filterDescriptionTemplate != 0) {
-            $collection->addFieldToFilter(
-                'second_table.template_description_id',
-                (int)$filterDescriptionTemplate
-            );
-        }
-
-        if ($filterSynchronizationTemplate != 0) {
-            $collection->addFieldToFilter(
-                'second_table.template_synchronization_id',
-                (int)$filterSynchronizationTemplate
-            );
-        }
-        // ---------------------------------------
-
-        // join marketplace and accounts
-        // ---------------------------------------
-        $collection->getSelect()
-                   ->join(
-                       ['a' => $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable()],
-                       '(`a`.`id` = `main_table`.`account_id`)',
-                       ['account_title' => 'title']
-                   )
-                   ->join(
-                       ['m' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
-                       '(`m`.`id` = `main_table`.`marketplace_id`)',
-                       ['marketplace_title' => 'title']
-                   );
-        // ---------------------------------------
-
-        $m2eproListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing');
-        $m2eproWalmartListing = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_walmart_listing');
-        $m2eproListingProduct = $this->moduleDatabaseStructure->getTableNameWithPrefix('m2epro_listing_product');
-
-        $sql = "SELECT
-                    l.id                                           AS listing_id,
-                    COUNT(lp.id)                                   AS products_total_count,
-                    COUNT(CASE WHEN lp.status = 2 THEN lp.id END)  AS products_active_count,
-                    COUNT(CASE WHEN lp.status != 2 THEN lp.id END) AS products_inactive_count
-                FROM `{$m2eproListing}` AS `l`
-                    INNER JOIN `{$m2eproWalmartListing}` AS `wl` ON l.id = wl.listing_id
-                    LEFT JOIN `{$m2eproListingProduct}` AS `lp` ON l.id = lp.listing_id
-                GROUP BY listing_id";
+        $select->from(['wlp' => $this->walmartListingProductResource->getMainTable()], []);
+        $select->joinLeft(
+            ['lp' => $this->listingProductResource->getMainTable()],
+            'lp.id = wlp.listing_product_id',
+            [
+                'listing_id' => 'listing_id',
+                'products_total_count' => new \Zend_Db_Expr('COUNT(lp.id)'),
+                'products_active_count' => new \Zend_Db_Expr('COUNT(IF(lp.status = 2, lp.id, NULL))'),
+                'products_inactive_count' => new \Zend_Db_Expr('COUNT(IF(lp.status != 2, lp.id, NULL))'),
+            ]
+        );
+        $select->group('lp.listing_id');
 
         $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(' . $sql . ')'),
+            ['t' => $select],
             'main_table.id=t.listing_id',
             [
                 'products_total_count' => 'products_total_count',
@@ -120,7 +104,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     protected function getColumnActionsItems()
     {
-        $backUrl = $this->dataHelper->makeBackUrlParam(
+        $backUrl = $this->urlHelper->makeBackUrlParam(
             '*/walmart_listing/index'
         );
 

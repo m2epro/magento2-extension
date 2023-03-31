@@ -2676,7 +2676,6 @@ class Installer
         $moduleConfig->insert('/', 'environment', 'production');
         $moduleConfig->insert('/', 'installation_key', sha1((string)microtime(true)));
         $moduleConfig->insert('/license/', 'key');
-        $moduleConfig->insert('/license/', 'status', 1);
         $moduleConfig->insert('/license/domain/', 'real');
         $moduleConfig->insert('/license/domain/', 'valid');
         $moduleConfig->insert('/license/domain/', 'is_valid');
@@ -2708,7 +2707,7 @@ class Installer
         $moduleConfig->insert('/logs/listings/', 'last_action_id', '0');
         $moduleConfig->insert('/logs/grouped/', 'max_records_count', '100000');
         $moduleConfig->insert('/support/', 'documentation_url', 'https://m2e.atlassian.net/wiki/');
-        $moduleConfig->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/');
+        $moduleConfig->insert('/support/', 'accounts_url', 'https://accounts.m2e.cloud/');
         $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
         $moduleConfig->insert('/support/', 'support_url', 'https://help.m2epro.com');
         $moduleConfig->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl);
@@ -8977,12 +8976,6 @@ class Installer
                                            ['unsigned' => true, 'primary' => true, 'nullable' => false]
                                        )
                                        ->addColumn(
-                                           'developer_key',
-                                           Table::TYPE_TEXT,
-                                           255,
-                                           ['default' => null]
-                                       )
-                                       ->addColumn(
                                            'default_currency',
                                            Table::TYPE_TEXT,
                                            255,
@@ -10774,7 +10767,6 @@ class Installer
     {
         $moduleConfig = $this->getConfigModifier();
 
-        $moduleConfig->insert('/amazon/', 'application_name', 'M2ePro - Amazon Magento Integration');
         $moduleConfig->insert('/component/amazon/', 'mode', '1');
         $moduleConfig->insert('/cron/task/amazon/listing/product/process_instructions/', 'mode', '1');
         $moduleConfig->insert('/cron/task/amazon/listing/synchronize_inventory/', 'interval_per_account', '86400');
@@ -11061,7 +11053,6 @@ class Installer
             [
                 [
                     'marketplace_id' => 24,
-                    'developer_key' => '8636-1433-4377',
                     'default_currency' => 'CAD',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
@@ -11071,7 +11062,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 25,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11081,7 +11071,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 26,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
@@ -11091,7 +11080,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 28,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'GBP',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11101,7 +11089,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 29,
-                    'developer_key' => '8636-1433-4377',
                     'default_currency' => 'USD',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11111,7 +11098,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 30,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
@@ -11121,7 +11107,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 31,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
@@ -11131,7 +11116,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 34,
-                    'developer_key' => '8636-1433-4377',
                     'default_currency' => 'MXN',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
@@ -11141,7 +11125,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 35,
-                    'developer_key' => '2770-5005-3793',
                     'default_currency' => 'AUD',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
@@ -11151,7 +11134,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 39,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11161,7 +11143,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 40,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'TRY',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11171,7 +11152,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 41,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'SEK',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11181,7 +11161,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 42,
-                    'developer_key' => '2770-5005-3793',
                     'default_currency' => 'JPY',
                     'is_new_asin_available' => 0,
                     'is_merchant_fulfillment_available' => 1,
@@ -11191,7 +11170,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 43,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'PLN',
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
@@ -11201,7 +11179,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 44,
-                    'developer_key' => '8636-1433-4377',
                     'default_currency' => 'BRL',
                     'is_new_asin_available' => 0,
                     'is_merchant_fulfillment_available' => 1,
@@ -11211,7 +11188,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 45,
-                    'developer_key' => '2770-5005-3793',
                     'default_currency' => 'SGD',
                     'is_new_asin_available' => 0,
                     'is_merchant_fulfillment_available' => 1,
@@ -11221,7 +11197,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 46,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'INR',
                     'is_new_asin_available' => 0,
                     'is_merchant_fulfillment_available' => 1,
@@ -11231,7 +11206,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 47,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'AED',
                     'is_new_asin_available' => 0,
                     'is_merchant_fulfillment_available' => 1,
@@ -11241,7 +11215,6 @@ class Installer
                 ],
                 [
                     'marketplace_id' => 48,
-                    'developer_key' => '7078-7205-1944',
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 0,
                     'is_merchant_fulfillment_available' => 1,
@@ -13631,14 +13604,8 @@ class Installer
         $moduleConfig->insert('/walmart/configuration/', 'sku_modification_custom_value');
         $moduleConfig->insert('/walmart/configuration/', 'generate_sku_mode', '0');
         $moduleConfig->insert('/walmart/configuration/', 'product_id_override_mode', '0');
-        $moduleConfig->insert('/walmart/configuration/', 'upc_mode', '0');
-        $moduleConfig->insert('/walmart/configuration/', 'upc_custom_attribute');
-        $moduleConfig->insert('/walmart/configuration/', 'ean_mode', '0');
-        $moduleConfig->insert('/walmart/configuration/', 'ean_custom_attribute');
-        $moduleConfig->insert('/walmart/configuration/', 'gtin_mode', '0');
-        $moduleConfig->insert('/walmart/configuration/', 'gtin_custom_attribute');
-        $moduleConfig->insert('/walmart/configuration/', 'isbn_mode', '0');
-        $moduleConfig->insert('/walmart/configuration/', 'isbn_custom_attribute');
+        $moduleConfig->insert('/walmart/configuration/', 'product_id_mode', '0');
+        $moduleConfig->insert('/walmart/configuration/', 'product_id_custom_attribute');
         $moduleConfig->insert('/walmart/configuration/', 'option_images_url_mode', '0');
         $moduleConfig->insert('/walmart/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
         $moduleConfig->insert('/walmart/listing/product/action/scheduled_data/', 'limit', '20000');

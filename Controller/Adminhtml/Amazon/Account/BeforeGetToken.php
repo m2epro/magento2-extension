@@ -10,18 +10,12 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Account\BeforeGetToken
- */
 class BeforeGetToken extends Account
 {
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\TemporaryStorage */
-    private $temporaryStorage;
 
     public function __construct(
-        \Ess\M2ePro\Model\Amazon\Account\TemporaryStorage $temporaryStorage,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -29,30 +23,31 @@ class BeforeGetToken extends Account
         parent::__construct($amazonFactory, $context);
 
         $this->helperException = $helperException;
-        $this->temporaryStorage = $temporaryStorage;
     }
 
     public function execute()
     {
-        // Get and save form data
-        // ---------------------------------------
         $accountId = (int)$this->getRequest()->getParam('id', 0);
-        $accountTitle = $this->getRequest()->getParam('title', '');
         $marketplaceId = (int)$this->getRequest()->getParam('marketplace_id', 0);
-        // ---------------------------------------
 
         $marketplace = $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId);
 
         try {
-            $backUrl = $this->getUrl('*/*/afterGetToken', ['_current' => true]);
+            $backUrl = $this->getUrl(
+                '*/*/afterGetToken',
+                [
+                    'marketplace_id' => $marketplaceId,
+                    'account_id' => $accountId,
+                ]
+            );
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
+            $connectorObj = $dispatcherObject->getConnector(
                 'account',
                 'get',
-                'authUrl',
-                ['back_url' => $backUrl, 'marketplace' => $marketplace->getData('native_id')]
+                'authUrlRequester',
+                ['back_url' => $backUrl, 'marketplace_native_id' => $marketplace->getData('native_id')]
             );
 
             $dispatcherObject->process($connectorObj);
@@ -68,10 +63,6 @@ class BeforeGetToken extends Account
 
             return $this->getResult();
         }
-
-        $this->temporaryStorage->setAccountId($accountId);
-        $this->temporaryStorage->setAccountTitle($accountTitle);
-        $this->temporaryStorage->setMarketplaceId($marketplaceId);
 
         $this->getResponse()->setRedirect($response['url']);
 

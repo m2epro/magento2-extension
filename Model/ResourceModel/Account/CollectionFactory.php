@@ -37,6 +37,14 @@ class CollectionFactory
     }
 
     /**
+     * @return \Ess\M2ePro\Model\ResourceModel\Account\Collection
+     */
+    public function createWithAmazonChildMode(): Collection
+    {
+        return $this->createWithChildMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
+    }
+
+    /**
      * @param string $componentMode
      *
      * @return \Ess\M2ePro\Model\ResourceModel\Account\Collection

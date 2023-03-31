@@ -24,17 +24,8 @@ class Configuration
     public const PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS = 2;
     public const PRODUCT_ID_OVERRIDE_CUSTOM_CODE            = 'CUSTOM';
 
-    public const UPC_MODE_NOT_SET          = 0;
-    public const UPC_MODE_CUSTOM_ATTRIBUTE = 1;
-
-    public const EAN_MODE_NOT_SET          = 0;
-    public const EAN_MODE_CUSTOM_ATTRIBUTE = 1;
-
-    public const GTIN_MODE_NOT_SET          = 0;
-    public const GTIN_MODE_CUSTOM_ATTRIBUTE = 1;
-
-    public const ISBN_MODE_NOT_SET          = 0;
-    public const ISBN_MODE_CUSTOM_ATTRIBUTE = 1;
+    public const PRODUCT_ID_MODE_NOT_SET          = 0;
+    public const PRODUCT_ID_MODE_CUSTOM_ATTRIBUTE = 1;
 
     public const OPTION_IMAGES_URL_MODE_ORIGINAL = 0;
     public const OPTION_IMAGES_URL_MODE_HTTP     = 1;
@@ -45,9 +36,6 @@ class Configuration
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
 
-    /**
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     */
     public function __construct(
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
@@ -145,118 +133,41 @@ class Configuration
         );
     }
 
-    public function isProductIdOverrideModeNode()
+    public function isProductIdOverrideModeNode(): bool
     {
         return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_NONE;
     }
 
-    public function isProductIdOverrideModeAll()
+    public function isProductIdOverrideModeAll(): bool
     {
         return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_ALL;
     }
 
-    public function isProductIdOverrideModeSpecificProducts()
+    public function isProductIdOverrideModeSpecificProducts(): bool
     {
         return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS;
     }
 
-    //########################################
-
-    public function getUpcMode()
-    {
-        return (int)$this->config->getGroupValue(self::CONFIG_GROUP, 'upc_mode');
-    }
-
-    public function isUpcModeNotSet()
-    {
-        return $this->getUpcMode() == self::UPC_MODE_NOT_SET;
-    }
-
-    public function isUpcModeCustomAttribute()
-    {
-        return $this->getUpcMode() == self::UPC_MODE_CUSTOM_ATTRIBUTE;
-    }
-
     //---------------------------------------
 
-    public function getUpcCustomAttribute()
+    public function getProductIdMode(): int
     {
-        return $this->config->getGroupValue(
-            self::CONFIG_GROUP,
-            'upc_custom_attribute'
-        );
+        return (int)$this->config->getGroupValue(self::CONFIG_GROUP, 'product_id_mode');
     }
 
-    //########################################
-
-    public function getEanMode()
+    public function getProductIdCustomAttribute()
     {
-        return (int)$this->config->getGroupValue(self::CONFIG_GROUP, 'ean_mode');
+        return $this->config->getGroupValue(self::CONFIG_GROUP, 'product_id_custom_attribute');
     }
 
-    public function isEanModeNotSet()
+    public function isProductIdModeNotSet(): bool
     {
-        return $this->getEanMode() == self::EAN_MODE_NOT_SET;
+        return $this->getProductIdMode() == self::PRODUCT_ID_MODE_NOT_SET;
     }
 
-    public function isEanModeCustomAttribute()
+    public function isProductIdModeCustomAttribute(): bool
     {
-        return $this->getEanMode() == self::EAN_MODE_CUSTOM_ATTRIBUTE;
-    }
-
-    //---------------------------------------
-
-    public function getEanCustomAttribute()
-    {
-        return $this->config->getGroupValue(self::CONFIG_GROUP, 'ean_custom_attribute');
-    }
-
-    //########################################
-
-    public function getGtinMode()
-    {
-        return (int)$this->config->getGroupValue(self::CONFIG_GROUP, 'gtin_mode');
-    }
-
-    public function isGtinModeNotSet()
-    {
-        return $this->getGtinMode() == self::GTIN_MODE_NOT_SET;
-    }
-
-    public function isGtinModeCustomAttribute()
-    {
-        return $this->getGtinMode() == self::GTIN_MODE_CUSTOM_ATTRIBUTE;
-    }
-
-    //---------------------------------------
-
-    public function getGtinCustomAttribute()
-    {
-        return $this->config->getGroupValue(self::CONFIG_GROUP, 'gtin_custom_attribute');
-    }
-
-    //########################################
-
-    public function getIsbnMode()
-    {
-        return (int)$this->config->getGroupValue(self::CONFIG_GROUP, 'isbn_mode');
-    }
-
-    public function isIsbnModeNotSet()
-    {
-        return $this->getIsbnMode() == self::ISBN_MODE_NOT_SET;
-    }
-
-    public function isIsbnModeCustomAttribute()
-    {
-        return $this->getIsbnMode() == self::ISBN_MODE_CUSTOM_ATTRIBUTE;
-    }
-
-    //---------------------------------------
-
-    public function getIsbnCustomAttribute()
-    {
-        return $this->config->getGroupValue(self::CONFIG_GROUP, 'isbn_custom_attribute');
+        return $this->getProductIdMode() == self::PRODUCT_ID_MODE_CUSTOM_ATTRIBUTE;
     }
 
     //########################################
@@ -336,67 +247,19 @@ class Configuration
             );
         }
 
-        if (isset($values['upc_mode'])) {
+        if (isset($values['product_id_mode'])) {
             $this->config->setGroupValue(
                 self::CONFIG_GROUP,
-                'upc_mode',
-                $values['upc_mode']
+                'product_id_mode',
+                $values['product_id_mode']
             );
         }
 
-        if (isset($values['upc_custom_attribute'])) {
+        if (isset($values['product_id_custom_attribute'])) {
             $this->config->setGroupValue(
                 self::CONFIG_GROUP,
-                'upc_custom_attribute',
-                $values['upc_custom_attribute']
-            );
-        }
-
-        if (isset($values['ean_mode'])) {
-            $this->config->setGroupValue(
-                self::CONFIG_GROUP,
-                'ean_mode',
-                $values['ean_mode']
-            );
-        }
-
-        if (isset($values['ean_custom_attribute'])) {
-            $this->config->setGroupValue(
-                self::CONFIG_GROUP,
-                'ean_custom_attribute',
-                $values['ean_custom_attribute']
-            );
-        }
-
-        if (isset($values['gtin_mode'])) {
-            $this->config->setGroupValue(
-                self::CONFIG_GROUP,
-                'gtin_mode',
-                $values['gtin_mode']
-            );
-        }
-
-        if (isset($values['gtin_custom_attribute'])) {
-            $this->config->setGroupValue(
-                self::CONFIG_GROUP,
-                'gtin_custom_attribute',
-                $values['gtin_custom_attribute']
-            );
-        }
-
-        if (isset($values['isbn_mode'])) {
-            $this->config->setGroupValue(
-                self::CONFIG_GROUP,
-                'isbn_mode',
-                $values['isbn_mode']
-            );
-        }
-
-        if (isset($values['isbn_custom_attribute'])) {
-            $this->config->setGroupValue(
-                self::CONFIG_GROUP,
-                'isbn_custom_attribute',
-                $values['isbn_custom_attribute']
+                'product_id_custom_attribute',
+                $values['product_id_custom_attribute']
             );
         }
 
@@ -408,6 +271,4 @@ class Configuration
             );
         }
     }
-
-    //########################################
 }

@@ -36,11 +36,13 @@ class Integration extends Command
     {
         if ($this->getRequest()->getParam('print')) {
             $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
+            /** @var \Ess\M2ePro\Model\Listing\Product $lp */
             $lp = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId);
             $componentMode = $lp->getComponentMode();
             $requestType = $this->getRequest()->getParam('request_type');
 
             if ($componentMode == 'ebay') {
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator $configurator */
                 $configurator = $this->modelFactory->getObject('Ebay_Listing_Product_Action_Configurator');
 
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request $request */
@@ -55,6 +57,7 @@ class Integration extends Command
             }
 
             if ($componentMode == 'amazon') {
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
                 $configurator = $this->modelFactory->getObject('Amazon_Listing_Product_Action_Configurator');
 
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Request $request */
@@ -78,8 +81,10 @@ class Integration extends Command
             }
 
             if ($componentMode == 'walmart') {
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator $configurator */
                 $configurator = $this->modelFactory->getObject('Walmart_Listing_Product_Action_Configurator');
 
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\SkuResolver $skuResolver */
                 $skuResolver = $this->modelFactory
                     ->getObject('Walmart_Listing_Product_Action_Type_ListAction_SkuResolver');
                 $skuResolver->setListingProduct($lp);
@@ -140,12 +145,16 @@ HTML;
         if ($this->getRequest()->getParam('print')) {
             $listingProductId = $this->getRequest()->getParam('listing_product_id');
 
+            /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $instructionCollection */
             $instructionCollection = $this->activeRecordFactory->getObject(
                 'Listing_Product_Instruction'
             )->getCollection();
             $instructionCollection->applySkipUntilFilter();
             $instructionCollection->addFieldToFilter('listing_product_id', $listingProductId);
-            $lp = $this->activeRecordFactory->getObject('Listing\Product')->load($listingProductId);
+            /** @var \Ess\M2ePro\Model\Listing\Product $lp */
+            $lp = $this->activeRecordFactory
+                ->getObject('Listing\Product')
+                ->load($listingProductId);
 
             if ($lp->getComponentMode() == 'ebay') {
                 $lp->setChildMode(Ebay::NICK);
@@ -153,6 +162,7 @@ HTML;
                 /**@var \Ess\M2ePro\Model\Listing\Product $lp */
                 // $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
 
+                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\Input $checkerInput */
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
                 );
@@ -169,6 +179,7 @@ HTML;
                 $html = '<pre>';
 
                 //--
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed $checker */
                 $checker = $this->modelFactory->getObject(
                     'Ebay_Listing_Product_Instruction_SynchronizationTemplate_Checker_NotListed'
                 );
@@ -180,6 +191,7 @@ HTML;
                 //--
 
                 //--
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive $checker */
                 $checker = $this->modelFactory->getObject(
                     'Ebay_Listing_Product_Instruction_SynchronizationTemplate_Checker_Inactive'
                 );
@@ -191,6 +203,7 @@ HTML;
                 //--
 
                 //--
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active $checker */
                 $checker = $this->modelFactory->getObject(
                     'Ebay_Listing_Product_Instruction_SynchronizationTemplate_Checker_Active'
                 );
@@ -231,7 +244,7 @@ HTML;
 
             if ($lp->getComponentMode() == 'amazon') {
                 $lp->setChildMode(Amazon::NICK);
-
+                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\Input $checkerInput */
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
                 );
@@ -248,6 +261,7 @@ HTML;
                 $html = '<pre>';
 
                 //--
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed $checker */
                 $checker = $this->modelFactory->getObject(
                     'Amazon_Listing_Product_Instruction_SynchronizationTemplate_Checker_NotListed'
                 );
@@ -259,6 +273,7 @@ HTML;
                 //--
 
                 //--
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive $checker */
                 $checker = $this->modelFactory->getObject(
                     'Amazon_Listing_Product_Instruction_SynchronizationTemplate_Checker_Inactive'
                 );
@@ -270,6 +285,7 @@ HTML;
                 //--
 
                 //--
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active $checker */
                 $checker = $this->modelFactory->getObject(
                     'Amazon_Listing_Product_Instruction_SynchronizationTemplate_Checker_Active'
                 );
@@ -303,6 +319,7 @@ HTML;
             if ($lp->getComponentMode() == 'walmart') {
                 $lp->setChildMode(Walmart::NICK);
 
+                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\Input $checkerInput */
                 $checkerInput = $this->modelFactory->getObject(
                     'Listing_Product_Instruction_SynchronizationTemplate_Checker_Input'
                 );
@@ -319,6 +336,7 @@ HTML;
                 $html = '<pre>';
 
                 //--
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed $checker */
                 $checker = $this->modelFactory->getObject(
                     'Walmart_Listing_Product_Instruction_SynchronizationTemplate_Checker_NotListed'
                 );
@@ -330,6 +348,7 @@ HTML;
                 //--
 
                 //--
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive $checker */
                 $checker = $this->modelFactory->getObject(
                     'Walmart_Listing_Product_Instruction_SynchronizationTemplate_Checker_Inactive'
                 );
@@ -341,6 +360,7 @@ HTML;
                 //--
 
                 //--
+                /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active $checker */
                 $checker = $this->modelFactory->getObject(
                     'Walmart_Listing_Product_Instruction_SynchronizationTemplate_Checker_Active'
                 );
@@ -404,6 +424,7 @@ HTML;
         if ($this->getRequest()->getParam('print')) {
             /** @var \Ess\M2ePro\Model\Order $order */
             $orderId = $this->getRequest()->getParam('order_id');
+            /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
 
             if (!$order->getId()) {

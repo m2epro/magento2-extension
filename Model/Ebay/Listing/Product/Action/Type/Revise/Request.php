@@ -55,6 +55,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
         $data = $this->removePriceFromVariationsIfNotAllowed($data);
 
+        $data = $this->appendResolverVariation($data);
+
         return parent::prepareFinalData($data);
     }
 
@@ -182,6 +184,24 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
                     'no pending bids, previous sales and does not end within 12 hours.'
                 )
             );
+        }
+
+        return $data;
+    }
+
+    private function appendResolverVariation(array $data): array
+    {
+        if (!isset($data['variations_that_can_not_be_deleted'])) {
+            return $data;
+        }
+
+        foreach ($data['variations_that_can_not_be_deleted'] as $key => $delVariation) {
+            if (empty($delVariation['from_resolver'])) {
+                continue;
+            }
+
+            $data['variation'][] = $delVariation;
+            unset($data['variations_that_can_not_be_deleted'][$key]);
         }
 
         return $data;

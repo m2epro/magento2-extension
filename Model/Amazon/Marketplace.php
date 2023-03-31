@@ -74,11 +74,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     //########################################
 
-    public function getDeveloperKey()
-    {
-        return $this->getData('developer_key');
-    }
-
     public function getDefaultCurrency()
     {
         return $this->getData('default_currency');

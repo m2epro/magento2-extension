@@ -18,7 +18,7 @@ class EntityRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTim
         return [
             'account' => $this->params['account_server_hash'],
             'merchant_id' => $this->params['merchant_id'],
-            'token' => $this->params['token'],
+            'oauth_code' => $this->params['oauth_code'],
             'marketplace_id' => $this->params['marketplace_id'],
         ];
     }

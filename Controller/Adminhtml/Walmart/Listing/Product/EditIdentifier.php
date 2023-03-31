@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product;
 
+use Ess\M2ePro\Helper\Data\Product\Identifier;
+
 class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {
     protected function _isAllowed()
@@ -27,6 +29,15 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
             $this->setJsonContent([
                 'result' => false,
                 'message' => $this->__('Wrong parameters.'),
+            ]);
+
+            return $this->getResult();
+        }
+
+        if (!Identifier::isValidIdentifier($value, strtoupper($type))) {
+            $this->setJsonContent([
+                'result' => false,
+                'message' => $this->__('The product Identifier has incorrect format.'),
             ]);
 
             return $this->getResult();
@@ -86,7 +97,7 @@ class EditIdentifier extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Ac
                 'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
                 'is_force' => true,
                 'tag' => '/details/',
-                'additional_data' => $this->getHelper('Data')->jsonEncode(
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                     [
                         'params' => [
                             'changed_identifier' => [

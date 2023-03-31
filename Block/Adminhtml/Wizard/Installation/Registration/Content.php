@@ -70,15 +70,14 @@ abstract class Content extends AbstractForm
 M2E Pro requires activation for further work. To activate your installation,
 you should obtain a <strong>License Key</strong>. For more details, please read our
 <a href="%1%" target="_blank">Privacy Policy</a>.<br/><br/>
-Fill out the form below with the necessary data. The information will be used to create your
-<strong>Account</strong> on <a href="%2%" target="_blank">M2E Clients Portal</a> and a new
-License Key will be generated automatically.<br/><br/>
-Having access to your Account on <a href="%2%" target="_blank">M2E Clients Portal</a> will let you manage your Subscription,
-monitor Trial and Paid Period terms, control License Key(s) data, etc.
+Fill out the form below with the required information. This information will be used to register
+you on <a href="%2%" target="_blank">M2E Accounts</a> and auto-generate a new License Key.<br/><br/>
+Access to <a href="%2%" target="_blank">M2E Accounts</a> will allow you to manage your Subscription, keep track
+of your Trial and Paid terms, control your License Key details, and more.
 HTML
                 ,
                 $this->supportHelper->getPrivacyPolicyUrl(),
-                $this->supportHelper->getClientsPortalUrl()
+                $this->supportHelper->getAccountsUrl()
             )
         );
 

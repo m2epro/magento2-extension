@@ -13,18 +13,24 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
     public const MAX_ITEMS_PER_REQUEST = 10000;
 
-    /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager  */
-    protected $amazonThrottlingManager;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
-    protected $amazonFactory;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
-    protected $activeRecordFactory;
-    /** @var \Ess\M2ePro\Helper\Data  */
-    protected $helperData;
-    /** @var mixed|null  */
-    private $actionType = null;
+    /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager */
+    private $amazonThrottlingManager;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
+    private $amazonFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+    /** @var mixed|null */
+    private $actionType;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $helperModuleException;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Action\TimeManager */
+    private $timeManager;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Order\Action\TimeManager $timeManager,
+        \Ess\M2ePro\Helper\Module\Exception $helperModuleException,
         \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -34,11 +40,13 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         array $params = [],
         array $data = []
     ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->timeManager = $timeManager;
+        $this->helperModuleException = $helperModuleException;
         $this->amazonThrottlingManager = $amazonThrottlingManager;
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->helperData = $helperData;
-        parent::__construct($helperFactory, $modelFactory, $data);
 
         if (empty($params['action_type'])) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Action Type is not defined.');
@@ -61,20 +69,23 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $merchantIds[] = $account->getChildObject()->getMerchantId();
         }
 
-        $merchantIds = array_unique($merchantIds);
         if (empty($merchantIds)) {
             return;
         }
+
+        $merchantIds = array_unique($merchantIds);
 
         foreach ($merchantIds as $merchantId) {
             $this->processAction($merchantId);
         }
     }
 
-    // ----------------------------------------
-
-    protected function processAction($merchantId)
+    protected function processAction(string $merchantId): void
     {
+        if (!$this->isTimeToProcess($merchantId)) {
+            return;
+        }
+
         $processingActions = $this->getNotProcessedActions($merchantId);
         if (empty($processingActions)) {
             return;
@@ -88,6 +99,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         ) {
             return;
         }
+
+        $this->setLastProcessDate($merchantId);
 
         $requestDataKey = $this->getRequestDataKey();
 
@@ -123,8 +136,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         try {
             $dispatcher->process($connector);
         } catch (\Exception $exception) {
-            $this->getHelper('Module_Exception')->process($exception);
+            $this->helperModuleException->process($exception);
 
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
             $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
             $message->initFromException($exception);
 
@@ -181,15 +195,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                                   ->getResource()->markAsInProgress($actionsIds, $requestPendingSingle);
     }
 
-    // ----------------------------------------
-
     /**
      * @param $merchantId
      *
      * @return \Ess\M2ePro\Model\Amazon\Order\Action\Processing[]
+     * @throws \Magento\Framework\Exception\LocalizedException|\Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getNotProcessedActions($merchantId)
+    protected function getNotProcessedActions($merchantId): array
     {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Action\Processing\Collection $collection */
         $collection = $this->activeRecordFactory->getObject('Amazon_Order_Action_Processing')->getCollection();
         $collection->getSelect()->joinLeft(
             ['o' => $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable()],
@@ -209,7 +223,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         return $collection->getItems();
     }
 
-    protected function completeProcessingAction(\Ess\M2ePro\Model\Amazon\Order\Action\Processing $action, array $data)
+    protected function completeProcessingAction(Processing $action, array $data): void
     {
         $processing = $action->getProcessing();
 
@@ -221,7 +235,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $action->delete();
     }
 
-    protected function getResponseMessages(array $responseData, array $responseMessages, $orderId)
+    protected function getResponseMessages(array $responseData, array $responseMessages, int $orderId): array
     {
         $messages = $responseMessages;
 
@@ -240,16 +254,53 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         return $messages;
     }
 
-    protected function getServerCommand()
+    private function isTimeToProcess(string $merchantId): bool
     {
         switch ($this->actionType) {
-            case \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_UPDATE:
+            case Processing::ACTION_TYPE_UPDATE:
+                return $this->timeManager->isTimeToProcessUpdate($merchantId);
+
+            case Processing::ACTION_TYPE_CANCEL:
+                return $this->timeManager->isTimeToProcessCancel($merchantId);
+
+            case Processing::ACTION_TYPE_REFUND:
+                return $this->timeManager->isTimeToProcessRefund($merchantId);
+
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Unknown action type');
+        }
+    }
+
+    private function setLastProcessDate(string $merchantId): void
+    {
+        switch ($this->actionType) {
+            case Processing::ACTION_TYPE_UPDATE:
+                $this->timeManager->setLastUpdate($merchantId, \Ess\M2ePro\Helper\Date::createCurrentGmt());
+                break;
+
+            case Processing::ACTION_TYPE_CANCEL:
+                $this->timeManager->setLastCancel($merchantId, \Ess\M2ePro\Helper\Date::createCurrentGmt());
+                break;
+
+            case Processing::ACTION_TYPE_REFUND:
+                $this->timeManager->setLastRefund($merchantId, \Ess\M2ePro\Helper\Date::createCurrentGmt());
+                break;
+
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Unknown action type');
+        }
+    }
+
+    protected function getServerCommand(): array
+    {
+        switch ($this->actionType) {
+            case Processing::ACTION_TYPE_UPDATE:
                 return ['orders', 'update', 'entities'];
 
-            case \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_REFUND:
+            case Processing::ACTION_TYPE_REFUND:
                 return ['orders', 'refund', 'entities'];
 
-            case \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_CANCEL:
+            case Processing::ACTION_TYPE_CANCEL:
                 return ['orders', 'cancel', 'entities'];
 
             default:
@@ -257,14 +308,14 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    protected function getRequestDataKey()
+    protected function getRequestDataKey(): string
     {
         switch ($this->actionType) {
-            case \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_UPDATE:
+            case Processing::ACTION_TYPE_UPDATE:
                 return 'items';
 
-            case \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_REFUND:
-            case \Ess\M2ePro\Model\Amazon\Order\Action\Processing::ACTION_TYPE_CANCEL:
+            case Processing::ACTION_TYPE_REFUND:
+            case Processing::ACTION_TYPE_CANCEL:
                 return 'orders';
 
             default:
@@ -272,10 +323,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    // ----------------------------------------
-
-    protected function removeMissedProcessingActions()
+    protected function removeMissedProcessingActions(): void
     {
+        /**
+         * @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Action\Processing\Collection $actionCollection
+         */
         $actionCollection = $this->activeRecordFactory->getObject('Amazon_Listing_Product_Action_Processing')
                                                       ->getCollection();
         $actionCollection->getSelect()->joinLeft(

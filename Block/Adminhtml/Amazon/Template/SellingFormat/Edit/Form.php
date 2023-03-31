@@ -991,7 +991,7 @@ HTML
                 'repricer_connect_account',
                 self::CUSTOM_CONTAINER,
                 [
-                    'label' => __(''),
+                    'label' => '',
                     'text' => $this->__(
                         '<p>Click <a href="%url%" target="_blank">here</a>
                                to manage your Repricer configurations</p>',
@@ -1004,7 +1004,7 @@ HTML
                 'repricer_connect_account',
                 self::CUSTOM_CONTAINER,
                 [
-                    'label' => __(''),
+                    'label' => '',
                     'text' => $this->__(
                         '<p><a href="%url%" target="_blank">Connect</a>
                             your Amazon account(s) to Repricer to enable the service for your offers</p>',

@@ -106,7 +106,7 @@ HTML
         $fieldset = $form->addFieldset(
             'additional_settings',
             [
-                'legend' => $this->__(''),
+                'legend' => '',
                 'collapsable' => false,
             ]
         );

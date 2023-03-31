@@ -14,8 +14,6 @@ class BeforeToken extends InstallationAmazon
 {
     /** @var \Ess\M2ePro\Helper\View\Configuration */
     private $configurationHelper;
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $sessionHelper;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
     /** @var \Ess\M2ePro\Helper\Module\License */
@@ -26,7 +24,6 @@ class BeforeToken extends InstallationAmazon
     private $jsonResultFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
@@ -40,7 +37,6 @@ class BeforeToken extends InstallationAmazon
         parent::__construct($amazonFactory, $amazonViewHelper, $nameBuilder, $context);
 
         $this->configurationHelper = $configurationHelper;
-        $this->sessionHelper = $sessionHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->licenseHelper = $licenseHelper;
         $this->servicingDispatcher = $servicingDispatcher;
@@ -51,21 +47,26 @@ class BeforeToken extends InstallationAmazon
     {
         // Get and save form data
         // ---------------------------------------
-        $marketplaceId = $this->getRequest()->getParam('marketplace_id', 0);
+        $marketplaceId = (int)$this->getRequest()->getParam('marketplace_id', 0);
         // ---------------------------------------
 
         $marketplace = $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId);
 
         try {
-            $backUrl = $this->getUrl('*/*/afterToken');
+            $backUrl = $this->getUrl(
+                '*/*/afterToken',
+                [
+                    'marketplace_id' => $marketplaceId,
+                ]
+            );
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
             $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
+            $connectorObj = $dispatcherObject->getConnector(
                 'account',
                 'get',
-                'authUrl',
-                ['back_url' => $backUrl, 'marketplace' => $marketplace->getData('native_id')]
+                'authUrlRequester',
+                ['back_url' => $backUrl, 'marketplace_native_id' => $marketplace->getData('native_id')]
             );
 
             $dispatcherObject->process($connectorObj);
@@ -93,8 +94,6 @@ class BeforeToken extends InstallationAmazon
 
             return $this->jsonResultFactory->create()->setData(['message' => $error]);
         }
-
-        $this->sessionHelper->setValue('marketplace_id', $marketplaceId);
 
         return $this->jsonResultFactory->create()->setData(['url' => $response['url']]);
     }

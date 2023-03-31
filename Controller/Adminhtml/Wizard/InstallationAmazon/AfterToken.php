@@ -10,23 +10,17 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
 {
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $sessionHelper;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Server\Create */
     private $serverAccountCreate;
-    /** @var \Ess\M2ePro\Helper\Module\Logger */
-    private $logger;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder
      * @param \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate
-     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
      * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
-     * @param \Ess\M2ePro\Helper\Module\Logger $logger
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
      * @param \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper
      * @param \Magento\Framework\Code\NameBuilder $nameBuilder
@@ -35,9 +29,7 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate,
-        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
-        \Ess\M2ePro\Helper\Module\Logger $logger,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
@@ -45,10 +37,8 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
     ) {
         parent::__construct($amazonFactory, $amazonViewHelper, $nameBuilder, $context);
 
-        $this->sessionHelper = $sessionHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->serverAccountCreate = $serverAccountCreate;
-        $this->logger = $logger;
         $this->accountBuilder = $accountBuilder;
     }
 
@@ -59,15 +49,8 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
             if ($amazonData === null) {
                 return $this->indexAction();
             }
-
-            $marketplaceId = $this->sessionHelper->getValue('marketplace_id', true);
-            if ($marketplaceId === null) {
-                $this->logger->process('Unable to retrieve marketplace from session.', 'wizard');
-
-                return $this->indexAction();
-            }
         } catch (\LogicException $exception) {
-            $this->messageManager->addError($this->__($exception->getMessage()));
+            $this->messageManager->addErrorMessage($this->__($exception->getMessage()));
 
             return $this->indexAction();
         }
@@ -76,12 +59,12 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
             $result = $this->serverAccountCreate->process(
                 $amazonData['token'],
                 $amazonData['merchant'],
-                (int)$marketplaceId
+                (int)$amazonData['marketplace_id']
             );
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
 
-            $this->messageManager->addError($this->__($exception->getMessage()));
+            $this->messageManager->addErrorMessage($this->__($exception->getMessage()));
 
             return $this->indexAction();
         }
@@ -89,11 +72,11 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
         $this->createAccount(
             $amazonData['merchant'],
             $amazonData['merchant'],
-            $marketplaceId,
+            (int)$amazonData['marketplace_id'],
             $result
         );
 
-        $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId)
+        $this->activeRecordFactory->getObjectLoaded('Marketplace', (int)$amazonData['marketplace_id'])
                                   ->setData('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
                                   ->save();
 
@@ -116,8 +99,9 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
         }
 
         $requiredFields = [
-            'Merchant',
-            'MWSAuthToken',
+            'selling_partner_id',
+            'spapi_oauth_code',
+            'marketplace_id',
         ];
 
         foreach ($requiredFields as $requiredField) {
@@ -127,8 +111,9 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
         }
 
         return [
-            'merchant' => $params['Merchant'],
-            'token' => $params['MWSAuthToken'],
+            'merchant' => $params['selling_partner_id'],
+            'token' => $params['spapi_oauth_code'],
+            'marketplace_id' => $params['marketplace_id'],
         ];
     }
 

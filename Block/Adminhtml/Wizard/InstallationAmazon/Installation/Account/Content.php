@@ -67,7 +67,6 @@ HTML
         );
 
         $marketplacesCollection = $this->amazonFactory->getObject('Marketplace')->getCollection()
-                                                      ->addFieldToFilter('developer_key', ['notnull' => true])
                                                       ->setOrder('sorder', 'ASC');
 
         $marketplaces = [

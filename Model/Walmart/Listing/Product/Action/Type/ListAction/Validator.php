@@ -8,17 +8,29 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Validator
- */
+use Ess\M2ePro\Helper\Component\Walmart\Configuration;
+
 class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Validator
 {
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Walmart\Configuration */
+    private $walmartConfigurationHelper;
+
+    public function __construct(
+        Configuration $walmartConfigurationHelper,
+        \Ess\M2ePro\Helper\Module\Log $helperModuleLog,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->walmartConfigurationHelper = $walmartConfigurationHelper;
+        parent::__construct($helperModuleLog, $helperData, $helperFactory, $modelFactory, $data);
+    }
 
     /**
      * @return bool
      */
-    public function validate()
+    public function validate(): bool
     {
         if (!$this->validateMagentoProductType()) {
             return false;
@@ -55,7 +67,7 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
             return true;
         }
 
-        if (!$this->validateProductIds()) {
+        if (!$this->validateProductId()) {
             return false;
         }
 
@@ -92,93 +104,18 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
 
     //########################################
 
-    protected function getGtin()
+    protected function getIdentifierFromConfiguration()
     {
-        $gtin = parent::getGtin();
-        if ($gtin !== null) {
-            return $gtin;
+        if ($this->walmartConfigurationHelper->isProductIdOverrideModeAll()) {
+            return Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
         }
 
-        $helper = $this->getHelper('Component_Walmart_Configuration');
-
-        if ($helper->isProductIdOverrideModeAll()) {
-            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
-        }
-
-        if ($helper->isGtinModeNotSet()) {
+        if ($this->walmartConfigurationHelper->isProductIdModeNotSet()) {
             return null;
         }
 
         return $this->getWalmartListingProduct()->getActualMagentoProduct()->getAttributeValue(
-            $helper->getGtinCustomAttribute()
+            $this->walmartConfigurationHelper->getProductIdCustomAttribute()
         );
     }
-
-    protected function getUpc()
-    {
-        $upc = parent::getUpc();
-        if ($upc !== null) {
-            return $upc;
-        }
-
-        $helper = $this->getHelper('Component_Walmart_Configuration');
-
-        if ($helper->isProductIdOverrideModeAll()) {
-            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
-        }
-
-        if ($helper->isUpcModeNotSet()) {
-            return null;
-        }
-
-        return $this->getWalmartListingProduct()->getActualMagentoProduct()->getAttributeValue(
-            $helper->getUpcCustomAttribute()
-        );
-    }
-
-    protected function getEan()
-    {
-        $ean = parent::getEan();
-        if ($ean !== null) {
-            return $ean;
-        }
-
-        $helper = $this->getHelper('Component_Walmart_Configuration');
-
-        if ($helper->isProductIdOverrideModeAll()) {
-            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
-        }
-
-        if ($helper->isEanModeNotSet()) {
-            return null;
-        }
-
-        return $this->getWalmartListingProduct()->getActualMagentoProduct()->getAttributeValue(
-            $helper->getEanCustomAttribute()
-        );
-    }
-
-    protected function getIsbn()
-    {
-        $isbn = parent::getIsbn();
-        if ($isbn !== null) {
-            return $isbn;
-        }
-
-        $helper = $this->getHelper('Component_Walmart_Configuration');
-
-        if ($helper->isProductIdOverrideModeAll()) {
-            return \Ess\M2ePro\Helper\Component\Walmart\Configuration::PRODUCT_ID_OVERRIDE_CUSTOM_CODE;
-        }
-
-        if ($helper->isIsbnModeNotSet()) {
-            return null;
-        }
-
-        return $this->getWalmartListingProduct()->getActualMagentoProduct()->getAttributeValue(
-            $helper->getIsbnCustomAttribute()
-        );
-    }
-
-    //########################################
 }

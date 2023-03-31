@@ -9,22 +9,12 @@ define([
 
         initialize: function() {
             jQuery.validator.addMethod('M2ePro-walmart-required-identifier-setting', function(value, el) {
-
-                var result = false;
-
                 if ($('product_id_override_mode').value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::PRODUCT_ID_OVERRIDE_MODE_ALL')) {
                     return true;
                 }
 
-                $$('.M2ePro-walmart-required-identifier-setting').each(function(obj) {
-                    if (obj.value > 0) {
-                        result = true;
-                        return;
-                    }
-                });
-
-                return result;
-            }, M2ePro.translator.translate('Required at least one identifier'));
+                return $('product_id_mode').value > 0;
+            }, M2ePro.translator.translate('Required identifier'));
         },
 
         // ---------------------------------------
@@ -50,41 +40,14 @@ define([
             }
         },
 
-        upc_mode_change: function() {
+        product_id_mode_change: function() {
             var self = WalmartSettingsMainObj;
 
-            $('upc_custom_attribute').value = '';
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::UPC_MODE_CUSTOM_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('upc_custom_attribute'));
+            $('product_id_custom_attribute').value = '';
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::PRODUCT_ID_MODE_CUSTOM_ATTRIBUTE')) {
+                self.updateHiddenValue(this, $('product_id_custom_attribute'));
             }
         },
-
-        ean_mode_change: function() {
-            var self = WalmartSettingsMainObj;
-
-            $('ean_custom_attribute').value = '';
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::EAN_MODE_CUSTOM_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('ean_custom_attribute'));
-            }
-        },
-
-        gtin_mode_change: function() {
-            var self = WalmartSettingsMainObj;
-
-            $('gtin_custom_attribute').value = '';
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::GTIN_MODE_CUSTOM_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('gtin_custom_attribute'));
-            }
-        },
-
-        isbn_mode_change: function() {
-            var self = WalmartSettingsMainObj;
-
-            $('isbn_custom_attribute').value = '';
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart_Configuration::ISBN_MODE_CUSTOM_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('isbn_custom_attribute'));
-            }
-        }
 
         // ---------------------------------------
     });

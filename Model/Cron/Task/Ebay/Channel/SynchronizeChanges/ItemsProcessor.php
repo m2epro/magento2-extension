@@ -19,16 +19,16 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
     private const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
 
     private const MESSAGE_CODE_RESULT_SET_TOO_LARGE = 21917062;
-    /** @var null|int  */
+    /** @var null|int */
     protected $logsActionId = null;
 
     /** @var \Ess\M2ePro\Model\Synchronization\ */
     protected $synchronizationLog = null;
-    /** @var null|string  */
+    /** @var null|string */
     protected $receiveChangesToDate = null;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     /** @var bool */
@@ -453,9 +453,10 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $listingType = $this->getActualListingType($listingProduct, $change);
+        $isAuction = $this->getActualListingType($listingProduct, $change)
+            == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION;
 
-        if ($listingType == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_AUCTION) {
+        if ($isAuction) {
             $data['online_qty'] = 1;
             $data['online_bids'] = (int)$change['bidCount'] < 0 ? 0 : (int)$change['bidCount'];
         }
@@ -464,6 +465,19 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $ebayListingProduct->getOnlineQty() != $data['online_qty'] ||
             $ebayListingProduct->getOnlineQtySold() != $data['online_qty_sold']
         ) {
+            $isNeedSkipQTYChange = $this->isNeedSkipQTYChange(
+                $data['online_qty'],
+                $data['online_qty_sold'],
+                $ebayListingProduct->getOnlineQty(),
+                $ebayListingProduct->getOnlineQtySold()
+            );
+
+            if ($isNeedSkipQTYChange && !$isAuction) {
+                unset($data['online_qty'], $data['online_qty_sold']);
+
+                return $data;
+            }
+
             $this->logReportChange(
                 $listingProduct,
                 $this->translationHelper->__(
@@ -597,8 +611,19 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                     $ebayVariation->getOnlineQty() != $updateData['online_qty'] ||
                     $ebayVariation->getOnlineQtySold() != $updateData['online_qty_sold']
                 ) {
-                    $hasVariationQtyChanges = true;
-                    $isVariationChanged = true;
+                    $isNeedSkipQTYChange = $this->isNeedSkipQTYChange(
+                        $updateData['online_qty'],
+                        $updateData['online_qty_sold'],
+                        $ebayVariation->getOnlineQty(),
+                        $ebayVariation->getOnlineQtySold()
+                    );
+
+                    if ($isNeedSkipQTYChange) {
+                        unset($updateData['online_qty'], $updateData['online_qty_sold']);
+                    } else {
+                        $hasVariationQtyChanges = true;
+                        $isVariationChanged = true;
+                    }
                 }
 
                 if ($isVariationChanged) {
@@ -816,5 +841,27 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $logMessage,
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
         );
+    }
+
+    /**
+     * Skip channel change to prevent oversell when we have got report before an order
+     *
+     * @param int $updateOnlineQty
+     * @param int $updateSoldQty
+     * @param int $existOnlineQty
+     * @param int $existSoldQty
+     *
+     * @return bool
+     */
+    private function isNeedSkipQTYChange(
+        int $updateOnlineQty,
+        int $updateSoldQty,
+        int $existOnlineQty,
+        int $existSoldQty
+    ): bool {
+        $updateQty = $updateOnlineQty - $updateSoldQty;
+        $existQty = $existOnlineQty - $existSoldQty;
+
+        return $updateQty < 5 && $updateQty < $existQty;
     }
 }

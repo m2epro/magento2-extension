@@ -143,28 +143,6 @@ class Amazon
     // ----------------------------------------
 
     /**
-     * @param int $marketplaceId
-     *
-     * @return string
-     */
-    public function getRegisterUrl($marketplaceId = null): string
-    {
-        $marketplaceId = (int)$marketplaceId;
-        $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
-
-        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
-        $applicationName = $this->getApplicationName();
-
-        $marketplace = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId);
-
-        return 'https://sellercentral.' .
-            $domain .
-            '/gp/mws/registration/register.html?ie=UTF8&*Version*=1&*entries*=0&applicationName=' .
-            rawurlencode($applicationName) . '&appDevMWSAccountId=' .
-            $marketplace->getChildObject()->getDeveloperKey();
-    }
-
-    /**
      * @param int $productId
      * @param int|null $marketplaceId
      *
@@ -208,11 +186,6 @@ class Amazon
     public function isASIN($string): bool
     {
         return \Ess\M2ePro\Helper\Data\Product\Identifier::isASIN($string);
-    }
-
-    public function getApplicationName()
-    {
-        return $this->config->getGroupValue('/amazon/', 'application_name');
     }
 
     // ----------------------------------------
@@ -267,7 +240,6 @@ class Amazon
         return $this->amazonFactory->getObject('Marketplace')->getCollection()
                                    ->addFieldToFilter('component_mode', self::NICK)
                                    ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-                                   ->addFieldToFilter('developer_key', ['notnull' => true])
                                    ->setOrder('sorder', 'ASC');
     }
 

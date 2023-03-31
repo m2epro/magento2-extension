@@ -45,7 +45,7 @@ class Edit extends Account
 
     public function execute()
     {
-        $id = $this->getRequest()->getParam('id');
+        $id = (int)$this->getRequest()->getParam('id', 0);
 
         $account = null;
         try {
@@ -54,42 +54,20 @@ class Edit extends Account
         } catch (\Exception $e) {
         }
 
-        if ($id && !$account->getId()) {
-            $this->messageManager->addError($this->__('Account does not exist.'));
+        if ($account === null || !$account->getId()) {
+            $this->messageManager->addErrorMessage($this->__('Account does not exist.'));
 
             return $this->_redirect('*/amazon_account');
         }
 
-        $marketplaces = $this->helperAmazon->getMarketplacesAvailableForApiCreation();
-        if ($marketplaces->getSize() <= 0) {
-            $message = 'You should select and update at least one Amazon marketplace.';
-            $this->messageManager->addError($this->__($message));
-
-            return $this->_redirect('*/amazon_account');
-        }
-
-        if ($account !== null) {
-            $this->addLicenseMessage($account);
-        }
+        $this->addLicenseMessage($account);
 
         $this->helperDataGlobalData->setValue('edit_account', $account);
 
         // Set header text
         // ---------------------------------------
 
-        $headerTextEdit = $this->__('Edit Account');
-        $headerTextAdd = $this->__('Add Account');
-
-        if (
-            $account &&
-            $account->getId()
-        ) {
-            $headerText = $headerTextEdit;
-            $headerText .= ' "' . $this->helperData->escapeHtml($account->getTitle()) . '"';
-        } else {
-            $headerText = $headerTextAdd;
-        }
-
+        $headerText = $this->__('Edit Account') . ' "' . $this->helperData->escapeHtml($account->getTitle()) . '"';
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         // ---------------------------------------

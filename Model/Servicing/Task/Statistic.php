@@ -675,7 +675,6 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         }
 
         $amazonMarketplaces = $this->parentFactory->getObject(HelperAmazon::NICK, 'Marketplace')->getCollection();
-        $amazonMarketplaces->addFieldToFilter('developer_key', ['notnull' => true]);
         foreach ($amazonMarketplaces->getItems() as $amazonMark) {
             /** @var \Ess\M2ePro\Model\Marketplace $amazonMark */
 

@@ -188,9 +188,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnProductsCount($value, $row, $column, $isExport)
     {
-        if ($value === null || $value === '') {
-            $value = $this->__('N/A');
-        } elseif ($value <= 0) {
+        if (empty($value) || $value <= 0) {
             $value = '<span style="color: red;">0</span>';
         }
 

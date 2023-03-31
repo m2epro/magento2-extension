@@ -12,8 +12,6 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
 {
     /** @var string */
     private $key;
-    /** @var bool */
-    private $status;
     /** @var array */
     private $licenseData;
     /** @var \Ess\M2ePro\Helper\Module\Support */
@@ -66,11 +64,10 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                 'no_collapse' => true,
                 'no_hide' => true,
                 'content' => $this->__(
-                    '<p>To use M2E Pro Extension, the Clients Portal Account and License Key are required.</p><br>
+                    '<p>To use M2E Pro, you need to register on M2E Accounts and generate a License Key.</p><br>
 
-                    <p>Clients Portal Account is created automatically based on the email address provided during the
-                    initial configuration of your M2E Pro instance. After you log into Account, you will be able
-                    to manage your Subscription and Billing information.</p><br>
+                    <p>Your email address used during the initial setup of M2E Pro automatically registers you on
+                    M2E Accounts. After logging in, you can manage your Subscription and Billing information.</p><br>
 
                     <p>License Key is a unique identifier of M2E Pro instance which is generated automatically
                     and strictly associated with the current IP and Domain of your Magento.</p><br>
@@ -98,10 +95,6 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
             'text' => $this->key,
         ];
 
-        if ($this->key && $this->licenseData['domain'] && $this->licenseData['ip'] && !$this->status) {
-            $fieldData['text'] .= ' <span style="color: red;">(' . $this->__('Suspended') . ')</span>';
-        }
-
         $fieldSet->addField(
             'license_text_key_container',
             self::NOTE,
@@ -116,10 +109,10 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                     'label' => $this->__('Associated Email'),
                     'text' => $this->licenseData['info']['email'],
                     'tooltip' => $this->__(
-                        'That is an e-mail address associated to your License.
-                        Also, you can use this e-mail to access a
-                        <a href="%url%" target="_blank" class="external-link">clients portal</a>',
-                        $this->supportHelper->getClientsPortalUrl()
+                        'This email address is associated with your License.
+                        You can also use it to access
+                        <a href="%url%" target="_blank" class="external-link">M2E Accounts</a>.',
+                        $this->supportHelper->getAccountsUrl()
                     ),
                 ]
             );
@@ -132,7 +125,7 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                 [
                     'label' => '',
                     'value' => $this->__('Manage License'),
-                    'href' => $this->supportHelper->getClientsPortalUrl(),
+                    'href' => $this->supportHelper->getAccountsUrl(),
                     'class' => 'external-link',
                     'target' => '_blank',
                 ]
@@ -220,7 +213,6 @@ class License extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
     protected function prepareLicenseData()
     {
         $this->key = $this->dataHelper->escapeHtml($this->licenseHelper->getKey());
-        $this->status = $this->licenseHelper->getStatus();
 
         $this->licenseData = [
             'domain' => $this->dataHelper->escapeHtml($this->licenseHelper->getDomain()),

@@ -23,11 +23,11 @@ class Update
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Account $account
-     * @param string $token
+     * @param string $oAuthCode
      *
      * @return void
      */
-    public function process(\Ess\M2ePro\Model\Amazon\Account $account, string $token): void
+    public function process(\Ess\M2ePro\Model\Amazon\Account $account, string $oAuthCode): void
     {
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Account\Update\EntityRequester $connectorObj */
         $connectorObj = $this->dispatcher->getConnector(
@@ -36,7 +36,7 @@ class Update
             'entityRequester',
             [
                 'account_server_hash' => $account->getServerHash(),
-                'token' => $token,
+                'oauth_code' => $oAuthCode,
                 'marketplace_id' => $account->getMarketplace()->getNativeId(),
                 'merchant_id' => $account->getMerchantId(),
             ]

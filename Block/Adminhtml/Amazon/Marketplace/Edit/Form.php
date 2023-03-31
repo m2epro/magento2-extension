@@ -109,12 +109,6 @@ HTML;
                             $this->__('Used in Account(s)'),
                     ];
                     $selectData['value'] = \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE;
-                } elseif ($marketplace['instance']->getChildObject()->getData('developer_key') === null) {
-                    $selectData['values'] = [
-                        \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled - Coming Soon'),
-                    ];
-                    $selectData['value'] = \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE;
-                    $selectData['disabled'] = true;
                 } else {
                     $selectData['values'] = [
                         \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled'),

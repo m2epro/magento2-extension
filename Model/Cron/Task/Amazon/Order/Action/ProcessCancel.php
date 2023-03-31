@@ -8,22 +8,16 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Action\ProcessCancel
- */
 class ProcessCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'amazon/order/action/process_cancel';
 
-    /**
-     * @var int (in seconds)
-     */
-    protected $interval = 18000;
+    /** @var int (in seconds) */
+    protected $interval = 300;
 
-    //####################################
-
-    public function performActions()
+    protected function performActions(): void
     {
+        /** @var \Ess\M2ePro\Model\Amazon\Order\Action\Processor $actionsProcessor */
         $actionsProcessor = $this->modelFactory->getObject(
             'Amazon_Order_Action_Processor',
             [
@@ -32,6 +26,4 @@ class ProcessCancel extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
         $actionsProcessor->process();
     }
-
-    //####################################
 }

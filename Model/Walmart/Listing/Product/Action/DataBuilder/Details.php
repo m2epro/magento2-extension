@@ -8,16 +8,11 @@
 
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
-use Ess\M2ePro\Helper\Component\Walmart\Configuration as ConfigurationHelper;
+use Ess\M2ePro\Helper\Data\Product\Identifier;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Details
- */
 class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
-    //########################################
-
     public function getBuilderData()
     {
         $sellingFormatTemplateSource = $this->getWalmartListingProduct()->getSellingFormatTemplateSource();
@@ -25,7 +20,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         $data = [
             'product_data_nick' => $this->getWalmartListingProduct()->getCategoryTemplate()->getProductDataNick(),
             'product_data' => $this->getProductData(),
-            'product_ids_data' => $this->getProductIdsData(),
+            'product_id_data' => $this->getProductIdData(),
             'description_data' => $this->getDescriptionData(),
             'shipping_weight' => $sellingFormatTemplateSource->getItemWeight(),
             'additional_attributes' => $sellingFormatTemplateSource->getAttributes(),
@@ -118,74 +113,48 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
     // ---------------------------------------
 
-    private function getProductIdsData()
+    private function getProductIdData()
     {
-        if (empty($this->cachedData)) {
-            $walmartListingProduct = $this->getListingProduct()->getChildObject();
-
-            /** @var \Ess\M2ePro\Helper\Data $helperData */
-            $helperData = $this->getHelper('Data');
-
-            $ids = [
-                'gtin' => $walmartListingProduct->getGtin(),
-                'upc' => $walmartListingProduct->getUpc(),
-                'ean' => $walmartListingProduct->getEan(),
-                'isbn' => $walmartListingProduct->getIsbn(),
-            ];
-
-            if (
-                !$ids['gtin'] ||
-                (strtoupper($ids['gtin']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                    !$helperData->isGTIN($ids['gtin']))
-            ) {
-                unset($ids['gtin']);
-            }
-
-            if (
-                !$ids['upc'] ||
-                (strtoupper($ids['upc']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                    !$helperData->isUPC($ids['upc']))
-            ) {
-                unset($ids['upc']);
-            }
-
-            if (
-                !$ids['ean'] ||
-                (strtoupper($ids['ean']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                    !$helperData->isEAN($ids['ean']))
-            ) {
-                unset($ids['ean']);
-            }
-
-            if (
-                !$ids['isbn'] ||
-                (strtoupper($ids['isbn']) !== ConfigurationHelper::PRODUCT_ID_OVERRIDE_CUSTOM_CODE &&
-                    !$helperData->isISBN($ids['isbn']))
-            ) {
-                unset($ids['isbn']);
-            }
-
-            foreach ($ids as $idType => $value) {
-                $this->cachedData[$idType] = $value;
-            }
+        if (!isset($this->cachedData['identifier'])) {
+            $this->cachedData['identifier'] = $this->getIdentifierFromProduct();
         }
 
-        $data = [];
+        return $this->cachedData['identifier'];
+    }
 
-        $idsTypes = ['gtin', 'upc', 'ean', 'isbn'];
+    private function getIdentifierFromProduct(): array
+    {
+        $walmartListingProduct = $this->getListingProduct()->getChildObject();
 
-        foreach ($idsTypes as $idType) {
-            if (!isset($this->cachedData[$idType])) {
-                continue;
-            }
-
-            $data[] = [
-                'type' => strtoupper($idType),
-                'id' => $this->cachedData[$idType],
+        if ($identifier = $walmartListingProduct->getGtin()) {
+            return [
+                'type' => Identifier::GTIN,
+                'id' => $identifier
             ];
         }
 
-        return $data;
+        if ($identifier = $walmartListingProduct->getUpc()) {
+            return [
+                'type' => Identifier::UPC,
+                'id' => $identifier
+            ];
+        }
+
+        if ($identifier = $walmartListingProduct->getEan()) {
+            return [
+                'type' => Identifier::EAN,
+                'id' => $identifier
+            ];
+        }
+
+        if ($identifier = $walmartListingProduct->getIsbn()) {
+            return [
+                'type' => Identifier::ISBN,
+                'id' => $identifier
+            ];
+        }
+
+        return [];
     }
 
     // ---------------------------------------

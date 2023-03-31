@@ -262,11 +262,17 @@ class Config extends AbstractConfig
                 'RemoveConfigConvertLinebreaks',
                 'EbayListingProductScheduledStopAction',
                 'UpdateConfigSupportUrl',
+                'AmazonRemoveUnnecessaryData',
             ],
             'y23_m02' => [
                 'AddImmediatePaymentColumn',
                 'AddTags',
                 'AddErrorCodeColumnForTags',
+            ],
+            'y23_m03' => [
+                'WalmartProductIdentifiers',
+                'RemoveLicenseStatus',
+                'RenameClientsToAccounts',
             ],
         ];
     }

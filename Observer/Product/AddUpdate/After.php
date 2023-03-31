@@ -329,12 +329,12 @@ class After extends AbstractAddUpdate
             $oldValue = $attributeValue;
             $newValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
 
+            if ($oldValue == $newValue) {
+                continue;
+            }
+
             foreach ($this->getAffectedListingsProductsByTrackingAttribute($attributeCode) as $listingProduct) {
                 if (!$this->isAttributeAffectOnStoreId($attributeCode, $listingProduct->getListing()->getStoreId())) {
-                    continue;
-                }
-
-                if ($oldValue == $newValue) {
                     continue;
                 }
 

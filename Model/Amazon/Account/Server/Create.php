@@ -28,13 +28,13 @@ class Create
     }
 
     /**
-     * @param string $token
+     * @param string $oAuthCode
      * @param string $merchantId
      * @param int $marketplaceId
      *
      * @return \Ess\M2ePro\Model\Amazon\Account\Server\Create\Result
      */
-    public function process(string $token, string $merchantId, int $marketplaceId): Create\Result
+    public function process(string $oAuthCode, string $merchantId, int $marketplaceId): Create\Result
     {
         /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         $marketplace = $this->amazonFactory->getCachedObjectLoaded(
@@ -50,7 +50,7 @@ class Create
             [
                 'marketplace_id' => $marketplace->getNativeId(),
                 'merchant_id' => $merchantId,
-                'token' => $token,
+                'oauth_code' => $oAuthCode,
             ]
         );
 

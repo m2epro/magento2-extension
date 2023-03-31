@@ -22,4 +22,13 @@ window.location.href = "$wizardUrl";
 JS
         );
     }
+
+    protected function _prepareForm()
+    {
+        $form = $this->_formFactory->create();
+
+        $this->setForm($form);
+
+        return parent::_prepareForm();
+    }
 }

@@ -18,23 +18,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     private $accountResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
     private $marketplaceResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
-    private $listingResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
     private $listingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing */
-    private $ebayListingResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product*/
     private $ebayListingProductResource;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     private $ebayFactory;
     /** @var \Ess\M2ePro\Helper\Url */
     private $urlHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory */
+    private $listingCollectionFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
-        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing $ebayListingResource,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product $ebayListingProductResource,
         \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
@@ -44,18 +40,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Url $urlHelper,
+        \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         array $data = []
     ) {
         parent::__construct($viewHelper, $context, $backendHelper, $dataHelper, $data);
 
         $this->accountResource = $accountResource;
         $this->marketplaceResource = $marketplaceResource;
-        $this->listingResource = $listingResource;
         $this->listingProductResource = $listingProductResource;
-        $this->ebayListingResource = $ebayListingResource;
         $this->ebayListingProductResource = $ebayListingProductResource;
         $this->ebayFactory = $ebayFactory;
         $this->urlHelper = $urlHelper;
+        $this->listingCollectionFactory = $listingCollectionFactory;
     }
 
     /**
@@ -64,11 +60,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     public function _construct()
     {
         parent::_construct();
-
-        // Initialization block
-        // ---------------------------------------
         $this->setId('ebayListingItemsByListingGrid');
-        // ---------------------------------------
     }
 
     /**
@@ -95,42 +87,40 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 
     /**
      * @return \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing\Grid
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function _prepareCollection()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection $collection */
-        $collection = $this->ebayFactory->getObject('Listing')->getCollection();
+        $collection = $this->listingCollectionFactory->createWithEbayChildMode();
         $collection->getSelect()->join(
             ['a' => $this->accountResource->getMainTable()],
-            '(`a`.`id` = `main_table`.`account_id`)',
+            'a.id = main_table.account_id',
             ['account_title' => 'title']
         );
         $collection->getSelect()->join(
-            ['m' =>  $this->marketplaceResource->getMainTable()],
-            '(`m`.`id` = `main_table`.`marketplace_id`)',
+            ['m' => $this->marketplaceResource->getMainTable()],
+            'm.id = main_table.marketplace_id',
             ['marketplace_title' => 'title']
         );
 
-        $listingTable = $this->listingResource->getMainTable();
-        $ebayListingTable = $this->ebayListingResource->getMainTable();
-        $listingProductTable = $this->listingProductResource->getMainTable();
-        $ebayListingProductTable = $this->ebayListingProductResource->getMainTable();
-
-        $sql = "SELECT l.id AS listing_id,
-                    COUNT(lp.id)                                   AS products_total_count,
-                    COUNT(CASE WHEN lp.status = 2 THEN lp.id END)  AS products_active_count,
-                    COUNT(CASE WHEN lp.status != 2 THEN lp.id END) AS products_inactive_count,
-                    IFNULL(SUM(elp.online_qty_sold), 0)            AS items_sold_count
-                FROM `{$listingTable}` AS `l`
-                    INNER JOIN `{$ebayListingTable}` AS `el` ON l.id = el.listing_id
-                    LEFT JOIN `{$listingProductTable}` AS `lp` ON l.id = lp.listing_id
-                    LEFT JOIN `{$ebayListingProductTable}` AS `elp` ON lp.id = elp.listing_product_id
-                GROUP BY listing_id";
+        $select = $collection->getConnection()->select();
+        $select->from(['elp' => $this->ebayListingProductResource->getMainTable()], [
+            'items_sold_count' => new \Zend_Db_Expr('IFNULL(SUM(elp.online_qty_sold), 0)'),
+        ]);
+        $select->joinLeft(
+            ['lp' => $this->listingProductResource->getMainTable()],
+            'lp.id = elp.listing_product_id',
+            [
+                'listing_id' => 'listing_id',
+                'products_total_count' => new \Zend_Db_Expr('COUNT(lp.id)'),
+                'products_active_count' => new \Zend_Db_Expr('COUNT(IF(lp.status = 2, lp.id, NULL))'),
+                'products_inactive_count' => new \Zend_Db_Expr('COUNT(IF(lp.status != 2, lp.id, NULL))'),
+            ]
+        );
+        $select->group('lp.listing_id');
 
         $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(' . $sql . ')'),
+            ['t' => $select],
             'main_table.id=t.listing_id',
             [
                 'products_total_count' => 'products_total_count',

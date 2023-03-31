@@ -39,11 +39,6 @@ class License
         return (string)$this->config->getGroupValue('/license/', 'key');
     }
 
-    public function getStatus()
-    {
-        return (bool)$this->config->getGroupValue('/license/', 'status');
-    }
-
     public function getDomain()
     {
         return (string)$this->config->getGroupValue('/license/domain/', 'valid');
@@ -131,7 +126,6 @@ class License
     {
         return [
             'key'        => $this->getKey(),
-            'status'     => $this->getStatus(),
             'domain'     => $this->getDomain(),
             'ip'         => $this->getIp(),
             'info'       => [

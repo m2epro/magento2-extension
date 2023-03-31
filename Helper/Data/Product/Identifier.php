@@ -173,4 +173,57 @@ class Identifier
 
         return $result;
     }
+
+    /**
+     * @param string $identifier
+     *
+     * @return null|string
+     */
+    public static function getIdentifierType(string $identifier): ?string
+    {
+        if (self::isISBN($identifier)) {
+            return self::ISBN;
+        }
+
+        if (self::isUPC($identifier)) {
+            return self::UPC;
+        }
+
+        if (self::isEAN($identifier)) {
+            return self::EAN;
+        }
+
+        if (self::isGTIN($identifier)) {
+            return self::GTIN;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $identifier
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function isValidIdentifier(string $identifier, string $type): bool
+    {
+        if ($type == self::GTIN) {
+            return self::isGTIN($identifier);
+        }
+
+        if ($type == self::EAN) {
+            return self::isEAN($identifier);
+        }
+
+        if ($type == self::UPC) {
+            return self::isUPC($identifier);
+        }
+
+        if ($type == self::ISBN) {
+            return self::isISBN($identifier);
+        }
+
+        return false;
+    }
 }

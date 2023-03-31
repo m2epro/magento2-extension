@@ -78,10 +78,6 @@ class License implements \Ess\M2ePro\Model\Servicing\TaskInterface
         if (isset($data['connection']) && is_array($data['connection'])) {
             $this->updateConnectionData($data['connection']);
         }
-
-        if (isset($data['status'])) {
-            $this->updateStatus($data['status']);
-        }
     }
 
     // ----------------------------------------
@@ -144,15 +140,5 @@ class License implements \Ess\M2ePro\Model\Servicing\TaskInterface
         if (array_key_exists('ip', $data)) {
             $this->configManager->setGroupValue('/license/ip/', 'real', $data['ip']);
         }
-    }
-
-    /**
-     * @param $status
-     *
-     * @return void
-     */
-    private function updateStatus($status): void
-    {
-        $this->configManager->setGroupValue('/license/', 'status', (int)$status);
     }
 }

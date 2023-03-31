@@ -269,10 +269,6 @@ abstract class Main extends Base
             $added = $this->addLicenseValidationFailNotifications();
         }
 
-        if (!$added && $this->getHelper('Module\License')->getKey()) {
-            $added = $this->addLicenseStatusNotifications();
-        }
-
         return $added;
     }
 
@@ -444,29 +440,6 @@ abstract class Main extends Base
             $message = 'M2E Pro License Key Validation is failed for this IP. ';
             $message .= 'Go to the <a href="%url%" target="_blank">License Page</a>.';
             $message = $this->__($message, $url);
-
-            $this->getMessageManager()->addError($message, self::GLOBAL_MESSAGES_GROUP);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    protected function addLicenseStatusNotifications()
-    {
-        /** @var License $licenseHelper */
-        $licenseHelper = $this->getHelper('Module\License');
-
-        if (!$licenseHelper->getStatus()) {
-            $params = [];
-            $this->isContentLockedByWizard() && $params['wizard'] = '1';
-            $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
-
-            $message = $this->__(
-                'The License is suspended. Go to the <a href="%url%" target ="_blank">License Page</a>.',
-                $url
-            );
 
             $this->getMessageManager()->addError($message, self::GLOBAL_MESSAGES_GROUP);
 
