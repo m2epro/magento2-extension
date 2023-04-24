@@ -201,9 +201,9 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     /**
      * @return bool
      */
-    public function hasProductDataNick()
+    public function hasProductTypeNick()
     {
-        return isset($this->getData()['product_data_nick']);
+        return isset($this->getData()['product_type_nick']);
     }
 
     // ---------------------------------------
@@ -214,24 +214,6 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     public function hasProductData()
     {
         return isset($this->getData()['product_data']);
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasDescriptionData()
-    {
-        return isset($this->getData()['description_data']);
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function hasImagesData()
-    {
-        return isset($this->getData()['images_data']);
     }
 
     // ---------------------------------------
@@ -466,9 +448,9 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     /**
      * @return string|null
      */
-    public function getProductDataNick()
+    public function getProductTypeNick()
     {
-        return $this->hasProductDataNick() ? $this->getData('product_data_nick') : null;
+        return $this->hasProductTypeNick() ? $this->getData('product_type_nick') : null;
     }
 
     // ---------------------------------------
@@ -479,24 +461,6 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     public function getProductData()
     {
         return $this->hasProductData() ? $this->getData('product_data') : null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getDescriptionData()
-    {
-        return $this->hasDescriptionData() ? $this->getData('description_data') : null;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return mixed
-     */
-    public function getImagesData()
-    {
-        return $this->hasImagesData() ? $this->getData('images_data') : null;
     }
 
     // ---------------------------------------

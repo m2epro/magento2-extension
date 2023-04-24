@@ -194,6 +194,11 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
         return $this->getData('attribute');
     }
 
+    public function setAttribute(string $attribute): void
+    {
+        $this->setData('attribute', $attribute);
+    }
+
     public function getOption()
     {
         return $this->getData('option');

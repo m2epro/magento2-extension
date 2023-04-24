@@ -86,7 +86,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             [
                 'listing_id' => 'listing_id',
                 'products_total_count' => new \Zend_Db_Expr('COUNT(lp.id)'),
-                'products_active_count' => new \Zend_Db_Expr('SUM(IF(lp.status = 2, lp.id, NULL))'),
+                'products_active_count' => new \Zend_Db_Expr('COUNT(IF(lp.status = 2, lp.id, NULL))'),
                 'products_inactive_count' => new \Zend_Db_Expr('COUNT(IF(lp.status != 2, lp.id, NULL))'),
             ]
         );

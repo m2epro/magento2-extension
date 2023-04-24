@@ -170,8 +170,8 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
                                               ->setMarketplaceId($this->getListingProduct()->getMarketplace()->getId())
                                               ->getVariationThemeAttributes(
                                                   $this->getAmazonListingProduct()
-                                                       ->getAmazonDescriptionTemplate()
-                                                       ->getProductDataNick(),
+                                                       ->getProductTypeTemplate()
+                                                       ->getNick(),
                                                   $this->getChannelTheme()
                                               );
 
@@ -179,10 +179,6 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
         sort($themeAttributes);
         sort($channelAttributes);
-
-        if ($this->getAmazonListingProduct()->getGeneralId() && $themeAttributes != $channelAttributes) {
-            return false;
-        }
 
         $isThemeSetManually = $this->getListingProduct()->getSetting(
             'additional_data',
@@ -274,13 +270,14 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             return array_keys($this->getChannelAttributesSets());
         }
 
-        if ($this->hasChannelTheme()) {
+        $productType = $this->getAmazonListingProduct()->getProductTypeTemplate();
+        if ($this->hasChannelTheme() && $productType !== null) {
             /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $marketplaceDetails */
             $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
             $marketplaceDetails->setMarketplaceId($this->getListingProduct()->getListing()->getMarketplaceId());
 
             return $marketplaceDetails->getVariationThemeAttributes(
-                $this->getAmazonListingProduct()->getAmazonDescriptionTemplate()->getProductDataNick(),
+                $productType->getNick(),
                 $this->getChannelTheme()
             );
         }
@@ -437,7 +434,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             $marketplaceDetails->setMarketplaceId($this->getListingProduct()->getListing()->getMarketplaceId());
 
             $themeAttributes = $marketplaceDetails->getVariationThemeAttributes(
-                $this->getAmazonListingProduct()->getAmazonDescriptionTemplate()->getProductDataNick(),
+                $this->getAmazonListingProduct()->getProductTypeTemplate()->getNick(),
                 $this->getChannelTheme()
             );
 
@@ -548,10 +545,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
 
     public function getRealChannelAttributesSets()
     {
-        return $this->getListingProduct()->getSetting(
+        return (array)$this->getListingProduct()->getSetting(
             'additional_data',
-            'variation_channel_attributes_sets',
-            null
+            'variation_channel_attributes_sets'
         );
     }
 
@@ -884,7 +880,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             'is_variation_product' => 1,
             'is_variation_parent' => 0,
             'variation_parent_id' => $this->getListingProduct()->getId(),
-            'template_description_id' => $this->getAmazonListingProduct()->getTemplateDescriptionId(),
+            'template_product_type_id' => $this->getAmazonListingProduct()->getTemplateProductTypeId(),
             'template_shipping_id' => $this->getAmazonListingProduct()->getTemplateShippingId(),
             'template_product_tax_code_id' => $this->getAmazonListingProduct()->getTemplateProductTaxCodeId(),
         ];

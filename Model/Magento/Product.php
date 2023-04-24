@@ -1312,7 +1312,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return '';
         }
 
-        if (!$productObject->hasData($attributeCode)) {
+        if ($attributeCode !== 'gallery' && !$productObject->hasData($attributeCode)) {
             $this->addNotFoundAttributes($attributeCode);
 
             return '';
@@ -1320,7 +1320,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $value = $productObject->getData($attributeCode);
 
-        if ($attributeCode == 'media_gallery') {
+        if ($attributeCode === 'media_gallery' || $attributeCode === 'gallery') {
             $links = [];
             foreach ($this->getGalleryImages(100) as $image) {
                 if (!$image->getUrl()) {

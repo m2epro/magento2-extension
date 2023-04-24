@@ -29,6 +29,14 @@ class NotListed extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
+
+        if (
+            $amazonListingProduct->isGeneralIdOwner()
+            && $amazonListingProduct->getProductTypeTemplate() === null
+        ) {
+            return false;
+        }
+
         $variationManager = $amazonListingProduct->getVariationManager();
 
         $identifiers = $amazonListingProduct->getIdentifiers();

@@ -51,11 +51,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_global_adding_description_template_id' => null,
+            'auto_global_adding_product_type_template_id'  => null,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'auto_website_adding_description_template_id' => null,
+            'auto_website_adding_product_type_template_id' => null,
         ];
 
         $groupData = [
@@ -74,7 +74,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL) {
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL;
             $listingData['auto_global_adding_mode'] = $data['auto_global_adding_mode'];
-            $listingData['auto_global_adding_description_template_id'] = $data['adding_description_template_id'];
+            $listingData['auto_global_adding_product_type_template_id'] = $data['adding_product_type_template_id'];
 
             if ($listingData['auto_global_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
                 $listingData['auto_global_adding_add_not_visible'] = $data['auto_global_adding_add_not_visible'];
@@ -87,7 +87,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE;
             $listingData['auto_website_adding_mode'] = $data['auto_website_adding_mode'];
             $listingData['auto_website_deleting_mode'] = $data['auto_website_deleting_mode'];
-            $listingData['auto_website_adding_description_template_id'] = $data['adding_description_template_id'];
+            $listingData['auto_website_adding_product_type_template_id'] = $data['adding_product_type_template_id'];
 
             if ($listingData['auto_website_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
                 $listingData['auto_website_adding_add_not_visible'] = $data['auto_website_adding_add_not_visible'];
@@ -113,13 +113,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
                 $group->save();
             }
 
-            if (!empty($data['adding_description_template_id'])) {
+            if (!empty($data['adding_product_type_template_id'])) {
                 $group->getChildObject()->setData(
-                    'adding_description_template_id',
-                    $data['adding_description_template_id']
+                    'adding_product_type_template_id',
+                    $data['adding_product_type_template_id']
                 );
             } else {
-                $group->getChildObject()->setData('adding_description_template_id', null);
+                $group->getChildObject()->setData('adding_product_type_template_id', null);
             }
 
             $group->save();

@@ -12,10 +12,10 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 abstract class Add extends Main
 {
-    /** @var string  */
+    /** @var string */
     protected $sessionKey = 'amazon_listing_product_add';
-    /** @var null  */
-    protected $listing = null;
+    /** @var \Ess\M2ePro\Model\Listing */
+    protected $listing;
 
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     protected $variationHelper;
@@ -74,6 +74,7 @@ abstract class Add extends Main
 
     /**
      * @return \Ess\M2ePro\Model\Listing
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getListing()
     {
@@ -86,16 +87,18 @@ abstract class Add extends Main
 
     //########################################
 
-    protected function setDescriptionTemplate($productsIds, $templateId)
+    protected function setProductTypeTemplate($productsIds, $templateId)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableAmazonListingProduct = $this->activeRecordFactory->getObject('Amazon_Listing_Product')
-                                                               ->getResource()->getMainTable();
+        $tableAmazonListingProduct = $this->activeRecordFactory
+            ->getObject('Amazon_Listing_Product')
+            ->getResource()
+            ->getMainTable();
 
         $productsIds = array_chunk($productsIds, 1000);
         foreach ($productsIds as $productsIdsChunk) {
             $connWrite->update($tableAmazonListingProduct, [
-                'template_description_id' => $templateId,
+                'template_product_type_id' => $templateId,
             ], '`listing_product_id` IN (' . implode(',', $productsIdsChunk) . ')');
         }
     }
@@ -149,7 +152,7 @@ abstract class Add extends Main
         $listing->setSetting('additional_data', 'adding_listing_products_ids', []);
         $listing->setSetting('additional_data', 'adding_new_asin_listing_products_ids', []);
         $listing->setSetting('additional_data', 'auto_search_was_performed', 0);
-        $listing->setSetting('additional_data', 'adding_new_asin_description_templates_data', []);
+        $listing->setSetting('additional_data', 'adding_new_asin_product_type_data', []);
         $listing->save();
     }
 }

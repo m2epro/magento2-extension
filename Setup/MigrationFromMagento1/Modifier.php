@@ -40,13 +40,15 @@ class Modifier
 
     //########################################
 
-    public function process()
+    /**
+     * @return void
+     */
+    public function process(): void
     {
         $this->migrateConfig();
         $this->migrateWizards();
         $this->migrateWalmartAccount();
         $this->actualizeConfigs();
-        $this->actualizeTablesStructure();
         $this->executeSomeFeatures();
     }
 
@@ -191,34 +193,21 @@ class Modifier
 
     /**
      * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Setup
-     */
-    private function actualizeTablesStructure()
-    {
-        // y22_m04/AddFeeColumnForEbayOrder
-        $this->getTableModifier('ebay_order')
-             ->addColumn(
-                 'final_fee',
-                 'decimal(10,2) unsigned DEFAULT NULL',
-                 'NULL',
-                 'saved_amount'
-             );
-    }
-
-    /**
-     * @return void
      */
     private function executeSomeFeatures(): void
     {
         $featureClasses = [
+            \Ess\M2ePro\Setup\Update\y22_m05\AddFeeColumnForEbayOrder::class,
             \Ess\M2ePro\Setup\Update\y22_m06\EbayFixedPriceModifier::class,
             \Ess\M2ePro\Setup\Update\y22_m07\AddEpidsForItaly::class,
             \Ess\M2ePro\Setup\Update\y22_m07\MoveEbayProductIdentifiers::class,
             \Ess\M2ePro\Setup\Update\y22_m08\MoveAmazonProductIdentifiers::class,
             \Ess\M2ePro\Setup\Update\y22_m10\AmazonWalmartSellingPolicyPriceModifier::class,
             \Ess\M2ePro\Setup\Update\y23_m01\EbayListingProductScheduledStopAction::class,
+            \Ess\M2ePro\Setup\Update\y23_m01\AmazonProductTypes::class,
             \Ess\M2ePro\Setup\Update\y23_m02\AddTags::class,
             \Ess\M2ePro\Setup\Update\y23_m02\AddErrorCodeColumnForTags::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AmazonShippingTemplates::class,
             \Ess\M2ePro\Setup\Update\y23_m02\AddImmediatePaymentColumn::class,
         ];
 

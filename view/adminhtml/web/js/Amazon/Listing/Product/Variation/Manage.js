@@ -316,7 +316,7 @@ define([
                         if (response.empty_sku) {
                             return self.openSkuPopUp();
                         }
-                        self.openDescriptionTemplatePopUp(response.html);
+                        self.openProductTypeTemplatePopUp(response.html);
                     }
                 });
             };
@@ -424,74 +424,75 @@ define([
             });
         },
 
-        openDescriptionTemplatePopUp: function (contentData) {
+        openProductTypeTemplatePopUp: function (contentData) {
             var self = this;
             self.gridHandler.unselectAll();
 
             MessageObj.clear();
 
-            if (!$('template_description_pop_up_content')) {
+            if (!$('product_type_pop_up_content')) {
                 $('html-body').insert({bottom: contentData});
             }
 
-            self.templateDescriptionPopup = jQuery('#template_description_pop_up_content');
+            self.templateProductTypePopup = jQuery('#product_type_pop_up_content');
 
             modal({
-                title: M2ePro.translator.translate('templateDescriptionPopupTitle'),
+                title: M2ePro.translator.translate('productTypePopupTitle'),
                 type: 'slide',
                 buttons: [{
-                    text: M2ePro.translator.translate('Add New Description Policy'),
+                    text: M2ePro.translator.translate('Add New Product Type'),
                     class: 'action primary ',
                     click: function () {
-                        ListingGridObj.templateDescriptionHandler.createTemplateDescriptionInNewTab(M2ePro.url.get('newTemplateDescriptionUrl'));
+                        ListingGridObj.templateProductTypeHandler.createInNewTab(M2ePro.url.get('createProductTypeUrl'));
                     }
                 }]
-            }, self.templateDescriptionPopup);
+            }, self.templateProductTypePopup);
 
-            self.templateDescriptionPopup.modal('openModal');
+            self.templateProductTypePopup.modal('openModal');
 
-            self.templateDescriptionPopup.productsIds = self.variationProductManagePopup.productId;
-            self.templateDescriptionPopup.checkIsNewAsinAccepted = 1;
+            self.templateProductTypePopup.productsIds = self.variationProductManagePopup.productId;
+            self.templateProductTypePopup.checkIsNewAsinAccepted = 1;
 
-            self.loadTemplateDescriptionGrid();
+            self.loadTemplateProductTypeGrid();
         },
 
-        loadTemplateDescriptionGrid: function () {
+        loadTemplateProductTypeGrid: function () {
             var self = this;
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/viewGrid'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_productType/viewGrid'), {
                 method: 'post',
                 parameters: {
                     products_ids: self.variationProductManagePopup.productId,
                     check_is_new_asin_accepted: 1,
-                    map_to_template_js_fn: 'ListingGridObj.variationProductManageHandler.mapToTemplateDescription'
+                    map_to_template_js_fn: 'ListingGridObj.variationProductManageHandler.mapToTemplateProductType'
                 },
                 onSuccess: function (transport) {
-                    $('template_description_grid').update(transport.responseText);
-                    $('template_description_grid').show();
+                    $('product_type_grid').update(transport.responseText);
+                    $('product_type_grid').show();
                 }
             });
         },
 
-        mapToTemplateDescription: function (el, templateId, mapToGeneralId) {
+        mapToTemplateProductType: function (el, templateId, mapToGeneralId) {
             var self = this;
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_productType/assign'), {
                 method: 'post',
                 parameters: {
                     products_ids: self.variationProductManagePopup.productId,
-                    template_id: templateId
+                    product_type_id: templateId,
+                    is_general_id_owner_will_be_set: mapToGeneralId !== undefined ? !!mapToGeneralId : false
                 },
                 onSuccess: function (transport) {
                     var response = self.parseResponse(transport);
                     if (response.type == 'success') {
-                        self.templateDescriptionPopup.modal('closeModal');
+                        self.templateProductTypePopup.modal('closeModal');
                         self.setGeneralIdOwner(1, true);
                     }
                 }
             });
 
-            self.templateDescriptionPopup.modal('closeModal');
+            self.templateProductTypePopup.modal('closeModal');
         },
 
         // ---------------------------------------

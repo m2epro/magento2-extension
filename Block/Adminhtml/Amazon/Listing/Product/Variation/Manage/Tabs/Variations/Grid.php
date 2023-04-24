@@ -993,24 +993,6 @@ JS
         return $this->lockedDataCache[$listingProductId];
     }
 
-    protected function getTemplateDescriptionLinkHtml($listingProduct)
-    {
-        $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $listingProduct->getChildObject()->getTemplateDescriptionId(),
-        ]);
-
-        $helper = $this->dataHelper;
-        $templateTitle = $listingProduct->getChildObject()->getDescriptionTemplate()->getTitle();
-
-        return <<<HTML
-<span style="font-size: 9px;">{$helper->__('Description Title')}:&nbsp;
-    <a target="_blank" href="{$templateDescriptionEditUrl}">
-        {$helper->escapeHtml($templateTitle)}</a>
-</span>
-<br/>
-HTML;
-    }
-
     public function getProductVariationsTree($childProduct, $attributes)
     {
         $unusedVariations = $this->getUnusedProductVariations();

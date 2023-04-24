@@ -10,17 +10,12 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop;
 
 use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Stop\Response
- */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
-    //########################################
-
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $data = [];
 
@@ -28,14 +23,17 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $data = $this->appendQtyValues($data);
 
         $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->getChildObject()->addData($data);
+
+        $this->getAmazonListingProduct()->addData($data);
+
+        $isStatusChangerUser = $this->getListingProduct()->getStatusChanger()
+            === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
+        $isStoppedManually = $this->getListingProduct()->isStopped() && $isStatusChangerUser;
+        $this->getAmazonListingProduct()->setIsStoppedManually($isStoppedManually);
 
         $this->setLastSynchronizationDates();
-
         $this->getListingProduct()->save();
     }
-
-    //########################################
 
     protected function setLastSynchronizationDates()
     {
@@ -43,8 +41,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $additionalData['last_synchronization_dates']['qty'] = $this->getHelper('Data')->getCurrentGmtDate();
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
     }
-
-    //########################################
 
     public function throwRepeatActionInstructions()
     {
@@ -59,6 +55,4 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             ]
         );
     }
-
-    //########################################
 }

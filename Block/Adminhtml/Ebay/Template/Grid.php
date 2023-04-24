@@ -11,31 +11,39 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template;
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 use Magento\Framework\DB\Select;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Grid
- */
 class Grid extends AbstractGrid
 {
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
+    private $marketplaceCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory */
     private $wrapperCollectionFactory;
+    /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection|null */
     private $enabledMarketplacesCollection = null;
 
-    //########################################
-
+    /**
+     * @param \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
+        $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -54,8 +62,6 @@ class Grid extends AbstractGrid
         $this->setSaveParametersInSession(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -216,7 +222,6 @@ class Grid extends AbstractGrid
             'header' => $this->__('Title'),
             'align' => 'left',
             'type' => 'text',
-            //            'width'         => '150px',
             'index' => 'title',
             'escape' => true,
             'filter_index' => 'main_table.title',
@@ -315,8 +320,6 @@ class Grid extends AbstractGrid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     public function callbackColumnMarketplace($value, $row, $column, $isExport)
     {
         if (empty($value)) {
@@ -337,8 +340,6 @@ class Grid extends AbstractGrid
         $collection->getSelect()->where('main_table.marketplace = 0 OR main_table.marketplace = ?', (int)$value);
     }
 
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/*/templateGrid', ['_current' => true]);
@@ -356,15 +357,13 @@ class Grid extends AbstractGrid
         );
     }
 
-    //########################################
-
     private function getEnabledMarketplacesCollection()
     {
         if ($this->enabledMarketplacesCollection === null) {
-            $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
-            $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
-            $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-            $collection->setOrder('sorder', 'ASC');
+            /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $collection */
+            $collection = $this->marketplaceCollectionFactory->create();
+            $collection->appendFilterEnabledMarketplaces(\Ess\M2ePro\Helper\Component\Ebay::NICK)
+                ->setOrder('title', 'ASC');
 
             $this->enabledMarketplacesCollection = $collection;
         }
@@ -381,6 +380,4 @@ class Grid extends AbstractGrid
     {
         return $this->getEnabledMarketplacesCollection()->toOptionHash();
     }
-
-    //########################################
 }

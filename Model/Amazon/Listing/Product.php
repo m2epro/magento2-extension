@@ -50,6 +50,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
 
+    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
+    private $productTypeFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory */
     private $amazonPriceCalculatorFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory */
@@ -67,6 +69,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $repricingModel = null;
 
     /**
+     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
      * @param \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory
      * @param \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory
      * @param \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher
@@ -83,6 +86,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @param array $data
      */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory,
         \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher,
@@ -98,6 +102,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->productTypeFactory = $productTypeFactory;
         $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
         $this->identifiersFactory = $identifiesFactory;
         $this->searchDispatcher = $searchDispatcher;
@@ -408,54 +413,26 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isExistDescriptionTemplate()
+    public function isExistsProductTypeTemplate(): bool
     {
-        return $this->getTemplateDescriptionId() > 0;
+        return $this->getTemplateProductTypeId() > 0;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Template\Description | null
+     * @return \Ess\M2ePro\Model\Amazon\Template\ProductType|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getDescriptionTemplate()
+    public function getProductTypeTemplate(): ?\Ess\M2ePro\Model\Amazon\Template\ProductType
     {
-        if (!$this->isExistDescriptionTemplate()) {
+        if (!$this->isExistsProductTypeTemplate()) {
             return null;
         }
 
-        return $this->parentFactory->getCachedObjectLoaded(
-            $this->getComponentMode(),
-            'Template\Description',
-            $this->getTemplateDescriptionId()
-        );
+        $productType = $this->productTypeFactory->create();
+        $productType->load($this->getTemplateProductTypeId());
+
+        return $productType;
     }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\Description | null
-     */
-    public function getAmazonDescriptionTemplate()
-    {
-        if (!$this->isExistDescriptionTemplate()) {
-            return null;
-        }
-
-        return $this->getDescriptionTemplate()->getChildObject();
-    }
-
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\Description\Source
-     */
-    public function getDescriptionTemplateSource()
-    {
-        if (!$this->isExistDescriptionTemplate()) {
-            return null;
-        }
-
-        return $this->getAmazonDescriptionTemplate()->getSource($this->getActualMagentoProduct());
-    }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Magento\Product\Cache
@@ -604,14 +581,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getTemplateDescriptionId()
-    {
-        return (int)($this->getData('template_description_id'));
-    }
-
-    /**
-     * @return int
-     */
     public function getTemplateShippingId()
     {
         return (int)($this->getData('template_shipping_id'));
@@ -633,6 +602,24 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getSku()
     {
         return $this->getData('sku');
+    }
+
+    /**
+     * @return int
+     */
+    public function getTemplateProductTypeId(): int
+    {
+        return (int)$this->getData('template_product_type_id');
+    }
+
+    /**
+     * @param int|string $productType
+     *
+     * @return void
+     */
+    public function setTemplateProductTypeId($productType)
+    {
+        $this->setData('template_product_type_id', (int)$productType);
     }
 
     /**
@@ -795,15 +782,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getOnlineDetailsData()
     {
         return $this->getData('online_details_data');
-    }
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getOnlineImagesData()
-    {
-        return $this->getData('online_images_data');
     }
 
     // ---------------------------------------
@@ -1285,12 +1263,32 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $resultValue;
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function mapChannelItemProduct()
     {
         $this->getResource()->mapChannelItemProduct($this);
     }
 
-    //########################################
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isStoppedManually(): bool
+    {
+        return (bool)$this->getData('is_stopped_manually');
+    }
+
+    /**
+     * @param bool $value
+     *
+     * @return void
+     */
+    public function setIsStoppedManually(bool $value): void
+    {
+        $this->setData('is_stopped_manually', $value);
+    }
+
+    // ---------------------------------------
 }

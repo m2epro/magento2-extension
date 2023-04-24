@@ -51,17 +51,13 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $content = $this->__(
             '
             In this Section you can Create, Edit and Delete the Selling Policy,
-            Synchronization Policy, Description Policy, Shipping Policy,
-            Product Tax Code Policy.<br/><br/>
+            Synchronization Policy, Shipping Policy, Product Tax Code Policy.<br/><br/>
 
             <strong>Selling Policy</strong> is used to work with values related
             to the formation of your Channel Offers such as Price, Quantity, etc.<br/><br/>
 
             In the <strong>Synchronization Policy</strong>, you can set the Rules under which the dynamic data
             exchange between Channel and Magento will be performed.<br/><br/>
-
-            <strong>Description Policy</strong> is used to provide necessary settings for Creating new ASIN/ISBN in
-            Amazon Catalog or Update the Product Information of the existing Amazon Item.<br/><br/>
 
             <strong>Shipping Policy</strong> is used to apply the Amazon Shipping to your
             Products within M2E Pro Listings.<br/><br/>
@@ -100,11 +96,6 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
                 'label' => $this->__('Selling'),
                 'id' => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
-            ],
-            Grid::TEMPLATE_DESCRIPTION => [
-                'label' => $this->__('Description'),
-                'id' => 'description',
-                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_DESCRIPTION) . "')",
             ],
             Grid::TEMPLATE_SYNCHRONIZATION => [
                 'label' => $this->__('Synchronization'),

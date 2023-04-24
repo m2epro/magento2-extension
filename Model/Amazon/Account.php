@@ -68,19 +68,47 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public const INVOICE_GENERATION_BY_AMAZON = 1;
     public const INVOICE_GENERATION_BY_EXTENSION = 2;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Marketplace */
+    private $marketplaceModel;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing */
+    private $repricingModel;
+    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
+    private $moduleDatabaseStructure;
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    private $cachePermanent;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
 
-    /**
-     * @var \Ess\M2ePro\Model\Marketplace
-     */
-    private $marketplaceModel = null;
+    public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
+        \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructure,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
 
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Account\Repricing
-     */
-    private $repricingModel = null;
-
-    //########################################
+        $this->moduleDatabaseStructure = $moduleDatabaseStructure;
+        $this->cachePermanent = $cachePermanent;
+        $this->resourceConnection = $resourceConnection;
+    }
 
     public function _construct()
     {
@@ -88,16 +116,12 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Account::class);
     }
 
-    //########################################
-
     public function save()
     {
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+        $this->cachePermanent->removeTagValues('account');
 
         return parent::save();
     }
-
-    //########################################
 
     public function delete()
     {
@@ -115,21 +139,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $this->repricingModel = null;
         }
 
+        $this->deleteShippingPolicies();
+
         $this->marketplaceModel = null;
 
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
+        $this->cachePermanent->removeTagValues('account');
 
         return parent::delete();
     }
-
-    //########################################
 
     public function getAmazonItems($asObjects = false, array $filters = [])
     {
         return $this->getRelatedSimpleItems('Amazon\Item', 'account_id', $asObjects, $filters);
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Marketplace
@@ -155,15 +177,13 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $this->marketplaceModel = $instance;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
-    public function isRepricing()
+    public function isRepricing(): bool
     {
         $cacheKey = 'amazon_account_' . $this->getId() . '_is_repricing';
-        $cacheData = $this->getHelper('Data_Cache_Permanent')->getValue($cacheKey);
+        $cacheData = $this->cachePermanent->getValue($cacheKey);
 
         if ($cacheData !== null) {
             return (bool)$cacheData;
@@ -173,7 +193,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $repricingCollection->addFieldToFilter('account_id', $this->getId());
         $isRepricing = (int)(bool)$repricingCollection->getSize();
 
-        $this->getHelper('Data_Cache_Permanent')->setValue(
+        $this->cachePermanent->setValue(
             $cacheKey,
             $isRepricing,
             ['account'],
@@ -185,8 +205,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Account\Repricing
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getRepricing()
+    public function getRepricing(): Account\Repricing
     {
         if ($this->repricingModel === null) {
             $this->repricingModel = $this->activeRecordFactory->getCachedObjectLoaded(
@@ -199,7 +220,45 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->repricingModel;
     }
 
-    //########################################
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getShippingPolicies(): array
+    {
+        return $this->getRelatedSimpleItems('Amazon_Template_Shipping', 'account_id', true);
+    }
+
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function deleteShippingPolicies(): void
+    {
+        $policies = $this->getShippingPolicies();
+
+        foreach ($policies as $policy) {
+            $policy->delete();
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getShippingTemplates(): array
+    {
+        $tableDictionaryTemplateShipping = $this->moduleDatabaseStructure
+                                            ->getTableNameWithPrefix('m2epro_amazon_dictionary_template_shipping');
+
+        $connRead = $this->resourceConnection->getConnection();
+
+        $dbSelect = $connRead->select()
+                             ->from($tableDictionaryTemplateShipping, '*')
+                             ->where('`account_id` = ?', (int)$this->getId())
+                             ->order(['title ASC']);
+
+        return $connRead->fetchAll($dbSelect);
+    }
 
     public function getServerHash()
     {
@@ -209,7 +268,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMarketplaceId()
+    public function getMarketplaceId(): int
     {
         return (int)$this->getData('marketplace_id');
     }
@@ -227,12 +286,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getRelatedStoreId()
+    public function getRelatedStoreId(): int
     {
         return (int)$this->getData('related_store_id');
     }
-
-    // ---------------------------------------
 
     public function getInfo()
     {
@@ -242,19 +299,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return array|null
      */
-    public function getDecodedInfo()
+    public function getDecodedInfo(): ?array
     {
         $tempInfo = $this->getInfo();
 
         return $tempInfo === null ? null : \Ess\M2ePro\Helper\Json::decode($tempInfo);
     }
 
-    //########################################
-
     /**
      * @return int
      */
-    public function getOtherListingsSynchronization()
+    public function getOtherListingsSynchronization(): int
     {
         return (int)$this->getData('other_listings_synchronization');
     }
@@ -262,7 +317,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getOtherListingsMappingMode()
+    public function getOtherListingsMappingMode(): int
     {
         return (int)$this->getData('other_listings_mapping_mode');
     }
@@ -271,17 +326,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getOtherListingsMappingSettings()
+    public function getOtherListingsMappingSettings(): array
     {
         return $this->getSettings('other_listings_mapping_settings');
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
-    public function getOtherListingsMappingGeneralIdMode()
+    public function getOtherListingsMappingGeneralIdMode(): int
     {
         $setting = $this->getSetting(
             'other_listings_mapping_settings',
@@ -319,7 +372,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getOtherListingsMappingGeneralIdPriority()
+    public function getOtherListingsMappingGeneralIdPriority(): int
     {
         $setting = $this->getSetting(
             'other_listings_mapping_settings',
@@ -335,12 +388,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getSetting('other_listings_mapping_settings', ['general_id', 'attribute']);
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
-    public function getOtherListingsMappingSkuMode()
+    public function getOtherListingsMappingSkuMode(): int
     {
         $setting = $this->getSetting(
             'other_listings_mapping_settings',
@@ -354,7 +405,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getOtherListingsMappingSkuPriority()
+    public function getOtherListingsMappingSkuPriority(): int
     {
         $setting = $this->getSetting(
             'other_listings_mapping_settings',
@@ -373,12 +424,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         );
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
-    public function getOtherListingsMappingTitleMode()
+    public function getOtherListingsMappingTitleMode(): int
     {
         $setting = $this->getSetting(
             'other_listings_mapping_settings',
@@ -392,7 +441,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getOtherListingsMappingTitlePriority()
+    public function getOtherListingsMappingTitlePriority(): int
     {
         $setting = $this->getSetting(
             'other_listings_mapping_settings',
@@ -408,12 +457,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getSetting('other_listings_mapping_settings', ['title', 'attribute']);
     }
 
-    //########################################
-
     /**
      * @return bool
      */
-    public function isOtherListingsSynchronizationEnabled()
+    public function isOtherListingsSynchronizationEnabled(): bool
     {
         return $this->getOtherListingsSynchronization() == 1;
     }
@@ -421,17 +468,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingEnabled()
+    public function isOtherListingsMappingEnabled(): bool
     {
         return $this->getOtherListingsMappingMode() == 1;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isOtherListingsMappingGeneralIdModeNone()
+    public function isOtherListingsMappingGeneralIdModeNone(): bool
     {
         return $this->getOtherListingsMappingGeneralIdMode() == self::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE;
     }
@@ -439,18 +484,16 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingGeneralIdModeCustomAttribute()
+    public function isOtherListingsMappingGeneralIdModeCustomAttribute(): bool
     {
         return $this->getOtherListingsMappingGeneralIdMode() ==
             self::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_CUSTOM_ATTRIBUTE;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isOtherListingsMappingSkuModeNone()
+    public function isOtherListingsMappingSkuModeNone(): bool
     {
         return $this->getOtherListingsMappingSkuMode() == self::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE;
     }
@@ -458,7 +501,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingSkuModeDefault()
+    public function isOtherListingsMappingSkuModeDefault(): bool
     {
         return $this->getOtherListingsMappingSkuMode() == self::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT;
     }
@@ -466,7 +509,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingSkuModeCustomAttribute()
+    public function isOtherListingsMappingSkuModeCustomAttribute(): bool
     {
         return $this->getOtherListingsMappingSkuMode() == self::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE;
     }
@@ -474,17 +517,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingSkuModeProductId()
+    public function isOtherListingsMappingSkuModeProductId(): bool
     {
         return $this->getOtherListingsMappingSkuMode() == self::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isOtherListingsMappingTitleModeNone()
+    public function isOtherListingsMappingTitleModeNone(): bool
     {
         return $this->getOtherListingsMappingTitleMode() == self::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE;
     }
@@ -492,7 +533,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingTitleModeDefault()
+    public function isOtherListingsMappingTitleModeDefault(): bool
     {
         return $this->getOtherListingsMappingTitleMode() == self::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT;
     }
@@ -500,17 +541,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isOtherListingsMappingTitleModeCustomAttribute()
+    public function isOtherListingsMappingTitleModeCustomAttribute(): bool
     {
         return $this->getOtherListingsMappingTitleMode() == self::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
-    public function isMagentoOrdersListingsModeEnabled()
+    public function isMagentoOrdersListingsModeEnabled(): bool
     {
         return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
     }
@@ -518,7 +557,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersListingsStoreCustom()
+    public function isMagentoOrdersListingsStoreCustom(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -532,19 +571,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersListingsStoreId()
+    public function getMagentoOrdersListingsStoreId(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['listing', 'store_id'], 0);
 
         return (int)$setting;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isMagentoOrdersListingsOtherModeEnabled()
+    public function isMagentoOrdersListingsOtherModeEnabled(): bool
     {
         return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
     }
@@ -552,7 +589,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersListingsOtherStoreId()
+    public function getMagentoOrdersListingsOtherStoreId(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['listing_other', 'store_id'], 0);
 
@@ -562,7 +599,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersListingsOtherProductImportEnabled()
+    public function isMagentoOrdersListingsOtherProductImportEnabled(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -576,7 +613,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersListingsOtherProductTaxClassId()
+    public function getMagentoOrdersListingsOtherProductTaxClassId(): int
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -586,8 +623,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         return (int)$setting;
     }
-
-    // ---------------------------------------
 
     public function getMagentoOrdersNumberSource()
     {
@@ -601,7 +636,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersNumberSourceMagento()
+    public function isMagentoOrdersNumberSourceMagento(): bool
     {
         return $this->getMagentoOrdersNumberSource() == self::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO;
     }
@@ -609,17 +644,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersNumberSourceChannel()
+    public function isMagentoOrdersNumberSourceChannel(): bool
     {
         return $this->getMagentoOrdersNumberSource() == self::MAGENTO_ORDERS_NUMBER_SOURCE_CHANNEL;
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      */
-    public function getMagentoOrdersNumberRegularPrefix()
+    public function getMagentoOrdersNumberRegularPrefix(): string
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
 
@@ -629,7 +662,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return string
      */
-    public function getMagentoOrdersNumberAfnPrefix()
+    public function getMagentoOrdersNumberAfnPrefix(): string
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
 
@@ -639,7 +672,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return string
      */
-    public function getMagentoOrdersNumberPrimePrefix()
+    public function getMagentoOrdersNumberPrimePrefix(): string
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
 
@@ -649,19 +682,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return string
      */
-    public function getMagentoOrdersNumberB2bPrefix()
+    public function getMagentoOrdersNumberB2bPrefix(): string
     {
         $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
 
         return isset($settings['b2b-prefix']) ? $settings['b2b-prefix'] : '';
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isMagentoOrdersNumberApplyToAmazonOrderEnable()
+    public function isMagentoOrdersNumberApplyToAmazonOrderEnable(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -672,36 +703,30 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $setting == 1;
     }
 
-    // ---------------------------------------
-
     /**
      * @return int
      */
-    public function getQtyReservationDays()
+    public function getQtyReservationDays(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['qty_reservation', 'days'], 1);
 
         return (int)$setting;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isRefundEnabled()
+    public function isRefundEnabled(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['refund_and_cancellation', 'refund_mode']);
 
         return (bool)$setting;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isMagentoOrdersTaxModeNone()
+    public function isMagentoOrdersTaxModeNone(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
@@ -711,7 +736,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersTaxModeChannel()
+    public function isMagentoOrdersTaxModeChannel(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
@@ -721,7 +746,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersTaxModeMagento()
+    public function isMagentoOrdersTaxModeMagento(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
@@ -731,14 +756,12 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersTaxModeMixed()
+    public function isMagentoOrdersTaxModeMixed(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['tax', 'mode']);
 
         return $setting == self::MAGENTO_ORDERS_TAX_MODE_MIXED;
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -813,12 +836,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return false;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerGuest()
+    public function isMagentoOrdersCustomerGuest(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -832,7 +853,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerPredefined()
+    public function isMagentoOrdersCustomerPredefined(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -846,7 +867,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerNew()
+    public function isMagentoOrdersCustomerNew(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -860,7 +881,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersCustomerId()
+    public function getMagentoOrdersCustomerId(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'id']);
 
@@ -870,7 +891,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerNewSubscribed()
+    public function isMagentoOrdersCustomerNewSubscribed(): bool
     {
         return $this->getSetting('magento_orders_settings', ['customer', 'subscription_mode'], 0) == 1;
     }
@@ -878,7 +899,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerNewNotifyWhenCreated()
+    public function isMagentoOrdersCustomerNewNotifyWhenCreated(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'customer_created']);
 
@@ -888,7 +909,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated()
+    public function isMagentoOrdersCustomerNewNotifyWhenOrderCreated(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'order_created']);
 
@@ -898,7 +919,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersCustomerNewNotifyWhenInvoiceCreated()
+    public function isMagentoOrdersCustomerNewNotifyWhenInvoiceCreated(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'notifications', 'invoice_created']);
 
@@ -908,7 +929,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersCustomerNewWebsiteId()
+    public function getMagentoOrdersCustomerNewWebsiteId(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'website_id']);
 
@@ -918,19 +939,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersCustomerNewGroupId()
+    public function getMagentoOrdersCustomerNewGroupId(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['customer', 'group_id']);
 
         return (int)$setting;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function useMagentoOrdersShippingAddressAsBillingAlways()
+    public function useMagentoOrdersShippingAddressAsBillingAlways(): bool
     {
         return $this->getBillingAddressMode() == self::USE_SHIPPING_ADDRESS_AS_BILLING_ALWAYS;
     }
@@ -938,7 +957,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient()
+    public function useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient(): bool
     {
         return $this->getBillingAddressMode() == self::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT;
     }
@@ -946,7 +965,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    private function getBillingAddressMode()
+    private function getBillingAddressMode(): int
     {
         return (int)$this->getSetting(
             'magento_orders_settings',
@@ -955,12 +974,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         );
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
-    public function isMagentoOrdersStatusMappingDefault()
+    public function isMagentoOrdersStatusMappingDefault(): bool
     {
         $setting = $this->getSetting(
             'magento_orders_settings',
@@ -989,14 +1006,18 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getSetting('magento_orders_settings', ['status_mapping', 'shipped']);
     }
 
-    // ---------------------------------------
-
-    public function isMagentoOrdersFbaModeEnabled()
+    /**
+     * @return bool
+     */
+    public function isMagentoOrdersFbaModeEnabled(): bool
     {
         return $this->getSetting('magento_orders_settings', ['fba', 'mode'], 1) == 1;
     }
 
-    public function isMagentoOrdersFbaStoreModeEnabled()
+    /**
+     * @return bool
+     */
+    public function isMagentoOrdersFbaStoreModeEnabled(): bool
     {
         $setting = $this->getSetting('magento_orders_settings', ['fba', 'store_mode'], 0);
 
@@ -1006,24 +1027,25 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getMagentoOrdersFbaStoreId()
+    public function getMagentoOrdersFbaStoreId(): int
     {
         $setting = $this->getSetting('magento_orders_settings', ['fba', 'store_id'], 0);
 
         return (int)$setting;
     }
 
-    public function isMagentoOrdersFbaStockEnabled()
+    /**
+     * @return bool
+     */
+    public function isMagentoOrdersFbaStockEnabled(): bool
     {
         return $this->getSetting('magento_orders_settings', ['fba', 'stock_mode'], 0) == 1;
     }
 
-    //########################################
-
     /**
      * @return int
      */
-    public function getAutoInvoicing()
+    public function getAutoInvoicing(): int
     {
         return (int)$this->getData('auto_invoicing');
     }
@@ -1031,7 +1053,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isAutoInvoicingDisabled()
+    public function isAutoInvoicingDisabled(): bool
     {
         return $this->getAutoInvoicing() == self::AUTO_INVOICING_DISABLED;
     }
@@ -1039,7 +1061,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isVatCalculationServiceEnabled()
+    public function isVatCalculationServiceEnabled(): bool
     {
         return $this->getAutoInvoicing() == self::AUTO_INVOICING_VAT_CALCULATION_SERVICE;
     }
@@ -1047,7 +1069,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isUploadMagentoInvoices()
+    public function isUploadMagentoInvoices(): bool
     {
         return $this->getAutoInvoicing() == self::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES;
     }
@@ -1055,7 +1077,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getInvoiceGeneration()
+    public function getInvoiceGeneration(): int
     {
         return (int)$this->getData('invoice_generation');
     }
@@ -1063,7 +1085,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isInvoiceGenerationByAmazon()
+    public function isInvoiceGenerationByAmazon(): bool
     {
         return $this->getInvoiceGeneration() == self::INVOICE_GENERATION_BY_AMAZON;
     }
@@ -1071,7 +1093,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isInvoiceGenerationByExtension()
+    public function isInvoiceGenerationByExtension(): bool
     {
         return $this->getInvoiceGeneration() == self::INVOICE_GENERATION_BY_EXTENSION;
     }
@@ -1079,7 +1101,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersInvoiceEnabled()
+    public function isMagentoOrdersInvoiceEnabled(): bool
     {
         return (bool)$this->getData('create_magento_invoice');
     }
@@ -1087,7 +1109,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isMagentoOrdersShipmentEnabled()
+    public function isMagentoOrdersShipmentEnabled(): bool
     {
         return (bool)$this->getData('create_magento_shipment');
     }
@@ -1095,12 +1117,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isRemoteFulfillmentProgramEnabled()
+    public function isRemoteFulfillmentProgramEnabled(): bool
     {
         return (bool)$this->getData('remote_fulfillment_program_mode');
     }
 
-    public function isCacheEnabled()
+    /**
+     * @return bool
+     */
+    public function isCacheEnabled(): bool
     {
         return true;
     }

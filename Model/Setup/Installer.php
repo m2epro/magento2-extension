@@ -2781,6 +2781,14 @@ class Installer
                     'type' => 1,
                     'priority' => 5,
                 ],
+                [
+                    'nick' => 'amazonMigrationToProductTypes',
+                    'view' => 'amazon',
+                    'status' => 3,
+                    'step' => null,
+                    'type' => 1,
+                    'priority' => 6,
+                ],
             ]
         );
 
@@ -4320,43 +4328,47 @@ class Installer
         $this->getConnection()->createTable($ebayIndexerListingProductVariationParentTable);
 
         $ebayListingProductScheduledStopActionTable = $this->getConnection()
-            ->newTable($this->getFullTableName('ebay_listing_product_scheduled_stop_action'))
-            ->addColumn(
-                'id',
-                Table::TYPE_INTEGER,
-                null,
-                [
-                    'unsigned' => true,
-                    'primary' => true,
-                    'nullable' => false,
-                    'auto_increment' => true,
-                ]
-            )
-            ->addColumn(
-                'listing_product_id',
-                Table::TYPE_INTEGER,
-                null,
-                [
-                    'unsigned' => true,
-                    'nullable' => false
-                ]
-            )
-            ->addColumn(
-                'create_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->addColumn(
-                'process_date',
-                Table::TYPE_DATETIME,
-                null,
-                ['default' => null]
-            )
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci')
-            ->setOption('row_format', 'dynamic');
+                                                           ->newTable(
+                                                               $this->getFullTableName(
+                                                                   'ebay_listing_product_scheduled_stop_action'
+                                                               )
+                                                           )
+                                                           ->addColumn(
+                                                               'id',
+                                                               Table::TYPE_INTEGER,
+                                                               null,
+                                                               [
+                                                                   'unsigned' => true,
+                                                                   'primary' => true,
+                                                                   'nullable' => false,
+                                                                   'auto_increment' => true,
+                                                               ]
+                                                           )
+                                                           ->addColumn(
+                                                               'listing_product_id',
+                                                               Table::TYPE_INTEGER,
+                                                               null,
+                                                               [
+                                                                   'unsigned' => true,
+                                                                   'nullable' => false,
+                                                               ]
+                                                           )
+                                                           ->addColumn(
+                                                               'create_date',
+                                                               Table::TYPE_DATETIME,
+                                                               null,
+                                                               ['default' => null]
+                                                           )
+                                                           ->addColumn(
+                                                               'process_date',
+                                                               Table::TYPE_DATETIME,
+                                                               null,
+                                                               ['default' => null]
+                                                           )
+                                                           ->setOption('type', 'INNODB')
+                                                           ->setOption('charset', 'utf8')
+                                                           ->setOption('collate', 'utf8_general_ci')
+                                                           ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayListingProductScheduledStopActionTable);
 
         $ebayMarketplaceTable = $this->getConnection()->newTable($this->getFullTableName('ebay_marketplace'))
@@ -7474,7 +7486,7 @@ class Installer
                     'is_freight_shipping' => 0,
                     'is_calculated_shipping' => 0,
                     'is_tax_table' => 0,
-                    'is_vat' => 0,
+                    'is_vat' => 1,
                     'is_stp' => 0,
                     'is_stp_advanced' => 0,
                     'is_map' => 0,
@@ -7961,7 +7973,7 @@ class Installer
                                                      ['default' => null]
                                                  )
                                                  ->addColumn(
-                                                     'product_data',
+                                                     'product_types',
                                                      Table::TYPE_TEXT,
                                                      self::LONG_COLUMN_SIZE,
                                                      ['default' => null]
@@ -7972,6 +7984,61 @@ class Installer
                                                  ->setOption('collate', 'utf8_general_ci')
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonDictionaryMarketplaceTable);
+
+        $amazonDictionaryProductTypeTable = $this->getConnection()->newTable(
+            $this->getFullTableName('amazon_dictionary_product_type')
+        )
+                                                 ->addColumn(
+                                                     'id',
+                                                     Table::TYPE_INTEGER,
+                                                     null,
+                                                     [
+                                                         'unsigned' => true,
+                                                         'primary' => true,
+                                                         'nullable' => false,
+                                                         'auto_increment' => true,
+                                                     ]
+                                                 )
+                                                 ->addColumn(
+                                                     'marketplace_id',
+                                                     Table::TYPE_INTEGER,
+                                                     null,
+                                                     ['unsigned' => true, 'nullable' => false]
+                                                 )
+                                                 ->addColumn(
+                                                     'nick',
+                                                     Table::TYPE_TEXT,
+                                                     255,
+                                                     ['nullable' => false]
+                                                 )
+                                                 ->addColumn(
+                                                     'title',
+                                                     Table::TYPE_TEXT,
+                                                     255,
+                                                     ['nullable' => false]
+                                                 )
+                                                 ->addColumn(
+                                                     'scheme',
+                                                     Table::TYPE_TEXT,
+                                                     self::LONG_COLUMN_SIZE,
+                                                     ['nullable' => false]
+                                                 )
+                                                 ->addColumn(
+                                                     'invalid',
+                                                     Table::TYPE_SMALLINT,
+                                                     null,
+                                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                                 )
+                                                 ->addIndex(
+                                                     'marketplace_id_nick',
+                                                     ['marketplace_id', 'nick'],
+                                                     ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+                                                 )
+                                                 ->setOption('type', 'INNODB')
+                                                 ->setOption('charset', 'utf8')
+                                                 ->setOption('collate', 'utf8_general_ci')
+                                                 ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($amazonDictionaryProductTypeTable);
 
         $amazonDictionarySpecificTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_dictionary_specific')
@@ -8213,13 +8280,25 @@ class Installer
                                        ['unsigned' => true, 'primary' => true, 'nullable' => false]
                                    )
                                    ->addColumn(
-                                       'auto_global_adding_description_template_id',
+                                       'auto_global_adding_description_template_id', // @deprecated
                                        Table::TYPE_INTEGER,
                                        null,
                                        ['unsigned' => true, 'default' => null]
                                    )
                                    ->addColumn(
-                                       'auto_website_adding_description_template_id',
+                                       'auto_global_adding_product_type_template_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'default' => null]
+                                   )
+                                   ->addColumn(
+                                       'auto_website_adding_description_template_id', // @deprecated
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'default' => null]
+                                   )
+                                   ->addColumn(
+                                       'auto_website_adding_product_type_template_id',
                                        Table::TYPE_INTEGER,
                                        null,
                                        ['unsigned' => true, 'default' => null]
@@ -8303,31 +8382,31 @@ class Installer
                                        ['nullable' => false]
                                    )
                                    ->addColumn(
-                                       'image_main_mode',
+                                       'image_main_mode', // @deprecated
                                        Table::TYPE_SMALLINT,
                                        null,
                                        ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                    )
                                    ->addColumn(
-                                       'image_main_attribute',
+                                       'image_main_attribute', // @deprecated
                                        Table::TYPE_TEXT,
                                        255,
                                        ['nullable' => false]
                                    )
                                    ->addColumn(
-                                       'gallery_images_mode',
+                                       'gallery_images_mode', // @deprecated
                                        Table::TYPE_SMALLINT,
                                        null,
                                        ['unsigned' => true, 'nullable' => false]
                                    )
                                    ->addColumn(
-                                       'gallery_images_limit',
+                                       'gallery_images_limit', // @deprecated
                                        Table::TYPE_SMALLINT,
                                        null,
                                        ['unsigned' => true, 'nullable' => false, 'default' => 1]
                                    )
                                    ->addColumn(
-                                       'gallery_images_attribute',
+                                       'gallery_images_attribute', // @deprecated
                                        Table::TYPE_TEXT,
                                        255,
                                        ['nullable' => false]
@@ -8401,10 +8480,18 @@ class Installer
                                    ->addIndex(
                                        'auto_global_adding_description_template_id',
                                        'auto_global_adding_description_template_id'
+                                   ) // @deprecated
+                                   ->addIndex(
+                                       'auto_global_adding_product_type_template_id`',
+                                       'auto_global_adding_product_type_template_id'
                                    )
                                    ->addIndex(
                                        'auto_website_adding_description_template_id',
                                        'auto_website_adding_description_template_id'
+                                   ) // @deprecated
+                                   ->addIndex(
+                                       'auto_website_adding_product_type_template_id',
+                                       'auto_website_adding_product_type_template_id'
                                    )
                                    ->addIndex('generate_sku_mode', 'generate_sku_mode')
                                    ->addIndex('template_selling_format_id', 'template_selling_format_id')
@@ -8426,7 +8513,13 @@ class Installer
                                                         ['unsigned' => true, 'primary' => true, 'nullable' => false]
                                                     )
                                                     ->addColumn(
-                                                        'adding_description_template_id',
+                                                        'adding_description_template_id', // @deprecated
+                                                        Table::TYPE_INTEGER,
+                                                        null,
+                                                        ['unsigned' => true, 'default' => null]
+                                                    )
+                                                    ->addColumn(
+                                                        'adding_product_type_template_id',
                                                         Table::TYPE_INTEGER,
                                                         null,
                                                         ['unsigned' => true, 'default' => null]
@@ -8434,6 +8527,10 @@ class Installer
                                                     ->addIndex(
                                                         'adding_description_template_id',
                                                         'adding_description_template_id'
+                                                    ) // @deprecated
+                                                    ->addIndex(
+                                                        'adding_product_type_template_id',
+                                                        'adding_product_type_template_id'
                                                     )
                                                     ->setOption('type', 'INNODB')
                                                     ->setOption('charset', 'utf8')
@@ -8530,257 +8627,267 @@ class Installer
                                         ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingOtherTable);
 
-        $amazonListingProductTable = $this->getConnection()->newTable($this->getFullTableName('amazon_listing_product'))
-                                          ->addColumn(
-                                              'listing_product_id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                          )
-                                          ->addColumn(
-                                              'template_description_id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'template_shipping_id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'template_product_tax_code_id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'is_variation_product',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'is_variation_product_matched',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'is_variation_channel_matched',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'is_variation_parent',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'variation_parent_id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'variation_parent_need_processor',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'variation_child_statuses',
-                                              Table::TYPE_TEXT,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'general_id',
-                                              Table::TYPE_TEXT,
-                                              255,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'general_id_search_info',
-                                              Table::TYPE_TEXT,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'search_settings_status',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'search_settings_data',
-                                              Table::TYPE_TEXT,
-                                              Table::MAX_TEXT_SIZE,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'sku',
-                                              Table::TYPE_TEXT,
-                                              255,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_regular_price',
-                                              Table::TYPE_DECIMAL,
-                                              [12, 4],
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_regular_sale_price',
-                                              Table::TYPE_DECIMAL,
-                                              [12, 4],
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_regular_sale_price_start_date',
-                                              Table::TYPE_DATETIME,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_regular_sale_price_end_date',
-                                              Table::TYPE_DATETIME,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_business_price',
-                                              Table::TYPE_DECIMAL,
-                                              [12, 4],
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_business_discounts',
-                                              Table::TYPE_TEXT,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_qty',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_afn_qty',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_handling_time',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_restock_date',
-                                              Table::TYPE_DATETIME,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_details_data',
-                                              Table::TYPE_TEXT,
-                                              40,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'online_images_data',
-                                              Table::TYPE_TEXT,
-                                              40,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'is_repricing',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'is_afn_channel',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'is_isbn_general_id',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'is_general_id_owner',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                          )
-                                          ->addColumn(
-                                              'variation_parent_afn_state',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'variation_parent_repricing_state',
-                                              Table::TYPE_SMALLINT,
-                                              null,
-                                              ['unsigned' => true, 'default' => null]
-                                          )
-                                          ->addColumn(
-                                              'defected_messages',
-                                              Table::TYPE_TEXT,
-                                              null,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
-                                              'list_date',
-                                              Table::TYPE_DATETIME,
-                                              null,
-                                              ['nullable' => true]
-                                          )
-                                          ->addIndex('general_id', 'general_id')
-                                          ->addIndex('search_settings_status', 'search_settings_status')
-                                          ->addIndex('is_repricing', 'is_repricing')
-                                          ->addIndex('is_afn_channel', 'is_afn_channel')
-                                          ->addIndex('is_isbn_general_id', 'is_isbn_general_id')
-                                          ->addIndex('is_variation_product_matched', 'is_variation_product_matched')
-                                          ->addIndex('is_variation_channel_matched', 'is_variation_channel_matched')
-                                          ->addIndex('is_variation_product', 'is_variation_product')
-                                          ->addIndex('online_regular_price', 'online_regular_price')
-                                          ->addIndex('online_qty', 'online_qty')
-                                          ->addIndex('online_regular_sale_price', 'online_regular_sale_price')
-                                          ->addIndex('online_business_price', 'online_business_price')
-                                          ->addIndex('sku', 'sku')
-                                          ->addIndex('is_variation_parent', 'is_variation_parent')
-                                          ->addIndex(
-                                              'variation_parent_need_processor',
-                                              'variation_parent_need_processor'
-                                          )
-                                          ->addIndex('variation_parent_id', 'variation_parent_id')
-                                          ->addIndex('is_general_id_owner', 'is_general_id_owner')
-                                          ->addIndex('variation_parent_afn_state', 'variation_parent_afn_state')
-                                          ->addIndex(
-                                              'variation_parent_repricing_state',
-                                              'variation_parent_repricing_state'
-                                          )
-                                          ->addIndex('template_shipping_id', 'template_shipping_id')
-                                          ->addIndex('template_product_tax_code_id', 'template_product_tax_code_id')
-                                          ->addIndex('template_description_id', 'template_description_id')
-                                          ->addIndex('list_date', 'list_date')
-                                          ->setOption('type', 'INNODB')
-                                          ->setOption('charset', 'utf8')
-                                          ->setOption('collate', 'utf8_general_ci')
-                                          ->setOption('row_format', 'dynamic');
+        #region amazon_listing_product
+        $amazonListingProductTable = $this->getConnection()->newTable(
+            $this->getFullTableName('amazon_listing_product')
+        );
+        $amazonListingProductTable->addColumn(
+            'listing_product_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'primary' => true, 'nullable' => false]
+        );
+        $amazonListingProductTable->addColumn(
+            'template_product_type_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'template_description_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'template_shipping_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'template_product_tax_code_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_variation_product',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_variation_product_matched',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_variation_channel_matched',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_variation_parent',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'variation_parent_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'variation_parent_need_processor',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'variation_child_statuses',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'general_id',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'general_id_search_info',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'search_settings_status',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'search_settings_data',
+            Table::TYPE_TEXT,
+            Table::MAX_TEXT_SIZE,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'sku',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_regular_price',
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_regular_sale_price',
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_regular_sale_price_start_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_regular_sale_price_end_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_business_price',
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_business_discounts',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_qty',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_afn_qty',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_handling_time',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_restock_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_details_data',
+            Table::TYPE_TEXT,
+            40,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_images_data', // @deprecated
+            Table::TYPE_TEXT,
+            40,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_repricing',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_afn_channel',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_isbn_general_id',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_general_id_owner',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'is_stopped_manually',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonListingProductTable->addColumn(
+            'variation_parent_afn_state',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'variation_parent_repricing_state',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'defected_messages',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'list_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['nullable' => true]
+        );
+        $amazonListingProductTable->addIndex('general_id', 'general_id');
+        $amazonListingProductTable->addIndex('search_settings_status', 'search_settings_status');
+        $amazonListingProductTable->addIndex('is_repricing', 'is_repricing');
+        $amazonListingProductTable->addIndex('is_afn_channel', 'is_afn_channel');
+        $amazonListingProductTable->addIndex('is_isbn_general_id', 'is_isbn_general_id');
+        $amazonListingProductTable->addIndex('is_variation_product_matched', 'is_variation_product_matched');
+        $amazonListingProductTable->addIndex('is_variation_channel_matched', 'is_variation_channel_matched');
+        $amazonListingProductTable->addIndex('is_variation_product', 'is_variation_product');
+        $amazonListingProductTable->addIndex('online_regular_price', 'online_regular_price');
+        $amazonListingProductTable->addIndex('online_qty', 'online_qty');
+        $amazonListingProductTable->addIndex('online_regular_sale_price', 'online_regular_sale_price');
+        $amazonListingProductTable->addIndex('online_business_price', 'online_business_price');
+        $amazonListingProductTable->addIndex('sku', 'sku');
+        $amazonListingProductTable->addIndex('is_variation_parent', 'is_variation_parent');
+        $amazonListingProductTable->addIndex('variation_parent_need_processor', 'variation_parent_need_processor');
+        $amazonListingProductTable->addIndex('variation_parent_id', 'variation_parent_id');
+        $amazonListingProductTable->addIndex('is_general_id_owner', 'is_general_id_owner');
+        $amazonListingProductTable->addIndex('variation_parent_afn_state', 'variation_parent_afn_state');
+        $amazonListingProductTable->addIndex('variation_parent_repricing_state', 'variation_parent_repricing_state');
+        $amazonListingProductTable->addIndex('template_shipping_id', 'template_shipping_id');
+        $amazonListingProductTable->addIndex('template_product_tax_code_id', 'template_product_tax_code_id');
+        $amazonListingProductTable->addIndex('template_product_type_id', 'template_product_type_id');
+        $amazonListingProductTable->addIndex('list_date', 'list_date');
+        $amazonListingProductTable->setOption('type', 'INNODB');
+        $amazonListingProductTable->setOption('charset', 'utf8');
+        $amazonListingProductTable->setOption('collate', 'utf8_general_ci');
+        $amazonListingProductTable->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingProductTable);
+        #endregion
 
         $amazonListingProductRepricingTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_product_repricing')
@@ -9617,19 +9724,19 @@ class Installer
                                                 ['nullable' => false]
                                             )
                                             ->addColumn(
-                                                'template_name_mode',
-                                                Table::TYPE_SMALLINT,
+                                                'account_id',
+                                                Table::TYPE_INTEGER,
                                                 null,
-                                                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                                ['unsigned' => true, 'nullable' => false]
                                             )
                                             ->addColumn(
-                                                'template_name_value',
-                                                Table::TYPE_TEXT,
-                                                255,
-                                                ['nullable' => false]
+                                                'marketplace_id',
+                                                Table::TYPE_INTEGER,
+                                                null,
+                                                ['unsigned' => true, 'nullable' => false]
                                             )
                                             ->addColumn(
-                                                'template_name_attribute',
+                                                'template_id',
                                                 Table::TYPE_TEXT,
                                                 255,
                                                 ['nullable' => false]
@@ -9652,6 +9759,45 @@ class Installer
                                             ->setOption('collate', 'utf8_general_ci')
                                             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonTemplateShippingTable);
+
+        $amazonDictionaryTemplateShippingTable = $this->getConnection()->newTable(
+            $this->getFullTableName('amazon_dictionary_template_shipping')
+        )
+                                            ->addColumn(
+                                                'id',
+                                                Table::TYPE_INTEGER,
+                                                null,
+                                                [
+                                                    'unsigned' => true,
+                                                    'primary' => true,
+                                                    'nullable' => false,
+                                                    'auto_increment' => true,
+                                                ]
+                                            )
+                                            ->addColumn(
+                                                'account_id',
+                                                Table::TYPE_INTEGER,
+                                                null,
+                                                ['unsigned' => true, 'nullable' => false]
+                                            )
+                                            ->addColumn(
+                                                'template_id',
+                                                Table::TYPE_TEXT,
+                                                255,
+                                                ['nullable' => false]
+                                            )
+                                            ->addColumn(
+                                                'title',
+                                                Table::TYPE_TEXT,
+                                                255,
+                                                ['nullable' => false]
+                                            )
+                                            ->addIndex('account_id', 'account_id')
+                                            ->setOption('type', 'INNODB')
+                                            ->setOption('charset', 'utf8')
+                                            ->setOption('collate', 'utf8_general_ci')
+                                            ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($amazonDictionaryTemplateShippingTable);
 
         $amazonTemplateProductTaxCodeTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_template_product_tax_code')
@@ -9710,6 +9856,55 @@ class Installer
                                                   ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonTemplateProductTaxCodeTable);
 
+        $amazonTemplateProductTypeTable = $this->getConnection()->newTable(
+            $this->getFullTableName('amazon_template_product_type')
+        )
+                                               ->addColumn(
+                                                   'id',
+                                                   Table::TYPE_INTEGER,
+                                                   null,
+                                                   [
+                                                       'unsigned' => true,
+                                                       'primary' => true,
+                                                       'nullable' => false,
+                                                       'auto_increment' => true,
+                                                   ]
+                                               )
+                                               ->addColumn(
+                                                   'dictionary_product_type_id',
+                                                   Table::TYPE_INTEGER,
+                                                   null,
+                                                   ['unsigned' => true, 'nullable' => false]
+                                               )
+                                               ->addColumn(
+                                                   'settings',
+                                                   Table::TYPE_TEXT,
+                                                   self::LONG_COLUMN_SIZE,
+                                                   ['nullable' => false]
+                                               )
+                                               ->addColumn(
+                                                   'update_date',
+                                                   Table::TYPE_DATETIME,
+                                                   null,
+                                                   ['default' => null]
+                                               )
+                                               ->addColumn(
+                                                   'create_date',
+                                                   Table::TYPE_DATETIME,
+                                                   null,
+                                                   ['default' => null]
+                                               )
+                                               ->addIndex(
+                                                   'dictionary_product_type_id',
+                                                   ['dictionary_product_type_id'],
+                                                   ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+                                               )
+                                               ->setOption('type', 'INNODB')
+                                               ->setOption('charset', 'utf8')
+                                               ->setOption('collate', 'utf8_general_ci')
+                                               ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($amazonTemplateProductTypeTable);
+
         $amazonTemplateDescriptionTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_template_description')
         )
@@ -9759,6 +9954,7 @@ class Installer
                                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonTemplateDescriptionTable);
 
+        // @deprecated
         $amazonTemplateDescriptionDefinitionTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_template_description_definition')
         )
@@ -10658,7 +10854,7 @@ class Installer
                                                        ['unsigned' => true, 'nullable' => false]
                                                    )
                                                    ->addColumn(
-                                                       'revise_update_images',
+                                                       'revise_update_images', // @deprecated
                                                        Table::TYPE_SMALLINT,
                                                        null,
                                                        ['unsigned' => true, 'nullable' => false]
@@ -10783,7 +10979,11 @@ class Installer
         $moduleConfig->insert('/amazon/listing/product/action/revise_qty/', 'min_allowed_wait_interval', '900');
         $moduleConfig->insert('/amazon/listing/product/action/revise_price/', 'min_allowed_wait_interval', '1800');
         $moduleConfig->insert('/amazon/listing/product/action/revise_details/', 'min_allowed_wait_interval', '7200');
-        $moduleConfig->insert('/amazon/listing/product/action/revise_images/', 'min_allowed_wait_interval', '7200');
+        $moduleConfig->insert(
+            '/amazon/listing/product/action/revise_images/',
+            'min_allowed_wait_interval',
+            '7200'
+        ); // @deprecated
         $moduleConfig->insert('/amazon/listing/product/action/stop/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/listing/product/action/delete/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
@@ -10791,7 +10991,7 @@ class Installer
         $moduleConfig->insert('/amazon/configuration/', 'business_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_custom_attribute');
-        $moduleConfig->insert('/amazon/configuration/', 'product_id_override_mode', '0');
+        $moduleConfig->insert('/amazon/configuration/', 'product_id_override_mode', '0'); // @deprecated
         $moduleConfig->insert('/amazon/configuration/', 'general_id_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'general_id_custom_attribute');
 
@@ -11162,7 +11362,7 @@ class Installer
                 [
                     'marketplace_id' => 42,
                     'default_currency' => 'JPY',
-                    'is_new_asin_available' => 0,
+                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
@@ -11180,7 +11380,7 @@ class Installer
                 [
                     'marketplace_id' => 44,
                     'default_currency' => 'BRL',
-                    'is_new_asin_available' => 0,
+                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11189,7 +11389,7 @@ class Installer
                 [
                     'marketplace_id' => 45,
                     'default_currency' => 'SGD',
-                    'is_new_asin_available' => 0,
+                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11198,7 +11398,7 @@ class Installer
                 [
                     'marketplace_id' => 46,
                     'default_currency' => 'INR',
-                    'is_new_asin_available' => 0,
+                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11207,7 +11407,7 @@ class Installer
                 [
                     'marketplace_id' => 47,
                     'default_currency' => 'AED',
-                    'is_new_asin_available' => 0,
+                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11216,7 +11416,7 @@ class Installer
                 [
                     'marketplace_id' => 48,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 0,
+                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11951,212 +12151,215 @@ class Installer
                                          ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($walmartListingOtherTable);
 
-        /**
-         * Create table 'm2epro_walmart_listing_product'
-         */
-        $walmartListingProductTable = $this->getConnection()
-                                           ->newTable($this->getFullTableName('walmart_listing_product'))
-                                           ->addColumn(
-                                               'listing_product_id',
-                                               Table::TYPE_INTEGER,
-                                               null,
-                                               ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                           )
-                                           ->addColumn(
-                                               'template_category_id',
-                                               Table::TYPE_INTEGER,
-                                               null,
-                                               ['unsigned' => true, 'default' => null]
-                                           )
-                                           ->addColumn(
-                                               'is_variation_product',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'is_variation_product_matched',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'is_variation_channel_matched',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'is_variation_parent',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'variation_parent_id',
-                                               Table::TYPE_INTEGER,
-                                               null,
-                                               ['unsigned' => true, 'default' => null]
-                                           )
-                                           ->addColumn(
-                                               'variation_parent_need_processor',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'variation_child_statuses',
-                                               Table::TYPE_TEXT,
-                                               null,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'sku',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'gtin',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'upc',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'ean',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'isbn',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'wpid',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'item_id',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'publish_status',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'lifecycle_status',
-                                               Table::TYPE_TEXT,
-                                               255,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'status_change_reasons',
-                                               Table::TYPE_TEXT,
-                                               null,
-                                               ['default' => null]
-                                           )
-                                           ->addColumn(
-                                               'online_price',
-                                               Table::TYPE_DECIMAL,
-                                               [12, 4],
-                                               ['unsigned' => true, 'default' => null]
-                                           )
-                                           ->addColumn(
-                                               'is_online_price_invalid',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'online_promotions',
-                                               Table::TYPE_TEXT,
-                                               40,
-                                               ['nullable' => true]
-                                           )
-                                           ->addColumn(
-                                               'online_qty',
-                                               Table::TYPE_INTEGER,
-                                               null,
-                                               ['unsigned' => true, 'default' => null]
-                                           )
-                                           ->addColumn(
-                                               'online_lag_time',
-                                               Table::TYPE_INTEGER,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => true]
-                                           )
-                                           ->addColumn(
-                                               'online_details_data',
-                                               Table::TYPE_TEXT,
-                                               40,
-                                               ['nullable' => true]
-                                           )
-                                           ->addColumn(
-                                               'online_start_date',
-                                               Table::TYPE_DATETIME,
-                                               null,
-                                               ['nullable' => true]
-                                           )
-                                           ->addColumn(
-                                               'online_end_date',
-                                               Table::TYPE_DATETIME,
-                                               null,
-                                               ['nullable' => true]
-                                           )
-                                           ->addColumn(
-                                               'is_missed_on_channel',
-                                               Table::TYPE_SMALLINT,
-                                               null,
-                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                           )
-                                           ->addColumn(
-                                               'list_date',
-                                               Table::TYPE_DATETIME,
-                                               null,
-                                               ['nullable' => true]
-                                           )
-                                           ->addIndex('is_variation_product_matched', 'is_variation_product_matched')
-                                           ->addIndex('is_variation_channel_matched', 'is_variation_channel_matched')
-                                           ->addIndex('is_variation_product', 'is_variation_product')
-                                           ->addIndex('online_price', 'online_price')
-                                           ->addIndex('online_qty', 'online_qty')
-                                           ->addIndex('sku', 'sku')
-                                           ->addIndex('gtin', 'gtin')
-                                           ->addIndex('upc', 'upc')
-                                           ->addIndex('ean', 'ean')
-                                           ->addIndex('isbn', 'isbn')
-                                           ->addIndex('wpid', 'wpid')
-                                           ->addIndex('item_id', 'item_id')
-                                           ->addIndex('online_start_date', 'online_start_date')
-                                           ->addIndex('online_end_date', 'online_end_date')
-                                           ->addIndex('is_variation_parent', 'is_variation_parent')
-                                           ->addIndex(
-                                               'variation_parent_need_processor',
-                                               'variation_parent_need_processor'
-                                           )
-                                           ->addIndex('variation_parent_id', 'variation_parent_id')
-                                           ->addIndex('template_category_id', 'template_category_id')
-                                           ->addIndex('list_date', 'list_date')
-                                           ->setOption('type', 'INNODB')
-                                           ->setOption('charset', 'utf8')
-                                           ->setOption('collate', 'utf8_general_ci')
-                                           ->setOption('row_format', 'dynamic');
+        # region walmart_listing_product
+        $walmartListingProductTable = $this->getConnection()->newTable(
+            $this->getFullTableName('walmart_listing_product')
+        );
+        $walmartListingProductTable->addColumn(
+            'listing_product_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'primary' => true, 'nullable' => false]
+        );
+        $walmartListingProductTable->addColumn(
+            'template_category_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_variation_product',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_variation_product_matched',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_variation_channel_matched',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_variation_parent',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'variation_parent_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'variation_parent_need_processor',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'variation_child_statuses',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'sku',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'gtin',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'upc',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'ean',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'isbn',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'wpid',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'item_id',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'publish_status',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'lifecycle_status',
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'status_change_reasons',
+            Table::TYPE_TEXT,
+            null,
+            ['default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_stopped_manually',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_price',
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_online_price_invalid',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_promotions',
+            Table::TYPE_TEXT,
+            40,
+            ['nullable' => true]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_qty',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_lag_time',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => true]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_details_data',
+            Table::TYPE_TEXT,
+            40,
+            ['nullable' => true]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_start_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['nullable' => true]
+        );
+        $walmartListingProductTable->addColumn(
+            'online_end_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['nullable' => true]
+        );
+        $walmartListingProductTable->addColumn(
+            'is_missed_on_channel',
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartListingProductTable->addColumn(
+            'list_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['nullable' => true]
+        );
+        $walmartListingProductTable->addIndex('is_variation_product_matched', 'is_variation_product_matched');
+        $walmartListingProductTable->addIndex('is_variation_channel_matched', 'is_variation_channel_matched');
+        $walmartListingProductTable->addIndex('is_variation_product', 'is_variation_product');
+        $walmartListingProductTable->addIndex('online_price', 'online_price');
+        $walmartListingProductTable->addIndex('online_qty', 'online_qty');
+        $walmartListingProductTable->addIndex('sku', 'sku');
+        $walmartListingProductTable->addIndex('gtin', 'gtin');
+        $walmartListingProductTable->addIndex('upc', 'upc');
+        $walmartListingProductTable->addIndex('ean', 'ean');
+        $walmartListingProductTable->addIndex('isbn', 'isbn');
+        $walmartListingProductTable->addIndex('wpid', 'wpid');
+        $walmartListingProductTable->addIndex('item_id', 'item_id');
+        $walmartListingProductTable->addIndex('online_start_date', 'online_start_date');
+        $walmartListingProductTable->addIndex('online_end_date', 'online_end_date');
+        $walmartListingProductTable->addIndex('is_variation_parent', 'is_variation_parent');
+        $walmartListingProductTable->addIndex('variation_parent_need_processor', 'variation_parent_need_processor');
+        $walmartListingProductTable->addIndex('variation_parent_id', 'variation_parent_id');
+        $walmartListingProductTable->addIndex('template_category_id', 'template_category_id');
+        $walmartListingProductTable->addIndex('list_date', 'list_date');
+        $walmartListingProductTable->setOption('type', 'INNODB');
+        $walmartListingProductTable->setOption('charset', 'utf8');
+        $walmartListingProductTable->setOption('collate', 'utf8_general_ci');
+        $walmartListingProductTable->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($walmartListingProductTable);
+        #endregion
 
         $walmartProcessingActionTable = $this->getConnection()->newTable(
             $this->getFullTableName('walmart_listing_product_action_processing')

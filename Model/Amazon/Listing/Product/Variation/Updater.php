@@ -69,7 +69,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                 'is_general_id_owner',
                 \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
             );
-            $listingProduct->getChildObject()->setData('template_description_id', null);
+            $listingProduct->getChildObject()->setData('template_product_type_id', null);
         }
 
         $listingProduct->getChildObject()->setData('is_variation_product', 1);

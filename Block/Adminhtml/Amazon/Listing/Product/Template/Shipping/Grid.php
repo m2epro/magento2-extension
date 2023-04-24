@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Shipping;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $marketplaceId;
-    protected $productsIds;
+    protected $accountId;
+    private $productsIds;
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
@@ -42,28 +42,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
     }
 
-    // ---------------------------------------
+    /**
+     * @param int $accountId
+     *
+     * @return void
+     */
+    public function setAccountId(int $accountId): void
+    {
+        $this->accountId = $accountId;
+    }
 
     /**
      * @return mixed
      */
-    public function getMarketplaceId()
+    public function getAccountId()
     {
-        return $this->marketplaceId;
+        return $this->accountId;
     }
 
     /**
-     * @param mixed $marketplaceId
+     * @param array $productsIds
+     *
+     * @return void
      */
-    public function setMarketplaceId($marketplaceId)
-    {
-        $this->marketplaceId = $marketplaceId;
-    }
-
-    /**
-     * @param mixed $productsIds
-     */
-    public function setProductsIds($productsIds)
+    public function setProductsIds(array $productsIds): void
     {
         $this->productsIds = $productsIds;
     }
@@ -76,19 +78,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->productsIds;
     }
 
-    // ---------------------------------------
-
     protected function _prepareCollection()
     {
         $this->setNoTemplatesText();
 
         $collection = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')->getCollection();
+        $collection->addFieldToFilter('account_id', $this->accountId);
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
     }
 
-    protected function _prepareColumns()
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    protected function _prepareColumns(): void
     {
         $this->addColumn('title', [
             'header' => $this->__('Title'),
@@ -112,7 +118,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
     }
 
-    protected function _prepareLayout()
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Shipping\Grid
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function _prepareLayout(): self
     {
         $this->setChild(
             'refresh_button',
@@ -128,23 +138,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareLayout();
     }
 
-    //########################################
-
-    public function getRefreshButtonHtml()
+    /**
+     * @return string
+     */
+    public function getRefreshButtonHtml(): string
     {
         return $this->getChildHtml('refresh_button');
     }
 
-    //########################################
-
-    public function getMainButtonsHtml()
+    /**
+     * @return string
+     */
+    public function getMainButtonsHtml(): string
     {
         return $this->getRefreshButtonHtml() . parent::getMainButtonsHtml();
     }
 
-    //########################################
-
-    public function callbackColumnTitle($value, $row, $column, $isExport)
+    public function callbackColumnTitle($value, $row, $column, $isExport): string
     {
         $templateEditUrl = $this->getUrl('*/amazon_template_shipping/edit', [
             'id' => $row->getData('id'),
@@ -171,9 +181,10 @@ HTML;
 HTML;
     }
 
-    //########################################
-
-    protected function _toHtml()
+    /**
+     * @return string
+     */
+    protected function _toHtml(): string
     {
         $this->js->add(
             <<<JS
@@ -184,27 +195,34 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
-
-    public function getGridUrl()
+    /**
+     * @return string
+     */
+    public function getGridUrl(): string
     {
         return $this->getUrl('*/*/viewGrid', [
             '_current' => true,
             '_query' => [
-                'marketplace_id' => $this->getMarketplaceId(),
+                'account_id' => $this->getAccountId(),
             ],
             'products_ids' => implode(',', $this->getProductsIds()),
         ]);
     }
 
-    public function getRowUrl($row)
+    /**
+     * @param $row
+     *
+     * @return bool
+     */
+    public function getRowUrl($row): bool
     {
         return false;
     }
 
-    //########################################
-
-    protected function setNoTemplatesText()
+    /**
+     * @return void
+     */
+    protected function setNoTemplatesText(): void
     {
         $messageTxt = $this->__('Shipping Policies are not found.');
         $linkTitle = $this->__('Create New Shipping Policy.');
@@ -218,12 +236,13 @@ HTML;
         $this->setEmptyText($message);
     }
 
-    protected function getNewTemplateShippingUrl()
+    /**
+     * @return string
+     */
+    protected function getNewTemplateShippingUrl(): string
     {
         return $this->getUrl('*/amazon_template_shipping/new', [
             'close_on_save' => true,
         ]);
     }
-
-    //########################################
 }

@@ -175,10 +175,7 @@ define([
                 .simulate('change');
 
             $('revise_update_details')
-                .observe('change', AmazonTemplateSynchronizationObj.reviseDetailsOrImagesMode_change);
-
-            $('revise_update_images')
-                .observe('change', AmazonTemplateSynchronizationObj.reviseDetailsOrImagesMode_change);
+                .observe('change', AmazonTemplateSynchronizationObj.reviseDetailsMode_change);
 
             //stop
             $('stop_mode')
@@ -387,7 +384,7 @@ define([
 
         // ---------------------------------------
 
-        reviseDetailsOrImagesMode_change: function()
+        reviseDetailsMode_change: function()
         {
             var self = AmazonTemplateSynchronizationObj;
 

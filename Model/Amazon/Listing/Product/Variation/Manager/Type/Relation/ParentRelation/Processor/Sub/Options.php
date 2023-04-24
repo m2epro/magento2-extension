@@ -24,6 +24,11 @@ class Options extends AbstractModel
 
     protected function check()
     {
+        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
+        if (!empty($additionalData['running_migration_to_product_types'])) {
+            return;
+        }
+
         if (empty($this->getProcessor()->getTypeModel()->getChildListingsProducts())) {
             return;
         }
@@ -99,6 +104,11 @@ class Options extends AbstractModel
         }
 
         if (!$this->getProcessor()->getTypeModel()->hasMatchedAttributes()) {
+            return;
+        }
+
+        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
+        if (!empty($additionalData['running_migration_to_product_types'])) {
             return;
         }
 

@@ -36,18 +36,12 @@ class RunSynchNow extends Marketplace
             (int)$this->getRequest()->getParam('marketplace_id')
         );
 
-        if ($this->amazonHelper->isMarketplacesWithoutData($marketplace->getId())) {
-            $this->setJsonContent(['result' => 'success']);
-
-            return $this->getResult();
-        }
-
         /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Synchronization $synchronization */
         $synchronization = $this->modelFactory->getObject('Amazon_Marketplace_Synchronization');
         $synchronization->setMarketplace($marketplace);
 
         if ($synchronization->isLocked()) {
-            $synchronization->getlog()->addMessage(
+            $synchronization->getLog()->addMessage(
                 $this->__(
                     'Marketplaces cannot be updated now. '
                     . 'Please wait until another marketplace synchronization is completed, then try again.'
@@ -63,7 +57,7 @@ class RunSynchNow extends Marketplace
         try {
             $synchronization->process();
         } catch (\Exception $e) {
-            $synchronization->getlog()->addMessageFromException($e);
+            $synchronization->getLog()->addMessageFromException($e);
 
             $synchronization->getLockItemManager()->remove();
 

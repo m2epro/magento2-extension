@@ -8,25 +8,19 @@
 
 namespace Ess\M2ePro\Model\Template;
 
-use Ess\M2ePro\Model\Amazon\Template\Description as AmazonTemplateDescription;
 use Ess\M2ePro\Model\Ebay\Template\Description as EbayTemplateDescription;
 use Ess\M2ePro\Model\Walmart\Template\Description as WalmartTemplateDescription;
 
 /**
- * Class \Ess\M2ePro\Model\Template\Description
- * @method AmazonTemplateDescription|EbayTemplateDescription|WalmartTemplateDescription getChildObject()
+ * @method EbayTemplateDescription|WalmartTemplateDescription getChildObject()
  */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Template\Description::class);
     }
-
-    //########################################
 
     public function save($reloadOnCreate = false)
     {
@@ -34,8 +28,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
         return parent::save($reloadOnCreate);
     }
-
-    //########################################
 
     public function delete()
     {
@@ -48,14 +40,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return parent::delete();
     }
 
-    //########################################
-
     public function getTitle()
     {
         return $this->getData('title');
     }
-
-    // ---------------------------------------
 
     public function getCreateDate()
     {
@@ -67,19 +55,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return $this->getData('update_date');
     }
 
-    //########################################
-
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);
     }
 
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;
     }
-
-    //########################################
 }

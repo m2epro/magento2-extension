@@ -20,7 +20,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public const FEED_TYPE_UPDATE_QTY = 'update_qty';
     public const FEED_TYPE_UPDATE_PRICE = 'update_price';
     public const FEED_TYPE_UPDATE_DETAILS = 'update_details';
-    public const FEED_TYPE_UPDATE_IMAGES = 'update_images';
 
     public const LIST_PRIORITY = 25;
     public const RELIST_PRIORITY = 125;
@@ -29,7 +28,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     public const REVISE_QTY_PRIORITY = 500;
     public const REVISE_PRICE_PRIORITY = 250;
     public const REVISE_DETAILS_PRIORITY = 50;
-    public const REVISE_IMAGES_PRIORITY = 50;
 
     public const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
 
@@ -110,7 +108,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 self::FEED_TYPE_UPDATE_QTY => [],
                 self::FEED_TYPE_UPDATE_PRICE => [],
                 self::FEED_TYPE_UPDATE_DETAILS => [],
-                self::FEED_TYPE_UPDATE_IMAGES => [],
             ];
 
             $this->fillFeedsPacks(
@@ -311,12 +308,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                             case 'details':
                                 if ($listingProductConfigurator->isDetailsAllowed()) {
                                     $configurator->allowDetails();
-                                }
-                                break;
-
-                            case 'images':
-                                if ($listingProductConfigurator->isImagesAllowed()) {
-                                    $configurator->allowImages();
                                 }
                                 break;
                         }
@@ -605,11 +596,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         $existedConfigurator->disallowDetails();
                         unset($tags['details']);
                         break;
-
-                    case 'images':
-                        $existedConfigurator->disallowImages();
-                        unset($tags['images']);
-                        break;
                 }
             }
 
@@ -753,7 +739,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $this->getReviseQtyScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getRevisePriceScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getReviseDetailsScheduledActionsPreparedCollection($merchantId)->getSelect(),
-                $this->getReviseImagesScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getStopScheduledActionsPreparedCollection($merchantId)->getSelect(),
                 $this->getDeleteScheduledActionsPreparedCollection($merchantId)->getSelect(),
             ]
@@ -968,38 +953,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function getReviseImagesScheduledActionsPreparedCollection($merchantId)
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Listing_Product_ScheduledAction')->getCollection();
-        $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK)
-                   ->getScheduledActionsPreparedCollection(
-                       self::REVISE_IMAGES_PRIORITY,
-                       \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
-                   )
-                   ->joinAccountTable()
-                   ->addFilteredTagColumnToSelect(new \Zend_Db_Expr("'images'"))
-                   ->addTagFilter('images', true)
-                   ->addFieldToFilter('account.merchant_id', $merchantId);
-
-        if ($this->getHelper('Module')->isProductionEnvironment()) {
-            $minAllowedWaitInterval = (int)$this->getConfigValue(
-                '/amazon/listing/product/action/revise_images/',
-                'min_allowed_wait_interval'
-            );
-            $collection->addCreatedBeforeFilter($minAllowedWaitInterval);
-        }
-
-        return $collection;
-    }
-
-    /**
-     * @param $merchantId
-     *
-     * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     protected function getStopScheduledActionsPreparedCollection($merchantId)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection $collection */
@@ -1147,10 +1100,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 if ($tag == 'details') {
                     $feedTypes[] = self::FEED_TYPE_UPDATE_DETAILS;
-                }
-
-                if ($tag == 'images') {
-                    $feedTypes[] = self::FEED_TYPE_UPDATE_IMAGES;
                 }
 
                 return $feedTypes;

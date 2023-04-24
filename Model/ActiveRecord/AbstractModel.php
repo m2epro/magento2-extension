@@ -349,7 +349,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getSettings($fieldName)
+    public function getSettings($fieldName): array
     {
         $settings = $this->getData((string)$fieldName);
 
@@ -357,7 +357,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             return [];
         }
 
-        $settings = $this->getHelper('Data')->jsonDecode($settings);
+        $settings = \Ess\M2ePro\Helper\Json::decode($settings);
 
         return !empty($settings) ? $settings : [];
     }

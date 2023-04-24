@@ -17,16 +17,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
     public const TEMPLATE_DESCRIPTION = 'description';
 
-    protected $wrapperCollectionFactory;
-    protected $walmartFactory;
-    protected $resourceConnection;
-
-    private $enabledMarketplacesCollection = null;
-
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
+    private $marketplaceCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory */
+    private $wrapperCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
+    private $walmartFactory;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
+    /**
+     * @param \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -35,14 +48,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
+        $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
         $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -61,8 +73,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -185,8 +195,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareCollection();
     }
 
-    //########################################
-
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
@@ -228,7 +236,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
             'frame_callback' => [$this, 'callbackColumnMarketplace'],
             'options' => $this->getEnabledMarketplaceTitles(),
-        ], 'type');
+        ]);
 
         $this->addColumn('create_date', [
             'header' => $this->__('Creation Date'),
@@ -293,8 +301,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareColumns();
     }
 
-    //########################################
-
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         if ($row->getData('type') != self::TEMPLATE_CATEGORY) {
@@ -324,8 +330,6 @@ HTML;
         return $value;
     }
 
-    //########################################
-
     protected function callbackFilterTitle($collection, $column)
     {
         $value = $column->getFilter()->getValue();
@@ -351,28 +355,18 @@ HTML;
         $collection->getSelect()->where('marketplace_id = 0 OR marketplace_id = ?', (int)$value);
     }
 
-    //########################################
-
-    private function getEnabledMarketplacesCollection()
+    /**
+     * @return array
+     */
+    private function getEnabledMarketplaceTitles(): array
     {
-        if ($this->enabledMarketplacesCollection === null) {
-            $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
-            $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Walmart::NICK);
-            $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-            $collection->setOrder('sorder', 'ASC');
+        /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $collection */
+        $collection = $this->marketplaceCollectionFactory->create();
+        $collection->appendFilterEnabledMarketplaces(\Ess\M2ePro\Helper\Component\Walmart::NICK)
+            ->setOrder('title', 'ASC');
 
-            $this->enabledMarketplacesCollection = $collection;
-        }
-
-        return $this->enabledMarketplacesCollection;
+        return $collection->toOptionHash();
     }
-
-    private function getEnabledMarketplaceTitles()
-    {
-        return $this->getEnabledMarketplacesCollection()->toOptionHash();
-    }
-
-    //########################################
 
     public function getGridUrl()
     {
@@ -390,6 +384,4 @@ HTML;
             ]
         );
     }
-
-    //########################################
 }

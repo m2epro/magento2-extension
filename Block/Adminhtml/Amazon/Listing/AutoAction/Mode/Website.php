@@ -8,14 +8,26 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory as AmazonProductTypeCollectionFactory;
+
 class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractWebsite
 {
-    /** @var int */
-    public $showCreateNewAsin = 0;
-
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
+    private $amazonProductTypeCollectionFactory;
 
+    /**
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper
+     * @param AmazonProductTypeCollectionFactory $amazonProductTypeCollectionFactory
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -24,6 +36,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
+        AmazonProductTypeCollectionFactory $amazonProductTypeCollectionFactory,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
@@ -36,6 +49,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
             $magentoStoreHelper,
             $data
         );
+        $this->amazonProductTypeCollectionFactory = $amazonProductTypeCollectionFactory;
     }
 
     protected function _prepareForm()
@@ -135,7 +149,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
                         'label' => $this->__('Yes'),
                     ],
                 ],
-                'value' => (int)!empty($this->formData['auto_website_adding_description_template_id']),
+                'value' => (int)!empty($this->formData['auto_website_adding_product_type_template_id']),
                 'field_extra_attributes' => 'id="auto_action_amazon_add_and_create_asin"',
                 'tooltip' => $this->__(
                     'Should M2E Pro try to create new ASIN/ISBN in case Search
@@ -144,68 +158,49 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
             ]
         );
 
-        $collection = $this->parentFactory->getObject(
-            \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'Template\Description'
-        )->getCollection();
-        $collection->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId());
+        $collection = $this->amazonProductTypeCollectionFactory->create();
+        $collection->appendFilterMarketplaceId($this->getListing()->getMarketplaceId());
 
-        $descriptionTemplates = $collection->getData();
-
-        if (!empty($descriptionTemplates)) {
-            $this->showCreateNewAsin = 1;
-        }
-
-        usort($descriptionTemplates, function ($a, $b) {
-            return $b["is_new_asin_accepted"] <=> $a["is_new_asin_accepted"];
-        });
+        $productTypesTemplates = $collection->getData();
 
         $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
-        foreach ($descriptionTemplates as $template) {
-            $tmp = [
-                'label' => $this->_escaper->escapeHtml($template['title']),
-                'value' => $template['id'],
+        foreach ($productTypesTemplates as $template) {
+            $options[] = [
+                'label' => $this->_escaper->escapeHtml($template['product_type_title']),
+                'value' => $template['id']
             ];
-
-            if (!$template['is_new_asin_accepted']) {
-                $tmp['attrs'] = ['disabled' => 'disabled'];
-            }
-
-            $options[] = $tmp;
         }
 
-        $url = $this->getUrl('*/amazon_template_description/new', [
-            'is_new_asin_accepted' => 1,
-            'marketplace_id' => $this->getListing()->getMarketplaceId(),
-            'close_on_save' => true,
+        $url = $this->getUrl('*/amazon_template_productType/edit', [
+            'is_new_asin_accepted'  => 1,
+            'marketplace_id'        => $this->getListing()->getMarketplaceId(),
+            'close_on_save' => true
         ]);
 
         $fieldSet->addField(
-            'adding_description_template_id',
+            'adding_product_type_template_id',
             self::SELECT,
             [
-                'name' => 'adding_description_template_id',
-                'label' => $this->__('Description Policy'),
-                'title' => $this->__('Description Policy'),
+                'name' => 'adding_product_type_template_id',
+                'label' => $this->__('Product Type'),
+                'title' => $this->__('Product Type'),
                 'values' => $options,
-                'value' => $this->formData['auto_website_adding_description_template_id'],
-                'field_extra_attributes' => 'id="auto_action_amazon_add_and_assign_description_template"',
+                'value' => $this->formData['auto_website_adding_product_type_template_id'],
+                'field_extra_attributes' => 'id="auto_action_amazon_add_and_assign_product_type_template"',
                 'required' => true,
                 'after_element_html' => $this->getTooltipHtml(
                     $this->__(
-                        'Creation of new ASIN/ISBN will be performed based on specified Description Policy.
-                    Only the Description Policies set for new ASIN/ISBN creation are available for choosing.
-                    <br/><br/><b>Note:</b> If chosen Description Policy doesn’t meet all the
+                        'Creation of new ASIN/ISBN will be performed based on specified Product Type.
+                    Only the Product Types set for new ASIN/ISBN creation are available for choosing.
+                    <br/><br/><b>Note:</b> If chosen Product Type doesn’t meet all the
                     Conditions for new ASIN/ISBN creation, the Products will still be added to M2E Pro Listings
                     but will not be Listed on Amazon.'
                     )
                 ) . '<a href="javascript: void(0);"
                                             style="vertical-align: inherit; margin-left: 65px;"
-                                            onclick="ListingAutoActionObj.addNewTemplate(\'' . $url . '\',
-                                            ListingAutoActionObj.reloadDescriptionTemplates);">' . $this->__(
-                                                'Add New'
-                                            ) . '
-                                         </a>',
+                                            onclick="ListingAutoActionObj.addNewProductType(\'' . $url . '\',
+                                            ListingAutoActionObj.reloadProductTypeTemplates);">'
+                                                . $this->__('Add New') . '</a>'
             ]
         );
 
@@ -257,13 +252,11 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
         $this->js->add(
             <<<JS
 
-        ListingAutoActionObj.showCreateNewAsin = {$this->showCreateNewAsin};
-
         $('auto_action_create_asin')
             .observe('change', ListingAutoActionObj.createAsinChange)
             .simulate('change');
 
-        $('adding_description_template_id').observe('change', function(el) {
+        $('adding_product_type_template_id').observe('change', function(el) {
             var options = $(el.target).select('.empty');
             options.length > 0 && options[0].hide();
         });

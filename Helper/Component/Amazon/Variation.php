@@ -28,17 +28,9 @@ class Variation
     private $cachePermanent;
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registry;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    private $listingProductCollectionFactory;
 
-    /**
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
-     * @param \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct
-     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
-     * @param \Ess\M2ePro\Model\Registry\Manager $registry
-     */
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -47,7 +39,8 @@ class Variation
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
         \Ess\M2ePro\Helper\Magento\Product $helperMagentoProduct,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Model\Registry\Manager $registry
+        \Ess\M2ePro\Model\Registry\Manager $registry,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
     ) {
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -57,6 +50,7 @@ class Variation
         $this->helperMagentoProduct = $helperMagentoProduct;
         $this->cachePermanent = $cachePermanent;
         $this->registry = $registry;
+        $this->listingProductCollectionFactory = $listingProductCollectionFactory;
     }
 
     // ----------------------------------------
@@ -206,28 +200,65 @@ class Variation
         return $listingProductsIds;
     }
 
+    public function filterProductsByAvailableWorldwideIdentifiers(array $listingProductsIds): array
+    {
+        $worldwideIdSeemsLikeAvailable = [];
+        $parentWithChildWithoutWorldwideId = [];
+
+        $productsIdsChunks = array_chunk($listingProductsIds, 1000);
+        foreach ($productsIdsChunks as $chunk) {
+            $idsCondition = implode(',', $chunk);
+            $collection = $this->listingProductCollectionFactory
+                ->createWithAmazonChildMode();
+            $collection->getSelect()
+                ->where("id IN($idsCondition) OR variation_parent_id IN($idsCondition)");
+
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+            foreach ($collection->getItems() as $listingProduct) {
+                $amazonListingProduct = $listingProduct->getChildObject();
+                $variationManager = $amazonListingProduct->getVariationManager();
+                $identifiers = $amazonListingProduct->getIdentifiers();
+
+                if ($variationManager->isRelationParentType()) {
+                    // variation parent does not require worldwide id,
+                    // but variation children will be checked for worldwide id availability
+                    $id = $listingProduct->getId();
+                    $worldwideIdSeemsLikeAvailable[$id] = true;
+                } elseif ($variationManager->isRelationChildType()) {
+                    if ($identifiers->getWorldwideId() === null) {
+                        $id = $variationManager->getVariationParentId();
+                        $parentWithChildWithoutWorldwideId[$id] = true;
+                    }
+                } else {
+                    if ($identifiers->getWorldwideId() !== null) {
+                        $id = $listingProduct->getId();
+                        $worldwideIdSeemsLikeAvailable[$id] = true;
+                    }
+                }
+            }
+        }
+
+        return array_diff(
+            array_keys($worldwideIdSeemsLikeAvailable),
+            array_keys($parentWithChildWithoutWorldwideId)
+        );
+    }
+
     //########################################
 
-    public function filterProductsByDescriptionTemplate($productsIds)
+    public function filterProductsByProductType($productsIds)
     {
         $productsIdsChunks = array_chunk($productsIds, 1000);
         $productsIds = [];
 
         $connRead = $this->resourceConnection->getConnection();
         $tableAmazonListingProduct = $this->databaseStructure->getTableNameWithPrefix('m2epro_amazon_listing_product');
-        $tableAmazonTemplateDescription = $this->databaseStructure
-            ->getTableNameWithPrefix('m2epro_amazon_template_description');
 
         foreach ($productsIdsChunks as $productsIdsChunk) {
             $select = $connRead->select();
             $select->from(['alp' => $tableAmazonListingProduct], ['listing_product_id'])
-                   ->where('listing_product_id IN (?)', $productsIdsChunk);
-
-            $select->join(
-                ['atd' => $tableAmazonTemplateDescription],
-                'alp.template_description_id=atd.template_description_id',
-                []
-            )->where('atd.is_new_asin_accepted = 1');
+                   ->where('listing_product_id IN (?)', $productsIdsChunk)
+                   ->where('template_product_type_id IS NOT NULL');
 
             $productsIds = array_merge(
                 $productsIds,
@@ -256,8 +287,14 @@ class Variation
 
             $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
 
+            $productType = $amazonListingProduct->getProductTypeTemplate();
+            if ($productType === null) {
+                unset($productsIds[$key]);
+                continue;
+            }
+
             $themes = $detailsModel->getVariationThemes(
-                $amazonListingProduct->getAmazonDescriptionTemplate()->getProductDataNick()
+                $productType->getNick()
             );
 
             if (empty($themes)) {

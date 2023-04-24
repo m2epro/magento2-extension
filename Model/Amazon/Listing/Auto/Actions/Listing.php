@@ -14,17 +14,22 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     private $amazonFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory */
     private $marketplaceDetailsFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType */
+    private $productTypeResource;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory $marketplaceDetailsFactory,
         \Ess\M2ePro\Model\Listing $listing,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType $productTypeResource,
+        \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
     ) {
         parent::__construct($listing, $activeRecordFactory, $exceptionHelper);
         $this->amazonFactory = $amazonFactory;
         $this->marketplaceDetailsFactory = $marketplaceDetailsFactory;
+        $this->productTypeResource = $productTypeResource;
     }
 
     /**
@@ -131,7 +136,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $amazonCategoryGroup = $categoryGroup->getChildObject();
 
         $params = [
-            'template_description_id' => $amazonCategoryGroup->getAddingDescriptionTemplateId(),
+            'template_product_type_id' => $amazonCategoryGroup->getAddingProductTypeTemplateId(),
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -170,7 +175,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $amazonListing = $listing->getChildObject();
 
         $params = [
-            'template_description_id' => $amazonListing->getAutoGlobalAddingDescriptionTemplateId(),
+            'template_product_type_id' => $amazonListing->getAutoGlobalAddingProductTypeTemplateId(),
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -207,7 +212,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $amazonListing = $listing->getChildObject();
 
         $params = [
-            'template_description_id' => $amazonListing->getAutoWebsiteAddingDescriptionTemplateId(),
+            'template_product_type_id' => $amazonListing->getAutoWebsiteAddingProductTypeTemplateId(),
         ];
 
         $this->processAddedListingProduct($listingProduct, $params);
@@ -225,7 +230,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
         array $params
     ): void {
-        if (empty($params['template_description_id'])) {
+        if (empty($params['template_product_type_id'])) {
             return;
         }
 
@@ -233,7 +238,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $amazonListingProduct = $listingProduct->getChildObject();
 
         if (!$amazonListingProduct->getVariationManager()->isRelationParentType()) {
-            $amazonListingProduct->setData('template_description_id', $params['template_description_id']);
+            $amazonListingProduct->setData('template_product_type_id', $params['template_product_type_id']);
             $amazonListingProduct->setData(
                 'is_general_id_owner',
                 \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
@@ -256,20 +261,13 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        /** @var  \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
         $detailsModel = $this->marketplaceDetailsFactory->create();
         $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
 
-        /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
-        $descriptionTemplate = $this->amazonFactory->getObjectLoaded(
-            'Template\Description',
-            $params['template_description_id']
-        );
+        $productTypeTemplate = $this->productTypeResource
+            ->loadById((int)$params['template_product_type_id']);
 
-        /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */
-        $amazonDescriptionTemplate = $descriptionTemplate->getChildObject();
-
-        $possibleThemes = $detailsModel->getVariationThemes($amazonDescriptionTemplate->getProductDataNick());
+        $possibleThemes = $detailsModel->getVariationThemes($productTypeTemplate->getNick());
 
         $productAttributes = $amazonListingProduct->getVariationManager()
                                                   ->getTypeModel()
@@ -280,7 +278,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
                 continue;
             }
 
-            $amazonListingProduct->setData('template_description_id', $params['template_description_id']);
+            $amazonListingProduct->setData('template_product_type_id', $params['template_product_type_id']);
             $amazonListingProduct->setData(
                 'is_general_id_owner',
                 \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES

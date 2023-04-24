@@ -18,16 +18,13 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     //########################################
 
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $data = [];
 
-        if (
-            $this->getConfigurator()->isDetailsAllowed() ||
-            $this->getConfigurator()->isImagesAllowed()
-        ) {
+        if ($this->getConfigurator()->isDetailsAllowed()) {
             $data['defected_messages'] = null;
         }
 
@@ -37,14 +34,15 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $data = $this->appendBusinessPriceValues($data);
         $data = $this->appendGiftSettingsStatus($data);
         $data = $this->appendDetailsValues($data);
-        $data = $this->appendImagesValues($data);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->getChildObject()->addData($data);
+
+        $this->getAmazonListingProduct()->addData($data);
+        $this->getAmazonListingProduct()->setIsStoppedManually(false);
 
         $this->setLastSynchronizationDates();
 

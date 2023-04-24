@@ -28,10 +28,7 @@ class Theme extends AbstractModel
             return;
         }
 
-        if (
-            !$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate() ||
-            !$this->getProcessor()->getAmazonDescriptionTemplate()->isNewAsinAccepted()
-        ) {
+        if (!$this->getProcessor()->getAmazonListingProduct()->isExistsProductTypeTemplate()) {
             $this->getProcessor()->getTypeModel()->resetChannelTheme(false);
 
             return;
@@ -58,9 +55,8 @@ class Theme extends AbstractModel
         $possibleThemes = $this->getProcessor()->getPossibleThemes();
 
         if (
-            !$this->getProcessor()->getAmazonListingProduct()->isExistDescriptionTemplate() ||
-            !$this->getProcessor()->getAmazonDescriptionTemplate()->isNewAsinAccepted() ||
-            empty($possibleThemes)
+            !$this->getProcessor()->getAmazonListingProduct()->isExistsProductTypeTemplate()
+            || empty($possibleThemes)
         ) {
             return;
         }
@@ -78,10 +74,19 @@ class Theme extends AbstractModel
 
     private function processExistProduct()
     {
+        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
+        if (!empty($additionalData['running_migration_to_product_types'])) {
+            return;
+        }
+
         $possibleThemes = $this->getProcessor()->getPossibleThemes();
         $channelAttributes = array_keys(
             $this->getProcessor()->getTypeModel()->getRealChannelAttributesSets()
         );
+
+        if (empty($channelAttributes)) {
+            return;
+        }
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Theme $themeMatcher */
         $themeMatcher = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Matcher_Theme');

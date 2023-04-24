@@ -23,9 +23,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
     public const INSTRUCTION_TYPE_REVISE_DETAILS_ENABLED = 'template_synchronization_revise_details_enabled';
     public const INSTRUCTION_TYPE_REVISE_DETAILS_DISABLED = 'template_synchronization_revise_details_disabled';
 
-    public const INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED = 'template_synchronization_revise_images_enabled';
-    public const INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED = 'template_synchronization_revise_images_disabled';
-
     //########################################
 
     protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status)
@@ -75,20 +72,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
         } elseif ($diff->isReviseDetailsDisabled()) {
             $data[] = [
                 'type' => self::INSTRUCTION_TYPE_REVISE_DETAILS_DISABLED,
-                'priority' => 5,
-            ];
-        }
-
-        //----------------------------------------
-
-        if ($diff->isReviseImagesEnabled()) {
-            $data[] = [
-                'type' => self::INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED,
-                'priority' => $status === \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ? 80 : 5,
-            ];
-        } elseif ($diff->isReviseImagesDisabled()) {
-            $data[] = [
-                'type' => self::INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED,
                 'priority' => 5,
             ];
         }

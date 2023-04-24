@@ -8,29 +8,19 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Shipping\Source
- */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
-    /**
-     * @var \Ess\M2ePro\Model\Magento\Product $magentoProduct
-     */
-    private $magentoProduct = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Template\Shipping $shippingTemplateModel
-     */
-    private $shippingTemplateModel = null;
-
-    //########################################
+    /**@var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
+    private $magentoProduct;
+    /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping $shippingTemplateModel */
+    private $shippingTemplateModel;
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
      *
      * @return $this
      */
-    public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct): self
     {
         $this->magentoProduct = $magentoProduct;
 
@@ -40,19 +30,17 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Magento\Product
      */
-    public function getMagentoProduct()
+    public function getMagentoProduct(): ?\Ess\M2ePro\Model\Magento\Product
     {
         return $this->magentoProduct;
     }
-
-    // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Amazon\Template\Shipping $instance
      *
      * @return $this
      */
-    public function setShippingTemplate(\Ess\M2ePro\Model\Amazon\Template\Shipping $instance)
+    public function setShippingTemplate(\Ess\M2ePro\Model\Amazon\Template\Shipping $instance): self
     {
         $this->shippingTemplateModel = $instance;
 
@@ -62,34 +50,16 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return \Ess\M2ePro\Model\Amazon\Template\Shipping
      */
-    public function getShippingTemplate()
+    public function getShippingTemplate(): ?\Ess\M2ePro\Model\Amazon\Template\Shipping
     {
         return $this->shippingTemplateModel;
     }
 
-    //########################################
-
     /**
      * @return string
      */
-    public function getTemplateName()
+    public function getTemplateId(): string
     {
-        $result = '';
-
-        switch ($this->getShippingTemplate()->getTemplateNameMode()) {
-            case \Ess\M2ePro\Model\Amazon\Template\Shipping::TEMPLATE_NAME_VALUE:
-                $result = $this->getShippingTemplate()->getTemplateNameValue();
-                break;
-
-            case \Ess\M2ePro\Model\Amazon\Template\Shipping::TEMPLATE_NAME_ATTRIBUTE:
-                $result = $this->getMagentoProduct()->getAttributeValue(
-                    $this->getShippingTemplate()->getTemplateNameAttribute()
-                );
-                break;
-        }
-
-        return $result;
+        return $this->getShippingTemplate()->getTemplateId();
     }
-
-    //########################################
 }

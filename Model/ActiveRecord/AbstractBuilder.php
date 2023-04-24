@@ -41,8 +41,8 @@ abstract class AbstractBuilder extends \Ess\M2ePro\Model\AbstractModel
         $this->model->addData($preparedData);
 
         if (
-            $this->model instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel &&
-            $this->model->hasChildObjectLoaded()
+            $this->model instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
+            && $this->model->hasChildObjectLoaded()
         ) {
             $this->model->getChildObject()->addData($preparedData);
         }

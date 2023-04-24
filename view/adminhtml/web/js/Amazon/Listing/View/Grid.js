@@ -6,7 +6,7 @@ define([
     'M2ePro/Amazon/Listing/View/Action',
     'M2ePro/Amazon/Listing/View/Fulfillment',
     'M2ePro/Amazon/Listing/Product/Search',
-    'M2ePro/Amazon/Listing/Product/Template/Description',
+    'M2ePro/Amazon/Listing/Product/Template/ProductType',
     'M2ePro/Amazon/Listing/Product/Template/Shipping',
     'M2ePro/Amazon/Listing/Product/Template/ProductTaxCode',
     'M2ePro/Amazon/Listing/Product/Variation/Manage',
@@ -52,9 +52,9 @@ define([
             this.mappingHandler = new ListingMapping(this, 'amazon');
             this.productSearchHandler = new AmazonListingProductSearch(this);
 
-            this.templateDescriptionHandler    = new AmazonListingProductTemplateDescription(this);
             this.templateShippingHandler       = new AmazonListingProductTemplateShipping(this);
             this.templateProductTaxCodeHandler = new AmazonListingProductTemplateProductTaxCode(this);
+            this.templateProductTypeHandler    = new AmazonListingProductProductType(this);
 
             this.variationProductManageHandler = new AmazonListingProductVariationManage(this);
             this.fulfillmentHandler = new AmazonListingViewFulfillment(this);
@@ -65,13 +65,13 @@ define([
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
                 deleteAndRemoveAction: this.actionHandler.deleteAndRemoveAction.bind(this.actionHandler),
 
-                assignTemplateDescriptionIdAction: (function(id) {
+                assignProductTypeAction: (function(id) {
                     id = id || this.getSelectedProductsString();
-                    this.templateDescriptionHandler.validateProductsForTemplateDescriptionAssign(id)
+                    this.templateProductTypeHandler.validateProductsAndAssign(id)
                 }).bind(this),
-                unassignTemplateDescriptionIdAction: (function(id) {
+                unassignProductTypeAction: (function(id) {
                     id = id || this.getSelectedProductsString();
-                    this.templateDescriptionHandler.unassignFromTemplateDescription(id)
+                    this.templateProductTypeHandler.unassign(id)
                 }).bind(this),
 
                 assignTemplateShippingIdAction: (function(id) {
@@ -164,23 +164,6 @@ define([
             window.AmazonListingTransferringObj.popupShow(this.selectedProductsIds);
         },
 
-        // ---------------------------------------
-
-        unassignTemplateDescriptionIdActionConfrim: function (id)
-        {
-            var self = this;
-
-            self.confirm({
-                actions: {
-                    confirm: function () {
-                        self.templateDescriptionHandler.unassignFromTemplateDescription(id);
-                    },
-                    cancel: function () {
-                        return false;
-                    }
-                }
-            });
-        },
 
         // ---------------------------------------
 
@@ -192,6 +175,22 @@ define([
                 actions: {
                     confirm: function () {
                         self.templateShippingHandler.unassign(id);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
+        },
+
+        unassignProductTypeConfrim: function (id)
+        {
+            var self = this;
+
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.templateProductTypeHandler.unassign(id);
                     },
                     cancel: function () {
                         return false;

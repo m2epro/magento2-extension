@@ -402,7 +402,7 @@ HTML
             ]
         );
 
-        $shippingTemplates = $this->getShippingTemplates();
+        $shippingTemplates = $this->getShippingTemplates($formData['account_id']);
         $style = count($shippingTemplates) === 0 ? 'display: none' : '';
 
         $templateShipping = $this->elementFactory->create(
@@ -532,23 +532,12 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     <<<HTML
-                    <p>The Condition settings will be used not only to create new Amazon Products, but
-                    also during a Full Revise of the Product on the channel. However, it is not recommended
-                    to change the Condition settings of the already existing Amazon Products as the ability to
-                    edit this kind of information in Seller Central is not available.</p><br>
+                    <p>Specify the condition that best describes the current state of your product.</p><br>
 
-                    <p>On the other hand, Amazon MWS API allows changing the Condition of the existing Amazon
-                    Product following the list of technical limitations. It is required to provide the Condition
-                    value when the Condition Note should be updated.</p><br>
-
-                    <p><strong>For example</strong>, you are listing a New Product on Amazon with the Condition Note
-                    ‘totally new’.
-                    Then, you are changing the Condition to Used and Condition Note to ‘a bit used’.
-                    The modified values will be updated during the next Revise action. As a result, the Condition
-                    will be set to Used and the Condition Note will be ‘a bit used’ for the Product on Amazon.</p>
+                    <p>By providing accurate information about the product condition, you improve the visibility
+                    of your listings, ensure fair pricing, and increase customer satisfaction.</p>
 HTML
                 ),
-
                 'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
@@ -591,7 +580,7 @@ HTML
                 'name' => 'condition_note_value',
                 'label' => $this->__('Condition Note Value'),
                 'style' => 'width: 70%;',
-                'class' => 'textarea M2ePro-required-when-visible',
+                'class' => 'textarea M2ePro-validate-condition-note-length',
                 'required' => true,
                 'value' => $formData['condition_note_value'],
             ]
@@ -609,162 +598,6 @@ HTML
                 'after_element_html' => $button->toHtml(),
             ]
         );
-
-        // Listing Photos
-        $fieldset = $form->addFieldset(
-            'magento_block_amazon_listing_add_images',
-            [
-                'legend' => $this->__('Listing Photos'),
-                'collapsable' => true,
-            ]
-        );
-
-        $fieldset->addField(
-            'image_main_attribute',
-            'hidden',
-            [
-                'name' => 'image_main_attribute',
-                'value' => $formData['image_main_attribute'],
-            ]
-        );
-
-        $preparedAttributes = [];
-        foreach ($attributesByTypes['text_images'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['image_main_mode'] == AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE
-                && $attribute['code'] == $formData['image_main_attribute']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldset->addField(
-            'image_main_mode',
-            self::SELECT,
-            [
-                'name' => 'image_main_mode',
-                'label' => $this->__('Main Image'),
-                'required' => true,
-                'values' => [
-                    AmazonListing::IMAGE_MAIN_MODE_NONE => $this->__('None'),
-                    AmazonListing::IMAGE_MAIN_MODE_PRODUCT => $this->__('Product Base Image'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true,
-                        ],
-                    ],
-                ],
-                'value' => $formData['image_main_mode'] != AmazonListing::IMAGE_MAIN_MODE_ATTRIBUTE
-                    ? $formData['image_main_mode'] : '',
-                'tooltip' => $this->__(
-                    'You have an ability to add Photos for your Items to be displayed on the More Buying Choices Page.
-                    <br/>It is available only for Items with Used or Collectible Condition.'
-                ),
-
-                'create_magento_attribute' => true,
-
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
-
-        $fieldset->addField(
-            'gallery_images_limit',
-            'hidden',
-            [
-                'name' => 'gallery_images_limit',
-                'value' => $formData['gallery_images_limit'],
-            ]
-        );
-
-        $fieldset->addField(
-            'gallery_images_attribute',
-            'hidden',
-            [
-                'name' => 'gallery_images_attribute',
-                'value' => $formData['gallery_images_attribute'],
-            ]
-        );
-
-        $preparedLimitOptions[] = [
-            'attrs' => ['attribute_code' => 1],
-            'value' => 1,
-            'label' => 1,
-        ];
-        if (
-            $formData['gallery_images_limit'] == 1 &&
-            $formData['gallery_images_mode'] != AmazonListing::GALLERY_IMAGES_MODE_NONE
-        ) {
-            $preparedLimitOptions[0]['attrs']['selected'] = 'selected';
-        }
-
-        for ($i = 2; $i <= AmazonListing::GALLERY_IMAGES_COUNT_MAX; $i++) {
-            $option = [
-                'attrs' => ['attribute_code' => $i],
-                'value' => AmazonListing::GALLERY_IMAGES_MODE_PRODUCT,
-                'label' => $this->__('Up to') . ' ' . $i,
-            ];
-
-            if ($formData['gallery_images_limit'] == $i) {
-                $option['attrs']['selected'] = 'selected';
-            }
-
-            $preparedLimitOptions[] = $option;
-        }
-
-        $preparedAttributes = [];
-        foreach ($attributesByTypes['text_images'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['gallery_images_mode'] == AmazonListing::GALLERY_IMAGES_MODE_ATTRIBUTE
-                && $attribute['code'] == $formData['gallery_images_attribute']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => AmazonListing::GALLERY_IMAGES_MODE_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
-        $fieldConfig = [
-            'container_id' => 'gallery_images_mode_tr',
-            'name' => 'gallery_images_mode',
-            'label' => $this->__('Additional Images'),
-            'values' => [
-                AmazonListing::GALLERY_IMAGES_MODE_NONE => $this->__('None'),
-                [
-                    'label' => $this->__('Product Images Quantity'),
-                    'value' => $preparedLimitOptions,
-                ],
-                [
-                    'label' => $this->__('Magento Attribute'),
-                    'value' => $preparedAttributes,
-                    'attrs' => [
-                        'is_magento_attribute' => true,
-                    ],
-                ],
-            ],
-
-            'create_magento_attribute' => true,
-        ];
-
-        if ($formData['gallery_images_mode'] == AmazonListing::GALLERY_IMAGES_MODE_NONE) {
-            $fieldConfig['value'] = $formData['gallery_images_mode'];
-        }
-
-        $fieldset->addField(
-            'gallery_images_mode',
-            self::SELECT,
-            $fieldConfig
-        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
         // Gift Wrap
         $fieldset = $form->addFieldset(
@@ -1046,6 +879,11 @@ HTML
         return parent::_prepareForm();
     }
 
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form|\Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \ReflectionException
+     */
     protected function _prepareLayout()
     {
         $this->jsPhp->addConstants(
@@ -1181,7 +1019,10 @@ JS
         return parent::_prepareLayout();
     }
 
-    private function getRecommendedConditionValues()
+    /**
+     * @return array[]
+     */
+    private function getRecommendedConditionValues(): array
     {
         $formData = $this->getListingData();
 
@@ -1190,6 +1031,16 @@ JS
                 'attrs' => ['attribute_code' => AmazonListing::CONDITION_NEW],
                 'value' => AmazonListing::CONDITION_MODE_DEFAULT,
                 'label' => $this->__('New'),
+            ],
+            [
+                'attrs' => ['attribute_code' => AmazonListing::CONDITION_NEW_OEM],
+                'value' => AmazonListing::CONDITION_MODE_DEFAULT,
+                'label' => $this->__('New - OEM'),
+            ],
+            [
+                'attrs' => ['attribute_code' => AmazonListing::CONDITION_NEW_OPEN_BOX],
+                'value' => AmazonListing::CONDITION_MODE_DEFAULT,
+                'label' => $this->__('New - Open Box'),
             ],
             [
                 'attrs' => ['attribute_code' => AmazonListing::CONDITION_USED_LIKE_NEW],
@@ -1252,7 +1103,10 @@ JS
         return $recommendedValues;
     }
 
-    public function getDefaultFieldsValues()
+    /**
+     * @return array
+     */
+    public function getDefaultFieldsValues(): array
     {
         return [
             'sku_mode' => AmazonListing::SKU_MODE_DEFAULT,
@@ -1271,12 +1125,6 @@ JS
             'condition_note_mode' => AmazonListing::CONDITION_NOTE_MODE_NONE,
             'condition_note_value' => '',
 
-            'image_main_mode' => AmazonListing::IMAGE_MAIN_MODE_NONE,
-            'image_main_attribute' => '',
-            'gallery_images_mode' => AmazonListing::GALLERY_IMAGES_MODE_NONE,
-            'gallery_images_limit' => '',
-            'gallery_images_attribute' => '',
-
             'gift_wrap_mode' => AmazonListing::GIFT_WRAP_MODE_NO,
             'gift_wrap_attribute' => '',
 
@@ -1293,7 +1141,11 @@ JS
         ];
     }
 
-    protected function getListingData()
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getListingData(): array
     {
         if ($this->getRequest()->getParam('id') !== null) {
             $data = array_merge($this->getListing()->getData(), $this->getListing()->getChildObject()->getData());
@@ -1319,6 +1171,9 @@ JS
         return $data;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel|\Ess\M2ePro\Model\Listing
+     */
     protected function getListing()
     {
         if ($this->listing === null && $this->getRequest()->getParam('id')) {
@@ -1331,6 +1186,10 @@ JS
         return $this->listing;
     }
 
+    /**
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function getSellingFormatTemplates()
     {
         $collection = $this->amazonFactory->getObject('Template\SellingFormat')->getCollection();
@@ -1348,6 +1207,10 @@ JS
         return $result['items'];
     }
 
+    /**
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function getSynchronizationTemplates()
     {
         $collection = $this->amazonFactory->getObject('Template\Synchronization')->getCollection();
@@ -1365,11 +1228,17 @@ JS
         return $result['items'];
     }
 
-    protected function getShippingTemplates()
+    /**
+     * @param int $accountId
+     *
+     * @return mixed
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function getShippingTemplates(int $accountId)
     {
         $collection = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')->getCollection();
+        $collection->addFieldToFilter('account_id', $accountId);
         $collection->setOrder('title', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
-
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS)->columns(
             [
                 'value' => 'id',
@@ -1384,8 +1253,10 @@ JS
 
     /**
      * @param boolean $useFormContainer
+     *
+     * @return $this
      */
-    public function setUseFormContainer($useFormContainer)
+    public function setUseFormContainer(bool $useFormContainer): self
     {
         $this->useFormContainer = $useFormContainer;
 

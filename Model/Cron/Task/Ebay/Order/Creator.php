@@ -63,11 +63,16 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
     {
         $orders = [];
         $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
+        $boundaryCreationDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify('-90 days');
 
         foreach ($ordersData as $ebayOrderData) {
             try {
                 $orderCreateDate = new \DateTime($ebayOrderData['purchase_create_date'], new \DateTimeZone('UTC'));
-                if ($this->_validateAccountCreateDate && $orderCreateDate < $accountCreateDate) {
+
+                if (
+                    $this->_validateAccountCreateDate
+                    && ($orderCreateDate < $accountCreateDate || $orderCreateDate < $boundaryCreationDate)
+                ) {
                     continue;
                 }
 

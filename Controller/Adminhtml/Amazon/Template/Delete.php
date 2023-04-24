@@ -74,7 +74,6 @@ class Delete extends Template
                 break;
 
             case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SYNCHRONIZATION:
-            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION:
             default:
                 $model = $this->amazonFactory->getObjectLoaded('Template\\' . ucfirst($type), $id);
                 break;

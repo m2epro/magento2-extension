@@ -128,7 +128,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             )
         );
 
-        $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
+        $path = 'amazon_listing_autoAction/getProductTypesList';
         $this->jsUrl->add(
             $this->getUrl('*/' . $path, [
                 'marketplace_id' => $listing->getMarketplaceId(),

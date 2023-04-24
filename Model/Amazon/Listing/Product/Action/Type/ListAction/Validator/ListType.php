@@ -329,7 +329,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             $this->addMessage(
                 $this->log->encodeDescription(
                     '%worldwide_id_type% %worldwide_id% provided in Search Settings
-                     is not found on Amazon. Please set Description Policy to create New ASIN/ISBN.',
+                     is not found on Amazon. Please set Product Type to create New ASIN/ISBN.',
                     ['!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId->getIdentifier()]
                 )
             );
@@ -391,13 +391,9 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             return null;
         }
 
-        /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
-        $descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
-        if (empty($descriptionTemplate)) {
-            return null;
-        }
-
-        if (!$descriptionTemplate->isNewAsinAccepted()) {
+        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType $productTypeTemplate */
+        $productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
+        if (empty($productTypeTemplate)) {
             return null;
         }
 
@@ -553,20 +549,11 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             return false;
         }
 
-        $descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
-        if (empty($descriptionTemplate)) {
+        $productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
+        if (empty($productTypeTemplate)) {
             $this->addMessage(
                 'Product cannot be Listed because the process of new ASIN/ISBN creation has started
-                 but Description Policy is missing. Please assign the Description Policy and try again.'
-            );
-
-            return false;
-        }
-
-        if (!$descriptionTemplate->isNewAsinAccepted()) {
-            $this->addMessage(
-                'Product cannot be Listed because new ASIN/ISBN creation is disabled in the Description
-                 Policy assigned to this Product. Please enable new ASIN/ISBN creation and try again.'
+                 but Product Type is missing. Please assign the Product Type and try again.'
             );
 
             return false;
@@ -592,16 +579,6 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         $productIdentifiers = $this->getAmazonListingProduct()->getIdentifiers();
         $worldwideId = $productIdentifiers->getWorldwideId();
-        $registeredParameter = $productIdentifiers->getRegisteredParameter();
-
-        if (empty($worldwideId) && empty($registeredParameter)) {
-            $this->addMessage(
-                'The Product cannot be Listed because no UPC/EAN value or Product ID Override option was set under
-                 Amazon > Configuration > Main. Please set the required values and try again.'
-            );
-
-            return false;
-        }
 
         if (empty($worldwideId)) {
             return true;

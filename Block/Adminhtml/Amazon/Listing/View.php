@@ -12,13 +12,10 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionDataHelper;
 
@@ -161,7 +158,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             )
         );
 
-        $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
+        $path = 'amazon_listing_autoAction/getProductTypesList';
         $this->jsUrl->add(
             $this->getUrl('*/' . $path, [
                 'marketplace_id' => $this->listing->getMarketplaceId(),
@@ -213,11 +210,12 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product_Fulfillment'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product_Search'));
-        $this->jsUrl->addUrls(
-            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_Description')
-        );
+
         $this->jsUrl->addUrls(
             $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_Shipping')
+        );
+        $this->jsUrl->addUrls(
+            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_ProductType')
         );
         $this->jsUrl->addUrls(
             $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_ProductTaxCode')
@@ -286,8 +284,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
 
-        $templateDescriptionPopupTitle = $this->__('Assign Description Policy');
-
         $popupTitle = $this->__('Moving Amazon Items');
 
         $taskCompletedMessage = $this->__('Task completed. Please wait ...');
@@ -324,6 +320,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $templateShippingPopupTitle = $this->__('Assign Shipping Template Policy');
         $templateProductTaxCodePopupTitle = $this->__('Assign Product Tax Code Policy');
 
+        $productTypePopupTitle = $this->__('Assign Product Type');
+
         $enterProductSearchQueryMessage = $this->__('Please enter Product Title or ASIN/ISBN/UPC/EAN.');
         $autoMapAsinSearchProducts = $this->__('Search %product_title% Product(s) on Amazon.');
         $autoMapAsinProgressTitle = $this->__('Automatic Assigning ASIN/ISBN to Item(s)');
@@ -333,8 +331,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
         $notSynchronizedMarketplace = $this->__(
             'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.'
-        ) . ' ' .
-            $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
+        ) . ' ' . $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
 
         $noVariationsLeftText = $this->__('All variations are already added.');
 
@@ -365,6 +362,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Linking Product' => $this->__('Linking Product'),
 
             'Add New Shipping Policy' => $this->__('Add New Shipping Policy'),
+            'Add New Product Type' => $this->__('Add New Product Type'),
             'Add New Product Tax Code Policy' => $this->__('Add New Product Tax Code Policy'),
             'Add New Listing' => $this->__('Add New Listing'),
 
@@ -395,9 +393,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'select_items_message' => $selectItemsMessage,
             'select_action_message' => $selectActionMessage,
 
-            'templateDescriptionPopupTitle' => $templateDescriptionPopupTitle,
-
             'templateShippingPopupTitle' => $templateShippingPopupTitle,
+            'productTypePopupTitle' => $productTypePopupTitle,
             'templateProductTaxCodePopupTitle' => $templateProductTaxCodePopupTitle,
 
             'assign' => $assignString,
@@ -426,7 +423,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'switch_to_individual_mode_popup_title' => $switchToIndividualModePopUpTitle,
             'switch_to_parent_mode_popup_title' => $switchToParentModePopUpTitle,
 
-            'Add New Description Policy' => $this->__('Add New Description Policy'),
             'Add New Child Product' => $this->__('Add New Child Product'),
         ]);
 

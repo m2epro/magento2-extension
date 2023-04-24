@@ -26,7 +26,6 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
         'price_regular',
         'price_business',
         'details',
-        'images',
     ];
 
     /**
@@ -169,24 +168,6 @@ abstract class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
         $data = $dataBuilder->getBuilderData();
 
         $this->addMetaData('details_data', $data);
-
-        return $data;
-    }
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getImagesData()
-    {
-        if (!$this->getConfigurator()->isImagesAllowed()) {
-            return [];
-        }
-
-        $dataBuilder = $this->getDataBuilder('images');
-        $data = $dataBuilder->getBuilderData();
-
-        $this->addMetaData('images_data', $data);
 
         return $data;
     }

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Walmart\Order\Action\Handler;
 use Ess\M2ePro\Model\Walmart\Order\Item as OrderItem;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Acknowledge
+ * Class \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Do not change order status
  */
 class Acknowledge extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\AbstractModel
 {
@@ -51,18 +51,6 @@ class Acknowledge extends \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Abstrac
 
             return;
         }
-
-        $itemsStatuses = [];
-
-        foreach ($this->getOrder()->getItemsCollection() as $item) {
-            $item->getChildObject()->setData('status', OrderItem::STATUS_ACKNOWLEDGED)->save();
-            $itemsStatuses[$item->getChildObject()->getData('walmart_order_item_id')] = OrderItem::STATUS_ACKNOWLEDGED;
-        }
-
-        $orderStatus = $this->modelFactory->getObject('Walmart_Order_Helper')->getOrderStatus($itemsStatuses);
-        $this->getOrder()->getChildObject()->setData('status', $orderStatus);
-        $this->getOrder()->getChildObject()->save();
-        $this->getOrder()->save();
 
         $this->getOrder()->addSuccessLog(
             $this->helperFactory->getObject('Module\Translation')->__('Order was acknowledged.')

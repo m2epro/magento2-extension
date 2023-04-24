@@ -10,60 +10,45 @@ namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Walmart\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Response
- */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
     public const INSTRUCTION_INITIATOR = 'action_response';
 
-    protected $resourceConnection;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
-    /**
-     * @var array
-     */
-    private $params = [];
-
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product
-     */
+    /** @var \Ess\M2ePro\Model\Listing\Product|null */
     private $listingProduct = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator
-     */
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Configurator|null */
     private $configurator = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\RequestData
-     */
+    /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\RequestData|null */
     protected $requestData = null;
 
-    /**
-     * @var array
-     */
+    /** @var array */
+    private $params = [];
+    /** @var array */
     protected $requestMetaData = [];
 
-    //########################################
-
     public function __construct(
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->resourceConnection = $resourceConnection;
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->activeRecordFactory = $activeRecordFactory;
     }
 
-    //########################################
+    // ---------------------------------------
 
-    abstract public function processSuccess($params = []);
+    /**
+     * @param array $params
+     *
+     * @return void
+     */
+    abstract public function processSuccess(array $params = []): void;
 
-    //########################################
+    // ---------------------------------------
 
     public function setParams(array $params = [])
     {
@@ -150,8 +135,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Walmart\Listing\Product
      */
@@ -223,8 +206,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->getListingProduct()->getMagentoProduct();
     }
-
-    //########################################
 
     protected function appendStatusChangerValue($data)
     {
@@ -356,8 +337,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    //########################################
-
     protected function setLastSynchronizationDates()
     {
         if (!$this->getConfigurator()->isQtyAllowed() && !$this->getConfigurator()->isPriceAllowed()) {
@@ -376,8 +355,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
     }
-
-    //########################################
 
     public function throwRepeatActionInstructions()
     {
@@ -430,6 +407,4 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructions);
     }
-
-    //########################################
 }

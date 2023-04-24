@@ -30,16 +30,16 @@ class Qty extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
         $isDisabled = AmazonListingProduct::IS_AFN_CHANNEL_NO;
 
         $html = <<<HTML
-<div class="range" style="width: 135px;">
-    <div class="range-line" style="padding-top: 5px;">
+<div class="range">
+    <div class="range-line" style="padding-top: 5px; display: flex; align-items: center">
         <label for="{$this->_getHtmlName()}"
-               style="cursor: pointer;vertical-align: text-bottom;"
+               style="cursor: pointer;vertical-align: text-bottom; white-space: nowrap;"
                class="admin__field-label">
             {$this->__('Fulfillment')}
         </label>
         <select id="{$this->_getHtmlName()}"
                 class="admin__control-select"
-                style="margin-left:6px; float:none; width:auto !important;"
+                style="margin-left:6px; float:none;"
                 name="{$this->_getHtmlName()}[afn]"
             >
             <option {$anySelected} value="">{$this->__('Any')}</option>

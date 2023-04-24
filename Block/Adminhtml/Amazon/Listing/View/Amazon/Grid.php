@@ -334,7 +334,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $groups = [
             'actions' => $this->__('Actions'),
             'asin_isbn' => $this->__('ASIN / ISBN'),
-            'description_policy' => $this->__('Description Policy'),
             'other' => $this->__('Other'),
         ];
 

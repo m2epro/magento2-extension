@@ -78,7 +78,8 @@
                         <resource id="Ess_M2ePro::amazon_configuration_accounts" title="Accounts" sortOrder="1" />
                         <resource id="Ess_M2ePro::amazon_configuration_marketplaces" title="Marketplaces" sortOrder="2" />
                         <resource id="Ess_M2ePro::amazon_configuration_templates" title="Policies" sortOrder="3" />
-                        <resource id="Ess_M2ePro::amazon_configuration_settings" title="Settings" sortOrder="4" />
+                        <resource id="Ess_M2ePro::amazon_configuration_product_types" title="Product Types" sortOrder="4" />
+                        <resource id="Ess_M2ePro::amazon_configuration_settings" title="Settings" sortOrder="5" />
                     </resource>
 
                     <!-- amazon help center acl -->

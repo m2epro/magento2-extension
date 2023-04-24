@@ -101,13 +101,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             'condition_note_mode',
             'condition_note_value',
 
-            'image_main_mode',
-            'image_main_attribute',
-
-            'gallery_images_mode',
-            'gallery_images_limit',
-            'gallery_images_attribute',
-
             'gift_wrap_mode',
             'gift_wrap_attribute',
 

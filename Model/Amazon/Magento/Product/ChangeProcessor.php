@@ -8,17 +8,11 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Magento\Product\ChangeProcessor
- */
 class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel
 {
     public const INSTRUCTION_TYPE_QTY_DATA_CHANGED = 'magento_product_qty_data_changed';
     public const INSTRUCTION_TYPE_DETAILS_DATA_CHANGED = 'magento_product_details_data_changed';
-    public const INSTRUCTION_TYPE_IMAGES_DATA_CHANGED = 'magento_product_images_data_changed';
     public const INSTRUCTION_TYPE_REPRICING_DATA_CHANGED = 'magento_product_repricing_data_changed';
-
-    //########################################
 
     public function getTrackingAttributes()
     {
@@ -26,7 +20,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             array_merge(
                 $this->getQtyTrackingAttributes(),
                 $this->getDetailsTrackingAttributes(),
-                $this->getImagesTrackingAttributes(),
                 $this->getRepricingTrackingAttributes()
             )
         );
@@ -66,19 +59,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             ];
         }
 
-        if (array_intersect($attributes, $this->getImagesTrackingAttributes())) {
-            $priority = 5;
-
-            if ($this->getListingProduct()->isListed()) {
-                $priority = 30;
-            }
-
-            $data[] = [
-                'type' => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-                'priority' => $priority,
-            ];
-        }
-
         if (array_intersect($attributes, $this->getRepricingTrackingAttributes())) {
             $priority = 5;
 
@@ -94,8 +74,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
 
         return $data;
     }
-
-    //########################################
 
     public function getQtyTrackingAttributes()
     {
@@ -122,46 +100,12 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $amazonListing->getGiftMessageAttributes()
         );
 
-        if ($this->getAmazonListingProduct()->isExistDescriptionTemplate()) {
-            $amazonDescriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
-            $descriptionDefinitionTemplate = $amazonDescriptionTemplate->getDefinitionTemplate();
-
+        if ($this->getAmazonListingProduct()->isExistsProductTypeTemplate()) {
+            $productType = $this->getAmazonListingProduct()->getProductTypeTemplate();
             $trackingAttributes = array_merge(
                 $trackingAttributes,
-                array_merge(
-                    $descriptionDefinitionTemplate->getTitleAttributes(),
-                    $descriptionDefinitionTemplate->getBrandAttributes(),
-                    $descriptionDefinitionTemplate->getNumberOfItemsAttributes(),
-                    $descriptionDefinitionTemplate->getItemPackageQuantityAttributes(),
-                    $descriptionDefinitionTemplate->getDescriptionAttributes(),
-                    $descriptionDefinitionTemplate->getBulletPointsAttributes(),
-                    $descriptionDefinitionTemplate->getSearchTermsAttributes(),
-                    $descriptionDefinitionTemplate->getTargetAudienceAttributes(),
-                    $descriptionDefinitionTemplate->getManufacturerAttributes(),
-                    $descriptionDefinitionTemplate->getManufacturerPartNumberAttributes(),
-                    $descriptionDefinitionTemplate->getMsrpRrpAttributes(),
-                    $descriptionDefinitionTemplate->getItemDimensionsVolumeAttributes(),
-                    $descriptionDefinitionTemplate->getItemDimensionsVolumeUnitOfMeasureAttributes(),
-                    $descriptionDefinitionTemplate->getItemDimensionsWeightAttributes(),
-                    $descriptionDefinitionTemplate->getItemDimensionsWeightUnitOfMeasureAttributes(),
-                    $descriptionDefinitionTemplate->getPackageDimensionsVolumeAttributes(),
-                    $descriptionDefinitionTemplate->getPackageDimensionsVolumeUnitOfMeasureAttributes(),
-                    $descriptionDefinitionTemplate->getPackageWeightAttributes(),
-                    $descriptionDefinitionTemplate->getPackageWeightUnitOfMeasureAttributes(),
-                    $descriptionDefinitionTemplate->getShippingWeightAttributes(),
-                    $descriptionDefinitionTemplate->getShippingWeightUnitOfMeasureAttributes()
-                )
+                $productType->getCustomAttributesName()
             );
-
-            $specifics = $amazonDescriptionTemplate->getSpecifics(true);
-            foreach ($specifics as $specific) {
-                $customAttribute = $specific->getCustomAttribute();
-                if (empty($customAttribute)) {
-                    continue;
-                }
-
-                $trackingAttributes = array_merge($trackingAttributes, [$customAttribute]);
-            }
         }
 
         if ($this->getAmazonListingProduct()->isExistProductTaxCodeTemplate()) {
@@ -170,41 +114,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $trackingAttributes = array_merge(
                 $trackingAttributes,
                 $productTaxCodeTemplate->getProductTaxCodeAttributes()
-            );
-        }
-
-        if ($this->getAmazonListingProduct()->isExistShippingTemplate()) {
-            $shippingTemplate = $this->getAmazonListingProduct()->getShippingTemplate();
-
-            $trackingAttributes = array_merge(
-                $trackingAttributes,
-                $shippingTemplate->getTemplateNameAttributes()
-            );
-        }
-
-        return array_unique($trackingAttributes);
-    }
-
-    public function getImagesTrackingAttributes()
-    {
-        $trackingAttributes = [];
-
-        $amazonListing = $this->getAmazonListingProduct()->getAmazonListing();
-
-        $trackingAttributes = array_merge(
-            $trackingAttributes,
-            $amazonListing->getImageMainAttributes(),
-            $amazonListing->getGalleryImagesAttributes()
-        );
-
-        if ($this->getAmazonListingProduct()->isExistDescriptionTemplate()) {
-            $amazonDescriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
-
-            $trackingAttributes = array_merge(
-                $trackingAttributes,
-                $amazonDescriptionTemplate->getDefinitionTemplate()->getImageMainAttributes(),
-                $amazonDescriptionTemplate->getDefinitionTemplate()->getImageVariationDifferenceAttributes(),
-                $amazonDescriptionTemplate->getDefinitionTemplate()->getGalleryImagesAttributes()
             );
         }
 
@@ -232,8 +141,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
         return array_unique($trackingAttributes);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product
      */
@@ -241,6 +148,4 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
     {
         return $this->getListingProduct()->getChildObject();
     }
-
-    //########################################
 }

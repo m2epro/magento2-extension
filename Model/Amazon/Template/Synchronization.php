@@ -168,14 +168,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
         return $this->getData('revise_update_details') != 0;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReviseWhenChangeImages()
-    {
-        return $this->getData('revise_update_images') != 0;
-    }
-
     // ---------------------------------------
 
     /**

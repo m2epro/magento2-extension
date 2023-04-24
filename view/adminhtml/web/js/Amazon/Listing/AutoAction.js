@@ -17,15 +17,21 @@ define([
 
         addingModeChange: function(el)
         {
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Listing::ADDING_MODE_ADD') &&
-                ListingAutoActionObj.showCreateNewAsin) {
-
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Listing::ADDING_MODE_ADD')) {
                 $('auto_action_amazon_add_and_create_asin').show();
+                var productTypeFieldset = jQuery('#auto_action_amazon_add_and_assign_product_type_template');
+                if (productTypeFieldset.find('select option:not(.empty)').length === 0) {
+                    productTypeFieldset.find('select').hide();
+                    productTypeFieldset.find('#empty-product-type-message').show();
+                } else {
+                    productTypeFieldset.find('select').show();
+                    productTypeFieldset.find('#empty-product-type-message').hide();
+                }
             } else {
                 $('auto_action_amazon_add_and_create_asin').hide();
-                $('auto_action_amazon_add_and_assign_description_template').hide();
+                $('auto_action_amazon_add_and_assign_product_type_template').hide();
                 $('auto_action_create_asin').value = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_NO');
-                $('adding_description_template_id').value = '';
+                $('adding_product_type_template_id').value = '';
             }
 
             if (el.target.value != M2ePro.php.constant('Ess_M2ePro_Model_Listing::ADDING_MODE_NONE')) {
@@ -39,10 +45,10 @@ define([
         createAsinChange: function(el)
         {
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::ADDING_MODE_ADD_AND_CREATE_NEW_ASIN_YES')) {
-                $('auto_action_amazon_add_and_assign_description_template').show();
+                $('auto_action_amazon_add_and_assign_product_type_template').show();
             } else {
-                $('auto_action_amazon_add_and_assign_description_template').hide();
-                $('adding_description_template_id').value = '';
+                $('auto_action_amazon_add_and_assign_product_type_template').hide();
+                $('adding_product_type_template_id').value = '';
             }
         },
 
@@ -55,17 +61,17 @@ define([
                 ListingAutoActionObj.internalData = Object.extend(
                     ListingAutoActionObj.internalData,
                     {
-                        adding_description_template_id : $('adding_description_template_id').value
+                        adding_product_type_template_id : $('adding_product_type_template_id').value
                     }
                 );
             }
         },
 
-        reloadDescriptionTemplates: function()
+        reloadProductTypeTemplates: function()
         {
-            var select = $('adding_description_template_id');
+            var select = $('adding_product_type_template_id');
 
-            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/getDescriptionTemplatesList'), {
+            new Ajax.Request(M2ePro.url.get(ListingAutoActionObj.getController() + '/getProductTypesList'), {
                 onSuccess: function(transport) {
 
                     var data = transport.responseText.evalJSON(true);
@@ -76,11 +82,7 @@ define([
                     var currentValue = select.value;
 
                     data.each(function(item) {
-                        var key = item.id;
-                        var val = item.title;
-                        var disabled = item.is_new_asin_accepted == 0 ? ' disabled="disabled"' : '';
-
-                        options += '<option value="' + key + '"' + disabled + '>' + val + '</option>\n';
+                        options += `<option value="${item.id}">${item.title}</option>`;
 
                         if (!firstItem) {
                             firstItem = item;
@@ -91,19 +93,22 @@ define([
                     select.insert(options);
 
                     if (currentValue != '') {
-                        $('adding_description_template_id').value = currentValue;
+                        $('adding_product_type_template_id').value = currentValue;
                     } else if (typeof id !== 'undefined' && M2ePro.formData[id] > 0) {
                         select.value = M2ePro.formData[id];
-                    } else if (firstItem.is_new_asin_accepted != 0) {
+                    } else {
                         select.value = firstItem.id;
                     }
+
+                    select.show();
+                    jQuery('#empty-product-type-message').hide();
 
                     select.simulate('change');
                 }
             });
         },
 
-        addNewTemplate: function(url, callback)
+        addNewProductType: function(url, callback)
         {
             return this.openWindow(url, callback);
         }

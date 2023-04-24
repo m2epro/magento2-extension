@@ -12,7 +12,6 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
@@ -33,7 +32,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         // Initialization block
         // ---------------------------------------
-        $this->setId('newAsinDescriptionTemplateManual');
+        $this->setId('newAsinProductTypeManual');
         // ---------------------------------------
 
         // Set header text
@@ -101,23 +100,23 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         // TEXT
         $this->jsTranslator->addTranslations([
-            'templateDescriptionPopupTitle' => $this->__('Assign Description Policy'),
-            'setDescriptionPolicy' => $this->__('Set Description Policy'),
-            'Add New Description Policy' => $this->__('Add New Description Policy'),
+            'productTypePopupTitle' => $this->__('Assign Product Type'),
+            'setProductType' => $this->__('Set Product Type'),
+            'Add New Product Type' => $this->__('Add New Product Type'),
         ]);
         // ---------------------------------------
 
         // URL
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Listing_Product'));
         $this->jsUrl->addUrls(
-            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_Description')
+            $this->dataHelper->getControllerActions('Amazon_Listing_Product_Template_ProductType')
         );
 
         $this->jsUrl->add(
-            $this->getUrl('*/amazon_listing_product_template_description/viewGrid', [
-                'map_to_template_js_fn' => 'selectTemplateDescription',
+            $this->getUrl('*/amazon_listing_product_template_productType/viewGrid', [
+                'map_to_template_js_fn' => 'selectProductType',
             ]),
-            'amazon_listing_product_template_description/viewGrid'
+            'amazon_listing_product_template_productType/viewGrid'
         );
 
         $this->jsUrl->add(
@@ -126,24 +125,24 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
 
         $this->jsUrl->add(
-            $this->getUrl('*/amazon_listing_product_add/resetDescriptionTemplate', ['_current' => true]),
-            'amazon_listing_product_add/resetDescriptionTemplate'
+            $this->getUrl('*/amazon_listing_product_add/resetProductTypeTemplate', ['_current' => true]),
+            'amazon_listing_product_add/resetProductTypeTemplate'
         );
         // ---------------------------------------
 
         $this->js->add(
             <<<JS
-    selectTemplateDescription = function (el, templateId, mapToGeneralId)
+    selectProductType = function (el, templateId, mapToGeneralId)
     {
-        ListingGridObj.mapToTemplateDescription(el, templateId, mapToGeneralId);
+        ListingGridObj.mapToProductType(el, templateId, mapToGeneralId);
     };
 
     require([
-        'M2ePro/Amazon/Listing/Product/Add/NewAsin/Template/Description/Grid',
+        'M2ePro/Amazon/Listing/Product/Add/NewAsin/Template/ProductType/Grid',
     ],function() {
         Common.prototype.scrollPageToTop = function() { return; }
 
-        window.ListingGridObj = new AmazonListingProductAddNewAsinTemplateDescriptionGrid(
+        window.ListingGridObj = new AmazonListingProductAddNewAsinProductTypeGrid(
             '{$this->getChildBlock('grid')->getId()}',
             {$this->getRequest()->getParam('id')}
         );

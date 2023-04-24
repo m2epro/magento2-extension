@@ -41,32 +41,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
     //########################################
 
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     *
-     * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getAmazonItems($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedSimpleItems('Amazon\Item', 'marketplace_id', $asObjects, $filters);
-    }
-
-    /**
-     * @param bool $asObjects
-     * @param array $filters
-     *
-     * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getDescriptionTemplates($asObjects = false, array $filters = [])
-    {
-        return $this->getRelatedSimpleItems('Amazon_Template_Description', 'marketplace_id', $asObjects, $filters);
-    }
-
-    //########################################
-
     public function getCurrency()
     {
         return $this->getData('default_currency');

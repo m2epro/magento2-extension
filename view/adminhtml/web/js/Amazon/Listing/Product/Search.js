@@ -322,9 +322,12 @@ define([
                     self.flagSuccess = true;
 
                     if (response.products_ids.length > 0) {
-                        ListingGridObj.templateDescriptionHandler.openPopUp(
-                            0, M2ePro.translator.translate('templateDescriptionPopupTitle'),
-                            response.products_ids, response.html, 1);
+                        ListingGridObj.templateProductTypeHandler.openProductTypePopUp(
+                                response.products_ids,
+                                M2ePro.translator.translate('productTypePopupTitle'),
+                                response.html,
+                                1
+                        );
                     } else {
                         if (response.messages.length > 0) {
                             MessageObj.clear();

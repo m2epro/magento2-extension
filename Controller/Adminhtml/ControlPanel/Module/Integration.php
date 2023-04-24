@@ -220,7 +220,6 @@ HTML;
                 $html .= 'isMeetReviseDescription: ' . json_encode(
                     $checker->isMeetReviseDescriptionRequirements()
                 ) . '<br>';
-                $html .= 'isMeetReviseImages: ' . json_encode($checker->isMeetReviseImagesRequirements()) . '<br>';
                 $html .= 'isMeetReviseCategories: ' . json_encode(
                     $checker->isMeetReviseCategoriesRequirements()
                 ) . '<br>';
@@ -303,7 +302,6 @@ HTML;
                     $checker->isMeetRevisePriceBusinessRequirements()
                 ) . '<br>';
                 $html .= 'isMeetReviseDetails: ' . json_encode($checker->isMeetReviseDetailsRequirements()) . '<br>';
-                $html .= 'isMeetReviseImages: ' . json_encode($checker->isMeetReviseImagesRequirements()) . '<br><br>';
                 //--
 
                 //--

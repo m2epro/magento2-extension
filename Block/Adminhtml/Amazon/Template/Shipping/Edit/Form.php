@@ -8,40 +8,67 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\Shipping\Edit;
 
-use Ess\M2ePro\Model\Amazon\Template\Shipping;
-
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $formData;
+    private $accountData = [];
 
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    private $amazonHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
-        $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
+        $this->amazonHelper = $amazonHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    protected function _prepareForm()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function _construct()
     {
+        parent::_construct();
+        $this->setId('amazonTemplateShippingEditForm');
+
+        $accounts = $this->amazonHelper->getAccounts();
+        $accounts = $accounts->toArray();
+        $this->accountData = $accounts['items'];
+    }
+
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Shipping\Edit\Form
+     * @throws \Magento\Framework\Exception\LocalizedException|\Ess\M2ePro\Model\Exception\Logic
+     */
+    protected function _prepareForm(): self
+    {
+        $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
+            [
+                'id' => 'refresh_templates',
+                'label' => $this->__('Refresh Templates'),
+                'onclick' => 'AmazonTemplateShippingObj.refreshTemplateShipping()',
+                'class' => 'action-primary',
+                'style' => 'margin-left: 70px;',
+            ]
+        );
+
         $form = $this->_formFactory->create(
             [
                 'data' => [
@@ -56,10 +83,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $formData = $this->getFormData();
 
-        $attributes = $this->magentoAttributeHelper->getAll();
-        $attributesByInputTypes = [
-            'text_select' => $this->magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select']),
-        ];
+        $templates = [];
+
+        if ($formData['account_id']) {
+            $templates = $this->amazonHelper->getTemplateShippingDictionary($formData['account_id']);
+            $templates = $templates['items'];
+        }
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_shipping_general',
@@ -82,6 +111,20 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
+        $fieldset->addField(
+            'account_id',
+            self::SELECT,
+            [
+                'name' => 'account_id',
+                'label' => $this->__('Account'),
+                'title' => $this->__('Account'),
+                'values' => $this->getAccountDataOptions(),
+                'value' => $this->formData['account_id'],
+                'required' => true,
+                'disabled' => !empty($this->formData['account_id']),
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_shipping_channel',
             [
@@ -90,62 +133,16 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $preparedAttributes = [];
-        foreach ($attributesByInputTypes['text_select'] as $attribute) {
-            $attrs = ['attribute_code' => $attribute['code']];
-            if (
-                $formData['template_name_mode'] == Shipping::TEMPLATE_NAME_ATTRIBUTE
-                && $formData['template_name_attribute'] == $attribute['code']
-            ) {
-                $attrs['selected'] = 'selected';
-            }
-            $preparedAttributes[] = [
-                'attrs' => $attrs,
-                'value' => Shipping::TEMPLATE_NAME_ATTRIBUTE,
-                'label' => $attribute['label'],
-            ];
-        }
-
         $fieldset->addField(
-            'template_name_mode',
+            'template_id',
             self::SELECT,
             [
-                'container_id' => 'template_name_mode_tr',
-                'label' => $this->__('Template Name'),
-                'class' => 'select-main',
-                'name' => 'template_name_mode',
-                'values' => [
-                    Shipping::TEMPLATE_NAME_VALUE => $this->__('Custom Value'),
-                    [
-                        'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes,
-                        'attrs' => [
-                            'is_magento_attribute' => true,
-                        ],
-                    ],
-                ],
-                'create_magento_attribute' => true,
-                'tooltip' => $this->__('Template Name which you would like to be used.'),
-            ]
-        )->addCustomAttribute('allowed_attribute_types', 'text,select');
-
-        $fieldset->addField(
-            'template_name_attribute',
-            'hidden',
-            [
-                'name' => 'template_name_attribute',
-            ]
-        );
-
-        $fieldset->addField(
-            'template_name_value',
-            'text',
-            [
-                'container_id' => 'template_name_custom_value_tr',
-                'label' => $this->__('Template Name Value'),
-                'name' => 'template_name_value',
-                'value' => $formData['template_name_value'],
+                'name' => 'template_id',
+                'label' => $this->__('Template'),
+                'value' => $formData['template_id'],
+                'values' => $this->getTemplateDataOptions($templates),
                 'required' => true,
+                'after_element_html' => $button->toHtml(),
             ]
         );
 
@@ -157,28 +154,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareLayout()
     {
-        $this->appendHelpBlock(
-            [
-                'content' => $this->__(
-                    '
-        The Shipping Policy allows to provide Shipping Settings for the Items being listed to Amazon.
-        So you should provide a Channel Template Name which you would like to be used.<br />
-        More detailed information about ability to work with this Page
-        you can find <a target="_blank" href="%url%">here</a>',
-                    $this->supportHelper->getDocumentationArticleUrl('x/6-0kB')
-                ),
-            ]
-        );
-
-        $this->jsPhp->addConstants(
-            $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
-        );
-
-        $this->jsPhp->addConstants(
-            $this->dataHelper
-                ->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\Shipping::class)
-        );
-
         $this->jsUrl->addUrls(
             [
                 'formSubmit' => $this->getUrl(
@@ -195,6 +170,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                         'id' => $this->getRequest()->getParam('id'),
                         'close_on_save' => $this->getRequest()->getParam('close_on_save'),
                     ]
+                ),
+                'amazon_template_shipping/refresh' => $this->getUrl(
+                    '*/amazon_template_shipping/refresh/'
+                ),
+                'amazon_template_shipping/getTemplates' => $this->getUrl(
+                    '*/amazon_template_shipping/getTemplates/'
                 ),
             ]
         );
@@ -246,5 +227,43 @@ JS
         }
 
         return $this->formData;
+    }
+
+    /**
+     * @return array[]
+     */
+    public function getAccountDataOptions(): array
+    {
+        $optionsResult = [
+            ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']],
+        ];
+        foreach ($this->accountData as $account) {
+            $optionsResult[] = [
+                'value' => $account['id'],
+                'label' => $this->__($account['title']),
+            ];
+        }
+
+        return $optionsResult;
+    }
+
+    /**
+     * @param array $templates
+     *
+     * @return array[]
+     */
+    public function getTemplateDataOptions(array $templates): array
+    {
+        $optionsResult = [
+            ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']],
+        ];
+        foreach ($templates as $template) {
+            $optionsResult[] = [
+                'value' => $template['template_id'],
+                'label' => $this->__($template['title']),
+            ];
+        }
+
+        return $optionsResult;
     }
 }

@@ -8,44 +8,53 @@
 
 namespace Ess\M2ePro\Model\Amazon\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Marketplace\Synchronization
- */
 class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 {
     public const LOCK_ITEM_MAX_ALLOWED_INACTIVE_TIME = 1800; // 30 min
 
     /** @var \Ess\M2ePro\Model\Marketplace */
     protected $marketplace = null;
-
     /** @var \Ess\M2ePro\Model\Lock\Item\Manager */
     protected $lockItemManager = null;
-
     /** @var \Ess\M2ePro\Model\Lock\Item\Progress */
     protected $progressManager = null;
-
-    /** @var \Ess\M2ePro\Model\Synchronization\Log */
+    /** @var \Ess\M2ePro\Model\Synchronization\Log  */
     protected $synchronizationLog = null;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
-    protected $activeRecordFactory;
-    /** @var \Magento\Framework\App\ResourceConnection  */
-    protected $resourceConnection;
+    /** @var array */
+    private $productTypes = [];
+    /** @var array */
+    private $existingProductTypesNicks = [];
+    /** @var array */
+    private $newProductTypesNicks = [];
 
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
+    private $productTypeHelper;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
 
+    /**
+     * @param \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper
+     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param array $data
+     */
     public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->productTypeHelper = $productTypeHelper;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($helperFactory, $modelFactory, $data);
     }
-
-    //########################################
 
     public function setMarketplace(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
@@ -53,8 +62,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         return $this;
     }
-
-    //########################################
 
     public function isLocked()
     {
@@ -71,23 +78,31 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    //########################################
-
-    public function process()
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function process(): void
     {
         $this->getLockItemManager()->create();
-
         $this->getProgressManager()->setPercentage(0);
 
+        $this->prepareExistingProductTypesNicks();
         $this->processDetails();
+        $removedProductTypes = array_diff($this->existingProductTypesNicks, $this->newProductTypesNicks);
+        $this->removedOldProductTypes($removedProductTypes);
 
-        $this->getProgressManager()->setPercentage(10);
+        $specificsSteps = $this->getSpecificsStepsCount();
+        $steps = 1 + $specificsSteps; // 1 step for details, other steps for specifics
+        $percentsPerStep = (int)floor(100 / $steps);
 
-        $this->processCategories();
+        $this->getProgressManager()->setPercentage($percentsPerStep);
 
-        $this->getProgressManager()->setPercentage(60);
-
-        $this->processSpecifics();
+        for ($i = 0; $i < $specificsSteps; $i++) {
+            $this->processSpecificsStep($i);
+            $this->getProgressManager()->setPercentage($percentsPerStep * (2 + $i));
+        }
 
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('marketplace');
 
@@ -96,9 +111,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         $this->getLockItemManager()->remove();
     }
 
-    //########################################
-
-    protected function processDetails()
+    private function processDetails(): void
     {
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObj */
         $dispatcherObj = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
@@ -121,9 +134,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        $details['details']['last_update'] = $details['last_update'];
-        $details = $details['details'];
-
         $tableMarketplaces = $this->getHelper('Module_Database_Structure')
                                   ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
@@ -132,167 +142,136 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             ['marketplace_id = ?' => $this->marketplace->getId()]
         );
 
-        $helper = $this->getHelper('Data');
-
+        // todo \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace
         $data = [
             'marketplace_id' => $this->marketplace->getId(),
-            'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
-            'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
-            'product_data' => isset($details['product_data']) ? $helper->jsonEncode($details['product_data']) : null,
+            'client_details_last_update_date' => $details['last_update'] ?? null,
+            'server_details_last_update_date' => $details['last_update'] ?? null,
+            'product_types' => \Ess\M2ePro\Helper\Json::encode(
+                $this->prepareProductTypes($details['details']['product_type'])
+            ),
         ];
 
         $this->resourceConnection->getConnection()->insert($tableMarketplaces, $data);
+
+        $this->prepareNewProductTypesNicks($details['details']['product_type']);
     }
 
-    protected function processCategories()
+    /**
+     * @param array $productTypes
+     *
+     * @return array
+     */
+    private function prepareProductTypes(array $productTypes): array
     {
-        $tableCategories = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
-            'm2epro_amazon_dictionary_category'
+        $result = [];
+
+        foreach ($productTypes as $productType) {
+            $result[$productType['nick']] = $productType;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return void
+     */
+    private function prepareExistingProductTypesNicks(): void
+    {
+        $productTypes = $this->productTypeHelper->getProductTypesInDictionary(
+            (int)$this->marketplace->getId()
         );
-        $this->resourceConnection->getConnection()->delete(
-            $tableCategories,
-            ['marketplace_id = ?' => $this->marketplace->getId()]
-        );
 
-        $tableProductData = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
-            'm2epro_amazon_dictionary_category_product_data'
-        );
-        $this->resourceConnection->getConnection()->delete(
-            $tableProductData,
-            ['marketplace_id = ?' => $this->marketplace->getId()]
-        );
-
-        $partNumber = 1;
-
-        for ($i = 0; $i < 100; $i++) {
-            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObj */
-            $dispatcherObj = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-            $connectorObj = $dispatcherObj->getVirtualConnector(
-                'marketplace',
-                'get',
-                'categories',
-                [
-                    'part_number' => $partNumber,
-                    'marketplace' => $this->marketplace->getNativeId(),
-                ],
-                null,
-                null
-            );
-
-            $dispatcherObj->process($connectorObj);
-            $response = $connectorObj->getResponseData();
-
-            if ($response === null || empty($response['data'])) {
-                break;
-            }
-
-            $insertData = [];
-
-            $helper = $this->getHelper('Data');
-            $responseDataCount = count($response['data']);
-
-            for ($categoryIndex = 0; $categoryIndex < $responseDataCount; $categoryIndex++) {
-                $data = $response['data'][$categoryIndex];
-
-                $isLeaf = $data['is_leaf'];
-                $insertData[] = [
-                    'marketplace_id' => $this->marketplace->getId(),
-                    'category_id' => $data['id'],
-                    'parent_category_id' => $data['parent_id'],
-                    'browsenode_id' => ($isLeaf ? $data['browsenode_id'] : null),
-                    'product_data_nicks' => ($isLeaf ? $helper->jsonEncode($data['product_data_nicks']) : null),
-                    'title' => $data['title'],
-                    'path' => $data['path'],
-                    'keywords' => ($isLeaf ? $helper->jsonEncode($data['keywords']) : null),
-                    'is_leaf' => $isLeaf,
-                ];
-
-                if (count($insertData) >= 100 || $categoryIndex >= (count($response['data']) - 1)) {
-                    $this->resourceConnection->getConnection()->insertMultiple($tableCategories, $insertData);
-                    $insertData = [];
-                }
-            }
-
-            $partNumber = $response['next_part'];
-
-            if ($partNumber === null) {
-                break;
-            }
+        /** @var \Ess\M2ePro\Model\Amazon\Dictionary\ProductType $productType */
+        foreach ($productTypes as $productType) {
+            $this->existingProductTypesNicks[] = $productType->getNick();
         }
     }
 
-    protected function processSpecifics()
+    private function prepareNewProductTypesNicks(array $productTypes): void
     {
-        $tableSpecifics = $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix(
-            'm2epro_amazon_dictionary_specific'
-        );
-        $this->resourceConnection->getConnection()->delete(
-            $tableSpecifics,
-            ['marketplace_id = ?' => $this->marketplace->getId()]
-        );
-
-        $partNumber = 1;
-
-        for ($i = 0; $i < 100; $i++) {
-            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
-                'marketplace',
-                'get',
-                'specifics',
-                [
-                    'part_number' => $partNumber,
-                    'marketplace' => $this->marketplace->getNativeId(),
-                ]
-            );
-
-            $dispatcherObject->process($connectorObj);
-            $response = $connectorObj->getResponseData();
-
-            if ($response === null || empty($response['data'])) {
-                break;
-            }
-
-            $insertData = [];
-
-            $helper = $this->getHelper('Data');
-            $responseDataCount = count($response['data']);
-
-            for ($specificIndex = 0; $specificIndex < $responseDataCount; $specificIndex++) {
-                $data = $response['data'][$specificIndex];
-
-                $insertData[] = [
-                    'marketplace_id' => $this->marketplace->getId(),
-                    'specific_id' => $data['id'],
-                    'parent_specific_id' => $data['parent_id'],
-                    'product_data_nick' => $data['product_data_nick'],
-                    'title' => $data['title'],
-                    'xml_tag' => $data['xml_tag'],
-                    'xpath' => $data['xpath'],
-                    'type' => (int)$data['type'],
-                    'values' => $helper->jsonEncode($data['values']),
-                    'recommended_values' => $helper->jsonEncode($data['recommended_values']),
-                    'params' => $helper->jsonEncode($data['params']),
-                    'data_definition' => $helper->jsonEncode($data['data_definition']),
-                    'min_occurs' => (int)$data['min_occurs'],
-                    'max_occurs' => (int)$data['max_occurs'],
-                ];
-
-                if (count($insertData) >= 100 || $specificIndex >= (count($response['data']) - 1)) {
-                    $this->resourceConnection->getConnection()->insertMultiple($tableSpecifics, $insertData);
-                    $insertData = [];
-                }
-            }
-
-            $partNumber = $response['next_part'];
-
-            if ($partNumber === null) {
-                break;
-            }
+        foreach ($productTypes as $productType) {
+            $this->newProductTypesNicks[] = $productType['nick'];
         }
     }
 
-    //########################################
+    /**
+     * @param array $removedProductTypes
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function removedOldProductTypes(array $removedProductTypes): void
+    {
+        if (empty($removedProductTypes)) {
+            return;
+        }
+
+        $listToMarkInvalid = [];
+        $listToRemove = [];
+        $configuredProductTypes = $this->productTypeHelper
+            ->getConfiguredProductTypesList((int)$this->marketplace->getId());
+
+        foreach ($removedProductTypes as $nick) {
+            if (isset($configuredProductTypes[$nick])) {
+                $listToMarkInvalid[] = $nick;
+            } else {
+                $listToRemove[] = $nick;
+            }
+        }
+
+        if (!empty($listToMarkInvalid)) {
+            $this->productTypeHelper->markProductTypeDictionariesInvalid(
+                (int)$this->marketplace->getId(),
+                $listToMarkInvalid
+            );
+        }
+
+        if (!empty($listToRemove)) {
+            $this->productTypeHelper->removeProductTypeDictionaries(
+                (int)$this->marketplace->getId(),
+                $listToRemove
+            );
+        }
+    }
+
+    /**
+     * @return int
+     */
+    private function getSpecificsStepsCount(): int
+    {
+        $this->productTypes = array_values(
+            $this->productTypeHelper->getProductTypesInDictionary(
+                (int)$this->marketplace->getId(),
+                true
+            )
+        );
+
+        return count($this->productTypes);
+    }
+
+    /**
+     * @param int $step
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function processSpecificsStep(int $step): void
+    {
+        if (empty($this->productTypes[$step])) {
+            return;
+        }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Dictionary\ProductType $productTypeDictionary */
+        $productTypeDictionary = $this->productTypes[$step];
+
+        $this->productTypeHelper->updateProductTypeDictionary(
+            $productTypeDictionary,
+            $this->marketplace->getId(),
+            $productTypeDictionary->getNick()
+        );
+    }
 
     public function getLockItemManager()
     {
@@ -329,6 +308,4 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->synchronizationLog;
     }
-
-    //########################################
 }

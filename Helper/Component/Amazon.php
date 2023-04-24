@@ -9,6 +9,8 @@
 namespace Ess\M2ePro\Helper\Component;
 
 use Ess\M2ePro\Model\Listing\Product as ListingProduct;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\TemplateShipping\CollectionFactory
+    as TemplateShippingDictionaryCollectionFactory;
 
 class Amazon
 {
@@ -37,15 +39,6 @@ class Amazon
     public const MARKETPLACE_AE = 47;
     public const MARKETPLACE_BE = 48;
 
-    private const MARKETPLACE_WITHOUT_DATA = [
-        self::MARKETPLACE_JP,
-        self::MARKETPLACE_BR,
-        self::MARKETPLACE_SG,
-        self::MARKETPLACE_IN,
-        self::MARKETPLACE_AE,
-        self::MARKETPLACE_BE,
-    ];
-
     public const EEA_COUNTRY_CODES = [
         'AT', 'BE', 'BG', 'HR', 'CY',
         'CZ', 'DK', 'EE', 'FI', 'FR',
@@ -67,16 +60,17 @@ class Amazon
     private $cachePermanent;
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
+    /** @var TemplateShippingDictionaryCollectionFactory */
+    private $templateShippingDictionaryCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    protected $activeRecordFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
+    private $accountCollectionFactory;
 
-    /**
-     * @param \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollectionFactory
-     * @param \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
-     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        TemplateShippingDictionaryCollectionFactory $templateShippingDictionaryCollectionFactory,
         \Magento\Directory\Model\ResourceModel\Country\CollectionFactory $countryCollectionFactory,
         \Magento\Directory\Model\ResourceModel\Region\Collection $regionCollection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -84,6 +78,9 @@ class Amazon
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
+        $this->accountCollectionFactory = $accountCollectionFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
+        $this->templateShippingDictionaryCollectionFactory = $templateShippingDictionaryCollectionFactory;
         $this->countryCollectionFactory = $countryCollectionFactory;
         $this->regionCollection = $regionCollection;
         $this->amazonFactory = $amazonFactory;
@@ -91,8 +88,6 @@ class Amazon
         $this->cachePermanent = $cachePermanent;
         $this->config = $config;
     }
-
-    // ----------------------------------------
 
     /**
      * @return string
@@ -110,14 +105,12 @@ class Amazon
         return $this->moduleTranslation->__('Amazon');
     }
 
-    // ----------------------------------------
-
     /**
      * @param string $status
      *
      * @return string|null
      */
-    public function getHumanTitleByListingProductStatus($status): ?string
+    public function getHumanTitleByListingProductStatus(string $status): ?string
     {
         $statuses = [
             ListingProduct::STATUS_UNKNOWN    => $this->moduleTranslation->__('Unknown'),
@@ -130,8 +123,6 @@ class Amazon
         return $statuses[$status] ?? null;
     }
 
-    // ----------------------------------------
-
     /**
      * @return bool
      */
@@ -140,10 +131,8 @@ class Amazon
         return (bool)$this->config->getGroupValue('/component/' . self::NICK . '/', 'mode');
     }
 
-    // ----------------------------------------
-
     /**
-     * @param int $productId
+     * @param $productId
      * @param int|null $marketplaceId
      *
      * @return string
@@ -174,8 +163,6 @@ class Amazon
         return 'https://sellercentral.' . $domain . '/orders-v3/order/' . $orderId;
     }
 
-    // ----------------------------------------
-
     /**
      * @param string $string
      *
@@ -187,8 +174,6 @@ class Amazon
     {
         return \Ess\M2ePro\Helper\Data\Product\Identifier::isASIN($string);
     }
-
-    // ----------------------------------------
 
     /**
      * @return string[]
@@ -226,14 +211,8 @@ class Amazon
         $carriers = $this->getCarriers();
         $carrierCode = strtolower($carrierCode);
 
-        if (isset($carriers[$carrierCode])) {
-            return $carriers[$carrierCode];
-        }
-
-        return $title;
+        return $carriers[$carrierCode] ?? $title;
     }
-
-    // ----------------------------------------
 
     public function getMarketplacesAvailableForApiCreation()
     {
@@ -248,7 +227,49 @@ class Amazon
         return $this->getMarketplacesAvailableForApiCreation()->addFieldToFilter('is_new_asin_available', 1);
     }
 
-    // ----------------------------------------
+    /**
+     * @return \Ess\M2ePro\Model\ResourceModel\Account\Collection
+     */
+    public function getAccounts(): \Ess\M2ePro\Model\ResourceModel\Account\Collection
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
+        $accountCollection = $this->accountCollectionFactory->create(
+            ['childMode' => self::NICK]
+        );
+        $accountCollection->setOrder('title', 'ASC');
+
+        return $accountCollection;
+    }
+
+    /**
+     * @param $accountId
+     *
+     * @return int
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getAccountMarketplace($accountId): int
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Account $amazonAccount */
+        $amazonAccount = $this->activeRecordFactory->getObjectLoaded(
+            'Amazon_Account',
+            $accountId,
+            'account_id'
+        );
+
+        return $amazonAccount->getMarketplaceId();
+    }
+
+    /**
+     * @param int $accountId
+     *
+     * @return array
+     */
+    public function getTemplateShippingDictionary(int $accountId): array
+    {
+        $collection = $this->templateShippingDictionaryCollectionFactory->create()->appendFilterAccountId($accountId);
+
+        return $collection->toArray();
+    }
 
     /**
      * @return array
@@ -327,18 +348,5 @@ class Amazon
     public function clearCache(): void
     {
         $this->cachePermanent->removeTagValues(self::NICK);
-    }
-
-    /**
-     * @param mixed $marketplaceId
-     * @return bool
-     */
-    public function isMarketplacesWithoutData($marketplaceId): bool
-    {
-        if (in_array((int)$marketplaceId, self::MARKETPLACE_WITHOUT_DATA, true)) {
-            return true;
-        }
-
-        return false;
     }
 }

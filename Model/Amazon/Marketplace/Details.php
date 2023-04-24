@@ -8,20 +8,20 @@
 
 namespace Ess\M2ePro\Model\Amazon\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Marketplace\Details
- */
 class Details extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var int */
     private $marketplaceId = null;
     /** @var array  */
-    private $productData = [];
+    private $productTypes = [];
     /** @var \Magento\Framework\App\ResourceConnection  */
     private $resourceConnection;
 
-    //########################################
-
+    /**
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -30,8 +30,6 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory);
     }
-
-    //########################################
 
     /**
      * @param $marketplaceId
@@ -51,44 +49,37 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
-
     /**
      * @return array
      */
-    public function getProductData()
+    public function getProductTypes(): array
     {
-        return $this->productData;
+        return $this->productTypes;
     }
 
     /**
-     * @param $productDataNick
+     * @param string $productTypeNick
      *
      * @return array
      */
-    public function getVariationThemes($productDataNick)
+    public function getVariationThemes(string $productTypeNick): array
     {
-        if (!isset($this->productData[$productDataNick])) {
-            return [];
-        }
-
-        return (array)$this->productData[$productDataNick]['variation_themes'];
+        return !empty($this->productTypes[$productTypeNick]['variation_themes']) ?
+            $this->productTypes[$productTypeNick]['variation_themes'] : [];
     }
 
     /**
-     * @param $productDataNick
-     * @param $theme
+     * @param string $productTypeNick
+     * @param string $theme
      *
      * @return array
      */
-    public function getVariationThemeAttributes($productDataNick, $theme)
+    public function getVariationThemeAttributes(string $productTypeNick, string $theme): array
     {
-        $themes = $this->getVariationThemes($productDataNick);
+        $themes = $this->getVariationThemes($productTypeNick);
 
         return !empty($themes[$theme]['attributes']) ? $themes[$theme]['attributes'] : [];
     }
-
-    //########################################
 
     private function load()
     {
@@ -110,8 +101,6 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception('Marketplace not found or not synchronized');
         }
 
-        $this->productData = $this->getHelper('Data')->jsonDecode($data['product_data']);
+        $this->productTypes = $this->getHelper('Data')->jsonDecode($data['product_types']);
     }
-
-    //########################################
 }

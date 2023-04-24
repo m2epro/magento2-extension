@@ -13,8 +13,6 @@ use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as 
 
 class Inactive extends AbstractModel
 {
-    //########################################
-
     protected function getRelistInstructionTypes()
     {
         return [
@@ -38,8 +36,6 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_QTY,
         ];
     }
-
-    //########################################
 
     public function isAllowed()
     {
@@ -76,8 +72,6 @@ class Inactive extends AbstractModel
 
         return true;
     }
-
-    //########################################
 
     public function process(array $params = [])
     {
@@ -140,8 +134,6 @@ class Inactive extends AbstractModel
         }
     }
 
-    //########################################
-
     public function isMeetRelistRequirements()
     {
         $listingProduct = $this->input->getListingProduct();
@@ -156,10 +148,7 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if (
-            $amazonSynchronizationTemplate->isRelistFilterUserLock() &&
-            $listingProduct->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
-        ) {
+        if ($amazonSynchronizationTemplate->isRelistFilterUserLock() && $amazonListingProduct->isStoppedManually()) {
             return false;
         }
 
@@ -233,6 +222,4 @@ class Inactive extends AbstractModel
 
         return true;
     }
-
-    //########################################
 }

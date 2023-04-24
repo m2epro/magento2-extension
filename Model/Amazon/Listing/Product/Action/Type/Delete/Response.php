@@ -16,21 +16,24 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     //########################################
 
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $data = [
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             'general_id' => null,
             'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
-            'template_description_id' => null,
+            'template_product_type_id' => null,
             'online_qty' => 0,
         ];
 
         $data = $this->appendStatusChangerValue($data);
 
         $this->getListingProduct()->addData($data);
+
+        $this->getAmazonListingProduct()->setIsStoppedManually(false);
+
         $this->getListingProduct()->save();
     }
 

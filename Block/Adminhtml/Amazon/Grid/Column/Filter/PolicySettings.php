@@ -38,10 +38,10 @@ class PolicySettings extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Fil
     <input type="text" name="{$this->_getHtmlName()}[input]" id="{$this->_getHtmlId()}_input"
            value="{$this->getEscapedValue('input')}" class="input-text admin__control-text no-changes"/>
 </div>
-<div style="margin-top: 38px;">
-    <label style="vertical-align: text-bottom;">{$this->__('Override')}</label>
+<div style="margin-top: 5px; display: flex; align-items: center">
+    <label style="vertical-align: text-bottom; white-space: nowrap;">{$this->__('Override')}</label>
     <select class="admin__control-select"
-            style="margin-left:6px; float:none; width:auto !important;"
+            style="margin-left:6px; float:none;"
             name="{$this->_getHtmlName()}[select]" id="{$this->_getHtmlId()}_select">
         {$optionsHtml}
     </select>

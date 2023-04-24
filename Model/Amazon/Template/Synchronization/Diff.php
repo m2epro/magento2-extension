@@ -23,9 +23,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             $this->isRevisePriceEnabled() ||
             $this->isRevisePriceDisabled() ||
             $this->isReviseDetailsDisabled() ||
-            $this->isReviseDetailsEnabled() ||
-            $this->isReviseImagesDisabled() ||
-            $this->isReviseImagesEnabled();
+            $this->isReviseDetailsEnabled();
     }
 
     //########################################
@@ -93,24 +91,4 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
 
         return !empty($oldSnapshotData['revise_update_details']) && empty($newSnapshotData['revise_update_details']);
     }
-
-    //########################################
-
-    public function isReviseImagesEnabled()
-    {
-        $newSnapshotData = $this->newSnapshot;
-        $oldSnapshotData = $this->oldSnapshot;
-
-        return empty($oldSnapshotData['revise_update_images']) && !empty($newSnapshotData['revise_update_images']);
-    }
-
-    public function isReviseImagesDisabled()
-    {
-        $newSnapshotData = $this->newSnapshot;
-        $oldSnapshotData = $this->oldSnapshot;
-
-        return !empty($oldSnapshotData['revise_update_images']) && empty($newSnapshotData['revise_update_images']);
-    }
-
-    //########################################
 }

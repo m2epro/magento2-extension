@@ -263,17 +263,23 @@ class Config extends AbstractConfig
                 'EbayListingProductScheduledStopAction',
                 'UpdateConfigSupportUrl',
                 'AmazonRemoveUnnecessaryData',
+                'AmazonProductTypes',
             ],
             'y23_m02' => [
                 'AddImmediatePaymentColumn',
                 'AddTags',
                 'AddErrorCodeColumnForTags',
+                'AmazonShippingTemplates',
             ],
             'y23_m03' => [
                 'WalmartProductIdentifiers',
                 'RemoveLicenseStatus',
                 'RenameClientsToAccounts',
+                'AddColumnIsStoppedManuallyForAmazonAndWalmartProducts',
             ],
+            'y23_m04' => [
+                'SetIsVatEbayMarketplacePL'
+            ]
         ];
     }
 

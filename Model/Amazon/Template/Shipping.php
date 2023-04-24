@@ -13,20 +13,15 @@ namespace Ess\M2ePro\Model\Amazon\Template;
  */
 class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
-    public const TEMPLATE_NAME_VALUE = 1;
-    public const TEMPLATE_NAME_ATTRIBUTE = 2;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Template\Shipping\Source[]
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\Source[] */
     private $shippingTemplateSourceModels = [];
-
-    //########################################
+    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
+    private $cachePermanent;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -37,6 +32,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->cachePermanent = $cachePermanent;
         $this->amazonFactory = $amazonFactory;
 
         parent::__construct(
@@ -51,21 +47,17 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         );
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Template\Shipping::class);
     }
 
-    //########################################
-
     /**
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         if (parent::isLocked()) {
             return true;
@@ -81,14 +73,13 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
                                             ->getSize();
     }
 
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
      *
      * @return \Ess\M2ePro\Model\Amazon\Template\Shipping\Source
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct): Shipping\Source
     {
         $id = $magentoProduct->getProductId();
 
@@ -106,43 +97,15 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->shippingTemplateSourceModels[$id];
     }
 
-    //########################################
-
     public function getTitle()
     {
         return $this->getData('title');
     }
 
-    // ---------------------------------------
-
-    public function getTemplateNameMode()
+    public function getTemplateId(): string
     {
-        return (int)$this->getData('template_name_mode');
+        return $this->getData('template_id');
     }
-
-    public function isTemplateNameModeValue()
-    {
-        return $this->getTemplateNameMode() == self::TEMPLATE_NAME_VALUE;
-    }
-
-    public function isTemplateNameModeAttribute()
-    {
-        return $this->getTemplateNameMode() == self::TEMPLATE_NAME_ATTRIBUTE;
-    }
-
-    // ---------------------------------------
-
-    public function getTemplateNameValue()
-    {
-        return $this->getData('template_name_value');
-    }
-
-    public function getTemplateNameAttribute()
-    {
-        return $this->getData('template_name_attribute');
-    }
-
-    // ---------------------------------------
 
     public function getCreateDate()
     {
@@ -154,46 +117,27 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getData('update_date');
     }
 
-    //########################################
-
-    public function getTemplateNameAttributes()
-    {
-        $attributes = [];
-
-        if ($this->isTemplateNameModeAttribute()) {
-            $attributes[] = $this->getTemplateNameAttribute();
-        }
-
-        return $attributes;
-    }
-
-    //########################################
-
     public function save()
     {
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_shipping');
+        $this->cachePermanent->removeTagValues('amazon_template_shipping');
 
         return parent::save();
     }
 
     public function delete()
     {
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('amazon_template_shipping');
+        $this->cachePermanent->removeTagValues('amazon_template_shipping');
 
         return parent::delete();
     }
 
-    //########################################
-
-    public function isCacheEnabled()
+    public function isCacheEnabled(): bool
     {
         return true;
     }
 
-    public function getCacheGroupTags()
+    public function getCacheGroupTags(): array
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);
     }
-
-    //########################################
 }

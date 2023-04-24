@@ -164,27 +164,9 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Condition Note, Gift Message, Gift Wrap settings,
-                    data from Description Policy, Shipping Template Policy and Product Tax Code Policy
+                    data from Product Type, Shipping Template Policy and Product Tax Code Policy
                     in Amazon Listing when there are changes made to Magento Attribute
                     of at least one mentioned parameter.'
-                ),
-            ]
-        );
-
-        $fieldset->addField(
-            'revise_update_images',
-            self::SELECT,
-            [
-                'name' => 'revise_update_images',
-                'label' => $this->__('Images'),
-                'value' => $formData['revise_update_images'],
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'tooltip' => $this->__(
-                    'Automatically revises Item Image in Amazon Listing if Product Image or Magento
-                    Attribute value used for Product Image is changed in Magento.'
                 ),
             ]
         );

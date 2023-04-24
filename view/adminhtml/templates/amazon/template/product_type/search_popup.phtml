@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs\General\SearchPopup $block */
+
+?>
+
+<div>
+    <div id="chooser_container">
+        <div id="selected_product_type_container">
+            <div style="vertical-align: middle;">
+                <strong>Product Type</strong>
+
+                <span style="vertical-align: middle; padding-left: 5px">
+                    <span id="search_popup_selected_product_type_title"></span>
+                    <span id="search_popup_product_type_not_selected" style="color: grey;"><?= $block->__('Not Selected') ?></span>
+                </span>
+
+                <a style="vertical-align: middle; padding-left: 5px"
+                   href="javascript:void(0)" id="product_type_reset_link">Reset</a>
+            </div>
+        </div>
+
+        <div class="">
+            <div id="chooser_search_input_container">
+                <input id="product_type_search_query" type="text" placeholder="Enter keyword(s)"
+                       onkeyup="AmazonTemplateProductTypeSearchObj.applySearchFilter();">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <a onclick="AmazonTemplateProductTypeSearchObj.resetFilter()">Reset</a>
+            </div>
+
+            <div class="chooser_browser">
+                <select id="product_type_search_results" size="8"
+                        class="multiselect admin__control-multiselect">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        AmazonTemplateProductTypeSearchObj.initPopup(
+            <?= \Ess\M2ePro\Helper\Json::encode($block->getProductTypes()) ?>
+        );
+    </script>
+</div>

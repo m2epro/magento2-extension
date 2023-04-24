@@ -271,11 +271,14 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             'sku' => $this->getSku(),
         ];
 
-        $descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
+        $productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
         $listingProductSku = $this->getAmazonListingProduct()->getSku();
 
         // improve check is sku existence
-        if (empty($listingProductSku) && !empty($descriptionTemplate) && $descriptionTemplate->isNewAsinAccepted()) {
+        if (
+            empty($listingProductSku)
+            && $productTypeTemplate !== null
+        ) {
             $dataForUpdate['is_general_id_owner'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES;
         } else {
             $dataForUpdate['is_general_id_owner'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO;

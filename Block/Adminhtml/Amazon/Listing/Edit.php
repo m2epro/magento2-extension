@@ -136,16 +136,15 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             )
         );
 
-        $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
         $this->jsUrl->add(
             $this->getUrl(
-                '*/' . $path,
+                '*/amazon_listing_autoAction/getProductTypesList',
                 [
                     'marketplace_id' => $this->getListing()->getMarketplaceId(),
                     'is_new_asin_accepted' => 1,
                 ]
             ),
-            $path
+            'amazon_listing_autoAction/getProductTypesList'
         );
 
         $this->jsTranslator->addTranslations(

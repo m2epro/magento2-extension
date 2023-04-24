@@ -8,30 +8,19 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Shipping\Diff
- */
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    //########################################
-
-    public function isDifferent()
+    public function isDifferent(): bool
     {
         return $this->isDetailsDifferent();
     }
 
-    //########################################
-
-    public function isDetailsDifferent()
+    public function isDetailsDifferent(): bool
     {
         $keys = [
-            'template_name_mode',
-            'template_name_value',
-            'template_name_attribute',
+            'template_id'
         ];
 
         return $this->isSettingsDifferent($keys);
     }
-
-    //########################################
 }

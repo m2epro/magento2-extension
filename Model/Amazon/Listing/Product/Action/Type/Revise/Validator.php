@@ -110,8 +110,8 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
     protected function validateParentListingProduct()
     {
         if (
-            (!$this->getConfigurator()->isDetailsAllowed() && !$this->getConfigurator()->isImagesAllowed()) ||
-            !$this->getAmazonListingProduct()->isExistDescriptionTemplate()
+            !$this->getConfigurator()->isDetailsAllowed()
+            || !$this->getAmazonListingProduct()->isExistsProductTypeTemplate()
         ) {
             $this->addMessage('There was no need for this action. It was skipped.');
 

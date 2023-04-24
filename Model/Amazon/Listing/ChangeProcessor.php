@@ -72,19 +72,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
             ];
         }
 
-        if ($diff->isImagesDifferent()) {
-            $priority = 5;
-
-            if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                $priority = 30;
-            }
-
-            $data[] = [
-                'type' => self::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-                'priority' => $priority,
-            ];
-        }
-
         if ($diff->isSkuSettingsDifferent()) {
             $priority = 0;
 

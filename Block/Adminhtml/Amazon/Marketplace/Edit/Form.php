@@ -52,24 +52,20 @@ class Form extends AbstractForm
             );
 
             foreach ($group['marketplaces'] as $marketplace) {
-                $afterElementHtml = '';
+                $afterElementHtml =
+                    '<div id="run_single_button_' . $marketplace['instance']->getId() . '" class="control-value"';
+                $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
+                $afterElementHtml .= ' style="display: none;"';
+                $afterElementHtml .= '">';
 
-                if (!$this->amazonHelper->isMarketplacesWithoutData($marketplace['instance']->getId())) {
-                    $afterElementHtml .= '
-                <div id="run_single_button_' . $marketplace['instance']->getId() . '" class="control-value"';
-                    $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
-                    $afterElementHtml .= ' style="display: none;"';
-                    $afterElementHtml .= '">';
-
-                    $afterElementHtml .= $this->getLayout()
-                                              ->createBlock(\Magento\Backend\Block\Widget\Button::class)
-                                              ->setData([
-                                                  'label' => $this->__('Update Now'),
-                                                  'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
-                                                  'class' => 'run_single_button primary',
-                                              ])->toHtml();
-                    $afterElementHtml .= '</div>';
-                }
+                $afterElementHtml .= $this->getLayout()
+                    ->createBlock(\Magento\Backend\Block\Widget\Button::class)
+                    ->setData([
+                        'label' => $this->__('Update Now'),
+                        'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
+                        'class' => 'run_single_button primary'
+                    ])->toHtml();
+                $afterElementHtml .= '</div>';
 
                 $afterElementHtml .= <<<HTML
                 <div id="synch_info_container" class="control-value">

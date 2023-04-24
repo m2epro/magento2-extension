@@ -20,7 +20,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isQtyDifferent() ||
             $this->isConditionDifferent() ||
             $this->isDetailsDifferent() ||
-            $this->isImagesDifferent() ||
             $this->isSkuSettingsDifferent();
     }
 
@@ -60,19 +59,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'gift_wrap_attribute',
             'gift_message_mode',
             'gift_message_attribute',
-        ];
-
-        return $this->isSettingsDifferent($keys);
-    }
-
-    public function isImagesDifferent()
-    {
-        $keys = [
-            'image_main_mode',
-            'image_main_attribute',
-            'gallery_images_mode',
-            'gallery_images_limit',
-            'gallery_images_attribute',
         ];
 
         return $this->isSettingsDifferent($keys);

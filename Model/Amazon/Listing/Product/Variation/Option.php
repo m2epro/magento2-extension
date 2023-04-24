@@ -177,28 +177,6 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
         return $this->getSynchronizationTemplate()->getChildObject();
     }
 
-    // ---------------------------------------
-
-    /**
-     * @return \Ess\M2ePro\Model\Template\Description
-     */
-    public function getDescriptionTemplate()
-    {
-        return $this->getAmazonListingProductVariation()->getDescriptionTemplate();
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\Description
-     */
-    public function getAmazonDescriptionTemplate()
-    {
-        if (!$templateModel = $this->getDescriptionTemplate()) {
-            return null;
-        }
-
-        return $templateModel->getChildObject();
-    }
-
     //########################################
 
     /**

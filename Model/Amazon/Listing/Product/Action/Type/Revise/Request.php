@@ -9,6 +9,8 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Request as ListActionRequest;
+use Ess\M2ePro\Helper\Data\Product\Identifier;
+use Ess\M2ePro\Model\Amazon\Template\ProductType as ProductTypeTemplate;
 
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Revise\Request
@@ -23,14 +25,21 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
             [
                 'sku' => $this->getAmazonListingProduct()->getSku(),
             ],
+            $this->getProductIdentifierData(),
             $this->getQtyData(),
             $this->getRegularPriceData(),
             $this->getBusinessPriceData(),
-            $this->getDetailsData(),
-            $this->getImagesData()
+            $this->getDetailsData()
         );
 
-        if ($this->getVariationManager()->isRelationChildType()) {
+        if ($this->getVariationManager()->isRelationParentType()) {
+            $channelTheme = $this->getVariationManager()->getTypeModel()->getChannelTheme();
+
+            $data['variation_data'] = [
+                'parentage' => ListActionRequest::PARENTAGE_PARENT,
+                'theme' => $channelTheme,
+            ];
+        } elseif ($this->getVariationManager()->isRelationChildType()) {
             $variationData = [
                 'parentage' => ListActionRequest::PARENTAGE_CHILD,
                 'attributes' => $this->getVariationManager()->getTypeModel()->getChannelOptions(),
@@ -58,5 +67,24 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
         return $data;
     }
 
-    //########################################
+    private function getProductIdentifierData(): array
+    {
+        $productType = $this->getAmazonListingProduct()->getProductTypeTemplate();
+        if (
+            $productType === null
+            || $productType->getNick() === ProductTypeTemplate::GENERAL_PRODUCT_TYPE_NICK
+        ) {
+            return [];
+        }
+
+        $productIdentifiers = $this->getAmazonListingProduct()->getIdentifiers();
+        $data = [];
+
+        if ($worldwideId = $productIdentifiers->getWorldwideId()) {
+            $data['product_id'] = $worldwideId->getIdentifier();
+            $data['product_id_type'] = $worldwideId->isUPC() ? Identifier::UPC : Identifier::EAN;
+        }
+
+        return $data;
+    }
 }

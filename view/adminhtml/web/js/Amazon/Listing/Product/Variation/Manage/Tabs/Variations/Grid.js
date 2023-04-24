@@ -3,7 +3,6 @@ define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Listing/View/Grid',
     'M2ePro/Amazon/Listing/View/Action',
-    'M2ePro/Amazon/Listing/Product/Template/Description'
 ], function(MessageObj, modal) {
 
     window.AmazonListingProductVariationManageTabsVariationsGrid = Class.create(ListingViewGrid, {
@@ -54,7 +53,7 @@ define([
                 previewItemsAction: this.actionHandler.previewItemsAction.bind(this.actionHandler)
             };
 
-            this.templateDescriptionHandler = new AmazonListingProductTemplateDescription(this);
+            this.templateProductTypeHandler = new AmazonListingProductProductType(this);
 
             this.actions = Object.extend(this.actions, {
                 deleteAndRemoveAction: this.actionHandler.deleteAndRemoveAction.bind(this.actionHandler)

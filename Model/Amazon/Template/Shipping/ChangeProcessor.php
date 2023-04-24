@@ -8,23 +8,25 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Shipping\ChangeProcessor
- */
 class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract
 {
     public const INSTRUCTION_INITIATOR = 'template_shipping_change_processor';
 
-    //########################################
-
-    protected function getInstructionInitiator()
+    /**
+     * @return string
+     */
+    protected function getInstructionInitiator(): string
     {
         return self::INSTRUCTION_INITIATOR;
     }
 
-    // ---------------------------------------
-
-    protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status)
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Diff $diff
+     * @param $status
+     *
+     * @return array
+     */
+    protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status): array
     {
         /** @var \Ess\M2ePro\Model\Amazon\Template\Shipping\Diff $diff */
 
@@ -45,6 +47,4 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\
 
         return $data;
     }
-
-    //########################################
 }

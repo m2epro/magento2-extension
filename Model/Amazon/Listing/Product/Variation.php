@@ -186,28 +186,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         return $this->getSynchronizationTemplate()->getChildObject();
     }
 
-    // ---------------------------------------
-
-    /**
-     * @return \Ess\M2ePro\Model\Template\Description
-     */
-    public function getDescriptionTemplate()
-    {
-        return $this->getAmazonListingProduct()->getDescriptionTemplate();
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\Description
-     */
-    public function getAmazonDescriptionTemplate()
-    {
-        if (!$templateModel = $this->getDescriptionTemplate()) {
-            return null;
-        }
-
-        return $templateModel->getChildObject();
-    }
-
     //########################################
 
     public function getOptions($asObjects = false, array $filters = [])

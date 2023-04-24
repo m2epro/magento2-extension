@@ -621,3 +621,10 @@ a.walmart-listing-view-switch-variation-mode:before {
 .admin__menu #menu-ess-m2epro-amazon [target='_blank']:after {
     font-size: 1rem;
 }
+
+/* Disable events for action button child  */
+/* ================================================ */
+
+button.action * {
+    pointer-events: none;
+}

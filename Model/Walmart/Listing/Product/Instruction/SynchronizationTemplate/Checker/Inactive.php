@@ -179,10 +179,7 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if (
-            $walmartSynchronizationTemplate->isRelistFilterUserLock() &&
-            $listingProduct->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER
-        ) {
+        if ($walmartSynchronizationTemplate->isRelistFilterUserLock() && $walmartListingProduct->isStoppedManually()) {
             return false;
         }
 

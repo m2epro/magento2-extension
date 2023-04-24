@@ -16,9 +16,9 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     //########################################
 
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $generalId = $this->getGeneralId($params);
 
@@ -30,7 +30,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendIdentifiersData($data, $generalId);
         $data = $this->appendDetailsValues($data);
-        $data = $this->appendImagesValues($data);
 
         $variationManager = $this->getAmazonListingProduct()->getVariationManager();
 
@@ -48,7 +47,10 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->getChildObject()->addData($data);
+
+        $this->getAmazonListingProduct()->addData($data);
+        $this->getAmazonListingProduct()->setIsStoppedManually(false);
+
         $this->setVariationData($generalId);
 
         $this->getListingProduct()->save();
@@ -98,7 +100,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
             $detailsModel->setMarketplaceId($this->getMarketplace()->getId());
 
             $channelAttributes = $detailsModel->getVariationThemeAttributes(
-                $this->getRequestData()->getProductDataNick(),
+                $this->getRequestData()->getProductTypeNick(),
                 $typeModel->getChannelTheme()
             );
 

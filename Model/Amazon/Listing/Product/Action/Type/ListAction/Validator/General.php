@@ -52,13 +52,24 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             return false;
         }
 
+        if ($this->getAmazonListingProduct()->isGeneralIdOwner()) {
+            $productType = $this->getAmazonListingProduct()->getProductTypeTemplate();
+            if (
+                $productType === null
+                || $productType->getNick() === \Ess\M2ePro\Model\Amazon\Template\ProductType::GENERAL_PRODUCT_TYPE_NICK
+            ) {
+                $this->addMessage(
+                    "To list a new ASIN/ISBN on Amazon, please assign a valid Product Type. "
+                    . "Product Type 'General' cannot be used."
+                );
+                return false;
+            }
+        }
+
         $condition = $this->getAmazonListingProduct()->getListingSource()->getCondition();
         if (empty($condition)) {
-            $this->addMessage(
-                'You cannot list this Product because the Item Condition is not specified.
-                               You can set the Condition in the Selling Settings of the Listing.'
-            );
-
+            $this->addMessage('You cannot list this Product because the Item Condition is not specified.
+                               You can set the Condition in the Selling Settings of the Listing.');
             return false;
         }
 

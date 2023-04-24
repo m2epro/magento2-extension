@@ -8,15 +8,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\Shipping;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Template\Shipping\AffectedListingsProducts
- */
 class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
     protected $amazonFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -29,9 +24,13 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
     }
 
-    //########################################
-
-    public function loadCollection(array $filters = [])
+    /**
+     * @param array $filters
+     *
+     * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function loadCollection(array $filters = []): \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
@@ -43,6 +42,4 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
 
         return $listingProductCollection;
     }
-
-    //########################################
 }

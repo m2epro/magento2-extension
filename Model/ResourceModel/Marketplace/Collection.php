@@ -8,13 +8,11 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
-    //########################################
-
+    /**
+     * @return void
+     */
     public function _construct()
     {
         parent::_construct();
@@ -24,5 +22,16 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    /**
+     * @param string $component
+     *
+     * @return $this
+     */
+    public function appendFilterEnabledMarketplaces(string $component): self
+    {
+        $this->addFieldToFilter('component_mode', $component);
+        $this->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+
+        return $this;
+    }
 }

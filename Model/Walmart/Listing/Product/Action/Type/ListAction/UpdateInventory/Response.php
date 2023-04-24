@@ -16,15 +16,16 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
     //########################################
 
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $data = [];
 
         $data = $this->appendQtyValues($data);
         $data = $this->appendLagTimeValues($data);
         $this->getListingProduct()->addData($data);
+        $this->getWalmartListingProduct()->setIsStoppedManually(false);
 
         $this->setLastSynchronizationDates();
         $this->getListingProduct()->save();

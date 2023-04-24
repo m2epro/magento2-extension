@@ -88,8 +88,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['alp' => $alpTable],
             'listing_product_id=id',
             [
+                'template_product_type_id' => 'template_product_type_id',
                 'template_shipping_id' => 'template_shipping_id',
-                'template_description_id' => 'template_description_id',
                 'template_product_tax_code_id' => 'template_product_tax_code_id',
                 'general_id' => 'general_id',
                 'general_id_search_info' => 'general_id_search_info',
@@ -119,17 +119,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             '{{table}}.variation_parent_id is NULL'
         );
 
-        $tdTable = $this->activeRecordFactory->getObject('Template\Description')->getResource()->getMainTable();
-        $collection->joinTable(
-            ['td' => $tdTable],
-            'id=template_description_id',
-            [
-                'template_description_title' => 'title',
-            ],
-            null,
-            'left'
-        );
-
         $tsTable = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')
                                              ->getResource()->getMainTable();
         $collection->joinTable(
@@ -137,6 +126,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'id=template_shipping_id',
             [
                 'template_shipping_title' => 'title',
+            ],
+            null,
+            'left'
+        );
+
+        $ptTable = $this->activeRecordFactory
+            ->getObject('Amazon_Template_ProductType')
+            ->getResource()->getMainTable();
+        $collection->joinTable(
+            ['pt' => $ptTable],
+            'id=template_product_type_id',
+            [
+                'dictionary_product_type_id' => 'dictionary_product_type_id',
+            ],
+            null,
+            'left'
+        );
+
+        $dicTable = $this->activeRecordFactory
+            ->getObject('Amazon_Dictionary_ProductType')
+            ->getResource()->getMainTable();
+        $collection->joinTable(
+            ['dic' => $dicTable],
+            'id=dictionary_product_type_id',
+            [
+                'product_type_title' => 'title',
             ],
             null,
             'left'
@@ -216,16 +231,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterGeneralId'],
         ]);
 
-        $this->addColumn('description_template', [
-            'header' => $this->__('Description Policy'),
+        $this->addColumn('product_type', [
+            'header' => $this->__('Product Type'),
             'align' => 'left',
-            'width' => '170px',
+            'width' => '140px',
             'type' => 'text',
-            'index' => 'template_description_title',
-            'filter' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\PolicySettings::class,
-            'filter_index' => 'template_description_title',
-            'filter_condition_callback' => [$this, 'callbackFilterDescriptionSettings'],
-            'frame_callback' => [$this, 'callbackColumnTemplateDescription'],
+            'index' => 'product_type',
+            'filter_index' => 'product_type',
+            'frame_callback' => [$this, 'callbackColumnProductType'],
+            'filter_condition_callback' => [$this, 'callbackFilterProductType'],
         ]);
 
         $this->addColumn('shipping_template', [
@@ -275,8 +289,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function getGroupOrder()
     {
         $groups = [
-            'edit_template_description' => $this->__('Description Policy'),
             'edit_template_shipping' => $this->__('Shipping Policy'),
+            'edit_product_type' => $this->__('Product Type'),
             'other' => $this->__('Other'),
         ];
 
@@ -293,18 +307,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function getColumnActionsItems()
     {
         $actions = [
-            'assignTemplateDescription' => [
+            'assignProductType' => [
                 'caption' => $this->__('Assign'),
-                'group' => 'edit_template_description',
+                'group' => 'edit_product_type',
                 'field' => 'id',
-                'onclick_action' => 'ListingGridObj.actions[\'assignTemplateDescriptionIdAction\']',
+                'onclick_action' => 'ListingGridObj.actions[\'assignProductTypeAction\']',
             ],
 
-            'unassignTemplateDescription' => [
+            'unassignProductType' => [
                 'caption' => $this->__('Unassign'),
-                'group' => 'edit_template_description',
+                'group' => 'edit_product_type',
                 'field' => 'id',
-                'onclick_action' => 'ListingGridObj.unassignTemplateDescriptionIdActionConfrim',
+                'onclick_action' => 'ListingGridObj.unassignProductTypeConfrim',
             ],
         ];
 
@@ -364,23 +378,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Set mass-action
         // ---------------------------------------
         $groups = [
-            'description_policy' => $this->__('Description Policy'),
             'shipping_policy' => $this->__('Shipping Policy'),
+            'product_type' => $this->__('Product Type'),
             'edit_template_product_tax_code' => $this->__('Product Tax Code Policy'),
             'other' => $this->__('Other'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
-
-        $this->getMassactionBlock()->addItem('assignTemplateDescriptionId', [
-            'label' => $this->__('Assign'),
-            'url' => '',
-        ], 'description_policy');
-
-        $this->getMassactionBlock()->addItem('unassignTemplateDescriptionId', [
-            'label' => $this->__('Unassign'),
-            'url' => '',
-        ], 'description_policy');
 
         $this->getMassactionBlock()->addItem('assignTemplateShippingId', [
             'label' => $this->__('Assign'),
@@ -391,6 +395,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'label' => $this->__('Unassign'),
             'url' => '',
         ], 'shipping_policy');
+
+        $this->getMassactionBlock()->addItem('assignProductType', [
+            'label' => $this->__('Assign'),
+            'url' => '',
+        ], 'product_type');
+
+        $this->getMassactionBlock()->addItem('unassignProductType', [
+            'label' => $this->__('Unassign'),
+            'url' => '',
+        ], 'product_type');
 
         if (
             $this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
@@ -510,6 +524,39 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $this->getGeneralIdColumnValueNotEmptyGeneralId($row);
     }
 
+    /**
+     * @param string $generalId
+     * @param \Magento\Catalog\Model\Product $row
+     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
+     * @param bool $isExport
+     *
+     * @return false|string
+     */
+    public function callbackColumnProductType(
+        string $generalId,
+        \Magento\Catalog\Model\AbstractModel $row,
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
+        bool $isExport
+    ) {
+        $productTypeId = (int)$row->getData('template_product_type_id');
+        $productTypeTitle = (int)$row->getData('product_type_title');
+
+        if ($productTypeId === 0) {
+            return $this->__('N/A');
+        }
+
+        $url = $this->getUrl('*/amazon_template_productType/edit', [
+            'id' => $productTypeId,
+            'close_on_save' => true,
+        ]);
+
+        return sprintf(
+            '<a target="_blank" href="%s">%s</a>',
+            $url,
+            $this->dataHelper->escapeHtml($row->getData('product_type_title'))
+        );
+    }
+
     private function getGeneralIdColumnValueEmptyGeneralId($row)
     {
         // ---------------------------------------
@@ -575,26 +622,6 @@ HTML;
         }
 
         return $text . $generalIdOwnerHtml;
-    }
-
-    public function callbackColumnTemplateDescription($value, $row, $column, $isExport)
-    {
-        $html = $this->__('N/A');
-
-        if ($row->getData('template_description_id')) {
-            $url = $this->getUrl('*/amazon_template_description/edit', [
-                'id' => $row->getData('template_description_id'),
-                'close_on_save' => true,
-            ]);
-
-            $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_description_title'));
-
-            return <<<HTML
-<a target="_blank" href="{$url}">{$templateTitle}</a>
-HTML;
-        }
-
-        return $html;
     }
 
     public function callbackColumnTemplateShipping($value, $row, $column, $isExport)
@@ -703,7 +730,7 @@ HTML;
         }
     }
 
-    protected function callbackFilterDescriptionSettings($collection, $column)
+    protected function callbackFilterProductType($collection, $column)
     {
         $value = $column->getFilter()->getValue();
         $inputValue = null;
@@ -717,7 +744,7 @@ HTML;
         if ($inputValue !== null) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
             $collection->addAttributeToFilter(
-                'template_description_title',
+                'product_type_title',
                 ['like' => '%' . $inputValue . '%']
             );
         }
@@ -725,10 +752,10 @@ HTML;
         if (isset($value['select'])) {
             switch ($value['select']) {
                 case '0':
-                    $collection->addAttributeToFilter('template_description_id', ['null' => true]);
+                    $collection->addAttributeToFilter('template_product_type_id', ['null' => true]);
                     break;
                 case '1':
-                    $collection->addAttributeToFilter('template_description_id', ['notnull' => true]);
+                    $collection->addAttributeToFilter('template_product_type_id', ['notnull' => true]);
                     break;
             }
         }

@@ -24,8 +24,7 @@ abstract class AbstractModel extends BaseAbstractModel
                 $this->getReviseQtyInstructionTypes(),
                 $this->getRevisePriceRegularInstructionTypes(),
                 $this->getRevisePriceBusinessInstructionTypes(),
-                $this->getReviseDetailsInstructionTypes(),
-                $this->getReviseImagesInstructionTypes()
+                $this->getReviseDetailsInstructionTypes()
             )
         );
     }
@@ -115,23 +114,6 @@ abstract class AbstractModel extends BaseAbstractModel
         ];
     }
 
-    protected function getReviseImagesInstructionTypes()
-    {
-        return [
-            SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED,
-            SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED,
-            \Ess\M2ePro\Model\Amazon\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-            TemplateChangeProcessorAbstract::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
-            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
-            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
-            \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_IMAGES,
-            \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
-            ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
-            \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
-        ];
-    }
-
     //########################################
 
     protected function getPropertiesDataFromInputInstructions()
@@ -156,10 +138,6 @@ abstract class AbstractModel extends BaseAbstractModel
 
         if ($this->input->hasInstructionWithTypes($this->getReviseDetailsInstructionTypes())) {
             $propertiesData[] = 'details';
-        }
-
-        if ($this->input->hasInstructionWithTypes($this->getReviseImagesInstructionTypes())) {
-            $propertiesData[] = 'images';
         }
 
         return $propertiesData;
@@ -196,10 +174,6 @@ abstract class AbstractModel extends BaseAbstractModel
 
         if ($configurator->isDetailsAllowed()) {
             $propertiesData[] = 'details';
-        }
-
-        if ($configurator->isImagesAllowed()) {
-            $propertiesData[] = 'images';
         }
 
         return $propertiesData;

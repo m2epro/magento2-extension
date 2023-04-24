@@ -18,6 +18,7 @@ class UserInfoFactory
         '"',
         ';',
         '/',
+        '\\',
         '!',
         '"',
         '#',
@@ -38,6 +39,8 @@ class UserInfoFactory
         '[',
         ']',
         '}',
+        '“',
+        '”',
     ];
 
     /** @var \Magento\Customer\Model\Options */

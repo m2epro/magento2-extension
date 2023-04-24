@@ -23,9 +23,9 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     //########################################
 
-    public function getAddingDescriptionTemplateId()
+    public function getAddingProductTypeTemplateId()
     {
-        return $this->getData('adding_description_template_id');
+        return $this->getData('adding_product_type_template_id');
     }
 
     //########################################

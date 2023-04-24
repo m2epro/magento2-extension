@@ -15,40 +15,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public const TEMPLATE_SELLING_FORMAT = 'selling_format';
     public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
     public const TEMPLATE_SHIPPING = 'shipping';
-    public const TEMPLATE_DESCRIPTION = 'description';
     public const TEMPLATE_PRODUCT_TAX_CODE = 'product_tax_code';
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
+    private $marketplaceCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory */
-    protected $wrapperCollectionFactory;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    protected $amazonFactory;
-
+    private $wrapperCollectionFactory;
     /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
-    private $enabledMarketplacesCollection;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\MarketplaceFactory */
+    private $marketplaceFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
+        $this->marketplaceFactory = $marketplaceFactory;
+        $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
-        $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
-        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -67,8 +59,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -119,46 +109,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         $collectionShipping = $this->activeRecordFactory->getObject('Amazon_Template_Shipping')
                                                         ->getCollection();
+        $collectionShipping->getSelect()->join(
+            ['mm' => $this->marketplaceFactory->create()->getResource()->getMainTable()],
+            'mm.id=main_table.marketplace_id',
+            []
+        );
+        $collectionShipping->addFieldToFilter('mm.status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
         $collectionShipping->getSelect()->reset(Select::COLUMNS);
         $collectionShipping->getSelect()->columns(
             [
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_SHIPPING . '\' as `type`'),
-                new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
+                'marketplace_id',
                 'create_date',
                 'update_date',
                 new \Zend_Db_Expr('NULL as `category_path`'),
                 new \Zend_Db_Expr('NULL as `browsenode_id`'),
                 new \Zend_Db_Expr('NULL as `is_new_asin_accepted`'),
-            ]
-        );
-        // ---------------------------------------
-
-        // Prepare Description collection
-        // ---------------------------------------
-        $collectionDescription = $this->amazonFactory->getObject('Template\Description')->getCollection();
-
-        $collectionDescription->getSelect()->join(
-            ['mm' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
-            'mm.id=second_table.marketplace_id',
-            []
-        );
-
-        $collectionDescription->addFieldToFilter('mm.status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-
-        $collectionDescription->getSelect()->reset(Select::COLUMNS);
-        $collectionDescription->getSelect()->columns(
-            [
-                'id as template_id',
-                'title',
-                new \Zend_Db_Expr('\'' . self::TEMPLATE_DESCRIPTION . '\' as `type`'),
-                'second_table.marketplace_id',
-                'create_date',
-                'update_date',
-                'second_table.category_path',
-                'second_table.browsenode_id',
-                'second_table.is_new_asin_accepted',
             ]
         );
         // ---------------------------------------
@@ -189,7 +157,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collectionsArray = [
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
-            $collectionDescription->getSelect(),
             $collectionShipping->getSelect(),
             $collectionProductTaxCode->getSelect(),
         ];
@@ -224,15 +191,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareCollection();
     }
 
-    //########################################
-
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
             'header' => $this->__('Title'),
             'align' => 'left',
             'type' => 'text',
-            //            'width'         => '150px',
             'index' => 'title',
             'escape' => true,
             'filter_index' => 'main_table.title',
@@ -263,7 +227,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
             'frame_callback' => [$this, 'callbackColumnMarketplace'],
             'options' => $this->getEnabledMarketplaceTitles(),
-        ], 'type');
+        ]);
 
         $this->addColumn('create_date', [
             'header' => $this->__('Creation Date'),
@@ -329,7 +293,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $options = [
             self::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
-            self::TEMPLATE_DESCRIPTION => $this->__('Description'),
             self::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
             self::TEMPLATE_SHIPPING => $this->__('Shipping'),
             self::TEMPLATE_PRODUCT_TAX_CODE => $this->__('Product Tax Code'),
@@ -337,40 +300,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->getColumn('type')->setData('options', $options);
 
-        $this->getColumn('title')->setData('header', $this->__('Title / Description Policy Category'));
-        $this->getColumn('title')->setData('frame_callback', [$this, 'callbackColumnTitle']);
+        $this->getColumn('title')->setData('header', $this->__('Title'));
         $this->getColumn('title')->setData('filter_condition_callback', [$this, 'callbackFilterTitle']);
 
         return $this;
-    }
-
-    //########################################
-
-    public function callbackColumnTitle($value, $row, $column, $isExport)
-    {
-        if ($row->getData('type') != self::TEMPLATE_DESCRIPTION) {
-            return $value;
-        }
-
-        $title = $this->dataHelper->escapeHtml($value);
-
-        $categoryWord = $this->__('Category');
-        $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"
-            : $this->__('Not Set');
-
-        $newAsin = $this->__('New ASIN/ISBN');
-        $newAsinAccepted = $this->__('No');
-        if ($row->getData('is_new_asin_accepted') == 1) {
-            $newAsinAccepted = $this->__('Yes');
-        }
-
-        return <<<HTML
-{$title}
-<div>
-    <span style="font-weight: bold">{$newAsin}</span>: <span style="color: #505050">{$newAsinAccepted}</span><br/>
-    <span style="font-weight: bold">{$categoryWord}</span>: <span style="color: #505050">{$categoryPath}</span><br/>
-</div>
-HTML;
     }
 
     public function callbackColumnMarketplace($value, $row, $column, $isExport)
@@ -382,9 +315,7 @@ HTML;
         return $value;
     }
 
-    //########################################
-
-    protected function callbackFilterTitle($collection, $column)
+    protected function callbackFilterTitle($collection, $column): void
     {
         $value = $column->getFilter()->getValue();
 
@@ -398,7 +329,7 @@ HTML;
         );
     }
 
-    protected function callbackFilterMarketplace($collection, $column)
+    protected function callbackFilterMarketplace($collection, $column): void
     {
         $value = $column->getFilter()->getValue();
 
@@ -409,35 +340,25 @@ HTML;
         $collection->getSelect()->where('marketplace_id = 0 OR marketplace_id = ?', (int)$value);
     }
 
-    //########################################
-
-    private function getEnabledMarketplacesCollection()
+    /**
+     * @return array
+     */
+    private function getEnabledMarketplaceTitles(): array
     {
-        if ($this->enabledMarketplacesCollection === null) {
-            $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
-            $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
-            $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-            $collection->setOrder('sorder', 'ASC');
+        /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $collection */
+        $collection = $this->marketplaceCollectionFactory->create();
+        $collection->appendFilterEnabledMarketplaces(\Ess\M2ePro\Helper\Component\Amazon::NICK)
+            ->setOrder('title', 'ASC');
 
-            $this->enabledMarketplacesCollection = $collection;
-        }
-
-        return $this->enabledMarketplacesCollection;
+        return $collection->toOptionHash();
     }
 
-    private function getEnabledMarketplaceTitles()
-    {
-        return $this->getEnabledMarketplacesCollection()->toOptionHash();
-    }
-
-    //########################################
-
-    public function getGridUrl()
+    public function getGridUrl(): string
     {
         return $this->getUrl('*/*/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($row): string
     {
         return $this->getUrl(
             '*/amazon_template/edit',
@@ -448,6 +369,4 @@ HTML;
             ]
         );
     }
-
-    //########################################
 }

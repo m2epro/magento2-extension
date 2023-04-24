@@ -42,21 +42,6 @@ define([
 
         // ---------------------------------------
 
-        getAvailableConstantsForImages: function () {
-            return [
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_USED_LIKE_NEW'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_USED_VERY_GOOD'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_USED_GOOD'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_USED_ACCEPTABLE'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_COLLECTIBLE_LIKE_NEW'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_COLLECTIBLE_VERY_GOOD'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_COLLECTIBLE_GOOD'),
-                M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_COLLECTIBLE_ACCEPTABLE'),
-            ];
-        },
-
-        // ---------------------------------------
-
         sku_mode_change: function () {
             var self = AmazonListingCreateSellingObj;
 
@@ -81,13 +66,13 @@ define([
         condition_mode_change: function () {
             var self = AmazonListingCreateSellingObj,
                 attributeCode = this.options[this.selectedIndex].getAttribute('attribute_code'),
-                condition_note_mode = $('condition_note_mode'),
                 conditionValue = $('condition_value'),
-                conditionCustomAttribute = $('condition_custom_attribute');
+                conditionCustomAttribute = $('condition_custom_attribute'),
+                conditionNoteModeTr = $('condition_note_mode_tr'),
+                conditionNoteValueTr = $('condition_note_value_tr');
 
-            $('magento_block_amazon_listing_add_images-wrapper').hide();
-            $('condition_note_mode_tr').show();
-            $('condition_note_value_tr').show();
+            conditionNoteModeTr.show();
+            conditionNoteValueTr.show();
 
             conditionValue.value = '';
             conditionCustomAttribute.value = '';
@@ -96,62 +81,16 @@ define([
                 self.updateHiddenValue(this, conditionValue);
 
                 if (attributeCode == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::CONDITION_NEW')) {
-                    $('condition_note_mode_tr').hide();
-                    $('condition_note_value_tr').hide();
+                    conditionNoteModeTr.hide();
+                    conditionNoteValueTr.hide();
                     $('condition_custom_tr').hide();
                 } else {
                     self.condition_note_mode_change();
                 }
-
-                if (self.getAvailableConstantsForImages().indexOf(attributeCode) == -1) {
-                    $('image_main_attribute').value = '';
-                    $('image_main_mode').selectedIndex = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::IMAGE_MAIN_MODE_NONE');
-                    $('image_main_mode').simulate('change');
-                } else {
-                    $('magento_block_amazon_listing_add_images-wrapper').show();
-                }
             } else {
                 self.updateHiddenValue(this, conditionCustomAttribute);
-                $('condition_note_mode_tr').show();
+                conditionNoteModeTr.show();
                 self.condition_note_mode_change();
-
-                $('magento_block_amazon_listing_add_images-wrapper').show();
-            }
-        },
-
-        // ---------------------------------------
-
-        image_main_mode_change: function () {
-            var self = AmazonListingCreateSellingObj;
-
-            $('gallery_images_mode_tr').show();
-
-            $('image_main_attribute').value = '';
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::IMAGE_MAIN_MODE_NONE')) {
-                $('gallery_images_mode_tr').hide();
-                $('gallery_images_limit').value = '';
-                $('gallery_images_attribute').value = '';
-                $('gallery_images_mode').selectedIndex = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::GALLERY_IMAGES_MODE_NONE');
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::IMAGE_MAIN_MODE_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('image_main_attribute'));
-            }
-        },
-
-        gallery_images_mode_change: function () {
-            var self = AmazonListingCreateSellingObj;
-
-            $('gallery_images_limit').value = '';
-            $('gallery_images_attribute').value = '';
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::GALLERY_IMAGES_MODE_PRODUCT')) {
-                self.updateHiddenValue(this, $('gallery_images_limit'));
-            }
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Listing::GALLERY_IMAGES_MODE_ATTRIBUTE')) {
-                self.updateHiddenValue(this, $('gallery_images_attribute'));
             }
         },
 

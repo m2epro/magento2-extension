@@ -10,42 +10,23 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
- */
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
     public const INSTRUCTION_INITIATOR = 'action_response';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
-
-    /**
-     * @var array
-     */
-    private $params = [];
-
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData */
+    protected $requestData;
+    /** @var \Ess\M2ePro\Model\Listing\Product */
     private $listingProduct;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
     private $configurator;
 
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
-     */
-    protected $requestData;
-
-    /**
-     * @var array
-     */
+    /** @var array */
+    private $params = [];
+    /** @var array */
     protected $requestMetaData = [];
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -53,15 +34,21 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->activeRecordFactory = $activeRecordFactory;
     }
 
-    //########################################
+    // ---------------------------------------
 
-    abstract public function processSuccess($params = []);
+    /**
+     * @param array $params
+     *
+     * @return void
+     */
+    abstract public function processSuccess(array $params = []): void;
 
-    //########################################
+    // ---------------------------------------
 
     public function setParams(array $params = [])
     {
@@ -144,8 +131,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product
      */
@@ -217,8 +202,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     {
         return $this->getListingProduct()->getMagentoProduct();
     }
-
-    //########################################
 
     protected function appendStatusChangerValue($data)
     {
@@ -322,23 +305,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    protected function appendImagesValues($data)
-    {
-        $requestMetadata = $this->getRequestMetaData();
-        if (!isset($requestMetadata['images_data'])) {
-            return $data;
-        }
-
-        $data['online_images_data'] = $this->getHelper('Data')->hashString(
-            \Ess\M2ePro\Helper\Json::encode($requestMetadata['images_data']),
-            'md5'
-        );
-
-        return $data;
-    }
-
-    //########################################
-
     protected function appendGiftSettingsStatus($data)
     {
         if (!$this->getRequestData()->hasGiftWrap() && !$this->getRequestData()->hasGiftMessage()) {
@@ -357,8 +323,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         return $data;
     }
-
-    //########################################
 
     protected function setLastSynchronizationDates()
     {
@@ -380,8 +344,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getListingProduct()->setSettings('additional_data', $additionalData);
     }
-
-    //########################################
 
     public function throwRepeatActionInstructions()
     {
@@ -414,17 +376,6 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             ];
         }
 
-        if ($this->getConfigurator()->isImagesAllowed()) {
-            $instructions[] = [
-                'listing_product_id' => $this->getListingProduct()->getId(),
-                'type' => ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
-                'initiator' => self::INSTRUCTION_INITIATOR,
-                'priority' => 30,
-            ];
-        }
-
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructions);
     }
-
-    //########################################
 }

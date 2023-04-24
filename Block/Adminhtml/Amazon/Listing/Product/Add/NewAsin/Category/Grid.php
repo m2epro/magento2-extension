@@ -12,35 +12,55 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-
     /** @var \Ess\M2ePro\Helper\Magento\Category */
     protected $magentoCategoryHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
+    private $productTypeFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType */
+    private $productTypeResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    private $listingProductCollectionFactory;
 
+    /**
+     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
+     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory
+     * @param \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper
+     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
+     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
+     * @param \Magento\Backend\Helper\Data $backendHelper
+     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper
+     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
+     * @param \Ess\M2ePro\Helper\Data $dataHelper
+     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
+     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType $productTypeResource
+     * @param array $data
+     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType $productTypeResource,
         array $data = []
     ) {
         $this->amazonFactory = $amazonFactory;
@@ -49,6 +69,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->magentoCategoryHelper = $magentoCategoryHelper;
         $this->databaseHelper = $databaseHelper;
         $this->globalDataHelper = $globalDataHelper;
+        $this->productTypeFactory = $productTypeFactory;
+        $this->productTypeResource = $productTypeResource;
+        $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         parent::__construct(
             $categoryCollectionFactory,
             $context,
@@ -81,7 +104,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected function _prepareCollection()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Category\Collection $collection */
         $collection = $this->categoryCollectionFactory->create();
         $collection->addAttributeToSelect('name');
 
@@ -107,20 +129,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'frame_callback' => [$this, 'callbackColumnMagentoCategory'],
         ]);
 
-        $this->addColumn('description_template', [
-            'header' => $this->__('Description Policy'),
+        $this->addColumn('product_type', [
+            'header' => $this->__('Product Type'),
             'align' => 'left',
             'width' => '*',
             'sortable' => false,
             'type' => 'options',
-            'index' => 'description_template_id',
-            'filter_index' => 'description_template_id',
+            'index' => 'product_type_id',
+            'filter_index' => 'product_type_id',
             'options' => [
-                1 => $this->__('Description Policy Selected'),
-                0 => $this->__('Description Policy Not Selected'),
+                1 => $this->__('Product Type Selected'),
+                0 => $this->__('Product Type Not Selected'),
             ],
-            'frame_callback' => [$this, 'callbackColumnDescriptionTemplateCallback'],
-            'filter_condition_callback' => [$this, 'callbackColumnDescriptionTemplateFilterCallback'],
+            'frame_callback' => [$this, 'callbackColumnProductTypeCallback'],
+            'filter_condition_callback' => [$this, 'callbackColumnProductTypeFilterCallback'],
         ]);
 
         $actionsColumn = [
@@ -136,14 +158,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         $actions = [
             [
-                'caption' => $this->__('Set Description Policy'),
+                'caption' => $this->__('Set Product Type'),
                 'field' => 'entity_id',
-                'onclick_action' => 'ListingGridObj.setDescriptionTemplateByCategoryRowAction',
+                'onclick_action' => 'ListingGridObj.setProductTypeByCategoryRowAction',
             ],
             [
-                'caption' => $this->__('Reset Description Policy'),
+                'caption' => $this->__('Reset Product Type'),
                 'field' => 'entity_id',
-                'onclick_action' => 'ListingGridObj.resetDescriptionTemplateByCategoryRowAction',
+                'onclick_action' => 'ListingGridObj.resetProductTypeByCategoryRowAction',
             ],
         ];
 
@@ -160,13 +182,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->setMassactionIdFieldOnlyIndexValue(true);
 
         // ---------------------------------------
-        $this->getMassactionBlock()->addItem('setDescriptionTemplateByCategory', [
-            'label' => $this->__('Set Description Policy'),
+        $this->getMassactionBlock()->addItem('setProductTypeByCategory', [
+            'label' => $this->__('Set Product Type'),
             'url' => '',
         ]);
 
-        $this->getMassactionBlock()->addItem('resetDescriptionTemplateByCategory', [
-            'label' => $this->__('Reset Description Policy'),
+        $this->getMassactionBlock()->addItem('resetProductTypeByCategory', [
+            'label' => $this->__('Reset Product Type'),
             'url' => '',
         ]);
 
@@ -175,26 +197,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         return parent::_prepareMassaction();
     }
 
-    public function callbackColumnDescriptionTemplateCallback($value, $row, $column, $isExport)
+    public function callbackColumnProductTypeCallback($value, $row, $column, $isExport)
     {
         $categoriesData = $this->getData('categories_data');
         $productsIds = implode(',', $categoriesData[$row->getData('entity_id')]);
 
-        $descriptionTemplatesData = $this->getData('description_templates_data');
-        $descriptionTemplatesIds = [];
+        $productTypeData = $this->getData('product_type_data');
+        $productTypeIds = [];
         foreach ($categoriesData[$row->getData('entity_id')] as $productId) {
-            if (empty($descriptionTemplatesIds[$descriptionTemplatesData[$productId]])) {
-                $descriptionTemplatesIds[$descriptionTemplatesData[$productId]] = 0;
+            if (empty($productTypeIds[$productTypeData[$productId]])) {
+                $productTypeIds[$productTypeData[$productId]] = 0;
             }
-            $descriptionTemplatesIds[$descriptionTemplatesData[$productId]]++;
+            $productTypeIds[$productTypeData[$productId]]++;
         }
 
-        arsort($descriptionTemplatesIds);
+        arsort($productTypeIds);
 
-        reset($descriptionTemplatesIds);
-        $descriptionTemplateId = key($descriptionTemplatesIds);
+        reset($productTypeIds);
+        $productTypeId = key($productTypeIds);
 
-        if (empty($descriptionTemplateId)) {
+        if (empty($productTypeId)) {
             $label = $this->__('Not Selected');
 
             return <<<HTML
@@ -203,28 +225,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 HTML;
         }
 
-        $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $descriptionTemplateId,
+        $productTypeEditUrl = $this->getUrl('*/amazon_template_productType/edit', [
+            'id' => $productTypeId,
         ]);
 
-        /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
-        $descriptionTemplate = $this->activeRecordFactory->getObjectLoaded(
-            'Template\Description',
-            $descriptionTemplateId
-        );
+        $productType = $this->productTypeFactory->create();
+        $this->productTypeResource->load($productType, $productTypeId);
 
-        $title = $this->dataHelper->escapeHtml($descriptionTemplate->getData('title'));
+        $title = $this->dataHelper->escapeHtml($productType->getTitle());
 
         return <<<HTML
-<a target="_blank" href="{$templateDescriptionEditUrl}">{$title}</a>
+<a target="_blank" href="{$productTypeEditUrl}">{$title}</a>
 <input type="hidden" id="products_ids_{$row->getData('entity_id')}" value="{$productsIds}">
 HTML;
     }
 
-    protected function callbackColumnDescriptionTemplateFilterCallback($collection, $column)
+    protected function callbackColumnProductTypeFilterCallback($collection, $column)
     {
         $value = $column->getFilter()->getValue();
-
         if ($value == null) {
             return;
         }
@@ -233,10 +251,10 @@ HTML;
         $filteredListingProductsIds = [];
 
         $categoriesData = $this->getData('categories_data');
-        $descriptionTemplatesIds = $this->getData('description_templates_data');
+        $productTypeIds = $this->getData('product_type_data');
 
-        foreach ($descriptionTemplatesIds as $listingProductId => $descriptionTemplateId) {
-            if ($descriptionTemplateId !== null) {
+        foreach ($productTypeIds as $listingProductId => $productTypeId) {
+            if ($productTypeId !== null) {
                 $filteredListingProductsIds[] = $listingProductId;
             }
         }
@@ -270,11 +288,10 @@ HTML;
             $errorMessage = $this
                 ->__(
                     "To proceed, the category data must be specified.
-                     Please select a relevant Description Policy for at least one Magento Category. "
+                     Please select a relevant Product Type for at least one Magento Category. "
                 );
-            $isNotExistProductsWithDescriptionTemplate = (int)$this->isNotExistProductsWithDescriptionTemplate(
-                $this->getData('description_templates_data')
-            );
+            $isNotExistProductsWithProductType = (int)$this
+                ->isNotExistProductsWithProductType($this->getData('product_type_data'));
 
             $this->js->add(
                 <<<JS
@@ -282,7 +299,7 @@ HTML;
         'M2ePro/Plugin/Messages'
     ],function(MessageObj) {
         var button = $('add_products_new_asin_category_continue');
-        if ({$isNotExistProductsWithDescriptionTemplate}) {
+        if ({$isNotExistProductsWithProductType}) {
             button.addClassName('disabled');
             button.disable();
             MessageObj.addError(`{$errorMessage}`);
@@ -311,16 +328,25 @@ JS
 
     private function prepareDataByCategories()
     {
-        $listingProductsIds = $this->listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
+        $listingProductsIds = $this->listing
+            ->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
 
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection()
-                                                        ->addFieldToFilter('id', ['in' => $listingProductsIds]);
+        $listingProductCollection = $this->listingProductCollectionFactory->create([
+            'childMode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+        ]);
+        $listingProductCollection->addFieldToFilter('id', ['in' => $listingProductsIds]);
+        $listingProductCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $listingProductCollection->getSelect()->columns([
+            'id' => 'id',
+            'product_id' => 'product_id',
+            'template_product_type_id' => 'second_table.template_product_type_id',
+        ]);
 
         $productsIds = [];
-        $descriptionTemplatesIds = [];
+        $productTypeIds = [];
         foreach ($listingProductCollection->getData() as $item) {
             $productsIds[$item['id']] = $item['product_id'];
-            $descriptionTemplatesIds[$item['id']] = $item['template_description_id'];
+            $productTypeIds[$item['id']] = $item['template_product_type_id'];
         }
         $productsIds = array_unique($productsIds);
 
@@ -332,7 +358,6 @@ JS
         $categoriesData = [];
 
         foreach ($categoriesIds as $categoryId) {
-            /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
             $collection = $this->magentoProductCollectionFactory->create();
             $collection->setListing($this->listing);
             $collection->setStoreId($this->listing->getStoreId());
@@ -358,24 +383,24 @@ JS
         }
 
         $this->setData('categories_data', $categoriesData);
-        $this->setData('description_templates_data', $descriptionTemplatesIds);
+        $this->setData('product_type_data', $productTypeIds);
 
         $this->listing->setSetting(
             'additional_data',
-            'adding_new_asin_description_templates_data',
-            $descriptionTemplatesIds
+            'adding_new_asin_product_type_data',
+            $productTypeIds
         );
         $this->listing->save();
     }
 
-    protected function isNotExistProductsWithDescriptionTemplate($descriptionTemplatesData)
+    protected function isNotExistProductsWithProductType($productTypesData)
     {
-        if (empty($descriptionTemplatesData)) {
+        if (empty($productTypesData)) {
             return true;
         }
 
-        foreach ($descriptionTemplatesData as $descriptionTemplateData) {
-            if (!empty($descriptionTemplateData)) {
+        foreach ($productTypesData as $productTypeData) {
+            if (!empty($productTypeData)) {
                 return false;
             }
         }

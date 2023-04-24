@@ -17,18 +17,17 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     public const INSTRUCTION_TYPE_CHECK_PRICE_REGULAR = 'success_relist_check_price_regular';
     public const INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS = 'success_relist_check_price_business';
     public const INSTRUCTION_TYPE_CHECK_DETAILS = 'success_relist_check_details';
-    public const INSTRUCTION_TYPE_CHECK_IMAGES = 'success_relist_check_images';
 
     //########################################
 
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $data = [];
 
-        if ($this->getConfigurator()->isDetailsAllowed() || $this->getConfigurator()->isImagesAllowed()) {
+        if ($this->getConfigurator()->isDetailsAllowed()) {
             $data['defected_messages'] = null;
         }
 
@@ -44,7 +43,9 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->getChildObject()->addData($data);
+
+        $this->getAmazonListingProduct()->addData($data);
+        $this->getAmazonListingProduct()->setIsStoppedManually(false);
 
         $this->setLastSynchronizationDates();
 
@@ -87,11 +88,6 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
                 case 'details':
                     $instructionType = self::INSTRUCTION_TYPE_CHECK_DETAILS;
-                    $instructionPriority = 30;
-                    break;
-
-                case 'images':
-                    $instructionType = self::INSTRUCTION_TYPE_CHECK_IMAGES;
                     $instructionPriority = 30;
                     break;
             }

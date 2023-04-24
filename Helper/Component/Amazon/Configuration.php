@@ -10,10 +10,6 @@ namespace Ess\M2ePro\Helper\Component\Amazon;
 
 class Configuration
 {
-    public const PRODUCT_ID_OVERRIDE_MODE_NONE              = 0;
-    public const PRODUCT_ID_OVERRIDE_MODE_ALL               = 1;
-    public const PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS = 2;
-
     public const WORLDWIDE_ID_MODE_NONE             = 0;
     public const WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE = 1;
 
@@ -50,43 +46,6 @@ class Configuration
     public function isEnabledBusinessMode(): bool
     {
         return $this->getBusinessMode() == 1;
-    }
-
-    // ----------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getProductIdOverrideMode(): int
-    {
-        return (int)$this->config->getGroupValue(
-            self::CONFIG_GROUP,
-            'product_id_override_mode'
-        );
-    }
-
-    /**
-     * @return bool
-     */
-    public function isProductIdOverrideModeNone(): bool
-    {
-        return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isProductIdOverrideModeAll(): bool
-    {
-        return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_ALL;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isProductIdOverrideModeSpecificProducts(): bool
-    {
-        return $this->getProductIdOverrideMode() == self::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS;
     }
 
     // ----------------------------------------
@@ -180,7 +139,6 @@ class Configuration
     {
         $allowedConfigKeys = [
             'business_mode',
-            'product_id_override_mode',
             'worldwide_id_mode',
             'worldwide_id_custom_attribute',
             'general_id_mode',

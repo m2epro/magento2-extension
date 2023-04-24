@@ -258,10 +258,6 @@ HTML;
                         if ($configurator->isDetailsAllowed()) {
                             $reviseParts[] = 'Details';
                         }
-
-                        if ($configurator->isImagesAllowed()) {
-                            $reviseParts[] = 'Images';
-                        }
                     }
                 }
 

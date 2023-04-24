@@ -24,8 +24,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     private $variationHelper;
 
-    /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
-    private $descriptionTemplate = null;
+    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType $productTypeTemplate */
+    private $productTypeTemplate = null;
     /** @var null  */
     private $possibleThemes = null;
 
@@ -197,23 +197,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Template\Description
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getDescriptionTemplate()
+    public function getProductTypeTemplate(): ?\Ess\M2ePro\Model\Amazon\Template\ProductType
     {
-        if ($this->descriptionTemplate !== null) {
-            return $this->descriptionTemplate;
+        if ($this->productTypeTemplate !== null) {
+            return $this->productTypeTemplate;
         }
 
-        return $this->descriptionTemplate = $this->getAmazonListingProduct()->getDescriptionTemplate();
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\Description
-     */
-    public function getAmazonDescriptionTemplate()
-    {
-        return $this->getDescriptionTemplate()->getChildObject();
+        return $this->productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
     }
 
     //########################################
@@ -229,11 +221,16 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         $marketPlaceId = $this->getMarketplaceId();
 
+        $productType = $this->getProductTypeTemplate();
+        if ($productType === null) {
+            return $this->possibleThemes = [];
+        }
+
         $possibleThemes = $this->modelFactory->getObject('Amazon_Marketplace_Details')
-                                             ->setMarketplaceId($marketPlaceId)
-                                             ->getVariationThemes(
-                                                 $this->getAmazonDescriptionTemplate()->getProductDataNick()
-                                             );
+            ->setMarketplaceId($marketPlaceId)
+            ->getVariationThemes(
+                $productType->getNick()
+            );
 
         $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];

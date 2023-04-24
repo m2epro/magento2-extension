@@ -75,11 +75,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             $isPlural = true;
         }
 
-        if ($this->getConfigurator()->isImagesAllowed()) {
-            $sequenceStrings[] = 'Images';
-            $isPlural = true;
-        }
-
         if (empty($sequenceStrings)) {
             return null;
         }

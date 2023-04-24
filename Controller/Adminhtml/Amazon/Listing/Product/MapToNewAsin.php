@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
-use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description as DescriptionTemplate;
 
 class MapToNewAsin extends Main
 {
@@ -41,26 +40,24 @@ class MapToNewAsin extends Main
 
         $messages = [];
 
-        $badDescriptionProductsIds = [];
-        $descriptionTemplatesBlock = '';
+        $badProductTypesProductsIds = [];
+        $productTypeBlock = '';
 
         $errorMsg = $this->__(
-            'The new ASIN/ISBN creation feature was not added to some Items because '
+            'The new ASIN/ISBN creation feature was not added to some Items since '
         );
         $errors = [];
         $errorMsgProductsCount = 0;
 
         $filteredByGeneralId = $this->variationHelper->filterProductsByGeneralId($productsIds);
-
-        if (count($productsIds) != count($filteredByGeneralId)) {
+        if (count($productsIds) !== count($filteredByGeneralId)) {
             $tempCount = count($productsIds) - count($filteredByGeneralId);
             $errors[] = $this->__('%count% Item(s) already have ASIN(s)/ISBN(s).', $tempCount);
             $errorMsgProductsCount += $tempCount;
         }
 
         $filteredByGeneralIdOwner = $this->variationHelper->filterProductsByGeneralIdOwner($filteredByGeneralId);
-
-        if (count($filteredByGeneralId) != count($filteredByGeneralIdOwner)) {
+        if (count($filteredByGeneralId) !== count($filteredByGeneralIdOwner)) {
             $tempCount = count($filteredByGeneralId) - count($filteredByGeneralIdOwner);
             $errors[] = $this->__(
                 '%count% Item(s) already have possibility to create ASIN(s)/ISBN(s).',
@@ -70,8 +67,7 @@ class MapToNewAsin extends Main
         }
 
         $filteredByStatus = $this->variationHelper->filterProductsByStatus($filteredByGeneralIdOwner);
-
-        if (count($filteredByGeneralIdOwner) != count($filteredByStatus)) {
+        if (count($filteredByGeneralIdOwner) !== count($filteredByStatus)) {
             $tempCount = count($filteredByGeneralIdOwner) - count($filteredByStatus);
             $errors[] = $this->__(
                 '%count% Items have the Status different from “Not Listed”.',
@@ -81,8 +77,7 @@ class MapToNewAsin extends Main
         }
 
         $filteredLockedProducts = $this->variationHelper->filterLockedProducts($filteredByStatus);
-
-        if (count($filteredByStatus) != count($filteredLockedProducts)) {
+        if (count($filteredByStatus) !== count($filteredLockedProducts)) {
             $tempCount = count($filteredByStatus) - count($filteredLockedProducts);
             $errors[] = $this->__(
                 'There are some other actions performed on %count% Items.',
@@ -91,11 +86,9 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByType = $this->variationHelper->filterProductsByMagentoProductType(
-            $filteredLockedProducts
-        );
-
-        if (count($filteredLockedProducts) != count($filteredProductsIdsByType)) {
+        $filteredProductsIdsByType = $this->variationHelper
+            ->filterProductsByMagentoProductType($filteredLockedProducts);
+        if (count($filteredLockedProducts) !== count($filteredProductsIdsByType)) {
             $tempCount = count($filteredLockedProducts) - count($filteredProductsIdsByType);
             $errors[] = $this->__(
                 '%count% Items are Simple with Custom Options,
@@ -105,37 +98,32 @@ class MapToNewAsin extends Main
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByTpl = $this->variationHelper->filterProductsByDescriptionTemplate(
-            $filteredProductsIdsByType
-        );
-
-        if (count($filteredProductsIdsByType) != count($filteredProductsIdsByTpl)) {
-            $badDescriptionProductsIds = array_diff($filteredProductsIdsByType, $filteredProductsIdsByTpl);
+        $filteredProductsIdsByTpl = $this->variationHelper
+            ->filterProductsByProductType($filteredProductsIdsByType);
+        if (count($filteredProductsIdsByType) !== count($filteredProductsIdsByTpl)) {
+            $badProductTypesProductsIds = array_diff($filteredProductsIdsByType, $filteredProductsIdsByTpl);
 
             $tempCount = count($filteredProductsIdsByType) - count($filteredProductsIdsByTpl);
             $errors[] = $this->__(
-                '%count% Item(s) haven’t got the Description Policy assigned with enabled ability to create
+                '%count% Item(s) haven’t got the Product Type assigned with enabled ability to create
                  new ASIN(s)/ISBN(s).',
                 $tempCount
             );
             $errorMsgProductsCount += $tempCount;
         }
 
-        $filteredProductsIdsByParent = $this->variationHelper->filterParentProductsByVariationTheme(
-            $filteredProductsIdsByTpl
-        );
-
-        if (count($filteredProductsIdsByTpl) != count($filteredProductsIdsByParent)) {
+        $filteredProductsIdsByParent = $this->variationHelper
+            ->filterParentProductsByVariationTheme($filteredProductsIdsByTpl);
+        if (count($filteredProductsIdsByTpl) !== count($filteredProductsIdsByParent)) {
             $badThemeProductsIds = array_diff($filteredProductsIdsByTpl, $filteredProductsIdsByParent);
-            $badDescriptionProductsIds = array_merge(
-                $badDescriptionProductsIds,
+            $badProductTypesProductsIds = array_merge(
+                $badProductTypesProductsIds,
                 $badThemeProductsIds
             );
 
             $tempCount = count($filteredProductsIdsByTpl) - count($filteredProductsIdsByParent);
             $errors[] = $this->__(
-                'The Category chosen in the Description Policies of %count% Items does not support creation of
-                 Variational Products at all.',
+                'the selected Product Type restricts adding variations.',
                 $tempCount
             );
             $errorMsgProductsCount += $tempCount;
@@ -163,25 +151,33 @@ class MapToNewAsin extends Main
             );
         }
 
-        if (!empty($badDescriptionProductsIds)) {
-            $badDescriptionProductsIds = $this->variationHelper
-                ->filterProductsByMagentoProductType($badDescriptionProductsIds);
+        if (!empty($badProductTypesProductsIds)) {
+            $badProductTypesProductsIds = $this->variationHelper
+                ->filterProductsByMagentoProductType($badProductTypesProductsIds);
 
-            $descriptionTemplatesBlock = $this->getLayout()->createBlock(DescriptionTemplate::class);
-            $descriptionTemplatesBlock->setNewAsin(true);
-            $descriptionTemplatesBlock->setMessages($messages);
-            $descriptionTemplatesBlock = $descriptionTemplatesBlock->toHtml();
+            $productTypeBlock = $this
+                ->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductType::class);
+            $productTypeBlock->setMessages($messages);
+            $productTypeBlock = $productTypeBlock->toHtml();
         }
 
         $this->setJsonContent([
             'messages' => $messages,
-            'html' => $descriptionTemplatesBlock,
-            'products_ids' => implode(',', $badDescriptionProductsIds),
+            'html' => $productTypeBlock,
+            'products_ids' => implode(',', $badProductTypesProductsIds),
         ]);
 
         return $this->getResult();
     }
 
+    /**
+     * @param $productsIds
+     *
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     protected function mapToNewAsinByChunks($productsIds)
     {
         $connection = $this->resourceConnection->getConnection();

@@ -12,10 +12,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionDataHelper;
 
@@ -49,7 +47,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'data' => [
                     'id' => 'edit_form',
-                    'action' => $this->getUrl('*/*/descriptionTemplateAssignType', ['_current' => true]),
+                    'action' => $this->getUrl('*/*/productTypeAssignType', ['_current' => true]),
                     'method' => 'post',
                 ],
             ]
@@ -65,7 +63,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'block-title',
             'label',
             [
-                'value' => $this->__('Description Policy is required to Create New ASIN/ISBN'),
+                'value' => $this->__('Product Type is required to Create New ASIN/ISBN'),
                 'field_extra_attributes' =>
                     'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
@@ -82,7 +80,7 @@ CSS
             'block-notice',
             'label',
             [
-                'value' => $this->__('Below you can select the most convenient for you way to set Description Policy:'),
+                'value' => $this->__('Below you can select the most convenient for you way to set Product Type:'),
                 'field_extra_attributes' => 'style="margin-bottom: 0;"',
             ]
         );
@@ -96,22 +94,22 @@ CSS
                 'values' => [
                     [
                         'value' => 'same',
-                        'label' => 'All Products same Description Policy',
+                        'label' => 'All Products same Product Type',
                     ],
                 ],
                 'note' => <<<HTML
 <div style="padding-top: 3px; padding-left: 26px; font-weight: normal">
-    {$this->__('New ASIN(s)/ISBN(s) will be created using the same Description Policy.')}
+    {$this->__('New ASIN(s)/ISBN(s) will be created using the same Product Type.')}
 </div>
 <div style="margin: 7px 52px">
-    <b>{$this->__('Description Policy')}</b>:
-    <span id="description_template_title" style="font-style: italic; color: #808080">{$this->__('Not selected')}</span>
-    &nbsp;<a href="javascript:void(0);" id="edit_description_template">{$this->__('Edit')}</a>
-    <input id="description_template_id" name="description_template_id" value="" type="hidden" />
+    <b>{$this->__('Product Type')}</b>:
+    <span id="product_type_title" style="font-style: italic; color: #808080">{$this->__('Not selected')}</span>
+    &nbsp;<a href="javascript:void(0);" id="edit_product_type">{$this->__('Edit')}</a>
+    <input id="product_type_id" name="product_type_id" value="" type="hidden" />
     <input id="products_ids" name="products_ids" type="hidden" value="">
 </div>
-<label style="margin: 0 52px; display: none;" class="mage-error" id="same_description_template_error" >
-    {$this->__('Please select Description Policy.')}
+<label style="margin: 0 52px; display: none;" class="mage-error" id="same_product_type_error" >
+    {$this->__('Please select Product Type.')}
 </label>
 HTML
             ,
@@ -132,7 +130,7 @@ HTML
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     $this->__(
-                        'Products will have Description Policies set according to the Magento Categories.'
+                        'Products will have Product Types set according to the Magento Categories.'
                     ) . '</div>',
             ]
         );
@@ -150,7 +148,7 @@ HTML
                     ],
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    $this->__('Set Description Policies for each Product (or a group of Products) manually.') . '</div>',
+                    $this->__('Set Product Types for each Product (or a group of Products) manually.') . '</div>',
             ]
         );
 
@@ -165,7 +163,7 @@ HTML
         return $this->listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
     }
 
-    public function getDescriptionTemplateMode()
+    public function getProductTypeMode()
     {
         $listingAdditionalData = $this->listing->getData('additional_data');
         $listingAdditionalData = $this->dataHelper->jsonDecode($listingAdditionalData);
@@ -195,7 +193,7 @@ HTML
     ],function(modal) {
 
         $('mode1same').observe('change', function (e) {
-            $('edit_description_template').show();
+            $('edit_product_type').show();
         });
 
         $('edit_form').observe('change', function(e) {
@@ -204,13 +202,13 @@ HTML
             }
 
             if (e.target.value != 'same') {
-                $('edit_description_template').hide();
+                $('edit_product_type').hide();
             } else {
-                $('edit_description_template').show();
+                $('edit_product_type').show();
             }
         });
 
-        createTemplateDescriptionInNewTab = function(stepWindowUrl) {
+        createProductTypeInNewTab = function(stepWindowUrl) {
             var win = window.open(stepWindowUrl);
 
             var intervalId = setInterval(function(){
@@ -220,60 +218,59 @@ HTML
 
                 clearInterval(intervalId);
 
-                loadTemplateDescriptionGrid();
+                loadProductTypeGrid();
             }, 1000);
         };
 
-        loadTemplateDescriptionGrid = function() {
+        loadProductTypeGrid = function() {
 
             new Ajax.Request(
                 '{$this->getUrl(
-                '*/amazon_listing_product_template_description/viewGrid'
+                '*/amazon_listing_product_template_productType/viewGrid'
             )}', {
                 method: 'post',
                 parameters: {
                     products_ids : filteredProductsIds,
                     check_is_new_asin_accepted : 1,
-                    map_to_template_js_fn : 'selectTemplateDescription',
-                    create_new_template_js_fn : 'createTemplateDescriptionInNewTab'
+                    map_to_template_js_fn : 'selectProductType',
+                    create_new_template_js_fn : 'createProductTypeInNewTab'
                 },
                 onSuccess: function (transport) {
-                    $('template_description_grid').update(transport.responseText);
-                    $('template_description_grid').show();
+                    $('product_type_grid').update(transport.responseText);
+                    $('product_type_grid').show();
                 }
             })
         };
 
-        descriptionTemplateModeFormSubmit = function()
+        productTypeTemplateModeFormSubmit = function()
         {
-            if ($('mode1same').checked && $('description_template_id').value == '') {
-                $('same_description_template_error').show();
+            if ($('mode1same').checked && $('product_type_id').value == '') {
+                $('same_product_type_error').show();
                 return;
             }
             $('edit_form').submit();
         };
 
-        selectTemplateDescription = function(el, templateId)
+        selectProductType = function(el, productTypeId)
         {
-            $('description_template_id').value = templateId;
+            $('product_type_id').value = productTypeId;
             $('products_ids').value = filteredProductsIds;
-            $('description_template_title').innerHTML = el.up('tr').down('td').down('a').innerHTML;
-            $('same_description_template_error').hide();
+            $('product_type_title').innerHTML = el.up('tr').down('td').down('a').innerHTML;
+            $('same_product_type_error').hide();
             popup.modal('closeModal');
         };
 
-        var modeElement = $$('input[value="{$this->getDescriptionTemplateMode()}"]').shift();
+        var modeElement = $$('input[value="{$this->getProductTypeMode()}"]').shift();
 
         modeElement.checked = true;
         if (modeElement.value != 'same') {
-            $('edit_description_template').hide();
+            $('edit_product_type').hide();
         } else {
-            $('edit_description_template').show();
+            $('edit_product_type').show();
         }
 
-        $('edit_description_template').observe('click', function(event) {
+        $('edit_product_type').observe('click', function(event) {
 
-            var popupContent = '';
             new Ajax.Request('{$this->getUrl('*/amazon_listing_product/mapToNewAsin')}', {
                 method: 'post',
                 parameters: {
@@ -288,29 +285,29 @@ HTML
 
                     filteredProductsIds = response.products_ids;
 
-                    if (!$('template_description_pop_up_content')) {
+                    if (!$('product_type_pop_up_content')) {
                         $('html-body').insert({bottom: response.html});
                     }
 
-                    popup = jQuery('#template_description_pop_up_content');
+                    popup = jQuery('#product_type_pop_up_content');
 
                     modal({
                         title: '{$this->__(
-                'Please select the Description Policy for the process of New ASIN/ISBN creation'
+                'Please select the Product Type for the process of New ASIN/ISBN creation'
             )}',
                         type: 'slide',
                         buttons: [{
-                            text: '{$this->__('Add New Description Policy')}',
+                            text: '{$this->__('Add New Product Type')}',
                             class: 'action primary ',
                             click: function () {
-                                createTemplateDescriptionInNewTab(M2ePro.url.get('newTemplateDescriptionUrl'))
+                                createProductTypeInNewTab(M2ePro.url.get('createProductTypeUrl'))
                             }
                         }]
                     }, popup);
 
                     popup.modal('openModal');
 
-                    loadTemplateDescriptionGrid();
+                    loadProductTypeGrid();
                 }
             });
 

@@ -74,15 +74,30 @@ class Attribute extends AbstractHelper
         $attributeCollection = $this->getPreparedAttributeCollection();
         $attributeCollection->addVisibleFilter();
 
-        $resultAttributes = [];
+        $attributesByLabels = [];
         foreach ($attributeCollection->getItems() as $attribute) {
-            $resultAttributes[] = [
+            if ($attribute['attribute_code'] === 'image') {
+                $attribute['frontend_label'] = 'Product Base Image';
+            }
+
+            if (empty($attributesByLabels[$attribute['frontend_label']])) {
+                $attributesByLabels[$attribute['frontend_label']] = [];
+            }
+
+            $attributesByLabels[$attribute['frontend_label']][] = [
                 'code' => $attribute['attribute_code'],
                 'label' => $attribute['frontend_label'],
             ];
         }
 
-        return $resultAttributes;
+        $result = [];
+        $keys = array_keys($attributesByLabels);
+        sort($keys);
+        foreach ($keys as $key) {
+            array_push($result, ...$attributesByLabels[$key]);
+        }
+
+        return $result;
     }
 
     public function getAllAsObjects()

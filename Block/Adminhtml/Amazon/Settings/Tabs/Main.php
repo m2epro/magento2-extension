@@ -159,43 +159,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField(
-            'product_id_override',
-            self::SELECT,
-            [
-                'name' => 'product_id_override_mode',
-                'label' => $this->__('Product ID Override'),
-                'title' => $this->__('Product ID Override'),
-                'values' => [
-                    [
-                        'value' => Configuration::PRODUCT_ID_OVERRIDE_MODE_NONE,
-                        'label' => $this->__('None'),
-                    ],
-                    [
-                        'value' => Configuration::PRODUCT_ID_OVERRIDE_MODE_ALL,
-                        'label' => $this->__('All Products'),
-                    ],
-                    [
-                        'value' => Configuration::PRODUCT_ID_OVERRIDE_MODE_SPECIFIC_PRODUCTS,
-                        'label' => $this->__('Specific Products'),
-                    ],
-                ],
-                'value' => $this->config->getProductIdOverrideMode(),
-                'tooltip' => $this->__(
-                    '
-                     Choose one of the options from the dropdown if your Products do not imply <b>UPCs/EANs</b>.<br><br>
-                     <b>None</b> - all Products will be listed with the standard Product IDs.<br>
-                     <b>All Products</b> - Product ID exemption will be applied to all Products.<br>
-                     <b>Specific Products</b> - Product ID exemption will be applied to Products with ‘CUSTOM’ value
-                     in the Product ID attribute.
-                     Find more details <a href="%url%" target="_blank" class="external-link">here.</a><br><br>
-                     <b>Note:</b> You need to have Amazon approval for listing products without Product Identifiers.
-                    ',
-                    $this->support->getSupportUrl('/support/solutions/articles/9000219393')
-                ),
-            ]
-        );
-
         $attributesTextType = $this->attributeHelper->filterAllAttrByInputTypes(['text']);
         $preparedAttributes = [];
         $warningToolTip = '';

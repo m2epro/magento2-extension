@@ -460,4 +460,8 @@ td.specifics-grid {
     margin: 0 10px;
 }
 
+#template_id + label {
+    background: none;
+}
+
 /* ================================================ */

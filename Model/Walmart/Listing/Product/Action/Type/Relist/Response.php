@@ -22,9 +22,9 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
     //########################################
 
     /**
-     * @param array $params
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         $data = [];
 
@@ -45,7 +45,8 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         }
 
         $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->getChildObject()->addData($data);
+        $this->getWalmartListingProduct()->addData($data);
+        $this->getWalmartListingProduct()->setIsStoppedManually(false);
 
         $this->setLastSynchronizationDates();
 

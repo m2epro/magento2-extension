@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\AmazonMigrationToProductTypes\Content $block */
+
+?>
+
+<div class="wizard-note">
+    <div>
+        <?php
+
+        echo $block->__(
+            'In this version, M2E Pro introduces significant improvements to provide full compatibility with SP-API,
+            the latest Amazon enhancement. The updates concern the basic functionality – new ASIN creation
+            and listing under new ASINs.<br><br>
+
+            Important! Before you continue managing your Amazon business, read
+            <a target="_blank" href="%url%">the article with key recommendations</a> to adjust your workflow
+            with new ASINs.<br><br>',
+            $block->getSupportArticleUrl()
+        );
+
+        ?>
+    </div>
+
+    <button title="<?php echo $block->__('Proceed'); ?>"
+            type="button"
+            class="action-default scalable action primary"
+            onclick="WizardAmazonMigrationToProductTypesObj.proceed()">
+        <span><?php echo $block->__('Proceed'); ?></span>
+    </button>
+</div>

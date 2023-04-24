@@ -180,16 +180,6 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseImagesInstructionTypes())) {
-            if ($this->isMeetReviseImagesRequirements()) {
-                $configurator->allowImages();
-                $tags['images'] = true;
-            } else {
-                $configurator->disallowImages();
-                unset($tags['images']);
-            }
-        }
-
         if (empty($configurator->getAllowedDataTypes())) {
             if ($scheduledAction->getId()) {
                 $this->getScheduledActionManager()->deleteAction($scheduledAction);
@@ -514,8 +504,13 @@ class Active extends AbstractModel
         $actionDataBuilder = $this->modelFactory->getObject('Amazon_Listing_Product_Action_DataBuilder_Details');
         $actionDataBuilder->setListingProduct($listingProduct);
 
+        $builderData = $actionDataBuilder->getBuilderData();
+        if (empty($builderData)) {
+            return false;
+        }
+
         $hashDetailsData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
+            \Ess\M2ePro\Helper\Json::encode($builderData),
             'md5'
         );
 
@@ -525,36 +520,4 @@ class Active extends AbstractModel
 
         return false;
     }
-
-    // ---------------------------------------
-
-    public function isMeetReviseImagesRequirements()
-    {
-        $listingProduct = $this->input->getListingProduct();
-
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-        $amazonListingProduct = $listingProduct->getChildObject();
-
-        $amazonSynchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
-        if (!$amazonSynchronizationTemplate->isReviseWhenChangeImages()) {
-            return false;
-        }
-
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Images $actionDataBuilder */
-        $actionDataBuilder = $this->modelFactory->getObject('Amazon_Listing_Product_Action_DataBuilder_Images');
-        $actionDataBuilder->setListingProduct($listingProduct);
-
-        $hashImagesData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($actionDataBuilder->getBuilderData()),
-            'md5'
-        );
-
-        if ($hashImagesData != $amazonListingProduct->getOnlineImagesData()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    //########################################
 }

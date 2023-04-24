@@ -91,7 +91,7 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton('next', [
             'label' => $this->__('Continue'),
             'class' => 'action-primary forward',
-            'onclick' => "descriptionTemplateModeFormSubmit()",
+            'onclick' => "productTypeTemplateModeFormSubmit()",
         ]);
     }
 
@@ -99,10 +99,10 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         $this->appendHelpBlock([
             'content' => $this->__(
-                '<p>Description Policy is required for New ASIN/ISBN creation.
+                '<p>Product Type is required for New ASIN/ISBN creation.
                 It should be properly configured to allow creation of New Amazon Products.</p><br>
 
-                <p>More detailed information about creation of New Amazon Products and Description Policies
+                <p>More detailed information about creation of New Amazon Products and Product Types
                  you can find in the following article article
                  <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                 $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')

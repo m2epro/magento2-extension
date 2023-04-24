@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -24,5 +19,15 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    /**
+     * @param int $marketplaceId
+     *
+     * @return $this
+     */
+    public function appendFilterMarketplaceId(int $marketplaceId): self
+    {
+        $this->getSelect()->where('marketplace_id = ?', $marketplaceId);
+
+        return $this;
+    }
 }

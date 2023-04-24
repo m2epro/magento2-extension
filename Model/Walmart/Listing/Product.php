@@ -531,6 +531,26 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     /**
      * @return bool
      */
+    public function isStoppedManually(): bool
+    {
+        return (bool)$this->getData('is_stopped_manually');
+    }
+
+    /**
+     * @param bool $value
+     *
+     * @return void
+     */
+    public function setIsStoppedManually(bool $value): void
+    {
+        $this->setData('is_stopped_manually', $value);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
     public function isOnlinePriceInvalid()
     {
         return (bool)$this->getData('is_online_price_invalid');

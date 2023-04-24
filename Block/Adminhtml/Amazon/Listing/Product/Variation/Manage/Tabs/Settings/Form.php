@@ -20,25 +20,25 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected $channelThemes = null;
     protected $childListingProducts = null;
     protected $currentProductVariations = null;
+    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType|null */
+    private $productType;
 
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     protected $variationHelper;
-
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
-
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Matcher\Attribute $matcherAttribute */
     protected $matcherAttributes;
-
     protected $messages = [];
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -47,6 +47,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
+        $this->supportHelper = $supportHelper;
         $this->variationHelper = $variationHelper;
         $this->dataHelper = $dataHelper;
         $this->amazonHelper = $amazonHelper;
@@ -64,6 +65,16 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ],
             ]
         );
+
+        if (
+            $this->listingProduct->getChildObject()->isGeneralIdOwner()
+            && $this->productType === null
+        ) {
+            $form->setUseContainer(false);
+            $this->setForm($form);
+
+            return parent::_prepareForm();
+        }
 
         $magentoProductVariations = $this->getListingProduct()
                                          ->getMagentoProduct()
@@ -92,7 +103,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     <ul class="list">
                         <li>Only you have an ability to add new Options of Attributes (for example,
                         Option Red of Attribute Color) and Child Products for them;</li>
-                        <li>New Amazon Child Product will be created using a Description Policy assigned to the
+                        <li>New Amazon Child Product will be created using a Product Type assigned to the
                         Amazon Parent Product.</li>
                     </ul>
 
@@ -137,9 +148,9 @@ HTML;
         <p>{$this->__(
                 'You are the Creator of Amazon Parent Product %asin%. It is allowed to you to create
                        New Amazon Child Products. <br/><br/><b>Please Note:</b> New Amazon Child Products will be
-                       created based on Description Policy %template_link%.',
-                ['asin' => $this->getGeneralIdLink(), 'template_link' => $this->getDescriptionTemplateLink()]
-            )}
+                       created based on Product Type %template_link%.',
+                ['asin' => $this->getGeneralIdLink(), 'template_link' => $this->getProductTypeTemplateLink()]
+        )}
 HTML;
             if ($this->showGeneralIdActions()) {
                 $generalIdOwnerNo = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO;
@@ -154,9 +165,9 @@ HTML;
         } elseif (!$this->hasGeneralId() && $this->isGeneralIdOwner()) {
             $html .= <<<HTML
         <p>{$this->__(
-                'New Amazon Parent Product will be created based on %desctemplate% Description Policy.<br/>
+                'New Amazon Parent Product will be created based on %template_link% Product Type.<br/>
                       You will be able to create New Amazon Child Products.',
-                $this->getDescriptionTemplateLink()
+                $this->getProductTypeTemplateLink()
             )}</p>
 HTML;
         }
@@ -171,8 +182,6 @@ HTML;
         );
 
         if ($this->isGeneralIdOwner()) {
-            $channelThemeNote = $this->getChannelThemeNote();
-
             $fieldset = $form->addFieldset(
                 'theme_fieldset',
                 [
@@ -182,7 +191,7 @@ HTML;
                         'Variation Theme is a combination of Attributes by which your product will vary on Amazon.
                         To create new Amazon Multi-Variation Products, a Variation Theme is required.<br><br>
                         The list of available Variation Themes depends on the Category and Product Type selected in the
-                        Description Policy. The Variation Themes are strictly regulated by Amazon,
+                        Product Type. The Variation Themes are strictly regulated by Amazon,
                         so they cannot be modified or added.<br><br>
                         <b>Note:</b> You cannot change the Variation Theme once the ASIN/ISBN is assigned
                         to the Parent Product.
@@ -191,107 +200,62 @@ HTML;
                 ]
             );
 
-            $html = '';
+            $style = !$this->hasChannelTheme() ? 'color: red;' : 'color: initial;';
+            $text = $this->hasChannelTheme() ? $this->getChannelThemeTitle() : $this->__('Not Set');
 
-            if ($this->hasGeneralId()) {
-                if (!$this->hasChannelTheme()) {
-                    $html = <<<HTML
-<span style="color: #ea7601; ">{$this->__('Not Available')}</span>
-HTML;
-                } else {
-                    $html .= <<<HTML
-<span style="color: grey;">{$this->getChannelThemeAttrString()}</span>&nbsp;&nbsp;&nbsp;
-HTML;
-
-                    if (!empty($channelThemeNote)) {
-                        $html .= <<<HTML
-<div class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip" style="margin-top: -1px;">
-    <a class="admin__field-tooltip-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content">
-        {$channelThemeNote}
-    </div>
-</div>
-HTML;
-                    }
-                }
-
-                $fieldset->addField(
-                    'theme_container',
-                    self::CUSTOM_CONTAINER,
-                    [
-                        'label' => $this->__('Variation Theme'),
-                        'text' => $html,
-                    ]
-                );
-            } else {
-                $style = !$this->hasChannelTheme() ? 'color: red;' : 'color: initial;';
-                $text = $this->hasChannelTheme() ? $this->getChannelThemeAttrString() : $this->__('Not Set');
-
-                $html = <<<HTML
+            $html = <<<HTML
 <span id="variation_manager_theme_attributes" style="line-height: 33px; {$style}">{$text}</span>&nbsp;
 HTML;
 
-                $channelThemes = $this->getChannelThemes();
-                $channelThemesOptions = [];
-                foreach ($channelThemes as $key => $theme) {
-                    $channelThemesOptions[] = [
-                        'value' => $key,
-                        'label' => implode(', ', $theme['attributes']),
-                    ];
-                }
+            $channelThemes = $this->getChannelThemes();
+            $channelThemesOptions = [];
+            foreach ($channelThemes as $theme) {
+                $channelThemesOptions[] = [
+                    'value' => $theme['nick'],
+                    'label' => $theme['title'],
+                ];
+            }
 
-                $themeSelect = $this->elementFactory->create('select', [
-                    'data' => [
-                        'html_id' => 'variation_manager_theme',
-                        'name' => 'variation_manager_theme',
-                        'style' => 'display: none; width: 50%;',
-                        'no_span' => true,
-                        'value' => $this->getChannelTheme(),
-                        'values' => $channelThemesOptions,
-                    ],
-                ]);
-                $themeSelect->setForm($form);
+            $themeSelect = $this->elementFactory->create('select', [
+                'data' => [
+                    'html_id' => 'variation_manager_theme',
+                    'name' => 'variation_manager_theme',
+                    'style' => 'display: none; width: 50%;',
+                    'no_span' => true,
+                    'value' => $this->getChannelTheme(),
+                    'values' => $channelThemesOptions,
+                ],
+            ]);
+            $themeSelect->setForm($form);
 
-                $html .= $themeSelect->toHtml();
+            $html .= $themeSelect->toHtml();
 
-                if (!empty($channelThemeNote)) {
-                    $html .= <<<HTML
-<div id="channel_variation_theme_note"
-     class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip">
-    <a class="admin__field-tooltip-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content">
-        {$channelThemeNote}
-    </div>
-</div>
-HTML;
-                }
+            if (!$this->isInAction()) {
+                $html .= $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                              ->setData([
+                                  'class' => 'action primary',
+                                  'style' => '    margin-left: 60px;',
+                                  'label' => $this->hasChannelTheme() ? $this->__('Change') :
+                                      $this->__('Set Theme'),
+                                  'onclick' => 'ListingGridObj.variationProductManageHandler.changeVariationTheme(this)',
+                              ])->toHtml();
 
-                if (!$this->isInAction()) {
-                    $html .= $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                  ->setData([
-                                      'class' => 'action primary',
-                                      'style' => '    margin-left: 60px;',
-                                      'label' => $this->hasChannelTheme() ? $this->__('Change') :
-                                          $this->__('Set Theme'),
-                                      'onclick' => 'ListingGridObj.variationProductManageHandler.changeVariationTheme(this)',
-                                  ])->toHtml();
+                $confirmBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
+                                   ->setData([
+                                       'class' => 'action primary',
+                                       'label' => $this->__('Confirm'),
+                                       'onclick' => 'ListingGridObj.variationProductManageHandler.setVariationTheme()',
+                                   ])->toHtml();
 
-                    $confirmBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                       ->setData([
-                                           'class' => 'action primary',
-                                           'label' => $this->__('Confirm'),
-                                           'onclick' => 'ListingGridObj.variationProductManageHandler.setVariationTheme()',
-                                       ])->toHtml();
-
-                    $html .= <<<HTML
+                $html .= <<<HTML
 <span id="edit_variation_btns" style="display: none;">
     <div class="m2epro-field-tooltip admin__field-tooltip">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content">
             {$this->__(
-                        'Some Variation Themes cannot be used because number of Attributes in Variation Theme is
+                    'Some Variation Themes cannot be used because number of Attributes in Variation Theme is
                        not equal to number of Magento Product Attributes.'
-                    )}
+                )}
         </div>
     </div>
     &nbsp;&nbsp;
@@ -303,19 +267,18 @@ HTML;
     {$confirmBtn}
 </span>
 HTML;
-                }
-
-                $fieldset->addField(
-                    'theme_container',
-                    self::CUSTOM_CONTAINER,
-                    [
-                        'label' => $this->__('Variation Theme'),
-                        'style' => 'padding-top: 0;',
-                        'required' => true,
-                        'text' => $html,
-                    ]
-                );
             }
+
+            $fieldset->addField(
+                'theme_container',
+                self::CUSTOM_CONTAINER,
+                [
+                    'label' => $this->__('Variation Theme'),
+                    'style' => 'padding-top: 0;',
+                    'required' => true,
+                    'text' => $html,
+                ]
+            );
         }
 
         if (
@@ -741,13 +704,12 @@ CSS
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     *
-     * @return $this
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): self
     {
         $this->listingProduct = $listingProduct;
+        $this->productType = $this->getListingProduct()->getChildObject()->getProductTypeTemplate();
 
         return $this;
     }
@@ -811,6 +773,20 @@ CSS
     {
         if (!$this->warningsCalculated) {
             $this->warningsCalculated = true;
+
+            if ($this->isGeneralIdOwner() && $this->productType === null) {
+                $url = $this->supportHelper->getSupportUrl('/support/solutions/articles/9000226190');
+                $this->addMessage(
+                    $this->__(
+                        'Variation Theme is not set. Please assign a Product Type to the Item first and then select the
+                            Variation Theme. Follow the steps in
+                            <a href="' . $url . '" target="_blank" class="external-link">this article</a>.'
+                    ),
+                    self::MESSAGE_TYPE_ERROR
+                );
+
+                return;
+            }
 
             if (!$this->hasGeneralId() && $this->isGeneralIdOwner()) {
                 if (!$this->hasChannelTheme() || !$this->hasMatchedAttributes()) {
@@ -914,13 +890,17 @@ HTML;
         return $this->getListingProduct()->getChildObject()->isGeneralIdOwner();
     }
 
-    public function getDescriptionTemplateLink()
+    public function getProductTypeTemplateLink()
     {
-        $url = $this->getUrl('*/amazon_template_description/edit', [
-            'id' => $this->getListingProduct()->getChildObject()->getTemplateDescriptionId(),
+        if ($this->productType === null) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Product Type is not set.');
+        }
+
+        $url = $this->getUrl('*/amazon_template_productType/edit', [
+            'id' => $this->productType->getId(),
         ]);
 
-        $templateTitle = $this->getListingProduct()->getChildObject()->getDescriptionTemplate()->getTitle();
+        $templateTitle = $this->productType->getTitle();
 
         return <<<HTML
 <a href="{$url}" target="_blank" title="{$templateTitle}" >{$templateTitle}</a>
@@ -943,11 +923,9 @@ HTML;
             return $this->channelThemes;
         }
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-        $amazonListingProduct = $this->getListingProduct()->getChildObject();
-        $descriptionTemplate = $amazonListingProduct->getAmazonDescriptionTemplate();
+        $productTypeTemplate = $this->productType;
 
-        if (!$descriptionTemplate) {
+        if (!$productTypeTemplate) {
             return [];
         }
 
@@ -957,7 +935,7 @@ HTML;
         $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
         $detailsModel->setMarketplaceId($marketPlaceId);
 
-        $channelThemes = $detailsModel->getVariationThemes($descriptionTemplate->getProductDataNick());
+        $channelThemes = $detailsModel->getVariationThemes($productTypeTemplate->getNick());
 
         $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];
@@ -985,18 +963,6 @@ HTML;
         return null;
     }
 
-    public function getChannelThemeNote()
-    {
-        $theme = $this->getChannelTheme();
-        $themes = $this->getChannelThemes();
-
-        if (!empty($themes[$theme])) {
-            return $themes[$theme]['note'];
-        }
-
-        return null;
-    }
-
     public function getChannelThemeAttrString()
     {
         $themesAttributes = $this->getChannelThemeAttr();
@@ -1006,6 +972,17 @@ HTML;
         }
 
         return $this->__('Variation Theme not found.');
+    }
+
+    /**
+     * @return string
+     */
+    public function getChannelThemeTitle(): string
+    {
+        $theme = $this->getChannelTheme();
+        $themes = $this->getChannelThemes();
+
+        return !empty($themes[$theme]) ? $themes[$theme]['title'] : '';
     }
 
     public function hasMatchedAttributes()

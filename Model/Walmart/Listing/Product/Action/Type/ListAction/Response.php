@@ -21,11 +21,9 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
     //########################################
 
     /**
-     * @param array $params
-     *
-     * @throws \Ess\M2ePro\Model\Exception
+     * @ingeritdoc
      */
-    public function processSuccess($params = [])
+    public function processSuccess(array $params = []): void
     {
         // list action include 2 steps (list details and relist with qty)
         $data = [
@@ -44,7 +42,8 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $data = $this->appendProductIdsData($data);
 
         $this->getListingProduct()->addData($data);
-        $this->getListingProduct()->getChildObject()->addData($data);
+        $this->getWalmartListingProduct()->addData($data);
+        $this->getWalmartListingProduct()->setIsStoppedManually(false);
 
         $this->getListingProduct()->save();
 

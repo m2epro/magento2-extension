@@ -63,8 +63,7 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
             $this->getQtyData(),
             $this->getRegularPriceData(),
             $this->getBusinessPriceData(),
-            $this->getDetailsData(),
-            $this->getImagesData()
+            $this->getDetailsData()
         );
 
         if ($this->getVariationManager()->isRelationParentType()) {
@@ -92,10 +91,6 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
         $productIdentifiers = $this->getAmazonListingProduct()->getIdentifiers();
         $data = [];
 
-        if ($registeredParameter = $productIdentifiers->getRegisteredParameter()) {
-            $data['registered_parameter'] = $registeredParameter;
-        }
-
         if ($worldwideId = $productIdentifiers->getWorldwideId()) {
             $data['product_id'] = $worldwideId->getIdentifier();
             $data['product_id_type'] = $worldwideId->isUPC() ? Identifier::UPC : Identifier::EAN;
@@ -110,10 +105,10 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
             return [];
         }
 
-        $descriptionTemplate = $this->getAmazonListingProduct()->getAmazonDescriptionTemplate();
+        $productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
 
         $data = [
-            'product_data_nick' => $descriptionTemplate->getProductDataNick(),
+            'product_type_nick' => $productTypeTemplate->getNick(),
             'variation_data' => [
                 'theme' => $this->getChannelTheme(),
             ],

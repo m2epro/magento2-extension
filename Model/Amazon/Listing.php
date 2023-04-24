@@ -29,33 +29,25 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public const CONDITION_MODE_DEFAULT = 1;
     public const CONDITION_MODE_CUSTOM_ATTRIBUTE = 2;
 
-    public const CONDITION_NEW = 'New';
-    public const CONDITION_USED_LIKE_NEW = 'UsedLikeNew';
-    public const CONDITION_USED_VERY_GOOD = 'UsedVeryGood';
-    public const CONDITION_USED_GOOD = 'UsedGood';
-    public const CONDITION_USED_ACCEPTABLE = 'UsedAcceptable';
-    public const CONDITION_COLLECTIBLE_LIKE_NEW = 'CollectibleLikeNew';
-    public const CONDITION_COLLECTIBLE_VERY_GOOD = 'CollectibleVeryGood';
-    public const CONDITION_COLLECTIBLE_GOOD = 'CollectibleGood';
-    public const CONDITION_COLLECTIBLE_ACCEPTABLE = 'CollectibleAcceptable';
-    public const CONDITION_REFURBISHED = 'Refurbished';
-    public const CONDITION_CLUB = 'Club';
+    public const CONDITION_NEW = 'new_new';
+    public const CONDITION_NEW_OEM = 'new_oem';
+    public const CONDITION_NEW_OPEN_BOX = 'new_open_box';
+    public const CONDITION_USED_LIKE_NEW = 'used_like_new';
+    public const CONDITION_USED_VERY_GOOD = 'used_very_good';
+    public const CONDITION_USED_GOOD = 'used_good';
+    public const CONDITION_USED_ACCEPTABLE = 'used_acceptable';
+    public const CONDITION_COLLECTIBLE_LIKE_NEW = 'collectible_like_new';
+    public const CONDITION_COLLECTIBLE_VERY_GOOD = 'collectible_very_good';
+    public const CONDITION_COLLECTIBLE_GOOD = 'collectible_good';
+    public const CONDITION_COLLECTIBLE_ACCEPTABLE = 'collectible_acceptable';
+    public const CONDITION_REFURBISHED = 'refurbished_refurbished';
+    public const CONDITION_CLUB = 'club_club';
 
     public const CONDITION_NOTE_MODE_NONE = 3;
     public const CONDITION_NOTE_MODE_CUSTOM_VALUE = 1;
 
-    public const IMAGE_MAIN_MODE_NONE = 0;
-    public const IMAGE_MAIN_MODE_PRODUCT = 1;
-    public const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
-
-    public const GALLERY_IMAGES_MODE_NONE = 0;
-    public const GALLERY_IMAGES_MODE_PRODUCT = 1;
-    public const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
-
-    public const GALLERY_IMAGES_COUNT_MAX = 5;
-
-    public const HANDLING_TIME_MODE_NONE = 3;
-    public const HANDLING_TIME_MODE_RECOMMENDED = 1;
+    public const HANDLING_TIME_MODE_NONE             = 3;
+    public const HANDLING_TIME_MODE_RECOMMENDED      = 1;
     public const HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE = 2;
 
     public const RESTOCK_DATE_MODE_NONE = 1;
@@ -347,17 +339,17 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getAutoGlobalAddingDescriptionTemplateId()
+    public function getAutoGlobalAddingProductTypeTemplateId()
     {
-        return (int)$this->getData('auto_global_adding_description_template_id');
+        return (int)$this->getData('auto_global_adding_product_type_template_id');
     }
 
     /**
      * @return int
      */
-    public function getAutoWebsiteAddingDescriptionTemplateId()
+    public function getAutoWebsiteAddingProductTypeTemplateId()
     {
-        return (int)$this->getData('auto_website_adding_description_template_id');
+        return (int)$this->getData('auto_website_adding_product_type_template_id');
     }
 
     //########################################
@@ -489,7 +481,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getConditionMode()
+    public function getConditionMode(): int
     {
         return (int)$this->getData('condition_mode');
     }
@@ -497,7 +489,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isConditionDefaultMode()
+    public function isConditionDefaultMode(): bool
     {
         return $this->getConditionMode() == self::CONDITION_MODE_DEFAULT;
     }
@@ -505,7 +497,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isConditionAttributeMode()
+    public function isConditionAttributeMode(): bool
     {
         return $this->getConditionMode() == self::CONDITION_MODE_CUSTOM_ATTRIBUTE;
     }
@@ -513,7 +505,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return array
      */
-    public function getConditionSource()
+    public function getConditionSource(): array
     {
         return [
             'mode' => $this->getConditionMode(),
@@ -555,7 +547,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return int
      */
-    public function getConditionNoteMode()
+    public function getConditionNoteMode(): int
     {
         return (int)$this->getData('condition_note_mode');
     }
@@ -563,7 +555,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isConditionNoteNoneMode()
+    public function isConditionNoteNoneMode(): bool
     {
         return $this->getConditionNoteMode() == self::CONDITION_NOTE_MODE_NONE;
     }
@@ -571,7 +563,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
-    public function isConditionNoteValueMode()
+    public function isConditionNoteValueMode(): bool
     {
         return $this->getConditionNoteMode() == self::CONDITION_NOTE_MODE_CUSTOM_VALUE;
     }
@@ -579,7 +571,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return array
      */
-    public function getConditionNoteSource()
+    public function getConditionNoteSource(): array
     {
         return [
             'mode' => $this->getConditionNoteMode(),
@@ -590,7 +582,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return array
      */
-    public function getConditionNoteAttributes()
+    public function getConditionNoteAttributes(): array
     {
         $attributes = [];
         $src = $this->getConditionNoteSource();
@@ -603,131 +595,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
         return $attributes;
     }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getImageMainMode()
-    {
-        return (int)$this->getData('image_main_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isImageMainModeNone()
-    {
-        return $this->getImageMainMode() == self::IMAGE_MAIN_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isImageMainModeProduct()
-    {
-        return $this->getImageMainMode() == self::IMAGE_MAIN_MODE_PRODUCT;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isImageMainModeAttribute()
-    {
-        return $this->getImageMainMode() == self::IMAGE_MAIN_MODE_ATTRIBUTE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getImageMainSource()
-    {
-        return [
-            'mode' => $this->getImageMainMode(),
-            'attribute' => $this->getData('image_main_attribute'),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getImageMainAttributes()
-    {
-        $attributes = [];
-        $src = $this->getImageMainSource();
-
-        if ($src['mode'] == self::IMAGE_MAIN_MODE_PRODUCT) {
-            $attributes[] = 'image';
-        } elseif ($src['mode'] == self::IMAGE_MAIN_MODE_ATTRIBUTE) {
-            $attributes[] = $src['attribute'];
-        }
-
-        return $attributes;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getGalleryImagesMode()
-    {
-        return (int)$this->getData('gallery_images_mode');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGalleryImagesModeNone()
-    {
-        return $this->getGalleryImagesMode() == self::GALLERY_IMAGES_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGalleryImagesModeProduct()
-    {
-        return $this->getGalleryImagesMode() == self::GALLERY_IMAGES_MODE_PRODUCT;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGalleryImagesModeAttribute()
-    {
-        return $this->getGalleryImagesMode() == self::GALLERY_IMAGES_MODE_ATTRIBUTE;
-    }
-
-    /**
-     * @return array
-     */
-    public function getGalleryImagesSource()
-    {
-        return [
-            'mode' => $this->getGalleryImagesMode(),
-            'limit' => $this->getData('gallery_images_limit'),
-            'attribute' => $this->getData('gallery_images_attribute'),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getGalleryImagesAttributes()
-    {
-        $attributes = [];
-        $src = $this->getGalleryImagesSource();
-
-        if ($src['mode'] == self::GALLERY_IMAGES_MODE_ATTRIBUTE) {
-            $attributes[] = $src['attribute'];
-        }
-
-        return $attributes;
-    }
-
-    // ---------------------------------------
 
     /**
      * @return int
@@ -1128,8 +995,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
             if ($sourceListing->getMarketplaceId() == $this->getParentObject()->getMarketplaceId()) {
                 $listingProduct->getChildObject()->setData(
-                    'template_description_id',
-                    $sourceListingProduct->getChildObject()->getTemplateDescriptionId()
+                    'template_product_type_id',
+                    $sourceListingProduct->getChildObject()->getTemplateProductTypeId()
                 );
                 $listingProduct->getChildObject()->setData(
                     'template_shipping_id',

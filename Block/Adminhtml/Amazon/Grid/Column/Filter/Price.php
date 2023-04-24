@@ -30,16 +30,16 @@ class Price extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
         $isDisabled = AmazonListingProduct::IS_REPRICING_NO;
 
         $html = <<<HTML
-<div class="range" style="width: 145px;">
-    <div class="range-line" style="padding-top: 5px">
+<div class="range">
+    <div class="range-line" style="padding-top: 5px; display: flex; align-items: center">
         <label for="{$this->_getHtmlName()}"
-               style="cursor: pointer;vertical-align: text-bottom;"
+               style="cursor: pointer;vertical-align: text-bottom; white-space: nowrap;"
                class="admin__field-label">
             {$this->__('On Repricing')}
         </label>
         <select id="{$this->_getHtmlName()}"
                 class="admin__control-select"
-                style="margin-left:6px; float:none; width:auto !important;"
+                style="margin-left:6px; float:none;"
                 name="{$this->_getHtmlName()}[is_repricing]"
             >
             <option {$anySelected} value="">{$this->__('Any')}</option>
