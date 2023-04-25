@@ -278,7 +278,8 @@ class Config extends AbstractConfig
                 'AddColumnIsStoppedManuallyForAmazonAndWalmartProducts',
             ],
             'y23_m04' => [
-                'SetIsVatEbayMarketplacePL'
+                'SetIsVatEbayMarketplacePL',
+                'RemoveUnavailableDataType',
             ]
         ];
     }
