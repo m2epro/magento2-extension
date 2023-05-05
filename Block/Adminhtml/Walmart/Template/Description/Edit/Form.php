@@ -78,7 +78,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'walmart_description_general_help',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
                 <p>Description Policy highlights the key details and features of Product as a physical object that
                 is for sale. Providing maximum Product information and high-quality images is critical if you want
@@ -92,7 +92,7 @@ HTML
         );
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_general', [
-            'legend' => $this->__('General'),
+            'legend' => __('General'),
             'collapsable' => false,
         ]);
 
@@ -101,17 +101,17 @@ HTML
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
-                'title' => $this->__('Title'),
+                'label' => __('Title'),
+                'title' => __('Title'),
                 'value' => $this->formData['title'],
                 'class' => 'input-text M2ePro-description-template-title',
                 'required' => true,
-                'tooltip' => $this->__('Policy Title for your internal use.'),
+                'tooltip' => __('Policy Title for your internal use.'),
             ]
         );
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_details', [
-            'legend' => $this->__('Details'),
+            'legend' => __('Details'),
             'collapsable' => false,
         ]);
 
@@ -120,15 +120,15 @@ HTML
             self::SELECT,
             [
                 'name' => 'title_mode',
-                'label' => $this->__('Title'),
-                'title' => $this->__('Title'),
+                'label' => __('Title'),
+                'title' => __('Title'),
                 'values' => [
-                    Description::TITLE_MODE_PRODUCT => $this->__('Product Name'),
-                    Description::TITLE_MODE_CUSTOM => $this->__('Custom Value'),
+                    Description::TITLE_MODE_PRODUCT => __('Product Name'),
+                    Description::TITLE_MODE_CUSTOM => __('Custom Value'),
                 ],
                 'value' => $this->formData['title_mode'],
                 'required' => true,
-                'tooltip' => $this->__('Item Name that will be available on Walmart.'),
+                'tooltip' => __('Item Name that will be available on Walmart.'),
             ]
         );
 
@@ -154,7 +154,7 @@ HTML
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
                        ->addData([
-                           'label' => $this->__('Insert'),
+                           'label' => __('Insert'),
                            'destination_id' => 'title_template',
                            'class' => 'select_attributes_for_title_button primary',
                            'style' => 'display: inline-block;',
@@ -165,7 +165,7 @@ HTML
             'text',
             [
                 'container_id' => 'custom_title_tr',
-                'label' => $this->__('Title Value'),
+                'label' => __('Title Value'),
                 'value' => $this->formData['title_template'],
                 'name' => 'title_template',
                 'class' => 'input-text-title M2ePro-required-when-visible',
@@ -195,14 +195,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'brand_mode',
-                'label' => $this->__('Brand'),
-                'title' => $this->__('Brand'),
+                'label' => __('Brand'),
+                'title' => __('Brand'),
                 'class' => 'select',
                 'values' => $this->getBrandOptions(),
                 'value' => $defaultValue,
                 'required' => true,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Specify the Item brand.'),
+                'tooltip' => __('Specify the Item brand.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -211,8 +211,8 @@ HTML
             'text',
             [
                 'name' => 'brand_custom_value',
-                'label' => $this->__('Brand Value'),
-                'title' => $this->__('Brand Value'),
+                'label' => __('Brand Value'),
+                'title' => __('Brand Value'),
                 'value' => $this->formData['brand_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -244,14 +244,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'manufacturer_mode',
-                'label' => $this->__('Manufacturer'),
-                'title' => $this->__('Manufacturer'),
+                'label' => __('Manufacturer'),
+                'title' => __('Manufacturer'),
                 'values' => $this->getManufacturerOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'required' => true,
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Specify the Item manufacturer name.'),
+                'tooltip' => __('Specify the Item manufacturer name.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
@@ -260,8 +260,8 @@ HTML
             'text',
             [
                 'name' => 'manufacturer_custom_value',
-                'label' => $this->__('Manufacturer Value'),
-                'title' => $this->__('Manufacturer Value'),
+                'label' => __('Manufacturer Value'),
+                'title' => __('Manufacturer Value'),
                 'value' => $this->formData['manufacturer_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -293,13 +293,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'manufacturer_part_number_mode',
-                'label' => $this->__('Manufacturer Part Number'),
-                'title' => $this->__('Manufacturer Part Number'),
+                'label' => __('Manufacturer Part Number'),
+                'title' => __('Manufacturer Part Number'),
                 'values' => $this->getManufacturerPartNumberOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'A unique identifier assigned to Product by manufacturer.
                 May be identical to the Model Number.'
                 ),
@@ -311,8 +311,8 @@ HTML
             'text',
             [
                 'name' => 'manufacturer_part_number_custom_value',
-                'label' => $this->__('Manufacturer Part Number Value'),
-                'title' => $this->__('Manufacturer Part Number Value'),
+                'label' => __('Manufacturer Part Number Value'),
+                'title' => __('Manufacturer Part Number Value'),
                 'value' => $this->formData['manufacturer_part_number_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -344,13 +344,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'model_number_mode',
-                'label' => $this->__('Model Number'),
-                'title' => $this->__('Model Number'),
+                'label' => __('Model Number'),
+                'title' => __('Model Number'),
                 'values' => $this->getModelNumberOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'A unique number given to Product model by manufacturer.
                 May be identical to the Manufacturer Part Number.'
                 ),
@@ -362,8 +362,8 @@ HTML
             'text',
             [
                 'name' => 'model_number_custom_value',
-                'label' => $this->__('Model Number Value'),
-                'title' => $this->__('Model Number Value'),
+                'label' => __('Model Number Value'),
+                'title' => __('Model Number Value'),
                 'value' => $this->formData['model_number_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -374,7 +374,7 @@ HTML
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_price', [
-            'legend' => $this->__('Price'),
+            'legend' => __('Price'),
             'collapsable' => false,
         ]);
 
@@ -397,13 +397,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'msrp_rrp_mode',
-                'label' => $this->__('MSRP / RRP'),
-                'title' => $this->__('MSRP / RRP'),
+                'label' => __('MSRP / RRP'),
+                'title' => __('MSRP / RRP'),
                 'values' => $this->getMsrpRrpModeOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Manufacturer\'s suggested retail price (MSRP), or recommended retail price (RRP)
                                     is a price at which manufacturer recommends the retailers to sell the Product<br/>
                                     <strong>Note:</strong> it is not the price that buyers will pay for your Item. Your
@@ -415,7 +415,7 @@ HTML
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_image', [
-            'legend' => $this->__('Images'),
+            'legend' => __('Images'),
             'collapsable' => false,
         ]);
 
@@ -443,13 +443,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'image_main_mode',
-                'label' => $this->__('Main Image'),
-                'title' => $this->__('Main Image'),
+                'label' => __('Main Image'),
+                'title' => __('Main Image'),
                 'values' => $this->getImageMainOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'The primary Product image that will be shown on your Walmart
                                 Item page and next to your Item in the search results.<br>
                                 <strong>Note:</strong> Selected Magento Attribute should contain absolute url. e.g.<br>
@@ -484,10 +484,10 @@ HTML
             [
                 'container_id' => 'gallery_images_mode_tr',
                 'name' => 'gallery_images_mode',
-                'label' => $this->__('Additional Images'),
+                'label' => __('Additional Images'),
                 'values' => $this->getGalleryImagesModeOptions(),
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Additional images that may show different views of the Product. Images will be displayed as
                     thumbnails under the Main Image on your Walmart Item page.<br>
                     <strong>Note:</strong> Magento Attributes with Text, Multiple Select or Dropdown type can be used.
@@ -521,13 +521,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'image_variation_difference_mode',
-                'label' => $this->__('Swatch Image'),
-                'title' => $this->__('Swatch Image'),
+                'label' => __('Swatch Image'),
+                'title' => __('Swatch Image'),
                 'values' => $this->getImageVariationDifferenceModeOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '
                     Image that shows a selected Item Variation on Walmart Item page.<br><br>
 
@@ -548,7 +548,7 @@ HTML
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_description', [
-            'legend' => $this->__('Description'),
+            'legend' => __('Description'),
             'collapsable' => false,
         ]);
 
@@ -558,16 +558,16 @@ HTML
             'description_mode',
             'select',
             [
-                'label' => $this->__('Description'),
+                'label' => __('Description'),
                 'name' => 'description_mode',
                 'values' => [
-                    Description::DESCRIPTION_MODE_PRODUCT => $this->__('Product Description'),
-                    Description::DESCRIPTION_MODE_SHORT => $this->__('Product Short Description'),
-                    Description::DESCRIPTION_MODE_CUSTOM => $this->__('Custom Value'),
+                    Description::DESCRIPTION_MODE_PRODUCT => __('Product Description'),
+                    Description::DESCRIPTION_MODE_SHORT => __('Product Short Description'),
+                    Description::DESCRIPTION_MODE_CUSTOM => __('Custom Value'),
                 ],
                 'value' => $this->formData['description_mode'],
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '
                         The key Product details and features that will be displayed on your Walmart Item page.<br>
                         You can use Magento Product data or create a Custom description.<br>
@@ -582,7 +582,7 @@ HTML
             [
                 'container_id' => 'description_template_tr',
                 'css_class' => 'c-custom_description_tr _required',
-                'label' => $this->__('Description Value'),
+                'label' => __('Description Value'),
                 'name' => 'description_template',
                 'value' => $this->formData['description_template'],
                 'class' => ' admin__control-textarea left M2ePro-validate-description-template',
@@ -592,7 +592,7 @@ HTML
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
                        ->addData([
-                           'label' => $this->__('Insert'),
+                           'label' => __('Insert'),
                            'destination_id' => 'description_template',
                            'class' => 'primary',
                            'style' => 'display: inline-block;',
@@ -602,8 +602,8 @@ HTML
             'selectAttr_description_template',
             self::SELECT,
             [
-                'label' => $this->__('Product Attribute'),
-                'title' => $this->__('Product Attribute'),
+                'label' => __('Product Attribute'),
+                'title' => __('Product Attribute'),
                 'values' => $preparedAttributes,
                 'create_magento_attribute' => true,
                 'after_element_html' => $button->toHtml(),
@@ -613,7 +613,7 @@ HTML
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_packaging', [
-            'legend' => $this->__('Packaging'),
+            'legend' => __('Packaging'),
             'collapsable' => false,
         ]);
 
@@ -641,13 +641,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'multipack_quantity_mode',
-                'label' => $this->__('Multipack Quantity'),
-                'title' => $this->__('Multipack Quantity'),
+                'label' => __('Multipack Quantity'),
+                'title' => __('Multipack Quantity'),
                 'values' => $this->getMultipackQuantityModeOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'The number of identical, individually packaged-for-sale
                                 Items inside the Product.<br/>
                                 <strong>For example</strong>, the case/box containing 3 packs of 50
@@ -661,8 +661,8 @@ HTML
             'text',
             [
                 'name' => 'multipack_quantity_custom_value',
-                'label' => $this->__('Number of Items Value'),
-                'title' => $this->__('Number of Items Value'),
+                'label' => __('Number of Items Value'),
+                'title' => __('Number of Items Value'),
                 'value' => $this->formData['multipack_quantity_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -694,13 +694,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'count_per_pack_mode',
-                'label' => $this->__('Count Per Pack'),
-                'title' => $this->__('Count Per Pack'),
+                'label' => __('Count Per Pack'),
+                'title' => __('Count Per Pack'),
                 'values' => $this->getCountPerPackModeOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'The number of identical Items included in each individual pack
                                 given by the Multipack Quantity attribute.<br>
                                 <strong>For example</strong>, the case/box containing 3 packs of 50 pencils
@@ -714,8 +714,8 @@ HTML
             'text',
             [
                 'name' => 'count_per_pack_custom_value',
-                'label' => $this->__('Package Quantity Value'),
-                'title' => $this->__('Package Quantity Value'),
+                'label' => __('Package Quantity Value'),
+                'title' => __('Package Quantity Value'),
                 'value' => $this->formData['count_per_pack_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -747,13 +747,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'total_count_mode',
-                'label' => $this->__('Total Count'),
-                'title' => $this->__('Total Count'),
+                'label' => __('Total Count'),
+                'title' => __('Total Count'),
                 'values' => $this->getTotalCountModeOptions(),
                 'value' => $defaultValue,
                 'class' => 'select',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'The total number of identical Items inside the Product. Total Count is a
                                 result of multiplication of Multipack Quantity by Count Per Pack.<br>
                                 <strong>For example</strong>, the case/box containing 3 packs of 50 pencils
@@ -767,8 +767,8 @@ HTML
             'text',
             [
                 'name' => 'total_count_custom_value',
-                'label' => $this->__('Total Count Value'),
-                'title' => $this->__('Total Count Value'),
+                'label' => __('Total Count Value'),
+                'title' => __('Total Count Value'),
                 'value' => $this->formData['total_count_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
@@ -779,7 +779,7 @@ HTML
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_walmart_template_description_additional', [
-            'legend' => $this->__('Additional'),
+            'legend' => __('Additional'),
             'collapsable' => false,
         ]);
 
@@ -790,14 +790,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'key_features_mode',
-                'label' => $this->__('Key Features'),
-                'title' => $this->__('Key Features'),
+                'label' => __('Key Features'),
+                'title' => __('Key Features'),
                 'values' => [
-                    ['value' => Description::KEY_FEATURES_MODE_NONE, 'label' => $this->__('None')],
-                    ['value' => Description::KEY_FEATURES_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
+                    ['value' => Description::KEY_FEATURES_MODE_NONE, 'label' => __('None')],
+                    ['value' => Description::KEY_FEATURES_MODE_CUSTOM, 'label' => __('Custom Value')],
                 ],
                 'value' => $this->formData['key_features_mode'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Specify up to 5 features that highlight the most
                                 essential information about your Item.<br>
                                 The text will appear as bulleted list on your Walmart Item page
@@ -806,7 +806,7 @@ HTML
             ]
         );
 
-        $this->appendKeywordsFields($fieldSet, 5, 'key_features', $this->__('Key Features'));
+        $this->appendKeywordsFields($fieldSet, 5, 'key_features', __('Key Features'));
 
         $fieldSet->addField('key_features_mode_separator', self::SEPARATOR, []);
 
@@ -817,18 +817,18 @@ HTML
             self::SELECT,
             [
                 'name' => 'other_features_mode',
-                'label' => $this->__('Other Features'),
-                'title' => $this->__('Other Features'),
+                'label' => __('Other Features'),
+                'title' => __('Other Features'),
                 'values' => [
-                    ['value' => Description::OTHER_FEATURES_MODE_NONE, 'label' => $this->__('None')],
-                    ['value' => Description::OTHER_FEATURES_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
+                    ['value' => Description::OTHER_FEATURES_MODE_NONE, 'label' => __('None')],
+                    ['value' => Description::OTHER_FEATURES_MODE_CUSTOM, 'label' => __('Custom Value')],
                 ],
                 'value' => $this->formData['other_features_mode'],
-                'tooltip' => $this->__('Specify up to 5 additional features that describe your Item.'),
+                'tooltip' => __('Specify up to 5 additional features that describe your Item.'),
             ]
         );
 
-        $this->appendKeywordsFields($fieldSet, 5, 'other_features', $this->__('Other Features'));
+        $this->appendKeywordsFields($fieldSet, 5, 'other_features', __('Other Features'));
 
         $fieldSet->addField('other_features_mode_separator', self::SEPARATOR, []);
 
@@ -839,14 +839,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'attributes_mode',
-                'label' => $this->__('Attributes'),
-                'title' => $this->__('Attributes'),
+                'label' => __('Attributes'),
+                'title' => __('Attributes'),
                 'values' => [
-                    ['value' => Description::ATTRIBUTES_MODE_NONE, 'label' => $this->__('None')],
-                    ['value' => Description::ATTRIBUTES_MODE_CUSTOM, 'label' => $this->__('Custom Value')],
+                    ['value' => Description::ATTRIBUTES_MODE_NONE, 'label' => __('None')],
+                    ['value' => Description::ATTRIBUTES_MODE_CUSTOM, 'label' => __('Custom Value')],
                 ],
                 'value' => $this->formData['attributes_mode'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Specify up to 5 additional features that describe your Item.<br>
                     To add Attributes, you can either:<br>
                     - Enter both the name and the value manually<br>
@@ -869,7 +869,7 @@ HTML
     public function getBrandOptions()
     {
         $optionsResult = [
-            ['value' => Description::BRAND_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
+            ['value' => Description::BRAND_MODE_CUSTOM_VALUE, 'label' => __('Custom Value')],
         ];
 
         return array_merge(
@@ -885,8 +885,8 @@ HTML
     public function getManufacturerOptions()
     {
         $optionsResult = [
-            ['value' => Description::MANUFACTURER_MODE_NONE, 'label' => $this->__('None')],
-            ['value' => Description::MANUFACTURER_MODE_CUSTOM_VALUE, 'label' => $this->__('Custom Value')],
+            ['value' => Description::MANUFACTURER_MODE_NONE, 'label' => __('None')],
+            ['value' => Description::MANUFACTURER_MODE_CUSTOM_VALUE, 'label' => __('Custom Value')],
         ];
 
         return array_merge(
@@ -902,10 +902,10 @@ HTML
     public function getManufacturerPartNumberOptions()
     {
         $optionsResult = [
-            ['value' => Description::MANUFACTURER_PART_NUMBER_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::MANUFACTURER_PART_NUMBER_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -922,10 +922,10 @@ HTML
     public function getModelNumberOptions()
     {
         $optionsResult = [
-            ['value' => Description::MODEL_NUMBER_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::MODEL_NUMBER_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::MODEL_NUMBER_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -942,7 +942,7 @@ HTML
     public function getMsrpRrpModeOptions()
     {
         $optionsResult = [
-            ['value' => Description::MSRP_RRP_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::MSRP_RRP_MODE_NONE, 'label' => __('None')],
         ];
 
         return array_merge(
@@ -958,10 +958,10 @@ HTML
     public function getImageMainOptions()
     {
         $optionsResult = [
-            ['value' => Description::IMAGE_MAIN_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::IMAGE_MAIN_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::IMAGE_MAIN_MODE_PRODUCT,
-                'label' => $this->__('Product Base Image'),
+                'label' => __('Product Base Image'),
             ],
         ];
 
@@ -990,15 +990,15 @@ HTML
 
             $preparedImages[] = [
                 'value' => Description::GALLERY_IMAGES_MODE_PRODUCT,
-                'label' => $i == 1 ? $i : ($this->__('Up to') . " $i"),
+                'label' => $i == 1 ? $i : (__('Up to') . " $i"),
                 'attrs' => $attrs,
             ];
         }
 
         $optionsResult = [
-            ['value' => Description::GALLERY_IMAGES_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::GALLERY_IMAGES_MODE_NONE, 'label' => __('None')],
             [
-                'label' => $this->__('Product Images'),
+                'label' => __('Product Images'),
                 'value' => $preparedImages,
             ],
         ];
@@ -1016,10 +1016,10 @@ HTML
     public function getImageVariationDifferenceModeOptions()
     {
         $optionsResult = [
-            ['value' => Description::IMAGE_VARIATION_DIFFERENCE_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::IMAGE_VARIATION_DIFFERENCE_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::IMAGE_VARIATION_DIFFERENCE_MODE_PRODUCT,
-                'label' => $this->__('Product Base Image'),
+                'label' => __('Product Base Image'),
             ],
         ];
 
@@ -1036,10 +1036,10 @@ HTML
     public function getMultipackQuantityModeOptions()
     {
         $optionsResult = [
-            ['value' => Description::MULTIPACK_QUANTITY_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::MULTIPACK_QUANTITY_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::MULTIPACK_QUANTITY_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -1056,10 +1056,10 @@ HTML
     public function getCountPerPackModeOptions()
     {
         $optionsResult = [
-            ['value' => Description::COUNT_PER_PACK_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::COUNT_PER_PACK_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::COUNT_PER_PACK_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -1076,10 +1076,10 @@ HTML
     public function getTotalCountModeOptions()
     {
         $optionsResult = [
-            ['value' => Description::TOTAL_COUNT_MODE_NONE, 'label' => $this->__('None')],
+            ['value' => Description::TOTAL_COUNT_MODE_NONE, 'label' => __('None')],
             [
                 'value' => Description::TOTAL_COUNT_MODE_CUSTOM_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -1119,27 +1119,27 @@ HTML
         ]);
 
         $this->jsTranslator->addTranslations([
-            'Add Description Policy' => $this->__('Add Description Policy'),
+            'Add Description Policy' => __('Add Description Policy'),
 
-            'Change Category' => $this->__('Change Category'),
-            'Not Selected' => $this->__('Not Selected'),
-            'Select' => $this->__('Select'),
+            'Change Category' => __('Change Category'),
+            'Not Selected' => __('Not Selected'),
+            'Select' => __('Select'),
 
-            'The specified Title is already used for another Policy. Policy Title must be unique.' => $this->__(
+            'The specified Title is already used for another Policy. Policy Title must be unique.' => __(
                 'The specified Title is already used for another Policy. Policy Title must be unique.'
             ),
-            'You should select Marketplace first.' => $this->__('You should select Marketplace first.'),
-            'You should select Category and Product Type first' => $this->__(
+            'You should select Marketplace first.' => __('You should select Marketplace first.'),
+            'You should select Category and Product Type first' => __(
                 'You should select Category and Product Type first'
             ),
 
-            'Recommended' => $this->__('Recommended'),
-            'Recent' => $this->__('Recent'),
+            'Recommended' => __('Recommended'),
+            'Recent' => __('Recent'),
         ]);
 
-        $formData = $this->dataHelper->jsonEncode($this->formData);
+        $formData = \Ess\M2ePro\Helper\Json::encode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
-        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
+        $allAttributes = \Ess\M2ePro\Helper\Json::encode($this->magentoAttributeHelper->getAll());
 
         $this->js->addRequireJs(
             [
@@ -1184,18 +1184,17 @@ JS
             $this->templateModel->getData(),
             $this->templateModel->getChildObject()->getData()
         );
-        $helper = $this->dataHelper;
 
         if (!empty($data['key_features'])) {
-            $data['key_features'] = $helper->jsonDecode($data['key_features'], true);
+            $data['key_features'] = \Ess\M2ePro\Helper\Json::decode($data['key_features'], true);
         }
 
         if (!empty($data['other_features'])) {
-            $data['other_features'] = $helper->jsonDecode($data['other_features'], true);
+            $data['other_features'] = \Ess\M2ePro\Helper\Json::decode($data['other_features'], true);
         }
 
         if (!empty($data['attributes'])) {
-            $data['attributes'] = $helper->jsonDecode($data['attributes'], true);
+            $data['attributes'] = \Ess\M2ePro\Helper\Json::decode($data['attributes'], true);
         }
 
         return array_merge($default, $data);
@@ -1243,7 +1242,7 @@ JS
                     'css_class' => $name . '_tr no-margin-bottom',
                     'field_extra_attributes' => 'style="display: none;"',
                     'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         'Either enter the value manually or select a Magento Attribute with the
                         relevant value and click <strong>Insert</strong>. Max. 50 characters allowed.'
                     ),
@@ -1317,7 +1316,7 @@ HTML
                         'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\'' . $name . '\',this)',
                         'class' => 'M2ePro-required-when-visible',
                         'css_class' => $name . '_tr no-margin-bottom',
-                        'tooltip' => $this->__('Max. 100 characters.'),
+                        'tooltip' => __('Max. 100 characters.'),
                     ],
                 ]
             );
@@ -1327,7 +1326,7 @@ HTML
             $button = $this->getLayout()
                            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
                            ->addData([
-                               'label' => $this->__('Insert'),
+                               'label' => __('Insert'),
                                'destination_id' => $name . '_value_' . $i,
                                'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
                                'on_click_callback' => "WalmartTemplateDescriptionObj.multi_element_keyup
@@ -1392,7 +1391,7 @@ HTML
     {
         return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
                     ->addData([
-                        'label' => $this->__('Insert'),
+                        'label' => __('Insert'),
                         'destination_id' => $type . '_' . $index,
                         'on_click_callback' => "WalmartTemplateDescriptionObj.multi_element_keyup
                                     ('{$type}',$('{$type}_{$index}'));",

@@ -5,7 +5,6 @@ namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Helper\Data as HelperData;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\Data\Form\FormKey;
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
@@ -14,9 +13,6 @@ use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
 
 class AmazonProductWithoutVariations implements InspectorInterface, FixerInterface
 {
-    /** @var HelperData */
-    private $helperData;
-
     /** @var UrlInterface */
     private $urlBuilder;
 
@@ -35,14 +31,12 @@ class AmazonProductWithoutVariations implements InspectorInterface, FixerInterfa
     //########################################
 
     public function __construct(
-        HelperData $helperData,
         UrlInterface $urlBuilder,
         FormKey $formKey,
         ParentFactory $parentFactory,
         ActiveRecordFactory $activeRecordFactory,
         IssueFactory $issueFactory
     ) {
-        $this->helperData = $helperData;
         $this->urlBuilder = $urlBuilder;
         $this->formKey = $formKey;
         $this->parentFactory = $parentFactory;
@@ -100,7 +94,7 @@ class AmazonProductWithoutVariations implements InspectorInterface, FixerInterfa
     </tr>
 HTML;
 
-        $repairInfo = $this->helperData->jsonEncode($data['ids']);
+        $repairInfo = \Ess\M2ePro\Helper\Json::encode($data['ids']);
         $input = "<input type='checkbox' style='display: none;' checked='checked'
         name='repair_info' value='" . $repairInfo . "'>";
         $html .= <<<HTML

@@ -72,7 +72,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $productAddIds = $listing->getChildObject()->getData('product_add_ids');
-        $productAddIds = array_filter((array)$this->getHelper('Data')->jsonDecode($productAddIds));
+        $productAddIds = array_filter((array)\Ess\M2ePro\Helper\Json::decode($productAddIds));
 
         if (!empty($productAddIds)) {
             $this->getMessageManager()->addNotice(

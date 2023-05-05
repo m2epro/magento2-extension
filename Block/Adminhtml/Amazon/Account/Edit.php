@@ -65,7 +65,7 @@ class Edit extends AbstractContainer
         if ($this->wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK)) {
             // ---------------------------------------
             $this->addButton('save_and_continue', [
-                'label' => $this->__('Save And Continue Edit'),
+                'label' => __('Save And Continue Edit'),
                 'onclick' => 'AmazonAccountObj.saveAndEditClick(\'\',\'amazonAccountEditTabs\')',
                 'class' => 'action-primary',
             ]);
@@ -75,7 +75,7 @@ class Edit extends AbstractContainer
                 // ---------------------------------------
                 $url = $this->getUrl('*/amazon_account/new', ['wizard' => true]);
                 $this->addButton('add_new_account', [
-                    'label' => $this->__('Add New Account'),
+                    'label' => __('Add New Account'),
                     'onclick' => 'setLocation(\'' . $url . '\')',
                     'class' => 'action-primary',
                 ]);
@@ -85,13 +85,13 @@ class Edit extends AbstractContainer
             if ((bool)$this->getRequest()->getParam('close_on_save', false)) {
                 if ($this->getRequest()->getParam('id')) {
                     $this->addButton('save', [
-                        'label' => $this->__('Save And Close'),
+                        'label' => __('Save And Close'),
                         'onclick' => 'AmazonAccountObj.saveAndClose()',
                         'class' => 'action-primary',
                     ]);
                 } else {
                     $this->addButton('save_and_continue', [
-                        'label' => $this->__('Save And Continue Edit'),
+                        'label' => __('Save And Continue Edit'),
                         'onclick' => 'AmazonAccountObj.saveAndEditClick(\'\',\'amazonAccountEditTabs\')',
                         'class' => 'action-primary',
                     ]);
@@ -103,7 +103,7 @@ class Edit extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/amazon_account/index');
             $this->addButton('back', [
-                'label' => $this->__('Back'),
+                'label' => __('Back'),
                 'onclick' => 'AmazonAccountObj.backClick(\'' . $url . '\')',
                 'class' => 'back',
             ]);
@@ -116,7 +116,7 @@ class Edit extends AbstractContainer
             ) {
                 // ---------------------------------------
                 $this->addButton('delete', [
-                    'label' => $this->__('Delete'),
+                    'label' => __('Delete'),
                     'onclick' => 'AmazonAccountObj.deleteClick()',
                     'class' => 'delete M2ePro_delete_button primary',
                 ]);
@@ -126,14 +126,14 @@ class Edit extends AbstractContainer
             // ---------------------------------------
             $saveButtons = [
                 'id' => 'save_and_continue',
-                'label' => $this->__('Save And Continue Edit'),
+                'label' => __('Save And Continue Edit'),
                 'class' => 'add',
                 'button_class' => '',
                 'onclick' => 'AmazonAccountObj.saveAndEditClick(\'\',\'amazonAccountEditTabs\')',
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label' => $this->__('Save And Back'),
+                        'label' => __('Save And Back'),
                         'onclick' => 'AmazonAccountObj.saveClick()',
                         'class' => 'action-primary',
                     ],
@@ -150,7 +150,7 @@ class Edit extends AbstractContainer
     protected function _prepareLayout()
     {
         $this->jsTranslator->addTranslations([
-            'is_ready_for_document_generation' => $this->__(
+            'is_ready_for_document_generation' => __(
                 <<<HTML
     To use this option, go to <i>Stores > Configuration > General > General > Store Information</i> and fill in the
     following required fields:<br><br>

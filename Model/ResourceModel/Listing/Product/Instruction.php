@@ -76,7 +76,7 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             }
 
             $encodedInstructionTypes = $listingProduct->getData('instruction_json_types');
-            $instructionTypes = $dataHelper->jsonDecode($encodedInstructionTypes);
+            $instructionTypes = \Ess\M2ePro\Helper\Json::decode($encodedInstructionTypes);
 
             if (in_array($instructionData['type'], $instructionTypes, true)) {
                 unset($instructionsData[$index]);

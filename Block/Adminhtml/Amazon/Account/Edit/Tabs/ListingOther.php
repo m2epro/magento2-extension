@@ -93,7 +93,7 @@ HTML
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -103,13 +103,13 @@ HTML
             'select',
             [
                 'name' => 'other_listings_synchronization',
-                'label' => $this->__('Import Unmanaged Listings'),
+                'label' => __('Import Unmanaged Listings'),
                 'values' => [
-                    1 => $this->__('Yes'),
-                    0 => $this->__('No'),
+                    1 => __('Yes'),
+                    0 => __('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
-                'tooltip' => $this->__('Allows importing Unmanaged Listings.'),
+                'tooltip' => __('Allows importing Unmanaged Listings.'),
             ]
         );
 
@@ -119,9 +119,9 @@ HTML
             [
                 'container_id' => 'other_listings_store_view_tr',
                 'name' => 'related_store_id',
-                'label' => $this->__('Related Store View'),
+                'label' => __('Related Store View'),
                 'value' => $formData['related_store_id'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Store View, which will be associated with chosen Marketplace of the current Account.'
                 ),
             ]
@@ -134,13 +134,13 @@ HTML
                 'container_id' => 'other_listings_mapping_mode_tr',
                 'name' => 'other_listings_mapping_mode',
                 'class' => 'M2ePro-require-select-attribute',
-                'label' => $this->__('Product Linking'),
+                'label' => __('Product Linking'),
                 'values' => [
-                    1 => $this->__('Yes'),
-                    0 => $this->__('No'),
+                    1 => __('Yes'),
+                    0 => __('No'),
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Choose whether imported Amazon Listings should automatically link to a
                     Product in your Magento Inventory.'
                 ),
@@ -150,9 +150,9 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_other_listings_product_mapping',
             [
-                'legend' => $this->__('Magento Product Linking Settings'),
+                'legend' => __('Magento Product Linking Settings'),
                 'collapsable' => false,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>In this section you can provide settings for automatic Linking of the newly imported
                     Unmanaged Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are linked based on the correspondence between Amazon Item values and
@@ -187,15 +187,15 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_sku_mode',
-                'label' => $this->__('SKU'),
+                'label' => __('SKU'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => __('None'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => __('Product SKU'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => __('Product ID'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -255,13 +255,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_general_id_mode',
-                'label' => $this->__('ASIN / ISBN'),
+                'label' => __('ASIN / ISBN'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE => $this->__('None'),
+                    Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE => __('None'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -319,14 +319,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_title_mode',
-                'label' => $this->__('Listing Title'),
+                'label' => __('Listing Title'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
-                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),
+                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => __('None'),
+                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => __('Product Name'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -363,7 +363,7 @@ HTML
 
         $this->jsTranslator->add(
             'If Yes is chosen, you must select at least one Attribute for Product Linking.',
-            $this->__('If Yes is chosen, you must select at least one Attribute for Product Linking.')
+            __('If Yes is chosen, you must select at least one Attribute for Product Linking.')
         );
 
         return parent::_prepareForm();

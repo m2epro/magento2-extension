@@ -17,14 +17,12 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 {
     /** @var bool */
     protected $_isPkAutoIncrement = false;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     protected $databaseStructure;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\CollectionFactory */
+    private $otherCollectionFactory;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -33,23 +31,21 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Other\CollectionFactory $otherCollectionFactory,
         $connectionName = null
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->databaseStructure = $databaseStructure;
+        $this->otherCollectionFactory = $otherCollectionFactory;
 
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
-
-    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_ebay_listing_other', 'listing_other_id');
         $this->_isPkAutoIncrement = false;
     }
-
-    //########################################
 
     public function resetEntities()
     {
@@ -112,5 +108,23 @@ SQL;
         }
     }
 
-    //########################################
+    /**
+     * @param int $productId
+     * @param int $accountId
+     * @param int $marketplaceId
+     *
+     * @return bool
+     */
+    public function isItemFromOtherListing(int $productId, int $accountId, int $marketplaceId): bool
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
+        $collection = $this->otherCollectionFactory->create();
+
+        return $collection->isExistsProduct(
+            $productId,
+            $accountId,
+            $marketplaceId,
+            \Ess\M2ePro\Helper\Component\Ebay::NICK
+        );
+    }
 }

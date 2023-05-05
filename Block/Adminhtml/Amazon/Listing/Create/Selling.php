@@ -38,7 +38,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->_controller = 'adminhtml_amazon_listing_create';
         $this->_mode = 'selling';
 
-        $this->_headerText = $this->__("Creating A New Amazon M2E Pro Listing");
+        $this->_headerText = __("Creating A New Amazon M2E Pro Listing");
 
         $this->removeButton('back');
         $this->removeButton('reset');
@@ -57,7 +57,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton(
             'back',
             [
-                'label' => $this->__('Previous Step'),
+                'label' => __('Previous Step'),
                 'onclick' => 'AmazonListingSettingsObj.backClick(\'' . $url . '\')',
                 'class' => 'action-primary back',
             ]
@@ -72,7 +72,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton(
             'save_and_next',
             [
-                'label' => $this->__('Next Step'),
+                'label' => __('Next Step'),
                 'onclick' => 'AmazonListingSettingsObj.saveClick(\'' . $url . '\')',
                 'class' => 'action-primary forward',
             ]

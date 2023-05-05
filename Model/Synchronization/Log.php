@@ -107,7 +107,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             'description' => $description,
             'detailed_description' => $detailedDescription,
             'type' => (int)$type,
-            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode($additionalData),
 
             'operation_history_id' => $this->operationHistoryId,
             'task' => $this->task,

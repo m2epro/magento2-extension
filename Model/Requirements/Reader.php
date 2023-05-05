@@ -34,13 +34,10 @@ class Reader extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->componentRegistrar = $componentRegistrar;
-
         $path = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, \Ess\M2ePro\Helper\Module::IDENTIFIER);
         $moduleDir = $directoryReadFactory->create($path);
-
-        $this->cachedData = $this->getHelper('Data')->jsonDecode($moduleDir->readFile('requirements.json'));
-        $composerData = $this->getHelper('Data')->jsonDecode($moduleDir->readFile('composer.json'));
-
+        $this->cachedData = \Ess\M2ePro\Helper\Json::decode($moduleDir->readFile('requirements.json'));
+        $composerData = \Ess\M2ePro\Helper\Json::decode($moduleDir->readFile('composer.json'));
         $this->cachedData['composer'] = $composerData['require'];
     }
 

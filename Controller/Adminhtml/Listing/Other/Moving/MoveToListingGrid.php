@@ -13,18 +13,12 @@ class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($context);
-
         $this->globalData = $globalData;
-        $this->dataHelper = $dataHelper;
     }
 
     public function execute()
@@ -46,7 +40,7 @@ class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         $this->globalData->setValue(
             'ignoreListings',
-            $this->dataHelper->jsonDecode($this->getRequest()->getParam('ignoreListings'))
+            \Ess\M2ePro\Helper\Json::decode($this->getRequest()->getParam('ignoreListings'))
         );
 
         $component = ucfirst(strtolower($this->getRequest()->getParam('componentMode')));

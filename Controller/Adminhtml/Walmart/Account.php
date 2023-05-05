@@ -51,7 +51,7 @@ abstract class Account extends Main
             $account->getChildObject()->addData(
                 [
                     'server_hash' => $responseData['hash'],
-                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
+                    'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
                 ]
             );
             $account->getChildObject()->save();
@@ -96,7 +96,7 @@ abstract class Account extends Main
 
             $account->getChildObject()->addData(
                 [
-                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
+                    'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
                 ]
             );
             $account->getChildObject()->save();

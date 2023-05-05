@@ -803,7 +803,7 @@ abstract class AbstractPdf extends \Magento\Sales\Model\Order\Pdf\AbstractPdf
         $page->setLineColor($color);
         $page->drawRectangle(0, $height, $with, $height - 7);
         $page->drawRectangle(0, 0, $with, 7);
-        $page->setFillColor(new \Zend_Pdf_Color_RGB(0, 0, 0));
+        $page->setFillColor(new \Zend_Pdf_Color_Rgb(0, 0, 0));
 
         $this->drawCitation($page);
     }

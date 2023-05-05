@@ -73,7 +73,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_product_tax_code_general',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -83,10 +83,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'value' => $formData['title'],
                 'class' => 'M2ePro-tpl-title',
-                'tooltip' => $this->__('Short meaningful Policy Title for your internal use.'),
+                'tooltip' => __('Short meaningful Policy Title for your internal use.'),
                 'required' => true,
             ]
         );
@@ -94,7 +94,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_product_tax_code_channel',
             [
-                'legend' => $this->__('Product Tax Code'),
+                'legend' => __('Product Tax Code'),
                 'collapsable' => false,
             ]
         );
@@ -128,7 +128,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $customValueOption = [
             'html_id' => 'product_tax_code_mode_cv',
             'value' => ProductTaxCode::PRODUCT_TAX_CODE_MODE_VALUE,
-            'label' => $this->__('Custom Value'),
+            'label' => __('Custom Value'),
         ];
 
         if ($formData['product_tax_code_mode'] == ProductTaxCode::PRODUCT_TAX_CODE_MODE_VALUE) {
@@ -139,7 +139,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'product_tax_code_mode',
             self::SELECT,
             [
-                'label' => $this->__('Tax Code'),
+                'label' => __('Tax Code'),
                 'name' => 'product_tax_code_mode',
                 'values' => [
                     [
@@ -149,7 +149,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     ],
                     $customValueOption,
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'new_option_value' => ProductTaxCode::PRODUCT_TAX_CODE_MODE_ATTRIBUTE,
@@ -171,7 +171,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'container_id' => 'product_tax_code_custom_value_tr',
-                'label' => $this->__('Tax Code Value'),
+                'label' => __('Tax Code Value'),
                 'name' => 'product_tax_code_value',
                 'value' => $formData['product_tax_code_value'],
                 'required' => true,
@@ -198,9 +198,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ]);
 
         $this->jsTranslator->addTranslations([
-            'Add Product Tax Code Policy' => $this->__('Add Product Tax Code Policy'),
+            'Add Product Tax Code Policy' => __('Add Product Tax Code Policy'),
             'The specified Title is already used for other Policy. Policy Title must be unique.' =>
-                $this->__('The specified Title is already used for other Policy. Policy Title must be unique.'),
+                __('The specified Title is already used for other Policy. Policy Title must be unique.'),
         ]);
 
         $title = $this->dataHelper->escapeJs($this->dataHelper->escapeHtml($formData['title']));

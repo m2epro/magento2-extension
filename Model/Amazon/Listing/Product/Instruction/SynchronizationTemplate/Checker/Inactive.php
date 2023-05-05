@@ -118,7 +118,7 @@ class Inactive extends AbstractModel
                 'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
                 'tag' => '/' . implode('/', $tags) . '/',
-                'additional_data' => $this->getHelper('Data')->jsonEncode(
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                     [
                         'params' => $params,
                         'configurator' => $configurator->getSerializedData(),

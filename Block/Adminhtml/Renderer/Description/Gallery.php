@@ -15,18 +15,6 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 {
     private $galleryId;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Ess\M2ePro\Helper\Data $dataHelper,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-        $this->dataHelper = $dataHelper;
-    }
-
     public function _construct()
     {
         parent::_construct();
@@ -48,7 +36,7 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
                 sha1(
                     'gallery-'
                     . $this->getData('index_number')
-                    . $this->dataHelper->jsonEncode($this->getGalleryImages())
+                    . \Ess\M2ePro\Helper\Json::encode($this->getGalleryImages())
                 ),
                 20
             );

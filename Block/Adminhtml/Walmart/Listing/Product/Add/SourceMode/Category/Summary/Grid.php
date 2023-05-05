@@ -109,7 +109,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         // ---------------------------------------
 
         $this->getMassactionBlock()->addItem('remove', [
-            'label' => $this->__('Remove'),
+            'label' => __('Remove'),
         ]);
 
         // ---------------------------------------
@@ -122,7 +122,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('magento_category', [
-            'header' => $this->__('Magento Category'),
+            'header' => __('Magento Category'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -132,7 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         ]);
 
         $this->addColumn('action', [
-            'header' => $this->__('Action'),
+            'header' => __('Action'),
             'align' => 'center',
             'width' => '75px',
             'type' => 'text',
@@ -198,7 +198,7 @@ HTML;
 HTML;
 
         $help = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 'The Quantity of chosen Products in each Category is shown in brackets.  <br/>
                  If the Product belongs to several Categories,
                  it is shown in each Category.
@@ -255,7 +255,7 @@ JS
 
     //########################################
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

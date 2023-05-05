@@ -36,7 +36,7 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         $resultData = $this->getConnection()->fetchCol($select);
         $resultData = reset($resultData);
 
-        return !empty($resultData) ? $this->getHelper('Data')->jsonDecode($resultData) : null;
+        return !empty($resultData) ? \Ess\M2ePro\Helper\Json::decode($resultData) : null;
     }
 
     public function addResultData(
@@ -50,7 +50,7 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             [
                 'request_pending_partial_id' => $requestPendingPartial->getId(),
                 'part_number' => $partNumber,
-                'data' => $this->getHelper('Data')->jsonEncode($data),
+                'data' => \Ess\M2ePro\Helper\Json::encode($data),
             ]
         );
     }

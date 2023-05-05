@@ -48,7 +48,7 @@ class Browse extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             '',
             [
                 'data' => [
-                    'content' => $this->__(
+                    'content' => __(
                         'If you cannot find necessary Category, try to
                 <a href="javascript:void(0)"
                    onclick="WalmartTemplateCategoryCategoriesChooserObj.refreshWalmartCategories()">

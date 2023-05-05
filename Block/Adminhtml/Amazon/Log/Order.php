@@ -63,7 +63,7 @@ Find detailed info in <a href="%url%" target="_blank">the article</a>.
 TEXT;
         }
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 $message,
                 $this->supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-Orderlogs')
             ),

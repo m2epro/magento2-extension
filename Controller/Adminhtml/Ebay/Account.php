@@ -73,7 +73,7 @@ abstract class Account extends Main
             }
 
             $dataForUpdate = [
-                'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
+                'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
                 'token_expired_date' => $responseData['token_expired_date'],
             ];
 
@@ -155,7 +155,7 @@ abstract class Account extends Main
             }
 
             $dataForUpdate = [
-                'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
+                'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
                 'token_expired_date' => $responseData['token_expired_date'],
             ];
 

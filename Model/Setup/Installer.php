@@ -2593,72 +2593,93 @@ class Installer
                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($archivedEntity);
 
-        $tagTable = $this->getConnection()->newTable($this->getFullTableName('tag'))
-                         ->addColumn(
-                             'id',
-                             Table::TYPE_INTEGER,
-                             null,
-                             ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-                         )
-                         ->addColumn(
-                             'nick',
-                             Table::TYPE_TEXT,
-                             255,
-                             ['nullable' => false]
-                         )
-                         ->addColumn(
-                             'error_code',
-                             Table::TYPE_TEXT,
-                             100,
-                             ['nullable' => true]
-                         )
-                         ->setOption('type', 'INNODB')
-                         ->setOption('charset', 'utf8')
-                         ->setOption('collate', 'utf8_general_ci')
-                         ->setOption('row_format', 'dynamic');
+        # region tag
+        $tagTable = $this->getConnection()->newTable($this->getFullTableName('tag'));
+        $tagTable->addColumn(
+            'id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+        );
+        $tagTable->addColumn(
+            'error_code',
+            Table::TYPE_TEXT,
+            100,
+            ['nullable' => false]
+        );
+        $tagTable->addColumn(
+            'text',
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $tagTable->addColumn(
+            'create_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['nullable' => false]
+        );
+        $tagTable->addIndex(
+            'error_code',
+            ['error_code'],
+            ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
+        );
+        $tagTable->setOption('type', 'INNODB');
+        $tagTable->setOption('charset', 'utf8');
+        $tagTable->setOption('collate', 'utf8_general_ci');
+        $tagTable->setOption('row_format', 'dynamic');
 
         $this->getConnection()->createTable($tagTable);
+        #endregion
 
+        # region listing_product_tag_relation
         $listingProductTagRelationTable = $this->getConnection()->newTable(
             $this->getFullTableName('listing_product_tag_relation')
-        )
-                                               ->addColumn(
-                                                   'id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   [
-                                                       'unsigned' => true,
-                                                       'primary' => true,
-                                                       'nullable' => false,
-                                                       'auto_increment' => true,
-                                                   ]
-                                               )
-                                               ->addColumn(
-                                                   'listing_product_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   [
-                                                       'unsigned' => true,
-                                                       'nullable' => false,
-                                                   ]
-                                               )
-                                               ->addColumn(
-                                                   'tag_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   [
-                                                       'unsigned' => true,
-                                                       'nullable' => false,
-                                                   ]
-                                               )
-                                               ->addIndex('listing_product_id', 'listing_product_id')
-                                               ->addIndex('tag_id', 'tag_id')
-                                               ->setOption('type', 'INNODB')
-                                               ->setOption('charset', 'utf8')
-                                               ->setOption('collate', 'utf8_general_ci')
-                                               ->setOption('row_format', 'dynamic');
+        );
+        $listingProductTagRelationTable->addColumn(
+            'id',
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'primary' => true,
+                'nullable' => false,
+                'auto_increment' => true,
+            ]
+        );
+        $listingProductTagRelationTable->addColumn(
+            'listing_product_id',
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'nullable' => false,
+            ]
+        );
+        $listingProductTagRelationTable->addColumn(
+            'tag_id',
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'nullable' => false,
+            ]
+        );
+        $listingProductTagRelationTable->addColumn(
+            'create_date',
+            Table::TYPE_DATETIME,
+            null,
+            ['nullable' => false]
+        );
+        $listingProductTagRelationTable->addIndex('listing_product_id', 'listing_product_id');
+        $listingProductTagRelationTable->addIndex('tag_id', 'tag_id');
+        $listingProductTagRelationTable->setOption('type', 'INNODB');
+        $listingProductTagRelationTable->setOption('charset', 'utf8');
+        $listingProductTagRelationTable->setOption('collate', 'utf8_general_ci');
+        $listingProductTagRelationTable->setOption('row_format', 'dynamic');
 
         $this->getConnection()->createTable($listingProductTagRelationTable);
+        #endregion
     }
 
     /**
@@ -2789,22 +2810,37 @@ class Installer
                     'type' => 1,
                     'priority' => 6,
                 ],
+                [
+                    'nick' => 'versionDowngrade',
+                    'view' => '*',
+                    'status' => 3,
+                    'step' => null,
+                    'type' => 1,
+                    'priority' => 7,
+                ],
             ]
         );
+
+        #region tag
+        $tagCreateDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $tagCreateDate = $tagCreateDate->format('Y-m-d H:i:s');
 
         $this->getConnection()->insertMultiple(
             $this->getFullTableName('tag'),
             [
                 [
-                    'nick' => 'has_error',
-                    'error_code' => null,
+                    'error_code' => 'has_error',
+                    'text' => 'Has error',
+                    'create_date' => $tagCreateDate,
                 ],
                 [
-                    'nick' => 'missing_item_specific',
                     'error_code' => '21919303',
+                    'text' => 'Required Item Specifics are missing',
+                    'create_date' => $tagCreateDate,
                 ],
             ]
         );
+        #endregion
     }
 
     /**
@@ -3705,7 +3741,7 @@ class Installer
                                  ->addColumn(
                                      'product_add_ids',
                                      Table::TYPE_TEXT,
-                                     null,
+                                     self::LONG_COLUMN_SIZE,
                                      ['default' => null]
                                  )
                                  ->addColumn(
@@ -4965,6 +5001,12 @@ class Installer
                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                )
                                ->addColumn(
+                                   'buyer_cancellation_status',
+                                   Table::TYPE_SMALLINT,
+                                   null,
+                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                               )
+                               ->addColumn(
                                    'shipping_details',
                                    Table::TYPE_TEXT,
                                    null,
@@ -5839,12 +5881,6 @@ class Installer
                                                    Table::TYPE_TEXT,
                                                    255,
                                                    ['nullable' => false]
-                                               )
-                                               ->addColumn(
-                                                   'price_increase_vat_percent',
-                                                   Table::TYPE_SMALLINT,
-                                                   null,
-                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                                )
                                                ->addColumn(
                                                    'price_variation_mode',
@@ -8474,7 +8510,7 @@ class Installer
                                    ->addColumn(
                                        'product_add_ids',
                                        Table::TYPE_TEXT,
-                                       null,
+                                       self::LONG_COLUMN_SIZE,
                                        ['default' => null]
                                    )
                                    ->addIndex(

@@ -12,21 +12,22 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Component */
     private $componentHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $ebayHelper;
-
     /** @var \Ess\M2ePro\Helper\Component\Walmart */
     private $walmartHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Log\CollectionFactory */
+    private $logCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account */
+    private $accountResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
+    private $marketplaceResource;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -39,6 +40,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
+        \Ess\M2ePro\Model\ResourceModel\Order\Log\CollectionFactory $logCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         array $data = []
     ) {
         $this->databaseHelper = $databaseHelper;
@@ -47,6 +51,9 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->amazonHelper = $amazonHelper;
         $this->ebayHelper = $ebayHelper;
         $this->walmartHelper = $walmartHelper;
+        $this->logCollectionFactory = $logCollectionFactory;
+        $this->accountResource = $accountResource;
+        $this->marketplaceResource = $marketplaceResource;
         parent::__construct(
             $resourceConnection,
             $viewHelper,
@@ -78,7 +85,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $collection = $this->activeRecordFactory->getObject('Order\Log')->getCollection();
+        $collection = $this->logCollectionFactory->create();
 
         $isNeedCombine = $this->isNeedCombineMessages();
 
@@ -102,10 +109,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->addFieldToFilter('main_table.account_id', $accountId);
         } else {
             $collection->getSelect()->joinLeft(
-                [
-                    'account_table' => $this->activeRecordFactory->getObject('Account')
-                                                                 ->getResource()->getMainTable(),
-                ],
+                ['account_table' => $this->accountResource->getMainTable()],
                 'main_table.account_id = account_table.id',
                 ['real_account_id' => 'account_table.id']
             );
@@ -116,10 +120,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
         } else {
             $collection->getSelect()->joinLeft(
-                [
-                    'marketplace_table' => $this->activeRecordFactory->getObject('Marketplace')
-                                                                     ->getResource()->getMainTable(),
-                ],
+                ['marketplace_table' => $this->marketplaceResource->getMainTable()],
                 'main_table.marketplace_id = marketplace_table.id',
                 ['marketplace_status' => 'marketplace_table.status']
             );
@@ -138,13 +139,19 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             $collection->addFieldToFilter('main_table.order_id', (int)$orderId);
         }
 
-        $backToDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $backToDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         $backToDate->modify('- 1 days');
 
         if ($this->getRequest()->getParam('magento_order_failed')) {
             $text = 'Magento Order was not created';
             $collection->addFieldToFilter('main_table.description', ['like' => '%' . $text . '%']);
-            $collection->addFieldToFilter('main_table.create_date', ['gt' => $backToDate->format('Y-m-d H:i:s')]);
+            $collection->addFieldToFilter('mo.magento_order_creation_latest_attempt_date', [
+                'gteq' => $backToDate->format('Y-m-d H:i:s')
+            ]);
+        }
+
+        if ($this->getRequest()->getParam('orders_with_modified_vat')) {
+            $collection->onlyVatChanged();
         }
 
         $collection->addFieldToFilter('main_table.component_mode', $this->getComponentMode());
@@ -318,7 +325,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $collection->addFieldToFilter('main_table.order_id', ['in' => $ordersIds]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

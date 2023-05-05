@@ -35,7 +35,7 @@ class DeleteAll extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Ad
             $listingProduct->delete();
         }
 
-        $listing->getChildObject()->setData('product_add_ids', $this->getHelper('Data')->jsonEncode([]));
+        $listing->getChildObject()->setData('product_add_ids', \Ess\M2ePro\Helper\Json::encode([]));
         $listing->save();
 
         if ($listing->getSetting('additional_data', 'source') == SourceMode::MODE_OTHER) {

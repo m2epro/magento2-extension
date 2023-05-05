@@ -261,7 +261,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_promotions'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['promotions_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['promotions_data']),
             'md5'
         );
 
@@ -276,7 +276,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_details_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['details_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['details_data']),
             'md5'
         );
 

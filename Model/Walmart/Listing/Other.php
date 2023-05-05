@@ -21,8 +21,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
     protected $resourceConnection;
 
-    //########################################
-
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -52,15 +50,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         $this->resourceConnection = $resourceConnection;
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other::class);
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -85,8 +79,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         return $this->getParentObject()->getMagentoProduct();
     }
-
-    //########################################
 
     /**
      * @return string
@@ -136,8 +128,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $this->getData('item_id');
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      */
@@ -162,8 +152,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $this->getSettings('status_change_reasons');
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -172,8 +160,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return (bool)$this->getData('is_online_price_invalid');
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      */
@@ -181,8 +167,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         return $this->getData('title');
     }
-
-    // ---------------------------------------
 
     /**
      * @return float
@@ -200,8 +184,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return (int)$this->getData('online_qty');
     }
 
-    //########################################
-
     /**
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -210,8 +192,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         return $this->getAccount()->getChildObject()->getRelatedStoreId();
     }
-
-    //########################################
 
     public function afterMapProduct()
     {
@@ -279,6 +259,4 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
                                      ]
                                  );
     }
-
-    //########################################
 }

@@ -221,7 +221,7 @@ class ListingProductStructure implements InspectorInterface, FixerInterface
 HTML;
 
         foreach ($data as $key => $item) {
-            $repairInfo = $this->helperFactory->getObject('Data')->jsonEncode($item);
+            $repairInfo = \Ess\M2ePro\Helper\Json::encode($item);
             $description = str_replace('_', ' ', $key);
             $input = "<input type='checkbox' name='repair_info[]' value='" . $repairInfo . "'>";
             $html .= <<<HTML

@@ -21,7 +21,7 @@ class StepTwoSaveToSession extends Settings
     public function execute()
     {
         $templateData = $this->getRequest()->getParam('template_data');
-        $templateData = (array)$this->getHelper('Data')->jsonDecode($templateData);
+        $templateData = (array)\Ess\M2ePro\Helper\Json::decode($templateData);
 
         $sessionData = $this->getSessionValue($this->getSessionDataKey());
 

@@ -10,22 +10,23 @@ namespace Ess\M2ePro\Model\HealthStatus\Notification;
 
 class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Framework\UrlInterface */
+    /** @var \Magento\Backend\Model\UrlInterface */
     private $urlBuilder;
 
     /**
-     * @param \Magento\Framework\UrlInterface $urlBuilder
+     * @param \Magento\Backend\Model\UrlInterface $urlBuilder
      * @param \Ess\M2ePro\Helper\Factory $helperFactory
      * @param \Ess\M2ePro\Model\Factory $modelFactory
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\UrlInterface $urlBuilder,
+        \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
+
         $this->urlBuilder = $urlBuilder;
     }
 
@@ -55,7 +56,7 @@ class MessageBuilder extends \Ess\M2ePro\Model\AbstractModel
         return (string)__(
             <<<HTML
 Something went wrong with your M2E Pro running and some actions from your side are required.
- A detailed information you can find in <a target="_blank" href="{$manageUrl}">M2E Pro Health Status Center</a>.
+You can find detailed information in <a target="_blank" href="{$manageUrl}">M2E Pro Health Status Center</a>.
 HTML
         );
     }

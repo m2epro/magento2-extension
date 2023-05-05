@@ -61,7 +61,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->processRecheckInstructions($data);
 
         if (isset($data['additional_data'])) {
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
+            $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);

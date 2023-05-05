@@ -14,146 +14,147 @@ class Buffer
 {
     private const MAX_PACK_SIZE = 500;
 
-    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\CollectionFactory */
-    private $tagCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory */
-    private $tagListingProductRelationCollectionFactory;
+    /** @var array<int, Buffer\Item> */
+    private $items = [];
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
     private $relationResource;
+    /** @var \Ess\M2ePro\Model\Tag\Repository */
+    private $tagRepository;
+    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Repository */
+    private $listingProductTagRepository;
 
-    /** @var array<string,\Ess\M2ePro\Model\Tag> */
-    private $tags;
-    /** @var array<int, string[]> */
-    private $addNicks = [];
-    /** @var array<int, string[]> */
-    private $removeNicks = [];
-
-    /**
-     * @param ResourceModel\Tag\CollectionFactory $tagCollectionFactory
-     * @param ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $tagListingProductRelationCollectionFactory
-     * @param ResourceModel\Tag\ListingProduct\Relation $relationResource
-     */
     public function __construct(
-        ResourceModel\Tag\CollectionFactory $tagCollectionFactory,
-        ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $tagListingProductRelationCollectionFactory,
-        ResourceModel\Tag\ListingProduct\Relation $relationResource
+        \Ess\M2ePro\Model\Tag\Repository $tagRepository,
+        ResourceModel\Tag\ListingProduct\Relation $relationResource,
+        \Ess\M2ePro\Model\Tag\ListingProduct\Repository $listingProductTagRepository
     ) {
-        $this->tagCollectionFactory = $tagCollectionFactory;
-        $this->tagListingProductRelationCollectionFactory = $tagListingProductRelationCollectionFactory;
         $this->relationResource = $relationResource;
+        $this->tagRepository = $tagRepository;
+        $this->listingProductTagRepository = $listingProductTagRepository;
+    }
+
+    public function addTag(\Ess\M2ePro\Model\Listing\Product $listingProduct, \Ess\M2ePro\Model\Tag $tag): void
+    {
+        $this->addTags($listingProduct, [$tag]);
     }
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param string $tagNick
+     * @param \Ess\M2ePro\Model\Tag[] $tags
      *
      * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function addTag(\Ess\M2ePro\Model\Listing\Product $listingProduct, string $tagNick): void
+    public function addTags(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $tags): void
     {
-        $this->addTags($listingProduct, [$tagNick]);
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param string[] $tagNicks
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function addTags(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $tagNicks): void
-    {
-        $existTags = $this->getExistsTagsCollectedByNick();
-        foreach ($tagNicks as $tagNick) {
-            if (!isset($existTags[$tagNick])) {
-                throw new \Ess\M2ePro\Model\Exception\Logic(sprintf('Tag nick %s not found.', $tagNick));
-            }
-
-            $listingProductId = (int)$listingProduct->getId();
-
-            $this->addNicks[$listingProductId][$tagNick] = $tagNick;
-            if (isset($this->removeNicks[$listingProductId][$tagNick])) {
-                unset($this->removeNicks[$listingProductId][$tagNick]);
-            }
+        $item = $this->getItem((int)$listingProduct->getId());
+        foreach ($tags as $tag) {
+            $item->addTag($tag);
         }
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param string $tagNick
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function removeTag(\Ess\M2ePro\Model\Listing\Product $listingProduct, string $tagNick): void
+    public function removeAllTags(\Ess\M2ePro\Model\Listing\Product $listingProduct): void
     {
-        $this->removeTags($listingProduct, [$tagNick]);
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param string[] $tagNicks
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function removeTags(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $tagNicks): void
-    {
-        $existTags = $this->getExistsTagsCollectedByNick();
-        foreach ($tagNicks as $tagNick) {
-            if (!isset($existTags[$tagNick])) {
-                throw new \Ess\M2ePro\Model\Exception\Logic(sprintf('Tag nick %s not found.', $tagNick));
-            }
-
-            $listingProductId = (int)$listingProduct->getId();
-
-            $this->removeNicks[$listingProductId][$tagNick] = $tagNick;
-            if (isset($this->addNicks[$listingProductId][$tagNick])) {
-                unset($this->addNicks[$listingProductId][$tagNick]);
-            }
+        $item = $this->getItem((int)$listingProduct->getId());
+        foreach ($this->tagRepository->getAllTags() as $tag) {
+            $item->removeTag($tag);
         }
     }
 
-    /**
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
+    private function getItem(int $productId): Buffer\Item
+    {
+        return $this->items[$productId] ?? $this->items[$productId] = new Buffer\Item($productId);
+    }
+
+    // ----------------------------------------
+
     public function flush(): void
     {
-        if (empty($this->addNicks) && empty($this->removeNicks)) {
+        if (empty($this->items)) {
             return;
         }
 
-        $existRelations = $this->getExistsRelationsByProductId(
-            array_merge(
-                array_keys($this->addNicks),
-                array_keys($this->removeNicks)
-            )
-        );
-        $this->flushAdd($existRelations);
-        $this->flushRemove($existRelations);
+        $this->createNewTags($this->items);
 
-        $this->addNicks = [];
-        $this->removeNicks = [];
+        $tagsEntitiesByErrorCode = $this->getTagsEntitiesByErrorCode();
+        $existedRelations = $this->getExistsRelationsByProductId($this->items);
+
+        $this->flushAdd($this->items, $tagsEntitiesByErrorCode, $existedRelations);
+        $this->flushRemove($this->items, $tagsEntitiesByErrorCode, $existedRelations);
+
+        $this->items = [];
     }
 
     /**
+     * @param Buffer\Item[] $items
+     *
+     * @return void
+     */
+    private function createNewTags(array $items): void
+    {
+        foreach ($items as $item) {
+            foreach ($item->getAddedTags() as $tag) {
+                $this->tagRepository->create($tag);
+            }
+        }
+    }
+
+    /**
+     * @return array<string, \Ess\M2ePro\Model\Tag\Entity>
+     */
+    private function getTagsEntitiesByErrorCode(): array
+    {
+        $result = [];
+        foreach ($this->tagRepository->getAllEntities() as $entity) {
+            $result[$entity->getErrorCode()] = $entity;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Buffer\Item[] $items
+     *
+     * @return array<int, <string, \Ess\M2ePro\Model\Tag\Entity>>
+     */
+    private function getExistsRelationsByProductId(array $items): array
+    {
+        $productsIds = array_map(
+            function ($item) {
+                return $item->getProductId();
+            },
+            $items
+        );
+        $relations = $this->listingProductTagRepository->findRelationsByProductIds($productsIds);
+
+        $result = [];
+        foreach ($relations as $relation) {
+            $tagEntity = $this->tagRepository->findEntityById($relation->getTagId());
+            if ($tagEntity === null) {
+                continue;
+            }
+
+            $result[$relation->getListingProductId()][$tagEntity->getErrorCode()] = $tagEntity;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Buffer\Item[] $items
+     * @param array $tagsEntitiesByErrorCode
      * @param array $existsRelations
      *
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function flushAdd(array $existsRelations): void
+    private function flushAdd(array $items, array $tagsEntitiesByErrorCode, array $existsRelations): void
     {
         $pack = [];
 
-        $existTags = $this->getExistsTagsCollectedByNick();
-        foreach ($this->addNicks as $listingProductId => $addedTagNicks) {
-            $existRelation = $existsRelations[$listingProductId] ?? [];
-            foreach ($addedTagNicks as $addedTagNick) {
-                if (!isset($existRelation[$addedTagNick])) {
-                    $pack[$listingProductId][] = (int)$existTags[$addedTagNick]->getId();
+        foreach ($items as $item) {
+            $existRelation = $existsRelations[$item->getProductId()] ?? [];
+            foreach ($item->getAddedTags() as $tag) {
+                if (!isset($existRelation[$tag->getErrorCode()])) {
+                    $pack[$item->getProductId()][] = (int)$tagsEntitiesByErrorCode[$tag->getErrorCode()]->getId();
                 }
             }
         }
@@ -166,21 +167,21 @@ class Buffer
     }
 
     /**
+     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Buffer\Item[] $items
+     * @param array $tagsEntitiesByErrorCode
      * @param array $existsRelations
      *
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function flushRemove(array $existsRelations): void
+    private function flushRemove(array $items, array $tagsEntitiesByErrorCode, array $existsRelations): void
     {
         $pack = [];
 
-        $existTags = $this->getExistsTagsCollectedByNick();
-        foreach ($this->removeNicks as $listingProductId => $deletedTagNicks) {
-            $existRelation = $existsRelations[$listingProductId] ?? [];
-            foreach ($deletedTagNicks as $deletedTagNick) {
-                if (isset($existRelation[$deletedTagNick])) {
-                    $pack[$listingProductId][] = (int)$existTags[$deletedTagNick]->getId();
+        foreach ($items as $item) {
+            $existRelation = $existsRelations[$item->getProductId()] ?? [];
+            foreach ($item->getRemovedTags() as $tag) {
+                if (isset($existRelation[$tag->getErrorCode()])) {
+                    $pack[$item->getProductId()][] = (int)$tagsEntitiesByErrorCode[$tag->getErrorCode()]->getId();
                 }
             }
         }
@@ -190,69 +191,5 @@ class Buffer
                 $this->relationResource->removeTags($chunk);
             }
         }
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Tag[]
-     */
-    private function getExistsTags(): array
-    {
-        if (isset($this->tags)) {
-            return $this->tags;
-        }
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Tag\Collection $collection */
-        $collection = $this->tagCollectionFactory->create();
-        $this->tags = $collection->getAll();
-
-        return $this->tags;
-    }
-
-    /**
-     * @return array<string, \Ess\M2ePro\Model\Tag>
-     */
-    private function getExistsTagsCollectedByNick(): array
-    {
-        $result = [];
-        foreach ($this->getExistsTags() as $tag) {
-            $result[$tag->getNick()] = $tag;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param array $productsIds
-     *
-     * @return array<int, <string, \Ess\M2ePro\Model\Tag>>
-     */
-    private function getExistsRelationsByProductId(array $productsIds): array
-    {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\Collection $collection */
-        $collection = $this->tagListingProductRelationCollectionFactory->create();
-        $collection->addFieldToFilter(
-            \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation::LISTING_PRODUCT_ID_FIELD,
-            [
-                'in' => array_unique($productsIds),
-            ]
-        );
-
-        $tagsById = [];
-        foreach ($this->getExistsTags() as $tag) {
-            $tagsById[$tag->getId()] = $tag;
-        }
-
-        $result = [];
-        /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Relation $item */
-        foreach ($collection as $item) {
-            if (!isset($tagsById[$item->getTagId()])) {
-                continue;
-            }
-
-            $tag = $tagsById[$item->getTagId()];
-            $result[$item->getListingProductId()][$tag->getNick()] = $tag;
-        }
-
-        return $result;
     }
 }

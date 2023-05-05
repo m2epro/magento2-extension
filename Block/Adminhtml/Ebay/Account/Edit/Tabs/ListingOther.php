@@ -68,7 +68,7 @@ class ListingOther extends AbstractForm
         if (isset($formData['marketplaces_data'])) {
             $marketplacesData = $formData['marketplaces_data'];
             $marketplacesData = !empty($marketplacesData)
-                ? $this->dataHelper->jsonDecode($marketplacesData) : [];
+                ? \Ess\M2ePro\Helper\Json::decode($marketplacesData) : [];
         }
 
         $marketplaces = $this->ebayFactory->getObject('Marketplace')
@@ -88,7 +88,7 @@ class ListingOther extends AbstractForm
 
         $key = 'other_listings_mapping_settings';
         if (isset($formData[$key])) {
-            $formData[$key] = (array)$this->dataHelper->jsonDecode($formData[$key]);
+            $formData[$key] = (array)\Ess\M2ePro\Helper\Json::decode($formData[$key]);
         }
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();

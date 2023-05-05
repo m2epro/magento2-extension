@@ -837,7 +837,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getAddedListingProductsIds()
     {
         $ids = $this->getData('product_add_ids');
-        $ids = array_filter((array)$this->getHelper('Data')->jsonDecode($ids));
+        $ids = array_filter((array)\Ess\M2ePro\Helper\Json::decode($ids));
 
         return array_values(array_unique($ids));
     }

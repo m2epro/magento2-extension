@@ -338,7 +338,7 @@ HTML;
         return $this->getUrl('*/*/getGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

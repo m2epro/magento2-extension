@@ -90,7 +90,7 @@ class Item extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('products', [
-            'header' => $this->__('Product'),
+            'header' => __('Product'),
             'align' => 'left',
             'width' => '*',
             'index' => 'product_id',
@@ -98,14 +98,14 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('stock_availability', [
-            'header' => $this->__('Stock Availability'),
+            'header' => __('Stock Availability'),
             'width' => '100px',
             'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('original_price', [
-            'header' => $this->__('Original Price'),
+            'header' => __('Original Price'),
             'align' => 'left',
             'width' => '80px',
             'filter' => false,
@@ -114,7 +114,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('qty_purchased', [
-            'header' => $this->__('QTY'),
+            'header' => __('QTY'),
             'align' => 'left',
             'width' => '80px',
             'index' => 'qty_purchased',
@@ -122,7 +122,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('price', [
-            'header' => $this->__('Price'),
+            'header' => __('Price'),
             'align' => 'left',
             'width' => '80px',
             'index' => 'price',
@@ -130,7 +130,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('tax_percent', [
-            'header' => $this->__('Tax Percent'),
+            'header' => __('Tax Percent'),
             'align' => 'left',
             'width' => '80px',
             'filter' => false,
@@ -139,7 +139,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('row_total', [
-            'header' => $this->__('Row Total'),
+            'header' => __('Row Total'),
             'align' => 'left',
             'width' => '80px',
             'frame_callback' => [$this, 'callbackColumnRowTotal'],
@@ -296,24 +296,24 @@ HTML;
         /**@var \Ess\M2ePro\Model\Order\Item $row */
 
         if (!$row->isMagentoProductExists()) {
-            return '<span style="color: red;">' . $this->__('Product Not Found') . '</span>';
+            return '<span style="color: red;">' . __('Product Not Found') . '</span>';
         }
 
         if ($row->getMagentoProduct() === null) {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         if (!$row->getMagentoProduct()->isStockAvailability()) {
-            return '<span style="color: red;">' . $this->__('Out Of Stock') . '</span>';
+            return '<span style="color: red;">' . __('Out Of Stock') . '</span>';
         }
 
-        return $this->__('In Stock');
+        return __('In Stock');
     }
 
     public function callbackColumnOriginalPrice($value, $row, $column, $isExport)
     {
         $productId = $row->getData('product_id');
-        $formattedPrice = $this->__('N/A');
+        $formattedPrice = __('N/A');
 
         if ($productId && $product = $this->productModel->load($productId)) {
             $formattedPrice = $product->getFormatedPrice();
@@ -369,7 +369,7 @@ HTML;
         );
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return '';
     }

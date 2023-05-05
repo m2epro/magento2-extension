@@ -58,7 +58,7 @@ class View extends AbstractContainer
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('*/*/index');
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'onclick' => 'CommonObj.backClick(\'' . $url . '\')',
             'class' => 'back',
         ]);
@@ -68,7 +68,7 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/*/updateShippingStatus', ['id' => $this->order->getId()]);
             $this->addButton('update_shipping_status', [
-                'label' => $this->__('Mark as Shipped'),
+                'label' => __('Mark as Shipped'),
                 'onclick' => "setLocation('" . $url . "');",
                 'class' => 'primary',
             ]);
@@ -79,7 +79,7 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/order/reservationCancel', ['ids' => $this->order->getId()]);
             $this->addButton('reservation_cancel', [
-                'label' => $this->__('Cancel QTY Reserve'),
+                'label' => __('Cancel QTY Reserve'),
                 'onclick' => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '" . $url . "');",
                 'class' => 'primary',
             ]);
@@ -88,7 +88,7 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/order/reservationPlace', ['ids' => $this->order->getId()]);
             $this->addButton('reservation_place', [
-                'label' => $this->__('Reserve QTY'),
+                'label' => __('Reserve QTY'),
                 'onclick' => "confirmSetLocation(M2ePro.translator.translate('Are you sure?'), '" . $url . "');",
                 'class' => 'primary',
             ]);
@@ -99,7 +99,7 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $this->order->getId()]);
             $this->addButton('order', [
-                'label' => $this->__('Create Magento Order'),
+                'label' => __('Create Magento Order'),
                 'onclick' => "setLocation('" . $url . "');",
                 'class' => 'primary',
             ]);
@@ -108,11 +108,11 @@ class View extends AbstractContainer
             // ---------------------------------------
             $url = $this->getUrl('*/*/createMagentoOrder', ['id' => $this->order->getId(), 'force' => 'yes']);
             $confirm = $this->dataHelper->escapeJs(
-                $this->__('Are you sure that you want to create new Magento Order?')
+                __('Are you sure that you want to create new Magento Order?')
             );
 
             $this->addButton('order', [
-                'label' => $this->__('Create Magento Order'),
+                'label' => __('Create Magento Order'),
                 'onclick' => "confirmSetLocation('" . $confirm . "','" . $url . "');",
                 'class' => 'primary',
             ]);

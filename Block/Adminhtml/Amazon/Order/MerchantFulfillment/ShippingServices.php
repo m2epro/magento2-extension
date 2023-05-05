@@ -80,7 +80,7 @@ class ShippingServices extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'amazon_template_description_definition',
                 self::HELP_BLOCK,
                 [
-                    'content' => $this->__(
+                    'content' => __(
                         <<<HTML
 There were <strong>no</strong> suitable <strong>Shipping Services</strong> found according to the provided
 <strong>Configuration Settings</strong>.<br/>
@@ -263,8 +263,8 @@ JS
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
-                'title' => $this->__('Amazon\'s Shipping Services'),
-                'content' => $this->__(
+                'title' => __('Amazon\'s Shipping Services'),
+                'content' => __(
                     <<<HTML
 <p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options
 if you need to expedite your delivery.</p>

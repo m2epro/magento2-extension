@@ -40,7 +40,7 @@ class RemoveOption extends Main
 
         if (!is_array($productOptionsGroup)) {
             $productOptionsGroup = htmlspecialchars_decode($productOptionsGroup);
-            $productOptionsGroup = $this->getHelper('Data')->jsonDecode($productOptionsGroup);
+            $productOptionsGroup = \Ess\M2ePro\Helper\Json::decode($productOptionsGroup);
         }
 
         $this->vocabularyHelper->removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttr);

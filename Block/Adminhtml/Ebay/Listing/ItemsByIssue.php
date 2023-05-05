@@ -30,16 +30,60 @@ class ItemsByIssue extends AbstractContainer
         $this->buttonList->remove('edit');
     }
 
+    protected function _prepareLayout()
+    {
+        $this->css->addFile('switcher.css');
+
+        return parent::_prepareLayout();
+    }
+
     /**
      * @ingeritdoc
      */
-    protected function _toHtml()
+    protected function _toHtml(): string
     {
+        $filterBlockHtml = $this->getFilterBlockHtml();
+
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Tabs $tabsBlock */
         $tabsBlock = $this->getLayout()->createBlock(Tabs::class);
         $tabsBlock->activateItemsByIssueTab();
         $tabsBlockHtml = $tabsBlock->toHtml();
 
-        return $tabsBlockHtml . parent::_toHtml();
+        return $filterBlockHtml . $tabsBlockHtml . parent::_toHtml();
+    }
+
+    /**
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getFilterBlockHtml(): string
+    {
+        $marketplaceSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class);
+        $accountSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class);
+
+        return <<<HTML
+<div class="page-main-actions">
+    <div class="filter_block">
+        {$accountSwitcherBlock->toHtml()}
+        {$marketplaceSwitcherBlock->toHtml()}
+    </div>
+</div>
+HTML;
+    }
+
+    /**
+     * @param string $switcherClass
+     *
+     * @return \Ess\M2ePro\Block\Adminhtml\Component\Switcher
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function createSwitcher(string $switcherClass): \Ess\M2ePro\Block\Adminhtml\Switcher
+    {
+        return $this->getLayout()
+                    ->createBlock($switcherClass)
+                    ->setData([
+                        'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
+                        'controller_name' => $this->getRequest()->getControllerName(),
+                    ]);
     }
 }

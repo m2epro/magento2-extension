@@ -140,25 +140,23 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
         $connection->delete($tableMarketplaces, ['marketplace_id = ?' => $this->marketplace->getId()]);
 
-        $helper = $this->getHelper('Data');
-
         $insertData = [
             'marketplace_id' => $this->marketplace->getId(),
             'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
-            'dispatch' => $helper->jsonEncode($details['dispatch']),
-            'packages' => $helper->jsonEncode($details['packages']),
-            'return_policy' => $helper->jsonEncode($details['return_policy']),
-            'listing_features' => $helper->jsonEncode($details['listing_features']),
-            'payments' => $helper->jsonEncode($details['payments']),
-            'shipping_locations' => $helper->jsonEncode($details['shipping_locations']),
-            'shipping_locations_exclude' => $helper->jsonEncode($details['shipping_locations_exclude']),
-            'tax_categories' => $helper->jsonEncode($details['tax_categories']),
-            'charities' => $helper->jsonEncode($details['charities']),
+            'dispatch' => \Ess\M2ePro\Helper\Json::encode($details['dispatch']),
+            'packages' => \Ess\M2ePro\Helper\Json::encode($details['packages']),
+            'return_policy' => \Ess\M2ePro\Helper\Json::encode($details['return_policy']),
+            'listing_features' => \Ess\M2ePro\Helper\Json::encode($details['listing_features']),
+            'payments' => \Ess\M2ePro\Helper\Json::encode($details['payments']),
+            'shipping_locations' => \Ess\M2ePro\Helper\Json::encode($details['shipping_locations']),
+            'shipping_locations_exclude' => \Ess\M2ePro\Helper\Json::encode($details['shipping_locations_exclude']),
+            'tax_categories' => \Ess\M2ePro\Helper\Json::encode($details['tax_categories']),
+            'charities' => \Ess\M2ePro\Helper\Json::encode($details['charities']),
         ];
 
         if (isset($details['additional_data'])) {
-            $insertData['additional_data'] = $helper->jsonEncode($details['additional_data']);
+            $insertData['additional_data'] = \Ess\M2ePro\Helper\Json::encode($details['additional_data']);
         }
 
         unset($details['categories_version']);
@@ -174,11 +172,11 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                 'marketplace_id' => $this->marketplace->getId(),
                 'ebay_id' => $data['ebay_id'],
                 'title' => $data['title'],
-                'category' => $helper->jsonEncode($data['category']),
+                'category' => \Ess\M2ePro\Helper\Json::encode($data['category']),
                 'is_flat' => $data['is_flat'],
                 'is_calculated' => $data['is_calculated'],
                 'is_international' => $data['is_international'],
-                'data' => $helper->jsonEncode($data['data']),
+                'data' => \Ess\M2ePro\Helper\Json::encode($data['data']),
             ];
             $connection->insert($tableShipping, $insertData);
         }
@@ -224,8 +222,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             $categoriesCount = count($response['data']);
             $insertData = [];
 
-            $helper = $this->getHelper('Data');
-
             for ($categoryIndex = 0; $categoryIndex < $categoriesCount; $categoryIndex++) {
                 $data = $response['data'][$categoryIndex];
 
@@ -236,7 +232,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                     'title' => $data['title'],
                     'path' => $data['path'],
                     'is_leaf' => $data['is_leaf'],
-                    'features' => ($data['is_leaf'] ? $helper->jsonEncode($data['features']) : null),
+                    'features' => ($data['is_leaf'] ? \Ess\M2ePro\Helper\Json::encode($data['features']) : null),
                 ];
 
                 if (count($insertData) >= 100 || $categoryIndex >= ($categoriesCount - 1)) {

@@ -405,7 +405,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->getUrl('*/*/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

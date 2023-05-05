@@ -415,9 +415,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                 $processingList->addData(
                     [
-                        'relist_request_data' => $this->helperData->jsonEncode($requestData),
+                        'relist_request_data' => \Ess\M2ePro\Helper\Json::encode($requestData),
                         'relist_configurator_data' =>
-                            $this->helperData->jsonEncode($configurator->getSerializedData()),
+                            \Ess\M2ePro\Helper\Json::encode($configurator->getSerializedData()),
                     ]
                 );
                 $processingList->save();
@@ -787,7 +787,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
                     $messages = $skuResolver->getMessages();
                     if (!empty($messages)) {
-                        $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
+                        $additionalData = \Ess\M2ePro\Helper\Json::decode($listingProductData['additional_data']);
                         $logger = $this->createLogger($additionalData['params']['status_changer']);
 
                         foreach ($skuResolver->getMessages() as $message) {
@@ -851,7 +851,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                             );
                         }
 
-                        $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
+                        $additionalData = \Ess\M2ePro\Helper\Json::decode($listingProductData['additional_data']);
                         $logger = $this->createLogger($additionalData['params']['status_changer']);
                         $logger->logListingProductMessage($listingProduct, $message);
 
@@ -926,7 +926,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             $params = ['sku' => $listingProductData['sku']];
 
             if (!empty($listingProductData['additional_data'])) {
-                $additionalData = $this->helperData->jsonDecode($listingProductData['additional_data']);
+                $additionalData = \Ess\M2ePro\Helper\Json::decode($listingProductData['additional_data']);
                 // @codingStandardsIgnoreLine
                 !empty($additionalData['params']) && $params = array_merge($params, $additionalData['params']);
             }

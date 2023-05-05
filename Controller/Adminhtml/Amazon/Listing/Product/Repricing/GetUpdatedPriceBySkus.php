@@ -15,16 +15,11 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     /** @var \Magento\Framework\Locale\CurrencyInterface  */
     protected $localeCurrency;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
-
     public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         Context $context
     ) {
-        $this->helperData = $helperData;
         $this->localeCurrency = $localeCurrency;
         parent::__construct($amazonFactory, $context);
     }
@@ -37,7 +32,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $groupedSkus = $this->helperData->jsonDecode($groupedSkus);
+        $groupedSkus = \Ess\M2ePro\Helper\Json::decode($groupedSkus);
         $resultPrices = [];
 
         foreach ($groupedSkus as $accountId => $skus) {

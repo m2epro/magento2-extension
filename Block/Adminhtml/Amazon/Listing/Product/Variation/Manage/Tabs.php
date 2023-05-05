@@ -53,8 +53,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     protected function _beforeToHtml()
     {
         $this->addTab('variations', [
-            'label' => $this->__('Child Products'),
-            'title' => $this->__('Child Products'),
+            'label' => __('Child Products'),
+            'title' => __('Child Products'),
             'content' => $this->getLayout()
                               ->createBlock(
                                   \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Variations::class
@@ -71,15 +71,15 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         $settingsBlock->calculateWarnings();
 
         $this->addTab('settings', [
-            'label' => $this->__('Settings'),
-            'title' => $this->__('Settings'),
+            'label' => __('Settings'),
+            'title' => __('Settings'),
             'content' => $settingsBlock->toHtml(),
             'class' => (!empty($settingsBlock->getMessages())) ? 'listing-view-warning-icon' : '',
         ]);
 
         $this->addTab('vocabulary', [
-            'label' => $this->__('Advanced'),
-            'title' => $this->__('Advanced'),
+            'label' => __('Advanced'),
+            'title' => __('Advanced'),
             'content' => $this->getLayout()
                               ->createBlock(
                                   \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary::class

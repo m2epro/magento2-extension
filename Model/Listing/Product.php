@@ -287,7 +287,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
         $storageKey = "listing_product_{$this->getId()}_variations_" .
-            sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
+            sha1((string)$asObjects . \Ess\M2ePro\Helper\Json::encode($filters));
 
         if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data_Cache_Runtime')->getValue($storageKey))) {
             return $cacheData;

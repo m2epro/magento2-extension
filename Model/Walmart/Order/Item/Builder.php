@@ -59,7 +59,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         if (!empty($data['merged_walmart_order_item_ids'])) {
             $this->setData(
                 'merged_walmart_order_item_ids',
-                $this->getHelper('Data')->jsonEncode($data['merged_walmart_order_item_ids'])
+                \Ess\M2ePro\Helper\Json::encode($data['merged_walmart_order_item_ids'])
             );
         }
         // ---------------------------------------

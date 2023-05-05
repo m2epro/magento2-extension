@@ -21,19 +21,20 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public const STATUS_SHIPPED = 3;
     public const STATUS_CANCELED = 5;
 
+    /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
 
     private $subTotalPrice = null;
-
     private $grandTotalPrice = null;
 
+ /** @var \Ess\M2ePro\Model\Walmart\Order\ShippingAddressFactory */
     protected $shippingAddressFactory;
-
+    /** @var \Magento\Sales\Model\Order\Email\Sender\OrderSender */
     private $orderSender;
-
+    /** @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender */
     private $invoiceSender;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other */
+    private $listingOtherResourceModel;
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
@@ -47,6 +48,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other $listingOtherResourceModel,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -55,6 +57,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
 
         parent::__construct(
             $walmartFactory,
@@ -70,15 +73,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         );
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
+
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Order::class);
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Order\ProxyObject
@@ -88,8 +88,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $this->modelFactory->getObject('Walmart_Order_ProxyObject', ['order' => $this]);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Walmart\Account
      */
@@ -97,8 +95,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         return $this->getParentObject()->getAccount()->getChildObject();
     }
-
-    //########################################
 
     public function getWalmartOrderId()
     {
@@ -146,7 +142,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      */
     public function getShippingAddress()
     {
-        $address = $this->getHelper('Data')->jsonDecode($this->getData('shipping_address'));
+        $address = \Ess\M2ePro\Helper\Json::decode($this->getData('shipping_address'));
 
         return $this->shippingAddressFactory->create(
             [
@@ -160,8 +156,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $this->getData('shipping_date_to');
     }
 
-    //########################################
-
     /**
      * @return float
      */
@@ -169,8 +163,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         return (float)$this->getData('paid_amount');
     }
-
-    //########################################
 
     /**
      * @return array
@@ -239,8 +231,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return round($taxRate, 4);
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -281,8 +271,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $this->getStatus() == self::STATUS_CANCELED;
     }
 
-    //########################################
-
     /**
      * @return float|null
      */
@@ -310,8 +298,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return round($this->grandTotalPrice, 2);
     }
 
-    //########################################
-
     public function getStatusForMagentoOrder()
     {
         $status = '';
@@ -322,32 +308,31 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $status;
     }
 
-    //########################################
-
     /**
      * @return int|null
      */
     public function getAssociatedStoreId()
     {
-        $storeId = null;
-
         $channelItems = $this->getParentObject()->getChannelItems();
 
-        if (count($channelItems) == 0) {
-            // Unmanaged order
-            // ---------------------------------------
+        if (empty($channelItems)) {
             $storeId = $this->getWalmartAccount()->getMagentoOrdersListingsOtherStoreId();
-            // ---------------------------------------
         } else {
-            // M2E Pro order
-            // ---------------------------------------
-            if ($this->getWalmartAccount()->isMagentoOrdersListingsStoreCustom()) {
+            /** @var \Ess\M2ePro\Model\Walmart\Item $firstChannelItem */
+            $firstChannelItem = reset($channelItems);
+            $itemIsFromOtherListing = $this->listingOtherResourceModel->isItemFromOtherListing(
+                $firstChannelItem->getProductId(),
+                $firstChannelItem->getAccountId(),
+                $firstChannelItem->getMarketplaceId()
+            );
+
+            if ($itemIsFromOtherListing) {
+                $storeId = $this->getWalmartAccount()->getMagentoOrdersListingsOtherStoreId();
+            } elseif ($this->getWalmartAccount()->isMagentoOrdersListingsStoreCustom()) {
                 $storeId = $this->getWalmartAccount()->getMagentoOrdersListingsStoreId();
             } else {
-                $firstChannelItem = reset($channelItems);
                 $storeId = $firstChannelItem->getStoreId();
             }
-            // ---------------------------------------
         }
 
         if ($storeId == 0) {
@@ -356,8 +341,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         return $storeId;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -392,8 +375,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return true;
     }
 
-    //########################################
-
     public function beforeCreateMagentoOrder()
     {
         if ($this->isCanceled()) {
@@ -409,8 +390,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             $this->orderSender->send($this->getParentObject()->getMagentoOrder());
         }
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -436,8 +415,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         return true;
     }
-
-    // ---------------------------------------
 
     /**
      * @return \Magento\Sales\Model\Order\Invoice|null
@@ -468,8 +445,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $invoice;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -494,8 +469,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         return true;
     }
-
-    // ---------------------------------------
 
     /**
      * @return \Magento\Sales\Model\Order\Shipment[]|null
@@ -592,8 +565,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         return $tracks;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -752,13 +723,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             $existingParams['items'][] = $newItem;
         }
 
-        $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
+        $change->setData('params', \Ess\M2ePro\Helper\Json::encode($existingParams));
         $change->save();
 
         return true;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -828,6 +797,4 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         return true;
     }
-
-    //########################################
 }

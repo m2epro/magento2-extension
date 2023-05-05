@@ -138,7 +138,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
         $throwExceptionIfNoOptions = true
     ) {
         $storageKey = "listing_product_{$this->getListingProductId()}_variation_{$this->getId()}_options_" .
-            sha1((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
+            sha1((string)$asObjects . \Ess\M2ePro\Helper\Json::encode($filters));
 
         if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data_Cache_Runtime')->getValue($storageKey))) {
             return $cacheData;

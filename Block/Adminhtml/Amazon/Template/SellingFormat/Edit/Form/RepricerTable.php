@@ -105,7 +105,7 @@ class RepricerTable extends AbstractGrid
     protected function _prepareColumns(): RepricerTable
     {
         $this->addColumn('title', [
-            'header' => $this->__('Title / Info'),
+            'header' => __('Title / Info'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -116,7 +116,7 @@ class RepricerTable extends AbstractGrid
         ]);
 
         $this->addColumn('actions', [
-            'header' => $this->__('Actions'),
+            'header' => __('Actions'),
             'align' => 'center',
             'width' => '100px',
             'type' => 'text',
@@ -138,11 +138,11 @@ class RepricerTable extends AbstractGrid
     }
 
     /**
-     * @param $row
+     * @param $item
      *
      * @return string|void
      */
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return '';
     }
@@ -159,10 +159,10 @@ class RepricerTable extends AbstractGrid
     public function callbackColumnTitle($value, $row, $column, $isExport): string
     {
         /** @var \Ess\M2ePro\Model\Account $row */
-        $marketplaceLabel = $this->__('Marketplace');
+        $marketplaceLabel = __('Marketplace');
         $marketplaceTitle = $row->getData('marketplace_title');
 
-        $merchantLabel = $this->__('Merchant ID');
+        $merchantLabel = __('Merchant ID');
         $merchantId = $row->getChildObject()->getData('merchant_id');
 
         return <<<HTML

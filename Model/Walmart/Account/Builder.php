@@ -148,7 +148,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);
+        $data['other_listings_mapping_settings'] = \Ess\M2ePro\Helper\Json::encode($mappingSettings);
 
         // tab: orders
         // ---------------------------------------
@@ -308,9 +308,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['magento_orders_settings'] = $this
-            ->getHelper('Data')
-            ->jsonEncode($data['magento_orders_settings']);
+        $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($data['magento_orders_settings']);
 
         // tab invoice and shipment
         // ---------------------------------------
@@ -336,7 +334,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ];
             }
 
-            $data['other_carriers'] = $this->getHelper('Data')->jsonEncode($otherCarriers);
+            $data['other_carriers'] = \Ess\M2ePro\Helper\Json::encode($otherCarriers);
         }
 
         return $data;

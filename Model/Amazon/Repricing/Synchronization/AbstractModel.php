@@ -35,7 +35,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
 
         if (!empty($filters)) {
             foreach ($filters as $name => $value) {
-                $filters[$name] = $this->getHelper('Data')->jsonEncode($value);
+                $filters[$name] = \Ess\M2ePro\Helper\Json::encode($value);
             }
 
             $requestData['filters'] = $filters;

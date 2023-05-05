@@ -217,7 +217,7 @@ HTML;
         return $this->getUrl('*/order/productMappingGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

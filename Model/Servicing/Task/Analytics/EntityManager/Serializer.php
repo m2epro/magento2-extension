@@ -52,14 +52,6 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
                 );
                 break;
 
-            case \Ess\M2ePro\Helper\Component\Amazon::NICK . '::Template_Description':
-                /**@var \Ess\M2ePro\Model\Template\Description $item */
-                $data['specifics'] = $this->unsetDataInRelatedItems(
-                    $item->getChildObject()->getSpecifics(),
-                    'template_description_id'
-                );
-                break;
-
             // ---------------------------------------
 
             case \Ess\M2ePro\Helper\Component\Ebay::NICK . '::Account':

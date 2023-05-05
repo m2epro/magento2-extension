@@ -37,7 +37,7 @@ class AddOptions extends Main
         $needAddToVocabulary = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($optionsData)) {
-            $optionsData = $this->dataHelper->jsonDecode($optionsData);
+            $optionsData = \Ess\M2ePro\Helper\Json::decode($optionsData);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {

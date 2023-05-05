@@ -93,7 +93,7 @@ class OrderItemStructure implements InspectorInterface, FixerInterface
         <th style="width: 300px"></th>
     </tr>
 HTML;
-        $repairInfo = $this->helperFactory->getObject('Data')->jsonEncode($data['ids']);
+        $repairInfo = \Ess\M2ePro\Helper\Json::encode($data['ids']);
         $input = "<input type='checkbox' style='display: none;' checked='checked'
             name='repair_info' value='" . $repairInfo . "'>";
         $html .= <<<HTML

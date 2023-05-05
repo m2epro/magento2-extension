@@ -134,7 +134,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('Product ID'),
+            'header' => __('Product ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -145,7 +145,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Product Title / Product SKU'),
+            'header' => __('Product Title / Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -156,7 +156,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('general_id', [
-            'header' => $this->__('ASIN / ISBN'),
+            'header' => __('ASIN / ISBN'),
             'align' => 'left',
             'width' => '140px',
             'type' => 'text',
@@ -170,7 +170,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             || $this->config->isWorldwideIdModeCustomAttribute()
         ) {
             $this->addColumn('settings', [
-                'header' => $this->__('Search Settings Values'),
+                'header' => __('Search Settings Values'),
                 'align' => 'left',
                 'width' => '240px',
                 'filter' => false,
@@ -182,23 +182,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
+            'header' => __('Status'),
             'width' => '200px',
             'index' => 'search_settings_status',
             'filter_index' => 'search_settings_status',
             'sortable' => false,
             'type' => 'options',
             'options' => [
-                self::SEARCH_SETTINGS_STATUS_NONE => $this->__('None'),
+                self::SEARCH_SETTINGS_STATUS_NONE => __('None'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS =>
-                    $this->__('In Progress'),
+                    __('In Progress'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID =>
-                    $this->__('Product ID not found'),
+                    __('Product ID not found'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND =>
-                    $this->__('Not Found'),
+                    __('Not Found'),
                 \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED =>
-                    $this->__('Action Required'),
-                self::SEARCH_SETTINGS_STATUS_COMPLETED => $this->__('Completed'),
+                    __('Action Required'),
+                self::SEARCH_SETTINGS_STATUS_COMPLETED => __('Completed'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
             'filter_condition_callback' => [$this, 'callbackFilterStatus'],
@@ -214,12 +214,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('assignGeneralId', [
-            'label' => $this->__('Search ASIN/ISBN automatically'),
+            'label' => __('Search ASIN/ISBN automatically'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('unassignGeneralId', [
-            'label' => $this->__('Reset ASIN/ISBN information'),
+            'label' => __('Reset ASIN/ISBN information'),
             'url' => '',
         ]);
 
@@ -240,7 +240,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                          ->setProductId($row->getData('entity_id'))
                                          ->getSku();
 
-        $value .= '<br/><strong>' . $this->__('SKU') .
+        $value .= '<br/><strong>' . __('SKU') .
             ':</strong> ' . $this->dataHelper->escapeHtml($tempSku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
@@ -283,28 +283,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $generalId = $identifiers->getGeneralId();
 
             if (empty($generalId)) {
-                $attrValue = $this->__('Not set');
+                $attrValue = __('Not set');
             } elseif ($generalId->hasUnresolvedType()) {
-                $attrValue = $this->__('Inappropriate value');
+                $attrValue = __('Inappropriate value');
             } else {
                 $attrValue = $generalId->getIdentifier();
             }
 
-            $value .= '<b>' . $this->__('ASIN/ISBN') . '</b>: ' . $attrValue . '<br/>';
+            $value .= '<b>' . __('ASIN/ISBN') . '</b>: ' . $attrValue . '<br/>';
         }
 
         if ($this->config->isWorldwideIdModeCustomAttribute()) {
             $worldwideId = $identifiers->getWorldwideId();
 
             if (empty($worldwideId)) {
-                $attrValue = $this->__('Not Set');
+                $attrValue = __('Not Set');
             } elseif ($worldwideId->hasUnresolvedType()) {
-                $attrValue = $this->__('Inappropriate value');
+                $attrValue = __('Inappropriate value');
             } else {
                 $attrValue = $worldwideId->getIdentifier();
             }
 
-            $value .= '<b>' . $this->__('UPC/EAN') . '</b>: ' . $attrValue;
+            $value .= '<b>' . __('UPC/EAN') . '</b>: ' . $attrValue;
         }
 
         return $value;
@@ -317,8 +317,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $style = 'display: inline-block; vertical-align: middle; line-height: 30px;';
 
         if (empty($generalId) && empty($searchSettingsStatus)) {
-            $msg = $this->__('None');
-            $tip = $this->__('The Search of Product was not performed yet');
+            $msg = __('None');
+            $tip = __('The Search of Product was not performed yet');
 
             return <<<HTML
 <span style="color: gray; {$style}">{$msg}</span>&nbsp;
@@ -330,7 +330,7 @@ HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS:
                 $searchData = \Ess\M2ePro\Helper\Json::decode($row->getData('search_settings_data'));
 
-                $msg = $this->__('In Progress');
+                $msg = __('In Progress');
                 $tip = $this->__(
                     'The Search is being performed now by %type% "%value%"',
                     $this->prepareSearchType($searchData['type']),
@@ -342,8 +342,8 @@ HTML;
 {$this->getTooltipHtml($tip)}
 HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID:
-                $msg = $this->__('Invalid Product ID');
-                $tip = $this->__('Product ID is missing or has invalid format');
+                $msg = __('Invalid Product ID');
+                $tip = __('Product ID is missing or has invalid format');
 
                 return <<<HTML
 <span style="color: red; {$style}">{$msg}</span>&nbsp;
@@ -351,8 +351,8 @@ HTML;
 HTML;
 
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND:
-                $msg = $this->__('Product was not found');
-                $tip = $this->__(
+                $msg = __('Product was not found');
+                $tip = __(
                     'There are no Products found on Amazon after the Automatic Search
                                                    was performed according to Listing Search Settings.'
                 );
@@ -372,20 +372,20 @@ HTML;
                 }
                 $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-                $productTitle = $this->__(
+                $productTitle = __(
                     'Search ASIN/ISBN For &quot;%product_title%&quot;',
                     $productTitle
                 );
                 $productTitle = $this->dataHelper->escapeJs($productTitle);
 
-                $linkTxt = $this->__('choose one of the Results');
+                $linkTxt = __('choose one of the Results');
 
                 $linkHtml = <<<HTML
 <a href="javascript:void(0)"
     onclick="ListingGridObj.productSearchHandler.openPopUp(1,'{$productTitle}',{$lpId})">{$linkTxt}</a>
 HTML;
 
-                $msg = $this->__('Action Required');
+                $msg = __('Action Required');
                 $tip = $this->__(
                     'Please %link% that were found by %type% "%value%"',
                     $linkHtml,
@@ -401,8 +401,8 @@ HTML;
 
         $searchInfo = \Ess\M2ePro\Helper\Json::decode($row->getData('general_id_search_info'));
 
-        $msg = $this->__('Completed');
-        $tip = $this->__(
+        $msg = __('Completed');
+        $tip = __(
             'Product was found by %type% "%value%"',
             $this->prepareSearchType($searchInfo['type']),
             $searchInfo['value']
@@ -434,7 +434,7 @@ HTML;
         }
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-        $productTitle = $this->__('Search ASIN/ISBN For &quot;%product_title%&quot;', $productTitle);
+        $productTitle = __('Search ASIN/ISBN For &quot;%product_title%&quot;', $productTitle);
         $productTitle = $this->dataHelper->escapeJs($productTitle);
         // ---------------------------------------
 
@@ -444,7 +444,7 @@ HTML;
 
         // ---------------------------------------
         if ($searchSettingsStatus == \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS) {
-            $tip = $this->__('Automatic ASIN/ISBN Search in Progress.');
+            $tip = __('Automatic ASIN/ISBN Search in Progress.');
             $iconSrc = $this->getViewFileUrl('Ess_M2ePro::images/search_statuses/processing.gif');
 
             return <<<HTML
@@ -458,7 +458,7 @@ HTML;
 
         // ---------------------------------------
         if ($searchSettingsStatus == \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED) {
-            $linkTxt = $this->__('Choose ASIN/ISBN');
+            $linkTxt = __('Choose ASIN/ISBN');
 
             return <<<HTML
 <a href="javascript:;" title="{$linkTxt}"
@@ -467,8 +467,8 @@ HTML;
         }
         // ---------------------------------------
 
-        $na = $this->__('N/A');
-        $tip = $this->__('Search for ASIN/ISBN');
+        $na = __('N/A');
+        $tip = __('Search for ASIN/ISBN');
 
         return <<<HTML
 {$na} &nbsp;
@@ -495,7 +495,7 @@ HTML;
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
-            $tip = $this->__('ASIN/ISBN was found automatically');
+            $tip = __('ASIN/ISBN was found automatically');
 
             $text = <<<HTML
 <a href="{$url}" target="_blank" title="{$tip}" style="color:#40AADB;">{$generalId}</a>
@@ -517,7 +517,7 @@ HTML;
 
         $listingProductId = (int)$row->getData('id');
 
-        $tip = $this->__('Unassign ASIN/ISBN');
+        $tip = __('Unassign ASIN/ISBN');
 
         $text .= <<<HTML
 &nbsp;
@@ -595,7 +595,7 @@ HTML;
         return $this->lockedDataCache[$listingProductId];
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

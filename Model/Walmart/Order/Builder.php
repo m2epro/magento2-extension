@@ -105,7 +105,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         // Init sale data
         // ---------------------------------------
         $this->setData('paid_amount', (float)$data['amount_paid']);
-        $this->setData('tax_details', $this->helperData->jsonEncode($data['tax_details']));
+        $this->setData('tax_details', \Ess\M2ePro\Helper\Json::encode($data['tax_details']));
         $this->setData('currency', $data['currency']);
         // ---------------------------------------
 
@@ -114,7 +114,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->setData('buyer_name', $data['buyer']['name']);
         $this->setData('buyer_email', $data['buyer']['email']);
         $this->setData('shipping_service', $data['shipping']['level']);
-        $this->setData('shipping_address', $this->helperData->jsonEncode($data['shipping']['address']));
+        $this->setData('shipping_address', \Ess\M2ePro\Helper\Json::encode($data['shipping']['address']));
         $this->setData('shipping_price', (float)$data['shipping']['price']);
         $this->setData('shipping_date_to', $data['shipping']['estimated_ship_date']);
         // ---------------------------------------

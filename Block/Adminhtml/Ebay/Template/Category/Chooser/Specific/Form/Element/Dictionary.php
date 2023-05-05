@@ -26,16 +26,12 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         $data = []
     ) {
         $this->helperFactory = $context->getHelperFactory();
@@ -43,7 +39,6 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
         $this->setType('specifics');
         $this->translationHelper = $translationHelper;
-        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -208,7 +203,7 @@ HTML;
                         'style' => 'width: 100%;' . $display,
                         'value' => empty($specific['template_specific']['value_ebay_recommended'])
                             ? []
-                            : $this->dataHelper->jsonDecode(
+                            : \Ess\M2ePro\Helper\Json::decode(
                                 $specific['template_specific']['value_ebay_recommended']
                             ),
                         'values' => $values,
@@ -235,7 +230,7 @@ HTML;
                     'style' => 'width: 100%;' . $display,
                     'value' => empty($specific['template_specific']['value_ebay_recommended'])
                         ? ''
-                        : $this->dataHelper->jsonDecode($specific['template_specific']['value_ebay_recommended']),
+                        : \Ess\M2ePro\Helper\Json::decode($specific['template_specific']['value_ebay_recommended']),
                     'values' => $values,
                     'disabled' => $disabled,
                 ],
@@ -250,7 +245,7 @@ HTML;
         return $element->getHtml();
     }
 
-    public function getValueCustomValueHtml($index, $specific)
+    public function getValueCustomValueHtml($index, $specific): string
     {
         $addMoreTxt = $this->translationHelper->__('Add more');
 
@@ -259,7 +254,7 @@ HTML;
         if (empty($specific['template_specific']['value_custom_value'])) {
             $customValues = [''];
         } else {
-            $customValues = $this->dataHelper->jsonDecode($specific['template_specific']['value_custom_value']);
+            $customValues = \Ess\M2ePro\Helper\Json::decode($specific['template_specific']['value_custom_value']);
         }
 
         if (!is_array($customValues)) {

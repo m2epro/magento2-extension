@@ -39,8 +39,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
     protected function _prepareLayout()
     {
         !$this->isNeedToHideRecent() && $this->addTab(self::TAB_ID_RECENT, [
-            'label' => $this->__('Recently Used'),
-            'title' => $this->__('Recently Used'),
+            'label' => __('Recently Used'),
+            'title' => __('Recently Used'),
             'content' => $this->getLayout()
                               ->createBlock(
                                   \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs\Recent::class
@@ -50,8 +50,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         ]);
 
         $this->addTab(self::TAB_ID_BROWSE, [
-            'label' => $this->__('Browse'),
-            'title' => $this->__('Browse'),
+            'label' => __('Browse'),
+            'title' => __('Browse'),
             'content' => $this->getLayout()
                               ->createBlock(
                                   \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs\Browse::class
@@ -61,8 +61,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalTa
         ]);
 
         $this->addTab(self::TAB_ID_SEARCH, [
-            'label' => $this->__('Search'),
-            'title' => $this->__('Search'),
+            'label' => __('Search'),
+            'title' => __('Search'),
             'content' => $this->getLayout()
                               ->createBlock(
                                   \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Category\Categories\Chooser\Tabs\Search::class

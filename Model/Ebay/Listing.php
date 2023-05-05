@@ -776,7 +776,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             'online_qty_sold' => $ebayListingOther->getOnlineQtySold(),
             'online_bids' => $ebayListingOther->getOnlineBids(),
             'online_main_category' => $ebayListingOther->getOnlineMainCategory(),
-            'online_categories_data' => $this->getHelper('Data')->jsonEncode(
+            'online_categories_data' => \Ess\M2ePro\Helper\Json::encode(
                 $ebayListingOther->getOnlineCategoriesData()
             ),
 
@@ -931,7 +931,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getAddedListingProductsIds()
     {
         $ids = $this->getData('product_add_ids');
-        $ids = array_filter((array)$this->getHelper('Data')->jsonDecode($ids));
+        $ids = array_filter((array)\Ess\M2ePro\Helper\Json::decode($ids));
 
         return array_values(array_unique($ids));
     }

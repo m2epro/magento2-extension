@@ -216,8 +216,8 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
     {
         return [
             'api_version' => self::API_VERSION,
-            'request' => $this->getHelper('Data')->jsonEncode($request->getInfo()),
-            'data' => $this->getHelper('Data')->jsonEncode($request->getData()),
+            'request' => \Ess\M2ePro\Helper\Json::encode($request->getInfo()),
+            'data' => \Ess\M2ePro\Helper\Json::encode($request->getData()),
             'raw_data' => $request->getRawData(),
         ];
     }

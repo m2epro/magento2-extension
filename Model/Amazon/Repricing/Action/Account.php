@@ -59,7 +59,7 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                     'params' => [],
                 ],
             ],
-            'data' => $this->getHelper('Data')->jsonEncode($data),
+            'data' => \Ess\M2ePro\Helper\Json::encode($data),
         ];
 
         if ($this->getAmazonAccount()->isRepricing()) {

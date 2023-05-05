@@ -39,7 +39,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'onclick' => 'AmazonTemplateShippingObj.backClick(\'' . $url . '\')',
             'class' => 'back',
         ]);
@@ -54,7 +54,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
-                'label' => $this->__('Duplicate'),
+                'label' => __('Duplicate'),
                 'onclick' => 'AmazonTemplateShippingObj.duplicateClick'
                     . '(\'amazon-template-shipping\')',
                 'class' => 'action-primary M2ePro_duplicate_button',
@@ -63,7 +63,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 
             // ---------------------------------------
             $this->addButton('delete', [
-                'label' => $this->__('Delete'),
+                'label' => __('Delete'),
                 'onclick' => 'AmazonTemplateShippingObj.deleteClick()',
                 'class' => 'action-primary delete M2ePro_delete_button',
             ]);
@@ -75,7 +75,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         if ($isSaveAndClose) {
             $saveButtons = [
                 'id' => 'save_and_close',
-                'label' => $this->__('Save And Close'),
+                'label' => __('Save And Close'),
                 'class' => 'add',
                 'button_class' => '',
                 'onclick' => 'AmazonTemplateShippingObj.saveAndCloseClick('
@@ -85,7 +85,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label' => $this->__('Save And Continue Edit'),
+                        'label' => __('Save And Continue Edit'),
                         'onclick' => 'AmazonTemplateShippingObj.saveAndEditClick('
                             . '\'\','
                             . 'undefined,'
@@ -99,7 +99,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
         } else {
             $saveButtons = [
                 'id' => 'save_and_continue',
-                'label' => $this->__('Save And Continue Edit'),
+                'label' => __('Save And Continue Edit'),
                 'class' => 'add',
                 'onclick' => 'AmazonTemplateShippingObj.saveAndEditClick('
                     . '\'\','
@@ -110,7 +110,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label' => $this->__('Save And Back'),
+                        'label' => __('Save And Back'),
                         'onclick' => 'AmazonTemplateShippingObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','

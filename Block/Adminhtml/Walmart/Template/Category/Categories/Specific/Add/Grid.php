@@ -113,7 +113,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 }
             }
 
-            $row['data_definition'] = (array)$this->dataHelper->jsonDecode($row['data_definition']);
+            $row['data_definition'] = (array)\Ess\M2ePro\Helper\Json::decode($row['data_definition']);
             $row['is_desired'] = !empty($row['data_definition']['is_desired']) && $row['data_definition']['is_desired'];
 
             if ($this->onlyDesired && !$row['is_desired']) {
@@ -149,7 +149,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header' => $this->__('Specific'),
+            'header' => __('Specific'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -161,7 +161,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('is_desired', [
-            'header' => $this->__('Desired'),
+            'header' => __('Desired'),
             'align' => 'center',
             'type' => 'text',
             'index' => 'is_desired',
@@ -172,7 +172,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('actions', [
-            'header' => $this->__('Action'),
+            'header' => __('Action'),
             'align' => 'center',
             'type' => 'text',
             'width' => '80px',
@@ -197,7 +197,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $fullPath = $path;
         strlen($path) > 135 && $path = substr($path, 0, 135) . '...';
 
-        $foundInWord = $this->__('Found In: ');
+        $foundInWord = __('Found In: ');
 
         return <<<HTML
 <div style="margin-left: 3px">
@@ -213,12 +213,12 @@ HTML;
 
     public function callbackColumnIsDesired($value, $row, $column, $isExport)
     {
-        return $value ? $this->__('Yes') : $this->__('No');
+        return $value ? __('Yes') : __('No');
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $select = $this->__('Select');
+        $select = __('Select');
 
         return <<<HTML
 <a href="javascript:void(0);" class="specific_search_result_row" xpath = {$row->getData('xpath')}
@@ -302,7 +302,7 @@ HTML;
         return false;
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

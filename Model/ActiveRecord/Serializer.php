@@ -52,7 +52,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($encodeType === self::SETTING_FIELD_TYPE_JSON) {
-            $settings = $this->getHelper('Data')->jsonDecode($settings);
+            $settings = \Ess\M2ePro\Helper\Json::decode($settings);
         } elseif ($encodeType === self::SETTING_FIELD_TYPE_SERIALIZATION) {
             $settings = $this->getHelper('Data')->phpUnserialize($settings);
         } else {
@@ -123,7 +123,7 @@ class Serializer extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($encodeType == self::SETTING_FIELD_TYPE_JSON) {
-            $settings = $this->getHelper('Data')->jsonEncode($settings);
+            $settings = \Ess\M2ePro\Helper\Json::encode($settings);
         } elseif ($encodeType == self::SETTING_FIELD_TYPE_SERIALIZATION) {
             $settings = $this->getHelper('Data')->phpSerialize($settings);
         } else {

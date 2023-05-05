@@ -57,7 +57,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $templateSpecifics = [];
         $dictionarySpecifics = $this->getDictionarySpecifics();
 
-        $selectedSpecs = $this->dataHelper->jsonDecode($this->getData('selected_specifics'));
+        $selectedSpecs = \Ess\M2ePro\Helper\Json::decode($this->getData('selected_specifics'));
 
         if ($this->getData('template_id')) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category $template */

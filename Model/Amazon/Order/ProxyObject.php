@@ -129,7 +129,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     }
 
     /**
-     * @return array
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -139,7 +138,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         $amazonAccount = $this->order->getAmazonAccount();
         $data = $amazonAccount->getData('magento_orders_settings');
-        $data = !empty($data) ? $this->getHelper('Data')->jsonDecode($data) : [];
+        $data = !empty($data) ? \Ess\M2ePro\Helper\Json::decode($data) : [];
 
         if (!empty($data['tax']['import_tax_id_in_magento_order'])) {
             $this->addressData['vat_id'] = $this->order->getTaxRegistrationId();

@@ -13,14 +13,14 @@ use Ess\M2ePro\Helper\Component\Amazon as AmazonHelper;
 
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
-    /** @var bool  */
+    /** @var bool */
     protected $_isPkAutoIncrement = false;
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
     protected $amazonFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\CollectionFactory */
+    private $otherCollectionFactory;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -29,23 +29,21 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Other\CollectionFactory $otherCollectionFactory,
         $connectionName = null
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->amazonFactory = $amazonFactory;
+        $this->otherCollectionFactory = $otherCollectionFactory;
 
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
-
-    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_amazon_listing_other', 'listing_other_id');
         $this->_isPkAutoIncrement = false;
     }
-
-    //########################################
 
     public function getRepricingSkus(Account $account, $filterSkus = null, $repricingDisabled = null)
     {
@@ -68,8 +66,6 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         return $listingOtherCollection->getColumnValues('sku');
     }
-
-    //########################################
 
     public function getProductsDataBySkus(
         array $skus = [],
@@ -118,8 +114,6 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         return $result;
     }
 
-    //########################################
-
     public function resetEntities()
     {
         $listingOther = $this->parentFactory->getObject(AmazonHelper::NICK, 'Listing\Other');
@@ -148,8 +142,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         $accountsCollection->addFieldToFilter('other_listings_synchronization', 1);
 
         foreach ($accountsCollection->getItems() as $account) {
-            $additionalData = (array)$this->getHelper('Data')
-                                          ->jsonDecode($account->getAdditionalData());
+            $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($account->getAdditionalData());
 
             unset($additionalData['is_amazon_other_listings_full_items_data_already_received']);
 
@@ -158,5 +151,23 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         }
     }
 
-    //########################################
+    /**
+     * @param int $productId
+     * @param int $accountId
+     * @param int $marketplaceId
+     *
+     * @return bool
+     */
+    public function isItemFromOtherListing(int $productId, int $accountId, int $marketplaceId): bool
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
+        $collection = $this->otherCollectionFactory->create();
+
+        return $collection->isExistsProduct(
+            $productId,
+            $accountId,
+            $marketplaceId,
+            \Ess\M2ePro\Helper\Component\Amazon::NICK
+        );
+    }
 }

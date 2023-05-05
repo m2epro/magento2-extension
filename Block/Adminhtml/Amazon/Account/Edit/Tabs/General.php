@@ -76,7 +76,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -87,17 +87,17 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'name' => 'title',
                 'class' => 'M2ePro-account-title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'required' => true,
                 'value' => $formData['title'],
-                'tooltip' => $this->__('Title or Identifier of Amazon Account for your internal use.'),
+                'tooltip' => __('Title or Identifier of Amazon Account for your internal use.'),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'access_details',
             [
-                'legend' => $this->__('Access Details'),
+                'legend' => __('Access Details'),
                 'collapsable' => false,
             ]
         );
@@ -106,7 +106,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'marketplace_title',
             'note',
             [
-                'label' => $this->__('Marketplace'),
+                'label' => __('Marketplace'),
                 'text' => $marketplace->getTitle(),
             ]
         );
@@ -123,15 +123,15 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'merchant_id',
             'note',
             [
-                'label' => $this->__('Merchant ID'),
+                'label' => __('Merchant ID'),
                 'text' => $formData['merchant_id'],
-                'tooltip' => $this->__('Your Amazon Seller ID.'),
+                'tooltip' => __('Your Amazon Seller ID.'),
             ]
         );
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
-                'label' => $this->__('Update Access Data'),
+                'label' => __('Update Access Data'),
                 'onclick' => 'AmazonAccountObj.getToken(' . $formData['marketplace_id'] . ')',
                 'class' => 'check M2ePro_check_button primary',
             ]
@@ -147,7 +147,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData(
             [
-                'label' => $this->__('Check Token Validity'),
+                'label' => __('Check Token Validity'),
                 'onclick' => 'AmazonAccountObj.checkClick()',
                 'class' => 'check M2ePro_check_button primary',
                 'id' => 'check_token_validity',
@@ -181,12 +181,12 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ),
         ]);
 
-        $this->jsTranslator->add('Please enter correct value.', $this->__('Please enter correct value.'));
+        $this->jsTranslator->add('Please enter correct value.', __('Please enter correct value.'));
 
         $this->jsTranslator->add(
             'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
             . 'This will cause inappropriate work of all Accounts\' copies.',
-            $this->__(
+            __(
                 'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
                 . 'This will cause inappropriate work of all Accounts\' copies.'
             )
@@ -207,7 +207,7 @@ JS
         );
 
         $this->jsTranslator->addTranslations([
-            'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
+            'The specified Title is already used for other Account. Account Title must be unique.' => __(
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
         ]);

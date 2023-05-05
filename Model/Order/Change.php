@@ -57,12 +57,9 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getData('component');
     }
 
-    /**
-     * @return array
-     */
     public function getParams()
     {
-        $params = $this->getHelper('Data')->jsonDecode($this->getData('params'));
+        $params = \Ess\M2ePro\Helper\Json::decode($this->getData('params'));
 
         return is_array($params) ? $params : [];
     }
@@ -152,7 +149,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $change->addData([
             'order_id' => $orderId,
             'action' => $action,
-            'params' => $this->getHelper('Data')->jsonEncode($params),
+            'params' => \Ess\M2ePro\Helper\Json::encode($params),
             'creator_type' => $creatorType,
             'component' => $component,
             'hash' => $hash,

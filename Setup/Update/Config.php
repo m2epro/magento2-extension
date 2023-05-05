@@ -276,10 +276,15 @@ class Config extends AbstractConfig
                 'RemoveLicenseStatus',
                 'RenameClientsToAccounts',
                 'AddColumnIsStoppedManuallyForAmazonAndWalmartProducts',
+                'UpgradeTags',
+                'AddWizardVersionDowngrade',
             ],
             'y23_m04' => [
                 'SetIsVatEbayMarketplacePL',
+                'ChangeTypeProductAddIds',
                 'RemoveUnavailableDataType',
+                'EbayBuyerInitiatedOrderCancellation',
+                'UpdateEbayVatMode',
             ]
         ];
     }

@@ -75,7 +75,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $this->getProcessingAction()->setData('is_prepared', 1);
         $this->getProcessingAction()->setData(
             'request_data',
-            $this->helperData->jsonEncode($params['request_data'])
+            \Ess\M2ePro\Helper\Json::encode($params['request_data'])
         );
         $this->getProcessingAction()->save();
 

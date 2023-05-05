@@ -12,20 +12,6 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
 class GetRateTableData extends Template
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        parent::__construct($templateManager, $ebayFactory, $context);
-
-        $this->dataHelper = $dataHelper;
-    }
-
     public function execute()
     {
         $accountId = $this->getRequest()->getParam('account_id', false);
@@ -34,7 +20,7 @@ class GetRateTableData extends Template
 
         if (!$accountId || !$marketplaceId || !$type) {
             return $this->getResponse()->setBody(
-                $this->dataHelper->jsonEncode(
+                \Ess\M2ePro\Helper\Json::encode(
                     [
                         'error' => $this->__('Wrong parameters.'),
                     ]
@@ -48,7 +34,7 @@ class GetRateTableData extends Template
 
         if (!$ebayAccount->getSellApiTokenSession()) {
             return $this->getResponse()->setBody(
-                $this->dataHelper->jsonEncode(
+                \Ess\M2ePro\Helper\Json::encode(
                     [
                         'sell_api_disabled' => true,
                         'error' => $this->__('Sell Api token is missing.'),
@@ -61,7 +47,7 @@ class GetRateTableData extends Template
             $ebayAccount->updateRateTables();
         } catch (\Exception $exception) {
             return $this->getResponse()->setBody(
-                $this->dataHelper->jsonEncode(
+                \Ess\M2ePro\Helper\Json::encode(
                     [
                         'error' => $exception->getMessage(),
                     ]

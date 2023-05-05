@@ -195,6 +195,53 @@ class Date
         return $formatter->parse($localDate);
     }
 
+    /**
+     * Convert DateTime object into a string based on Magento locale settings.
+     * Date and time separated by space.
+     *
+     * If `$dateFormat` set is `\IntlDateFormatter::NONE` - don't print date,
+     * if `$timeFormat` set is `\IntlDateFormatter::NONE` - don't print time
+     *
+     * @param \DateTime $date
+     * @param int $dateFormat date format by Intl
+     * @param int $timeFormat time format by Intl
+     * @param string $localTimezone timezone, see https://www.php.net/manual/en/timezones.php
+     *
+     * @return string
+     */
+    public static function convertToLocalFormat(
+        \DateTime $date,
+        int $dateFormat = \IntlDateFormatter::SHORT,
+        int $timeFormat = \IntlDateFormatter::SHORT,
+        string $localTimezone = ''
+    ): string {
+        if ($localTimezone === '') {
+            $localTimezone = self::getTimezone()->getConfigTimezone();
+        }
+
+        $localeResolver = self::getLocaleResolver();
+
+        $pattern = '';
+        if ($dateFormat !== \IntlDateFormatter::NONE) {
+            $pattern = self::getTimezone()->getDateFormat($dateFormat);
+        }
+
+        if ($timeFormat !== \IntlDateFormatter::NONE) {
+            $pattern .= ' ' . self::getTimezone()->getTimeFormat($timeFormat);
+        }
+
+        $formatter = new \IntlDateFormatter(
+            $localeResolver->getLocale(),
+            \IntlDateFormatter::SHORT,
+            \IntlDateFormatter::SHORT,
+            new \DateTimeZone($localTimezone),
+            null,
+            trim($pattern)
+        );
+
+        return $formatter->format($date) ?? '';
+    }
+
     // ----------------------------------------
 
     /**

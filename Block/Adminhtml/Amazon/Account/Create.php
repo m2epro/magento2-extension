@@ -32,7 +32,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         // ---------------------------------------
 
         $this->addButton('continue', [
-            'label' => $this->__('Continue'),
+            'label' => __('Continue'),
             'onclick' => 'AmazonAccountCreateObj.continueClick()',
             'class' => 'action-primary',
         ]);

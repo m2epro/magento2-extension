@@ -128,7 +128,7 @@ class Updating extends AbstractModel
                 \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_SYNCHRONIZE_USER_CHANGES,
                 [
                     'account_token' => $this->getAmazonAccountRepricing()->getToken(),
-                    'offers' => $this->getHelper('Data')->jsonEncode($changesData),
+                    'offers' => \Ess\M2ePro\Helper\Json::encode($changesData),
                 ]
             );
         } catch (\Exception $e) {

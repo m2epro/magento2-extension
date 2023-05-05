@@ -56,7 +56,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             '_current' => true,
         ]);
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'onclick' => 'ListingGridObj.backClick(\'' . $url . '\')',
             'class' => 'back',
         ]);
@@ -68,19 +68,19 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             ['id' => $this->getRequest()->getParam('id')]
         );
         $confirm =
-            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
-            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+            '<strong>' . __('Are you sure?') . '</strong><br><br>'
+            . __('All unsaved changes will be lost and you will be returned to the Listings grid.');
         $this->addButton(
             'exit_to_listing',
             [
-                'label' => $this->__('Cancel'),
+                'label' => __('Cancel'),
                 'onclick' => "confirmSetLocation('$confirm', '$url');",
                 'class' => 'action-primary',
             ]
         );
 
         $this->addButton('add_products_category_template_category_continue', [
-            'label' => $this->__('Continue'),
+            'label' => __('Continue'),
             'onclick' => 'ListingGridObj.completeCategoriesDataStep()',
             'class' => 'action-primary forward',
         ]);
@@ -104,8 +104,8 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         // TEXT
         $this->jsTranslator->addTranslations([
-            'templateCategoryPopupTitle' => $this->__('Assign Category Policy'),
-            'Add New Category Policy' => $this->__('Add New Category Policy'),
+            'templateCategoryPopupTitle' => __('Assign Category Policy'),
+            'Add New Category Policy' => __('Add New Category Policy'),
         ]);
         // ---------------------------------------
 

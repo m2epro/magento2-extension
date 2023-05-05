@@ -63,7 +63,7 @@ class CategoryMode extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Sele
         $value = $this->getValue();
 
         $titleValue = !empty($value['title']) ? $value['title'] : '';
-        $isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isAjax());
+        $isAjax = \Ess\M2ePro\Helper\Json::encode($this->getRequest()->isAjax());
         $modeTitle = self::MODE_TITLE;
 
         $this->js->add(

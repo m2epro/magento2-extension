@@ -149,8 +149,8 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
     {
         return [
             'api_version' => self::API_VERSION,
-            'request' => $this->getHelper('Data')->jsonEncode($this->getRequest()->getInfo()),
-            'data' => $this->getHelper('Data')->jsonEncode($this->getRequest()->getData()),
+            'request' => \Ess\M2ePro\Helper\Json::encode($this->getRequest()->getInfo()),
+            'data' => \Ess\M2ePro\Helper\Json::encode($this->getRequest()->getData()),
             'raw_data' => $this->getRequest()->getRawData(),
         ];
     }

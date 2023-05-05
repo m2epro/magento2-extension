@@ -48,7 +48,6 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
 
-        $dataHelper = $this->helperFactory->getObject('Data');
         $componentHelper = $this->helperFactory->getObject('Component\Amazon');
 
         $parentIdsForProcessing = [];
@@ -99,7 +98,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     }
                 }
 
-                $existingAdditionalData = $dataHelper->jsonDecode($existingItem['additional_data']);
+                $existingAdditionalData = \Ess\M2ePro\Helper\Json::decode($existingItem['additional_data']);
                 $lastSynchDates = !empty($existingAdditionalData['last_synchronization_dates'])
                     ? $existingAdditionalData['last_synchronization_dates']
                     : [];

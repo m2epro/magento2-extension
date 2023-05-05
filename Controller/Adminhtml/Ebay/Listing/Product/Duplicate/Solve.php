@@ -42,7 +42,7 @@ class Solve extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $listingProduct->getChildObject()->generateItemUUID()
             );
             $listingProduct->getChildObject()->setData('is_duplicate', 0);
-            $listingProduct->setData('additional_data', $this->getHelper('Data')->jsonEncode($additionalData));
+            $listingProduct->setData('additional_data', \Ess\M2ePro\Helper\Json::encode($additionalData));
             $listingProduct->save();
         }
 

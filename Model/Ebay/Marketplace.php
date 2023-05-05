@@ -314,10 +314,10 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         $categoryShippingMethods = [];
         foreach ($shippingMethods as $shippingMethod) {
-            $category = $this->getHelper('Data')->jsonDecode($shippingMethod['category']);
+            $category = \Ess\M2ePro\Helper\Json::decode($shippingMethod['category']);
 
             if (empty($category)) {
-                $shippingMethod['data'] = $this->getHelper('Data')->jsonDecode($shippingMethod['data']);
+                $shippingMethod['data'] = \Ess\M2ePro\Helper\Json::decode($shippingMethod['data']);
                 $categoryShippingMethods['']['methods'][] = $shippingMethod;
                 continue;
             }
@@ -329,23 +329,23 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
                 ];
             }
 
-            $shippingMethod['data'] = $this->getHelper('Data')->jsonDecode($shippingMethod['data']);
+            $shippingMethod['data'] = \Ess\M2ePro\Helper\Json::decode($shippingMethod['data']);
             $categoryShippingMethods[$category['ebay_id']]['methods'][] = $shippingMethod;
         }
 
         // ---------------------------------------
 
         return $this->info = [
-            'dispatch' => $this->getHelper('Data')->jsonDecode($data['dispatch']),
-            'packages' => $this->getHelper('Data')->jsonDecode($data['packages']),
-            'return_policy' => $this->getHelper('Data')->jsonDecode($data['return_policy']),
-            'listing_features' => $this->getHelper('Data')->jsonDecode($data['listing_features']),
-            'payments' => $this->getHelper('Data')->jsonDecode($data['payments']),
-            'charities' => $this->getHelper('Data')->jsonDecode($data['charities']),
+            'dispatch' => \Ess\M2ePro\Helper\Json::decode($data['dispatch']),
+            'packages' => \Ess\M2ePro\Helper\Json::decode($data['packages']),
+            'return_policy' => \Ess\M2ePro\Helper\Json::decode($data['return_policy']),
+            'listing_features' => \Ess\M2ePro\Helper\Json::decode($data['listing_features']),
+            'payments' => \Ess\M2ePro\Helper\Json::decode($data['payments']),
+            'charities' => \Ess\M2ePro\Helper\Json::decode($data['charities']),
             'shipping' => $categoryShippingMethods,
-            'shipping_locations' => $this->getHelper('Data')->jsonDecode($data['shipping_locations']),
-            'shipping_locations_exclude' => $this->getHelper('Data')->jsonDecode($data['shipping_locations_exclude']),
-            'tax_categories' => $this->getHelper('Data')->jsonDecode($data['tax_categories']),
+            'shipping_locations' => \Ess\M2ePro\Helper\Json::decode($data['shipping_locations']),
+            'shipping_locations_exclude' => \Ess\M2ePro\Helper\Json::decode($data['shipping_locations_exclude']),
+            'tax_categories' => \Ess\M2ePro\Helper\Json::decode($data['tax_categories']),
         ];
     }
 

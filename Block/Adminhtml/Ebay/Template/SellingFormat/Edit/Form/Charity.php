@@ -20,20 +20,15 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
-        parent::__construct($context, $data);
         $this->databaseHelper = $databaseHelper;
-        $this->dataHelper = $dataHelper;
+        parent::__construct($context, $data);
     }
 
     protected function _beforeToHtml()
@@ -79,7 +74,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         return $this->enabledMarketplaces;
     }
 
-    public function getCharityDictionary()
+    public function getCharityDictionary(): array
     {
         $connection = $this->resourceConnection->getConnection();
         $tableDictMarketplace = $this->databaseHelper
@@ -91,7 +86,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $data = $connection->fetchAssoc($dbSelect);
 
         foreach ($data as $key => $item) {
-            $data[$key]['charities'] = $this->dataHelper->jsonDecode($item['charities']);
+            $data[$key]['charities'] = \Ess\M2ePro\Helper\Json::decode($item['charities']);
         }
 
         return $data;

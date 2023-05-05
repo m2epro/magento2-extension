@@ -100,7 +100,7 @@ class Item extends AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('products', [
-            'header' => $this->__('Product'),
+            'header' => __('Product'),
             'align' => 'left',
             'width' => '*',
             'index' => 'product_id',
@@ -108,14 +108,14 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('stock_availability', [
-            'header' => $this->__('Stock Availability'),
+            'header' => __('Stock Availability'),
             'width' => '100px',
             'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('original_price', [
-            'header' => $this->__('Original Price'),
+            'header' => __('Original Price'),
             'align' => 'left',
             'width' => '80px',
             'filter' => false,
@@ -124,7 +124,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('qty_purchased', [
-            'header' => $this->__('QTY'),
+            'header' => __('QTY'),
             'align' => 'left',
             'width' => '80px',
             'index' => 'qty_purchased',
@@ -132,7 +132,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('price', [
-            'header' => $this->__('Price'),
+            'header' => __('Price'),
             'align' => 'left',
             'width' => '80px',
             'index' => 'price',
@@ -140,7 +140,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('discount_amount', [
-            'header' => $this->__('Promotions'),
+            'header' => __('Promotions'),
             'align' => 'left',
             'width' => '80px',
             'filter' => false,
@@ -150,7 +150,7 @@ class Item extends AbstractGrid
 
         if ($this->activeRecordFactory->getObject('Amazon_Order')->getResource()->hasGifts($this->order->getId())) {
             $this->addColumn('gift_price', [
-                'header' => $this->__('Gift Wrap Price'),
+                'header' => __('Gift Wrap Price'),
                 'align' => 'left',
                 'width' => '80px',
                 'index' => 'gift_price',
@@ -158,7 +158,7 @@ class Item extends AbstractGrid
             ]);
 
             $this->addColumn('gift_options', [
-                'header' => $this->__('Gift Options'),
+                'header' => __('Gift Options'),
                 'align' => 'left',
                 'width' => '250px',
                 'filter' => false,
@@ -168,7 +168,7 @@ class Item extends AbstractGrid
         }
 
         $this->addColumn('tax_percent', [
-            'header' => $this->__('Tax Percent'),
+            'header' => __('Tax Percent'),
             'align' => 'left',
             'width' => '80px',
             'filter' => false,
@@ -177,7 +177,7 @@ class Item extends AbstractGrid
         ]);
 
         $this->addColumn('row_total', [
-            'header' => $this->__('Row Total'),
+            'header' => __('Row Total'),
             'align' => 'left',
             'width' => '80px',
             'frame_callback' => [$this, 'callbackColumnRowTotal'],
@@ -301,18 +301,18 @@ HTML;
         /** @var \Ess\M2ePro\Model\Order\Item $row */
 
         if (!$row->isMagentoProductExists()) {
-            return '<span style="color: red;">' . $this->__('Product Not Found') . '</span>';
+            return '<span style="color: red;">' . __('Product Not Found') . '</span>';
         }
 
         if ($row->getMagentoProduct() === null) {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         if (!$row->getMagentoProduct()->isStockAvailability()) {
-            return '<span style="color: red;">' . $this->__('Out Of Stock') . '</span>';
+            return '<span style="color: red;">' . __('Out Of Stock') . '</span>';
         }
 
-        return $this->__('In Stock');
+        return __('In Stock');
     }
 
     /**
@@ -327,7 +327,7 @@ HTML;
     public function callbackColumnOriginalPrice($value, $row, $column, $isExport)
     {
         $productId = $row->getData('product_id');
-        $formattedPrice = $this->__('N/A');
+        $formattedPrice = __('N/A');
 
         if ($productId && $product = $this->productModel->load($productId)) {
             $formattedPrice = $product->getFormatedPrice();
@@ -415,7 +415,7 @@ HTML;
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }
 
-        $discountDetails = $this->dataHelper->jsonDecode($row->getChildObject()->getData('discount_details'));
+        $discountDetails = \Ess\M2ePro\Helper\Json::decode($row->getChildObject()->getData('discount_details'));
         if (empty($discountDetails['promotion']['value'])) {
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }
@@ -441,14 +441,14 @@ HTML;
             $row->getChildObject()->getData('gift_type') == '' &&
             $row->getChildObject()->getData('gift_message') == ''
         ) {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         $giftType = $this->dataHelper->escapeHtml($row->getChildObject()->getData('gift_type'));
-        $giftTypeLabel = $this->__('Gift Wrap Type');
+        $giftTypeLabel = __('Gift Wrap Type');
 
         $giftMessage = $this->dataHelper->escapeHtml($row->getChildObject()->getData('gift_message'));
-        $giftMessageLabel = $this->__('Gift Message');
+        $giftMessageLabel = __('Gift Message');
 
         $resultHtml = '';
         if (!empty($giftType)) {
@@ -509,7 +509,7 @@ HTML;
     /**
      * {@inheritDoc}
      */
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return '';
     }

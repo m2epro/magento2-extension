@@ -61,10 +61,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             [
                 'name' => 'title',
                 'class' => 'M2ePro-account-title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'required' => true,
                 'style' => 'width: 50%',
-                'tooltip' => $this->__('Title or Identifier of Amazon Account for your internal use.'),
+                'tooltip' => __('Title or Identifier of Amazon Account for your internal use.'),
             ]
         );
 
@@ -72,7 +72,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'marketplace_id',
             'select',
             [
-                'label' => $this->__('Marketplace'),
+                'label' => __('Marketplace'),
                 'name' => 'marketplace_id',
                 'required' => true,
                 'values' => $marketplaces,
@@ -93,7 +93,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 JS
         );
         $this->jsTranslator->addTranslations([
-            'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
+            'The specified Title is already used for other Account. Account Title must be unique.' => __(
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
         ]);

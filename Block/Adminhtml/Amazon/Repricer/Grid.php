@@ -109,7 +109,7 @@ class Grid extends AbstractGrid
     protected function _prepareColumns(): Grid
     {
         $this->addColumn('id', [
-            'header' => $this->__('ID'),
+            'header' => __('ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -119,7 +119,7 @@ class Grid extends AbstractGrid
         ]);
 
         $this->addColumn('title', [
-            'header' => $this->__('Title / Info'),
+            'header' => __('Title / Info'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -130,7 +130,7 @@ class Grid extends AbstractGrid
         ]);
 
         $this->addColumn('total_products', [
-            'header' => $this->__('Repricing products'),
+            'header' => __('Repricing products'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -140,7 +140,7 @@ class Grid extends AbstractGrid
         ]);
 
         $this->addColumn('m2e_products', [
-            'header' => $this->__('M2E Pro products'),
+            'header' => __('M2E Pro products'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -151,7 +151,7 @@ class Grid extends AbstractGrid
         ]);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
+            'header' => __('Status'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -162,7 +162,7 @@ class Grid extends AbstractGrid
         ]);
 
         $this->addColumn('actions', [
-            'header' => $this->__('Actions'),
+            'header' => __('Actions'),
             'align' => 'center',
             'width' => '100px',
             'type' => 'text',
@@ -181,7 +181,7 @@ class Grid extends AbstractGrid
      */
     protected function _toHtml(): string
     {
-        $this->jsTranslator->add('Please enter correct value.', $this->__('Please enter correct value.'));
+        $this->jsTranslator->add('Please enter correct value.', __('Please enter correct value.'));
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Repricer'));
 
@@ -207,14 +207,14 @@ JS
     }
 
     /**
-     * @param $row
+     * @param $item
      *
      * @return string|void
      */
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
-        if ($row->getData('linked')) {
-            return $this->viewHelper->getUrl($row, 'repricer_settings', 'edit', ['id' => $row->getData('id')]);
+        if ($item->getData('linked')) {
+            return $this->viewHelper->getUrl($item, 'repricer_settings', 'edit', ['id' => $item->getData('id')]);
         }
     }
 
@@ -230,10 +230,10 @@ JS
     public function callbackColumnTitle($value, $row, $column, $isExport): string
     {
         /** @var \Ess\M2ePro\Model\Account $row */
-        $marketplaceLabel = $this->__('Marketplace');
+        $marketplaceLabel = __('Marketplace');
         $marketplaceTitle = $row->getData('marketplace_title');
 
-        $merchantLabel = $this->__('Merchant ID');
+        $merchantLabel = __('Merchant ID');
         $merchantId = $row->getChildObject()->getData('merchant_id');
 
         return <<<HTML

@@ -14,6 +14,7 @@ use Ess\M2ePro\Model\Exception\Connection;
 
 class Repricing
 {
+    public const COMMAND_ACCOUNT_GET = 'account/get';
     public const COMMAND_ACCOUNT_LINK = 'account/link';
     public const COMMAND_ACCOUNT_UNLINK = 'account/unlink';
     public const COMMAND_SYNCHRONIZE = 'synchronize';
@@ -24,8 +25,6 @@ class Repricing
 
     private const REQUEST_TIMEOUT = 300;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $moduleTranslation;
     /** @var \Ess\M2ePro\Helper\Module\Support */
@@ -34,18 +33,15 @@ class Repricing
     private $config;
 
     /**
-     * @param \Ess\M2ePro\Helper\Data $helperData
      * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
      * @param \Ess\M2ePro\Helper\Module\Support $moduleSupport
      * @param \Ess\M2ePro\Model\Config\Manager $config
      */
     public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
         \Ess\M2ePro\Helper\Module\Support $moduleSupport,
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
-        $this->helperData = $helperData;
         $this->moduleTranslation = $moduleTranslation;
         $this->moduleSupport = $moduleSupport;
         $this->config = $config;
@@ -110,7 +106,7 @@ class Repricing
             );
         }
 
-        $responseDecoded = $this->helperData->jsonDecode($response);
+        $responseDecoded = \Ess\M2ePro\Helper\Json::decode($response);
         if (!$responseDecoded || !is_array($responseDecoded)) {
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 'The Action was not completed because server responded with an incorrect response.',

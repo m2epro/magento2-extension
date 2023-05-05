@@ -47,10 +47,9 @@ class Preview extends AbstractBlock
         $this->currency = $currency;
         $this->componentEbayCategoryStore = $componentEbayCategoryStore;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
-
-        parent::__construct($context, $data);
         $this->dataHelper = $dataHelper;
         $this->magentoHelper = $magentoHelper;
+        parent::__construct($context, $data);
     }
 
     public function _construct()
@@ -72,8 +71,8 @@ class Preview extends AbstractBlock
     {
         $this->jsTranslator->add('This is Item Preview Mode', $this->__('This is Item Preview Mode'));
 
-        $variations = $this->dataHelper->jsonEncode($this->getVariations());
-        $images = $this->dataHelper->jsonEncode($this->getImages());
+        $variations = \Ess\M2ePro\Helper\Json::encode($this->getVariations());
+        $images = \Ess\M2ePro\Helper\Json::encode($this->getImages());
 
         $this->js->add(
             <<<JS

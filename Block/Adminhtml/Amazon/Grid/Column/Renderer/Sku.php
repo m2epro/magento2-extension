@@ -64,7 +64,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if (!$row->getData('is_variation_parent') && $row->getData('defected_messages')) {
-            $defectedMessages = $this->dataHelper->jsonDecode($row->getData('defected_messages'));
+            $defectedMessages = \Ess\M2ePro\Helper\Json::decode($row->getData('defected_messages'));
             if (empty($defectedMessages)) {
                 $defectedMessages = [];
             }

@@ -53,7 +53,7 @@ class Edit extends AbstractContainer
             $this->addButton(
                 'save_and_continue',
                 [
-                    'label' => $this->__('Save And Continue Edit'),
+                    'label' => __('Save And Continue Edit'),
                     'onclick' => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
                     'class' => 'action-primary',
                 ]
@@ -66,7 +66,7 @@ class Edit extends AbstractContainer
                 $this->addButton(
                     'add_new_account',
                     [
-                        'label' => $this->__('Add New Account'),
+                        'label' => __('Add New Account'),
                         'onclick' => 'setLocation(\'' . $url . '\')',
                         'class' => 'action-primary',
                     ]
@@ -79,7 +79,7 @@ class Edit extends AbstractContainer
                     $this->addButton(
                         'save',
                         [
-                            'label' => $this->__('Save And Close'),
+                            'label' => __('Save And Close'),
                             'onclick' => 'WalmartAccountObj.saveAndClose()',
                             'class' => 'action-primary',
                         ]
@@ -88,7 +88,7 @@ class Edit extends AbstractContainer
                     $this->addButton(
                         'save_and_continue',
                         [
-                            'label' => $this->__('Save And Continue Edit'),
+                            'label' => __('Save And Continue Edit'),
                             'onclick' => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
                             'class' => 'action-primary',
                         ]
@@ -103,7 +103,7 @@ class Edit extends AbstractContainer
             $this->addButton(
                 'back',
                 [
-                    'label' => $this->__('Back'),
+                    'label' => __('Back'),
                     'onclick' => 'WalmartAccountObj.backClick(\'' . $url . '\')',
                     'class' => 'back',
                 ]
@@ -119,7 +119,7 @@ class Edit extends AbstractContainer
                 $this->addButton(
                     'delete',
                     [
-                        'label' => $this->__('Delete'),
+                        'label' => __('Delete'),
                         'onclick' => 'WalmartAccountObj.deleteClick()',
                         'class' => 'delete M2ePro_delete_button primary',
                     ]
@@ -130,14 +130,14 @@ class Edit extends AbstractContainer
             // ---------------------------------------
             $saveButtons = [
                 'id' => 'save_and_continue',
-                'label' => $this->__('Save And Continue Edit'),
+                'label' => __('Save And Continue Edit'),
                 'class' => 'add',
                 'button_class' => '',
                 'onclick' => 'WalmartAccountObj.saveAndEditClick(\'\',\'walmartAccountEditTabs\')',
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label' => $this->__('Save And Back'),
+                        'label' => __('Save And Back'),
                         'onclick' => 'WalmartAccountObj.saveClick()',
                         'class' => 'action-primary',
                     ],

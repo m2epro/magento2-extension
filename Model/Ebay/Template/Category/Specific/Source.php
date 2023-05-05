@@ -111,13 +111,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getCategorySpecificTemplate()->isEbayRecommendedValueMode()) {
-            $valueData = $this->getHelper('Data')->jsonDecode(
+            $valueData = \Ess\M2ePro\Helper\Json::decode(
                 $this->getCategorySpecificTemplate()->getData('value_ebay_recommended')
             );
         }
 
         if ($this->getCategorySpecificTemplate()->isCustomValueValueMode()) {
-            $valueData = $this->getHelper('Data')->jsonDecode(
+            $valueData = \Ess\M2ePro\Helper\Json::decode(
                 $this->getCategorySpecificTemplate()->getData('value_custom_value')
             );
         }

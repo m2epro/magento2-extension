@@ -284,7 +284,7 @@ abstract class PhysicalUnit extends \Ess\M2ePro\Model\Walmart\Listing\Product\Va
             'sku' => $this->getWalmartListingProduct()->getSku(),
             'product_id' => (int)$this->getListingProduct()->getProductId(),
             'store_id' => (int)$this->getListing()->getStoreId(),
-            'variation_product_options' => $this->getHelper('Data')->jsonEncode($options),
+            'variation_product_options' => \Ess\M2ePro\Helper\Json::encode($options),
         ];
 
         $this->activeRecordFactory->getObject('Walmart\Item')->setData($data)->save();

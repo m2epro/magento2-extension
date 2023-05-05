@@ -141,7 +141,7 @@ class ArchiveOldOrders extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
 
         foreach ($insertsData as $key => &$data) {
-            $data['data'] = $this->getHelper('Data')->jsonEncode($data['data']);
+            $data['data'] = \Ess\M2ePro\Helper\Json::encode($data['data']);
         }
 
         unset($data);

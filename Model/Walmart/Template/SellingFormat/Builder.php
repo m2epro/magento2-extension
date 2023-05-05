@@ -72,7 +72,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ->format('Y-m-d 00:00:00');
         }
 
-        $data['attributes'] = $this->helperData->jsonEncode(
+        $data['attributes'] = \Ess\M2ePro\Helper\Json::encode(
             $this->getComparedData($data, 'attributes_name', 'attributes_value')
         );
 
@@ -157,8 +157,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'attributes_mode' => WalmartSellingFormat::ATTRIBUTES_MODE_NONE,
             'attributes' => '',
-            'attributes_name' => $this->helperData->jsonEncode([]),
-            'attributes_value' => $this->helperData->jsonEncode([]),
+            'attributes_name' => \Ess\M2ePro\Helper\Json::encode([]),
+            'attributes_value' => \Ess\M2ePro\Helper\Json::encode([]),
 
             'shipping_override_rule_mode' => WalmartSellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO,
             'shipping_override_rule' => [],

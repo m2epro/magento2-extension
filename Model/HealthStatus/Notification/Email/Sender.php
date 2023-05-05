@@ -13,38 +13,41 @@ namespace Ess\M2ePro\Model\HealthStatus\Notification\Email;
  */
 class Sender extends \Ess\M2ePro\Model\AbstractModel
 {
-    public const FROM_NAME = 'M2E Pro Health Status';
-    public const FROM_EMAIL = 'do-not-reply';
-
-    public const TEMPLATE_PATH = 'm2epro_health_status_notification_email_template';
+    private const FROM_NAME = 'M2E Pro Health Status';
+    private const TEMPLATE_PATH = 'm2epro_health_status_notification_email_template';
 
     /** @var \Magento\Framework\Translate\Inline\StateInterface */
-    protected $inlineTranslation;
-
+    private $inlineTranslation;
     /** @var \Magento\Framework\Mail\Template\TransportBuilder */
-    protected $transportBuilder;
-
-    //########################################
+    private $transportBuilder;
+    /** @var \Magento\User\Model\ResourceModel\User\CollectionFactory */
+    private $userCollectionFactory;
+    /** @var \Ess\M2ePro\Model\HealthStatus\Notification\Settings */
+    private $healthStatusSettings;
+    /** @var \Ess\M2ePro\Model\HealthStatus\Notification\MessageBuilder */
+    private $healthStatusMessageBuilder;
 
     public function __construct(
         \Magento\Framework\Translate\Inline\StateInterface $inlineTranslation,
         \Magento\Framework\Mail\Template\TransportBuilder $transportBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
+        \Ess\M2ePro\Model\HealthStatus\Notification\Settings $healthStatusSettings,
+        \Ess\M2ePro\Model\HealthStatus\Notification\MessageBuilder $healthStatusMessageBuilder,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
+
         $this->inlineTranslation = $inlineTranslation;
         $this->transportBuilder = $transportBuilder;
+        $this->userCollectionFactory = $userCollectionFactory;
+        $this->healthStatusSettings = $healthStatusSettings;
+        $this->healthStatusMessageBuilder = $healthStatusMessageBuilder;
     }
-
-    //########################################
 
     public function send()
     {
-        $settings = $this->modelFactory->getObject('HealthStatus_Notification_Settings');
-        $messageBuilder = $this->modelFactory->getObject('HealthStatus_Notification_MessageBuilder');
-
         $this->inlineTranslation->suspend();
         $transport = $this->transportBuilder
             ->setTemplateIdentifier(self::TEMPLATE_PATH)
@@ -55,19 +58,28 @@ class Sender extends \Ess\M2ePro\Model\AbstractModel
                 ]
             )
             ->setTemplateVars([
-                'header' => $messageBuilder->getHeader(),
-                'message' => $messageBuilder->getMessage(),
+                'header' => $this->healthStatusMessageBuilder->getHeader(),
+                'message' => $this->healthStatusMessageBuilder->getMessage(),
+
             ])
             ->setFrom([
                 'name' => self::FROM_NAME,
-                'email' => self::FROM_EMAIL . '@' . $this->getHelper('Client')->getDomain(),
+                'email' => $this->getAdminUserEmail(),
             ])
-            ->addTo($settings->getEmail(), 'Magento Administrator')
+            ->addTo($this->healthStatusSettings->getEmail(), 'Magento Administrator')
             ->getTransport();
 
         $transport->sendMessage();
         $this->inlineTranslation->resume();
     }
 
-    //########################################
+    private function getAdminUserEmail(): string
+    {
+        $collection = $this->userCollectionFactory->create();
+        $collection->setOrder('user_id', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+        $collection->setPageSize(1);
+        $collection->addFieldToFilter('is_active', 1);
+
+        return $collection->getFirstItem()->getData('email');
+    }
 }

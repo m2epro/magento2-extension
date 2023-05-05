@@ -43,7 +43,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('id', [
-            'header' => $this->__('ID'),
+            'header' => __('ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -52,7 +52,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
         ]);
 
         $this->addColumn('title', [
-            'header' => $this->__('Title / Info'),
+            'header' => __('Title / Info'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -72,10 +72,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
         /** @var \Ess\M2ePro\Model\Account $row */
 
         if ($row->getChildObject()->getData('marketplace_id') == \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US) {
-            $titleLabel = $this->__('Client ID');
+            $titleLabel = __('Client ID');
             $titleValue = $row->getChildObject()->getData('client_id');
         } else {
-            $titleLabel = $this->__('Consumer ID');
+            $titleLabel = __('Consumer ID');
             $titleValue = $row->getChildObject()->getData('consumer_id');
         }
 

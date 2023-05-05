@@ -97,8 +97,6 @@ class VCSLiteInvoices extends AbstractFeature
         if ($this->getTableModifier('amazon_account')
             ->isColumnExists('is_magento_invoice_creation_disabled')) {
 
-            $dataHelper = $this->helperFactory->getObject('Data');
-
             $amazonAccountTable = $this->getFullTableName('amazon_account');
 
             $query = $this->getConnection()
@@ -107,7 +105,7 @@ class VCSLiteInvoices extends AbstractFeature
                 ->query();
 
             while ($row = $query->fetch()) {
-                $magentoOrdersSettings = $dataHelper->jsonDecode($row['magento_orders_settings']);
+                $magentoOrdersSettings = \Ess\M2ePro\Helper\Json::decode($row['magento_orders_settings']);
 
                 $data = [
                     'is_magento_invoice_creation_disabled' => isset($magentoOrdersSettings['invoice_mode']) ?
@@ -119,7 +117,7 @@ class VCSLiteInvoices extends AbstractFeature
                 // clearing old data
                 unset($magentoOrdersSettings['invoice_mode']);
                 unset($magentoOrdersSettings['shipment_mode']);
-                $data['magento_orders_settings'] = $dataHelper->jsonEncode($magentoOrdersSettings);
+                $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($magentoOrdersSettings);
 
                 $this->getConnection()->update(
                     $amazonAccountTable,

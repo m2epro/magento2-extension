@@ -52,7 +52,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -75,11 +75,11 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'value' => $title,
                 'required' => true,
                 'class' => 'M2ePro-listing-title',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Create a descriptive and meaningful Title for your M2E Pro Listing. <br/>
                     This is used for reference within M2E Pro and will not appear on your Amazon Listings.'
                 ),
@@ -89,7 +89,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'amazon_settings_fieldset',
             [
-                'legend' => $this->__('Amazon Settings'),
+                'legend' => __('Amazon Settings'),
                 'collapsable' => false,
             ]
         );
@@ -143,7 +143,7 @@ class Form extends AbstractForm
             'account_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Account'),
+                'label' => __('Account'),
                 'style' => 'line-height: 32px; display: initial;',
                 'text' => <<<HTML
     <span id="account_label"></span>
@@ -155,13 +155,13 @@ HTML
                                              ->setData(
                                                  [
                                                      'id' => 'add_account_button',
-                                                     'label' => $this->__('Add Another'),
+                                                     'label' => __('Add Another'),
                                                      'style' => 'margin-left: 5px;' . $isAddAccountButtonHidden,
                                                      'onclick' => '',
                                                      'class' => 'primary',
                                                  ]
                                              )->toHtml(),
-                'tooltip' => $this->__('This is the user name of your Amazon Account.'),
+                'tooltip' => __('This is the user name of your Amazon Account.'),
             ]
         );
 
@@ -170,7 +170,7 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'css_class' => 'no-margin-bottom',
-                'label' => $this->__('Marketplace'),
+                'label' => __('Marketplace'),
                 'text' => '<span id="marketplace_title"></span><p class="note" id="marketplace_url"></p>',
 
                 'field_extra_attributes' => 'id="marketplace_info" style="display: none; margin-top: 0px"',
@@ -189,7 +189,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_fieldset',
             [
-                'legend' => $this->__('Magento Settings'),
+                'legend' => __('Magento Settings'),
                 'collapsable' => false,
             ]
         );
@@ -199,12 +199,12 @@ HTML
             self::STORE_SWITCHER,
             [
                 'name' => 'store_id',
-                'label' => $this->__('Magento Store View'),
+                'label' => __('Magento Store View'),
                 'value' => $storeId,
                 'required' => true,
                 'has_empty_option' => true,
                 'display_default_store_mode' => StoreSwitcher::DISPLAY_DEFAULT_STORE_MODE_DOWN,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Choose the Magento Store View you want to use for this M2E Pro Listing.'
                 ),
             ]
@@ -253,18 +253,18 @@ HTML
 
         $this->jsTranslator->add(
             'The specified Title is already used for other Listing. Listing Title must be unique.',
-            $this->__(
+            __(
                 'The specified Title is already used for other Listing. Listing Title must be unique.'
             )
         );
         $this->jsTranslator->add(
             'Account not found, please create it.',
-            $this->__('Account not found, please create it.')
+            __('Account not found, please create it.')
         );
-        $this->jsTranslator->add('Add Another', $this->__('Add Another'));
+        $this->jsTranslator->add('Add Another', __('Add Another'));
         $this->jsTranslator->add(
             'Please wait while Synchronization is finished.',
-            $this->__('Please wait while Synchronization is finished.')
+            __('Please wait while Synchronization is finished.')
         );
 
         $this->js->add(

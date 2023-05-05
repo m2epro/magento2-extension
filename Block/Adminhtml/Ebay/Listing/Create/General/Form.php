@@ -69,7 +69,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $marketplaceSelectionDisabled = true;
         if (!$marketplaceId && $account->getId()) {
             $accountId = $account->getId();
-            $info = $this->dataHelper->jsonDecode($account->getChildObject()->getInfo());
+            $info = \Ess\M2ePro\Helper\Json::decode($account->getChildObject()->getInfo());
             $marketplaceId = $this->activeRecordFactory->getObject('Marketplace')->getIdByCode($info['Site']);
             $marketplaceSelectionDisabled = false;
         }
@@ -304,7 +304,7 @@ HTML
             ]
         );
 
-        $marketplaces = $this->dataHelper->jsonEncode($this->getMarketplaces());
+        $marketplaces = \Ess\M2ePro\Helper\Json::encode($this->getMarketplaces());
 
         $this->js->addOnReadyJs(
             <<<JS

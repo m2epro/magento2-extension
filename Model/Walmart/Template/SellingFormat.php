@@ -428,7 +428,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     }
 
     /**
-     * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getPriceModifier(): array
@@ -933,13 +932,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         return (int)$this->getData('attributes_mode');
     }
 
-    /**
-     * @return array
-     */
     public function getAttributesTemplate()
     {
         return $this->getData('attributes') === null
-            ? [] : $this->getHelper('Data')->jsonDecode($this->getData('attributes'));
+            ? [] : \Ess\M2ePro\Helper\Json::decode($this->getData('attributes'));
     }
 
     /**

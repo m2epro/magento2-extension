@@ -48,17 +48,17 @@ class Builder extends AbstractModel
         // ---------------------------------------
         $this->setData('price', (float)$data['selling']['price']);
         $this->setData('qty_purchased', (int)$data['selling']['qty_purchased']);
-        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($data['selling']['tax_details']));
+        $this->setData('tax_details', \Ess\M2ePro\Helper\Json::encode($data['selling']['tax_details']));
         $this->setData('final_fee', (float)$data['selling']['final_fee']);
         $this->setData('waste_recycling_fee', (float)$data['selling']['waste_recycling_fee']);
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->setData('variation_details', $this->getHelper('Data')->jsonEncode($data['variation_details']));
+        $this->setData('variation_details', \Ess\M2ePro\Helper\Json::encode($data['variation_details']));
         // ---------------------------------------
 
         // ---------------------------------------
-        $this->setData('tracking_details', $this->getHelper('Data')->jsonEncode($data['tracking_details']));
+        $this->setData('tracking_details', \Ess\M2ePro\Helper\Json::encode($data['tracking_details']));
         // ---------------------------------------
     }
 

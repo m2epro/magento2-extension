@@ -23,11 +23,12 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
     /** @var \Ess\M2ePro\Model\Ebay\Item $channelItem */
     private $channelItem = null;
-
+    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other */
+    private $listingOtherResourceModel;
+    /** @var \Ess\M2ePro\Model\Magento\Product\BuilderFactory */
     protected $productBuilderFactory;
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Product\BuilderFactory $productBuilderFactory,
@@ -38,12 +39,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other $listingOtherResourceModel,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->productBuilderFactory = $productBuilderFactory;
         $this->productFactory = $productFactory;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
+
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -56,8 +60,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
             $data
         );
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -271,8 +273,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return isset($variationDetails['options']) ? $variationDetails['options'] : [];
     }
 
-    // ---------------------------------------
-
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -283,8 +283,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         return is_array($trackingDetails) ? $trackingDetails : [];
     }
-
-    // ---------------------------------------
 
     /**
      * @return array
@@ -337,8 +335,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->getVariationOptions();
     }
 
-    //########################################
-
     /**
      * @return int
      */
@@ -357,8 +353,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
     }
 
-    //########################################
-
     public function canCreateMagentoOrder()
     {
         return $this->isOrdersCreationEnabled();
@@ -369,24 +363,27 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->isOrdersCreationEnabled();
     }
 
-    // ---------------------------------------
-
-    protected function isOrdersCreationEnabled()
+    protected function isOrdersCreationEnabled(): bool
     {
         $channelItem = $this->getChannelItem();
+        $isOtherListingsEnabled = $this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled();
 
-        if ($channelItem !== null && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
-            return false;
+        if ($channelItem === null) {
+            return $isOtherListingsEnabled;
         }
 
-        if ($channelItem === null && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
-            return false;
+        if (
+            $this->listingOtherResourceModel->isItemFromOtherListing(
+                $channelItem->getProductId(),
+                $channelItem->getAccountId(),
+                $channelItem->getMarketplaceId()
+            )
+        ) {
+            return $isOtherListingsEnabled;
         }
 
-        return true;
+        return $this->getEbayAccount()->isMagentoOrdersListingsModeEnabled();
     }
-
-    //########################################
 
     public function getAssociatedProductId()
     {
@@ -419,8 +416,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
                 return $product->getId();
             }
         }
-
-        // ---------------------------------------
 
         $product = $this->createProduct();
         $this->associateWithProduct($product);
@@ -509,6 +504,4 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
             ]);
         }
     }
-
-    //########################################
 }

@@ -60,7 +60,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             );
         }
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'onclick' => 'ListingProductGridObj.backClick(\'' . $url . '\')',
             'class' => 'back',
         ]);
@@ -68,7 +68,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
         // ---------------------------------------
         $this->addButton('auto_action', [
-            'label' => $this->__('Auto Add/Remove Rules'),
+            'label' => __('Auto Add/Remove Rules'),
             'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
             'class' => 'action-primary',
         ]);
@@ -81,12 +81,12 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
                 ['id' => $this->getRequest()->getParam('id')]
             );
             $confirm =
-                '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
-                . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+                '<strong>' . __('Are you sure?') . '</strong><br><br>'
+                . __('All unsaved changes will be lost and you will be returned to the Listings grid.');
             $this->addButton(
                 'exit_to_listing',
                 [
-                    'label' => $this->__('Cancel'),
+                    'label' => __('Cancel'),
                     'onclick' => "confirmSetLocation('$confirm', '$url');",
                     'class' => 'action-primary',
                 ]
@@ -94,7 +94,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         }
 
         $this->addButton('add_products_mode_category_continue', [
-            'label' => $this->__('Continue'),
+            'label' => __('Continue'),
             'onclick' => 'add_category_products()',
             'class' => 'action-primary forward',
         ]);
@@ -139,13 +139,13 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         );
 
         $this->jsTranslator->addTranslations([
-            'Remove Category' => $this->__('Remove Category'),
-            'Add New Rule' => $this->__('Add New Rule'),
-            'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-            'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-            'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-            'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-            'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
+            'Remove Category' => __('Remove Category'),
+            'Add New Rule' => __('Add New Rule'),
+            'Add/Edit Categories Rule' => __('Add/Edit Categories Rule'),
+            'Auto Add/Remove Rules' => __('Auto Add/Remove Rules'),
+            'Based on Magento Categories' => __('Based on Magento Categories'),
+            'You must select at least 1 Category.' => __('You must select at least 1 Category.'),
+            'Rule with the same Title already exists.' => __('Rule with the same Title already exists.'),
         ]);
 
         $this->js->addOnReadyJs(

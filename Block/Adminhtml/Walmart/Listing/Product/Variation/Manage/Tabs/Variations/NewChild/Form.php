@@ -109,7 +109,7 @@ HTML;
             $i++;
         }
 
-        $productVariationsTree = $this->dataHelper->jsonEncode($this->getProductVariationsTree());
+        $productVariationsTree = \Ess\M2ePro\Helper\Json::encode($this->getProductVariationsTree());
 
         $html .= <<<HTML
     <tr id="new_child_product_product_options_error_row">
@@ -226,7 +226,7 @@ CSS
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 'To sell Walmart Child Products it is necessary to set correspondence between Magento Variations and
                 Walmart Variations. <br/><br/>
 

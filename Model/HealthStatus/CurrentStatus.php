@@ -54,7 +54,7 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getHelper('Module')->getRegistry()->setValue(
             '/health_status/details/',
-            $this->getHelper('Data')->jsonEncode($details)
+            \Ess\M2ePro\Helper\Json::encode($details)
         );
 
         return true;

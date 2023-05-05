@@ -13,6 +13,7 @@ use Ess\M2ePro\Helper\Factory as HelperFactory;
 use Ess\M2ePro\Model\ActiveRecord\Factory as ActiveRecordFactory;
 use Ess\M2ePro\Model\Factory as ModelFactory;
 use Ess\M2ePro\Model\Wizard\MigrationFromMagento1;
+use Ess\M2ePro\Model\Wizard\VersionDowngrade;
 use Magento\Backend\App\Action;
 use Magento\Framework\View\Result\PageFactory;
 
@@ -216,10 +217,21 @@ abstract class Base extends Action
             return $this->_redirect('*/maintenance');
         }
 
-        /** @var MigrationFromMagento1 $wizard */
-        $wizard = $this->helperFactory->getObject('Module_Wizard')->getWizard(MigrationFromMagento1::NICK);
-        if ($wizard->isUnexpectedlyCopiedFromM1()) {
+        /** @var \Ess\M2ePro\Helper\Module\Wizard $wizardHelper */
+        $wizardHelper = $this->helperFactory->getObject('Module_Wizard');
+
+        /** @var MigrationFromMagento1 $migrationFromMagento1Wizard */
+        $migrationFromMagento1Wizard = $wizardHelper->getWizard(MigrationFromMagento1::NICK);
+        if ($migrationFromMagento1Wizard->isUnexpectedlyCopiedFromM1()) {
             return $this->_redirect('*/migrationFromMagento1/initUnexpectedlyCopied');
+        }
+
+        /** @var VersionDowngrade $versionDowngradeWizard */
+        $versionDowngradeWizard = $wizardHelper->getWizard(VersionDowngrade::NICK);
+        if ($versionDowngradeWizard->isVersionDowngrade()) {
+            $versionDowngradeWizard->startRepairProcess();
+
+            return $this->_redirect('*/wizard_versionDowngrade/index');
         }
 
         if ($this->getHelper('Module')->isDisabled()) {
@@ -247,7 +259,7 @@ abstract class Base extends Action
 
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
             $this->getRawResult()->setContents(
-                $this->getHelper('Data')->jsonEncode([
+                \Ess\M2ePro\Helper\Json::encode([
                     'ajaxExpired' => 1,
                     'ajaxRedirect' => $this->redirect->getRefererUrl(),
                 ])
@@ -411,7 +423,7 @@ abstract class Base extends Action
             $this->generalBlockWasAppended = true;
         }
 
-        $this->setAjaxContent($this->getHelper('Data')->jsonEncode($data), false);
+        $this->setAjaxContent(\Ess\M2ePro\Helper\Json::encode($data), false);
     }
 
     // ---------------------------------------

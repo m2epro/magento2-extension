@@ -26,6 +26,6 @@ class Skip extends InstallationAmazon
     {
         $this->magentoHelper->clearMenuCache();
         $this->setStatus(Wizard::STATUS_SKIPPED);
-        $this->_redirect("*/amazon_listing/index/");
+        $this->_redirect("*/amazon_listing/index");
     }
 }

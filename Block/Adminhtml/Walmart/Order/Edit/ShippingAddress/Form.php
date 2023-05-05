@@ -62,7 +62,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'order_address_info',
             [
-                'legend' => $this->__('Order Address Information'),
+                'legend' => __('Order Address Information'),
             ]
         );
 
@@ -71,7 +71,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'buyer_name',
-                'label' => $this->__('Buyer Name'),
+                'label' => __('Buyer Name'),
                 'value' => $order->getChildObject()->getData('buyer_name'),
                 'required' => true,
             ]
@@ -82,7 +82,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'buyer_email',
-                'label' => $this->__('Buyer Email'),
+                'label' => __('Buyer Email'),
                 'value' => $order->getChildObject()->getData('buyer_email'),
                 'required' => true,
             ]
@@ -93,7 +93,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'recipient_name',
-                'label' => $this->__('Recipient Name'),
+                'label' => __('Recipient Name'),
                 'value' => isset($address['recipient_name'])
                     ? $this->dataHelper->escapeHtml($address['recipient_name']) : '',
                 'required' => true,
@@ -105,7 +105,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'street[0]',
-                'label' => $this->__('Street Address'),
+                'label' => __('Street Address'),
                 'value' => isset($address['street'][0])
                     ? $this->dataHelper->escapeHtml($address['street'][0]) : '',
                 'required' => true,
@@ -139,7 +139,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'city',
-                'label' => $this->__('City'),
+                'label' => __('City'),
                 'value' => $address['city'],
                 'required' => true,
             ]
@@ -150,7 +150,7 @@ class Form extends AbstractForm
             'select',
             [
                 'name' => 'country_code',
-                'label' => $this->__('Country'),
+                'label' => __('Country'),
                 'values' => $this->magentoHelper->getCountries(),
                 'value' => $address['country_code'],
                 'required' => true,
@@ -162,7 +162,7 @@ class Form extends AbstractForm
             'text',
             [
                 'container_id' => 'state_td',
-                'label' => $this->__('Region/State'),
+                'label' => __('Region/State'),
             ]
         );
 
@@ -171,7 +171,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'county',
-                'label' => $this->__('County'),
+                'label' => __('County'),
                 'value' => isset($address['county'])
                     ? $this->dataHelper->escapeHtml($address['county']) : '',
             ]
@@ -182,7 +182,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'postal_code',
-                'label' => $this->__('Zip/Postal Code'),
+                'label' => __('Zip/Postal Code'),
                 'value' => $address['postal_code'],
             ]
         );
@@ -192,7 +192,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'phone',
-                'label' => $this->__('Telephone'),
+                'label' => __('Telephone'),
                 'value' => $address['phone'],
             ]
         );

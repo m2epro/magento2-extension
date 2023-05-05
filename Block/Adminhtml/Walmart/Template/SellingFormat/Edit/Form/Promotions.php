@@ -204,7 +204,7 @@ HTML;
                 'value' => '',
                 'class' => 'M2ePro-validate-price-coefficient',
                 'disabled' => true,
-                'tooltip' => $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)'),
+                'tooltip' => __('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)'),
             ]
         );
         $this->setData('promotions_price_coefficient', $promotionsPriceCoefficient);
@@ -246,7 +246,7 @@ HTML;
                 'value' => '',
                 'class' => 'M2ePro-validate-price-coefficient',
                 'disabled' => true,
-                'tooltip' => $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)'),
+                'tooltip' => __('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)'),
             ]
         );
         $this->setData('promotions_comparison_price_coefficient', $promotionsPriceCoefficient);
@@ -261,11 +261,11 @@ HTML;
                 'values' => [
                     [
                         'value' => Promotion::TYPE_REDUCED,
-                        'label' => $this->__('Reduced'),
+                        'label' => __('Reduced'),
                     ],
                     [
                         'value' => Promotion::TYPE_CLEARANCE,
-                        'label' => $this->__('Clearance'),
+                        'label' => __('Clearance'),
                     ],
                 ],
                 'value' => '',
@@ -278,7 +278,7 @@ HTML;
 
         $removePromotionPriceButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                            ->addData([
-                                               'label' => $this->__('Remove'),
+                                               'label' => __('Remove'),
                                                'class' => 'delete icon-btn remove_promotion_price_button',
                                            ]);
         $this->setData('remove_promotion_price_button', $removePromotionPriceButton);
@@ -295,7 +295,7 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::START_DATE_MODE_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -313,7 +313,7 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::END_DATE_MODE_VALUE,
-                'label' => $this->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
         ];
 
@@ -331,11 +331,11 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::PRICE_MODE_PRODUCT,
-                'label' => $this->__('Product Price'),
+                'label' => __('Product Price'),
             ],
             [
                 'value' => Promotion::PRICE_MODE_SPECIAL,
-                'label' => $this->__('Special Price'),
+                'label' => __('Special Price'),
             ],
         ];
 
@@ -353,11 +353,11 @@ HTML;
         $optionsResult = [
             [
                 'value' => Promotion::COMPARISON_PRICE_MODE_PRODUCT,
-                'label' => $this->__('Product Price'),
+                'label' => __('Product Price'),
             ],
             [
                 'value' => Promotion::COMPARISON_PRICE_MODE_SPECIAL,
-                'label' => $this->__('Special Price'),
+                'label' => __('Special Price'),
             ],
         ];
 

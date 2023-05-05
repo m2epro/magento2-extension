@@ -14,20 +14,16 @@ namespace Ess\M2ePro\Model\Amazon\Order;
 
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Order\Item
- */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Magento\Product\BuilderFactory  */
+    /** @var \Ess\M2ePro\Model\Magento\Product\BuilderFactory */
     private $productBuilderFactory;
-    /** @var \Magento\Catalog\Model\ProductFactory  */
+    /** @var \Magento\Catalog\Model\ProductFactory */
     private $productFactory;
-
-    /** @var \Ess\M2ePro\Model\Amazon\Item $channelItem */
+    /** @var \Ess\M2ePro\Model\Amazon\Item|null */
     private $channelItem = null;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other */
+    private $listingOtherResourceModel;
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Product\BuilderFactory $productBuilderFactory,
@@ -38,12 +34,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other $listingOtherResourceModel,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->productBuilderFactory = $productBuilderFactory;
         $this->productFactory = $productFactory;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
+
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -57,15 +56,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         );
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::class);
     }
-
-    //########################################
 
     public function getProxy()
     {
@@ -74,12 +69,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         ]);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Order
      */
-    public function getAmazonOrder()
+    public function getAmazonOrder(): \Ess\M2ePro\Model\Amazon\Order
     {
         return $this->getParentObject()->getOrder()->getChildObject();
     }
@@ -87,17 +80,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     /**
      * @return \Ess\M2ePro\Model\Amazon\Account
      */
-    public function getAmazonAccount()
+    public function getAmazonAccount(): \Ess\M2ePro\Model\Amazon\Account
     {
         return $this->getAmazonOrder()->getAmazonAccount();
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Item|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getChannelItem()
+    public function getChannelItem(): ?\Ess\M2ePro\Model\Amazon\Item
     {
         if ($this->channelItem === null) {
             $this->channelItem = $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
@@ -120,14 +112,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $this->channelItem->getId() !== null ? $this->channelItem : null;
     }
 
-    //########################################
-
     public function getAmazonOrderItemId()
     {
         return $this->getData('amazon_order_item_id');
     }
-
-    // ---------------------------------------
 
     public function getTitle()
     {
@@ -147,17 +135,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     /**
      * @return int
      */
-    public function getIsIsbnGeneralId()
+    public function getIsIsbnGeneralId(): int
     {
         return (int)$this->getData('is_isbn_general_id');
     }
 
-    // ---------------------------------------
-
     /**
      * @return float
      */
-    public function getPrice()
+    public function getPrice(): float
     {
         return (float)$this->getData('price');
     }
@@ -165,7 +151,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     /**
      * @return float
      */
-    public function getShippingPrice()
+    public function getShippingPrice(): float
     {
         return (float)$this->getData('shipping_price');
     }
@@ -181,17 +167,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     /**
      * @return int
      */
-    public function getQtyPurchased()
+    public function getQtyPurchased(): int
     {
         return (int)$this->getData('qty_purchased');
     }
 
-    // ---------------------------------------
-
     /**
      * @return float
      */
-    public function getGiftPrice()
+    public function getGiftPrice(): float
     {
         return (float)$this->getData('gift_price');
     }
@@ -206,13 +190,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $this->getData('gift_message');
     }
 
-    // ---------------------------------------
-
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getTaxDetails()
+    public function getTaxDetails(): array
     {
         return $this->getSettings('tax_details');
     }
@@ -221,7 +203,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
      * @return float
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getTaxAmount()
+    public function getTaxAmount(): float
     {
         $taxDetails = $this->getTaxDetails();
 
@@ -232,30 +214,26 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
      * @return float
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getShippingTaxAmount()
+    public function getShippingTaxAmount(): float
     {
         $taxDetails = $this->getTaxDetails();
 
         return isset($taxDetails['shipping']['value']) ? (float)$taxDetails['shipping']['value'] : 0.0;
     }
 
-    // ---------------------------------------
-
     /**
      * @return string|null
      */
-    public function getFulfillmentCenterId()
+    public function getFulfillmentCenterId(): ?string
     {
         return $this->getData('fulfillment_center_id');
     }
-
-    // ---------------------------------------
 
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getDiscountDetails()
+    public function getDiscountDetails(): array
     {
         return $this->getSettings('discount_details');
     }
@@ -271,12 +249,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             ? ($discountDetails['promotion']['value'] / $this->getQtyPurchased()) : 0.0;
     }
 
-    // ---------------------------------------
-
     /**
      * @return array
      */
-    public function getVariationProductOptions()
+    public function getVariationProductOptions(): array
     {
         $channelItem = $this->getChannelItem();
 
@@ -290,7 +266,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     /**
      * @return array
      */
-    public function getVariationChannelOptions()
+    public function getVariationChannelOptions(): array
     {
         $channelItem = $this->getChannelItem();
 
@@ -300,8 +276,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
         return $channelItem->getVariationChannelOptions();
     }
-
-    //########################################
 
     /**
      * @return int
@@ -333,36 +307,41 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $storeId;
     }
 
-    //########################################
-
-    public function canCreateMagentoOrder()
+    public function canCreateMagentoOrder(): bool
     {
         return $this->isOrdersCreationEnabled();
     }
 
-    public function isReservable()
+    public function isReservable(): bool
     {
         return $this->isOrdersCreationEnabled();
     }
 
-    // ---------------------------------------
-
-    private function isOrdersCreationEnabled()
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function isOrdersCreationEnabled(): bool
     {
         $channelItem = $this->getChannelItem();
+        $isOtherListingsEnabled = $this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled();
 
-        if ($channelItem !== null && !$this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled()) {
-            return false;
+        if ($channelItem === null) {
+            return $isOtherListingsEnabled;
         }
 
-        if ($channelItem === null && !$this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
-            return false;
+        if (
+            $this->listingOtherResourceModel->isItemFromOtherListing(
+                $channelItem->getProductId(),
+                $channelItem->getAccountId(),
+                $channelItem->getMarketplaceId()
+            )
+        ) {
+            return $isOtherListingsEnabled;
         }
 
-        return true;
+        return $this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled();
     }
-
-    //########################################
 
     /**
      * @return int|mixed
@@ -414,7 +393,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
      * @return \Magento\Catalog\Model\Product
      * @throws \Ess\M2ePro\Model\Exception
      */
-    protected function createProduct()
+    protected function createProduct(): \Magento\Catalog\Model\Product
     {
         if (!$this->getAmazonAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
             throw new ProductCreationDisabled(
@@ -494,6 +473,4 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
         return $this->getQtyPurchased();
     }
-
-    //########################################
 }

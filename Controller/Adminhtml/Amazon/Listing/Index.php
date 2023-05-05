@@ -8,36 +8,38 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
-    //########################################
-
+    /**
+     * @inheritDoc
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::amazon_listings_m2epro');
     }
 
-    //########################################
-
     public function execute()
     {
-        if ($this->getRequest()->getQuery('ajax')) {
-            $this->setAjaxContent(
-                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Grid::class)
+        if ($this->isAjax()) {
+            /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\ItemsByListing\Grid $grid */
+            $grid = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\ItemsByListing\Grid::class
             );
+            $this->setAjaxContent($grid);
 
             return $this->getResult();
         }
 
-        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing::class));
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\ItemsByListing $block */
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\ItemsByListing::class
+        );
+
+        $this->addContent($block);
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Items By Listing'));
         $this->setPageHelpLink('x/Kv8UB');
 
         return $this->getResult();
     }
-
-    //########################################
 }

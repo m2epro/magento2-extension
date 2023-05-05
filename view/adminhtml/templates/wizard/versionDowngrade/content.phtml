@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\VersionDowngrade\Content $block */
+
+$url = $block->getSupportUrl();
+
+?>
+
+<div class="wizard_block">
+    <div>
+        <p>
+            We detected a discrepancy between M2E Pro version stated in your database (setup_module table)
+            and the actual version of M2E Pro files available in your filesystem. Most likely, M2E Pro files
+            were attempted to get downgraded. To have the issue resolved, it’s required to perform an extension upgrade.
+            Please, follow <a href="<?php echo $url ?>" class="external-link" target="_blank">these instructions</a>
+            to complete the upgrade.
+        </p>
+        <p>
+            In case you are using any Version Control System (Git, etc), please remember to add the new version files
+            to your system project after the upgrade.
+        </p>
+        <p>
+            Once the extension version is properly installed, reloading the page will get you out of maintenance mode.
+        </p>
+    </div>
+</div>

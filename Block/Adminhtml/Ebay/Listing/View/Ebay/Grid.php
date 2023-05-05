@@ -356,7 +356,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             return $valueHtml;
         }
 
-        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
 
         $productAttributes = isset($additionalData['variations_sets'])
             ? array_keys($additionalData['variations_sets']) : [];
@@ -412,7 +412,7 @@ JS
             $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
             $row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN
         ) {
-            $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+            $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
 
             if (empty($additionalData['ebay_item_fees']['listing_fee']['fee'])) {
                 $price = $this->modelFactory->getObject('Currency')->formatPrice(
@@ -568,7 +568,7 @@ HTML;
         return $this->getUrl('*/ebay_listing/view', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -603,7 +603,7 @@ JS
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $gridId = $component . 'ListingViewGrid' . $this->listing['id'];
-        $ignoreListings = $this->dataHelper->jsonEncode([$this->listing['id']]);
+        $ignoreListings = \Ess\M2ePro\Helper\Json::encode([$this->listing['id']]);
 
         $this->jsUrl->addUrls([
             'runListProducts' => $this->getUrl('*/ebay_listing/runListProducts'),
@@ -697,7 +697,9 @@ JS
             'Ebay Item Duplicate' => $this->__('eBay Item Duplicate'),
         ]);
 
-        $showAutoAction = $this->dataHelper->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
+        $showAutoAction = \Ess\M2ePro\Helper\Json::encode(
+            (bool)$this->getRequest()->getParam('auto_actions')
+        );
 
         $this->js->add(
             <<<JS

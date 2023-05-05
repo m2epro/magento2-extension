@@ -26,6 +26,6 @@ class Skip extends InstallationWalmart
     {
         $this->magentoHelper->clearMenuCache();
         $this->setStatus(Wizard::STATUS_SKIPPED);
-        $this->_redirect("*/walmart_listing/index/");
+        $this->_redirect("*/walmart_listing/index");
     }
 }

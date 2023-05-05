@@ -74,7 +74,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
         $fieldset = $form->addFieldset(
             'amazon_synchronization_templates',
             [
-                'legend' => $this->__('M2E Pro Listings Synchronization'),
+                'legend' => __('M2E Pro Listings Synchronization'),
                 'collapsable' => false,
             ]
         );
@@ -84,13 +84,13 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractF
             self::SELECT,
             [
                 'name' => 'instructions_mode',
-                'label' => $this->__('Enabled'),
+                'label' => __('Enabled'),
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
                 'value' => $instructionsMode,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>This synchronization includes import of changes made on Amazon channel as well
                     as the ability to enable/disable the data synchronization managed by the
                     Synchronization Policy Rules.</p><br>

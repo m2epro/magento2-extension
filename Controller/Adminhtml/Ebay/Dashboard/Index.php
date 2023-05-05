@@ -15,7 +15,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
      */
     public function execute()
     {
-        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Dashboard::class));
+        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\DashboardDemo::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend(__('Dashboard. Coming soon...'));
 
         return $this->getResult();

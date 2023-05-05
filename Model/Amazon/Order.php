@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
-use Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory;
-
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Order getResource()
@@ -48,25 +46,27 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory */
     private $productPriceTaxFactory;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
-    protected $amazonHelper;
-
+    private $amazonHelper;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory */
-    protected $amazonFactory;
+    private $amazonFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other */
+    private $listingOtherResourceModel;
 
     public function __construct(
-        Order\Tax\ProductPriceTaxFactory                                              $productPriceTaxFactory,
-        \Ess\M2ePro\Helper\Component\Amazon                            $amazonHelper,
+        Order\Tax\ProductPriceTaxFactory $productPriceTaxFactory,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory                $shipmentFactory,
-        \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory          $shippingAddressFactory,
-        \Magento\Sales\Model\Order\Email\Sender\OrderSender            $orderSender,
-        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender          $invoiceSender,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory        $parentFactory,
-        \Ess\M2ePro\Model\Factory                                      $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory                         $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory                                     $helperFactory,
+        \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
+        \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
+        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
+        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other $listingOtherResourceModel,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -90,6 +90,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
     }
 
     public function _construct()
@@ -97,8 +98,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Order::class);
     }
-
-    //########################################
 
     public function getProxy()
     {
@@ -108,8 +107,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         );
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Account
      */
@@ -117,8 +114,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return $this->getParentObject()->getAccount()->getChildObject();
     }
-
-    //########################################
 
     public function getAmazonOrderId()
     {
@@ -166,7 +161,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getShippingAddress()
     {
-        $address = $this->getHelper('Data')->jsonDecode($this->getData('shipping_address'));
+        $address = \Ess\M2ePro\Helper\Json::decode($this->getData('shipping_address'));
 
         return $this->shippingAddressFactory->create([
             'order' => $this->getParentObject(),
@@ -181,8 +176,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getSettings('merchant_fulfillment_data');
     }
 
-    //########################################
-
     public function getShippingDateTo()
     {
         return $this->getData('shipping_date_to');
@@ -192,8 +185,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return $this->getData('delivery_date_to');
     }
-
-    //########################################
 
     public function getIossNumber()
     {
@@ -225,8 +216,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return (float)$this->getData('paid_amount');
     }
-
-    //########################################
 
     /**
      * @return array
@@ -294,8 +283,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return round($taxRate, 4);
     }
 
-    //########################################
-
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -325,8 +312,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return !empty($discountDetails['shipping']) ? $discountDetails['shipping'] : 0.0;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -334,8 +319,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return (bool)$this->getData('is_afn_channel');
     }
-
-    //########################################
 
     public function isEligibleForMerchantFulfillment()
     {
@@ -366,8 +349,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return !empty($info);
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -391,8 +372,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return (bool)$this->getData('is_sold_by_amazon');
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -460,8 +439,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getStatus() == self::STATUS_CANCELLATION_REQUESTED;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -479,8 +456,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return $this->getData('seller_order_id');
     }
-
-    //########################################
 
     /**
      * @return float|null
@@ -512,8 +487,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return round($this->grandTotalPrice, 2);
     }
 
-    //########################################
-
     public function getStatusForMagentoOrder()
     {
         $status = '';
@@ -524,32 +497,31 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $status;
     }
 
-    //########################################
-
     /**
      * @return int|null
      */
     public function getAssociatedStoreId()
     {
-        $storeId = null;
-
         $channelItems = $this->getParentObject()->getChannelItems();
 
         if (count($channelItems) == 0) {
-            // Unmanaged order
-            // ---------------------------------------
             $storeId = $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
-            // ---------------------------------------
         } else {
-            // M2E Pro order
-            // ---------------------------------------
-            if ($this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()) {
+            /** @var \Ess\M2ePro\Model\Amazon\Item $firstChannelItem */
+            $firstChannelItem = reset($channelItems);
+            $itemIsFromOtherListing = $this->listingOtherResourceModel->isItemFromOtherListing(
+                $firstChannelItem->getProductId(),
+                $firstChannelItem->getAccountId(),
+                $firstChannelItem->getMarketplaceId()
+            );
+
+            if ($itemIsFromOtherListing) {
+                $storeId = $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
+            } elseif ($this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()) {
                 $storeId = $this->getAmazonAccount()->getMagentoOrdersListingsStoreId();
             } else {
-                $firstChannelItem = reset($channelItems);
                 $storeId = $firstChannelItem->getStoreId();
             }
-            // ---------------------------------------
         }
 
         if ($this->isFulfilledByAmazon() && $this->getAmazonAccount()->isMagentoOrdersFbaStoreModeEnabled()) {
@@ -562,8 +534,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return $storeId;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -584,8 +554,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return true;
     }
-
-    //########################################
 
     /**
      * Check possibility for magento order creation
@@ -626,8 +594,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -652,8 +618,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return true;
     }
-
-    // ---------------------------------------
 
     /**
      * @return \Magento\Sales\Model\Order\Invoice|null
@@ -686,8 +650,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $invoice;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -713,8 +675,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    // ---------------------------------------
-
     /**
      * @return \Magento\Sales\Model\Order\Shipment[]|null
      */
@@ -731,8 +691,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return $shipmentBuilder->getShipments();
     }
-
-    //########################################
 
     /**
      * @param array $trackingDetails
@@ -870,13 +828,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $existingParams['items'][] = $newItem;
         }
 
-        $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
+        $change->setData('params', \Ess\M2ePro\Helper\Json::encode($existingParams));
         $change->save();
 
         return true;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -952,8 +908,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -1007,8 +961,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return true;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -1064,8 +1016,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    //########################################
-
     public function canSendInvoiceFromReport()
     {
         if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
@@ -1104,8 +1054,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    //########################################
-
     public function sendInvoiceDocument(array $params)
     {
         if (empty($params['invoice_source'])) {
@@ -1123,8 +1071,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    //########################################
-
     public function delete()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Invoice\Collection $invoiceCollection */
@@ -1136,6 +1082,4 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return parent::delete();
     }
-
-    //########################################
 }

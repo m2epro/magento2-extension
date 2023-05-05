@@ -63,12 +63,11 @@ HTML
             ];
         }
 
-        $dataHelper = $this->helperFactory->getObject('Data');
         $this->getConnection()->insert(
             $this->getFullTableName('registry'),
             [
                 'key'   => '/upgrade/messages/',
-                'value' => $dataHelper->jsonEncode($messages)
+                'value' => \Ess\M2ePro\Helper\Json::encode($messages)
             ]
         );
     }

@@ -21,7 +21,11 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
      */
     protected function _convertDate($date)
     {
-        if (!$this->getColumn()->getFilterTime()) {
+        $date = trim($date);
+        if (
+            !$this->getColumn()->getFilterTime()
+            || strpos($date, ' ') === false
+        ) {
             return parent::_convertDate($date);
         }
 

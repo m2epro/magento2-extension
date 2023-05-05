@@ -34,7 +34,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
 
     public function getTooltip()
     {
-        return $this->__(
+        return __(
             <<<HTML
     Switch between 3 View Modes to manage the related Item data:
     <ul class="list">
@@ -75,11 +75,11 @@ HTML
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
-                        'label' => $this->__('Settings'),
+                        'label' => __('Settings'),
                     ],
                     [
                         'value' => self::VIEW_MODE_MAGENTO,
-                        'label' => $this->__('Magento'),
+                        'label' => __('Magento'),
                     ],
                 ],
             ],

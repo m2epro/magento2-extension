@@ -193,15 +193,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->getUrl('*/controlPanel/databaseTab', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
-        if (!$row->getData('is_exist') || !$row->getData('model')) {
+        if (!$item->getData('is_exist') || !$item->getData('model')) {
             return false;
         }
 
         return $this->getUrl(
             '*/controlPanel_database/manageTable',
-            ['table' => $row->getData('table_name')]
+            ['table' => $item->getData('table_name')]
         );
     }
 

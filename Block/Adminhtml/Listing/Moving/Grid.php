@@ -275,7 +275,7 @@ JS
         return $this->getData('grid_url');
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

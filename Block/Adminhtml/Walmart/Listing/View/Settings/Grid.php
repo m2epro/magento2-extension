@@ -123,7 +123,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('Product ID'),
+            'header' => __('Product ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -133,7 +133,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Product Title / Product SKU'),
+            'header' => __('Product Title / Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -144,7 +144,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
+            'header' => __('SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
@@ -155,7 +155,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('gtin', [
-            'header' => $this->__('GTIN'),
+            'header' => __('GTIN'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
@@ -168,7 +168,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('category_template', [
-            'header' => $this->__('Category Policy'),
+            'header' => __('Category Policy'),
             'align' => 'left',
             'width' => '250px',
             'type' => 'text',
@@ -178,7 +178,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('actions', [
-            'header' => $this->__('Actions'),
+            'header' => __('Actions'),
             'align' => 'left',
             'width' => '100px',
             'type' => 'action',
@@ -198,8 +198,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function getGroupOrder()
     {
         $groups = [
-            'edit_template_category' => $this->__('Category Policy'),
-            'other' => $this->__('Other'),
+            'edit_template_category' => __('Category Policy'),
+            'other' => __('Other'),
         ];
 
         return $groups;
@@ -209,7 +209,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $actions = [
             'assignTemplateCategory' => [
-                'caption' => $this->__('Use Another Category Policy'),
+                'caption' => __('Use Another Category Policy'),
                 'group' => 'edit_template_category',
                 'field' => 'id',
                 'onclick_action' => 'ListingGridObj.actions[\'changeTemplateCategoryIdAction\']',
@@ -217,7 +217,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ];
 
         $actions['remapProduct'] = [
-            'caption' => $this->__('Link to another Magento Product'),
+            'caption' => __('Link to another Magento Product'),
             'group' => 'other',
             'field' => 'id',
             'only_remap_product' => true,
@@ -239,24 +239,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Set mass-action
         // ---------------------------------------
         $groups = [
-            'category_policy' => $this->__('Category Policy'),
-            'other' => $this->__('Other'),
+            'category_policy' => __('Category Policy'),
+            'other' => __('Other'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
 
         $this->getMassactionBlock()->addItem('changeTemplateCategoryId', [
-            'label' => $this->__('Use Another'),
+            'label' => __('Use Another'),
             'url' => '',
         ], 'category_policy');
 
         $this->getMassactionBlock()->addItem('moving', [
-            'label' => $this->__('Move Item(s) to Another Listing'),
+            'label' => __('Move Item(s) to Another Listing'),
             'url' => '',
         ], 'other');
 
         $this->getMassactionBlock()->addItem('duplicate', [
-            'label' => $this->__('Duplicate'),
+            'label' => __('Duplicate'),
             'url' => '',
         ], 'other');
 
@@ -279,7 +279,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                                       ->getSku();
         }
 
-        $value .= '<br/><strong>' . $this->__('SKU') .
+        $value .= '<br/><strong>' . __('SKU') .
             ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
@@ -341,7 +341,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function callbackColumnTemplateCategory($value, $row, $column, $isExport)
     {
-        $html = $this->__('N/A');
+        $html = __('N/A');
 
         if ($row->getData('template_category_id')) {
             $url = $this->getUrl('*/walmart_template_category/edit', [
@@ -395,7 +395,7 @@ SQL;
         $collection->getSelect()->where($where);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

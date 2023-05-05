@@ -31,9 +31,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $data['title'] = strip_tags($data['title']);
 
-        $data['key_features'] = $this->getHelper('Data')->jsonEncode($data['key_features']);
-        $data['other_features'] = $this->getHelper('Data')->jsonEncode($data['other_features']);
-        $data['attributes'] = $this->getHelper('Data')->jsonEncode(
+        $data['key_features'] = \Ess\M2ePro\Helper\Json::encode($data['key_features']);
+        $data['other_features'] = \Ess\M2ePro\Helper\Json::encode($data['other_features']);
+        $data['attributes'] = \Ess\M2ePro\Helper\Json::encode(
             $this->getComparedData($data, 'attributes_name', 'attributes_value')
         );
 
@@ -122,15 +122,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'gallery_images_attribute' => '',
 
             'key_features_mode' => Description::KEY_FEATURES_MODE_NONE,
-            'key_features' => $this->getHelper('Data')->jsonEncode([]),
+            'key_features' => \Ess\M2ePro\Helper\Json::encode([]),
 
             'other_features_mode' => Description::OTHER_FEATURES_MODE_NONE,
-            'other_features' => $this->getHelper('Data')->jsonEncode([]),
+            'other_features' => \Ess\M2ePro\Helper\Json::encode([]),
 
             'attributes_mode' => Description::ATTRIBUTES_MODE_NONE,
-            'attributes' => $this->getHelper('Data')->jsonEncode([]),
-            'attributes_name' => $this->getHelper('Data')->jsonEncode([]),
-            'attributes_value' => $this->getHelper('Data')->jsonEncode([]),
+            'attributes' => \Ess\M2ePro\Helper\Json::encode([]),
+            'attributes_name' => \Ess\M2ePro\Helper\Json::encode([]),
+            'attributes_value' => \Ess\M2ePro\Helper\Json::encode([]),
         ];
     }
 

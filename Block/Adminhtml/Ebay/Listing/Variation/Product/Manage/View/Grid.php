@@ -343,7 +343,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $formHtml = '';
 
         $variationId = $row->getData('id');
-        $additionalData = $this->dataHelper->jsonDecode($row->getData('additional_data'));
+        $additionalData = \Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
 
         $linkTitle = $this->__('Change');
         $linkContent = $this->__('Change');
@@ -518,13 +518,17 @@ HTML;
         ]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
 
     //########################################
 
+    /**
+     * @return string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function _toHtml()
     {
         $urls = [
@@ -555,7 +559,7 @@ JS
 JS
             );
         }
-        $urls = $this->dataHelper->jsonEncode($urls);
+        $urls = \Ess\M2ePro\Helper\Json::encode($urls);
 
         $this->js->addRequireJs(
             [

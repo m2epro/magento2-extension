@@ -43,7 +43,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('id', [
-            'header' => $this->__('ID'),
+            'header' => __('ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -52,7 +52,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
         ]);
 
         $this->addColumn('title', [
-            'header' => $this->__('Title / Info'),
+            'header' => __('Title / Info'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -70,10 +70,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         /** @var \Ess\M2ePro\Model\Account $row */
-        $marketplaceLabel = $this->__('Marketplace');
+        $marketplaceLabel = __('Marketplace');
         $marketplaceTitle = $row->getData('marketplace_title');
 
-        $merchantLabel = $this->__('Merchant ID');
+        $merchantLabel = __('Merchant ID');
         $merchantId = $row->getChildObject()->getData('merchant_id');
 
         return <<<HTML

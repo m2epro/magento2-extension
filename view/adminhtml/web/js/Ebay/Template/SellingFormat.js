@@ -566,7 +566,7 @@ define([
 
             vatPercentTr.hide();
 
-            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::VAT_MODE_YES')) {
+            if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::VAT_MODE_NO')) {
                 vatPercentTr.show();
             }
         },

@@ -152,6 +152,11 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
                 self::KEY_FIELD_SET => 'Orders',
                 self::KEY_FIELD => 'Walmart Magento Order Creation',
             ],
+            \Ess\M2ePro\Model\HealthStatus\Task\Orders\VatChanged\Amazon::class => [
+                self::KEY_TAB => 'Problems',
+                self::KEY_FIELD_SET => 'Reverse charge (0% VAT)',
+                self::KEY_FIELD => 'Amazon reverse charge (0% VAT)',
+            ],
         ];
     }
 

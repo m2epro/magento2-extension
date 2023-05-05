@@ -81,7 +81,7 @@ class Handler extends AbstractModel implements \Ess\M2ePro\Model\Listing\Product
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
             'is_force' => true,
-            'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode(['params' => $params]),
         ];
 
         $scheduledAction->addData($scheduledActionData);

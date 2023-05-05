@@ -174,7 +174,7 @@ HTML;
         );
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         $this->getGrgetGridIdsJson();
 

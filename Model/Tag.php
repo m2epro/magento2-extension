@@ -1,42 +1,29 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model;
 
-use Ess\M2ePro\Model\ResourceModel\Tag as Resource;
-
-class Tag extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
+class Tag
 {
-    public const NICK_HAS_ERROR = 'has_error';
-    public const NICK_EBAY_MISSING_ITEM_SPECIFIC = 'missing_item_specific';
+    public const HAS_ERROR_ERROR_CODE = 'has_error';
 
-    /**
-     * @inerhitDoc
-     */
-    public function _construct()
+    /** @var string */
+    private $errorCode;
+    /** @var string */
+    private $text;
+
+    public function __construct(string $errorCode, string $text)
     {
-        parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Tag::class);
+        $this->errorCode = $errorCode;
+        $this->text = $text;
     }
 
-    /**
-     * @return string
-     */
-    public function getNick(): string
+    public function getErrorCode(): string
     {
-        return $this->getDataByKey(Resource::NICK_FIELD);
+        return $this->errorCode;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getErrorCode(): ?string
+    public function getText(): string
     {
-        return $this->getDataByKey(Resource::ERROR_CODE_FIELD);
+        return $this->text;
     }
 }

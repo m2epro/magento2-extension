@@ -130,7 +130,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'purchase_create_date',
             [
-                'header' => $this->__('Sale Date'),
+                'header' => __('Sale Date'),
                 'align' => 'left',
                 'type' => 'datetime',
                 'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
@@ -145,7 +145,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'shipping_date_to',
             [
-                'header' => $this->__('Ship By Date'),
+                'header' => __('Ship By Date'),
                 'align' => 'left',
                 'type' => 'datetime',
                 'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
@@ -160,7 +160,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'magento_order_num',
             [
-                'header' => $this->__('Magento Order #'),
+                'header' => __('Magento Order #'),
                 'align' => 'left',
                 'index' => 'so.increment_id',
                 'width' => '110px',
@@ -171,7 +171,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'walmart_order_id',
             [
-                'header' => $this->__('Walmart Purchase Order #'),
+                'header' => __('Walmart Purchase Order #'),
                 'align' => 'left',
                 'width' => '110px',
                 'index' => 'walmart_order_id',
@@ -183,7 +183,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'walmart_order_items',
             [
-                'header' => $this->__('Items'),
+                'header' => __('Items'),
                 'align' => 'left',
                 'index' => 'walmart_order_items',
                 'sortable' => false,
@@ -196,7 +196,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'buyer',
             [
-                'header' => $this->__('Buyer'),
+                'header' => __('Buyer'),
                 'align' => 'left',
                 'index' => 'buyer_name',
                 'width' => '120px',
@@ -208,7 +208,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'paid_amount',
             [
-                'header' => $this->__('Total Paid'),
+                'header' => __('Total Paid'),
                 'align' => 'left',
                 'width' => '110px',
                 'index' => 'paid_amount',
@@ -220,18 +220,18 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'status',
             [
-                'header' => $this->__('Status'),
+                'header' => __('Status'),
                 'align' => 'left',
                 'width' => '50px',
                 'index' => 'status',
                 'filter_index' => 'second_table.status',
                 'type' => 'options',
                 'options' => [
-                    \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED => $this->__('Created'),
-                    \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
-                    \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY => $this->__('Partially Shipped'),
-                    \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED => $this->__('Shipped'),
-                    \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED => $this->__('Canceled'),
+                    \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED => __('Created'),
+                    \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED => __('Unshipped'),
+                    \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY => __('Partially Shipped'),
+                    \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED => __('Shipped'),
+                    \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED => __('Canceled'),
                 ],
                 'frame_callback' => [$this, 'callbackColumnStatus'],
             ]
@@ -254,27 +254,27 @@ class Grid extends AbstractGrid
         $this->getMassactionBlock()->addItem(
             'ship',
             [
-                'label' => $this->__('Mark Order(s) as Shipped'),
+                'label' => __('Mark Order(s) as Shipped'),
                 'url' => $this->getUrl('*/walmart_order/updateShippingStatus'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'resend_shipping',
             [
-                'label' => $this->__('Resend Shipping Information'),
+                'label' => __('Resend Shipping Information'),
                 'url' => $this->getUrl('*/order/resubmitShippingInfo'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'create_order',
             [
-                'label' => $this->__('Create Magento Order'),
+                'label' => __('Create Magento Order'),
                 'url' => $this->getUrl('*/walmart_order/createMagentoOrder'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
@@ -311,14 +311,14 @@ class Grid extends AbstractGrid
 
         $customerOrderId = $this->dataHelper->escapeHtml($row->getChildObject()->getData('customer_order_id'));
         if (!empty($customerOrderId)) {
-            $returnString .= sprintf('<br>[ <b>%s</b> %s ]', $this->__('CO #'), $customerOrderId);
+            $returnString .= sprintf('<br>[ <b>%s</b> %s ]', __('CO #'), $customerOrderId);
         }
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
 
         if ($notes) {
-            $htmlNotesCount = $this->__(
+            $htmlNotesCount = __(
                 'You have a custom note for the order. It can be reviewed on the order detail page.'
             );
 
@@ -340,7 +340,7 @@ HTML;
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)
     {
         $magentoOrderId = $row['magento_order_id'];
-        $returnString = $this->__('N/A');
+        $returnString = __('N/A');
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
@@ -348,7 +348,7 @@ HTML;
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
-                $returnString = '<span style="color: red;">' . $this->__('Deleted') . '</span>';
+                $returnString = '<span style="color: red;">' . __('Deleted') . '</span>';
             }
         }
 
@@ -414,7 +414,7 @@ HTML;
             $editItemHtml = '';
             if ($isShowEditLink) {
                 $orderItemId = $item->getId();
-                $orderItemEditLabel = $this->__('edit');
+                $orderItemEditLabel = __('edit');
 
                 $js = "{OrderEditItemObj.edit('{$gridId}', {$orderItemId});}";
 
@@ -425,7 +425,7 @@ HTML;
 
             $skuHtml = '';
             if ($item->getChildObject()->getSku()) {
-                $skuLabel = $this->__('SKU');
+                $skuLabel = __('SKU');
                 $sku = $this->dataHelper->escapeHtml($item->getChildObject()->getSku());
                 if ($product !== null) {
                     $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
@@ -450,7 +450,7 @@ STRING;
 HTML;
             }
 
-            $qtyLabel = $this->__('QTY');
+            $qtyLabel = __('QTY');
             $qtyHtml = <<<HTML
 <span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$item->getChildObject()->getQtyPurchased()}</span>
 HTML;
@@ -468,7 +468,7 @@ HTML;
     public function callbackColumnBuyer($value, $row, $column, $isExport)
     {
         if ($row->getChildObject()->getData('buyer_name') == '') {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         return $this->dataHelper->escapeHtml($row->getChildObject()->getData('buyer_name'));
@@ -499,11 +499,11 @@ HTML;
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         $statuses = [
-            \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED => $this->__('Created'),
-            \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
-            \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY => $this->__('Partially Shipped'),
-            \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED => $this->__('Shipped'),
-            \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED => $this->__('Canceled'),
+            \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED => __('Created'),
+            \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED => __('Unshipped'),
+            \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED_PARTIALLY => __('Partially Shipped'),
+            \Ess\M2ePro\Model\Walmart\Order::STATUS_SHIPPED => __('Shipped'),
+            \Ess\M2ePro\Model\Walmart\Order::STATUS_CANCELED => __('Canceled'),
         ];
         $status = $row->getChildObject()->getData('status');
 
@@ -521,7 +521,7 @@ HTML;
         if ($row->isSetProcessingLock('update_order_status')) {
             $value .= '<br/>';
             $value .= '<span style="color: gray;">['
-                . $this->__('Status Update in Progress...') . ']</span>';
+                . __('Status Update in Progress...') . ']</span>';
         }
 
         return $value;
@@ -576,7 +576,7 @@ HTML;
         return $this->getUrl('*/walmart_order/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -596,7 +596,7 @@ JS
         $tempGridIds = [];
         $this->walmartHelper->isEnabled() && $tempGridIds[] = $this->getId();
 
-        $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
+        $tempGridIds = \Ess\M2ePro\Helper\Json::encode($tempGridIds);
 
         $this->jsPhp->addConstants(
             $this->dataHelper
@@ -612,7 +612,7 @@ JS
             ]
         );
 
-        $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));
+        $this->jsTranslator->add('View Full Order Log', __('View Full Order Log'));
 
         $this->js->add(
             <<<JS

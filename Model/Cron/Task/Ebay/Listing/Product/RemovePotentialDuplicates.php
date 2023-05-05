@@ -333,7 +333,7 @@ class RemovePotentialDuplicates extends \Ess\M2ePro\Model\Cron\Task\AbstractMode
             [
                 'status' => $status,
                 'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
-                'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode($additionalData),
             ]
         )->save();
 

@@ -12,14 +12,14 @@ use Ess\M2ePro\Helper\Component\Walmart as WalmartHelper;
 
 class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
-    /** @var bool  */
+    /** @var bool */
     protected $_isPkAutoIncrement = false;
-    /** @var \Magento\Framework\App\ResourceConnection  */
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     protected $walmartFactory;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\CollectionFactory */
+    private $otherCollectionFactory;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -28,23 +28,21 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Other\CollectionFactory $otherCollectionFactory,
         $connectionName = null
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->walmartFactory = $walmartFactory;
+        $this->otherCollectionFactory = $otherCollectionFactory;
 
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
-
-    //########################################
 
     public function _construct()
     {
         $this->_init('m2epro_walmart_listing_other', 'listing_other_id');
         $this->_isPkAutoIncrement = false;
     }
-
-    //########################################
 
     public function getProductsDataBySkus(
         array $skus = [],
@@ -74,8 +72,6 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         return $listingOtherCollection->getData();
     }
-
-    //########################################
 
     public function resetEntities()
     {
@@ -111,5 +107,23 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         }
     }
 
-    //########################################
+    /**
+     * @param int $productId
+     * @param int $accountId
+     * @param int $marketplaceId
+     *
+     * @return bool
+     */
+    public function isItemFromOtherListing(int $productId, int $accountId, int $marketplaceId): bool
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
+        $collection = $this->otherCollectionFactory->create();
+
+        return $collection->isExistsProduct(
+            $productId,
+            $accountId,
+            $marketplaceId,
+            \Ess\M2ePro\Helper\Component\Walmart::NICK
+        );
+    }
 }

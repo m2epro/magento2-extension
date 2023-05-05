@@ -388,7 +388,7 @@ HTML
 
                 $rateTableValue = $this->formData['local_shipping_rate_table'][$this->getAccountId()]['value'];
                 $isSellApiEnabled = (bool)$this->getAccount()->getChildObject()->getSellApiTokenSession();
-
+                $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
                 $fieldSet->addField(
                     'local_shipping_rate_table_value_' . $this->getAccountId(),
                     self::SELECT,
@@ -420,7 +420,7 @@ HTML
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "local_shipping_rate_table_value_{$this->getAccountId()}",
-        value: {$this->dataHelper->jsonEncode($rateTableValue)},
+        value: {$rateTableValueJson},
         type: "local"
     })'>{$this->__($isSellApiEnabled ? 'Refresh Rate Tables' : 'Download Rate Tables')}</a>
 HTML
@@ -446,9 +446,8 @@ HTML
                         }
 
                         $rateTableValue = $this->formData['local_shipping_rate_table'][$account->getId()]['value'];
-
+                        $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
                         $isSellApiEnabled = (bool)$account->getChildObject()->getSellApiTokenSession();
-
                         $toolTip = $this->getTooltipHtml(
                             <<<HTML
     <span class="shipping_rate_table_note_accepted" style="{$shippingRateTableModeToolTipStyleAccept}">
@@ -483,7 +482,7 @@ HTML
                 accountId: {$account->getId()},
                 marketplaceId: {$this->getMarketplace()->getId()},
                 elementId: "local_shipping_rate_table_value_{$account->getId()}",
-                value: {$this->dataHelper->jsonEncode($rateTableValue)},
+                value: {$rateTableValueJson},
                 type: "local"
             })'>{$this->__($isSellApiEnabled ? 'Refresh Rate Tables' : 'Download Rate Tables')}</a>
         </td>
@@ -827,6 +826,7 @@ HTML
 
                 $rateTableValue = $this->formData['international_shipping_rate_table'][$this->getAccountId()]['value'];
                 $isSellApiEnabled = (bool)$this->getAccount()->getChildObject()->getSellApiTokenSession();
+                $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
 
                 $fieldSet->addField(
                     'international_shipping_rate_table_value_' . $this->getAccountId(),
@@ -859,7 +859,7 @@ HTML
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "international_shipping_rate_table_value_{$this->getAccountId()}",
-        value: {$this->dataHelper->jsonEncode($rateTableValue)},
+        value: {$rateTableValueJson},
         type: "international"
     })'>{$this->__($isSellApiEnabled ? 'Refresh Rate Tables' : 'Download Rate Tables')}</a>
 HTML
@@ -886,7 +886,7 @@ HTML
 
                         $rateTableValue =
                             $this->formData['international_shipping_rate_table'][$account->getId()]['value'];
-
+                        $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
                         $isSellApiEnabled = (bool)$account->getChildObject()->getSellApiTokenSession();
 
                         $toolTip = $this->getTooltipHtml(
@@ -923,7 +923,7 @@ HTML
                 accountId: {$account->getId()},
                 marketplaceId: {$this->getMarketplace()->getId()},
                 elementId: "international_shipping_rate_table_value_{$account->getId()}",
-                value: {$this->dataHelper->jsonEncode($rateTableValue)},
+                value: {$rateTableValueJson},
                 type: "international"
             })'>{$this->__($isSellApiEnabled ? 'Refresh Rate Tables' : 'Download Rate Tables')}</a>
         </td>
@@ -1994,7 +1994,7 @@ HTML;
 
     //########################################
 
-    public function getDiscountProfiles()
+    public function getDiscountProfiles(): array
     {
         $template = $this->globalDataHelper->getValue('ebay_template_shipping');
 
@@ -2002,11 +2002,11 @@ HTML;
         $internationalDiscount = $template->getData('international_shipping_discount_combined_profile_id');
 
         if ($localDiscount !== null) {
-            $localDiscount = $this->dataHelper->jsonDecode($localDiscount);
+            $localDiscount = \Ess\M2ePro\Helper\Json::decode($localDiscount);
         }
 
         if ($internationalDiscount !== null) {
-            $internationalDiscount = $this->dataHelper->jsonDecode($internationalDiscount);
+            $internationalDiscount = \Ess\M2ePro\Helper\Json::decode($internationalDiscount);
         }
 
         $accountCollection = $this->ebayFactory->getObject('Account')->getCollection();
@@ -2030,7 +2030,7 @@ HTML;
                 continue;
             }
 
-            $accountProfiles = $this->dataHelper->jsonDecode($accountProfiles);
+            $accountProfiles = \Ess\M2ePro\Helper\Json::decode($accountProfiles);
             $marketplaceId = $this->getMarketplace()->getId();
 
             if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {
@@ -2099,14 +2099,14 @@ HTML;
         }
 
         if (is_string($this->formData['excluded_locations'])) {
-            $excludedLocations = $this->dataHelper->jsonDecode($this->formData['excluded_locations']);
+            $excludedLocations = \Ess\M2ePro\Helper\Json::decode($this->formData['excluded_locations']);
             $this->formData['excluded_locations'] = is_array($excludedLocations) ? $excludedLocations : [];
         } else {
             unset($this->formData['excluded_locations']);
         }
 
         if (is_string($this->formData['local_shipping_rate_table'])) {
-            $this->formData['local_shipping_rate_table'] = $this->dataHelper->jsonDecode(
+            $this->formData['local_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::decode(
                 $this->formData['local_shipping_rate_table']
             );
 
@@ -2117,7 +2117,7 @@ HTML;
         }
 
         if (is_string($this->formData['international_shipping_rate_table'])) {
-            $this->formData['international_shipping_rate_table'] = $this->dataHelper->jsonDecode(
+            $this->formData['international_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::decode(
                 $this->formData['international_shipping_rate_table']
             );
 
@@ -2133,7 +2133,7 @@ HTML;
     public function getDefault()
     {
         $default = $this->modelFactory->getObject('Ebay_Template_Shipping_Builder')->getDefaultData();
-        $default['excluded_locations'] = $this->dataHelper->jsonDecode($default['excluded_locations']);
+        $default['excluded_locations'] = \Ess\M2ePro\Helper\Json::decode($default['excluded_locations']);
 
         // populate address fields with the data from magento configuration
         // ---------------------------------------
@@ -2723,28 +2723,32 @@ HTML
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::class)
         );
 
-        $missingAttributes = $this->dataHelper->jsonEncode($this->missingAttributes);
-        $services = $this->dataHelper->jsonEncode($this->marketplaceData['services']);
-        $locations = $this->dataHelper->jsonEncode($this->marketplaceData['locations']);
-        $discountProfiles = $this->dataHelper->jsonEncode($this->getDiscountProfiles());
-        $originCountry = $this->dataHelper->jsonEncode($this->marketplaceData['origin_country']);
+        $missingAttributes = \Ess\M2ePro\Helper\Json::encode($this->missingAttributes);
+        $services = \Ess\M2ePro\Helper\Json::encode($this->marketplaceData['services']);
+        $locations = \Ess\M2ePro\Helper\Json::encode($this->marketplaceData['locations']);
+        $discountProfiles = \Ess\M2ePro\Helper\Json::encode($this->getDiscountProfiles());
+        $originCountry = \Ess\M2ePro\Helper\Json::encode($this->marketplaceData['origin_country']);
 
-        $formDataServices = $this->dataHelper->jsonEncode($this->formData['services']);
+        $formDataServices = \Ess\M2ePro\Helper\Json::encode($this->formData['services']);
 
         $rateTablesHtml = <<<JS
 JS;
 
         if ($this->getAccountId() !== null) {
             if ($this->canDisplayLocalShippingRateTable()) {
-                $rateTablesValue = $this->dataHelper
-                    ->jsonEncode($this->formData['local_shipping_rate_table'][$this->getAccountId()]['value']);
+                $rateTablesValue = \Ess\M2ePro\Helper\Json::encode(
+                    $this->formData['local_shipping_rate_table'][$this->getAccountId()]['value']
+                );
 
+                $localShippingRateTablesJson = \Ess\M2ePro\Helper\Json::encode(
+                    $this->getLocalShippingRateTables($this->getAccount())
+                );
                 $rateTablesHtml .= <<<JS
     EbayTemplateShippingObj.renderRateTables({
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "local_shipping_rate_table_value_{$this->getAccountId()}",
-        data: {$this->dataHelper->jsonEncode($this->getLocalShippingRateTables($this->getAccount()))},
+        data: {$localShippingRateTablesJson},
         value: {$rateTablesValue},
         type: "local"
     });
@@ -2753,15 +2757,19 @@ JS;
             }
 
             if ($this->canDisplayInternationalShippingRateTable()) {
-                $rateTablesValue = $this->dataHelper
-                    ->jsonEncode($this->formData['international_shipping_rate_table'][$this->getAccountId()]['value']);
+                $rateTablesValue = \Ess\M2ePro\Helper\Json::encode(
+                    $this->formData['international_shipping_rate_table'][$this->getAccountId()]['value']
+                );
+                $internationalShippingRateTablesJson = \Ess\M2ePro\Helper\Json::encode(
+                    $this->getInternationalShippingRateTables($this->getAccount())
+                );
 
                 $rateTablesHtml .= <<<JS
     EbayTemplateShippingObj.renderRateTables({
         accountId: {$this->getAccountId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "international_shipping_rate_table_value_{$this->getAccountId()}",
-        data: {$this->dataHelper->jsonEncode($this->getInternationalShippingRateTables($this->getAccount()))},
+        data: {$internationalShippingRateTablesJson},
         value: {$rateTablesValue},
         type: "international"
     });
@@ -2772,8 +2780,11 @@ JS;
             if ($this->getAccounts()->getSize()) {
                 foreach ($this->getAccounts() as $account) {
                     if ($this->canDisplayLocalShippingRateTable()) {
-                        $rateTablesValue = $this->dataHelper->jsonEncode(
+                        $rateTablesValue = \Ess\M2ePro\Helper\Json::encode(
                             $this->formData['local_shipping_rate_table'][$account->getId()]['value']
+                        );
+                        $localShippingRateTablesJson = \Ess\M2ePro\Helper\Json::encode(
+                            $this->getLocalShippingRateTables($account)
                         );
 
                         $rateTablesHtml .= <<<JS
@@ -2781,7 +2792,7 @@ JS;
         accountId: {$account->getId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "local_shipping_rate_table_value_{$account->getId()}",
-        data: {$this->dataHelper->jsonEncode($this->getLocalShippingRateTables($account))},
+        data: {$localShippingRateTablesJson},
         value: {$rateTablesValue},
         type: "local"
     });
@@ -2790,8 +2801,11 @@ JS;
                     }
 
                     if ($this->canDisplayInternationalShippingRateTable()) {
-                        $rateTablesValue = $this->dataHelper->jsonEncode(
+                        $rateTablesValue = \Ess\M2ePro\Helper\Json::encode(
                             $this->formData['international_shipping_rate_table'][$account->getId()]['value']
+                        );
+                        $internationalShippingRateTablesJson = \Ess\M2ePro\Helper\Json::encode(
+                            $this->getInternationalShippingRateTables($account)
                         );
 
                         $rateTablesHtml .= <<<JS
@@ -2799,7 +2813,7 @@ JS;
         accountId: {$account->getId()},
         marketplaceId: {$this->getMarketplace()->getId()},
         elementId: "international_shipping_rate_table_value_{$account->getId()}",
-        data: {$this->dataHelper->jsonEncode($this->getInternationalShippingRateTables($account))},
+        data: {$internationalShippingRateTablesJson},
         value: {$rateTablesValue},
         type: "international"
     });
@@ -2810,7 +2824,7 @@ JS;
             }
         }
 
-        $selectedLocations = $this->dataHelper->jsonEncode($this->formData['excluded_locations']);
+        $selectedLocations = \Ess\M2ePro\Helper\Json::encode($this->formData['excluded_locations']);
 
         $this->js->addRequireJs(
             [

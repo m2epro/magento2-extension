@@ -156,7 +156,6 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
                 'Account',
                 'Listing',
                 'Template_Synchronization',
-                'Template_Description',
                 'Template_SellingFormat',
                 'Amazon_Template_ProductTaxCode',
                 'Amazon_Template_Shipping',

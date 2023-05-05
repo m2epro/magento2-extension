@@ -65,14 +65,14 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             self::SELECT,
             [
                 'name' => 'auto_global_adding_mode',
-                'label' => $this->__('New Product Added to Magento'),
-                'title' => $this->__('New Product Added to Magento'),
+                'label' => __('New Product Added to Magento'),
+                'title' => __('New Product Added to Magento'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => $this->__('No Action')],
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => $this->__('Add to the Listing')],
+                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => __('No Action')],
+                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => __('Add to the Listing')],
                 ],
                 'value' => $this->formData['auto_global_adding_mode'],
-                'tooltip' => $this->__('Action which will be applied automatically.'),
+                'tooltip' => __('Action which will be applied automatically.'),
                 'style' => 'width: 350px',
             ]
         );
@@ -82,18 +82,18 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             self::SELECT,
             [
                 'name' => 'auto_global_adding_add_not_visible',
-                'label' => $this->__('Add not Visible Individually Products'),
-                'title' => $this->__('Add not Visible Individually Products'),
+                'label' => __('Add not Visible Individually Products'),
+                'title' => __('Add not Visible Individually Products'),
                 'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => $this->__('No')],
+                    ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => __('No')],
                     [
                         'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                        'label' => $this->__('Yes'),
+                        'label' => __('Yes'),
                     ],
                 ],
                 'value' => $this->formData['auto_global_adding_add_not_visible'],
                 'field_extra_attributes' => 'id="auto_global_adding_add_not_visible_field"',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Set to <strong>Yes</strong> if you want the Magento Products with
                     Visibility \'Not visible Individually\' to be added to the Listing
                     Automatically.<br/>
@@ -129,14 +129,14 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             self::SELECT,
             [
                 'name' => 'adding_category_template_id',
-                'label' => $this->__('Category Policy'),
-                'title' => $this->__('Category Policy'),
+                'label' => __('Category Policy'),
+                'title' => __('Category Policy'),
                 'values' => $options,
                 'value' => $this->formData['auto_global_adding_category_template_id'],
                 'field_extra_attributes' => 'id="auto_action_walmart_add_and_assign_category_template"',
                 'required' => true,
                 'after_element_html' => $this->getTooltipHtml(
-                    $this->__(
+                    __(
                         'Select Category Policy you want to assign to Product(s).<br><br>
                     <strong>Note:</strong> Submitting of Category data is required when you create a new offer on
                     Walmart. Category Policy must be assigned to Products before they are added to M2E Pro Listing.'
@@ -144,7 +144,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                 ) . '<a href="javascript: void(0);"
                         style="vertical-align: inherit; margin-left: 65px;"
                         onclick="ListingAutoActionObj.addNewTemplate(\'' . $url . '\',
-                        ListingAutoActionObj.reloadCategoryTemplates);">' . $this->__('Add New') . '
+                        ListingAutoActionObj.reloadCategoryTemplates);">' . __('Add New') . '
                      </a>',
             ]
         );
@@ -155,12 +155,12 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             [
                 'name' => 'auto_global_deleting_mode',
                 'disabled' => 'disabled',
-                'label' => $this->__('Product Deleted from Magento'),
-                'title' => $this->__('Product Deleted from Magento'),
+                'label' => __('Product Deleted from Magento'),
+                'title' => __('Product Deleted from Magento'),
                 'values' => [
                     [
                         'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                        'label' => $this->__('Stop on Channel and Delete from Listing'),
+                        'label' => __('Stop on Channel and Delete from Listing'),
                     ],
                 ],
                 'style' => 'width: 350px;',

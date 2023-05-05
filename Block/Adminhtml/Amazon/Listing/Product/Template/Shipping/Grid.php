@@ -97,7 +97,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns(): void
     {
         $this->addColumn('title', [
-            'header' => $this->__('Title'),
+            'header' => __('Title'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -108,7 +108,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('action', [
-            'header' => $this->__('Action'),
+            'header' => __('Action'),
             'align' => 'left',
             'type' => 'number',
             'index' => 'id',
@@ -129,7 +129,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                  ->setData([
                      'id' => 'shipping_template_refresh_btn',
-                     'label' => $this->__('Refresh'),
+                     'label' => __('Refresh'),
                      'class' => 'action primary',
                      'onclick' => "ListingGridObj.templateShippingHandler.loadGrid()",
                  ])
@@ -170,7 +170,7 @@ HTML;
 
     public function callbackColumnAction($value, $row, $column, $isExport)
     {
-        $assignText = $this->__('Assign');
+        $assignText = __('Assign');
 
         return <<<HTML
 <a href="javascript:void(0)"
@@ -210,11 +210,11 @@ JS
     }
 
     /**
-     * @param $row
+     * @param $item
      *
      * @return bool
      */
-    public function getRowUrl($row): bool
+    public function getRowUrl($item): bool
     {
         return false;
     }
@@ -224,8 +224,8 @@ JS
      */
     protected function setNoTemplatesText(): void
     {
-        $messageTxt = $this->__('Shipping Policies are not found.');
-        $linkTitle = $this->__('Create New Shipping Policy.');
+        $messageTxt = __('Shipping Policies are not found.');
+        $linkTitle = __('Create New Shipping Policy.');
 
         $message = <<<HTML
 <p>{$messageTxt} <a href="javascript:void(0);"

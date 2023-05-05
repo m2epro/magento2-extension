@@ -102,7 +102,7 @@ class Active extends AbstractModel
                         'listing_product_id' => $this->input->getListingProduct()->getId(),
                         'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                         'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-                        'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params,]),
+                        'additional_data' => \Ess\M2ePro\Helper\Json::encode(['params' => $params,]),
                     ]
                 );
 
@@ -226,7 +226,7 @@ class Active extends AbstractModel
                 'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
                 'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
                 'tag' => '/' . implode('/', $tags) . '/',
-                'additional_data' => $this->getHelper('Data')->jsonEncode(
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                     [
                         'params' => $params,
                         'configurator' => $configurator->getSerializedData(),
@@ -446,13 +446,13 @@ class Active extends AbstractModel
 
         if (empty($onlinePromotions)) {
             $onlinePromotions = $hashDetailsData = $this->getHelper('Data')->hashString(
-                $this->getHelper('Data')->jsonEncode(['promotion_prices' => []]),
+                \Ess\M2ePro\Helper\Json::encode(['promotion_prices' => []]),
                 'md5'
             );
         }
 
         $hashPromotionsData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($promotionsActionDataBuilder->getBuilderData()),
+            \Ess\M2ePro\Helper\Json::encode($promotionsActionDataBuilder->getBuilderData()),
             'md5'
         );
 
@@ -479,7 +479,7 @@ class Active extends AbstractModel
         $currentDetailsData = $detailsActionDataBuilder->getBuilderData();
 
         $hashDetailsData = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($currentDetailsData),
+            \Ess\M2ePro\Helper\Json::encode($currentDetailsData),
             'md5'
         );
 

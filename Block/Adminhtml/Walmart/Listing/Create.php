@@ -26,20 +26,12 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('walmartListingCreateStepOne');
         $this->_controller = 'adminhtml_walmart_listing';
         $this->_mode = 'create';
-        // ---------------------------------------
 
-        // Set header text
-        // ---------------------------------------
-        $this->_headerText = $this->__("Creating A New Walmart M2E Pro Listing");
-        // ---------------------------------------
+        $this->_headerText = __("Creating A New Walmart M2E Pro Listing");
 
-        // Set buttons actions
-        // ---------------------------------------
         $this->removeButton('back');
         $this->removeButton('reset');
         $this->removeButton('delete');
@@ -49,7 +41,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton(
             'save_and_next',
             [
-                'label' => $this->__('Next Step'),
+                'label' => __('Next Step'),
                 'class' => 'action-primary forward',
             ]
         );
@@ -63,10 +55,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             ),
             'walmart_listing_create/index'
         );
-        // ---------------------------------------
     }
-
-    //########################################
 
     protected function _toHtml()
     {
@@ -88,6 +77,4 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $helpBlock->toHtml() .
             '<div id="content_container">' . parent::_toHtml() . '</div>';
     }
-
-    //########################################
 }

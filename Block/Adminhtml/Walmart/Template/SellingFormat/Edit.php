@@ -27,7 +27,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         // ---------------------------------------
         $url = $this->dataHelper->getBackUrl('list');
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'onclick' => 'WalmartTemplateSellingFormatObj.backClick(\'' . $url . '\')',
             'class' => 'back',
         ]);
@@ -42,7 +42,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         ) {
             // ---------------------------------------
             $this->addButton('duplicate', [
-                'label' => $this->__('Duplicate'),
+                'label' => __('Duplicate'),
                 'onclick' => 'WalmartTemplateSellingFormatObj.duplicateClick'
                     . '(\'walmart-template-sellingFormat\')',
                 'class' => 'add M2ePro_duplicate_button primary',
@@ -51,7 +51,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 
             // ---------------------------------------
             $this->addButton('delete', [
-                'label' => $this->__('Delete'),
+                'label' => __('Delete'),
                 'onclick' => 'WalmartTemplateSellingFormatObj.deleteClick()',
                 'class' => 'delete M2ePro_delete_button primary',
             ]);
@@ -65,7 +65,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
 
             $saveButtons = [
                 'id' => 'save_and_close',
-                'label' => $this->__('Save And Close'),
+                'label' => __('Save And Close'),
                 'class' => 'add',
                 'onclick' => 'WalmartTemplateSellingFormatObj.saveAndCloseClick('
                     . '\'' . $this->getSaveConfirmationText() . '\','
@@ -74,7 +74,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label' => $this->__('Save And Continue Edit'),
+                        'label' => __('Save And Continue Edit'),
                         'onclick' => 'WalmartTemplateSellingFormatObj.saveAndEditClick('
                             . '\'\','
                             . 'undefined,'
@@ -87,7 +87,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
         } else {
             $saveButtons = [
                 'id' => 'save_and_continue',
-                'label' => $this->__('Save And Continue Edit'),
+                'label' => __('Save And Continue Edit'),
                 'class' => 'add',
                 'onclick' => 'WalmartTemplateSellingFormatObj.saveAndEditClick('
                     . '\'\','
@@ -98,7 +98,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Edit
                 'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
                 'options' => [
                     'save' => [
-                        'label' => $this->__('Save And Back'),
+                        'label' => __('Save And Back'),
                         'onclick' => 'WalmartTemplateSellingFormatObj.saveClick('
                             . '\'\','
                             . '\'' . $this->getSaveConfirmationText() . '\','

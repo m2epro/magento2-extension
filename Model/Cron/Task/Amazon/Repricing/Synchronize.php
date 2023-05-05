@@ -23,6 +23,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         = '/amazon/repricing/synchronize/general/last_other_product_id/';
 
     public const REGISTRY_ACTUAL_PRICE_START_DATE = '/amazon/repricing/synchronize/actual_price/start_date/';
+    public const REGISTRY_ACTUAL_INFO_START_DATE = '/amazon/repricing/synchronize/actual_info/start_date/';
 
     public const REGISTRY_ACTUAL_PRICE_LAST_LISTING_PRODUCT_ID =
         '/amazon/repricing/synchronize/actual_price/last_listing_product_id/';
@@ -31,11 +32,15 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     public const SYNCHRONIZE_GENERAL_INTERVAL = 60;
     public const SYNCHRONIZE_ACTUAL_PRICE_INTERVAL = 60;
+    public const SYNCHRONIZE_ACTUAL_INFO_INTERVAL = 86400;
 
     public const PRODUCTS_COUNT_BY_ACCOUNT_AND_PRODUCT_TYPE = 5000;
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
     private $accountCollectionFactory;
+
+    /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualInfo */
+    private $repricingSynchronizationInfo;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data $helperData,
@@ -46,7 +51,8 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
+        \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualInfo $repricingSynchronizationInfo
     ) {
         parent::__construct(
             $helperData,
@@ -59,6 +65,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $resource
         );
         $this->accountCollectionFactory = $accountCollectionFactory;
+        $this->repricingSynchronizationInfo = $repricingSynchronizationInfo;
     }
 
     //####################################
@@ -80,6 +87,10 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         foreach ($accounts as $account) {
             if ($this->isPossibleToSynchronizeActualPrice($account)) {
                 $this->synchronizeActualPrice($account);
+            }
+
+            if ($this->isPossibleToSynchronizeActualInfo($account)) {
+                $this->synchronizeActualInfo($account);
             }
         }
     }
@@ -384,4 +395,36 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     //####################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    private function isPossibleToSynchronizeActualInfo(\Ess\M2ePro\Model\Account $account): bool
+    {
+        $currentTimeStamp = \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp();
+
+        $startDate = $this->getAccountData($account, self::REGISTRY_ACTUAL_INFO_START_DATE);
+        $startDate = !empty($startDate) ? \Ess\M2ePro\Helper\Date::createDateGmt($startDate)->getTimestamp() : 0;
+
+        if ($currentTimeStamp > $startDate + self::SYNCHRONIZE_ACTUAL_INFO_INTERVAL) {
+            $this->setAccountData(
+                $account,
+                self::REGISTRY_ACTUAL_INFO_START_DATE,
+                \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
+            );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private function synchronizeActualInfo(\Ess\M2ePro\Model\Account $account): void
+    {
+        $this->repricingSynchronizationInfo->setAccount($account);
+        $this->repricingSynchronizationInfo->run();
+    }
 }

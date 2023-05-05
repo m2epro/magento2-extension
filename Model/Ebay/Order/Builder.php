@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
+use Ess\M2ePro\Model\Ebay\Order as EbayOrder;
 use Ess\M2ePro\Model\Ebay\Order\Helper as OrderHelper;
 
 /**
@@ -32,13 +33,10 @@ class Builder extends AbstractModel
 
     /** @var \Ess\M2ePro\Model\Ebay\Order\Helper */
     private $helper;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
-
     /** @var \Ess\M2ePro\Model\Account */
     private $account;
 
@@ -55,8 +53,8 @@ class Builder extends AbstractModel
     private $status = self::STATUS_NOT_MODIFIED;
 
     private $updates = [];
-
-    //########################################
+    /** @var bool */
+    private $isBuyerCancellationRequested = false;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -105,6 +103,7 @@ class Builder extends AbstractModel
 
         $this->setData('order_status', $data['statuses']['order']);
         $this->setData('checkout_status', $this->helper->getCheckoutStatus($data['statuses']['checkout']));
+        $this->isBuyerCancellationRequested = !empty($data['buyer_cancellation_requested']);
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
@@ -548,9 +547,20 @@ class Builder extends AbstractModel
     {
         $this->prepareShippingAddress();
 
-        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($this->getData('tax_details')));
-        $this->setData('shipping_details', $this->getHelper('Data')->jsonEncode($this->getData('shipping_details')));
-        $this->setData('payment_details', $this->getHelper('Data')->jsonEncode($this->getData('payment_details')));
+        $this->setData('tax_details', \Ess\M2ePro\Helper\Json::encode($this->getData('tax_details')));
+        $this->setData('shipping_details', \Ess\M2ePro\Helper\Json::encode($this->getData('shipping_details')));
+        $this->setData('payment_details', \Ess\M2ePro\Helper\Json::encode($this->getData('payment_details')));
+
+        $buyerCancellationStatus = $this->order->getId() ?
+            $this->order->getChildObject()->getBuyerCancellationStatus()
+            : EbayOrder::BUYER_CANCELLATION_STATUS_NOT_REQUESTED;
+        $buyerCancellationStatusIsRequested =
+            $buyerCancellationStatus === EbayOrder::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
+            && $this->isBuyerCancellationRequested;
+
+        if ($buyerCancellationStatusIsRequested) {
+            $this->setData('buyer_cancellation_status', EbayOrder::BUYER_CANCELLATION_STATUS_REQUESTED);
+        }
 
         foreach ($this->getData() as $key => $value) {
             if (!$this->order->getId() || ($this->order->hasData($key) && $this->order->getData($key) != $value)) {
@@ -570,6 +580,14 @@ class Builder extends AbstractModel
         }
 
         $this->order->setAccount($this->account);
+
+        if ($buyerCancellationStatusIsRequested) {
+            $description = __(
+                'The buyer has requested to cancel the order #%order_number.',
+                ['order_number' => $this->order->getChildObject()->getEbayOrderId()]
+            );
+            $this->order->addWarningLog($description);
+        }
 
         if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED) {
             if ($this->order->getReserve()->isPlaced()) {

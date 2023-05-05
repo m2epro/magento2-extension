@@ -75,7 +75,7 @@ class CreateShippingOffer extends Order
 
             $order->addData(
                 [
-                    'merchant_fulfillment_data' => $this->getHelper('Data')->jsonEncode($response),
+                    'merchant_fulfillment_data' => \Ess\M2ePro\Helper\Json::encode($response),
                     'merchant_fulfillment_label' => $labelContent,
                 ]
             )->save();

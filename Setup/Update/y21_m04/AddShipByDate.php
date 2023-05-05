@@ -26,7 +26,6 @@ class AddShipByDate extends AbstractFeature
     {
         $this->timeNow = time();
 
-        $dataHelper = $this->helperFactory->getObject('Data');
         $this->getTableModifier('walmart_order')
             ->addColumn('shipping_date_to', 'DATETIME', 'NULL', 'shipping_price', true);
         $this->getTableModifier('ebay_order')
@@ -45,7 +44,7 @@ class AddShipByDate extends AbstractFeature
             ->query();
 
         while ($row = $query->fetch()) {
-            $data = $dataHelper->jsonDecode($row['shipping_dates']);
+            $data = \Ess\M2ePro\Helper\Json::decode($row['shipping_dates']);
 
             $shippingDateTo = isset($data['ship']['to']) ? $data['ship']['to'] : null;
             $deliveryDateTo = isset($data['delivery']['to']) ? $data['delivery']['to'] : null;

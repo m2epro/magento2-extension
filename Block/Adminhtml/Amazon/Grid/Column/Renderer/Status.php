@@ -63,10 +63,10 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->dataHelper = $dataHelper;
     }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
         $listingProductId = (int)$row->getData('id');
-        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
         $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
         $isVariationGrid = false;
 
@@ -122,7 +122,7 @@ HTML;
                     . $this->getLockedTag($row);
             }
 
-            $variationChildStatuses = $this->dataHelper->jsonDecode($variationChildStatuses);
+            $variationChildStatuses = \Ess\M2ePro\Helper\Json::decode($variationChildStatuses);
 
             $sortedStatuses = [];
             if (isset($variationChildStatuses[$statusUnknown])) {
@@ -188,20 +188,20 @@ HTML;
         $translator = $this->translationHelper;
         switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
-                return '<span style="color: gray;">' . $translator->__('Unknown') . '</span>';
+                return '<span style="color: gray;">' . __('Unknown') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+                return '<span style="color: gray;">' . __('Not Listed') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                return '<span style="color: green;">' . $translator->__('Active') . '</span>';
+                return '<span style="color: green;">' . __('Active') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                return '<span style="color: red;">' . $translator->__('Inactive') . '</span>';
+                return '<span style="color: red;">' . __('Inactive') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
                 return '<span style="color: orange; font-weight: bold;">' .
-                    $translator->__('Incomplete') . '</span>';
+                    __('Incomplete') . '</span>';
         }
 
         return '';

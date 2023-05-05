@@ -98,7 +98,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('magento_category', [
-            'header' => $this->__('Magento Category'),
+            'header' => __('Magento Category'),
             'align' => 'left',
             'width' => '500px',
             'type' => 'text',
@@ -109,7 +109,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         ]);
 
         $this->addColumn('category_template', [
-            'header' => $this->__('Category Policy'),
+            'header' => __('Category Policy'),
             'align' => 'left',
             'width' => '*',
             'sortable' => false,
@@ -117,15 +117,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
             'index' => 'category_template_id',
             'filter_index' => 'category_template_id',
             'options' => [
-                1 => $this->__('Category Policy Selected'),
-                0 => $this->__('Category Policy Not Selected'),
+                1 => __('Category Policy Selected'),
+                0 => __('Category Policy Not Selected'),
             ],
             'frame_callback' => [$this, 'callbackColumnCategoryTemplateCallback'],
             'filter_condition_callback' => [$this, 'callbackColumnCategoryTemplateFilterCallback'],
         ]);
 
         $actionsColumn = [
-            'header' => $this->__('Actions'),
+            'header' => __('Actions'),
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
             'no_link' => true,
             'align' => 'center',
@@ -138,7 +138,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         $actions = [
             [
-                'caption' => $this->__('Set Category Policy'),
+                'caption' => __('Set Category Policy'),
                 'field' => 'entity_id',
                 'onclick_action' => 'ListingGridObj.setCategoryTemplateByCategoryRowAction',
             ],
@@ -158,7 +158,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('setCategoryTemplateByCategory', [
-            'label' => $this->__('Set Category Policy'),
+            'label' => __('Set Category Policy'),
             'url' => '',
         ]);
 
@@ -187,7 +187,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $categoryTemplateId = key($categoryTemplatesIds);
 
         if (empty($categoryTemplateId)) {
-            $label = $this->__('Not Selected');
+            $label = __('Not Selected');
 
             return <<<HTML
 <span class="icon-warning" style="color: gray; font-style: italic;">{$label}</span>
@@ -250,7 +250,7 @@ HTML;
         }
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

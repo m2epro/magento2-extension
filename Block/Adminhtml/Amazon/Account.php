@@ -31,14 +31,14 @@ class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->_controller = 'adminhtml_amazon_account';
 
         $url = $this->getUrl('*/amazon_account/new');
-        $this->buttonList->update('add', 'label', $this->__('Add Account'));
+        $this->buttonList->update('add', 'label', __('Add Account'));
         $this->buttonList->update('add', 'onclick', 'setLocation(\'' . $url . '\');');
     }
 
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(
+            'content' => __(
                 <<<HTML
 <p>On this Page, you can find information about Amazon Accounts which are managed via M2E Pro.
 M2E Pro Amazon Account is a combination of Merchant ID and particular Marketplace.

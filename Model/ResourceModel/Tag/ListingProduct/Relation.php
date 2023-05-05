@@ -13,6 +13,7 @@ class Relation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
     public const ID_FIELD = 'id';
     public const LISTING_PRODUCT_ID_FIELD = 'listing_product_id';
     public const TAG_ID_FIELD = 'tag_id';
+    public const CREATE_DATE_FIELD = 'create_date';
 
     /**
      * @inerhitDoc
@@ -30,11 +31,13 @@ class Relation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
     public function insertTags(array $dataPackage): void
     {
         $queryData = [];
+        $createDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         foreach ($dataPackage as $listingProductId => $tagIds) {
             foreach ($tagIds as $tagId) {
                 $queryData[] = [
                     self::LISTING_PRODUCT_ID_FIELD => $listingProductId,
-                    self::TAG_ID_FIELD => $tagId
+                    self::TAG_ID_FIELD => $tagId,
+                    self::CREATE_DATE_FIELD => $createDate
                 ];
             }
         }

@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\CategoryFactory */
     private $templateCategoryFactory;
 
@@ -30,7 +27,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     private $filteredData = [];
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\Ebay\Template\CategoryFactory $templateCategoryFactory,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -39,8 +35,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         parent::__construct($helperFactory, $modelFactory);
-
-        $this->dataHelper = $dataHelper;
         $this->templateCategoryFactory = $templateCategoryFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->transactionFactory = $transactionFactory;
@@ -242,8 +236,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         }
 
         foreach ($template->getSpecifics() as $specific) {
-            $specific['value_ebay_recommended'] = $this->dataHelper->jsonDecode($specific['value_ebay_recommended']);
-            $specific['value_custom_value'] = $this->dataHelper->jsonDecode($specific['value_custom_value']);
+            $specific['value_ebay_recommended'] = \Ess\M2ePro\Helper\Json::decode($specific['value_ebay_recommended']);
+            $specific['value_custom_value'] = \Ess\M2ePro\Helper\Json::decode($specific['value_custom_value']);
 
             $this->rawData['specific'][] = $specific;
         }
@@ -261,14 +255,14 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             $recommendedValue = $specific['value_ebay_recommended'];
             !is_array($recommendedValue) && $recommendedValue = [$recommendedValue];
 
-            $specificData['value_ebay_recommended'] = $this->dataHelper->jsonEncode($recommendedValue);
+            $specificData['value_ebay_recommended'] = \Ess\M2ePro\Helper\Json::encode($recommendedValue);
         }
 
         if (isset($specific['value_custom_value'])) {
             $customValue = $specific['value_custom_value'];
             !is_array($customValue) && $customValue = [$customValue];
 
-            $specificData['value_custom_value'] = $this->dataHelper->jsonEncode($customValue);
+            $specificData['value_custom_value'] = \Ess\M2ePro\Helper\Json::encode($customValue);
         }
 
         if (isset($specific['value_custom_attribute'])) {

@@ -66,12 +66,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     /**
      * @ingeritdoc
      */
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return $this->getUrl(
             '*/ebay_listing/view',
             [
-                'id' => $row->getId(),
+                'id' => $item->getId(),
                 'back' => $this->getBackUrl()
             ]
         );

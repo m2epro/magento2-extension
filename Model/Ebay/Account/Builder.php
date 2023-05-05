@@ -93,7 +93,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     : \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         }
 
-        $data['marketplaces_data'] = $this->getHelper('Data')->jsonEncode($marketplacesData);
+        $data['marketplaces_data'] = \Ess\M2ePro\Helper\Json::encode($marketplacesData);
 
         // Mapping
         // ---------------------------------------
@@ -164,7 +164,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);
+        $data['other_listings_mapping_settings'] = \Ess\M2ePro\Helper\Json::encode($mappingSettings);
 
         // tab: orders
         // ---------------------------------------
@@ -357,9 +357,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
-        $data['magento_orders_settings'] = $this
-            ->getHelper('Data')
-            ->jsonEncode($data['magento_orders_settings']);
+        $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($data['magento_orders_settings']);
 
         // tab invoice and shipment
         // ---------------------------------------

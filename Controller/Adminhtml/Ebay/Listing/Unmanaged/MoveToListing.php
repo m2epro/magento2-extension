@@ -74,7 +74,7 @@ class MoveToListing extends Main
         if (!empty($addingProducts)) {
             $listingInstance->getChildObject()->setData(
                 'product_add_ids',
-                $this->getHelper('Data')->jsonEncode($addingProducts)
+                \Ess\M2ePro\Helper\Json::encode($addingProducts)
             );
             $listingInstance->setSetting('additional_data', 'source', SourceModeBlock::MODE_OTHER);
             $listingInstance->getChildObject()->save();

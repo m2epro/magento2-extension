@@ -8,17 +8,13 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
- */
 abstract class Listing extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
-    //########################################
-
+    /**
+     * @inheritDoc
+     */
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::amazon_listings');
     }
-
-    //########################################
 }

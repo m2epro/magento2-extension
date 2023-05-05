@@ -49,7 +49,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'legend' => $this->__('Saving of manual Variational Attributes/Options matches'),
+                'legend' => __('Saving of manual Variational Attributes/Options matches'),
                 'collapsable' => true,
             ]
         );
@@ -59,11 +59,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'select',
             [
                 'name' => 'attribute_auto_action',
-                'label' => $this->__('Save selected matching of Attributes?'),
+                'label' => __('Save selected matching of Attributes?'),
                 'values' => [
-                    Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET => $this->__('Ask Me'),
-                    Vocabulary::VOCABULARY_AUTO_ACTION_NO => $this->__('Don\'t save'),
-                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save'),
+                    Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET => __('Ask Me'),
+                    Vocabulary::VOCABULARY_AUTO_ACTION_NO => __('Don\'t save'),
+                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => __('Save'),
                 ],
                 'value' => $vocabularyHelper->isAttributeAutoActionNotSet() ?
                     Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
@@ -77,11 +77,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'select',
             [
                 'name' => 'option_auto_action',
-                'label' => $this->__('Save selected matching of Options?'),
+                'label' => __('Save selected matching of Options?'),
                 'values' => [
-                    Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET => $this->__('Ask Me'),
-                    Vocabulary::VOCABULARY_AUTO_ACTION_NO => $this->__('Don\'t save'),
-                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => $this->__('Save'),
+                    Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET => __('Ask Me'),
+                    Vocabulary::VOCABULARY_AUTO_ACTION_NO => __('Don\'t save'),
+                    Vocabulary::VOCABULARY_AUTO_ACTION_YES => __('Save'),
                 ],
                 'value' => $vocabularyHelper->isOptionAutoActionNotSet() ? Vocabulary::VOCABULARY_AUTO_ACTION_NOT_SET :
                     ($vocabularyHelper->isOptionAutoActionEnabled() ?
@@ -94,7 +94,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'button',
             [
                 'label' => '',
-                'value' => $this->__('Save'),
+                'value' => __('Save'),
                 'onclick' => 'ListingGridObj.variationProductManageHandler.saveAutoActionSettings()',
                 'class' => 'action-primary',
             ]

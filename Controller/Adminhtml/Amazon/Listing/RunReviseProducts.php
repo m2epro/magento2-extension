@@ -48,7 +48,7 @@ class RunReviseProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
             'action_type' => $action,
             'is_force' => true,
             'tag' => $tag,
-            'additional_data' => $this->getHelper('Data')->jsonEncode(
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                 [
                     'params' => $params,
                     'configurator' => $configurator->getSerializedData(),

@@ -76,7 +76,7 @@ class Handler extends AbstractModel implements HandlerInterface
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
             'is_force' => true,
-            'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode(['params' => $params]),
         ];
 
         $scheduledAction->addData($scheduledActionData);

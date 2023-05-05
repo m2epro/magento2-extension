@@ -43,9 +43,12 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Buffer */
     private $tagBuffer;
+    /** @var \Ess\M2ePro\Model\Ebay\TagFactory */
+    private $tagFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
+        \Ess\M2ePro\Model\Ebay\TagFactory $tagFactory,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -72,6 +75,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         $this->listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $this->params['product']['id']);
         $this->helperData = $helperData;
         $this->tagBuffer = $tagBuffer;
+        $this->tagFactory = $tagFactory;
     }
 
     //########################################
@@ -101,28 +105,38 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     {
         parent::eventAfterExecuting();
 
-        $responseMessages = $this->getResponse()->getMessages()->getEntities();
-        foreach ($responseMessages as $message) {
-            $this->calculateTagByMessage($message, $this->tagBuffer);
-        }
-
-        $this->tagBuffer->flush();
+        $this->addTags();
 
         if ($this->isTemporaryErrorAppeared($this->getResponse()->getMessages()->getEntities())) {
             $this->getResponseObject()->throwRepeatActionInstructions();
         }
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message $message
-     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer
-     *
-     * @return void
-     */
-    protected function calculateTagByMessage(
-        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
-        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer
-    ): void {
+    private function addTags(): void
+    {
+        $allowedCodesOfWarnings = [
+            '21919456',
+        ];
+
+        $tags = [];
+        $responseMessages = $this->getResponse()->getMessages()->getEntities();
+        foreach ($responseMessages as $message) {
+            if (!$message->isSenderComponent() || $message->getCode() === null) {
+                continue;
+            }
+
+            if (
+                $message->isError()
+                || ($message->isWarning() && in_array($message->getCode(), $allowedCodesOfWarnings))
+            ) {
+                $tags[] = $this->tagFactory->createByErrorCode($message->getCode(), $message->getText());
+            }
+        }
+
+        if (!empty($tags)) {
+            $this->tagBuffer->addTags($this->listingProduct, $tags);
+            $this->tagBuffer->flush();
+        }
     }
 
     //########################################
@@ -601,7 +615,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         $this->listingProduct->addData([
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-            'additional_data' => $this->helperData->jsonEncode($additionalData),
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode($additionalData),
         ])->save();
 
         $this->listingProduct->getChildObject()->updateVariationsStatus();

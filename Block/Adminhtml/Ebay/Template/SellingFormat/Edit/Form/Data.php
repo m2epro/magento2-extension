@@ -95,7 +95,7 @@ class Data extends AbstractForm
             $availableMarketplaces = $collection->getItems();
         }
 
-        $charity = $this->dataHelper->jsonDecode($formData['charity']);
+        $charity = \Ess\M2ePro\Helper\Json::decode($formData['charity']);
 
         $availableCharity = [];
         foreach ($availableMarketplaces as $marketplace) {
@@ -106,7 +106,7 @@ class Data extends AbstractForm
         $formData['charity'] = $availableCharity;
 
         $formData['fixed_price_modifier'] =
-            $this->dataHelper->jsonDecode($formData['fixed_price_modifier']) ?: [];
+            \Ess\M2ePro\Helper\Json::decode($formData['fixed_price_modifier']) ?: [];
 
         $taxCategories = $this->getTaxCategoriesInfo();
 
@@ -656,13 +656,29 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'vat_mode_tr',
-                'label' => $this->__('Add VAT Rate'),
+                'label' => __('Use VAT'),
                 'name' => 'selling_format[vat_mode]',
                 'value' => $formData['vat_mode'],
                 'values' => [
-                    SellingFormat::VAT_MODE_NO => $this->__('No'),
-                    SellingFormat::VAT_MODE_YES => $this->__('Yes'),
+                    SellingFormat::VAT_MODE_NO => __('No'),
+                    SellingFormat::VAT_MODE_INCLUDING_IN_PRICE => __('Including in price'),
+                    SellingFormat::VAT_MODE_ON_TOP_OF_PRICE => __('On top of price'),
                 ],
+                'tooltip' => __(
+                    <<<TEXT
+Choose if you’d like to add VAT rate to the Price of eBay Items:
+<br/>
+<b>Including in price</b> - Price of an Item will <b>not</b> be increased, VAT rate will be included in it.
+<br/>
+<b>On top of price</b> - Price of an Item will be increased by a specified VAT percentage.
+<br/>
+To remove the specified VAT rate from the Item Price on the channel and let eBay treat it as a net Price, set 0%.
+<br/>
+For more information, please check this <a href="%1" target='_blank'>article</a>
+TEXT
+                    ,
+                    $this->supportHelper->getDocumentationArticleUrl('x/e-8UB#Taxation')
+                ),
             ]
         );
 
@@ -671,7 +687,7 @@ class Data extends AbstractForm
             'text',
             [
                 'container_id' => 'vat_percent_tr',
-                'label' => $this->__('VAT Rate, %'),
+                'label' => __('VAT Rate, %'),
                 'name' => 'selling_format[vat_percent]',
                 'value' => $formData['vat_percent'],
                 'class' => 'M2ePro-validate-vat',
@@ -683,14 +699,14 @@ class Data extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'tax_table_mode_tr',
-                'label' => $this->__('Use eBay Tax Table'),
+                'label' => __('Use eBay Tax Table'),
                 'name' => 'selling_format[tax_table_mode]',
                 'value' => $formData['tax_table_mode'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Tax Tables are set up directly in your eBay Seller Central and are available only for Canada,
                     Canada (Fr), USA, and eBay Motors.'
                 ),
@@ -799,35 +815,6 @@ class Data extends AbstractForm
             [
                 'text' => $currencyAvailabilityMessage,
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom',
-            ]
-        );
-
-        $fieldset->addField(
-            'price_increase_vat_percent',
-            self::SELECT,
-            [
-                'label' => $this->__('Add VAT% on top of Price'),
-                'name' => 'selling_format[price_increase_vat_percent]',
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value' => $formData['price_increase_vat_percent'],
-                'tooltip' => $this->__(
-                    "Choose whether you want to add VAT Rate to the price when an item is listed on eBay:
-                    <br/>
-                    <br/>
-                    <b>Yes</b> - VAT Rate will be added on top of an item price.
-                    <br/>
-                    <br/>
-                    <b>No</b> - VAT Rate will stay included and an item price won't be changed.
-                    <br/>
-                    <br/>
-                    See our <a href='%url%' target='_blank'>article</a> to learn
-                     how the final eBay item price is calculated.",
-                    $this->supportHelper->getDocumentationArticleUrl('x/e-8UB#Selling-Price')
-                ),
-                'css_class' => 'no-margin-top',
             ]
         );
 
@@ -1188,24 +1175,24 @@ offer discounts.'
             $this->js->add("M2ePro.formData.currency = '{$this->currency->getCurrency($currency)->getSymbol()}';");
         }
 
-        $charityDictionary = $this->dataHelper->jsonEncode($charityBlock->getCharityDictionary());
+        $charityDictionary = \Ess\M2ePro\Helper\Json::encode($charityBlock->getCharityDictionary());
         if (empty($formData['charity'])) {
             $charityRenderJs = <<<JS
     EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
 JS;
         } else {
+            $formDataJson = \Ess\M2ePro\Helper\Json::encode($formData['charity']);
             $charityRenderJs = <<<JS
     EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
-    EbayTemplateSellingFormatObj.renderCharities({$this->dataHelper->jsonEncode($formData['charity'])});
+    EbayTemplateSellingFormatObj.renderCharities({$formDataJson});
 JS;
         }
 
         $fixedPriceModifierRenderJs = '';
         if (!empty($formData['fixed_price_modifier'])) {
+            $formDataJson = \Ess\M2ePro\Helper\Json::encode($formData['fixed_price_modifier']);
             $fixedPriceModifierRenderJs = <<<JS
-    EbayTemplateSellingFormatObj.renderFixedPriceChangeRows(
-        {$this->dataHelper->jsonEncode($formData['fixed_price_modifier'])}
-    );
+    EbayTemplateSellingFormatObj.renderFixedPriceChangeRows({$formDataJson});
 JS;
         }
 
@@ -1425,7 +1412,7 @@ JS
 
     //########################################
 
-    public function getCharityDictionary()
+    public function getCharityDictionary(): array
     {
         $connection = $this->resourceConnection->getConnection();
         $tableDictMarketplace = $this->dbStructureHelper
@@ -1437,7 +1424,7 @@ JS
         $data = $connection->fetchAssoc($dbSelect);
 
         foreach ($data as $key => $item) {
-            $data[$key]['charities'] = $this->dataHelper->jsonDecode($item['charities']);
+            $data[$key]['charities'] = \Ess\M2ePro\Helper\Json::decode($item['charities']);
         }
 
         return $data;

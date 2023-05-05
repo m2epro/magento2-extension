@@ -28,8 +28,6 @@ class Ebay
     private $dbStructure;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $cache;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
 
@@ -39,7 +37,6 @@ class Ebay
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Module\Database\Structure $dbStructure,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cache,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
@@ -49,7 +46,6 @@ class Ebay
         $this->resourceConnection = $resourceConnection;
         $this->dbStructure = $dbStructure;
         $this->cache = $cache;
-        $this->dataHelper = $dataHelper;
         $this->exceptionHelper = $exceptionHelper;
     }
 
@@ -183,7 +179,7 @@ class Ebay
 
         $features = [];
         if ($categoryRow['features'] !== null) {
-            $features = (array)$this->dataHelper->jsonDecode($categoryRow['features']);
+            $features = (array)\Ess\M2ePro\Helper\Json::decode($categoryRow['features']);
         }
 
         $this->cache->setValue($cacheKey, $features, [self::CACHE_TAG, 'marketplace']);
@@ -230,7 +226,7 @@ class Ebay
         }
 
         if ($categoryRow['item_specifics'] !== null) {
-            $specifics = (array)$this->dataHelper->jsonDecode($categoryRow['item_specifics']);
+            $specifics = (array)\Ess\M2ePro\Helper\Json::decode($categoryRow['item_specifics']);
         } else {
             try {
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
@@ -257,7 +253,7 @@ class Ebay
             $connWrite = $this->resourceConnection->getConnection();
             $connWrite->update(
                 $tableDictCategory,
-                ['item_specifics' => $this->dataHelper->jsonEncode($specifics)],
+                ['item_specifics' => \Ess\M2ePro\Helper\Json::encode($specifics)],
                 [
                     'marketplace_id = ?' => (int)$marketplaceId,
                     'category_id = ?'    => (int)$categoryId,

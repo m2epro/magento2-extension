@@ -15,18 +15,15 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 {
     public const EMPTY_TITLE_PLACEHOLDER = '--';
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other::class);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Account
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getAccount()
     {
@@ -35,6 +32,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     /**
      * @return \Ess\M2ePro\Model\Marketplace
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getMarketplace()
     {
@@ -43,13 +41,13 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     /**
      * @return \Ess\M2ePro\Model\Magento\Product\Cache
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getMagentoProduct()
     {
         return $this->getParentObject()->getMagentoProduct();
     }
-
-    //########################################
 
     /**
      * @return string
@@ -67,8 +65,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getData('general_id');
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      */
@@ -76,8 +72,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return $this->getData('title');
     }
-
-    // ---------------------------------------
 
     /**
      * @return float
@@ -94,8 +88,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return (int)$this->getData('online_qty');
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -115,8 +107,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             \Ess\M2ePro\Model\Amazon\Listing\Product::IS_ISBN_GENERAL_ID_YES;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -133,8 +123,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return (bool)$this->getData('is_repricing_disabled');
     }
 
-    //########################################
-
     /**
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -143,8 +131,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return $this->getAccount()->getChildObject()->getRelatedStoreId();
     }
-
-    //########################################
 
     public function afterMapProduct()
     {
@@ -196,6 +182,4 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             ]
         );
     }
-
-    //########################################
 }

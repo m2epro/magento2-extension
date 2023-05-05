@@ -79,7 +79,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'walmart_category_general_help',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
                 <p>In Category Policy, select Walmart Category/Subcategory for your
                 offer and complete the Item Specifics.</p><br>
@@ -101,7 +101,7 @@ HTML
         );
 
         $fieldSet = $form->addFieldset('magento_block_template_category_edit_general', [
-            'legend' => $this->__('General'),
+            'legend' => __('General'),
             'collapsable' => false,
         ]);
 
@@ -110,12 +110,12 @@ HTML
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
-                'title' => $this->__('Title'),
+                'label' => __('Title'),
+                'title' => __('Title'),
                 'value' => $this->formData['title'],
                 'class' => 'input-text M2ePro-category-template-title',
                 'required' => true,
-                'tooltip' => $this->__('Policy Title for your internal use.'),
+                'tooltip' => __('Policy Title for your internal use.'),
             ]
         );
 
@@ -137,8 +137,8 @@ HTML
             array_merge(
                 [
                     'name' => 'marketplace_id',
-                    'label' => $this->__('Marketplace'),
-                    'title' => $this->__('Marketplace'),
+                    'label' => __('Marketplace'),
+                    'title' => __('Marketplace'),
                     'values' => $this->getMarketplaceDataOptions(),
                     'value' => $this->formData['marketplace_id'],
                     'required' => true,
@@ -152,8 +152,8 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'category_path_container',
-                'label' => $this->__('Category'),
-                'title' => $this->__('Category'),
+                'label' => __('Category'),
+                'title' => __('Category'),
                 'required' => true,
                 'text' => $this->getCategoryHtml(),
             ]
@@ -162,7 +162,7 @@ HTML
         $this->css->add('label.mage-error[for="category_path"] { width: 160px !important; left: initial !important; }');
 
         $fieldSet = $form->addFieldset('magento_block_template_category_edit_specifics', [
-            'legend' => $this->__('Specifics'),
+            'legend' => __('Specifics'),
             'collapsable' => false,
         ]);
 
@@ -207,62 +207,62 @@ HTML
         ]);
 
         $this->jsTranslator->addTranslations([
-            'Add Category Policy' => $this->__('Add Category Policy'),
+            'Add Category Policy' => __('Add Category Policy'),
 
-            'Change Category' => $this->__('Change Category'),
-            'Not Selected' => $this->__('Not Selected'),
-            'Select' => $this->__('Select'),
+            'Change Category' => __('Change Category'),
+            'Not Selected' => __('Not Selected'),
+            'Select' => __('Select'),
 
             'The specified Title is already used for another Policy. Policy Title must be unique.' =>
-                $this->__('The specified Title is already used for another Policy. Policy Title must be unique.'),
-            'You should select Marketplace first.' => $this->__('You should select Marketplace first.'),
+                __('The specified Title is already used for another Policy. Policy Title must be unique.'),
+            'You should select Marketplace first.' => __('You should select Marketplace first.'),
             'You should select Category and Product Type first' =>
-                $this->__('You should select Category and Product Type first'),
+                __('You should select Category and Product Type first'),
 
-            'Recommended' => $this->__('Recommended'),
-            'Recent' => $this->__('Recent'),
+            'Recommended' => __('Recommended'),
+            'Recent' => __('Recent'),
 
-            'Add Specifics' => $this->__('Add Specifics'),
-            'Remove this specific' => $this->__('Remove this specific'),
+            'Add Specifics' => __('Add Specifics'),
+            'Remove this specific' => __('Remove this specific'),
 
-            'Total digits (not more):' => $this->__('Total digits (not more):'),
-            'Type: Numeric.' => $this->__('Type: Numeric.'),
-            'Min:' => $this->__('Min:'),
-            'Max:' => $this->__('Max:'),
+            'Total digits (not more):' => __('Total digits (not more):'),
+            'Type: Numeric.' => __('Type: Numeric.'),
+            'Min:' => __('Min:'),
+            'Max:' => __('Max:'),
 
-            'Can take any value.' => $this->__('Can take any value.'),
-            'Two uppercase letters or "unknown".' => $this->__('Two uppercase letters or "unknown".'),
-            'The value is incorrect.' => $this->__('The value is incorrect.'),
-            'Type: String.' => $this->__('Type: String.'),
-            'Min length:' => $this->__('Min length:'),
-            'Max length:' => $this->__('Max length:'),
+            'Can take any value.' => __('Can take any value.'),
+            'Two uppercase letters or "unknown".' => __('Two uppercase letters or "unknown".'),
+            'The value is incorrect.' => __('The value is incorrect.'),
+            'Type: String.' => __('Type: String.'),
+            'Min length:' => __('Min length:'),
+            'Max length:' => __('Max length:'),
 
-            'Type: Date time. Format: YYYY-MM-DD hh:mm:ss' => $this->__('Type: Date time. Format: YYYY-MM-DD hh:mm:ss'),
-            'Type: Numeric floating point.' => $this->__('Type: Numeric floating point.'),
-            'Decimal places (not more):' => $this->__('Decimal places (not more):'),
+            'Type: Date time. Format: YYYY-MM-DD hh:mm:ss' => __('Type: Date time. Format: YYYY-MM-DD hh:mm:ss'),
+            'Type: Numeric floating point.' => __('Type: Numeric floating point.'),
+            'Decimal places (not more):' => __('Decimal places (not more):'),
 
-            'Recommended Values' => $this->__('Recommended Values'),
-            'Allowed Values' => $this->__('Allowed Values'),
-            'Custom Attribute' => $this->__('Custom Attribute'),
-            'Custom Value' => $this->__('Custom Value'),
-            'None' => $this->__('None'),
+            'Recommended Values' => __('Recommended Values'),
+            'Allowed Values' => __('Allowed Values'),
+            'Custom Attribute' => __('Custom Attribute'),
+            'Custom Value' => __('Custom Value'),
+            'None' => __('None'),
 
-            'Definition:' => $this->__('Definition:'),
-            'Tips:' => $this->__('Tips:'),
-            'Examples:' => $this->__('Examples:'),
-            'Desired' => $this->__('Desired'),
+            'Definition:' => __('Definition:'),
+            'Tips:' => __('Tips:'),
+            'Examples:' => __('Examples:'),
+            'Desired' => __('Desired'),
 
-            'Duplicate specific' => $this->__('Duplicate specific'),
-            'Delete specific' => $this->__('Delete specific'),
-            'Add Specific into current container' => $this->__('Add Specific into current container'),
+            'Duplicate specific' => __('Duplicate specific'),
+            'Delete specific' => __('Delete specific'),
+            'Add Specific into current container' => __('Add Specific into current container'),
 
-            'Value of this Specific can be automatically overwritten by M2E Pro.' => $this->__(
+            'Value of this Specific can be automatically overwritten by M2E Pro.' => __(
                 'If you select this Item Specific as Walmart Variant Attribute in the Manage Variation pop-up,
                 its current value will be automatically overwritten with the related Attribute values of Magento Child
                 Products. Below you can see the Walmart Variant Attribute(s)
                 that will be used instead of this Item Specific:'
             ),
-            'Walmart Parentage Specific will be overridden notice.' => $this->__(
+            'Walmart Parentage Specific will be overridden notice.' => __(
                 'The Value of this Specific can be necessary due to technical reasons, so there is no ability to
                 Edit the Attribute parentage and also it has no semantic load. In case this Description Policy uses for
                 creation of new Walmart Parent-Child Product, this Value will be overwritten and the Value you selected
@@ -270,15 +270,15 @@ HTML
             ),
         ]);
 
-        $formData = $this->dataHelper->jsonEncode($this->formData);
+        $formData = \Ess\M2ePro\Helper\Json::encode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $isCategoryLocked = $this->isCategoryLocked() ? 'true' : 'false';
         $isMarketplaceLocked = $this->isMarketplaceLocked() ? 'true' : 'false';
-        $marketplaceForceSet = $this->dataHelper->jsonEncode(
+        $marketplaceForceSet = \Ess\M2ePro\Helper\Json::encode(
             (bool)(int)$this->getRequest()->getParam('marketplace_id')
         );
-        $allAttributes = $this->dataHelper->jsonEncode($this->magentoAttributeHelper->getAll());
-        $specifics = $this->dataHelper->jsonEncode($this->formData['specifics']);
+        $allAttributes = \Ess\M2ePro\Helper\Json::encode($this->magentoAttributeHelper->getAll());
+        $specifics = \Ess\M2ePro\Helper\Json::encode($this->formData['specifics']);
 
         $this->js->addRequireJs(
             [
@@ -347,7 +347,7 @@ JS
         foreach ($this->marketplaceData as $marketplace) {
             $optionsResult[] = [
                 'value' => $marketplace['id'],
-                'label' => $this->__($marketplace['title']),
+                'label' => __($marketplace['title']),
             ];
         }
 
@@ -393,7 +393,7 @@ JS
 
     public function getCategoryHtml()
     {
-        $html = '<span style="font-style: italic; color: grey;">' . $this->__('Not Selected') . '</span>';
+        $html = '<span style="font-style: italic; color: grey;">' . __('Not Selected') . '</span>';
         if (!empty($this->formData['category_path']) && !empty($this->formData['browsenode_id'])) {
             $html = '<span>' . $this->escapeHtml(
                 "{$this->formData['category_path']} ({$this->formData['browsenode_id']})"

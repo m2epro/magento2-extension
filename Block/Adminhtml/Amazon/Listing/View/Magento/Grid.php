@@ -181,7 +181,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('ID'),
+            'header' => __('ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -191,7 +191,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Title'),
+            'header' => __('Title'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -201,7 +201,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('type', [
-            'header' => $this->__('Type'),
+            'header' => __('Type'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'options',
@@ -212,7 +212,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('is_in_stock', [
-            'header' => $this->__('Stock Availability'),
+            'header' => __('Stock Availability'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'options',
@@ -220,14 +220,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'index' => 'is_in_stock',
             'filter_index' => 'is_in_stock',
             'options' => [
-                '1' => $this->__('In Stock'),
-                '0' => $this->__('Out of Stock'),
+                '1' => __('In Stock'),
+                '0' => __('Out of Stock'),
             ],
             'frame_callback' => [$this, 'callbackColumnIsInStock'],
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
+            'header' => __('SKU'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'text',
@@ -243,7 +243,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->addColumn($priceAttributeAlias, [
-            'header' => $this->__('Price'),
+            'header' => __('Price'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'price',
@@ -255,7 +255,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('qty', [
-            'header' => $this->__('QTY'),
+            'header' => __('QTY'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -265,7 +265,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('visibility', [
-            'header' => $this->__('Visibility'),
+            'header' => __('Visibility'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'options',
@@ -276,7 +276,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
+            'header' => __('Status'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'options',
@@ -289,7 +289,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if (!$this->_storeManager->isSingleStoreMode()) {
             $this->addColumn('websites', [
-                'header' => $this->__('Websites'),
+                'header' => __('Websites'),
                 'align' => 'left',
                 'width' => '90px',
                 'type' => 'options',
@@ -324,7 +324,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

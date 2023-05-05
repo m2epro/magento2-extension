@@ -68,7 +68,7 @@ class Form extends AbstractContainer
 
         $data = [
             'class' => 'primary',
-            'label' => $this->__('Edit'),
+            'label' => __('Edit'),
             'onclick' => "OrderEditItemObj.openEditShippingAddressPopup({$this->order->getId()});",
         ];
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
@@ -80,7 +80,7 @@ class Form extends AbstractContainer
             $url = $this->getUrl('*/order/resubmitShippingInfo', ['id' => $this->order->getId()]);
             $data = [
                 'class' => 'primary',
-                'label' => $this->__('Resend Shipping Information'),
+                'label' => __('Resend Shipping Information'),
                 'onclick' => 'setLocation(\'' . $url . '\');',
             ];
             $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
@@ -100,7 +100,7 @@ class Form extends AbstractContainer
         $buttonAddNoteBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                    ->setData(
                                        [
-                                           'label' => $this->__('Add Note'),
+                                           'label' => __('Add Note'),
                                            'onclick' => "OrderNoteObj.openAddNotePopup({$this->order->getId()})",
                                            'class' => 'order_note_btn',
                                        ]
@@ -201,7 +201,7 @@ class Form extends AbstractContainer
     protected function _toHtml()
     {
         $orderNoteGridId = $this->getChildBlock('order_note_grid')->getId();
-        $this->jsTranslator->add('Custom Note', $this->__('Custom Note'));
+        $this->jsTranslator->add('Custom Note', __('Custom Note'));
 
         $this->js->add(
             <<<JS

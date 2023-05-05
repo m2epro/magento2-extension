@@ -114,7 +114,7 @@ class General extends Command
 
         $dataForRepair = [];
         foreach ($repairInfo as $item) {
-            $temp = (array)$this->getHelper('Data')->jsonDecode($item);
+            $temp = (array)\Ess\M2ePro\Helper\Json::decode($item);
             $dataForRepair[$temp['table']] = $temp['ids'];
         }
 
@@ -139,7 +139,7 @@ class General extends Command
             return;
         }
 
-        $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($repairInfo);
+        $dataForRepair = (array)\Ess\M2ePro\Helper\Json::decode($repairInfo);
 
         $definition = $this->repository->getDefinition('OrderItemStructure');
 
@@ -160,7 +160,7 @@ class General extends Command
             return;
         }
 
-        $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
+        $dataForRepair = (array)\Ess\M2ePro\Helper\Json::decode($ids);
 
         $definition = $this->repository->getDefinition('EbayItemIdStructure');
 
@@ -181,7 +181,7 @@ class General extends Command
             return;
         }
 
-        $dataForRepair = (array)$this->getHelper('Data')->jsonDecode($ids);
+        $dataForRepair = (array)\Ess\M2ePro\Helper\Json::decode($ids);
 
         $definition = $this->repository->getDefinition('AmazonProductWithoutVariations');
 

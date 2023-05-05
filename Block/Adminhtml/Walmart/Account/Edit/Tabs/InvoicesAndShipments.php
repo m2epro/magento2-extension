@@ -41,7 +41,7 @@ class InvoicesAndShipments extends AbstractForm
             'invoices_and_shipments',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
     <p>Under this tab, you can set M2E Pro to automatically create invoices and shipments in your Magento.
      To do that, keep Magento <i>Invoice/Shipment Creation</i> options enabled.</p>
@@ -53,7 +53,7 @@ HTML
         $fieldset = $form->addFieldset(
             'invoices',
             [
-                'legend' => $this->__('Invoices'),
+                'legend' => __('Invoices'),
                 'collapsable' => false,
             ]
         );
@@ -62,14 +62,14 @@ HTML
             'create_magento_invoice',
             'select',
             [
-                'label' => $this->__('Magento Invoice Creation'),
-                'title' => $this->__('Magento Invoice Creation'),
+                'label' => __('Magento Invoice Creation'),
+                'title' => __('Magento Invoice Creation'),
                 'name' => 'create_magento_invoice',
                 'options' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically create Magento Invoices when order status is Unshipped/Partially Shipped.'
                 ),
             ]
@@ -78,7 +78,7 @@ HTML
         $fieldset = $form->addFieldset(
             'shipments',
             [
-                'legend' => $this->__('Shipments'),
+                'legend' => __('Shipments'),
                 'collapsable' => false,
             ]
         );
@@ -87,21 +87,21 @@ HTML
             'create_magento_shipment',
             'select',
             [
-                'label' => $this->__('Magento Shipment Creation'),
-                'title' => $this->__('Magento Shipment Creation'),
+                'label' => __('Magento Shipment Creation'),
+                'title' => __('Magento Shipment Creation'),
                 'name' => 'create_magento_shipment',
                 'options' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically create shipment for the Magento order when the associated order
                     on Channel is shipped.'
                 ),
             ]
         );
 
-        $otherCarriers = empty($formData['other_carriers']) ? [] : $this->dataHelper->jsonDecode(
+        $otherCarriers = empty($formData['other_carriers']) ? [] : \Ess\M2ePro\Helper\Json::decode(
             $formData['other_carriers']
         );
         for ($i = 0; $i < 30; $i++) {
@@ -146,7 +146,7 @@ HTML
 />
 HTML
                     ,
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         <<<TEXT
 If you use Other Carrier option on Walmart,
 enter a carrier code (unique identifier) and their website URL,

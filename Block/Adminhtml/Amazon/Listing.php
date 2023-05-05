@@ -27,7 +27,7 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'clear' => 'yes',
         ]);
         $this->addButton('add', [
-            'label' => $this->__('Add Listing'),
+            'label' => __('Add Listing'),
             'onclick' => 'setLocation(\'' . $url . '\')',
             'class' => 'action-primary',
         ]);
@@ -38,7 +38,7 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     protected function _prepareLayout()
     {
-        $content = $this->__(
+        $content = __(
             '<p>This page displays the list of M2E Pro Listings. Generally, a Listing is a group of Magento Products
             sold on a certain Marketplace by a particular Seller and managed by the same Selling, Synchronization,
             etc. Policy Settings.</p><br>

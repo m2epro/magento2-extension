@@ -91,6 +91,11 @@ class MatchedAttributes extends AbstractModel
             return;
         }
 
+        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
+        if (!empty($additionalData['running_migration_to_product_types'])) {
+            return;
+        }
+
         if ($this->getProcessor()->isGeneralIdSet()) {
             $this->processExistProduct();
 
@@ -104,11 +109,6 @@ class MatchedAttributes extends AbstractModel
 
     private function processExistProduct()
     {
-        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
-        if (!empty($additionalData['running_migration_to_product_types'])) {
-            return;
-        }
-
         $channelAttributes = $this->getProcessor()->getTypeModel()->getChannelAttributes();
 
         $this->getProcessor()

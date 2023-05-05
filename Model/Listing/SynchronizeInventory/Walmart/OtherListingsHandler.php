@@ -41,7 +41,6 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
      */
     protected function updateReceivedOtherListings()
     {
-        $dataHelper = $this->helperFactory->getObject('Data');
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
         foreach (array_chunk(array_keys($this->responseData), 200) as $wpids) {
@@ -66,7 +65,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
                     'online_qty' => (int)$receivedItem['qty'],
                     'publish_status' => (string)$receivedItem['publish_status'],
                     'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
-                    'status_change_reasons' => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
+                    'status_change_reasons' => \Ess\M2ePro\Helper\Json::encode($receivedItem['status_change_reason']),
                     'is_online_price_invalid' => $isOnlinePriceInvalid,
                 ];
 
@@ -123,7 +122,6 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
             $mappingModel->initialize($this->getAccount());
         }
 
-        $dataHelper = $this->helperFactory->getObject('Data');
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
         foreach ($this->responseData as $receivedItem) {
@@ -150,7 +148,7 @@ class OtherListingsHandler extends AbstractExistingProductsHandler
 
                 'publish_status' => (string)$receivedItem['publish_status'],
                 'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
-                'status_change_reasons' => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
+                'status_change_reasons' => \Ess\M2ePro\Helper\Json::encode($receivedItem['status_change_reason']),
                 'is_online_price_invalid' => $isOnlinePriceInvalid,
             ];
 

@@ -516,7 +516,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         $src = $this->getEbaySellingFormatTemplate()->getFixedPriceSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -537,7 +537,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountStpSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -552,7 +552,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountMapSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 

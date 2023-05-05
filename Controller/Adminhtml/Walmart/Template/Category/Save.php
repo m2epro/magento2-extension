@@ -69,7 +69,7 @@ class Save extends Category
         }
 
         $specifics = !empty($post['encoded_data']) ? $post['encoded_data'] : '';
-        $specifics = (array)$this->dataHelper->jsonDecode($specifics);
+        $specifics = (array)\Ess\M2ePro\Helper\Json::decode($specifics);
 
         $this->sortSpecifics($specifics, $post['product_data_nick'], $post['marketplace_id']);
 

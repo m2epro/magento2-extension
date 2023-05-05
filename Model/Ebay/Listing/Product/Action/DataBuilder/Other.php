@@ -86,7 +86,7 @@ class Other extends AbstractModel
         ];
 
         if ($this->getEbayMarketplace()->isVatEnabled()) {
-            $data['vat_mode'] = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getVatMode();
+            $data['vat_mode'] = (int)$this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isVatModeEnabled();
             $data['vat_percent'] = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getVatPercent();
         }
 

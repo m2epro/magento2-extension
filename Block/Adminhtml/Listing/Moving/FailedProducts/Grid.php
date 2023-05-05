@@ -53,7 +53,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $failedProducts = $this->dataHelper->jsonDecode($this->getRequest()->getParam('failed_products'));
+        $failedProducts = \Ess\M2ePro\Helper\Json::decode($this->getRequest()->getParam('failed_products'));
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create()
@@ -188,7 +188,7 @@ JS
         return $this->getData('grid_url');
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

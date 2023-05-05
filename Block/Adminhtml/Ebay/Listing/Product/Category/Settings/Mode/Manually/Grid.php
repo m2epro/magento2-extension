@@ -112,7 +112,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        $productAddIds = (array)$this->dataHelper->jsonDecode(
+        $productAddIds = (array)\Ess\M2ePro\Helper\Json::decode(
             $this->listing->getChildObject()->getData('product_add_ids')
         );
 
@@ -326,7 +326,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->getUrl('*/ebay_listing_product_category_settings/StepTwoModeManuallyGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

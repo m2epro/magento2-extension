@@ -147,7 +147,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('image', [
-            'header' => $this->__('Image'),
+            'header' => __('Image'),
             'align' => 'center',
             'type' => 'text',
             'width' => '80px',
@@ -158,7 +158,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('title', [
-            'header' => $this->__('Title'),
+            'header' => __('Title'),
             'align' => 'left',
             'type' => 'text',
             'string_limit' => 10000,
@@ -171,7 +171,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('price', [
-            'header' => $this->__('Price'),
+            'header' => __('Price'),
             'width' => '60px',
             'align' => 'right',
             'index' => 'price',
@@ -182,7 +182,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('general_id', [
-            'header' => $this->__('ASIN / ISBN'),
+            'header' => __('ASIN / ISBN'),
             'align' => 'center',
             'type' => 'text',
             'width' => '75px',
@@ -193,7 +193,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('actions', [
-            'header' => $this->__('Action'),
+            'header' => __('Action'),
             'align' => 'center',
             'type' => 'text',
             'width' => '78px',
@@ -213,7 +213,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $url = $this->amazonHelper
             ->getItemUrl($value, $this->globalDataHelper->getValue('marketplace_id'));
 
-        $parentAsinText = $this->__('parent ASIN/ISBN');
+        $parentAsinText = __('parent ASIN/ISBN');
 
         return <<<HTML
 <a id="asin_link_{$product->getData('id')}" href="{$url}" target="_blank">{$value}</a>
@@ -223,7 +223,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 HTML;
     }
 
-    public function callbackColumnTitle($value, $row, $column, $isExport)
+    public function callbackColumnTitle($value, $row, $column, $isExport): string
     {
         $value = '<div style="margin-left: 3px; margin-bottom: 3px;">' .
             $this->dataHelper->escapeHtml($value) . "</div>";
@@ -267,13 +267,13 @@ HTML;
                                         color: #808080;
                                         display: inline-block;
                                         width: 250px;">' .
-                    $this->__('Magento Attributes') .
+                    __('Magento Attributes') .
                     '</span><span style="margin-left: 10px;
                                         font-size: 11px;
                                         font-weight: bold;
                                         color: #808080;
                                         display: inline-block;">' .
-                    $this->__('Amazon Attributes') .
+                    __('Amazon Attributes') .
                     '</span></div>';
 
                 $matchedAttributes = $this->matcherAttributes->getMatchedAttributes();
@@ -323,20 +323,20 @@ JS;
                 $magentoProductAttributesJs .= '</script>';
 
                 $magentoProductAttributesHtml .= '<div id="variations_' . $id . '" style="display: none;">' .
-                    $this->dataHelper->jsonEncode($variations) .
+                    \Ess\M2ePro\Helper\Json::encode($variations) .
                     '</div>';
             } else {
                 $matchedAttributes = json_encode($this->matcherAttributes->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                $destinationAttributes = $this->dataHelper->jsonEncode($destinationAttributes);
+                $destinationAttributes = \Ess\M2ePro\Helper\Json::encode($destinationAttributes);
 
                 foreach ($variations['set'] as $attribute => $options) {
                     $variations['set'][$attribute] = array_values($options);
                 }
 
-                $amazonVariations = $this->dataHelper->jsonEncode($variations);
+                $amazonVariations = \Ess\M2ePro\Helper\Json::encode($variations);
 
-                $magentoAttributesText = $this->__('Magento Attributes');
-                $amazonAttributesText = $this->__('Amazon Attributes');
+                $magentoAttributesText = __('Magento Attributes');
+                $amazonAttributesText = __('Amazon Attributes');
 
                 $searchHandler = 'ListingGridObj.productSearchHandler';
 
@@ -361,10 +361,10 @@ HTML;
                     $magentoProductVariationsSet = $this->listingProduct->getMagentoProduct()
                                                                         ->getVariationInstance()
                                                                         ->getVariationsTypeStandard();
-                    $magentoProductVariationsSet = $this->dataHelper->jsonEncode(
+                    $magentoProductVariationsSet = \Ess\M2ePro\Helper\Json::encode(
                         $magentoProductVariationsSet['set']
                     );
-                    $productAttributes = $this->dataHelper->jsonEncode(
+                    $productAttributes = \Ess\M2ePro\Helper\Json::encode(
                         $this->listingProduct->getChildObject()
                                              ->getVariationManager()->getTypeModel()->getProductAttributes()
                     );
@@ -491,8 +491,8 @@ JS;
 
         $specificsJs .= '</script>';
 
-        $variationAsins = $this->dataHelper->jsonEncode($variations['asins']);
-        $variationTree = $this->dataHelper->jsonEncode($this->getChannelVariationsTree($variations));
+        $variationAsins = \Ess\M2ePro\Helper\Json::encode($variations['asins']);
+        $variationTree = \Ess\M2ePro\Helper\Json::encode($this->getChannelVariationsTree($variations));
 
         $specificsJsonContainer = <<<HTML
 <div id="parent_asin_{$id}" style="display: none">{$generalId}</div>
@@ -506,7 +506,7 @@ HTML;
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if (empty($value) || $row->getData('is_variation_product')) {
-            $value = $this->__('N/A');
+            $value = __('N/A');
         } else {
             $value = $this->localeCurrency->getCurrency($this->currency)->toCurrency($value);
         }
@@ -516,7 +516,7 @@ HTML;
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $assignText = $this->__('Assign');
+        $assignText = __('Assign');
 
         if (
             !$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
@@ -530,7 +530,7 @@ HTML;
             }
 
             if (!$row->getData('bad_parent')) {
-                $msg = $this->__(
+                $msg = __(
                     'Please select necessary Options for this Amazon Product to be able to assign ASIN/ISBN.'
                 );
 
@@ -549,7 +549,7 @@ HTML;
         }
 
         if ($row->getData('is_variation_product') && !$row->getData('bad_parent')) {
-            $msg = $this->__(
+            $msg = __(
                 'Please link Amazon and Magento Attributes for this Amazon Product to be able to assign ASIN/ISBN.'
             );
 
@@ -560,13 +560,13 @@ HTML;
             $this->matcherAttributes->setDestinationAttributes($destinationAttributes);
 
             if ($this->matcherAttributes->isSourceAmountGreater()) {
-                $msg = $this->__(
+                $msg = __(
                     'Please link Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
                     Be careful, as the number of  Magento Attributes is more than the number of Attributes in Amazon
                     Parent Product. Thus you should select fixed Value for unmatched Magento Variational Attribute.'
                 );
             } elseif ($this->matcherAttributes->isDestinationAmountGreater()) {
-                $msg = $this->__(
+                $msg = __(
                     'Please link Magento and Amazon Attributes for this Amazon Product to be able to assign ASIN/ISBN.
                     Be careful, as the number of Attributes in Amazon Parent Product is more than the number of
                     Magento Attributes. Thus you should select fixed Value for unmatched Amazon Variational Attribute.'
@@ -586,14 +586,14 @@ HTML;
 HTML;
         }
 
-        $msg = $this->__(
+        $msg = __(
             'This ASIN/ISBN cannot be assigned to selected Magento Product. <br/>
              This Amazon Product has no Variations. <br/>
              Only Amazon Parent/Child Products can be assigned in "All Variations" Mode.'
         );
 
         if ($row->getData('is_variation_product') && $row->getData('bad_parent')) {
-            $msg = $this->__(
+            $msg = __(
                 'This ASIN/ISBN cannot be assigned to selected Magento Product. <br/>
                  Amazon Service (API) does not return all required information about this Amazon Product.'
             );
@@ -622,40 +622,40 @@ HTML;
     protected function _toHtml()
     {
         $this->jsTranslator->addTranslations([
-            'help_icon_magento_greater_left' => $this->__(
+            'help_icon_magento_greater_left' => __(
                 'This Amazon Attribute and its Value are virtualized based ' .
                 'on the selected Magento Variational Attribute and its Value as physically this Amazon Attribute ' .
                 'does not exist.'
             ),
-            'help_icon_magento_greater_right' => $this->__(
+            'help_icon_magento_greater_right' => __(
                 'Select a particular Option of the Attribute to fix ' .
                 'it for virtualized Amazon Attribute. Please, be thoughtful as only those Variations of ' .
                 'Magento Product which contains the selected Option can be sold on Amazon.'
             ),
 
-            'help_icon_amazon_greater_left' => $this->__(
+            'help_icon_amazon_greater_left' => __(
                 'This Magento Attribute and its Value are virtualized ' .
                 'based on the selected Amazon Variational Attribute and its Value as physically this ' .
                 'Magento Attribute does not exist.'
             ),
-            'help_icon_amazon_greater_right' => $this->__(
+            'help_icon_amazon_greater_right' => __(
                 'Select a particular Option of the Attribute to fix ' .
                 'it for virtualized Magento Attribute. Please, be thoughtful as your offer will be available only ' .
                 'for those Buyers who selected the same Option.'
             ),
 
-            'duplicate_magento_attribute_error' => $this->__(
+            'duplicate_magento_attribute_error' => __(
                 'The Magento Attributes which you selected in ' .
                 'your settings have the same Labels. Such combination is invalid. Please, add the valid combination ' .
                 'of Attributes.'
             ),
-            'duplicate_amazon_attribute_error' => $this->__(
+            'duplicate_amazon_attribute_error' => __(
                 'The Amazon Attributes which you selected in ' .
                 'your settings have the same Labels. Such combination is invalid. Please, add the valid combination ' .
                 'of Attributes.'
             ),
 
-            'change_option' => $this->__('Change option'),
+            'change_option' => __('Change option'),
         ]);
 
         $searchData = $this->globalDataHelper->getValue('search_data');
@@ -683,7 +683,7 @@ HTML;
         return $this->getUrl('*/amazon_listing/getSuggestedAsinGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

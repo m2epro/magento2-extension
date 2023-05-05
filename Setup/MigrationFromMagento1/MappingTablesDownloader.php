@@ -146,7 +146,7 @@ class MappingTablesDownloader
 
         $curlResource = $this->getCurlResource($prepareUrl, $postData);
 
-        $responseData = $this->helperFactory->getObject('Data')->jsonDecode(curl_exec($curlResource));
+        $responseData = \Ess\M2ePro\Helper\Json::decode(curl_exec($curlResource));
         $responseCode = curl_getinfo($curlResource)['http_code'];
 
         if ($responseCode === 401) {
@@ -391,7 +391,7 @@ class MappingTablesDownloader
             $postData['offset'] = $offset;
 
             $curlResource = $this->getCurlResource($getMappingDataUrl, $postData);
-            $responseData = $this->helperFactory->getObject('Data')->jsonDecode(curl_exec($curlResource));
+            $responseData = \Ess\M2ePro\Helper\Json::decode(curl_exec($curlResource));
             $responseCode = curl_getinfo($curlResource)['http_code'];
 
             if ($responseCode === 401) {

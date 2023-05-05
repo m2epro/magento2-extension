@@ -117,7 +117,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $data = [
             'nick' => $nick,
             'parent_id' => $parentId,
-            'data' => $this->helperData->jsonEncode($data),
+            'data' => \Ess\M2ePro\Helper\Json::encode($data),
             'initiator' => $initiator,
             'start_date' => $this->helperData->getCurrentGmtDate(),
         ];
@@ -154,13 +154,13 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $data = [];
         if ($this->object->getData('data') != '') {
-            $data = $this->helperData->jsonDecode($this->object->getData('data'));
+            $data = \Ess\M2ePro\Helper\Json::decode($this->object->getData('data'));
         }
 
         $data[$key] = $value;
         $this->object->setData(
             'data',
-            $this->helperData->jsonEncode($data)
+            \Ess\M2ePro\Helper\Json::encode($data)
         )->save();
 
         return true;
@@ -191,7 +191,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return null;
         }
 
-        $data = $this->helperData->jsonDecode($this->object->getData('data'));
+        $data = \Ess\M2ePro\Helper\Json::decode($this->object->getData('data'));
 
         if (isset($data[$key])) {
             return $data[$key];
@@ -264,8 +264,14 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $nick = strtoupper($this->getObject()->getData('nick'));
 
-        $contentData = (array)$this->helperData->jsonDecode($this->getObject()->getData('data'));
-        $contentData = preg_replace('/^/m', "{$offset}", print_r($contentData, true));
+        $contentData = (array)\Ess\M2ePro\Helper\Json::decode(
+            $this->getObject()->getData('data')
+        );
+        $contentData = preg_replace(
+            '/^/m',
+            "{$offset}",
+            print_r($contentData, true)
+        );
 
         return <<<INFO
 {$offset}{$nick}

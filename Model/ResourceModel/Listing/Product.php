@@ -62,7 +62,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         array $listingProductFilters = []
     ) {
         $filters = [$listingFilters, $listingProductFilters];
-        $cacheKey = __METHOD__ . $productId . sha1($this->getHelper('Data')->jsonEncode($filters));
+        $cacheKey = __METHOD__ . $productId . sha1(\Ess\M2ePro\Helper\Json::encode($filters));
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {

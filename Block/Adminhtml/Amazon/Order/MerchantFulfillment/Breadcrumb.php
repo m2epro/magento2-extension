@@ -25,18 +25,18 @@ class Breadcrumb extends \Ess\M2ePro\Block\Adminhtml\Widget\Breadcrumb
             [
                 [
                     'id' => 1,
-                    'title' => $this->__('Step 1'),
-                    'description' => $this->__('Configure Options'),
+                    'title' => __('Step 1'),
+                    'description' => __('Configure Options'),
                 ],
                 [
                     'id' => 2,
-                    'title' => $this->__('Step 2'),
-                    'description' => $this->__('Choose Service'),
+                    'title' => __('Step 2'),
+                    'description' => __('Choose Service'),
                 ],
                 [
                     'id' => 3,
-                    'title' => $this->__('Step 3'),
-                    'description' => $this->__('Congratulations'),
+                    'title' => __('Step 3'),
+                    'description' => __('Congratulations'),
                 ],
             ]
         );

@@ -110,7 +110,7 @@ class Grid extends AbstractGrid
         return parent::_prepareColumns();
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return '';
     }

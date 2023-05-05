@@ -63,10 +63,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'possible_attributes_fieldset',
             [
-                'legend' => $this->__('Walmart Variant Attributes'),
+                'legend' => __('Walmart Variant Attributes'),
                 'collapsable' => true,
                 'direction_class' => 'to-right',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Select Walmart Variant Attribute you will use to vary your Item on the Channel. You can set more
                     than one Variant Attribute for Variational Item that varies by multiple attributes.<br><br>
 
@@ -131,7 +131,7 @@ HTML;
             $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
                 'class' => 'action primary',
                 'label' => $this->getListingProductTypeModel()->hasChannelAttributes() ?
-                    $this->__('Change') : $this->__('Set Attributes'),
+                    __('Change') : __('Set Attributes'),
                 'onclick' => 'ListingGridObj.variationProductManageHandler.changeChannelAttributes(this)',
             ])->toHtml();
 
@@ -185,7 +185,7 @@ HTML;
 
         $buttonConfirm = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'class' => 'action primary',
-            'label' => $this->__('Confirm'),
+            'label' => __('Confirm'),
             'onclick' => 'ListingGridObj.variationProductManageHandler.setChannelAttributes(this)',
         ])->toHtml();
 
@@ -226,49 +226,49 @@ JS
 
             $this->jsTranslator->addTranslations([
                 'help_icon_magento_greater_left' =>
-                    $this->__(
+                    __(
                         'This Walmart Attribute and its Value are virtualized based on the selected Magento
                 Variational Attribute and its Value as physically this Walmart Attribute does not exist.'
                     ),
                 'help_icon_magento_greater_right' =>
-                    $this->__(
+                    __(
                         'Select a particular Option of the Attribute to fix it for virtualized Walmart Attribute.
                         Please, be thoughtful as only those Variations of Magento Product which contains the selected
                         Option can be sold on Walmart.'
                     ),
 
                 'help_icon_walmart_greater_left' =>
-                    $this->__(
+                    __(
                         'This Magento Attribute and its Value are virtualized based on the selected Walmart
                         Variational Attribute and its Value as physically this Magento Attribute does not exist.'
                     ),
                 'help_icon_walmart_greater_right' =>
-                    $this->__(
+                    __(
                         'Select a particular Option of the Attribute to fix it for virtualized Magento Attribute.
                         Please, be thoughtful as your offer will be available only for those Buyers who selected the
                         same Option.'
                     ),
 
                 'duplicate_magento_attribute_error' =>
-                    $this->__(
+                    __(
                         'The Magento Attributes which you selected in your settings have the same Labels. Such
                         combination is invalid. Please, add the valid combination of Attributes.'
                     ),
                 'duplicate_walmart_attribute_error' =>
-                    $this->__(
+                    __(
                         'The Walmart Attributes which you selected in your settings have the same Labels. Such
                         combination is invalid. Please, add the valid combination of Attributes.'
                     ),
 
-                'change_option' => $this->__('Change option'),
+                'change_option' => __('Change option'),
             ]);
 
             $fieldset = $form->addFieldset(
                 'attributes_fieldset',
                 [
-                    'legend' => $this->__('Variation Attributes'),
+                    'legend' => __('Variation Attributes'),
                     'collapsable' => true,
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         '
                         To sell Magento Variational Product as Walmart Variant Group, you need to set a correspondence
                         between Magento Variational Attribute(s) and Walmart Variant Attribute(s). Click
@@ -318,16 +318,16 @@ HTML;
 HTML;
 
                 if ($this->getMatcherAttributes()->isSourceAmountGreater()) {
-                    $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $productAttributes = $this->dataHelper->jsonEncode($this->getProductAttributes());
-                    $destinationAttributes = $this->dataHelper->jsonEncode($this->getDestinationAttributes());
-                    $magentoVariationSet = $this->dataHelper->jsonEncode($magentoProductVariations['set']);
+                    $matchedAttributes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
+                    $productAttributes = \Ess\M2ePro\Helper\Json::encode($this->getProductAttributes());
+                    $destinationAttributes = \Ess\M2ePro\Helper\Json::encode($this->getDestinationAttributes());
+                    $magentoVariationSet = \Ess\M2ePro\Helper\Json::encode($magentoProductVariations['set']);
 
                     $this->js->add(
                         <<<JS
     ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_WALMART;
-    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttributes};
     ListingGridObj.variationProductManageHandler.productAttributes = {$productAttributes};
     ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
     ListingGridObj.variationProductManageHandler.magentoVariationSet = {$magentoVariationSet};
@@ -336,15 +336,15 @@ HTML;
 JS
                     );
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
-                    $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $destinationAttributes = $this->dataHelper->jsonEncode($this->getDestinationAttributes());
+                    $matchedAttributes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
+                    $destinationAttributes = \Ess\M2ePro\Helper\Json::encode($this->getDestinationAttributes());
 
                     $this->js->add(
                         <<<JS
     ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
 
-    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttributes};
     ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
 
     ListingGridObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
@@ -407,7 +407,7 @@ HTML;
 
                     if (!$isVirtual) {
                         $style = $this->hasMatchedAttributes() ? '' : 'style="color: red;"';
-                        $text = $this->hasMatchedAttributes() ? $walmartAttr : $this->__('Not Set');
+                        $text = $this->hasMatchedAttributes() ? $walmartAttr : __('Not Set');
                         $html .= <<<HTML
         <span class="variation_manager_attributes_walmart_value" {$style}>{$text}</span>
 HTML;
@@ -467,8 +467,8 @@ HTML;
                 $changeButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                      ->setData([
                                          'class' => 'action primary',
-                                         'label' => $this->hasMatchedAttributes() ? $this->__('Change') :
-                                             $this->__('Set Attributes'),
+                                         'label' => $this->hasMatchedAttributes() ? __('Change') :
+                                             __('Set Attributes'),
                                          'onclick' => 'ListingGridObj.variationProductManageHandler.changeMatchedAttributes(this)',
                                      ])->toHtml();
 
@@ -476,7 +476,7 @@ HTML;
                                       ->setData([
                                           'class' => 'action primary',
                                           'style' => 'display: none;',
-                                          'label' => $this->__('Confirm'),
+                                          'label' => __('Confirm'),
                                           'onclick' => 'ListingGridObj.variationProductManageHandler.setMatchedAttributes()',
                                       ])->toHtml();
 
@@ -508,10 +508,10 @@ HTML;
             $fieldset = $form->addFieldset(
                 'swatch_images__fieldset',
                 [
-                    'legend' => $this->__('Swatch Variant Attribute'),
+                    'legend' => __('Swatch Variant Attribute'),
                     'collapsable' => true,
                     'direction_class' => 'to-right',
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         'Select Swatch Variant Attribute by which the Swatch Images will be shown on your Walmart
                      Item page.<br><br>
                      <strong>Note:</strong> In Description Policy, you may select Magento source where the Images for
@@ -521,7 +521,7 @@ HTML;
             );
 
             $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
-                'label' => $this->__('Change'),
+                'label' => __('Change'),
                 'onclick' => 'ListingGridObj.variationProductManageHandler.setSwatchImagesAttribute()',
                 'class' => 'action-primary',
                 'style' => 'margin-left: 70px;',
@@ -531,7 +531,7 @@ HTML;
                 'swatch_images_attributes',
                 'select',
                 [
-                    'label' => $this->__('Swatch Variant Attribute'),
+                    'label' => __('Swatch Variant Attribute'),
                     'name' => 'swatch_images',
                     'values' => $possibleAttributes,
                     'value' => $this->getSwatchImagesAttribute(),
@@ -683,14 +683,14 @@ CSS
 
             if (!$this->getListingProductTypeModel()->hasChannelAttributes()) {
                 $this->addMessage(
-                    $this->__(
+                    __(
                         'Walmart Item Variations are not defined. To start configurations, click Set Attributes.'
                     ),
                     self::MESSAGE_TYPE_ERROR
                 );
             } elseif (!$this->hasMatchedAttributes()) {
                 $this->addMessage(
-                    $this->__(
+                    __(
                         'Item Variations cannot be added/updated on the Channel. The correspondence between Magento
                         Variational Attribute(s) and Walmart Variant Attribute(s) is not set.
                         Please complete the configurations.'

@@ -12,8 +12,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionDataHelper;
 
@@ -21,11 +20,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
-        $this->dataHelper = $dataHelper;
         $this->sessionDataHelper = $sessionDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -166,7 +163,7 @@ HTML
     public function getProductTypeMode()
     {
         $listingAdditionalData = $this->listing->getData('additional_data');
-        $listingAdditionalData = $this->dataHelper->jsonDecode($listingAdditionalData);
+        $listingAdditionalData = \Ess\M2ePro\Helper\Json::decode($listingAdditionalData);
 
         $mode = 'same';
 

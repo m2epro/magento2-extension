@@ -10,19 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        parent::__construct($walmartFactory, $context);
-
-        $this->helperData = $helperData;
-    }
-
     public function execute()
     {
         if (!$post = $this->getRequest()->getPost()) {
@@ -42,7 +29,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
             $this->getRequest()->getParam('listing_id')
         );
 
-        $data = $this->helperData->jsonDecode($post['auto_action_data']);
+        $data = \Ess\M2ePro\Helper\Json::decode($post['auto_action_data']);
 
         $listingData = [
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,

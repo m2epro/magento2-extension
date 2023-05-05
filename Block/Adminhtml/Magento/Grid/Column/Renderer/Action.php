@@ -19,9 +19,6 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    protected $dataHelper;
-
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         Renderer\CssRenderer $css,
@@ -31,7 +28,6 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         Renderer\JsUrlRenderer $jsUrlRenderer,
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->css = $css;
@@ -40,9 +36,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
         $this->jsTranslator = $jsTranslatorRenderer;
         $this->jsUrl = $jsUrlRenderer;
         $this->helperFactory = $helperFactory;
-
         parent::__construct($context, $jsonEncoder, $data);
-        $this->dataHelper = $dataHelper;
     }
 
     protected function _prepareLayout()
@@ -88,7 +82,7 @@ JS
         return parent::_prepareLayout();
     }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
         $actions = $this->getColumn()->getActions();
         if (empty($actions) || !is_array($actions)) {
@@ -97,7 +91,7 @@ JS
         $style = '';
         foreach ($actions as $columnName => $value) {
             if (array_key_exists('only_remap_product', $value) && $value['only_remap_product']) {
-                $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+                $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
                 $style = isset($value['style']) ? $value['style'] : '';
                 if (!isset($additionalData[Listing_Product::MOVING_LISTING_OTHER_SOURCE_KEY])) {
                     unset($actions[$columnName]);

@@ -8,17 +8,12 @@
 
 namespace Ess\M2ePro\Model\ActiveRecord\Component\Child;
 
-/**
- * Class \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel */
     protected $parentObject = null;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory  */
     protected $parentFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -32,6 +27,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         array $data = []
     ) {
         $this->parentFactory = $parentFactory;
+
         parent::__construct(
             $modelFactory,
             $activeRecordFactory,
@@ -44,11 +40,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         );
     }
 
-    //########################################
-
     abstract protected function getComponentMode();
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel $object
@@ -100,8 +92,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         return $this->parentObject;
     }
 
-    //########################################
-
     /**
      * @param string $modelName
      * @param string $fieldName
@@ -137,6 +127,4 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
         return $this->getRelatedItems($tempModel, $fieldName, $asObjects, $filters, $sort);
     }
-
-    //########################################
 }

@@ -83,7 +83,7 @@ class Status extends AbstractModel
         $this->getProcessor()->getListingProduct()->addData([
             'status' => $resultStatus,
         ])->getChildObject()->addData([
-            'variation_child_statuses' => $this->getHelper('Data')->jsonEncode($childStatuses),
+            'variation_child_statuses' => \Ess\M2ePro\Helper\Json::encode($childStatuses),
         ]);
     }
 

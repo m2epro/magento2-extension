@@ -48,6 +48,6 @@ class GetListings extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             ];
         }
 
-        $this->getResponse()->setBody($this->getHelper('Data')->jsonEncode($listings));
+        $this->getResponse()->setBody(\Ess\M2ePro\Helper\Json::encode($listings));
     }
 }

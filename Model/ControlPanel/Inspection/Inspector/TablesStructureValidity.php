@@ -162,7 +162,7 @@ HTML;
                     $columnInfo['repair_mode'] = self::FIX_COLUMN;
                 }
 
-                $repairInfo = $this->helperFactory->getObject('Data')->jsonEncode($columnInfo);
+                $repairInfo = \Ess\M2ePro\Helper\Json::encode($columnInfo);
                 $input = "<input type='checkbox' name='repair_info[]' value='" . $repairInfo . "'>";
                 $html .= <<<HTML
 <tr>

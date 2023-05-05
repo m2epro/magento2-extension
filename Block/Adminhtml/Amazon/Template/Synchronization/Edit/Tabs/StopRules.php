@@ -77,7 +77,7 @@ class StopRules extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_stop_filters',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -87,13 +87,13 @@ class StopRules extends AbstractForm
             self::SELECT,
             [
                 'name' => 'stop_mode',
-                'label' => $this->__('Stop Action'),
+                'label' => __('Stop Action'),
                 'value' => $formData['stop_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically stop the Item(s) when the Stop Conditions are met.'
                 ),
             ]
@@ -102,7 +102,7 @@ class StopRules extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_stop_rules',
             [
-                'legend' => $this->__('Stop Conditions'),
+                'legend' => __('Stop Conditions'),
                 'collapsable' => false,
             ]
         );
@@ -112,13 +112,13 @@ class StopRules extends AbstractForm
             self::SELECT,
             [
                 'name' => 'stop_status_disabled',
-                'label' => $this->__('Stop When Status Disabled'),
+                'label' => __('Stop When Status Disabled'),
                 'value' => $formData['stop_status_disabled'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically stops Item(s) if its status has been changed to \'Disabled\' in Magento.'
                 ),
             ]
@@ -129,13 +129,13 @@ class StopRules extends AbstractForm
             self::SELECT,
             [
                 'name' => 'stop_out_off_stock',
-                'label' => $this->__('Stop When Out Of Stock'),
+                'label' => __('Stop When Out Of Stock'),
                 'value' => $formData['stop_out_off_stock'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically stops Item(s) if its Stock availability has been changed to \'Out of Stock\'
                     in Magento.'
                 ),
@@ -163,13 +163,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'stop_qty_calculated',
-                'label' => $this->__('Stop When Quantity Is'),
+                'label' => __('Stop When Quantity Is'),
                 'value' => $formData['stop_qty_calculated'],
                 'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('No Action'),
-                    TemplateSynchronization::QTY_MODE_YES => $this->__('Less or Equal'),
+                    TemplateSynchronization::QTY_MODE_NONE => __('No Action'),
+                    TemplateSynchronization::QTY_MODE_YES => __('Less or Equal'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically stops Item(s) if Quantity according to the Selling
                     Policy has been changed and meets the Conditions.'
                 ),
@@ -186,9 +186,9 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_synchronization_stop_advanced_filters',
             [
-                'legend' => $this->__('Advanced Conditions'),
+                'legend' => __('Advanced Conditions'),
                 'collapsable' => false,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>Define Magento Attribute value(s) based on which a product must be stopped on the Channel.<br>
                     Once at least one Stop or Advanced Condition is met, the product will be stopped.</p>'
                 ),
@@ -202,7 +202,7 @@ HTML
                 'messages' => [
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                        'content' => $this->__(
+                        'content' => __(
                             'Please be very thoughtful before enabling this option as this functionality can have
                         a negative impact on the Performance of your system.<br> It can decrease the speed of running
                         in case you have a lot of Products with the high number of changes made to them.'
@@ -217,11 +217,11 @@ HTML
             self::SELECT,
             [
                 'name' => 'stop_advanced_rules_mode',
-                'label' => $this->__('Stop When Meet'),
+                'label' => __('Stop When Meet'),
                 'value' => $formData['stop_advanced_rules_mode'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
             ]
         );
@@ -242,7 +242,7 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'stop_advanced_rules_filters_container',
-                'label' => $this->__('Conditions'),
+                'label' => __('Conditions'),
                 'text' => $ruleBlock->toHtml(),
             ]
         );

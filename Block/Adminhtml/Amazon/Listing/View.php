@@ -129,7 +129,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             '</div>';
     }
 
-    public function getGridHtml()
+    public function getGridHtml(): string
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
             return parent::getGridHtml();
@@ -148,7 +148,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Account::class)
         );
 
-        $showAutoAction = $this->dataHelper->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
+        $showAutoAction = \Ess\M2ePro\Helper\Json::encode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
         $this->jsUrl->addUrls(
@@ -270,14 +270,14 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $component = \Ess\M2ePro\Helper\Component\Amazon::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
-        $ignoreListings = $this->dataHelper->jsonEncode([$this->listing['id']]);
-        $marketplace = $this->dataHelper->jsonEncode(
+        $ignoreListings = \Ess\M2ePro\Helper\Json::encode([$this->listing['id']]);
+        $marketplace = \Ess\M2ePro\Helper\Json::encode(
             array_merge(
                 $this->listing->getMarketplace()->getData(),
                 $this->listing->getMarketplace()->getChildObject()->getData()
             )
         );
-        $isNewAsinAvailable = $this->dataHelper->jsonEncode(
+        $isNewAsinAvailable = \Ess\M2ePro\Helper\Json::encode(
             $this->listing->getMarketplace()->getChildObject()->isNewAsinAvailable()
         );
 

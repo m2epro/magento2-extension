@@ -29,7 +29,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public const QTY_MODIFICATION_MODE_ON = 1;
 
     public const VAT_MODE_NO = 0;
-    public const VAT_MODE_YES = 1;
+    public const VAT_MODE_INCLUDING_IN_PRICE = 1;
+    public const VAT_MODE_ON_TOP_OF_PRICE = 2;
 
     public const QTY_MIN_POSTED_DEFAULT_VALUE = 1;
     public const QTY_MAX_POSTED_DEFAULT_VALUE = 100;
@@ -512,12 +513,19 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
     //----------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getVatMode()
+    public function getVatMode(): int
     {
         return (int)$this->getData('vat_mode');
+    }
+
+    public function isVatModeEnabled(): bool
+    {
+        return $this->getVatMode() != self::VAT_MODE_NO;
+    }
+
+    public function isVatModeOnTopOfPrice(): bool
+    {
+        return $this->getVatMode() == self::VAT_MODE_ON_TOP_OF_PRICE;
     }
 
     /**
@@ -569,16 +577,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public function isRestrictedToBusinessEnabled()
     {
         return (bool)$this->getData('restricted_to_business');
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isPriceIncreaseVatPercentEnabled()
-    {
-        return (bool)$this->getData('price_increase_vat_percent');
     }
 
     // ---------------------------------------
@@ -659,7 +657,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             return [];
         }
 
-        return $this->getHelper('Data')->jsonDecode($this->getData('fixed_price_modifier')) ?: [];
+        return \Ess\M2ePro\Helper\Json::decode($this->getData('fixed_price_modifier')) ?: [];
     }
 
     /**
@@ -1414,7 +1412,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             return null;
         }
 
-        return $this->getHelper('Data')->jsonDecode($this->getData('charity'));
+        return \Ess\M2ePro\Helper\Json::decode($this->getData('charity'));
     }
 
     // ---------------------------------------

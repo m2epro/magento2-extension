@@ -56,7 +56,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -66,18 +66,18 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'value' => $formData['title'],
                 'required' => true,
                 'class' => 'M2ePro-listing-title',
-                'tooltip' => $this->__('Listing Title for your internal use.'),
+                'tooltip' => __('Listing Title for your internal use.'),
             ]
         );
 
         $fieldset = $form->addFieldset(
             'walmart_settings_fieldset',
             [
-                'legend' => $this->__('Walmart Settings'),
+                'legend' => __('Walmart Settings'),
                 'collapsable' => false,
             ]
         );
@@ -131,9 +131,9 @@ class Form extends AbstractForm
             'account_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Account'),
+                'label' => __('Account'),
                 'style' => 'line-height: 32px; display: initial;',
-                'tooltip' => $this->__('Select Account under which you want to manage this Listing.'),
+                'tooltip' => __('Select Account under which you want to manage this Listing.'),
                 'text' => <<<HTML
     <span id="account_label"></span>
     {$accountSelect->toHtml()}
@@ -145,7 +145,7 @@ HTML
                                              ->setData(
                                                  [
                                                      'id' => 'add_account_button',
-                                                     'label' => $this->__('Add Another'),
+                                                     'label' => __('Add Another'),
                                                      'style' => 'margin-left: 5px;' . $isAddAccountButtonHidden,
                                                      'onclick' => '',
                                                      'class' => 'primary',
@@ -159,7 +159,7 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'css_class' => 'no-margin-bottom',
-                'label' => $this->__('Marketplace'),
+                'label' => __('Marketplace'),
                 'text' => '<span id="marketplace_title"></span><p class="note" id="marketplace_url"></p>',
 
                 'field_extra_attributes' => 'id="marketplace_info" style="display: none; margin-top: 0px"',
@@ -177,7 +177,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_fieldset',
             [
-                'legend' => $this->__('Magento Settings'),
+                'legend' => __('Magento Settings'),
                 'collapsable' => false,
             ]
         );
@@ -187,11 +187,11 @@ HTML
             self::STORE_SWITCHER,
             [
                 'name' => 'store_id',
-                'label' => $this->__('Magento Store View'),
+                'label' => __('Magento Store View'),
                 'value' => $formData['store_id'],
                 'required' => true,
                 'has_empty_option' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Choose the Magento Store View you want to use for this M2E Pro Listing.'
                 ),
 
@@ -202,7 +202,7 @@ HTML
         $fieldset = $form->addFieldset(
             'policies_settings',
             [
-                'legend' => $this->__('Policies Settings'),
+                'legend' => __('Policies Settings'),
                 'collapsable' => false,
             ]
         );
@@ -241,7 +241,7 @@ HTML
         $templateSellingFormat->setForm($form);
 
         $editPolicyTooltip = $this->getTooltipHtml(
-            $this->__(
+            __(
                 'At any time, you can edit the saved Policy. <br><br>
             <strong>Note:</strong> The changes you made will automatically affect all of the
             Products which were listed using this Policy.'
@@ -253,7 +253,7 @@ HTML
             'template_selling_format_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Selling Policy'),
+                'label' => __('Selling Policy'),
                 'style' => 'line-height: 34px; display: initial;',
                 'required' => true,
                 'text' => <<<HTML
@@ -323,7 +323,7 @@ HTML
             'template_description_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Description Policy'),
+                'label' => __('Description Policy'),
                 'style' => 'line-height: 34px;display: initial;',
                 'required' => true,
                 'text' => <<<HTML
@@ -393,7 +393,7 @@ HTML
             'template_synchronization_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Synchronization Policy'),
+                'label' => __('Synchronization Policy'),
                 'style' => 'line-height: 34px;display: initial;',
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
                 'required' => true,
@@ -554,18 +554,18 @@ HTML
 
         $this->jsTranslator->add(
             'The specified Title is already used for other Listing. Listing Title must be unique.',
-            $this->__(
+            __(
                 'The specified Title is already used for other Listing. Listing Title must be unique.'
             )
         );
         $this->jsTranslator->add(
             'Account not found, please create it.',
-            $this->__('Account not found, please create it.')
+            __('Account not found, please create it.')
         );
-        $this->jsTranslator->add('Add Another', $this->__('Add Another'));
+        $this->jsTranslator->add('Add Another', __('Add Another'));
         $this->jsTranslator->add(
             'Please wait while Synchronization is finished.',
-            $this->__('Please wait while Synchronization is finished.')
+            __('Please wait while Synchronization is finished.')
         );
 
         $this->js->add(

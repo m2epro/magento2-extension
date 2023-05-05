@@ -12,6 +12,54 @@ echo $block->getChildHtml('item_edit');
 
 $shippingDateTo = $block->order->getChildObject()->getShippingDateTo();
 $status = $this->getStatus();
+
+$ebayOrder = $block->order->getChildObject();
+$isBuyerCancellationAvailable = $ebayOrder->isBuyerCancellationStatusRequested()
+    && $ebayOrder->isBuyerCancellationPossible();
+
+$acceptButton = $declineButton = '';
+if ($isBuyerCancellationAvailable) {
+    $layout = $block->getLayout();
+    $urlBuilder = $block->getUrlBuilder();
+
+    $approveUrl = $urlBuilder->getUrl(
+        'm2epro/ebay_order_processBuyerCancellationRequest/approve',
+        [
+            'ids' => $block->order->getId(),
+        ]
+    );
+    $rejectUrl = $urlBuilder->getUrl(
+        'm2epro/ebay_order_processBuyerCancellationRequest/reject',
+        [
+            'ids' => $block->order->getId(),
+        ]
+    );
+
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $acceptButtonBlock */
+    $acceptButtonBlock = $layout->createBlock(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Button::class
+    );
+    $acceptButtonBlock->setData([
+        'label' => $block->__('Accept'),
+        'style' => '',
+        'class' => 'action-default scalable primary',
+        'onclick' => "setLocation('$approveUrl');",
+    ]);
+    $acceptButton = $acceptButtonBlock->toHtml();
+
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $declineButtonBlock */
+    $declineButtonBlock = $layout->createBlock(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Button::class
+    );
+    $declineButtonBlock->setData([
+        'label' => $block->__('Decline'),
+        'style' => 'margin-left: 2rem;',
+        'class' => 'action-default scalable primary',
+        'onclick' => "setLocation('$rejectUrl');",
+    ]);
+    $declineButton = $declineButtonBlock->toHtml();
+}
+
 ?>
 
 <div class="row">
@@ -176,6 +224,18 @@ $status = $this->getStatus();
                                 </strong>
                             </td>
                         </tr>
+
+                        <?php if($isBuyerCancellationAvailable): ?>
+                            <tr style="height: 7rem;">
+                                <td class="label" style="color: red;">
+                                    <div style="padding-top: 20px;"><?php echo $block->__('Cancellation Requested'); ?></div>
+                                </td>
+                                <td class="value">
+                                    <span style="padding-top: 20px;"><?php echo $acceptButton; ?></span>
+                                    <span style="padding-top: 20px;"><?php echo $declineButton; ?></span>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
 
                         </tbody>
                     </table>

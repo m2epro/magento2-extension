@@ -32,7 +32,7 @@ class Marketplace extends AbstractContainer
 
         // ---------------------------------------
         $this->addButton('run_update_all', [
-            'label' => $this->__('Update All Now'),
+            'label' => __('Update All Now'),
             'onclick' => 'MarketplaceObj.updateAction()',
             'class' => 'save update_all_marketplace primary',
         ]);
@@ -40,7 +40,7 @@ class Marketplace extends AbstractContainer
 
         // ---------------------------------------
         $this->addButton('run_synch_now', [
-            'label' => $this->__('Save'),
+            'label' => __('Save'),
             'onclick' => 'MarketplaceObj.saveAction();',
             'class' => 'save save_and_update_marketplaces primary',
         ]);
@@ -52,7 +52,7 @@ class Marketplace extends AbstractContainer
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(
+            'content' => __(
                 '<p>This Page contains a list of Amazon international Marketplaces
                 where you can sell your Items.</p><br>
                 <p><strong>Enable</strong> only those Marketplaces that you want to sell on.

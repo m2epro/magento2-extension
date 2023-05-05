@@ -29,7 +29,7 @@ class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->removeButton('edit');
 
         $this->addButton('save', [
-            'label' => $this->__('Save'),
+            'label' => __('Save'),
             'onclick' => 'SettingsObj.saveSettings()',
             'class' => 'primary',
         ]);

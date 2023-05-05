@@ -205,7 +205,7 @@ HTML;
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Marketplace'));
 
-        $storedStatuses = $this->dataHelper->jsonEncode($this->storedStatuses);
+        $storedStatuses = \Ess\M2ePro\Helper\Json::encode($this->storedStatuses);
         $this->js->addOnReadyJs(
             <<<JS
             require([

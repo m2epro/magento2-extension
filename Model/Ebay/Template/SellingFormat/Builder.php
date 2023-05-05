@@ -106,10 +106,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['tax_category_attribute'] = $this->rawData['tax_category_attribute'];
         }
 
-        if (isset($this->rawData['price_increase_vat_percent'])) {
-            $data['price_increase_vat_percent'] = (int)$this->rawData['price_increase_vat_percent'];
-        }
-
         if (isset($this->rawData['price_variation_mode'])) {
             $data['price_variation_mode'] = (int)$this->rawData['price_variation_mode'];
         }
@@ -335,7 +331,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'tax_category_value' => '',
             'tax_category_attribute' => '',
 
-            'price_increase_vat_percent' => 0,
             'price_variation_mode' => SellingFormat::PRICE_VARIATION_MODE_PARENT,
 
             'fixed_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,

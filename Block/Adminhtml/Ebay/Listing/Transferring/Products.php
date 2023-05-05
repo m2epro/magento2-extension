@@ -40,7 +40,7 @@ class Products extends AbstractBlock
 
     protected function _toHtml()
     {
-        $translations = $this->dataHelper->jsonEncode(
+        $translations = \Ess\M2ePro\Helper\Json::encode(
             [
                 'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
                 'Adding has been completed' => $this->__('Adding has been completed'),
@@ -50,7 +50,7 @@ class Products extends AbstractBlock
             ]
         );
 
-        $urls = $this->dataHelper->jsonEncode(
+        $urls = \Ess\M2ePro\Helper\Json::encode(
             $this->dataHelper->getControllerActions(
                 'Ebay_Listing_Transferring',
                 ['listing_id' => $this->getListing()->getId()]
@@ -59,7 +59,7 @@ class Products extends AbstractBlock
 
         $this->transferring->setListing($this->getListing());
 
-        $products = $this->dataHelper->jsonEncode($this->transferring->getProductsIds());
+        $products = \Ess\M2ePro\Helper\Json::encode($this->transferring->getProductsIds());
         $successUrl = $this->getUrl(
             '*/ebay_listing/view',
             ['id' => $this->transferring->getTargetListingId()]

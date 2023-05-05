@@ -21,21 +21,16 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
         $this->helperFactory = $helperFactory;
         $this->translationHelper = $translationHelper;
-        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -67,7 +62,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
             return $value;
         }
 
-        $variationChildStatuses = $this->dataHelper->jsonDecode($row->getData('variation_child_statuses'));
+        $variationChildStatuses = \Ess\M2ePro\Helper\Json::decode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses) || $value === null || $value === '') {
             return $this->translationHelper->__('N/A');

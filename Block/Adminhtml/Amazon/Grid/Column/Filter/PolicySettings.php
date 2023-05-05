@@ -56,15 +56,15 @@ HTML;
     {
         return [
             [
-                'label' => $this->__('Any'),
+                'label' => __('Any'),
                 'value' => '',
             ],
             [
-                'label' => $this->__('Yes'),
+                'label' => __('Yes'),
                 'value' => 1,
             ],
             [
-                'label' => $this->__('No'),
+                'label' => __('No'),
                 'value' => 0,
             ],
         ];

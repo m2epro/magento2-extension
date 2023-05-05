@@ -24,7 +24,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
     public function getItemsByProductId($productId, array $filters = [])
     {
-        $cacheKey = __METHOD__ . $productId . sha1($this->getHelper('Data')->jsonEncode($filters));
+        $cacheKey = __METHOD__ . $productId . sha1(\Ess\M2ePro\Helper\Json::encode($filters));
         $cacheValue = $this->getHelper('Data_Cache_Runtime')->getValue($cacheKey);
 
         if ($cacheValue !== null) {

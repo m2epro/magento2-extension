@@ -12,9 +12,6 @@ use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 
 class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
 
@@ -44,7 +41,6 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Exception $helperException,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Model\Ebay\Template\CategoryFactory $categoryFactory,
         \Ess\M2ePro\Model\Ebay\Template\StoreCategoryFactory $storeCategoryFactory,
@@ -58,8 +54,6 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $context);
-
-        $this->dataHelper = $dataHelper;
         $this->converterFactory = $converterFactory;
         $this->snapshotBuilderFactory = $snapshotBuilderFactory;
         $this->transactionFactory = $transactionFactory;
@@ -73,7 +67,7 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     public function execute()
     {
-        $categoryTemplatesData = $this->dataHelper->jsonDecode(
+        $categoryTemplatesData = \Ess\M2ePro\Helper\Json::decode(
             $this->getRequest()->getPost('template_category_data')
         );
 

@@ -30,7 +30,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->buttonList->remove('save');
         $this->buttonList->remove('edit');
 
-        $this->buttonList->update('add', 'label', $this->__('Add Policy'));
+        $this->buttonList->update('add', 'label', __('Add Policy'));
         $this->buttonList->update('add', 'onclick', '');
     }
 
@@ -38,7 +38,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
     protected function _prepareLayout()
     {
-        $content = $this->__(
+        $content = __(
             '
             <strong>Category Policy</strong> includes the Walmart Category/Subcategory and
             Specifics that best describe your Item.<br/><br/>
@@ -78,22 +78,22 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $data = [
             Grid::TEMPLATE_CATEGORY => [
-                'label' => $this->__('Category'),
+                'label' => __('Category'),
                 'id' => 'category',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_CATEGORY) . "')",
             ],
             Grid::TEMPLATE_DESCRIPTION => [
-                'label' => $this->__('Description'),
+                'label' => __('Description'),
                 'id' => 'description',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_DESCRIPTION) . "')",
             ],
             Grid::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Selling'),
+                'label' => __('Selling'),
                 'id' => 'selling',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
             Grid::TEMPLATE_SYNCHRONIZATION => [
-                'label' => $this->__('Synchronization'),
+                'label' => __('Synchronization'),
                 'id' => 'synchronization',
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ],

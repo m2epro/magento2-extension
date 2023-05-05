@@ -293,7 +293,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
             . ' onclick="EbayListingOtherGridObj.movingHandler.getGridHtml('
-            . $this->dataHelper->jsonEncode([(int)$row->getData('id')])
+            . \Ess\M2ePro\Helper\Json::encode([(int)$row->getData('id')])
             . ')">'
             . $this->__('Move')
             . '</a>';
@@ -489,7 +489,7 @@ JS
         return parent::_beforeToHtml();
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

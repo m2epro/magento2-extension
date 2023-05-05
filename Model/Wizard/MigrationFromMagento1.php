@@ -192,7 +192,8 @@ class MigrationFromMagento1 extends Wizard
         /**
          * Hope m2 version will never be larger than m1 one
          */
-        return version_compare($lastUpgradeVersion, $installedVersion, '>');
+        return version_compare($lastUpgradeVersion, $installedVersion, '>')
+            && version_compare($lastUpgradeVersion, '6.0.0', '>');
     }
 
     /**

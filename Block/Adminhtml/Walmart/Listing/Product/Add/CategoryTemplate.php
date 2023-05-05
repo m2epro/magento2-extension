@@ -58,7 +58,7 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             '_current' => true,
         ]);
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'class' => 'back',
             'onclick' => 'setLocation(\'' . $url . '\');',
         ]);
@@ -68,19 +68,19 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             ['id' => $this->getRequest()->getParam('id')]
         );
         $confirm =
-            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
-            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+            '<strong>' . __('Are you sure?') . '</strong><br><br>'
+            . __('All unsaved changes will be lost and you will be returned to the Listings grid.');
         $this->addButton(
             'exit_to_listing',
             [
-                'label' => $this->__('Cancel'),
+                'label' => __('Cancel'),
                 'onclick' => "confirmSetLocation('$confirm', '$url');",
                 'class' => 'action-primary',
             ]
         );
 
         $this->addButton('next', [
-            'label' => $this->__('Continue'),
+            'label' => __('Continue'),
             'class' => 'action-primary forward',
             'onclick' => "categoryTemplateModeFormSubmit()",
         ]);

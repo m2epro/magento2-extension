@@ -363,7 +363,7 @@ JS
         // ---------------------------------------
 
         // ---------------------------------------
-        $showAutoActionPopup = $this->dataHelper->jsonEncode(
+        $showAutoActionPopup = \Ess\M2ePro\Helper\Json::encode(
             !$this->moduleHelper->getRegistry()->getValue('/ebay/listing/autoaction_popup/is_shown/')
         );
 

@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -23,6 +18,4 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
             \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other::class
         );
     }
-
-    //########################################
 }

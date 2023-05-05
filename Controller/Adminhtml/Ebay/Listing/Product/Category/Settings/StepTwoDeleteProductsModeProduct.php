@@ -44,7 +44,7 @@ class StepTwoDeleteProductsModeProduct extends Settings
 
         $this->getEbayListingFromRequest()->setData(
             'product_add_ids',
-            $this->getHelper('Data')->jsonEncode($listingProductAddIds)
+            \Ess\M2ePro\Helper\Json::encode($listingProductAddIds)
         )->save();
 
         return $this->getResult();

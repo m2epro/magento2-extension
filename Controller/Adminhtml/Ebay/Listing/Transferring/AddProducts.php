@@ -16,19 +16,13 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Transferring $transferring */
     private $transferring;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context,
         \Ess\M2ePro\Model\Ebay\Listing\Transferring $transferring
     ) {
         parent::__construct($ebayFactory, $context);
-
         $this->transferring = $transferring;
-        $this->dataHelper = $dataHelper;
     }
 
     public function execute()
@@ -78,7 +72,7 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
             $targetListing->getChildObject()->setData(
                 'product_add_ids',
-                $this->getHelper('Data')->jsonEncode($existingIds)
+                \Ess\M2ePro\Helper\Json::encode($existingIds)
             );
             $targetListing->save();
         }
@@ -97,6 +91,6 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             $this->transferring->clearSession();
         }
 
-        return $this->getResponse()->setBody($this->dataHelper->jsonEncode(['result' => 'success']));
+        return $this->getResponse()->setBody(\Ess\M2ePro\Helper\Json::encode(['result' => 'success']));
     }
 }

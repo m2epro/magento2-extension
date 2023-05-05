@@ -1436,13 +1436,13 @@ JS
         }
 
         if (!empty($data['product_details']) && is_string($data['product_details'])) {
-            $data['product_details'] = $this->dataHelper->jsonDecode($data['product_details']);
+            $data['product_details'] = \Ess\M2ePro\Helper\Json::decode($data['product_details']);
         } else {
             unset($data['product_details']);
         }
 
         if (!empty($data['variation_configurable_images']) && is_string($data['variation_configurable_images'])) {
-            $data['variation_configurable_images'] = $this->dataHelper->jsonDecode(
+            $data['variation_configurable_images'] = \Ess\M2ePro\Helper\Json::decode(
                 $data['variation_configurable_images']
             );
         } else {
@@ -1450,7 +1450,7 @@ JS
         }
 
         if (!empty($data['watermark_settings']) && is_string($data['watermark_settings'])) {
-            $watermarkSettings = $this->dataHelper->jsonDecode($data['watermark_settings']);
+            $watermarkSettings = \Ess\M2ePro\Helper\Json::decode($data['watermark_settings']);
             unset($data['watermark_settings']);
 
             if (isset($watermarkSettings['position'])) {
@@ -1486,11 +1486,11 @@ JS
         $default = $this->modelFactory->getObject('Ebay_Template_Description_Builder')->getDefaultData();
 
         $default['enhancement'] = explode(',', $default['enhancement']);
-        $default['product_details'] = $this->dataHelper->jsonDecode($default['product_details']);
-        $default['variation_configurable_images'] = $this->dataHelper->jsonDecode(
+        $default['product_details'] = \Ess\M2ePro\Helper\Json::decode($default['product_details']);
+        $default['variation_configurable_images'] = \Ess\M2ePro\Helper\Json::decode(
             $default['variation_configurable_images']
         );
-        $default['watermark_settings'] = $this->dataHelper->jsonDecode(
+        $default['watermark_settings'] = \Ess\M2ePro\Helper\Json::decode(
             $default['watermark_settings']
         );
 

@@ -105,36 +105,36 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         }
 
         if (isset($this->rawData['local_shipping_rate_table'])) {
-            $data['local_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode(
+            $data['local_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::encode(
                 $this->rawData['local_shipping_rate_table']
             );
         } else {
-            $data['local_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode([]);
+            $data['local_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::encode([]);
         }
 
         if (isset($this->rawData['international_shipping_rate_table'])) {
-            $data['international_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode(
+            $data['international_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::encode(
                 $this->rawData['international_shipping_rate_table']
             );
         } else {
-            $data['international_shipping_rate_table'] = $this->getHelper('Data')->jsonEncode([]);
+            $data['international_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::encode([]);
         }
 
         if (isset($this->rawData['local_shipping_discount_combined_profile_id'])) {
-            $data['local_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode(
+            $data['local_shipping_discount_combined_profile_id'] = \Ess\M2ePro\Helper\Json::encode(
                 array_diff($this->rawData['local_shipping_discount_combined_profile_id'], [''])
             );
         } else {
-            $data['local_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode([]);
+            $data['local_shipping_discount_combined_profile_id'] = \Ess\M2ePro\Helper\Json::encode([]);
         }
 
         if (isset($this->rawData['international_shipping_discount_combined_profile_id'])) {
-            $data['international_shipping_discount_combined_profile_id'] = $this->getHelper('Data')->jsonEncode(
+            $data['international_shipping_discount_combined_profile_id'] = \Ess\M2ePro\Helper\Json::encode(
                 array_diff($this->rawData['international_shipping_discount_combined_profile_id'], [''])
             );
         } else {
             $data['international_shipping_discount_combined_profile_id']
-                = $this->getHelper('Data')->jsonEncode([]);
+                = \Ess\M2ePro\Helper\Json::encode([]);
         }
 
         if (isset($this->rawData['excluded_locations'])) {
@@ -297,7 +297,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
                 'shipping_type' => $shippingType,
                 'cost_additional_value' => $costAdditional,
                 'priority' => $this->rawData['shipping_priority'][$i],
-                'locations' => $this->getHelper('Data')->jsonEncode($locations),
+                'locations' => \Ess\M2ePro\Helper\Json::encode($locations),
             ];
         }
 
@@ -365,17 +365,17 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'cash_on_delivery_cost' => null,
             'global_shipping_program' => 0,
             'cross_border_trade' => Shipping::CROSS_BORDER_TRADE_NONE,
-            'excluded_locations' => $this->getHelper('Data')->jsonEncode([]),
+            'excluded_locations' => \Ess\M2ePro\Helper\Json::encode([]),
 
             'local_shipping_mode' => Shipping::SHIPPING_TYPE_FLAT,
             'local_shipping_discount_promotional_mode' => 0,
-            'local_shipping_discount_combined_profile_id' => $this->getHelper('Data')->jsonEncode([]),
+            'local_shipping_discount_combined_profile_id' => \Ess\M2ePro\Helper\Json::encode([]),
             'local_shipping_rate_table_mode' => 0,
             'local_shipping_rate_table' => null,
 
             'international_shipping_mode' => Shipping::SHIPPING_TYPE_NO_INTERNATIONAL,
             'international_shipping_discount_promotional_mode' => 0,
-            'international_shipping_discount_combined_profile_id' => $this->getHelper('Data')->jsonEncode([]),
+            'international_shipping_discount_combined_profile_id' => \Ess\M2ePro\Helper\Json::encode([]),
             'international_shipping_rate_table_mode' => 0,
             'international_shipping_rate_table' => null,
 

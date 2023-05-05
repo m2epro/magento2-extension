@@ -37,7 +37,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'sku',
-                'label' => $this->__('SKU'),
+                'label' => __('SKU'),
                 'required' => true,
             ]
         );
@@ -51,7 +51,7 @@ class Form extends AbstractForm
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 '
             In order to prove that this is your Product, you need to provide SKU of the respective Product
             in your Amazon Inventory. Please follow the Rules below to avoid issues:

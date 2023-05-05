@@ -57,7 +57,7 @@ abstract class AbstractWizard extends AbstractContainer
         );
 
         $step = $this->wizardHelper->getStep($this->getNick());
-        $steps = $this->dataHelper->jsonEncode(
+        $steps = \Ess\M2ePro\Helper\Json::encode(
             $this->wizardHelper->getWizard($this->getNick())->getSteps()
         );
         $status = $this->wizardHelper->getStatus($this->getNick());

@@ -166,7 +166,7 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         if (!$asObjects) {
             foreach ($specifics as &$specific) {
-                $specific['attributes'] = (array)$this->getHelper('Data')->jsonDecode($specific['attributes']);
+                $specific['attributes'] = (array)\Ess\M2ePro\Helper\Json::decode($specific['attributes']);
             }
         }
 

@@ -102,7 +102,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
 
             $data = array_replace_recursive(
                 $data,
-                $this->getHelper('Data')->jsonDecode($source->getPath())
+                \Ess\M2ePro\Helper\Json::decode($source->getPath())
             );
         }
 

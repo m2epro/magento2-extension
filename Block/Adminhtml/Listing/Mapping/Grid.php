@@ -248,7 +248,7 @@ JS
         );
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

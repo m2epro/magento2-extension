@@ -357,7 +357,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $this->getUrl('*/ebay_listing/view', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

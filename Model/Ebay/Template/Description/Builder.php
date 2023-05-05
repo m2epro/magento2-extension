@@ -95,7 +95,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['product_details'] = $this->rawData['product_details'];
 
             if (is_array($data['product_details'])) {
-                $data['product_details'] = $this->getHelper('Data')->jsonEncode($data['product_details']);
+                $data['product_details'] = \Ess\M2ePro\Helper\Json::encode(
+                    $data['product_details']
+                );
             }
         }
 
@@ -163,7 +165,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['variation_configurable_images'] = $this->rawData['variation_configurable_images'];
 
             if (is_array($data['variation_configurable_images'])) {
-                $data['variation_configurable_images'] = $this->getHelper('Data')->jsonEncode(
+                $data['variation_configurable_images'] = \Ess\M2ePro\Helper\Json::encode(
                     $data['variation_configurable_images']
                 );
             }
@@ -269,7 +271,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $watermarkSettings['hashes']['current'] = $this->rawData['old_watermark_settings']['hashes']['current'];
         }
 
-        $data['watermark_settings'] = $this->dataHelper->jsonEncode($watermarkSettings);
+        $data['watermark_settings'] = \Ess\M2ePro\Helper\Json::encode($watermarkSettings);
 
         // ---------------------------------------
 
@@ -297,7 +299,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'condition_note_mode' => Description::CONDITION_NOTE_MODE_NONE,
             'condition_note_template' => '',
 
-            'product_details' => $this->getHelper('Data')->jsonEncode(
+            'product_details' => \Ess\M2ePro\Helper\Json::encode(
                 [
                     'brand' => ['mode' => Description::PRODUCT_DETAILS_MODE_NONE, 'attribute' => ''],
                     'mpn' => ['mode' => Description::PRODUCT_DETAILS_MODE_DOES_NOT_APPLY, 'attribute' => ''],
@@ -322,12 +324,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'variation_images_attribute' => '',
             'default_image_url' => '',
 
-            'variation_configurable_images' => $this->dataHelper->jsonEncode([]),
+            'variation_configurable_images' => \Ess\M2ePro\Helper\Json::encode([]),
             'use_supersize_images' => Description::USE_SUPERSIZE_IMAGES_NO,
 
             'watermark_mode' => Description::WATERMARK_MODE_NO,
 
-            'watermark_settings' => $this->dataHelper->jsonEncode(
+            'watermark_settings' => \Ess\M2ePro\Helper\Json::encode(
                 [
                     'position' => Description::WATERMARK_POSITION_TOP,
                     'scale' => Description::WATERMARK_SCALE_MODE_NONE,

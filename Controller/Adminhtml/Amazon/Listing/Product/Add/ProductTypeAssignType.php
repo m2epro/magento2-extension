@@ -56,13 +56,13 @@ class ProductTypeAssignType extends \Ess\M2ePro\Controller\Adminhtml\Amazon\List
 
         $listing = $this->amazonFactory->getObjectLoaded('Listing', $listingId);
         $listingAdditionalData = $listing->getData('additional_data');
-        $listingAdditionalData = $this->getHelper('Data')->jsonDecode($listingAdditionalData);
+        $listingAdditionalData = \Ess\M2ePro\Helper\Json::decode($listingAdditionalData);
 
         $listingAdditionalData['new_asin_mode'] = $mode;
 
         $listing->setData(
             'additional_data',
-            $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+            \Ess\M2ePro\Helper\Json::encode($listingAdditionalData)
         )->save();
 
         if ($mode == 'same' && !empty($productTypeId)) {
@@ -85,7 +85,7 @@ class ProductTypeAssignType extends \Ess\M2ePro\Controller\Adminhtml\Amazon\List
 
             $listing->setData(
                 'additional_data',
-                $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+                \Ess\M2ePro\Helper\Json::encode($listingAdditionalData)
             )->save();
         } elseif ($mode == 'category') {
             return $this->_redirect('*/*/productTypeAssignByMagentoCategory', [

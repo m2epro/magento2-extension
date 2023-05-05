@@ -720,7 +720,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return null;
         }
 
-        $data = $this->getHelper('Data')->jsonDecode($data);
+        $data = \Ess\M2ePro\Helper\Json::decode($data);
 
         return !isset($data[$accountId]) ? null : $data[$accountId];
     }
@@ -769,7 +769,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return null;
         }
 
-        $data = $this->getHelper('Data')->jsonDecode($data);
+        $data = \Ess\M2ePro\Helper\Json::decode($data);
 
         return !isset($data[$accountId]) ? null : $data[$accountId];
     }
@@ -782,7 +782,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getExcludedLocations()
     {
         $excludedLocations = $this->getData('excluded_locations');
-        is_string($excludedLocations) && $excludedLocations = $this->getHelper('Data')->jsonDecode($excludedLocations);
+        is_string($excludedLocations) && $excludedLocations = \Ess\M2ePro\Helper\Json::decode($excludedLocations);
 
         return is_array($excludedLocations) ? $excludedLocations : [];
     }

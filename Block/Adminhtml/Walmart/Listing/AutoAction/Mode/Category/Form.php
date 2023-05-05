@@ -60,8 +60,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
-                'title' => $this->__('Title'),
+                'label' => __('Title'),
+                'title' => __('Title'),
                 'class' => 'M2ePro-required-when-visible M2ePro-validate-category-group-title',
                 'value' => $this->formData['title'],
                 'required' => true,
@@ -73,14 +73,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_mode',
-                'label' => $this->__('Product Assigned to Categories'),
-                'title' => $this->__('Product Assigned to Categories'),
+                'label' => __('Product Assigned to Categories'),
+                'title' => __('Product Assigned to Categories'),
                 'values' => [
-                    ['label' => $this->__('No Action'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE],
-                    ['label' => $this->__('Add to the Listing'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD],
+                    ['label' => __('No Action'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE],
+                    ['label' => __('Add to the Listing'), 'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD],
                 ],
                 'value' => $this->formData['adding_mode'],
-                'tooltip' => $this->__('Action which will be applied automatically.'),
+                'tooltip' => __('Action which will be applied automatically.'),
                 'style' => 'width: 350px',
             ]
         );
@@ -90,18 +90,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'adding_add_not_visible',
-                'label' => $this->__('Add not Visible Individually Products'),
-                'title' => $this->__('Add not Visible Individually Products'),
+                'label' => __('Add not Visible Individually Products'),
+                'title' => __('Add not Visible Individually Products'),
                 'values' => [
-                    ['label' => $this->__('No'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO],
+                    ['label' => __('No'), 'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO],
                     [
-                        'label' => $this->__('Yes'),
+                        'label' => __('Yes'),
                         'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
                     ],
                 ],
                 'value' => $this->formData['adding_add_not_visible'],
                 'field_extra_attributes' => 'id="adding_add_not_visible_field"',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Set to <strong>Yes</strong> if you want the Magento Products with
                     Visibility \'Not visible Individually\' to be added to the Listing
                     Automatically.<br/>
@@ -137,14 +137,14 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             self::SELECT,
             [
                 'name' => 'adding_category_template_id',
-                'label' => $this->__('Category Policy'),
-                'title' => $this->__('Category Policy'),
+                'label' => __('Category Policy'),
+                'title' => __('Category Policy'),
                 'values' => $options,
                 'value' => $this->formData['adding_category_template_id'],
                 'field_extra_attributes' => 'id="auto_action_walmart_add_and_assign_category_template"',
                 'required' => true,
                 'after_element_html' => $this->getTooltipHtml(
-                    $this->__(
+                    __(
                         'Select Category Policy you want to assign to Product(s).<br><br>
                     <strong>Note:</strong> Submitting of Category data is required when you create a new offer
                     on Walmart. Category Policy must be assigned to Products before they are added to M2E Pro Listing.'
@@ -152,7 +152,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                 ) . '<a href="javascript: void(0);"
                     style="vertical-align: inherit; margin-left: 65px;"
                     onclick="ListingAutoActionObj.addNewTemplate(\'' . $url . '\',
-                    ListingAutoActionObj.reloadCategoryTemplates);">' . $this->__('Add New') . '
+                    ListingAutoActionObj.reloadCategoryTemplates);">' . __('Add New') . '
                  </a>',
             ]
         );
@@ -162,13 +162,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class,
             [
                 'name' => 'deleting_mode',
-                'label' => $this->__('Product Deleted from Categories'),
-                'title' => $this->__('Product Deleted from Categories'),
+                'label' => __('Product Deleted from Categories'),
+                'title' => __('Product Deleted from Categories'),
                 'values' => [
-                    ['label' => $this->__('No Action'), 'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE],
-                    ['label' => $this->__('Stop on Channel'), 'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP],
+                    ['label' => __('No Action'), 'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE],
+                    ['label' => __('Stop on Channel'), 'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP],
                     [
-                        'label' => $this->__('Stop on Channel and Delete from Listing'),
+                        'label' => __('Stop on Channel and Delete from Listing'),
                         'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
                     ],
                 ],

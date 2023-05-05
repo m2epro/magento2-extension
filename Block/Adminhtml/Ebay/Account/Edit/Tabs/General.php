@@ -55,7 +55,7 @@ class General extends AbstractForm
 
         if (
             empty($formData['user_id']) && isset($formData['info']) &&
-            $ebayInfo = $this->dataHelper->jsonDecode($formData['info'])
+            $ebayInfo = \Ess\M2ePro\Helper\Json::decode($formData['info'])
         ) {
             !empty($ebayInfo['UserID']) && $formData['user_id'] = (string)$ebayInfo['UserID'];
         }

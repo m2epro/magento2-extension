@@ -47,7 +47,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_general_general',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -57,10 +57,10 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'value' => $formData['title'],
                 'class' => 'M2ePro-synchronization-tpl-title',
-                'tooltip' => $this->__('Policy Title for your internal use.'),
+                'tooltip' => __('Policy Title for your internal use.'),
                 'required' => true,
             ]
         );

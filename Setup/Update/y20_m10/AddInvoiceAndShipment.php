@@ -49,8 +49,6 @@ class AddInvoiceAndShipment extends AbstractFeature
                 )
                 ->commit();
 
-            $dataHelper = $this->helperFactory->getObject('Data');
-
             $ebayAccountTable = $this->getFullTableName('ebay_account');
 
             $query = $this->getConnection()
@@ -59,7 +57,7 @@ class AddInvoiceAndShipment extends AbstractFeature
                 ->query();
 
             while ($row = $query->fetch()) {
-                $magentoOrdersSettings = $dataHelper->jsonDecode($row['magento_orders_settings']);
+                $magentoOrdersSettings = \Ess\M2ePro\Helper\Json::decode($row['magento_orders_settings']);
 
                 $data = [
                     'create_magento_invoice' => empty($magentoOrdersSettings['invoice_mode']) ?
@@ -71,7 +69,7 @@ class AddInvoiceAndShipment extends AbstractFeature
                 // clearing old data
                 unset($magentoOrdersSettings['invoice_mode']);
                 unset($magentoOrdersSettings['shipment_mode']);
-                $data['magento_orders_settings'] = $dataHelper->jsonEncode($magentoOrdersSettings);
+                $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($magentoOrdersSettings);
 
                 $this->getConnection()->update(
                     $ebayAccountTable,
@@ -106,8 +104,6 @@ class AddInvoiceAndShipment extends AbstractFeature
                 )
                 ->commit();
 
-            $dataHelper = $this->helperFactory->getObject('Data');
-
             $walmartAccountTable = $this->getFullTableName('walmart_account');
 
             $query = $this->getConnection()
@@ -116,7 +112,7 @@ class AddInvoiceAndShipment extends AbstractFeature
                 ->query();
 
             while ($row = $query->fetch()) {
-                $magentoOrdersSettings = $dataHelper->jsonDecode($row['magento_orders_settings']);
+                $magentoOrdersSettings = \Ess\M2ePro\Helper\Json::decode($row['magento_orders_settings']);
 
                 $data = [
                     'create_magento_invoice' => empty($magentoOrdersSettings['invoice_mode']) ?
@@ -128,7 +124,7 @@ class AddInvoiceAndShipment extends AbstractFeature
                 // clearing old data
                 unset($magentoOrdersSettings['invoice_mode']);
                 unset($magentoOrdersSettings['shipment_mode']);
-                $data['magento_orders_settings'] = $dataHelper->jsonEncode($magentoOrdersSettings);
+                $data['magento_orders_settings'] = \Ess\M2ePro\Helper\Json::encode($magentoOrdersSettings);
 
                 $this->getConnection()->update(
                     $walmartAccountTable,

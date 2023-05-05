@@ -41,20 +41,20 @@ trait AbstractElementTrait
     /**
      * Serialize attributes
      *
-     * @param array $attributes
+     * @param array $keys
      * @param string $valueSeparator
      * @param string $fieldSeparator
      * @param string $quote
      *
      * @return string
      */
-    public function serialize($attributes = [], $valueSeparator = '=', $fieldSeparator = ' ', $quote = '"'): string
+    public function serialize($keys = [], $valueSeparator = '=', $fieldSeparator = ' ', $quote = '"'): string
     {
         $data = [];
-        foreach ($attributes as $attribute) {
-            $value = $this->getData($attribute);
+        foreach ($keys as $key) {
+            $value = $this->getData($key);
             if ($value !== null) {
-                $data[] = $attribute . $valueSeparator . $quote . $value . $quote;
+                $data[] = $key . $valueSeparator . $quote . $value . $quote;
             }
         }
 

@@ -12,17 +12,6 @@ class JsTranslatorRenderer extends AbstractRenderer
 {
     protected $jsTranslations = [];
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Helper\Data $dataHelper
-    ) {
-        parent::__construct($helperFactory);
-        $this->dataHelper = $dataHelper;
-    }
-
     public function add($alias, $translation)
     {
         $this->jsTranslations[$alias] = $translation;
@@ -43,7 +32,7 @@ class JsTranslatorRenderer extends AbstractRenderer
             return '';
         }
 
-        $translations = $this->dataHelper->jsonEncode($this->jsTranslations);
+        $translations = \Ess\M2ePro\Helper\Json::encode($this->jsTranslations);
 
         return "M2ePro.translator.add({$translations});";
     }

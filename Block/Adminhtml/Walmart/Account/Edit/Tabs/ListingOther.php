@@ -19,9 +19,6 @@ class ListingOther extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
@@ -31,13 +28,11 @@ class ListingOther extends AbstractForm
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
-        $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -61,7 +56,7 @@ class ListingOther extends AbstractForm
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)$this->dataHelper->jsonDecode(
+            $formData['other_listings_mapping_settings'] = (array)\Ess\M2ePro\Helper\Json::decode(
                 $formData['other_listings_mapping_settings']
             );
         }
@@ -101,7 +96,7 @@ HTML
         $fieldset = $form->addFieldset(
             'general',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -111,13 +106,13 @@ HTML
             'select',
             [
                 'name' => 'other_listings_synchronization',
-                'label' => $this->__('Import Unmanaged Listings'),
+                'label' => __('Import Unmanaged Listings'),
                 'values' => [
-                    1 => $this->__('Yes'),
-                    0 => $this->__('No'),
+                    1 => __('Yes'),
+                    0 => __('No'),
                 ],
                 'value' => $formData['other_listings_synchronization'],
-                'tooltip' => $this->__('Enable to automatically import the Unmanaged Items.'),
+                'tooltip' => __('Enable to automatically import the Unmanaged Items.'),
             ]
         );
 
@@ -127,9 +122,9 @@ HTML
             [
                 'container_id' => 'other_listings_store_view_tr',
                 'name' => 'related_store_id',
-                'label' => $this->__('Related Store View'),
+                'label' => __('Related Store View'),
                 'value' => $formData['related_store_id'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Select Magento Store View that will be associated with Marketplace set for the current Account.'
                 ),
             ]
@@ -142,13 +137,13 @@ HTML
                 'container_id' => 'other_listings_mapping_mode_tr',
                 'name' => 'other_listings_mapping_mode',
                 'class' => 'M2ePro-require-select-attribute',
-                'label' => $this->__('Product Linking'),
+                'label' => __('Product Linking'),
                 'values' => [
-                    1 => $this->__('Yes'),
-                    0 => $this->__('No'),
+                    1 => __('Yes'),
+                    0 => __('No'),
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically link your Unmanaged Items to Magento
                     Products based on the linking Attribute settings.'
                 ),
@@ -158,9 +153,9 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_other_listings_product_mapping',
             [
-                'legend' => $this->__('Attributes Of Linking Walmart Items To Magento Products'),
+                'legend' => __('Attributes Of Linking Walmart Items To Magento Products'),
                 'collapsable' => false,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>In this section you can provide settings for automatic Linking of the newly imported
                     Unmanaged Listings to the appropriate Magento Products. </p><br>
                     <p>The imported Items are linked based on the correspondence between Walmart Item values and
@@ -195,15 +190,15 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_sku_mode',
-                'label' => $this->__('SKU'),
+                'label' => __('SKU'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
-                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => __('None'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => __('Product SKU'),
+                    Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => __('Product ID'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -263,13 +258,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_upc_mode',
-                'label' => $this->__('UPC'),
+                'label' => __('UPC'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_UPC_MODE_NONE => $this->__('None'),
+                    Account::OTHER_LISTINGS_MAPPING_UPC_MODE_NONE => __('None'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -327,13 +322,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_gtin_mode',
-                'label' => $this->__('GTIN'),
+                'label' => __('GTIN'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_NONE => $this->__('None'),
+                    Account::OTHER_LISTINGS_MAPPING_GTIN_MODE_NONE => __('None'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -394,13 +389,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_wpid_mode',
-                'label' => $this->__('Walmart ID'),
+                'label' => __('Walmart ID'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_WPID_MODE_NONE => $this->__('None'),
+                    Account::OTHER_LISTINGS_MAPPING_WPID_MODE_NONE => __('None'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -461,14 +456,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_title_mode',
-                'label' => $this->__('Listing Title'),
+                'label' => __('Listing Title'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [
-                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
-                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),
+                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => __('None'),
+                    Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => __('Product Name'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -507,7 +502,7 @@ HTML
 
         $this->jsTranslator->add(
             'If Yes is chosen, you must select at least one Attribute for Product Linking.',
-            $this->__('If Yes is chosen, you must select at least one Attribute for Product Linking.')
+            __('If Yes is chosen, you must select at least one Attribute for Product Linking.')
         );
 
         return parent::_prepareForm();

@@ -6,7 +6,6 @@ use Ess\M2ePro\Helper\Component\Ebay;
 use Ess\M2ePro\Model\ControlPanel\Inspection\FixerInterface;
 use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
 use Ess\M2ePro\Model\Listing\Product;
-use Ess\M2ePro\Helper\Data as HelperData;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\Data\Form\FormKey;
 use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory as ParentFactory;
@@ -17,9 +16,6 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
 {
     /** @var array */
     private $brokenData = [];
-
-    /** @var HelperData */
-    private $helperData;
 
     /** @var UrlInterface */
     private $urlBuilder;
@@ -35,18 +31,15 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
 
     /** @var IssueFactory */
     private $issueFactory;
-
     //########################################
 
     public function __construct(
-        HelperData $helperData,
         UrlInterface $urlBuilder,
         FormKey $formKey,
         ParentFactory $parentFactory,
         ActiveRecordFactory $activeRecordFactory,
         IssueFactory $issueFactory
     ) {
-        $this->helperData = $helperData;
         $this->urlBuilder = $urlBuilder;
         $this->formKey = $formKey;
         $this->parentFactory = $parentFactory;
@@ -111,7 +104,7 @@ class EbayItemIdStructure implements InspectorInterface, FixerInterface
         <th style="width: 300px"></th>
     </tr>
 HTML;
-        $repairInfo = $this->helperData->jsonEncode($data['ids']);
+        $repairInfo = \Ess\M2ePro\Helper\Json::encode($data['ids']);
         $input = "<input type='checkbox' style='display: none;' checked='checked'
             name='repair_info' value='" . $repairInfo . "'>";
         $html .= <<<HTML

@@ -43,7 +43,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         }
 
         if (isset($data['additional_data'])) {
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
+            $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);

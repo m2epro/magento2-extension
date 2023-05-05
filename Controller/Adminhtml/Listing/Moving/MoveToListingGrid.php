@@ -41,7 +41,7 @@ class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         $this->globalData->setValue(
             'ignoreListings',
-            $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('ignoreListings'))
+            \Ess\M2ePro\Helper\Json::decode($this->getRequest()->getParam('ignoreListings'))
         );
 
         $movingHandlerJs = 'ListingGridObj.movingHandler';

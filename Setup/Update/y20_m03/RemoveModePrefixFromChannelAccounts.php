@@ -13,8 +13,6 @@ class RemoveModePrefixFromChannelAccounts extends AbstractFeature
 
     public function execute()
     {
-        $dataHelper = $this->helperFactory->getObject('Data');
-
         foreach ($this->helperFactory->getObject('Component')->getComponents() as $component) {
             $accountChannelTable = $this->getFullTableName("{$component}_account");
 
@@ -24,7 +22,7 @@ class RemoveModePrefixFromChannelAccounts extends AbstractFeature
                 ->query();
 
             while ($row = $query->fetch()) {
-                $magentoOrdersSettings = $dataHelper->jsonDecode($row['magento_orders_settings']);
+                $magentoOrdersSettings = \Ess\M2ePro\Helper\Json::decode($row['magento_orders_settings']);
                 if (!isset($magentoOrdersSettings['number']['prefix']['mode'])) {
                     continue;
                 }
@@ -39,7 +37,7 @@ class RemoveModePrefixFromChannelAccounts extends AbstractFeature
 
                 $this->installer->getConnection()->update(
                     $accountChannelTable,
-                    ['magento_orders_settings' => $dataHelper->jsonEncode($magentoOrdersSettings)],
+                    ['magento_orders_settings' => \Ess\M2ePro\Helper\Json::encode($magentoOrdersSettings)],
                     ['account_id = ?' => (int)$row['account_id']]
                 );
             }

@@ -139,7 +139,7 @@ class Ebay extends Command
             $additionalData['is_eps_ebay_images_mode'] = true;
             $affected++;
 
-            $listingProduct->setData('additional_data', $this->getHelper('Data')->jsonEncode($additionalData))
+            $listingProduct->setData('additional_data', \Ess\M2ePro\Helper\Json::encode($additionalData))
                            ->save();
         }
 

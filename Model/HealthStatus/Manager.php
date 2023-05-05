@@ -92,6 +92,8 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             'Orders_MagentoCreationFailed_Ebay',
             'Orders_MagentoCreationFailed_Amazon',
             'Orders_MagentoCreationFailed_Walmart',
+
+            'Orders_VatChanged_Amazon',
         ];
     }
 

@@ -272,8 +272,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         $listingProductConfigurator = $this->modelFactory
                             ->getObject('Amazon_Listing_Product_Action_Configurator');
 
-                        $additionalData = (array)$this->helperData
-                            ->jsonDecode($listingProductData['additional_data']);
+                        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode(
+                            $listingProductData['additional_data']
+                        );
 
                         if (!empty($additionalData['configurator'])) {
                             $listingProductConfigurator->setUnserializedData($additionalData['configurator']);
@@ -444,7 +445,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
             $params = [];
             if (!empty($listingProductData['additional_data'])) {
-                $additionalData = (array)$this->helperData->jsonDecode($listingProductData['additional_data']);
+                $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($listingProductData['additional_data']);
                 !empty($additionalData['params']) && $params = $additionalData['params'];
             }
 

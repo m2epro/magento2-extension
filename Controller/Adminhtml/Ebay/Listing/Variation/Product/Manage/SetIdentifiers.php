@@ -10,19 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Variation\Product\Manage;
 
 class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        parent::__construct($ebayFactory, $context);
-
-        $this->dataHelper = $dataHelper;
-    }
-
     public function execute()
     {
         $variationsId = $this->getRequest()->getParam('variation_id');
@@ -48,7 +35,7 @@ class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $additionalData['product_details'] = $data;
         $variation->setData(
             'additional_data',
-            $this->dataHelper->jsonEncode($additionalData)
+            \Ess\M2ePro\Helper\Json::encode($additionalData)
         )->save();
 
         $this->setJsonContent(['success' => true]);

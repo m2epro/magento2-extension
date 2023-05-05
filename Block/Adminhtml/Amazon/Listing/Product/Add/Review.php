@@ -66,8 +66,8 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                             ->setData([
-                                'id' => $this->__('go_to_the_listing'),
-                                'label' => $this->__('Go To The Listing'),
+                                'id' => __('go_to_the_listing'),
+                                'label' => __('Go To The Listing'),
                                 'onclick' => 'setLocation(\'' . $url . '\');',
                                 'class' => 'action primary',
                             ]);
@@ -82,7 +82,7 @@ class Review extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $buttonBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                             ->setData([
-                                'label' => $this->__('List Added Products Now'),
+                                'label' => __('List Added Products Now'),
                                 'onclick' => 'setLocation(\'' . $url . '\');',
                                 'class' => 'action primary',
                             ]);

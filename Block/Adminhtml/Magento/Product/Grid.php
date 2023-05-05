@@ -44,7 +44,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         $this->setUseAjax(true);
         // ---------------------------------------
 
-        $this->isAjax = $this->dataHelper->jsonEncode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = \Ess\M2ePro\Helper\Json::encode($this->getRequest()->isXmlHttpRequest());
     }
 
     //########################################
@@ -195,7 +195,7 @@ CSS
 
     //########################################
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -273,7 +273,7 @@ CSS
         // ---------------------------------------
 
         // ---------------------------------------
-        $isShowRuleBlock = $this->dataHelper->jsonEncode($this->isShowRuleBlock());
+        $isShowRuleBlock = \Ess\M2ePro\Helper\Json::encode($this->isShowRuleBlock());
 
         $this->js->add(
             <<<JS

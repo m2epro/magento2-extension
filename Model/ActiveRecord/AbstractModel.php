@@ -408,7 +408,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      */
     public function setSettings($fieldName, array $settings = [])
     {
-        $this->setData((string)$fieldName, $this->getHelper('Data')->jsonEncode($settings));
+        $this->setData((string)$fieldName, \Ess\M2ePro\Helper\Json::encode($settings));
 
         return $this;
     }
@@ -540,8 +540,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @param $helperName
      * @param array $arguments
      *
-     * @return \Magento\Framework\App\Helper\AbstractHelper
-     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @return object
      */
     protected function getHelper($helperName, array $arguments = [])
     {

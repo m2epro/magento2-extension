@@ -122,7 +122,7 @@ HTML
         if ($repricing) {
             $tooltipPriceCoefficient = '<div class="fix-magento-tooltip" style="margin-left: 20px;">' .
                 $this->getTooltipHtml(
-                    $this->__('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
+                    __('Absolute figure (+8,-3), percentage (+15%, -20%) or Currency rate (1.44)')
                 ) .
                 '</div>';
 
@@ -191,7 +191,7 @@ HTML
 
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
-                $this->__(
+                __(
                     '
     <strong>Regular Price</strong> is a common Price without any changes.
     This value is used for Repricing Rules configuration and plays the role of the roll-back Price in case
@@ -226,17 +226,17 @@ HTML
             self::SELECT,
             [
                 'name' => 'repricing[regular_price_mode]',
-                'label' => $this->__('Update Regular Price'),
+                'label' => __('Update Regular Price'),
                 'values' => [
-                    \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => $this->__('Manually'),
+                    \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => __('Manually'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::REGULAR_PRICE_MODE_PRODUCT_POLICY =>
-                        $this->__('According to Selling Policy'),
+                        __('According to Selling Policy'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_PRODUCT =>
-                        $this->__('From Product Price'),
+                        __('From Product Price'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_SPECIAL =>
-                        $this->__('From Special Price'),
+                        __('From Special Price'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -258,17 +258,17 @@ HTML
             self::SELECT,
             [
                 'container_id' => 'regular_price_variation_mode_tr',
-                'label' => $this->__('Regular Variation Price Source'),
+                'label' => __('Regular Variation Price Source'),
                 'class' => 'select-main',
                 'name' => 'repricing[regular_price_variation_mode]',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_PARENT =>
-                        $this->__('Main Product'),
+                        __('Main Product'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_CHILDREN =>
-                        $this->__('Associated Products'),
+                        __('Associated Products'),
                 ],
                 'value' => ($repricing) ? $repricing->getRegularPriceVariationMode() : '',
-                'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
+                'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );
@@ -344,7 +344,7 @@ HTML
 
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
-                $this->__(
+                __(
                     '
 <strong>Min Price</strong> is the lowest Price which you could sell your Item at.
 <a href="%url1%" target="_blank">Learn more</a> about using the Max Price in Repricing Service.
@@ -376,25 +376,25 @@ More detailed information on how to work with this option can be found
             self::SELECT,
             [
                 'name' => 'repricing[min_price_mode]',
-                'label' => $this->__('Update Min Price'),
+                'label' => __('Update Min Price'),
                 'values' => [
-                    \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => $this->__('Manually'),
+                    \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => __('Manually'),
                     [
-                        'label' => $this->__('Less than Regular Price by Value'),
+                        'label' => __('Less than Regular Price by Value'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MIN_PRICE_MODE_REGULAR_VALUE,
                         'attrs' => [
                             'class' => 'repricing-min-price-mode-regular-depended',
                         ],
                     ],
                     [
-                        'label' => $this->__('Less than Regular Price by Percent'),
+                        'label' => __('Less than Regular Price by Percent'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MIN_PRICE_MODE_REGULAR_PERCENT,
                         'attrs' => [
                             'class' => 'repricing-min-price-mode-regular-depended',
                         ],
                     ],
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -415,12 +415,12 @@ More detailed information on how to work with this option can be found
             'text',
             [
                 'container_id' => 'min_price_value_tr',
-                'label' => $this->__('Min Price Value'),
+                'label' => __('Min Price Value'),
                 'name' => 'repricing[min_price_value]',
                 'value' => ($repricing) ? $repricing->getData('min_price_value') : '',
                 'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-value',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Provide the Value which you would like to decrease the Regular Price by.'
                 ),
                 'field_extra_attributes' => 'style="display: none;"',
@@ -432,12 +432,12 @@ More detailed information on how to work with this option can be found
             'text',
             [
                 'container_id' => 'min_price_percent_tr',
-                'label' => $this->__('Min Price Percent'),
+                'label' => __('Min Price Percent'),
                 'name' => 'repricing[min_price_percent]',
                 'value' => ($repricing) ? $repricing->getData('min_price_percent') : '',
                 'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-percent',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Provide the Percent Value which you would like to decrease the Regular Price by.'
                 ),
                 'field_extra_attributes' => 'style="display: none;"',
@@ -449,17 +449,17 @@ More detailed information on how to work with this option can be found
             self::SELECT,
             [
                 'container_id' => 'min_price_variation_mode_tr',
-                'label' => $this->__('Min Variation Price Source'),
+                'label' => __('Min Variation Price Source'),
                 'class' => 'select-main',
                 'name' => 'repricing[min_price_variation_mode]',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_PARENT =>
-                        $this->__('Main Product'),
+                        __('Main Product'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_CHILDREN =>
-                        $this->__('Associated Products'),
+                        __('Associated Products'),
                 ],
                 'value' => ($repricing) ? $repricing->getMinPriceVariationMode() : '',
-                'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
+                'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );
@@ -471,7 +471,7 @@ More detailed information on how to work with this option can be found
                 'messages' => [
                     [
                         'type' => MessageInterface::TYPE_WARNING,
-                        'content' => $this->__(
+                        'content' => __(
                             'Min Price value is required to be specified to guarantee that M2E
                             Amazon Repricing Service will never set the Price of your Offer
                             lower than Min allowed Price. It allows Sellers to automatically
@@ -590,25 +590,25 @@ More detailed information on how to work with this option can be found
             self::SELECT,
             [
                 'name' => 'repricing[max_price_mode]',
-                'label' => $this->__('Update Max Price'),
+                'label' => __('Update Max Price'),
                 'values' => [
-                    \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => $this->__('Manually'),
+                    \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => __('Manually'),
                     [
-                        'label' => $this->__('More than Regular Price by Value'),
+                        'label' => __('More than Regular Price by Value'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MAX_PRICE_MODE_REGULAR_VALUE,
                         'attrs' => [
                             'class' => 'repricing-max-price-mode-regular-depended',
                         ],
                     ],
                     [
-                        'label' => $this->__('More than Regular Price by Percent'),
+                        'label' => __('More than Regular Price by Percent'),
                         'value' => \Ess\M2ePro\Model\Amazon\Account\Repricing::MAX_PRICE_MODE_REGULAR_PERCENT,
                         'attrs' => [
                             'class' => 'repricing-max-price-mode-regular-depended',
                         ],
                     ],
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -629,12 +629,12 @@ More detailed information on how to work with this option can be found
             'text',
             [
                 'container_id' => 'max_price_value_tr',
-                'label' => $this->__('Max Price Value'),
+                'label' => __('Max Price Value'),
                 'name' => 'repricing[max_price_value]',
                 'value' => ($repricing) ? $repricing->getData('max_price_value') : '',
                 'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-value',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Provide the Value which you would like to decrease the Regular Price by.'
                 ),
                 'field_extra_attributes' => 'style="display: none;"',
@@ -646,12 +646,12 @@ More detailed information on how to work with this option can be found
             'text',
             [
                 'container_id' => 'max_price_percent_tr',
-                'label' => $this->__('Max Price Percent'),
+                'label' => __('Max Price Percent'),
                 'name' => 'repricing[max_price_percent]',
                 'value' => ($repricing) ? $repricing->getData('max_price_percent') : '',
                 'class' => 'M2ePro-required-when-visible M2ePro-account-repricing-price-percent',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Provide the Percent Value which you would like to decrease the Regular Price by.'
                 ),
                 'field_extra_attributes' => 'style="display: none;"',
@@ -663,17 +663,17 @@ More detailed information on how to work with this option can be found
             self::SELECT,
             [
                 'container_id' => 'max_price_variation_mode_tr',
-                'label' => $this->__('Max Variation Price Source'),
+                'label' => __('Max Variation Price Source'),
                 'class' => 'select-main',
                 'name' => 'repricing[max_price_variation_mode]',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_PARENT =>
-                        $this->__('Main Product'),
+                        __('Main Product'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_VARIATION_MODE_CHILDREN =>
-                        $this->__('Associated Products'),
+                        __('Associated Products'),
                 ],
                 'value' => ($repricing) ? $repricing->getMaxPriceVariationMode() : '',
-                'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
+                'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
                 'field_extra_attributes' => 'style="display: none;"',
             ]
         );
@@ -685,7 +685,7 @@ More detailed information on how to work with this option can be found
                 'messages' => [
                     [
                         'type' => MessageInterface::TYPE_WARNING,
-                        'content' => $this->__(
+                        'content' => __(
                             'Max Price value is required to be specified to guarantee that M2E
                             Amazon Repricing Service will never set the Price of your Offer
                             higher than Max allowed Price. It allows Sellers to automatically
@@ -766,13 +766,13 @@ More detailed information on how to work with this option can be found
             self::SELECT,
             [
                 'name' => 'repricing[disable_mode]',
-                'label' => $this->__('Disable Repricing'),
+                'label' => __('Disable Repricing'),
                 'values' => [
-                    \Ess\M2ePro\Model\Amazon\Account\Repricing::DISABLE_MODE_MANUAL => $this->__('Manually'),
+                    \Ess\M2ePro\Model\Amazon\Account\Repricing::DISABLE_MODE_MANUAL => __('Manually'),
                     \Ess\M2ePro\Model\Amazon\Account\Repricing::DISABLE_MODE_PRODUCT_STATUS =>
-                        $this->__('When Status is Disabled'),
+                        __('When Status is Disabled'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -784,7 +784,7 @@ More detailed information on how to work with this option can be found
                 'after_element_html' =>
                     '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
                     $this->getTooltipHtml(
-                        $this->__(
+                        __(
                             '
 This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items.
 <a href="%url1%" target="_blank">Learn more</a> about the Product Disabling feature.
@@ -840,7 +840,7 @@ JS
 CSS
         );
 
-        $this->jsTranslator->add('Please enter correct value.', $this->__('Please enter correct value.'));
+        $this->jsTranslator->add('Please enter correct value.', __('Please enter correct value.'));
 
         $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
 

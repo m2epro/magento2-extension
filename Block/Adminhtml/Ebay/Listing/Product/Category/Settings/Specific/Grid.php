@@ -218,7 +218,7 @@ HTML;
 
     //########################################
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -231,7 +231,7 @@ HTML;
         $isAllSelected = (int)!$this->isAllSpecificsSelected();
         $showErrorMessage = (int)!empty($categoriesData);
 
-        $categoriesData = $this->dataHelper->jsonEncode($categoriesData);
+        $categoriesData = \Ess\M2ePro\Helper\Json::encode($categoriesData);
         if ($this->getRequest()->isXmlHttpRequest()) {
             $this->js->add(
                 <<<JS

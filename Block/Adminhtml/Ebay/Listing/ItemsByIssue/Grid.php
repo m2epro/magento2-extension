@@ -18,11 +18,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $relationCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
     private $tagResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
+    private $listingResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
     private $listingProductResource;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $relationCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
         \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -33,6 +36,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->tagResource = $tagResource;
         $this->relationCollectionFactory = $relationCollectionFactory;
+        $this->listingResource = $listingResource;
         $this->listingProductResource = $listingProductResource;
     }
 
@@ -89,15 +93,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'main_table.listing_product_id = lp.id'
         );
 
+        $collection->join(
+            ['l' => $this->listingResource->getMainTable()],
+            'lp.listing_id = l.id'
+        );
+
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns([
             'total_items' => new \Magento\Framework\DB\Sql\Expression('COUNT(*)'),
-            'tag_nick' => 'tag.nick',
             'tag_id' => 'tag.id',
+            'text' => 'tag.text',
             'error_code' => 'tag.error_code',
         ]);
-        $collection->getSelect()->where('tag.nick != ?', \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR);
+        $collection->getSelect()->where('tag.error_code != ?', \Ess\M2ePro\Model\Tag::HAS_ERROR_ERROR_CODE);
         $collection->getSelect()->group('main_table.tag_id');
+
+        if ($accountId = $this->getRequest()->getParam('ebayAccount', false)) {
+            $collection->getSelect()->where('l.account_id = ?', $accountId);
+        }
+
+        if ($marketplaceId = $this->getRequest()->getParam('ebayMarketplace', false)) {
+            $collection->getSelect()->where('l.marketplace_id = ?', $marketplaceId);
+        }
 
         $this->setCollection($collection);
 
@@ -128,11 +145,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             [
                 'header' => __('Issue'),
                 'align' => 'left',
-                'index' => 'issue',
+                'index' => 'text',
                 'type' => 'text',
                 'sortable' => false,
                 'filter' => false,
-                'frame_callback' => [$this, 'callbackColumnIssue'],
             ]
         );
 
@@ -166,28 +182,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     /**
-     * @param string|null $value
-     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Relation $row
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     * @param bool $isExport
-     *
-     * @return string
-     */
-    public function callbackColumnIssue(
-        ?string $value,
-        \Ess\M2ePro\Model\Tag\ListingProduct\Relation $row,
-        Rewrite $column,
-        bool $isExport
-    ): string {
-
-        if ($row->getData('tag_nick') === \Ess\M2ePro\Model\Tag::NICK_EBAY_MISSING_ITEM_SPECIFIC) {
-            return __('Missing item specific');
-        }
-
-        return __('N/A');
-    }
-
-    /**
      * @param string $value
      * @param \Ess\M2ePro\Model\Tag\ListingProduct\Relation $row
      * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
@@ -210,11 +204,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Relation $row
+     * @param \Ess\M2ePro\Model\Tag\ListingProduct\Relation $item
      *
      * @return false
      */
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

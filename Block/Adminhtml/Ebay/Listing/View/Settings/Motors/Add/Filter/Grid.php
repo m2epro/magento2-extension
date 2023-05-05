@@ -196,9 +196,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 HTML;
     }
 
-    public function callbackColumnConditions($value, $row, $column, $isExport)
+    public function callbackColumnConditions($value, $row, $column, $isExport): string
     {
-        $conditions = $this->dataHelper->jsonDecode($row->getData('conditions'));
+        $conditions = \Ess\M2ePro\Helper\Json::decode($row->getData('conditions'));
 
         if ($this->componentEbayMotors->isTypeBasedOnEpids($this->getMotorsType())) {
             if (!empty($conditions['year'])) {
@@ -327,7 +327,7 @@ JS
         ]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

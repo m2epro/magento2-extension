@@ -386,16 +386,16 @@ HTML;
 HTML;
 
                 if ($this->getMatcherAttributes()->isSourceAmountGreater()) {
-                    $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $productAttributes = $this->dataHelper->jsonEncode($this->getProductAttributes());
-                    $destinationAttributes = $this->dataHelper->jsonEncode($this->getDestinationAttributes());
-                    $magentoVariationSet = $this->dataHelper->jsonEncode($magentoProductVariations['set']);
+                    $matchedAttributes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
+                    $productAttributes = \Ess\M2ePro\Helper\Json::encode($this->getProductAttributes());
+                    $destinationAttributes = \Ess\M2ePro\Helper\Json::encode($this->getDestinationAttributes());
+                    $magentoVariationSet = \Ess\M2ePro\Helper\Json::encode($magentoProductVariations['set']);
 
                     $this->js->add(
                         <<<JS
     ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_AMAZON;
-    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttributes};
     ListingGridObj.variationProductManageHandler.productAttributes = {$productAttributes};
     ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
     ListingGridObj.variationProductManageHandler.magentoVariationSet = {$magentoVariationSet};
@@ -404,16 +404,16 @@ HTML;
 JS
                     );
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
-                    $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $destinationAttributes = $this->dataHelper->jsonEncode($this->getDestinationAttributes());
-                    $amazonVariationSet = $this->dataHelper->jsonEncode($this->getAmazonVariationsSet());
+                    $matchedAttributes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
+                    $destinationAttributes = \Ess\M2ePro\Helper\Json::encode($this->getDestinationAttributes());
+                    $amazonVariationSet = \Ess\M2ePro\Helper\Json::encode($this->getAmazonVariationsSet());
 
                     $this->js->add(
                         <<<JS
     ListingGridObj.variationProductManageHandler.matchingType = ListingGridObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
 
-    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
+    ListingGridObj.variationProductManageHandler.matchedAttributes = {$matchedAttributes};
     ListingGridObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
     ListingGridObj.variationProductManageHandler.amazonVariationSet = {$amazonVariationSet};
 
@@ -1049,15 +1049,6 @@ HTML;
     {
         if ($this->isInAction()) {
             return false;
-        }
-        if ($this->hasMatchedAttributes()) {
-            $typeModel = $this->getListingProductTypeModel();
-
-            $realMatchedAttributes = $typeModel->getRealMatchedAttributes();
-
-            if (count($realMatchedAttributes) === 1) {
-                return false;
-            }
         }
 
         return true;

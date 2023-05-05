@@ -44,7 +44,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isPriceDifferent(): bool
     {
         $keys = [
-            'price_increase_vat_percent',
             'price_variation_mode',
             'fixed_price_mode',
             'fixed_price_modifier',

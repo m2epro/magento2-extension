@@ -115,7 +115,11 @@ $fixedAttributes = $data['fixed_attributes'];
 
                         <li class="channel-attribute-options-group" style="margin: 0;">
                             <div class="product-option" style="display: none;"><?php echo $magentoOption ?></div>
-                            <div class="product-options-group" style="display: none;"><?php echo $block->getHelper('Data')->escapeHtml($block->getHelper('Data')->jsonEncode($amazonOptionsGroup)) ?></div>
+                            <div class="product-options-group" style="display: none;">
+                                <?php echo $block->getHelper('Data')->escapeHtml(
+                                    \Ess\M2ePro\Helper\Json::encode($amazonOptionsGroup)
+                                ) ?>
+                            </div>
                             <div class="channel-attribute-name" style="display: none;"><?php echo $amazonAttribute ?></div>
                             <?php
                             if (($key = array_search($magentoOption, $amazonOptionsGroup)) !== false) {

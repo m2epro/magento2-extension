@@ -208,7 +208,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         $listing->getChildObject()->setData(
             'product_add_ids',
-            $this->getHelper('Data')->jsonEncode([])
+            \Ess\M2ePro\Helper\Json::encode([])
         )->save();
     }
 

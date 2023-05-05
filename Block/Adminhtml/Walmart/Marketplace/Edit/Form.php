@@ -47,7 +47,7 @@ class Form extends AbstractForm
         foreach ($this->groups as $group) {
             $fieldset = $form->addFieldset(
                 'marketplaces_group_' . $group['id'],
-                ['legend' => $this->__($group['title'])]
+                ['legend' => __($group['title'])]
             );
 
             foreach ($group['marketplaces'] as $marketplace) {
@@ -60,7 +60,7 @@ class Form extends AbstractForm
                 $afterElementHtml .= $this->getLayout()
                                           ->createBlock(\Magento\Backend\Block\Widget\Button::class)
                                           ->setData([
-                                              'label' => $this->__('Update Now'),
+                                              'label' => __('Update Now'),
                                               'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
                                               'class' => 'run_single_button primary',
                                           ])->toHtml();
@@ -92,7 +92,7 @@ class Form extends AbstractForm
 HTML;
 
                 $selectData = [
-                    'label' => $this->__($marketplace['instance']->getData('title')),
+                    'label' => __($marketplace['instance']->getData('title')),
                     'style' => 'display: inline-block;',
                     'after_element_html' => $afterElementHtml,
                 ];
@@ -100,14 +100,14 @@ HTML;
                 if ($marketplace['params']['locked']) {
                     $selectData['disabled'] = 'disabled';
                     $selectData['values'] = [
-                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled') . ' - ' .
-                            $this->__('Used in Account(s)'),
+                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => __('Enabled') . ' - ' .
+                            __('Used in Account(s)'),
                     ];
                     $selectData['value'] = \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE;
                 } else {
                     $selectData['values'] = [
-                        \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled'),
-                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => $this->__('Enabled'),
+                        \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => __('Disabled'),
+                        \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => __('Enabled'),
                     ];
                     $selectData['value'] = $marketplace['instance']->getStatus();
                 }
@@ -202,7 +202,7 @@ HTML;
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Marketplace'));
 
-        $storedStatuses = $this->dataHelper->jsonEncode($this->storedStatuses);
+        $storedStatuses = \Ess\M2ePro\Helper\Json::encode($this->storedStatuses);
         $this->js->addOnReadyJs(
             <<<JS
             require([

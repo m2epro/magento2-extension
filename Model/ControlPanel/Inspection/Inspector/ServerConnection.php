@@ -41,7 +41,7 @@ class ServerConnection implements InspectorInterface
                 true
             );
 
-            $decoded = $this->helperFactory->getObject('Data')->jsonDecode($response['body']);
+            $decoded = \Ess\M2ePro\Helper\Json::decode($response['body']);
             if (empty($decoded['response']['result'])) {
                 $issues[] = $this->issueFactory->create(
                     'Connection Failed',

@@ -70,7 +70,7 @@ abstract class AbstractCategory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form
         $groupGrid = $this->getChildBlock('group_grid');
         // ---------------------------------------
 
-        $skipConfirmation = $this->dataHelper->jsonEncode($groupGrid->getCollection()->getSize() == 0);
+        $skipConfirmation = \Ess\M2ePro\Helper\Json::encode($groupGrid->getCollection()->getSize() == 0);
         $this->js->add(
             <<<JS
         var skipConfirmation = {$skipConfirmation};

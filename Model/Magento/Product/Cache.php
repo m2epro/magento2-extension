@@ -25,7 +25,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
             . '_'
             . $this->getStoreId()
             . '_'
-            . $this->getHelper('Data')->jsonEncode($key)
+            . \Ess\M2ePro\Helper\Json::encode($key)
         );
 
         return $this->getHelper('Data_Cache_Runtime')->getValue($key);
@@ -39,7 +39,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
             . '_'
             . $this->getStoreId()
             . '_'
-            . $this->getHelper('Data')->jsonEncode($key)
+            . \Ess\M2ePro\Helper\Json::encode($key)
         );
 
         $tags = [
@@ -244,9 +244,9 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
         }
 
         if ($params !== null) {
-            $data = call_user_func_array(['parent', $methodName], $params);
+            $data = parent::$methodName(...$params);
         } else {
-            $data = call_user_func(['parent', $methodName]);
+            $data = parent::$methodName();
         }
 
         if (!$this->isCacheEnabled()) {

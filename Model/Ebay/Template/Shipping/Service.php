@@ -114,7 +114,7 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getLocations()
     {
-        return $this->getHelper('Data')->jsonDecode($this->getData('locations'));
+        return \Ess\M2ePro\Helper\Json::decode($this->getData('locations'));
     }
 
     /**

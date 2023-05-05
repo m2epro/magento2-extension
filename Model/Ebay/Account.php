@@ -1079,7 +1079,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $this->setData(
             'user_preferences',
-            $this->getHelper('Data')->jsonEncode($responseData['user_preferences'])
+            \Ess\M2ePro\Helper\Json::encode($responseData['user_preferences'])
         )->save();
     }
 
@@ -1132,7 +1132,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return;
         }
 
-        $this->setData('rate_tables', $this->getHelper('Data')->jsonEncode($responseData))->save();
+        $this->setData('rate_tables', \Ess\M2ePro\Helper\Json::encode($responseData))
+             ->save();
     }
 
     public function isRateTablesExist()
@@ -1282,14 +1283,16 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         if ($this->getData('ebay_shipping_discount_profiles') === null) {
             $profiles = [];
         } else {
-            $profiles = $this->getHelper('Data')->jsonDecode($this->getData('ebay_shipping_discount_profiles'));
+            $profiles = \Ess\M2ePro\Helper\Json::decode(
+                $this->getData('ebay_shipping_discount_profiles')
+            );
         }
 
         $profiles[$marketplaceId] = $data;
 
         $this->setData(
             'ebay_shipping_discount_profiles',
-            $this->getHelper('Data')->jsonEncode($profiles)
+            \Ess\M2ePro\Helper\Json::encode($profiles)
         )->save();
     }
 

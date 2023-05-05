@@ -119,6 +119,9 @@ td.help_line .hl_footer {
 .data-grid tr.grid_help_content td, .data-grid tr.grid_help_content td:hover {
     background-color: #FFF !important;
 }
+.data-grid .data-grid-filters option:empty {
+    display: initial;
+}
 .admin__data-grid-wrap-static tbody tr:not(:only-child):hover td:not(:only-child) {
     background-color: #e5f7fe !important;
 }

@@ -110,7 +110,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             'order_id' => $order->getId(),
             'description' => $description,
             'type' => (int)$type,
-            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode($additionalData),
 
             'initiator' => $this->initiator ? $this->initiator : \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
             'component_mode' => $this->getComponentMode(),

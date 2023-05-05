@@ -80,7 +80,7 @@ class StopQueue extends ActiveRecord\AbstractModel
         $addedData = [
             'component_mode' => $listingProduct->getComponentMode(),
             'is_processed' => 0,
-            'additional_data' => $this->getHelper('Data')->jsonEncode(['request_data' => $requestData]),
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode(['request_data' => $requestData]),
         ];
 
         $this->activeRecordFactory->getObject('StopQueue')->setData($addedData)->save();

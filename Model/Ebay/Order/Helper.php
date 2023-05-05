@@ -100,7 +100,7 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
             return $code;
         }
 
-        $payments = (array)$this->getHelper('Data')->jsonDecode($marketplace['payments']);
+        $payments = (array)\Ess\M2ePro\Helper\Json::decode($marketplace['payments']);
 
         foreach ($payments as $payment) {
             if ($payment['ebay_id'] == $code) {

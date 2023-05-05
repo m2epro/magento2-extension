@@ -188,7 +188,7 @@ class ResolveNonReceivedData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 );
 
                 $newData['online_main_category'] = $categoryPath . ' (' . $categories['category_main_id'] . ')';
-                $newData['online_categories_data'] = $this->helperData->jsonEncode($categories);
+                $newData['online_categories_data'] = \Ess\M2ePro\Helper\Json::encode($categories);
             }
 
             $listingOther->getChildObject()->addData($newData);

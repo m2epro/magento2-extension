@@ -62,7 +62,7 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
             '_current' => true,
         ]);
         $this->addButton('back', [
-            'label' => $this->__('Back'),
+            'label' => __('Back'),
             'onclick' => 'ListingGridObj.backClick(\'' . $url . '\')',
             'class' => 'back',
         ]);
@@ -73,19 +73,19 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
             ['id' => $this->getRequest()->getParam('id')]
         );
         $confirm =
-            '<strong>' . $this->__('Are you sure?') . '</strong><br><br>'
-            . $this->__('All unsaved changes will be lost and you will be returned to the Listings grid.');
+            '<strong>' . __('Are you sure?') . '</strong><br><br>'
+            . __('All unsaved changes will be lost and you will be returned to the Listings grid.');
         $this->addButton(
             'exit_to_listing',
             [
-                'label' => $this->__('Cancel'),
+                'label' => __('Cancel'),
                 'onclick' => "confirmSetLocation('$confirm', '$url');",
                 'class' => 'action-primary',
             ]
         );
 
         $this->addButton('add_products_search_asin_continue', [
-            'label' => $this->__('Continue'),
+            'label' => __('Continue'),
             'onclick' => 'ListingGridObj.checkSearchResults(' . $this->listing['id'] . ')',
             'class' => 'action-primary forward',
         ]);
@@ -97,7 +97,7 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         $this->css->addFile('amazon/listing/view.css');
 
         $this->appendHelpBlock([
-            'content' => $this->__(
+            'content' => __(
                 <<<HTML
                 <p>Since most of the Products already exist in Amazon Catalog, M2E Pro makes it possible
                 to find them and to make a link between your Magento Products and existing Amazon Products.</p><br>
@@ -135,9 +135,9 @@ HTML
 
     protected function _toHtml()
     {
-        $createEmptyListingMessage = $this->__('Are you sure you want to create empty Listing?');
+        $createEmptyListingMessage = __('Are you sure you want to create empty Listing?');
 
-        $taskCompletedMessage = $this->__('Task completed. Please wait ...');
+        $taskCompletedMessage = __('Task completed. Please wait ...');
         $taskCompletedSuccessMessage = $this->__('"%task_title%" Task has submitted to be processed.');
         $taskCompletedWarningMessage = $this->__(
             '"%task_title%" Task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.'
@@ -146,27 +146,27 @@ HTML
             '"%task_title%" Task has completed with errors. <a target="_blank" href="%url%">View Log</a> for details.'
         );
 
-        $sendingDataToAmazonMessage = $this->__('Sending %product_title% Product(s) data on Amazon.');
+        $sendingDataToAmazonMessage = __('Sending %product_title% Product(s) data on Amazon.');
 
-        $selectItemsMessage = $this->__('Please select the Products you want to perform the Action on.');
+        $selectItemsMessage = __('Please select the Products you want to perform the Action on.');
 
-        $assignString = $this->__('Assign');
-        $textConfirm = $this->__('Are you sure?');
+        $assignString = __('Assign');
+        $textConfirm = __('Are you sure?');
 
-        $enterProductSearchQueryMessage = $this->__('Please enter Product Title or ASIN/ISBN/UPC/EAN.');
-        $autoMapAsinSearchProducts = $this->__('Search %product_title% Product(s) on Amazon.');
-        $autoMapAsinProgressTitle = $this->__('Automatic Assigning ASIN/ISBN to Item(s)');
-        $autoMapAsinErrorMessage = $this->__('Server is currently unavailable. Please try again later.');
+        $enterProductSearchQueryMessage = __('Please enter Product Title or ASIN/ISBN/UPC/EAN.');
+        $autoMapAsinSearchProducts = __('Search %product_title% Product(s) on Amazon.');
+        $autoMapAsinProgressTitle = __('Automatic Assigning ASIN/ISBN to Item(s)');
+        $autoMapAsinErrorMessage = __('Server is currently unavailable. Please try again later.');
         $newAsinNotAvailable = $this->__(
             'The new ASIN/ISBN creation functionality is not available in %code% Marketplace yet.'
         );
-        $notSynchronizedMarketplace = $this->__(
+        $notSynchronizedMarketplace = __(
             'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.'
-        ) . ' ' . $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
+        ) . ' ' . __('Press "Save And Update" Button after redirect on Marketplace Page.');
 
-        $newAsinPopupTitle = $this->__('New ASIN/ISBN creation');
-        $notCompletedPopupTitle = $this->__('Adding of New Products to the Listing was not competed');
-        $notCompletedPopupText = $this->__(
+        $newAsinPopupTitle = __('New ASIN/ISBN creation');
+        $notCompletedPopupTitle = __('Adding of New Products to the Listing was not competed');
+        $notCompletedPopupText = __(
             "
             You didn't finish adding Products to the Listing.<br/><br/>
             To add selected Products to the Listing, you need to specify the required information first.
@@ -176,7 +176,7 @@ HTML
         "
         );
 
-        $variationManageMatchedAttributesErrorDuplicateSelection = $this->__(
+        $variationManageMatchedAttributesErrorDuplicateSelection = __(
             'You can not choose the same Attribute twice.'
         );
 
@@ -208,7 +208,7 @@ HTML
 
             'variation_manage_matched_attributes_error_duplicate' =>
                 $variationManageMatchedAttributesErrorDuplicateSelection,
-            'Clear Search Results' => $this->__('Clear Search Results'),
+            'Clear Search Results' => __('Clear Search Results'),
         ]);
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Listing'));

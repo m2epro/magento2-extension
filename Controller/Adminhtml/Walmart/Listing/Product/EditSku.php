@@ -85,7 +85,7 @@ class EditSku extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbs
                 'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE,
                 'is_force' => true,
                 'tag' => '/details/',
-                'additional_data' => $this->getHelper('Data')->jsonEncode(
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                     [
                         'params' => [
                             'changed_sku' => $value,

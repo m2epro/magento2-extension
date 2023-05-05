@@ -209,6 +209,10 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m02\AddErrorCodeColumnForTags::class,
             \Ess\M2ePro\Setup\Update\y23_m02\AmazonShippingTemplates::class,
             \Ess\M2ePro\Setup\Update\y23_m02\AddImmediatePaymentColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m03\UpgradeTags::class,
+            \Ess\M2ePro\Setup\Update\y23_m03\AddWizardVersionDowngrade::class,
+            \Ess\M2ePro\Setup\Update\y23_m04\RemoveUnavailableDataType::class,
+            \Ess\M2ePro\Setup\Update\y23_m04\EbayBuyerInitiatedOrderCancellation::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

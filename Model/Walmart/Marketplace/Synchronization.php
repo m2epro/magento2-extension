@@ -131,13 +131,13 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             ['marketplace_id = ?' => $this->marketplace->getId()]
         );
 
-        $helper = $this->getHelper('Data');
-
         $data = [
             'marketplace_id' => $this->marketplace->getId(),
             'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
             'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : null,
-            'product_data' => isset($details['product_data']) ? $helper->jsonEncode($details['product_data']) : null,
+            'product_data' => isset($details['product_data'])
+                ? \Ess\M2ePro\Helper\Json::encode($details['product_data'])
+                : null,
         ];
 
         $this->resourceConnection->getConnection()->insert($tableMarketplaces, $data);
@@ -178,8 +178,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $insertData = [];
-
-            $helper = $this->getHelper('Data');
             $responseDataCount = count($response['data']);
 
             for ($categoryIndex = 0; $categoryIndex < $responseDataCount; $categoryIndex++) {
@@ -191,7 +189,9 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                     'category_id' => $data['id'],
                     'parent_category_id' => $data['parent_id'],
                     'browsenode_id' => ($isLeaf ? $data['browsenode_id'] : null),
-                    'product_data_nicks' => ($isLeaf ? $helper->jsonEncode($data['product_data_nicks']) : null),
+                    'product_data_nicks' => (
+                        $isLeaf ? \Ess\M2ePro\Helper\Json::encode($data['product_data_nicks']) : null
+                    ),
                     'title' => $data['title'],
                     'path' => $data['path'],
                     'is_leaf' => $isLeaf,
@@ -245,8 +245,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $insertData = [];
-
-            $helper = $this->getHelper('Data');
             $responseDataCount = count($response['data']);
 
             for ($specificIndex = 0; $specificIndex < $responseDataCount; $specificIndex++) {
@@ -261,9 +259,9 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
                     'xml_tag' => $data['xml_tag'],
                     'xpath' => $data['xpath'],
                     'type' => (int)$data['type'],
-                    'values' => $helper->jsonEncode($data['values']),
-                    'params' => $helper->jsonEncode($data['params']),
-                    'data_definition' => $helper->jsonEncode($data['data_definition']),
+                    'values' => \Ess\M2ePro\Helper\Json::encode($data['values']),
+                    'params' => \Ess\M2ePro\Helper\Json::encode($data['params']),
+                    'data_definition' => \Ess\M2ePro\Helper\Json::encode($data['data_definition']),
                     'min_occurs' => (int)$data['min_occurs'],
                     'max_occurs' => (int)$data['max_occurs'],
                 ];

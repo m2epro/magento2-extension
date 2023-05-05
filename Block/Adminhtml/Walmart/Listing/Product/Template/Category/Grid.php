@@ -130,7 +130,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header' => $this->__('Title'),
+            'header' => __('Title'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -141,7 +141,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('action', [
-            'header' => $this->__('Action'),
+            'header' => __('Action'),
             'align' => 'left',
             'type' => 'number',
             'width' => '55px',
@@ -159,7 +159,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                  ->setData([
                      'id' => 'category_template_refresh_btn',
-                     'label' => $this->__('Refresh'),
+                     'label' => __('Refresh'),
                      'class' => 'action primary',
                      'onclick' => $this->getJsObjectName() . '.reload()',
                  ])
@@ -190,9 +190,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $title = $this->dataHelper->escapeHtml($row->getData('title'));
 
-        $categoryWord = $this->__('Category');
+        $categoryWord = __('Category');
         $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"
-            : $this->__('N/A');
+            : __('N/A');
 
         return <<<HTML
 <a target="_blank" href="{$templateCategoryEditUrl}">{$title}</a>
@@ -204,7 +204,7 @@ HTML;
 
     public function callbackColumnAction($value, $row, $column, $isExport)
     {
-        $assignText = $this->__('Assign');
+        $assignText = __('Assign');
 
         return <<<HTML
 <a href="javascript:void(0);" onclick="{$this->getMapToTemplateJsFn()}(this, {$value});">{$assignText}</a>
@@ -246,7 +246,7 @@ HTML;
         ]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -271,8 +271,8 @@ HTML;
     {
         $templateCategoryEditUrl = $this->getNewTemplateCategoryUrl();
 
-        $messageTxt = $this->__('Category Policies are not found for current Marketplace.');
-        $linkTitle = $this->__('Create New Category Policy.');
+        $messageTxt = __('Category Policies are not found for current Marketplace.');
+        $linkTitle = __('Create New Category Policy.');
 
         $message = <<<HTML
 <p>{$messageTxt} <a href="javascript:void(0);"

@@ -984,7 +984,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $src = $this->getEbaySellingFormatTemplate()->getFixedPriceSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -1011,7 +1011,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $src = $this->getEbaySellingFormatTemplate()->getStartPriceSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -1036,7 +1036,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $src = $this->getEbaySellingFormatTemplate()->getReservePriceSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -1061,7 +1061,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $src = $this->getEbaySellingFormatTemplate()->getBuyItNowPriceSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -1082,7 +1082,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountStpSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
@@ -1097,7 +1097,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $src = $this->getEbaySellingFormatTemplate()->getPriceDiscountMapSource();
 
         $vatPercent = null;
-        if ($this->getEbaySellingFormatTemplate()->isPriceIncreaseVatPercentEnabled()) {
+        if ($this->getEbaySellingFormatTemplate()->isVatModeOnTopOfPrice()) {
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 

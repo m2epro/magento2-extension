@@ -32,14 +32,14 @@ class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->_controller = 'adminhtml_walmart_account';
 
         $url = $this->getUrl('*/walmart_account/new');
-        $this->buttonList->update('add', 'label', $this->__('Add Account'));
+        $this->buttonList->update('add', 'label', __('Add Account'));
         $this->buttonList->update('add', 'onclick', 'setLocation(\'' . $url . '\');');
     }
 
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(
+            'content' => __(
                 <<<HTML
             In this section, you can create, edit and delete Accounts for Walmart integration.
             Please be advised that Account is created per Marketplace using the relevant API credentials.

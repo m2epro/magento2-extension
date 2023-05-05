@@ -30,7 +30,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'soruce_mode_help_block',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     'After you set up M2E Pro Listing, you can add Magento Products into it.
                     You are able to select the products either from the entire Magento catalog or a
                     certain Magento category. To proceed, choose your option below.'
@@ -54,7 +54,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'block-title',
             'label',
             [
-                'value' => $this->__('Choose how you want to display Products for selection'),
+                'value' => __('Choose how you want to display Products for selection'),
                 'field_extra_attributes' => 'style="font-weight: bold;font-size:18px;margin-bottom:0px"',
 
             ]
@@ -73,7 +73,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ],
                 'value' => $defaultSource,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    $this->__('Products displayed as a list without any grouping.') . '</div>',
+                    __('Products displayed as a list without any grouping.') . '</div>',
             ]
         );
 
@@ -91,7 +91,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ],
                 'value' => $defaultSource,
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    $this->__('Products grouped by Magento Categories.') . '</div>',
+                    __('Products grouped by Magento Categories.') . '</div>',
             ]
         );
 

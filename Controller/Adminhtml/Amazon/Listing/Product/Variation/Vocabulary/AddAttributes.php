@@ -12,21 +12,15 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 class AddAttributes extends Main
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
-
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
     protected $vocabularyHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
-
-        $this->helperData = $helperData;
         $this->vocabularyHelper = $vocabularyHelper;
     }
 
@@ -37,7 +31,7 @@ class AddAttributes extends Main
         $needAddToVocabulary = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($attributes)) {
-            $attributes = $this->helperData->jsonDecode($attributes);
+            $attributes = \Ess\M2ePro\Helper\Json::decode($attributes);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {

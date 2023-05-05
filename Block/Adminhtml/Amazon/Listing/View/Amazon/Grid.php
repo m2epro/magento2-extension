@@ -678,7 +678,7 @@ HTML;
 
         if ($row->getData('is_repricing')) {
             if ($row->getData('is_variation_parent')) {
-                $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+                $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
 
                 $repricingManagedCount = isset($additionalData['repricing_managed_count'])
                     ? $additionalData['repricing_managed_count'] : null;
@@ -1115,7 +1115,7 @@ HTML;
 
     //########################################
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -1218,7 +1218,7 @@ HTML;
 
         $suggestData = [];
         if ($searchSettingsData !== null) {
-            $searchSettingsData = $this->dataHelper->jsonDecode($searchSettingsData);
+            $searchSettingsData = \Ess\M2ePro\Helper\Json::decode($searchSettingsData);
             !empty($searchSettingsData['data']) && $suggestData = $searchSettingsData['data'];
         }
         // ---------------------------------------
@@ -1310,7 +1310,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = $this->dataHelper->jsonDecode($generalIdSearchInfo);
+            $generalIdSearchInfo = \Ess\M2ePro\Helper\Json::decode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -1348,7 +1348,7 @@ HTML;
         $variationChildStatuses = $row->getData('variation_child_statuses');
 
         if ($variationManager->isVariationParent() && !empty($variationChildStatuses)) {
-            $variationChildStatuses = $this->dataHelper->jsonDecode($variationChildStatuses);
+            $variationChildStatuses = \Ess\M2ePro\Helper\Json::decode($variationChildStatuses);
             unset($variationChildStatuses[\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
 
             foreach ($variationChildStatuses as $variationChildStatus) {

@@ -127,7 +127,7 @@ class NotListed extends AbstractModel
                 'listing_product_id' => $this->input->getListingProduct()->getId(),
                 'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
                 'action_type' => \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
-                'additional_data' => $this->getHelper('Data')->jsonEncode(['params' => $params]),
+                'additional_data' => \Ess\M2ePro\Helper\Json::encode(['params' => $params]),
             ]
         );
 

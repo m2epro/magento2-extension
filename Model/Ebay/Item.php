@@ -158,7 +158,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @return float
      */
-    public function getItemId()
+    public function getItemId(): float
     {
         return (double)$this->getData('item_id');
     }
@@ -223,6 +223,4 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     {
         return $this->getGroupedProductMode() == \Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET;
     }
-
-    //########################################
 }

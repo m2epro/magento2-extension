@@ -120,7 +120,7 @@ class Amazon
             ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Incomplete'),
         ];
 
-        return $statuses[$status] ?? null;
+        return $statuses[(int)$status] ?? null;
     }
 
     /**

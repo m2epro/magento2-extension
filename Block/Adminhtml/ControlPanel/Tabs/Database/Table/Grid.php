@@ -555,7 +555,7 @@ HTML;
         return $this->getUrl('*/*/databaseTableGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

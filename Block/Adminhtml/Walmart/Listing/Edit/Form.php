@@ -72,7 +72,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'policies_settings',
             [
-                'legend' => $this->__('Policies Settings'),
+                'legend' => __('Policies Settings'),
                 'collapsable' => false,
             ]
         );
@@ -111,7 +111,7 @@ class Form extends AbstractForm
         $templateSellingFormat->setForm($form);
 
         $editPolicyTooltip = $this->getTooltipHtml(
-            $this->__(
+            __(
                 'You can edit the saved Policy any time you need. However, the changes you make will automatically
             affect all of the Products which are listed using this Policy.'
             )
@@ -122,7 +122,7 @@ class Form extends AbstractForm
             'template_selling_format_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Selling Policy'),
+                'label' => __('Selling Policy'),
                 'style' => 'line-height: 34px; display: initial;',
                 'required' => true,
                 'text' => <<<HTML
@@ -192,7 +192,7 @@ HTML
             'template_description_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Description Policy'),
+                'label' => __('Description Policy'),
                 'style' => 'line-height: 34px;display: initial;',
                 'required' => true,
                 'text' => <<<HTML
@@ -262,7 +262,7 @@ HTML
             'template_synchronization_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Synchronization Policy'),
+                'label' => __('Synchronization Policy'),
                 'style' => 'line-height: 34px;display: initial;',
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
                 'required' => true,
@@ -401,18 +401,18 @@ HTML
 
         $this->jsTranslator->add(
             'The specified Title is already used for other Listing. Listing Title must be unique.',
-            $this->__(
+            __(
                 'The specified Title is already used for other Listing. Listing Title must be unique.'
             )
         );
         $this->jsTranslator->add(
             'Account not found, please create it.',
-            $this->__('Account not found, please create it.')
+            __('Account not found, please create it.')
         );
-        $this->jsTranslator->add('Add Another', $this->__('Add Another'));
+        $this->jsTranslator->add('Add Another', __('Add Another'));
         $this->jsTranslator->add(
             'Please wait while Synchronization is finished.',
-            $this->__('Please wait while Synchronization is finished.')
+            __('Please wait while Synchronization is finished.')
         );
 
         $this->js->add(

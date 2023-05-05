@@ -164,7 +164,7 @@ HTML
             }
 
             if (!empty($categoriesTreeArray)) {
-                $categoriesTreeArray = $this->dataHelper->jsonEncode($categoriesTreeArray);
+                $categoriesTreeArray = \Ess\M2ePro\Helper\Json::encode($categoriesTreeArray);
 
                 $this->js->add(
                     <<<JS

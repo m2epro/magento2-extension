@@ -60,7 +60,7 @@ class RelistRules extends AbstractForm
             'walmart_template_synchronization_relist',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
                     <p>Enable the Relist Action and define the Relist Conditions based on which M2E Pro
                     will automatically relist your Items on Walmart.</p><br>
@@ -75,7 +75,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_relist_filters',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -85,13 +85,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'relist_mode',
-                'label' => $this->__('Relist Action'),
+                'label' => __('Relist Action'),
                 'value' => $formData['relist_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically relist the Not Listed Item(s) when the Relist Conditions are met.'
                 ),
             ]
@@ -103,13 +103,13 @@ HTML
             [
                 'container_id' => 'relist_filter_user_lock_tr_container',
                 'name' => 'relist_filter_user_lock',
-                'label' => $this->__('Relist When Stopped Manually'),
+                'label' => __('Relist When Stopped Manually'),
                 'value' => $formData['relist_filter_user_lock'],
                 'values' => [
-                    1 => $this->__('No'),
-                    0 => $this->__('Yes'),
+                    1 => __('No'),
+                    0 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable if you want to relist the Items that were stopped manually.'
                 ),
             ]
@@ -118,7 +118,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_relist_rules',
             [
-                'legend' => $this->__('Relist Conditions'),
+                'legend' => __('Relist Conditions'),
                 'collapsable' => false,
             ]
         );
@@ -128,14 +128,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'relist_status_enabled',
-                'label' => $this->__('Product Status'),
+                'label' => __('Product Status'),
                 'value' => $formData['relist_status_enabled'],
                 'values' => [
-                    0 => $this->__('Any'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Any'),
+                    1 => __('Enabled'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-product-status',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Magento Product Status at which the Item(s) have to be relisted.'
                 ),
             ]
@@ -146,14 +146,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'relist_is_in_stock',
-                'label' => $this->__('Stock Availability'),
+                'label' => __('Stock Availability'),
                 'value' => $formData['relist_is_in_stock'],
                 'values' => [
-                    0 => $this->__('Any'),
-                    1 => $this->__('In Stock'),
+                    0 => __('Any'),
+                    1 => __('In Stock'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-stock-availability',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Magento Stock Availability at which the Item(s) have to be relisted.'
                 ),
             ]
@@ -180,14 +180,14 @@ HTML
             self::SELECT,
             [
                 'name' => 'relist_qty_calculated',
-                'label' => $this->__('Quantity'),
+                'label' => __('Quantity'),
                 'value' => $formData['relist_qty_calculated'],
                 'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_YES => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_NONE => __('Any'),
+                    TemplateSynchronization::QTY_MODE_YES => __('More or Equal'),
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Item Quantity calculated based on the Selling Policy settings at
                     which the Item(s) have to be relisted. <br><br>
 
@@ -207,9 +207,9 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_relist_advanced_filters',
             [
-                'legend' => $this->__('Advanced Conditions'),
+                'legend' => __('Advanced Conditions'),
                 'collapsable' => false,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>Define Magento Attribute value(s) based on which a product must be relisted on the Channel.<br>
                     Once both Relist Conditions and Advanced Conditions are met, the product will be relisted.</p>'
                 ),
@@ -223,7 +223,7 @@ HTML
                 'messages' => [
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                        'content' => $this->__(
+                        'content' => __(
                             'Please be very thoughtful before enabling this option as this functionality can have
                         a negative impact on the Performance of your system.<br> It can decrease the speed of running
                         in case you have a lot of Products with the high number of changes made to them.'
@@ -238,11 +238,11 @@ HTML
             self::SELECT,
             [
                 'name' => 'relist_advanced_rules_mode',
-                'label' => $this->__('Mode'),
+                'label' => __('Mode'),
                 'value' => $formData['relist_advanced_rules_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
             ]
         );
@@ -263,7 +263,7 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'relist_advanced_rules_filters_container',
-                'label' => $this->__('Conditions'),
+                'label' => __('Conditions'),
                 'text' => $ruleBlock->toHtml(),
             ]
         );

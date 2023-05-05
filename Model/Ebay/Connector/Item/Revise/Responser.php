@@ -21,6 +21,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
     public function __construct(
         \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
+        \Ess\M2ePro\Model\Ebay\TagFactory $tagFactory,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -35,6 +36,7 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
     ) {
         parent::__construct(
             $tagBuffer,
+            $tagFactory,
             $helperData,
             $walmartFactory,
             $amazonFactory,
@@ -301,17 +303,5 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         parent::eventAfterExecuting();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function calculateTagByMessage(
-        \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
-        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer
-    ): void {
-        if ($this->isNewRequiredSpecificNeeded($message)) {
-            $tagBuffer->addTag($this->listingProduct, \Ess\M2ePro\Model\Tag::NICK_EBAY_MISSING_ITEM_SPECIFIC);
-        }
     }
 }

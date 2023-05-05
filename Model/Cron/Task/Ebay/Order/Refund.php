@@ -135,9 +135,9 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 'change_id' => $change->getId(),
             ];
 
-            /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Cancellation\Cancel $connectorObj */
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Cancellation\BySeller $connectorObj */
             $connectorObj = $dispatcherObject->getCustomConnector(
-                'Ebay_Connector_Order_Cancellation_Cancel',
+                'Ebay_Connector_Order_Cancellation_BySeller',
                 $cancelParams,
                 $order->getMarketplaceId(),
                 $order->getAccountId()

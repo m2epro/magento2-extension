@@ -25,7 +25,7 @@ abstract class Order extends Base
         }
 
         foreach ($optionsData as $optionId => $optionData) {
-            $optionData = $this->getHelper('Data')->jsonDecode($optionData);
+            $optionData = \Ess\M2ePro\Helper\Json::decode($optionData);
 
             if (!isset($optionData['value_id']) || !isset($optionData['product_ids'])) {
                 return [];

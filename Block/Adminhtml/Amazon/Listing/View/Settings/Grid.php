@@ -606,7 +606,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = $this->dataHelper->jsonDecode($generalIdSearchInfo);
+            $generalIdSearchInfo = \Ess\M2ePro\Helper\Json::decode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -761,7 +761,7 @@ HTML;
         }
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

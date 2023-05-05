@@ -34,20 +34,30 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public const STATUS_CANCELED = 3;
     public const STATUS_PENDING_RESERVED = 4;
 
+    public const BUYER_CANCELLATION_STATUS_NOT_REQUESTED = 0;
+    public const BUYER_CANCELLATION_STATUS_REQUESTED = 1;
+    public const BUYER_CANCELLATION_STATUS_APPROVED = 2;
+    public const BUYER_CANCELLATION_STATUS_REJECTED = 3;
+
     /** All reasons: https://developer.ebay.com/Devzone/post-order/types/CancelReasonEnum.html */
     public const CANCEL_REASON_DEFAULT = 'OTHER';
     public const CANCEL_REASON_BUYER_ASK = 'BUYER_ASKED_CANCEL';
 
-    protected $shippingAddressFactory;
-
+    /** @var \Ess\M2ePro\Model\Ebay\Order\ShippingAddressFactory */
+    private $shippingAddressFactory;
+    /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
     private $externalTransactionsCollection = null;
+    /** @var \Magento\Sales\Model\Order\Email\Sender\OrderSender */
     private $orderSender;
+    /** @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender */
     private $invoiceSender;
     private $subTotalPrice = null;
     private $grandTotalPrice = null;
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $componentEbay;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other */
+    private $listingOtherResourceModel;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
@@ -61,6 +71,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other $listingOtherResourceModel,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -82,6 +93,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
         $this->componentEbay = $componentEbay;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
     }
 
     public function _construct()
@@ -89,8 +101,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Order::class);
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Order\ProxyObject
@@ -100,8 +110,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->modelFactory->getObject('Ebay_Order_ProxyObject', ['order' => $this]);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Ebay\Account
      */
@@ -109,8 +117,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         return $this->getParentObject()->getAccount()->getChildObject();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\ResourceModel\Ebay\Order\ExternalTransaction\Collection
@@ -135,8 +141,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getExternalTransactionsCollection()->getSize() > 0;
     }
 
-    //########################################
-
     public function getEbayOrderId()
     {
         return $this->getData('ebay_order_id');
@@ -146,8 +150,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         return $this->getData('selling_manager_id');
     }
-
-    // ---------------------------------------
 
     public function getBuyerName()
     {
@@ -173,8 +175,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         return $this->getData('buyer_tax_id');
     }
-
-    // ---------------------------------------
 
     public function getCurrency()
     {
@@ -214,8 +214,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getData('saved_amount');
     }
 
-    // ---------------------------------------
-
     /**
      * @return string
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -224,8 +222,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         return strtoupper($this->getParentObject()->getMarketplace()->getChildObject()->getOriginCountry());
     }
-
-    // ---------------------------------------
 
     public function getTaxReference()
     {
@@ -281,8 +277,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return isset($taxDetails['includes_shipping']) ? (bool)$taxDetails['includes_shipping'] : false;
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -321,8 +315,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $taxDetails['is_vat'];
     }
 
-    // ---------------------------------------
-
     public function getWasteRecyclingFee()
     {
         $resultFee = 0.0;
@@ -336,8 +328,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return $resultFee;
     }
-
-    // ---------------------------------------
 
     /**
      * @return array
@@ -475,8 +465,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         )->setData($warehouseAddress);
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -527,8 +515,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return isset($paymentDetails['date']) ? $paymentDetails['date'] : '';
     }
 
-    // ---------------------------------------
-
     public function getPurchaseUpdateDate()
     {
         return $this->getData('purchase_update_date');
@@ -539,8 +525,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getData('purchase_create_date');
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -548,8 +532,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         return (int)$this->getData('checkout_status') == self::CHECKOUT_STATUS_COMPLETED;
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -594,8 +576,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             !$this->isPaymentFailed();
     }
 
-    // ---------------------------------------
-
     /**
      * @return bool
      */
@@ -638,7 +618,40 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return (bool)$this->getData('cancellation_status');
     }
 
-    // ---------------------------------------
+    public function getBuyerCancellationStatus(): int
+    {
+        return (int)$this->getData('buyer_cancellation_status');
+    }
+
+    public function isBuyerCancellationStatusNotRequested(): bool
+    {
+        return $this->getBuyerCancellationStatus() === self::BUYER_CANCELLATION_STATUS_NOT_REQUESTED;
+    }
+
+    public function isBuyerCancellationStatusRequested(): bool
+    {
+        return $this->getBuyerCancellationStatus() === self::BUYER_CANCELLATION_STATUS_REQUESTED;
+    }
+
+    public function isBuyerCancellationStatusApproved(): bool
+    {
+        return $this->getBuyerCancellationStatus() === self::BUYER_CANCELLATION_STATUS_APPROVED;
+    }
+
+    public function isBuyerCancellationStatusRejected(): bool
+    {
+        return $this->getBuyerCancellationStatus() === self::BUYER_CANCELLATION_STATUS_REJECTED;
+    }
+
+    public function setBuyerCancellationStatus(int $status): void
+    {
+        $this->setData('buyer_cancellation_status', $status);
+    }
+
+    public function isBuyerCancellationPossible(): bool
+    {
+        return !$this->isCanceled() && !$this->isShippingCompleted();
+    }
 
     /**
      * @return float|int|null
@@ -674,8 +687,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->grandTotalPrice;
     }
 
-    //########################################
-
     public function getStatusForMagentoOrder()
     {
         $status = '';
@@ -686,32 +697,31 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $status;
     }
 
-    //########################################
-
     /**
      * @return int|null
      */
     public function getAssociatedStoreId()
     {
-        $storeId = null;
-
         $channelItems = $this->getParentObject()->getChannelItems();
 
         if (empty($channelItems)) {
-            // Unmanaged order
-            // ---------------------------------------
             $storeId = $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
-            // ---------------------------------------
         } else {
-            // M2E order
-            // ---------------------------------------
-            if ($this->getEbayAccount()->isMagentoOrdersListingsStoreCustom()) {
+            /** @var \Ess\M2ePro\Model\Ebay\Item $firstChannelItem */
+            $firstChannelItem = reset($channelItems);
+            $itemIsFromOtherListing = $this->listingOtherResourceModel->isItemFromOtherListing(
+                $firstChannelItem->getProductId(),
+                $firstChannelItem->getAccountId(),
+                $firstChannelItem->getMarketplaceId()
+            );
+
+            if ($itemIsFromOtherListing) {
+                $storeId = $this->getEbayAccount()->getMagentoOrdersListingsOtherStoreId();
+            } elseif ($this->getEbayAccount()->isMagentoOrdersListingsStoreCustom()) {
                 $storeId = $this->getEbayAccount()->getMagentoOrdersListingsStoreId();
             } else {
-                $firstChannelItem = reset($channelItems);
                 $storeId = $firstChannelItem->getStoreId();
             }
-            // ---------------------------------------
         }
 
         if ($storeId == 0) {
@@ -720,8 +730,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return $storeId;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -757,8 +765,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return !$this->isCanceled();
     }
 
-    //########################################
-
     public function beforeCreateMagentoOrder()
     {
         $buyerName = $this->getBuyerName();
@@ -786,8 +792,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -804,8 +808,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return true;
     }
-
-    // ---------------------------------------
 
     public function createPaymentTransactions()
     {
@@ -833,8 +835,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         }
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -859,8 +859,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return true;
     }
-
-    // ---------------------------------------
 
     /**
      * @return \Magento\Sales\Model\Order\Invoice|null
@@ -888,8 +886,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $invoice;
     }
 
-    //########################################
-
     /**
      * @return bool
      */
@@ -915,8 +911,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return true;
     }
 
-    // ---------------------------------------
-
     /**
      * @return \Magento\Sales\Model\Order\Shipment[]|null
      */
@@ -933,8 +927,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return $shipmentBuilder->getShipments();
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -991,8 +983,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $tracks;
     }
 
-    //########################################
-
     private function processConnector($action, array $params = [])
     {
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher $dispatcher */
@@ -1000,8 +990,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return $dispatcher->process($action, $this->getParentObject(), $params);
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -1041,8 +1029,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return true;
     }
-
-    // ---------------------------------------
 
     /**
      * @param array $trackingDetails
@@ -1151,13 +1137,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         $existingParams['items'] = $existingItems;
 
-        $change->setData('params', $this->getHelper('Data')->jsonEncode($existingParams));
+        $change->setData('params', \Ess\M2ePro\Helper\Json::encode($existingParams));
         $change->save();
 
         return true;
     }
-
-    //########################################
 
     private function getBuyerInfo()
     {
@@ -1187,8 +1171,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return $buyerInfo;
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -1270,8 +1252,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return true;
     }
 
-    //########################################
-
     public function delete()
     {
         $table = $this->activeRecordFactory->getObject('Ebay_Order_ExternalTransaction')->getResource()->getMainTable();
@@ -1282,6 +1262,4 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         return parent::delete();
     }
-
-    //########################################
 }

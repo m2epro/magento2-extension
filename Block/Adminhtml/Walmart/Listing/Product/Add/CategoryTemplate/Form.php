@@ -82,7 +82,7 @@ CSS
             'block-notice',
             'label',
             [
-                'value' => $this->__('Select the most convenient way to set the Category Policy below:'),
+                'value' => __('Select the most convenient way to set the Category Policy below:'),
                 'field_extra_attributes' => 'style="margin-bottom: 0;"',
             ]
         );
@@ -131,7 +131,7 @@ HTML
                     ],
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    $this->__(
+                    __(
                         'Category Policy will be set for Products based on their Magento Categories.'
                     ) . '</div>',
             ]
@@ -150,7 +150,7 @@ HTML
                     ],
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
-                    $this->__('Allows you to set Category Policy for each Product or a group of Products manually.')
+                    __('Allows you to set Category Policy for each Product or a group of Products manually.')
                     . '</div>',
             ]
         );
@@ -169,7 +169,7 @@ HTML
     public function getCategoryTemplateMode()
     {
         $listingAdditionalData = $this->listing->getData('additional_data');
-        $listingAdditionalData = $this->dataHelper->jsonDecode($listingAdditionalData);
+        $listingAdditionalData = \Ess\M2ePro\Helper\Json::decode($listingAdditionalData);
 
         $mode = 'same';
 

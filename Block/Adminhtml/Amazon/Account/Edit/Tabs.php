@@ -53,24 +53,24 @@ class Tabs extends AbstractTabs
         $account = $this->globalDataHelper->getValue('edit_account');
 
         $this->addTab(self::TAB_ID_GENERAL, [
-            'label' => $this->__('General'),
-            'title' => $this->__('General'),
+            'label' => __('General'),
+            'title' => __('General'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\General::class)
                               ->toHtml(),
         ]);
 
         $this->addTab(self::TAB_ID_LISTING_OTHER, [
-            'label' => $this->__('Unmanaged Listings'),
-            'title' => $this->__('Unmanaged Listings'),
+            'label' => __('Unmanaged Listings'),
+            'title' => __('Unmanaged Listings'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\ListingOther::class)
                               ->toHtml(),
         ]);
 
         $this->addTab(self::TAB_ID_ORDERS, [
-            'label' => $this->__('Orders'),
-            'title' => $this->__('Orders'),
+            'label' => __('Orders'),
+            'title' => __('Orders'),
             'content' => $this->getLayout()
                               ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order::class)
                               ->toHtml(),
@@ -78,8 +78,8 @@ class Tabs extends AbstractTabs
 
         if ($account !== null && $account->getId()) {
             $this->addTab(self::TAB_ID_INVOICES_AND_SHIPMENTS, [
-                'label' => $this->__('Invoices & Shipments'),
-                'title' => $this->__('Invoices & Shipments'),
+                'label' => __('Invoices & Shipments'),
+                'title' => __('Invoices & Shipments'),
                 'content' => $this->getLayout()
                                   ->createBlock(
                                       \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\InvoicesAndShipments::class

@@ -100,7 +100,7 @@ class Order extends AbstractForm
 
         $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? $this->dataHelper->jsonDecode($formData['magento_orders_settings']) : [];
+            ? \Ess\M2ePro\Helper\Json::decode($formData['magento_orders_settings']) : [];
 
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 

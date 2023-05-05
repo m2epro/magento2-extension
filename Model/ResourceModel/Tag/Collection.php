@@ -17,23 +17,23 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     {
         parent::_construct();
         $this->_init(
-            \Ess\M2ePro\Model\Tag::class,
+            \Ess\M2ePro\Model\Tag\Entity::class,
             \Ess\M2ePro\Model\ResourceModel\Tag::class
         );
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Tag[]
+     * @return \Ess\M2ePro\Model\Tag\Entity[]
      */
     public function getItemsWithoutHasErrorsTag(): array
     {
-        $this->getSelect()->where('nick != (?)', \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR);
+        $this->getSelect()->where('error_code != (?)', \Ess\M2ePro\Model\Tag::HAS_ERROR_ERROR_CODE);
 
         return $this->getAll();
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Tag[]
+     * @return \Ess\M2ePro\Model\Tag\Entity[]
      */
     public function getAll(): array
     {

@@ -15,9 +15,6 @@ use Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\ConverterFactory */
     private $converterFactory;
 
@@ -52,7 +49,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
     private $autoCategoryFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\ConverterFactory $converterFactory,
         \Ess\M2ePro\Model\Ebay\Template\CategoryFactory $categoryFactory,
         \Ess\M2ePro\Model\Ebay\Template\StoreCategoryFactory $storeCategoryFactory,
@@ -64,8 +60,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $context);
-
-        $this->dataHelper = $dataHelper;
         $this->converterFactory = $converterFactory;
         $this->categoryFactory = $categoryFactory;
         $this->storeCategoryFactory = $storeCategoryFactory;
@@ -77,7 +71,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 
     public function execute()
     {
-        $requestData = $this->dataHelper->jsonDecode(
+        $requestData = \Ess\M2ePro\Helper\Json::decode(
             $this->getRequest()->getPost('auto_action_data')
         );
 

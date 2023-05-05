@@ -61,6 +61,11 @@ class Theme extends AbstractModel
             return;
         }
 
+        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
+        if (!empty($additionalData['running_migration_to_product_types'])) {
+            return;
+        }
+
         if ($this->getProcessor()->isGeneralIdSet()) {
             $this->processExistProduct();
 
@@ -74,11 +79,6 @@ class Theme extends AbstractModel
 
     private function processExistProduct()
     {
-        $additionalData = $this->getProcessor()->getListingProduct()->getAdditionalData();
-        if (!empty($additionalData['running_migration_to_product_types'])) {
-            return;
-        }
-
         $possibleThemes = $this->getProcessor()->getPossibleThemes();
         $channelAttributes = array_keys(
             $this->getProcessor()->getTypeModel()->getRealChannelAttributesSets()

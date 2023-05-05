@@ -12,6 +12,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Buffer */
     private $tagBuffer;
+    /** @var \Ess\M2ePro\Model\TagFactory */
+    private $tagFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory */
     private $dispatcherFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Log */
@@ -30,6 +32,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     public function __construct(
         \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
+        \Ess\M2ePro\Model\TagFactory $tagFactory,
         \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory $dispatcherFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
@@ -42,6 +45,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         parent::__construct($helperFactory, $modelFactory);
 
         $this->tagBuffer = $tagBuffer;
+        $this->tagFactory = $tagFactory;
         $this->dispatcherFactory = $dispatcherFactory;
         $this->listingLogResource = $listingLogResource;
         $this->exceptionHelper = $exceptionHelper;
@@ -158,7 +162,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $results = [];
 
         if (!$this->isAdditionalDispatch($params)) {
-            $this->clearErrorsTags($products);
+            foreach ($products as $listingProduct) {
+                $this->tagBuffer->removeAllTags($listingProduct);
+            }
+            $this->tagBuffer->flush();
         }
 
         foreach ($products as $product) {
@@ -186,7 +193,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 if ($result === \Ess\M2ePro\Helper\Data::STATUS_ERROR) {
-                    $this->tagBuffer->addTag($product, \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR);
+                    $this->tagBuffer->addTag($product, $this->tagFactory->createWithHasErrorCode());
                 }
             } catch (\Throwable $exception) {
                 $this->logListingProductException($product, $exception, $action, $params);
@@ -211,28 +218,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     private function isAdditionalDispatch(array $params): bool
     {
         return $params['is_additional_action'] ?? false;
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product[] $listingProducts
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function clearErrorsTags(array $listingProducts): void
-    {
-        foreach ($listingProducts as $listingProduct) {
-            $this->tagBuffer->removeTags(
-                $listingProduct,
-                [
-                    \Ess\M2ePro\Model\Tag::NICK_HAS_ERROR,
-                    \Ess\M2ePro\Model\Tag::NICK_EBAY_MISSING_ITEM_SPECIFIC,
-                ]
-            );
-        }
-
-        $this->tagBuffer->flush();
     }
 
     /**

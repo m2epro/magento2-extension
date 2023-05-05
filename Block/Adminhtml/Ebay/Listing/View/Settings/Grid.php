@@ -816,7 +816,7 @@ HTML;
         return $this->getUrl('*/ebay_listing/view', ['_current' => true]);
     }
 
-    public function getRowUrl($row): bool
+    public function getRowUrl($item): bool
     {
         return false;
     }
@@ -1090,7 +1090,7 @@ JS
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-        $ignoreListings = $this->dataHelper->jsonEncode([$this->listing->getId()]);
+        $ignoreListings = \Ess\M2ePro\Helper\Json::encode([$this->listing->getId()]);
 
         $motorsType = '';
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {

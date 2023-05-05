@@ -30,10 +30,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'edit_sku_fieldset',
             [
-                'legend' => $this->__('Edit SKU'),
+                'legend' => __('Edit SKU'),
                 'collapsable' => false,
                 'direction_class' => 'to-right',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'You may edit SKU of the already listed Item. Enter a new SKU value and click Submit. M2E Pro will
                     automatically submit the new Item SKU to Walmart.<br><br>
                     <strong>Note:</strong> a new SKU value must be unique.'
@@ -46,7 +46,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'name' => 'new_sku_value',
-                'label' => $this->__('New SKU'),
+                'label' => __('New SKU'),
                 'required' => true,
             ]
         );

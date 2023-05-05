@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
+use Ess\M2ePro\Model\Ebay\Order as EbayOrder;
 
 class Grid extends AbstractGrid
 {
@@ -290,7 +291,8 @@ class Grid extends AbstractGrid
         // ---------------------------------------
 
         $groups = [
-            'general' => $this->__('General'),
+            'general' => __('General'),
+            'order_cancellation' => __('Order Cancellation'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
@@ -355,6 +357,30 @@ class Grid extends AbstractGrid
                 'confirm' => $this->__('Are you sure?'),
             ],
             'general'
+        );
+
+        $this->getMassactionBlock()->addItem(
+            'approve_cancel_by_buyer',
+            [
+                'label' => $this->__('Accept cancellation request'),
+                'url' => $this->getUrl(
+                    '*/ebay_order_processBuyerCancellationRequest/approve'
+                ),
+                'confirm' => $this->__('Are you sure?'),
+            ],
+            'order_cancellation'
+        );
+
+        $this->getMassactionBlock()->addItem(
+            'reject_cancel_by_buyer',
+            [
+                'label' => $this->__('Decline cancellation request'),
+                'url' => $this->getUrl(
+                    '*/ebay_order_processBuyerCancellationRequest/reject'
+                ),
+                'confirm' => $this->__('Are you sure?'),
+            ],
+            'order_cancellation'
         );
 
         return parent::_prepareMassaction();
@@ -452,6 +478,19 @@ HTML;
 
         $html = '';
         $gridId = $this->getId();
+
+        if (!empty($items[0])) {
+            $ebayOrder = $items[0]->getOrder()->getChildObject();
+            if (
+                $ebayOrder->getBuyerCancellationStatus() === EbayOrder::BUYER_CANCELLATION_STATUS_REQUESTED
+                && $ebayOrder->isBuyerCancellationPossible()
+            ) {
+                $translation = __('Cancellation Requested');
+                $html .= <<<HTML
+<span style="color: red;">{$translation}</span><br/>
+HTML;
+            }
+        }
 
         foreach ($items as $item) {
             if ($html != '') {
@@ -720,7 +759,7 @@ HTML;
         return $this->getUrl('*/ebay_order/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -739,7 +778,7 @@ JS
 
         $tempGridIds = [];
         $this->ebayHelper->isEnabled() && $tempGridIds[] = $this->getId();
-        $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
+        $tempGridIds = \Ess\M2ePro\Helper\Json::encode($tempGridIds);
 
         $this->jsPhp->addConstants(
             $this->dataHelper

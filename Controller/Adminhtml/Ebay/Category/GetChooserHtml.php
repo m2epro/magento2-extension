@@ -34,7 +34,7 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         $selectedCategories = [];
         if ($categoriesJson = $this->getRequest()->getParam('selected_categories')) {
-            $selectedCategories = $this->getHelper('Data')->jsonDecode($categoriesJson);
+            $selectedCategories = \Ess\M2ePro\Helper\Json::decode($categoriesJson);
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser $chooserBlock */

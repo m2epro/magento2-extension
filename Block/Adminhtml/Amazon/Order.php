@@ -40,7 +40,7 @@ class Order extends AbstractContainer
         $this->addButton(
             'upload_by_user',
             [
-                'label' => $this->__('Order Reimport'),
+                'label' => __('Order Reimport'),
                 'onclick' => 'UploadByUserObj.openPopup()',
                 'class' => 'action-primary',
             ]
@@ -52,7 +52,7 @@ class Order extends AbstractContainer
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(
+            'content' => __(
                 <<<HTML
                 <p>In this section, you can find the list of the Orders imported from Amazon.</p><br>
 
@@ -101,9 +101,9 @@ JS
 
         $this->jsTranslator->addTranslations(
             [
-                'Order Reimport' => $this->__('Order Reimport'),
-                'Order importing in progress.' => $this->__('Order importing in progress.'),
-                'Order importing is canceled.' => $this->__('Order importing is canceled.'),
+                'Order Reimport' => __('Order Reimport'),
+                'Order importing in progress.' => __('Order importing in progress.'),
+                'Order importing is canceled.' => __('Order importing is canceled.'),
             ]
         );
 

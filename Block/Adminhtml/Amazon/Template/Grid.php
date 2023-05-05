@@ -358,13 +358,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $this->getUrl('*/*/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row): string
+    public function getRowUrl($item): string
     {
         return $this->getUrl(
             '*/amazon_template/edit',
             [
-                'id' => $row->getData('template_id'),
-                'type' => $row->getData('type'),
+                'id' => $item->getData('template_id'),
+                'type' => $item->getData('type'),
                 'back' => 1,
             ]
         );

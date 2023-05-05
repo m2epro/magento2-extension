@@ -15,7 +15,7 @@ abstract class Category extends Template
     protected function formatCategoryRow(&$row)
     {
         $row['product_data_nicks'] = $row['product_data_nicks'] !== null
-            ? (array)$this->getHelper('Data')->jsonDecode($row['product_data_nicks']) : [];
+            ? (array)\Ess\M2ePro\Helper\Json::decode($row['product_data_nicks']) : [];
     }
 
     protected function prepareGridBlock()
@@ -30,13 +30,13 @@ abstract class Category extends Template
         $grid->setProductDataNick($this->getRequest()->getParam('product_data_nick'));
         $grid->setCurrentXpath($this->getRequest()->getParam('current_indexed_xpath'));
         $grid->setAllRenderedSpecifics(
-            (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('all_rendered_specifics'))
+            (array)\Ess\M2ePro\Helper\Json::decode($this->getRequest()->getParam('all_rendered_specifics'))
         );
         $grid->setBlockRenderedSpecifics(
-            (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('block_rendered_specifics'))
+            (array)\Ess\M2ePro\Helper\Json::decode($this->getRequest()->getParam('block_rendered_specifics'))
         );
         $grid->setSelectedSpecifics(
-            (array)$this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('selected_specifics'))
+            (array)\Ess\M2ePro\Helper\Json::decode($this->getRequest()->getParam('selected_specifics'))
         );
         $grid->setOnlyDesired((bool)$this->getRequest()->getParam('only_desired'));
         $grid->setSearchQuery($this->getRequest()->getParam('query'));

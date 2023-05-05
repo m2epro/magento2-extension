@@ -67,10 +67,10 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->dataHelper = $dataHelper;
     }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
         $listingProductId = (int)$row->getData('id');
-        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
         $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
         $isVariationGrid = false;
 
@@ -146,7 +146,7 @@ HTML;
                     . $this->getLockedTag($row);
             }
 
-            $variationChildStatuses = $this->dataHelper->jsonDecode($variationChildStatuses);
+            $variationChildStatuses = \Ess\M2ePro\Helper\Json::decode($variationChildStatuses);
 
             $sortedStatuses = [];
 
@@ -209,17 +209,17 @@ HTML;
         $html = '';
         switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                $html = '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+                $html = '<span style="color: gray;">' . __('Not Listed') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                $html = '<span style="color: green;">' . $translator->__('Active') . '</span>';
+                $html = '<span style="color: green;">' . __('Active') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html = '<span style="color: red;">' . $translator->__('Inactive') . '</span>';
+                $html = '<span style="color: red;">' . __('Inactive') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
                 $html = '<span style="color: orange; font-weight: bold;">' .
-                    $translator->__('Incomplete') . '</span>';
+                    __('Incomplete') . '</span>';
                 break;
         }
 

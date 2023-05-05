@@ -11,10 +11,9 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing;
 class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing;
-
-    protected $walmartFactory;
-
+    private $listing;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
+    private $walmartFactory;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
@@ -26,10 +25,9 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     ) {
         $this->walmartFactory = $walmartFactory;
         $this->dataHelper = $dataHelper;
+
         parent::__construct($context, $data);
     }
-
-    //########################################
 
     public function _construct()
     {
@@ -53,7 +51,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->addButton(
                 'back',
                 [
-                    'label' => $this->__('Back'),
+                    'label' => __('Back'),
                     'onclick' => 'WalmartListingSettingsObj.backClick(\'' . $url . '\')',
                     'class' => 'back',
                 ]
@@ -63,7 +61,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->addButton(
             'auto_action',
             [
-                'label' => $this->__('Auto Add/Remove Rules'),
+                'label' => __('Auto Add/Remove Rules'),
                 'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
                 'class' => 'action-primary',
             ]
@@ -80,7 +78,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         );
         $saveButtonsProps = [
             'save' => [
-                'label' => $this->__('Save And Back'),
+                'label' => __('Save And Back'),
                 'onclick' => 'WalmartListingSettingsObj.saveClick(\'' . $url . '\')',
                 'class' => 'save primary',
             ],
@@ -104,7 +102,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         );
         $saveButtons = [
             'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
+            'label' => __('Save And Continue Edit'),
             'class' => 'add',
             'button_class' => '',
             'onclick' => 'WalmartListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1)',
@@ -114,8 +112,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         $this->addButton('save_buttons', $saveButtons);
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -145,13 +141,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         $this->jsTranslator->addTranslations(
             [
-                'Remove Category' => $this->__('Remove Category'),
-                'Add New Rule' => $this->__('Add New Rule'),
-                'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-                'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-                'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-                'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
+                'Remove Category' => __('Remove Category'),
+                'Add New Rule' => __('Add New Rule'),
+                'Add/Edit Categories Rule' => __('Add/Edit Categories Rule'),
+                'Auto Add/Remove Rules' => __('Auto Add/Remove Rules'),
+                'Based on Magento Categories' => __('Based on Magento Categories'),
+                'You must select at least 1 Category.' => __('You must select at least 1 Category.'),
+                'Rule with the same Title already exists.' => __('Rule with the same Title already exists.'),
             ]
         );
 
@@ -168,8 +164,6 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
-
     public function getFormHtml()
     {
         $viewHeaderBlock = $this->getLayout()->createBlock(
@@ -183,8 +177,6 @@ JS
         return $viewHeaderBlock->toHtml() . parent::getFormHtml();
     }
 
-    //########################################
-
     protected function getListing()
     {
         if ($this->listing === null && $this->getRequest()->getParam('id')) {
@@ -196,6 +188,4 @@ JS
 
         return $this->listing;
     }
-
-    //########################################
 }

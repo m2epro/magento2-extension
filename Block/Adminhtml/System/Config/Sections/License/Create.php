@@ -30,7 +30,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
      * @param array $data
      */
     public function __construct(
-        \Ess\M2ePRo\Helper\Magento\Store $magentoStoreHelper,
+        \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,

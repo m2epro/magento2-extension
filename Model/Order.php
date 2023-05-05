@@ -18,6 +18,7 @@ use Ess\M2ePro\Model\Log\AbstractModel as Log;
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
     public const ADDITIONAL_DATA_KEY_IN_ORDER = 'm2epro_order';
+    public const ADDITIONAL_DATA_KEY_VAT_REVERSE_CHARGE = 'vat_reverse_charge';
 
     public const MAGENTO_ORDER_CREATION_FAILED_NO = 0;
     public const MAGENTO_ORDER_CREATION_FAILED_YES = 1;
@@ -395,8 +396,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     //########################################
 
-    public function addLog($description, $type, array $params = [], array $links = [], $isUnique = false)
-    {
+    public function addLog(
+        $description,
+        $type,
+        array $params = [],
+        array $links = [],
+        $isUnique = false,
+        $additionalData = []
+    ) {
         /** @var \Ess\M2ePro\Model\Order\Log $log */
         $log = $this->getLog();
 
@@ -404,27 +411,47 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $description = $this->helperModuleLog->encodeDescription($description, $params, $links);
         }
 
-        return $log->addMessage($this, $description, $type, [], $isUnique);
+        return $log->addMessage($this, $description, $type, $additionalData, $isUnique);
     }
 
-    public function addSuccessLog($description, array $params = [], array $links = [], $isUnique = false)
-    {
-        return $this->addLog($description, Log::TYPE_SUCCESS, $params, $links, $isUnique);
+    public function addSuccessLog(
+        $description,
+        array $params = [],
+        array $links = [],
+        $isUnique = false,
+        $additionalData = []
+    ) {
+        return $this->addLog($description, Log::TYPE_SUCCESS, $params, $links, $isUnique, $additionalData);
     }
 
-    public function addInfoLog($description, array $params = [], array $links = [], $isUnique = false)
-    {
-        return $this->addLog($description, Log::TYPE_INFO, $params, $links, $isUnique);
+    public function addInfoLog(
+        $description,
+        array $params = [],
+        array $links = [],
+        $isUnique = false,
+        $additionalData = []
+    ) {
+        return $this->addLog($description, Log::TYPE_INFO, $params, $links, $isUnique, $additionalData);
     }
 
-    public function addWarningLog($description, array $params = [], array $links = [], $isUnique = false)
-    {
-        return $this->addLog($description, Log::TYPE_WARNING, $params, $links, $isUnique);
+    public function addWarningLog(
+        $description,
+        array $params = [],
+        array $links = [],
+        $isUnique = false,
+        $additionalData = []
+    ) {
+        return $this->addLog($description, Log::TYPE_WARNING, $params, $links, $isUnique, $additionalData);
     }
 
-    public function addErrorLog($description, array $params = [], array $links = [], $isUnique = false)
-    {
-        return $this->addLog($description, Log::TYPE_ERROR, $params, $links, $isUnique);
+    public function addErrorLog(
+        $description,
+        array $params = [],
+        array $links = [],
+        $isUnique = false,
+        $additionalData = []
+    ) {
+        return $this->addLog($description, Log::TYPE_ERROR, $params, $links, $isUnique, $additionalData);
     }
 
     //########################################
@@ -945,5 +972,12 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         return $this->getChildObject()->isSetProcessingLock('update_shipping_status') || $changes->getSize() > 0;
     }
 
-    //########################################
+    public function markAsVatChanged(): void
+    {
+        $additionalData = $this->getAdditionalData();
+        $now = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+        $additionalData[self::ADDITIONAL_DATA_KEY_VAT_REVERSE_CHARGE] = $now;
+        $this->setSettings('additional_data', $additionalData);
+        $this->save();
+    }
 }

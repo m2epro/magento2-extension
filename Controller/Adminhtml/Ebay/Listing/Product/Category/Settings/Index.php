@@ -218,7 +218,7 @@ class Index extends Settings
         if ($this->getRequest()->isPost()) {
             $categoryData = [];
             if ($param = $this->getRequest()->getParam('category_data')) {
-                $categoryData = $this->getHelper('Data')->jsonDecode($param);
+                $categoryData = \Ess\M2ePro\Helper\Json::decode($param);
             }
 
             $sessionData = $this->getSessionValue();

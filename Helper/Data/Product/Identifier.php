@@ -165,7 +165,7 @@ class Identifier
         }
 
         try {
-            $validator = new \Zend_Validate_Barcode($adapters[$type][$length]);
+            $validator = new \Laminas\Validator\Barcode($adapters[$type][$length]);
             $result = $validator->isValid($worldWideId);
         } catch (\Throwable $e) {
             return false;

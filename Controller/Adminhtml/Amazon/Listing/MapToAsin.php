@@ -104,7 +104,7 @@ class MapToAsin extends Main
             return $this->getResult();
         }
 
-        $optionsData = $this->helperData->jsonDecode($optionsData);
+        $optionsData = \Ess\M2ePro\Helper\Json::decode($optionsData);
 
         if ($variationManager->isRelationParentType()) {
             if (empty($optionsData['virtual_matched_attributes'])) {

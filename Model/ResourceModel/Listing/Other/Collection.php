@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Other;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -24,5 +19,26 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    /**
+     * @param int $productId
+     * @param int $accountId
+     * @param int $marketplaceId
+     * @param string $componentMode
+     *
+     * @return bool
+     */
+    public function isExistsProduct(
+        int $productId,
+        int $accountId,
+        int $marketplaceId,
+        string $componentMode
+    ): bool {
+        $this
+            ->addFieldToFilter('product_id', $productId)
+            ->addFieldToFilter('account_id', $accountId)
+            ->addFieldToFilter('marketplace_id', $marketplaceId)
+            ->addFieldToFilter('component_mode', $componentMode);
+
+        return $this->getSize() > 0;
+    }
 }

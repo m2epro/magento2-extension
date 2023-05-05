@@ -58,18 +58,18 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         }
 
         if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
-            return $translator->__('N/A');
+            return __('N/A');
         }
 
         $listingProductId = $row->getData('id');
 
         if (!$row->getData('is_variation_parent') || $isVariationGrid) {
             if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-                return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+                return '<span style="color: gray;">' . __('Not Listed') . '</span>';
             }
 
             if ($rowObject->getData('is_afn_channel')) {
-                $qty = $rowObject->getData('online_afn_qty') ?? $translator->__('N/A');
+                $qty = $rowObject->getData('online_afn_qty') ?? __('N/A');
 
                 return "AFN ($qty)";
             }
@@ -82,7 +82,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
                 if ($showReceiving) {
                     return '<i style="color:gray;">receiving...</i>';
                 } else {
-                    return $translator->__('N/A');
+                    return __('N/A');
                 }
             }
 
@@ -94,13 +94,13 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         }
 
         if ($row->getData('general_id') == '') {
-            return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
-        $variationChildStatuses = $this->dataHelper->jsonDecode($row->getData('variation_child_statuses'));
+        $variationChildStatuses = \Ess\M2ePro\Helper\Json::decode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses)) {
-            return $translator->__('N/A');
+            return __('N/A');
         }
 
         $activeChildrenCount = 0;
@@ -113,7 +113,7 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         }
 
         if ($activeChildrenCount == 0) {
-            return $translator->__('N/A');
+            return __('N/A');
         }
 
         if (!(bool)$row->getData('is_afn_channel')) {
@@ -124,8 +124,8 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
             return $value;
         }
 
-        $resultValue = $translator->__('AFN');
-        $additionalData = (array)$this->dataHelper->jsonDecode($row->getData('additional_data'));
+        $resultValue = __('AFN');
+        $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
 
         $filter = base64_encode('online_qty[afn]=1');
 
@@ -134,9 +134,9 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         // @codingStandardsIgnoreLine
         $vpmt = addslashes($vpmt);
 
-        $linkTitle = $translator->__('Show AFN Child Products.');
+        $linkTitle = __('Show AFN Child Products.');
         $afnCountWord = !empty($additionalData['afn_count']) ? $additionalData['afn_count']
-            : $translator->__('show');
+            : __('show');
 
         $resultValue = $resultValue . "&nbsp;<a href=\"javascript:void(0)\"
                            class=\"hover-underline\"

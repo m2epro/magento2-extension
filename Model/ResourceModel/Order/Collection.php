@@ -8,13 +8,8 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Order\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -24,5 +19,10 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    public function appendFilterIds(array $ids): self
+    {
+        $this->addFieldToFilter('id', ['in' => $ids]);
+
+        return $this;
+    }
 }

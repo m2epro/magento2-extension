@@ -120,7 +120,7 @@ class AccountContinue extends InstallationWalmart
             $account->getChildObject()->addData(
                 [
                     'server_hash' => $responseData['hash'],
-                    'info' => $this->getHelper('Data')->jsonEncode($responseData['info']),
+                    'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
                 ]
             );
             $account->getChildObject()->save();
@@ -180,9 +180,6 @@ class AccountContinue extends InstallationWalmart
         return true;
     }
 
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function getAccountDefaultSettings(): array
     {
         $data = $this->modelFactory->getObject('Walmart_Account_Builder')->getDefaultData();

@@ -21,7 +21,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     private $magentoProduct = null;
 
     /**
-     * @var \Ess\M2ePro\Model\Template\Sellingformat $sellingFormatTemplateModel
+     * @var \Ess\M2ePro\Model\Template\SellingFormat $sellingFormatTemplateModel
      */
     private $sellingFormatTemplateModel = null;
 

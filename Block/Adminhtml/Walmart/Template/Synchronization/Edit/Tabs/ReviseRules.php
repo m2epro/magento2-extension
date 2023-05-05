@@ -78,7 +78,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_form_data_revise_products',
             [
-                'legend' => $this->__('Revise Conditions'),
+                'legend' => __('Revise Conditions'),
                 'collapsable' => true,
             ]
         );
@@ -88,13 +88,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_qty',
-                'label' => $this->__('Quantity'),
+                'label' => __('Quantity'),
                 'value' => $formData['revise_update_qty'],
                 'values' => [
-                    1 => $this->__('Yes'),
+                    1 => __('Yes'),
                 ],
                 'disabled' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically revises Item Quantity and Lag Time on Walmart when any changes are made
                     to the Selling Policy settings that define these Item properties or Magento Attribute
                     values used for these Item properties in the Selling Policy.'
@@ -108,13 +108,13 @@ HTML
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
                 'name' => 'revise_update_qty_max_applied_value_mode',
-                'label' => $this->__('Conditional Revise'),
+                'label' => __('Conditional Revise'),
                 'value' => $formData['revise_update_qty_max_applied_value_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Revise When Less or Equal to'),
+                    0 => __('Disabled'),
+                    1 => __('Revise When Less or Equal to'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Set the Item Quantity limit at which the Revise Action should be triggered.
                     It is recommended to keep this value relatively low, between 10 and 20 Items.'
                 ),
@@ -139,13 +139,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_price',
-                'label' => $this->__('Price'),
+                'label' => __('Price'),
                 'value' => $formData['revise_update_price'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically revises Item Price on Walmart when any changes are made to the
                     Selling Policy settings that define this Item property or Magento Attribute values
                     used for this Item property in the Selling Policy.'
@@ -158,13 +158,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_promotions',
-                'label' => $this->__('Promotions'),
+                'label' => __('Promotions'),
                 'value' => $formData['revise_update_promotions'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Automatically revises Promotions on Walmart when any changes are made to
                     the Selling Policy settings that define Promotion properties or Magento Attribute
                     values used for Promotion properties in the Selling Policy.'
@@ -177,13 +177,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_update_details',
-                'label' => $this->__('Details'),
+                'label' => __('Details'),
                 'value' => $formData['revise_update_details'],
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Data will be automatically revised on Walmart Listing(s) if changes are made to the
                     Magento Attributes related to Image, Description, or Selling Settings.'
                 ),
@@ -203,7 +203,7 @@ HTML
             ]
         );
 
-        $this->jsTranslator->add('Wrong value. Only integer numbers.', $this->__('Wrong value. Only integer numbers.'));
+        $this->jsTranslator->add('Wrong value. Only integer numbers.', __('Wrong value. Only integer numbers.'));
 
         $jsFormData = [
             'revise_update_qty',

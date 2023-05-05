@@ -25,16 +25,12 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         $data = []
     ) {
         $this->helperFactory = $context->getHelperFactory();
@@ -42,7 +38,6 @@ class Custom extends \Magento\Framework\Data\Form\Element\AbstractElement
         parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
         $this->setType('specifics');
         $this->translationHelper = $translationHelper;
-        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -230,7 +225,7 @@ HTML;
         if (empty($specific['value_custom_value'])) {
             $customValues = [''];
         } else {
-            $customValues = $this->dataHelper->jsonDecode($specific['value_custom_value']);
+            $customValues = \Ess\M2ePro\Helper\Json::decode($specific['value_custom_value']);
         }
 
         $display = 'display: none;';

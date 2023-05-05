@@ -51,7 +51,7 @@ class InvoicesAndShipments extends AbstractForm
 
         $form = $this->_formFactory->create();
 
-        $helpText = $this->__(
+        $helpText = __(
             <<<HTML
     <p>Under this tab, you can enable Magento <i>Invoice/Shipment Creation</i> if you want M2E Pro to automatically
     create invoices and shipments in your Magento.</p>
@@ -80,7 +80,7 @@ HTML
         $fieldset = $form->addFieldset(
             'invoices',
             [
-                'legend' => $this->__('Invoices'),
+                'legend' => __('Invoices'),
                 'collapsable' => false,
             ]
         );
@@ -90,15 +90,15 @@ HTML
                 'auto_invoicing',
                 'select',
                 [
-                    'label' => $this->__('Invoice Uploading to Amazon'),
-                    'title' => $this->__('Invoice Uploading to Amazon'),
+                    'label' => __('Invoice Uploading to Amazon'),
+                    'title' => __('Invoice Uploading to Amazon'),
                     'name' => 'auto_invoicing',
                     'options' => [
-                        AmazonAccount::AUTO_INVOICING_DISABLED => $this->__('Disabled'),
+                        AmazonAccount::AUTO_INVOICING_DISABLED => __('Disabled'),
                         AmazonAccount::AUTO_INVOICING_UPLOAD_MAGENTO_INVOICES =>
-                            $this->__('Upload Magento Invoices'),
+                            __('Upload Magento Invoices'),
                         AmazonAccount::AUTO_INVOICING_VAT_CALCULATION_SERVICE =>
-                            $this->__('Use VAT Calculation Service'),
+                            __('Use VAT Calculation Service'),
                     ],
                     'value' => $formData['auto_invoicing'],
                 ]
@@ -109,17 +109,17 @@ HTML
                 'select',
                 [
                     'container_id' => 'invoice_generation_container',
-                    'label' => $this->__('VAT Invoice Creation'),
-                    'title' => $this->__('VAT Invoice Creation'),
+                    'label' => __('VAT Invoice Creation'),
+                    'title' => __('VAT Invoice Creation'),
                     'name' => 'invoice_generation',
                     'class' => 'M2ePro-required-when-visible M2ePro-is-ready-for-document-generation',
                     'required' => true,
                     'values' => [
                         '' => '',
                         AmazonAccount::INVOICE_GENERATION_BY_AMAZON =>
-                            $this->__('I want Amazon to generate VAT Invoices'),
+                            __('I want Amazon to generate VAT Invoices'),
                         AmazonAccount::INVOICE_GENERATION_BY_EXTENSION =>
-                            $this->__('I will upload my own Invoices'),
+                            __('I will upload my own Invoices'),
                     ],
                     'value' => '',
                 ]
@@ -136,14 +136,14 @@ HTML
             'create_magento_invoice',
             'select',
             [
-                'label' => $this->__('Magento Invoice Creation'),
-                'title' => $this->__('Magento Invoice Creation'),
+                'label' => __('Magento Invoice Creation'),
+                'title' => __('Magento Invoice Creation'),
                 'name' => 'create_magento_invoice',
                 'options' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically create Magento Invoices when order status is Unshipped/Partially Shipped.'
                 ),
             ]
@@ -152,7 +152,7 @@ HTML
         $fieldset = $form->addFieldset(
             'shipments',
             [
-                'legend' => $this->__('Shipments'),
+                'legend' => __('Shipments'),
                 'collapsable' => false,
             ]
         );
@@ -161,14 +161,14 @@ HTML
             'create_magento_shipment',
             'select',
             [
-                'label' => $this->__('Magento Shipment Creation'),
-                'title' => $this->__('Magento Shipment Creation'),
+                'label' => __('Magento Shipment Creation'),
+                'title' => __('Magento Shipment Creation'),
                 'name' => 'create_magento_shipment',
                 'options' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically create shipment for the Magento order when the associated order
                     on Channel is shipped.'
                 ),

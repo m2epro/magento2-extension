@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order\Log;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Order\Log\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    //########################################
+    // ----------------------------------------
 
     public function _construct()
     {
@@ -24,7 +21,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * GroupBy fix
@@ -46,6 +43,26 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $countSelect->columns(new \Zend_Db_Expr('COUNT(*)'));
 
         return $countSelect;
+    }
+
+    public function onlyVatChanged(): Collection
+    {
+        $condition = sprintf(
+            "JSON_EXTRACT(main_table.additional_data, '$.%s') IS NOT NULL",
+            \Ess\M2ePro\Model\Order::ADDITIONAL_DATA_KEY_VAT_REVERSE_CHARGE
+        );
+        $this->getSelect()->where($condition);
+
+        return $this;
+    }
+
+    public function createdDateGreaterThenOrEqual(\DateTime $date): Collection
+    {
+        $this->addFieldToFilter('main_table.create_date', [
+            'gteq' => $date->format('Y-m-d H:i:s')
+        ]);
+
+        return $this;
     }
 
     //########################################

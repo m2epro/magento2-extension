@@ -98,15 +98,15 @@ HTML
                     ],
                     [
                         'value' => self::VIEW_MODE_SETTINGS,
-                        'label' => $this->__('Settings'),
+                        'label' => __('Settings'),
                     ],
                     [
                         'value' => self::VIEW_MODE_SELLERCENTRAL,
-                        'label' => $this->__('Seller Сentral'),
+                        'label' => __('Seller Сentral'),
                     ],
                     [
                         'value' => self::VIEW_MODE_MAGENTO,
-                        'label' => $this->__('Magento'),
+                        'label' => __('Magento'),
                     ],
                 ],
             ],

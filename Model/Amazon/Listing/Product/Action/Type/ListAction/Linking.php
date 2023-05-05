@@ -142,20 +142,22 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         ) {
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
             $typeModel = $this->getVariationManager()->getTypeModel();
-            $data['variation_product_options'] = $this->getHelper('Data')->jsonEncode($typeModel->getProductOptions());
+            $data['variation_product_options'] = \Ess\M2ePro\Helper\Json::encode(
+                $typeModel->getProductOptions()
+            );
         }
 
         if ($this->getVariationManager()->isRelationChildType()) {
             $typeModel = $this->getVariationManager()->getTypeModel();
 
             if ($typeModel->isVariationProductMatched()) {
-                $data['variation_product_options'] = $this->getHelper('Data')->jsonEncode(
+                $data['variation_product_options'] = \Ess\M2ePro\Helper\Json::encode(
                     $typeModel->getRealProductOptions()
                 );
             }
 
             if ($typeModel->isVariationChannelMatched()) {
-                $data['variation_channel_options'] = $this->getHelper('Data')->jsonEncode(
+                $data['variation_channel_options'] = \Ess\M2ePro\Helper\Json::encode(
                     $typeModel->getRealChannelOptions()
                 );
             }
@@ -163,7 +165,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
             $additionalData = $this->getListingProduct()->getAdditionalData();
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode([
+            $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode([
                 'grouped_product_mode' => $additionalData['grouped_product_mode'],
             ]);
         }

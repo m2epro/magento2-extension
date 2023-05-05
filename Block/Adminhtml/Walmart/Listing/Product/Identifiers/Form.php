@@ -30,10 +30,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldset = $form->addFieldset(
             'edit_identifiers_fieldset',
             [
-                'legend' => $this->__('Edit Product ID'),
+                'legend' => __('Edit Product ID'),
                 'collapsable' => false,
                 'direction_class' => 'to-right',
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'If you need to link your listed Item to a different product in Walmart catalog, you may edit its
                     Product ID.<br>
                     Select a Product ID Type, enter a new Product ID value and click Submit. M2E Pro will automatically
@@ -47,12 +47,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'select',
             [
                 'name' => 'identifier',
-                'label' => $this->__('Product ID Type'),
+                'label' => __('Product ID Type'),
                 'values' => [
-                    'gtin' => $this->__('GTIN'),
-                    'upc' => $this->__('UPC'),
-                    'ean' => $this->__('EAN'),
-                    'isbn' => $this->__('ISBN'),
+                    'gtin' => __('GTIN'),
+                    'upc' => __('UPC'),
+                    'ean' => __('EAN'),
+                    'isbn' => __('ISBN'),
                 ],
                 'required' => true,
             ]
@@ -63,7 +63,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'text',
             [
                 'name' => 'new_identifier_value',
-                'label' => $this->__('New Product ID'),
+                'label' => __('New Product ID'),
                 'required' => true,
             ]
         );

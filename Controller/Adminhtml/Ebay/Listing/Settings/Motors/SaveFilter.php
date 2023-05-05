@@ -25,7 +25,7 @@ class SaveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             'title' => $post['title'],
             'type' => $post['type'],
             'note' => $post['note'],
-            'conditions' => $this->getHelper('Data')->jsonEncode($post['conditions']),
+            'conditions' => \Ess\M2ePro\Helper\Json::encode($post['conditions']),
         ];
 
         $model = $this->activeRecordFactory->getObject('Ebay_Motor_Filter');

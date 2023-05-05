@@ -113,10 +113,10 @@ class Grid extends AbstractGrid
         return $this->getUrl('*/*/accountGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return $this->viewHelper
-            ->getUrl($row, 'account', 'edit', ['id' => $row->getData('id')]);
+            ->getUrl($item, 'account', 'edit', ['id' => $item->getData('id')]);
     }
 
     //########################################

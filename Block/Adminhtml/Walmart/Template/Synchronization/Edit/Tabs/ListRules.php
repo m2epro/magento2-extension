@@ -47,7 +47,7 @@ class ListRules extends AbstractForm
             'walmart_template_synchronization_general',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
                     <p>Synchronization Policy includes rules and conditions based on which M2E Pro
                     automatically transfers your Magento data to the Channel. You may configure the List,
@@ -72,7 +72,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_general_list',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -82,13 +82,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'list_mode',
-                'label' => $this->__('List Action'),
+                'label' => __('List Action'),
                 'value' => $formData['list_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Enable to automatically list the Not Listed Item(s) when the List Conditions are met.'
                 ),
             ]
@@ -97,7 +97,7 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_list_rules',
             [
-                'legend' => $this->__('List Conditions'),
+                'legend' => __('List Conditions'),
                 'collapsable' => false,
             ]
         );
@@ -107,13 +107,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'list_status_enabled',
-                'label' => $this->__('Product Status'),
+                'label' => __('Product Status'),
                 'value' => $formData['list_status_enabled'],
                 'values' => [
-                    0 => $this->__('Any'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Any'),
+                    1 => __('Enabled'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Magento Product Status at which the Item(s) have to be listed.'
                 ),
             ]
@@ -124,13 +124,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'list_is_in_stock',
-                'label' => $this->__('Stock Availability'),
+                'label' => __('Stock Availability'),
                 'value' => $formData['list_is_in_stock'],
                 'values' => [
-                    0 => $this->__('Any'),
-                    1 => $this->__('In Stock'),
+                    0 => __('Any'),
+                    1 => __('In Stock'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Magento Stock Availability at which the Item(s) have to be listed'
                 ),
             ]
@@ -141,13 +141,13 @@ HTML
             self::SELECT,
             [
                 'name' => 'list_qty_calculated',
-                'label' => $this->__('Quantity'),
+                'label' => __('Quantity'),
                 'value' => $formData['list_qty_calculated'],
                 'values' => [
-                    TemplateSynchronization::QTY_MODE_NONE => $this->__('Any'),
-                    TemplateSynchronization::QTY_MODE_YES => $this->__('More or Equal'),
+                    TemplateSynchronization::QTY_MODE_NONE => __('Any'),
+                    TemplateSynchronization::QTY_MODE_YES => __('More or Equal'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>Item Quantity calculated based on the Selling Policy settings at which
                     the Item(s) have to be listed.</p>
                     <p><strong>Note:</strong> This option will be ignored for
@@ -166,9 +166,9 @@ HTML
         $fieldset = $form->addFieldset(
             'magento_block_walmart_template_synchronization_list_advanced_filters',
             [
-                'legend' => $this->__('Advanced Conditions'),
+                'legend' => __('Advanced Conditions'),
                 'collapsable' => false,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     '<p>Define Magento Attribute value(s) based on which a product must be listed on the Channel.<br>
                     Once both List Conditions and Advanced Conditions are met, the product will be listed.</p>'
                 ),
@@ -182,7 +182,7 @@ HTML
                 'messages' => [
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
-                        'content' => $this->__(
+                        'content' => __(
                             'Please be very thoughtful before enabling this option as this functionality can have
                         a negative impact on the Performance of your system.<br> It can decrease the speed of running
                         in case you have a lot of Products with the high number of changes made to them.'
@@ -197,11 +197,11 @@ HTML
             self::SELECT,
             [
                 'name' => 'list_advanced_rules_mode',
-                'label' => $this->__('Mode'),
+                'label' => __('Mode'),
                 'value' => $formData['list_advanced_rules_mode'],
                 'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
                 ],
             ]
         );
@@ -222,7 +222,7 @@ HTML
             self::CUSTOM_CONTAINER,
             [
                 'container_id' => 'list_advanced_rules_filters_container',
-                'label' => $this->__('Conditions'),
+                'label' => __('Conditions'),
                 'text' => $ruleBlock->toHtml(),
             ]
         );
@@ -251,15 +251,15 @@ HTML
         ]);
 
         $this->jsTranslator->addTranslations([
-            'Add Synchronization Policy' => $this->__('Add Synchronization Policy'),
-            'Wrong time format string.' => $this->__('Wrong time format string.'),
+            'Add Synchronization Policy' => __('Add Synchronization Policy'),
+            'Wrong time format string.' => __('Wrong time format string.'),
 
-            'Must be greater than "Min".' => $this->__('Must be greater than "Min".'),
-            'Inconsistent Settings in Relist and Stop Rules.' => $this->__(
+            'Must be greater than "Min".' => __('Must be greater than "Min".'),
+            'Inconsistent Settings in Relist and Stop Rules.' => __(
                 'Inconsistent Settings in Relist and Stop Rules.'
             ),
 
-            'The specified Title is already used for other Policy. Policy Title must be unique.' => $this->__(
+            'The specified Title is already used for other Policy. Policy Title must be unique.' => __(
                 'The specified Title is already used for other Policy. Policy Title must be unique.'
             ),
         ]);

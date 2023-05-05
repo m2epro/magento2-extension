@@ -12,21 +12,15 @@ use Ess\M2ePro\Controller\Adminhtml\Walmart\Template\Category;
 
 class GetAllSpecifics extends Category
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $dbStructureHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $dbStructureHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($walmartFactory, $context);
-
-        $this->dataHelper = $dataHelper;
         $this->dbStructureHelper = $dbStructureHelper;
     }
 
@@ -50,12 +44,12 @@ class GetAllSpecifics extends Category
 
         $specifics = [];
         foreach ($tempSpecifics as $tempSpecific) {
-            $tempSpecific['values'] = (array)$this->dataHelper->jsonDecode($tempSpecific['values']);
-            $tempSpecific['recommended_values'] = (array)$this->dataHelper->jsonDecode(
+            $tempSpecific['values'] = (array)\Ess\M2ePro\Helper\Json::decode($tempSpecific['values']);
+            $tempSpecific['recommended_values'] = (array)\Ess\M2ePro\Helper\Json::decode(
                 $tempSpecific['recommended_values']
             );
-            $tempSpecific['params'] = (array)$this->dataHelper->jsonDecode($tempSpecific['params']);
-            $tempSpecific['data_definition'] = (array)$this->dataHelper->jsonDecode($tempSpecific['data_definition']);
+            $tempSpecific['params'] = (array)\Ess\M2ePro\Helper\Json::decode($tempSpecific['params']);
+            $tempSpecific['data_definition'] = (array)\Ess\M2ePro\Helper\Json::decode($tempSpecific['data_definition']);
 
             $specifics[$tempSpecific['specific_id']] = $tempSpecific;
         }

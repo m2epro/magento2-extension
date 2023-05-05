@@ -267,12 +267,12 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 ];
             }
 
-            $data['variations'] = $this->getHelper('Data')->jsonEncode($variations);
+            $data['variations'] = \Ess\M2ePro\Helper\Json::encode($variations);
         }
 
         if ($this->getListingProduct()->getMagentoProduct()->isGroupedType()) {
             $additionalData = $this->getListingProduct()->getAdditionalData();
-            $data['additional_data'] = $this->getHelper('Data')->jsonEncode([
+            $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode([
                 'grouped_product_mode' => $additionalData['grouped_product_mode'],
             ]);
         }
@@ -332,7 +332,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
                     $variation->setData(
                         'additional_data',
-                        $this->getHelper('Data')->jsonEncode($variationAdditionalData)
+                        \Ess\M2ePro\Helper\Json::encode($variationAdditionalData)
                     );
                     $variation->save();
                 }
@@ -590,7 +590,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_images'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['images_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['images_data']),
             'md5'
         );
 
@@ -604,7 +604,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             return $data;
         }
 
-        $data['online_categories_data'] = $this->getHelper('Data')->jsonEncode($requestMetadata['categories_data']);
+        $data['online_categories_data'] = \Ess\M2ePro\Helper\Json::encode(
+            $requestMetadata['categories_data']
+        );
 
         return $data;
     }
@@ -629,7 +631,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_shipping_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['shipping_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['shipping_data']),
             'md5'
         );
 
@@ -644,7 +646,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_return_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['return_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['return_data']),
             'md5'
         );
 
@@ -659,7 +661,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $data['online_other_data'] = $this->getHelper('Data')->hashString(
-            $this->getHelper('Data')->jsonEncode($requestMetadata['other_data']),
+            \Ess\M2ePro\Helper\Json::encode($requestMetadata['other_data']),
             'md5'
         );
 

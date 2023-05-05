@@ -15,11 +15,7 @@ class RemoveOption extends Main
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
     protected $vocabularyHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $helperData;
-
     public function __construct(
-        \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -27,7 +23,6 @@ class RemoveOption extends Main
         parent::__construct($amazonFactory, $context);
 
         $this->vocabularyHelper = $vocabularyHelper;
-        $this->helperData = $helperData;
     }
 
     public function execute()
@@ -44,7 +39,7 @@ class RemoveOption extends Main
 
         if (!is_array($productOptionsGroup)) {
             $productOptionsGroup = htmlspecialchars_decode($productOptionsGroup);
-            $productOptionsGroup = $this->helperData->jsonDecode($productOptionsGroup);
+            $productOptionsGroup = \Ess\M2ePro\Helper\Json::decode($productOptionsGroup);
         }
 
         $this->vocabularyHelper->removeOptionFromLocalStorage($productOption, $productOptionsGroup, $channelAttr);

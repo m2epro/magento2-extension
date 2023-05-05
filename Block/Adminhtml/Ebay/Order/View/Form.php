@@ -16,6 +16,8 @@ class Form extends AbstractContainer
 
     protected $storeManager;
 
+    /** @var \Magento\Backend\Model\UrlInterface */
+    private $urlBuilder;
     protected $taxCalculator;
 
     public $shippingAddress = [];
@@ -39,6 +41,7 @@ class Form extends AbstractContainer
     private $globalDataHelper;
 
     public function __construct(
+        \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Magento\Tax\Model\Calculation $taxCalculator,
         \Magento\Store\Model\StoreManager $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
@@ -47,6 +50,7 @@ class Form extends AbstractContainer
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
+        $this->urlBuilder = $urlBuilder;
         $this->taxCalculator = $taxCalculator;
         $this->storeManager = $storeManager;
         $this->supportHelper = $supportHelper;
@@ -371,5 +375,8 @@ JS
         return parent::_toHtml();
     }
 
-    //########################################
+    public function getUrlBuilder(): \Magento\Backend\Model\UrlInterface
+    {
+        return $this->urlBuilder;
+    }
 }

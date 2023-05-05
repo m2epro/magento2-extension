@@ -27,7 +27,7 @@ class Diff extends \Ess\M2ePro\Model\Connector\Command\RealTime
     protected function getRequestData()
     {
         return [
-            'tables_info' => $this->getHelper('Data')->jsonEncode(
+            'tables_info' => \Ess\M2ePro\Helper\Json::encode(
                 $this->getHelper('Module_Database_Structure')->getModuleTablesInfo()
             ),
         ];

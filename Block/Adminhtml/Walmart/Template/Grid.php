@@ -198,7 +198,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header' => $this->__('Details'),
+            'header' => __('Details'),
             'align' => 'left',
             'type' => 'text',
             //            'width'         => '150px',
@@ -210,13 +210,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $options = [
-            self::TEMPLATE_CATEGORY => $this->__('Category'),
-            self::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
-            self::TEMPLATE_DESCRIPTION => $this->__('Description'),
-            self::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
+            self::TEMPLATE_CATEGORY => __('Category'),
+            self::TEMPLATE_SELLING_FORMAT => __('Selling'),
+            self::TEMPLATE_DESCRIPTION => __('Description'),
+            self::TEMPLATE_SYNCHRONIZATION => __('Synchronization'),
         ];
         $this->addColumn('type', [
-            'header' => $this->__('Type'),
+            'header' => __('Type'),
             'align' => 'left',
             'type' => 'options',
             'width' => '120px',
@@ -227,7 +227,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('marketplace', [
-            'header' => $this->__('Marketplace'),
+            'header' => __('Marketplace'),
             'align' => 'left',
             'type' => 'options',
             'width' => '100px',
@@ -239,7 +239,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('create_date', [
-            'header' => $this->__('Creation Date'),
+            'header' => __('Creation Date'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'datetime',
@@ -251,7 +251,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('update_date', [
-            'header' => $this->__('Update Date'),
+            'header' => __('Update Date'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'datetime',
@@ -263,7 +263,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('actions', [
-            'header' => $this->__('Actions'),
+            'header' => __('Actions'),
             'align' => 'left',
             'width' => '100px',
             'type' => 'action',
@@ -274,7 +274,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'getter' => 'getTemplateId',
             'actions' => [
                 [
-                    'caption' => $this->__('Edit'),
+                    'caption' => __('Edit'),
                     'url' => [
                         'base' => '*/walmart_template/edit',
                         'params' => [
@@ -284,7 +284,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     'field' => 'id',
                 ],
                 [
-                    'caption' => $this->__('Delete'),
+                    'caption' => __('Delete'),
                     'class' => 'action-default scalable add primary policy-delete-btn',
                     'url' => [
                         'base' => '*/walmart_template/delete',
@@ -293,7 +293,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                         ],
                     ],
                     'field' => 'id',
-                    'confirm' => $this->__('Are you sure?'),
+                    'confirm' => __('Are you sure?'),
                 ],
             ],
         ]);
@@ -309,9 +309,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $title = $this->dataHelper->escapeHtml($value);
 
-        $categoryWord = $this->__('Category');
+        $categoryWord = __('Category');
         $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"
-            : $this->__('Not Set');
+            : __('Not Set');
 
         return <<<HTML
 {$title}
@@ -324,7 +324,7 @@ HTML;
     public function callbackColumnMarketplace($value, $row, $column, $isExport)
     {
         if (empty($value)) {
-            return $this->__('Any');
+            return __('Any');
         }
 
         return $value;
@@ -373,13 +373,13 @@ HTML;
         return $this->getUrl('*/*/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return $this->getUrl(
             '*/walmart_template/edit',
             [
-                'id' => $row->getData('template_id'),
-                'type' => $row->getData('type'),
+                'id' => $item->getData('template_id'),
+                'type' => $item->getData('type'),
                 'back' => 1,
             ]
         );

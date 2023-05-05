@@ -45,8 +45,6 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
         $tempLog->setComponentMode($this->getComponentMode());
 
-        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
-        $dataHelper = $this->helperFactory->getObject('Data');
         /** @var \Ess\M2ePro\Helper\Component\Walmart $componentHelper */
         $componentHelper = $this->helperFactory->getObject('Component\Walmart');
 
@@ -77,7 +75,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     'online_qty' => (int)$receivedItem['qty'],
                     'publish_status' => (string)$receivedItem['publish_status'],
                     'lifecycle_status' => (string)$receivedItem['lifecycle_status'],
-                    'status_change_reasons' => $dataHelper->jsonEncode($receivedItem['status_change_reason']),
+                    'status_change_reasons' => \Ess\M2ePro\Helper\Json::encode($receivedItem['status_change_reason']),
                     'is_online_price_invalid' => $isOnlinePriceInvalid,
                     'is_missed_on_channel' => false,
                 ];
@@ -102,7 +100,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     'is_missed_on_channel' => (bool)$existingItem['is_missed_on_channel'],
                 ];
 
-                $existingAdditionalData = $dataHelper->jsonDecode($existingItem['additional_data']);
+                $existingAdditionalData = \Ess\M2ePro\Helper\Json::decode($existingItem['additional_data']);
                 $lastSynchDates = !empty($existingAdditionalData['last_synchronization_dates'])
                     ? $existingAdditionalData['last_synchronization_dates']
                     : [];

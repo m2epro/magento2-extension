@@ -50,7 +50,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ? $this->rawData['custom_attribute'] : '',
             'type' => isset($this->rawData['type']) ? $this->rawData['type'] : '',
             'attributes' => isset($this->rawData['attributes']) ?
-                $this->getHelper('Data')->jsonEncode($this->rawData['attributes']) : '[]',
+                \Ess\M2ePro\Helper\Json::encode($this->rawData['attributes']) : '[]',
         ];
     }
 

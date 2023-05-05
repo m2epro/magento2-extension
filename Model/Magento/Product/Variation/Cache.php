@@ -60,7 +60,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
             return $cacheResult;
         }
 
-        $data = call_user_func(['parent', $methodName]);
+        $data = parent::$methodName();
 
         if (!$this->getMagentoProduct()->isCacheEnabled()) {
             return $data;

@@ -582,13 +582,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         return (int)$this->getData('key_features_mode');
     }
 
-    /**
-     * @return array
-     */
     public function getKeyFeaturesTemplate()
     {
         return $this->getData('key_features') !== null
-            ? $this->getHelper('Data')->jsonDecode($this->getData('key_features')) : [];
+            ? \Ess\M2ePro\Helper\Json::decode($this->getData('key_features')) : [];
     }
 
     /**
@@ -657,7 +654,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
     public function getOtherFeaturesTemplate()
     {
         return $this->getData('other_features') === null
-            ? [] : $this->getHelper('Data')->jsonDecode($this->getData('other_features'));
+            ? [] : \Ess\M2ePro\Helper\Json::decode($this->getData('other_features'));
     }
 
     /**
@@ -720,13 +717,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         return (int)$this->getData('attributes_mode');
     }
 
-    /**
-     * @return array
-     */
     public function getAttributesTemplate()
     {
         return $this->getData('attributes') === null
-            ? [] : $this->getHelper('Data')->jsonDecode($this->getData('attributes'));
+            ? [] : \Ess\M2ePro\Helper\Json::decode($this->getData('attributes'));
     }
 
     /**

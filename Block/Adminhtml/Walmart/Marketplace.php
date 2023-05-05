@@ -32,7 +32,7 @@ class Marketplace extends AbstractContainer
 
         // ---------------------------------------
         $this->addButton('run_update_all', [
-            'label' => $this->__('Update All Now'),
+            'label' => __('Update All Now'),
             'onclick' => 'MarketplaceObj.updateAction()',
             'class' => 'save update_all_marketplace primary',
         ]);
@@ -40,7 +40,7 @@ class Marketplace extends AbstractContainer
 
         // ---------------------------------------
         $this->addButton('run_synch_now', [
-            'label' => $this->__('Save'),
+            'label' => __('Save'),
             'onclick' => 'MarketplaceObj.saveAction();',
             'class' => 'save save_and_update_marketplaces primary',
         ]);
@@ -52,7 +52,7 @@ class Marketplace extends AbstractContainer
     protected function _prepareLayout()
     {
         $this->appendHelpBlock([
-            'content' => $this->__(
+            'content' => __(
                 '<p>In this section, you can set up Walmart Marketplaces you will work with.
                 Enable the required Marketplaces and press <strong>Save</strong>. The Marketplace data will be
                 downloaded and synchronized with your M2E Pro installation.</p><br>

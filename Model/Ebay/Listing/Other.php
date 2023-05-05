@@ -12,23 +12,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Other
- */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other::class);
     }
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Account
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getAccount()
     {
@@ -51,8 +45,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getParentObject()->getMagentoProduct();
     }
 
-    //########################################
-
     public function getSku()
     {
         return $this->getData('sku');
@@ -66,8 +58,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return (double)$this->getData('item_id');
     }
 
-    // ---------------------------------------
-
     public function getTitle()
     {
         return $this->getData('title');
@@ -77,8 +67,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     {
         return $this->getData('currency');
     }
-
-    // ---------------------------------------
 
     public function getOnlineDuration()
     {
@@ -117,8 +105,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return (int)$this->getData('online_bids');
     }
 
-    // ---------------------------------------
-
     public function getOnlineMainCategory()
     {
         return $this->getData('online_main_category');
@@ -132,8 +118,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getSettings('online_categories_data');
     }
 
-    // ---------------------------------------
-
     public function getStartDate()
     {
         return $this->getData('start_date');
@@ -144,14 +128,10 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $this->getData('end_date');
     }
 
-    //########################################
-
     public function getRelatedStoreId()
     {
         return $this->getAccount()->getChildObject()->getRelatedStoreId($this->getParentObject()->getMarketplaceId());
     }
-
-    //########################################
 
     public function afterMapProduct()
     {
@@ -227,6 +207,4 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
                  ]
              );
     }
-
-    //########################################
 }

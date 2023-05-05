@@ -118,11 +118,11 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
                     ],
                     [
                         'value' => ShippingOverride::IS_SHIPPING_ALLOWED_ADD_OR_OVERRIDE,
-                        'label' => $this->__('Add/Override'),
+                        'label' => __('Add/Override'),
                     ],
                     [
                         'value' => ShippingOverride::IS_SHIPPING_ALLOWED_REMOVE,
-                        'label' => $this->__('Remove'),
+                        'label' => __('Remove'),
                     ],
                 ],
                 'value' => '',
@@ -148,16 +148,16 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
                     ],
                     [
                         'value' => ShippingOverride::COST_MODE_FREE,
-                        'label' => $this->__('Free'),
+                        'label' => __('Free'),
                     ],
                     [
                         'value' => ShippingOverride::COST_MODE_CUSTOM_VALUE,
-                        'label' => $this->__('Custom Value'),
+                        'label' => __('Custom Value'),
                         'attrs' => ['class' => 'shipping-override-rule-cost-mode-custom-value'],
                     ],
                     [
                         'value' => ShippingOverride::COST_MODE_CUSTOM_ATTRIBUTE,
-                        'label' => $this->__('Custom Attribute'),
+                        'label' => __('Custom Attribute'),
                         'attrs' => ['class' => 'shipping-override-rule-cost-mode-custom-attribute'],
                     ],
                 ],
@@ -215,7 +215,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
 
         $removeButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                              ->addData([
-                                 'label' => $this->__('Remove'),
+                                 'label' => __('Remove'),
                                  'class' => 'delete icon-btn remove_shipping_override_rule_button',
                              ]);
         $this->setData('remove_shipping_override_rule_button', $removeButton);
@@ -238,7 +238,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         foreach ($this->getShippingOverrideMethodsUs() as $code => $label) {
             $options[] = [
                 'value' => $code,
-                'label' => $this->__($label),
+                'label' => __($label),
                 'attrs' => [
                     'marketplace_id' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US,
                     'class' => 'm2epro-marketplace-depended-option',
@@ -249,7 +249,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         foreach ($this->getShippingOverrideMethodsCanada() as $code => $label) {
             $options[] = [
                 'value' => $code,
-                'label' => $this->__($label),
+                'label' => __($label),
                 'attrs' => [
                     'marketplace_id' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA,
                     'class' => 'm2epro-marketplace-depended-option',
@@ -273,7 +273,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         foreach ($this->getShippingOverrideRegionsUs() as $code => $label) {
             $options[] = [
                 'value' => $code,
-                'label' => $this->__($label),
+                'label' => __($label),
                 'attrs' => [
                     'marketplace_id' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_US,
                     'class' => 'm2epro-marketplace-depended-option',
@@ -284,7 +284,7 @@ class ShippingOverrideRules extends \Ess\M2ePro\Block\Adminhtml\Magento\Abstract
         foreach ($this->getShippingOverrideRegionsCanada() as $code => $label) {
             $options[] = [
                 'value' => $code,
-                'label' => $this->__($label),
+                'label' => __($label),
                 'attrs' => [
                     'marketplace_id' => \Ess\M2ePro\Helper\Component\Walmart::MARKETPLACE_CA,
                     'class' => 'm2epro-marketplace-depended-option',

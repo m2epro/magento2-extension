@@ -185,7 +185,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     //########################################
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

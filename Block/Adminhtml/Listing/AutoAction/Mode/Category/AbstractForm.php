@@ -228,7 +228,7 @@ abstract class AbstractForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abs
     {
         $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Listing::class));
 
-        $magentoCategoryIdsFromOtherGroups = $this->dataHelper->jsonEncode(
+        $magentoCategoryIdsFromOtherGroups = \Ess\M2ePro\Helper\Json::encode(
             $this->getCategoriesFromOtherGroups()
         );
         $this->js->add(

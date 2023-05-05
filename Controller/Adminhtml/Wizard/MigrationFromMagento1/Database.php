@@ -91,6 +91,7 @@ class Database extends \Magento\Backend\App\Action
 
         $this->_addContent($block);
 
+        /** @var \Ess\M2ePro\Block\Adminhtml\General $generalBlock */
         $generalBlock = $result->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\General::class);
         $result->getLayout()->setChild('js', $generalBlock->getNameInLayout(), '');
 

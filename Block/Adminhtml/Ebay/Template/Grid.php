@@ -345,13 +345,13 @@ class Grid extends AbstractGrid
         return $this->getUrl('*/*/templateGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return $this->getUrl(
             '*/ebay_template/edit',
             [
-                'id' => $row->getData('template_id'),
-                'nick' => $row->getData('nick'),
+                'id' => $item->getData('template_id'),
+                'nick' => $item->getData('nick'),
                 'back' => 1,
             ]
         );

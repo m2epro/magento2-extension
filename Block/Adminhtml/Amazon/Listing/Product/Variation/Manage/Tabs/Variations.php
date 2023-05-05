@@ -133,7 +133,7 @@ JS
             'tab' => 'selling',
         ]);
         $items[] = [
-            'label' => $this->__('Selling'),
+            'label' => __('Selling'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
             'default' => true,
         ];
@@ -146,7 +146,7 @@ JS
             'tab' => 'search',
         ]);
         $items[] = [
-            'label' => $this->__('Search'),
+            'label' => __('Search'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\');',
         ];
         // ---------------------------------------
@@ -154,7 +154,7 @@ JS
         // ---------------------------------------
         $items[] = [
             'onclick' => 'ListingAutoActionObj.loadAutoActionHtml();',
-            'label' => $this->__('Auto Add/Remove Rules'),
+            'label' => __('Auto Add/Remove Rules'),
         ];
 
         // ---------------------------------------
@@ -182,7 +182,7 @@ JS
             'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT,
         ]);
         $items[] = [
-            'label' => $this->__('From Products List'),
+            'label' => __('From Products List'),
             'onclick' => "setLocation('" . $url . "')",
             'default' => true,
         ];
@@ -198,7 +198,7 @@ JS
             'source' => \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY,
         ]);
         $items[] = [
-            'label' => $this->__('From Categories'),
+            'label' => __('From Categories'),
             'onclick' => "setLocation('" . $url . "')",
         ];
 

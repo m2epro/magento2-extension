@@ -12,17 +12,6 @@ class JsPhpRenderer extends AbstractRenderer
 {
     protected $jsPhp = [];
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Helper\Data $dataHelper
-    ) {
-        parent::__construct($helperFactory);
-        $this->dataHelper = $dataHelper;
-    }
-
     public function addConstants($constants)
     {
         $this->jsPhp = array_merge($this->jsPhp, $constants);
@@ -36,7 +25,7 @@ class JsPhpRenderer extends AbstractRenderer
             return '';
         }
 
-        $constants = $this->dataHelper->jsonEncode($this->jsPhp);
+        $constants = \Ess\M2ePro\Helper\Json::encode($this->jsPhp);
 
         return "M2ePro.php.add({$constants});";
     }

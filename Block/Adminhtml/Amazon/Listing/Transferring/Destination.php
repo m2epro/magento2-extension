@@ -84,7 +84,7 @@ class Destination extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 <<<HTML
 The Sell on Another Marketplace feature allows you to list products on multiple Amazon marketplaces.
 To do it, you have to choose From and To Accounts, Marketplaces, Store Views and Listings.
@@ -94,7 +94,7 @@ HTML
                 $this->supportHelper->getDocumentationArticleUrl('x/sH2bB')
             ),
             'style' => 'margin-top: 15px;',
-            'title' => $this->__('Sell on Another Marketplace'),
+            'title' => __('Sell on Another Marketplace'),
         ]);
 
         $parentHtml = parent::_toHtml();

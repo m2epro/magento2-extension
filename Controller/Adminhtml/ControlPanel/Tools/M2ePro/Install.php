@@ -67,7 +67,7 @@ class Install extends Command
         }
 
         foreach ($repairInfo as $item) {
-            $columnsInfo[] = (array)$this->getHelper('Data')->jsonDecode($item);
+            $columnsInfo[] = (array)\Ess\M2ePro\Helper\Json::decode($item);
         }
 
         $definition = $this->repository->getDefinition('TablesStructureValidity');

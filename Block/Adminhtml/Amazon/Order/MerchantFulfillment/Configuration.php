@@ -46,7 +46,7 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2epro\Helper\Data\Cache\Permanent $permanentCacheHelper,
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
@@ -142,7 +142,7 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
         $fieldset = $form->addFieldset(
             'products_fieldset',
             [
-                'legend' => $this->__('Products'),
+                'legend' => __('Products'),
             ]
         );
 
@@ -189,7 +189,7 @@ HTML;
         $fieldset = $form->addFieldset(
             'general_fieldset',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
             ]
         );
 
@@ -198,12 +198,12 @@ HTML;
             'text',
             [
                 'name' => 'must_arrive_by_date',
-                'label' => $this->__('Must Arrive By Date'),
-                'title' => $this->__('Must Arrive By Date'),
+                'label' => __('Must Arrive By Date'),
+                'title' => __('Must Arrive By Date'),
                 'class' => 'M2ePro-validate-must-arrive-date',
                 'value' => $formData['must_arrive_by_date'],
                 'required' => true,
-                'tooltip' => $this->__('Enter the date by which the Item must be delivered to a Buyer.'),
+                'tooltip' => __('Enter the date by which the Item must be delivered to a Buyer.'),
             ]
         );
 
@@ -212,12 +212,12 @@ HTML;
             'text',
             [
                 'name' => 'declared_value',
-                'label' => $this->__('Declared Value'),
-                'title' => $this->__('Declared Value'),
+                'label' => __('Declared Value'),
+                'title' => __('Declared Value'),
                 'class' => 'validate-greater-than-zero',
                 'value' => $formData['declared_value'],
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Based on this Value, the Carrier will determine for how much to insure the Shipment. By default,
                     this Value is calculated as a subtotal of all of the purchased Items.'
                 ),
@@ -231,14 +231,14 @@ HTML
         $fieldset = $form->addFieldset(
             'package_fieldset',
             [
-                'legend' => $this->__('Package'),
+                'legend' => __('Package'),
             ]
         );
 
         $sourcesArray = [
-            MerchantFulfillment::DIMENSION_SOURCE_NONE => '-- ' . $this->__('Please select') . ' --',
-            MerchantFulfillment::DIMENSION_SOURCE_CUSTOM => $this->__('Custom Value'),
-            MerchantFulfillment::DIMENSION_SOURCE_CUSTOM_ATTRIBUTE => $this->__('Custom Attribute'),
+            MerchantFulfillment::DIMENSION_SOURCE_NONE => '-- ' . __('Please select') . ' --',
+            MerchantFulfillment::DIMENSION_SOURCE_CUSTOM => __('Custom Value'),
+            MerchantFulfillment::DIMENSION_SOURCE_CUSTOM_ATTRIBUTE => __('Custom Attribute'),
         ];
 
         if (!$this->canUseProductAttributes()) {
@@ -288,12 +288,12 @@ HTML
             self::SELECT,
             [
                 'name' => 'package_dimension_source',
-                'label' => $this->__('Dimension'),
+                'label' => __('Dimension'),
                 'values' => $sourcesArray,
                 'value' => $formData['package_dimension_source'],
                 'class' => 'M2ePro-validate-dimension',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     <<<HTML
     You can select between a <strong>Custom Value</strong> and the <strong>Predefined Package Dimensions</strong>
     offered by the Carriers. It is recommended to use Custom Value only if the Item Package Dimensions do not confirm
@@ -413,8 +413,8 @@ HTML
                 'data' => [
                     'name' => 'package_dimension_measure',
                     'values' => [
-                        MerchantFulfillment::DIMENSION_MEASURE_INCHES => $this->__('in'),
-                        MerchantFulfillment::DIMENSION_MEASURE_CENTIMETERS => $this->__('cm'),
+                        MerchantFulfillment::DIMENSION_MEASURE_INCHES => __('in'),
+                        MerchantFulfillment::DIMENSION_MEASURE_CENTIMETERS => __('cm'),
                     ],
                     'value' => $formData['package_dimension_measure'],
                     'class' => 'M2ePro-required-when-visible',
@@ -429,8 +429,8 @@ HTML
             'package_dimension_custom_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Length x Width x Height'),
-                'title' => $this->__('Length x Width x Height'),
+                'label' => __('Length x Width x Height'),
+                'title' => __('Length x Width x Height'),
                 'style' => 'padding-top: 0;',
                 'text' => <<<HTML
 <span id="package_dimension_custom_value" style="display: none">
@@ -454,8 +454,8 @@ HTML
                 'data' => [
                     'name' => 'package_weight_measure',
                     'values' => [
-                        MerchantFulfillment::WEIGHT_MEASURE_OUNCES => $this->__('oz'),
-                        MerchantFulfillment::WEIGHT_MEASURE_GRAMS => $this->__('g'),
+                        MerchantFulfillment::WEIGHT_MEASURE_OUNCES => __('oz'),
+                        MerchantFulfillment::WEIGHT_MEASURE_GRAMS => __('g'),
                     ],
                     'value' => $formData['package_weight_measure'],
                     'style' => 'width: 40px',
@@ -497,12 +497,12 @@ HTML
                     'data' => [
                         'name' => 'package_weight_source',
                         'values' => [
-                            MerchantFulfillment::WEIGHT_SOURCE_NONE => '-- ' . $this->__(
+                            MerchantFulfillment::WEIGHT_SOURCE_NONE => '-- ' . __(
                                 'Please select'
                             ) . ' --',
-                            MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_VALUE => $this->__('Custom Value'),
+                            MerchantFulfillment::WEIGHT_SOURCE_CUSTOM_VALUE => __('Custom Value'),
                             [
-                                'label' => $this->__('Magento Attributes'),
+                                'label' => __('Magento Attributes'),
                                 'value' => $preparedAttributes,
                                 'attrs' => [
                                     'is_magento_attribute' => true,
@@ -521,7 +521,7 @@ HTML
             $packageWeightSourceSelect->setForm($form);
 
             $tooltipHtml = $this->getTooltipHtml(
-                $this->__(
+                __(
                     'Enter a Weight Value and select the appropriate Measurement Units. Please, note the
                             selected Measurement Units will be Saved Up till the next Changes are Made.'
                 )
@@ -530,8 +530,8 @@ HTML
                 'package_weight_container',
                 self::CUSTOM_CONTAINER,
                 [
-                    'label' => $this->__('Weight'),
-                    'title' => $this->__('Weight'),
+                    'label' => __('Weight'),
+                    'title' => __('Weight'),
                     'style' => 'padding-top: 0;',
                     'text' => <<<HTML
 {$packageWeightSourceSelect->toHtml()}
@@ -548,8 +548,8 @@ HTML
                 'text',
                 [
                     'name' => 'package_weight_custom_value',
-                    'label' => $this->__('Weight Value'),
-                    'title' => $this->__('Weight Value'),
+                    'label' => __('Weight Value'),
+                    'title' => __('Weight Value'),
                     'class' => 'M2ePro-required-when-visible validate-greater-than-zero',
                     'value' => $this->getData('total_weight') > 0 ? $this->getData(
                         'total_weight'
@@ -573,7 +573,7 @@ HTML
             $packageWeightInput->setForm($form);
 
             $tooltipHtml = $this->getTooltipHtml(
-                $this->__(
+                __(
                     'Enter a Weight Value and select the appropriate Measurement Units. Please, note the selected
                         Measurement Units will be Saved Up till the next Changes are Made.'
                 )
@@ -583,8 +583,8 @@ HTML
                 'package_weight_container',
                 self::CUSTOM_CONTAINER,
                 [
-                    'label' => $this->__('Weight'),
-                    'title' => $this->__('Weight'),
+                    'label' => __('Weight'),
+                    'title' => __('Weight'),
                     'style' => 'padding-top: 0;',
                     'text' => <<<HTML
 {$packageWeightInput->toHtml()}
@@ -600,7 +600,7 @@ HTML
         $fieldset = $form->addFieldset(
             'shipping_origin_fieldset',
             [
-                'legend' => $this->__('Shipping Origin'),
+                'legend' => __('Shipping Origin'),
             ]
         );
 
@@ -609,8 +609,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_name',
-                'label' => $this->__('Name'),
-                'title' => $this->__('Name'),
+                'label' => __('Name'),
+                'title' => __('Name'),
                 'value' => $formData['ship_from_address_name'],
                 'required' => true,
             ]
@@ -621,8 +621,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_email',
-                'label' => $this->__('Email'),
-                'title' => $this->__('Email'),
+                'label' => __('Email'),
+                'title' => __('Email'),
                 'class' => 'M2ePro-validate-email',
                 'value' => $formData['ship_from_address_email'],
                 'required' => true,
@@ -634,8 +634,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_phone',
-                'label' => $this->__('Phone'),
-                'title' => $this->__('Phone'),
+                'label' => __('Phone'),
+                'title' => __('Phone'),
                 'value' => $formData['ship_from_address_phone'],
                 'required' => true,
             ]
@@ -646,8 +646,8 @@ HTML
             self::SELECT,
             [
                 'name' => 'ship_from_address_country',
-                'label' => $this->__('Country'),
-                'title' => $this->__('Country'),
+                'label' => __('Country'),
+                'title' => __('Country'),
                 'values' => $this->magentoHelper->getCountries(),
                 'value' => $formData['ship_from_address_country'],
                 'required' => true,
@@ -692,8 +692,8 @@ HTML
             'ship_from_address_region_state_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Region/State'),
-                'title' => $this->__('Region/State'),
+                'label' => __('Region/State'),
+                'title' => __('Region/State'),
                 'style' => 'padding-top: 0;',
                 'text' => <<<HTML
 {$regionStateInput->toHtml()}
@@ -709,8 +709,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_city',
-                'label' => $this->__('City'),
-                'title' => $this->__('City'),
+                'label' => __('City'),
+                'title' => __('City'),
                 'value' => $formData['ship_from_address_city'],
                 'required' => true,
             ]
@@ -721,8 +721,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_address_line_1',
-                'label' => $this->__('Street Address'),
-                'title' => $this->__('Street Address'),
+                'label' => __('Street Address'),
+                'title' => __('Street Address'),
                 'value' => $formData['ship_from_address_address_line_1'],
                 'required' => true,
             ]
@@ -733,8 +733,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_address_line_2',
-                'label' => $this->__('Street Address Line 2'),
-                'title' => $this->__('Street Address Line 2'),
+                'label' => __('Street Address Line 2'),
+                'title' => __('Street Address Line 2'),
                 'value' => $formData['ship_from_address_address_line_2'],
                 'required' => true,
             ]
@@ -745,8 +745,8 @@ HTML
             'text',
             [
                 'name' => 'ship_from_address_postal_code',
-                'label' => $this->__('Postal Code'),
-                'title' => $this->__('Postal Code'),
+                'label' => __('Postal Code'),
+                'title' => __('Postal Code'),
                 'value' => $formData['ship_from_address_postal_code'],
                 'required' => true,
             ]
@@ -755,7 +755,7 @@ HTML
         $fieldset = $form->addFieldset(
             'additional_settings_fieldset',
             [
-                'legend' => $this->__('Additional Settings'),
+                'legend' => __('Additional Settings'),
             ]
         );
 
@@ -764,15 +764,15 @@ HTML
             self::SELECT,
             [
                 'name' => 'carrier_will_pickup',
-                'label' => $this->__('Carrier Will Pickup'),
-                'title' => $this->__('Carrier Will Pickup'),
+                'label' => __('Carrier Will Pickup'),
+                'title' => __('Carrier Will Pickup'),
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
                 'value' => $formData['carrier_will_pickup'],
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Indicates whether the Carrier will pick up the Package. Please, note the selected Values will be
                     Saved Up till the next changes are made.'
                 ),
@@ -784,21 +784,21 @@ HTML
             self::SELECT,
             [
                 'name' => 'delivery_experience',
-                'label' => $this->__('Delivery Experience'),
-                'title' => $this->__('Delivery Experience'),
+                'label' => __('Delivery Experience'),
+                'title' => __('Delivery Experience'),
                 'values' => [
                     MerchantFulfillment::DELIVERY_EXPERIENCE_WITH_ADULT_SIGNATURE =>
-                        $this->__('Delivery Confirmation With Adult Signature'),
+                        __('Delivery Confirmation With Adult Signature'),
                     MerchantFulfillment::DELIVERY_EXPERIENCE_WITH_SIGNATURE =>
-                        $this->__('Delivery Confirmation With Signature'),
+                        __('Delivery Confirmation With Signature'),
                     MerchantFulfillment::DELIVERY_EXPERIENCE_WITHOUT_SIGNATURE =>
-                        $this->__('Delivery Confirmation Without Signature'),
+                        __('Delivery Confirmation Without Signature'),
                     MerchantFulfillment::DELIVERY_EXPERIENCE_NO_TRACKING =>
-                        $this->__('No Delivery Confirmation'),
+                        __('No Delivery Confirmation'),
                 ],
                 'value' => $formData['delivery_experience'],
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Select a delivery confirmation level. Please, note the selected Value will be Saved Up till the
                     next changes are made.'
                 ),
@@ -850,8 +850,8 @@ JS
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class);
         $helpBlock->setData(
             [
-                'title' => $this->__('Amazon\'s Shipping Services'),
-                'content' => $this->__(
+                'title' => __('Amazon\'s Shipping Services'),
+                'content' => __(
                     <<<HTML
 <p>Amazon's Shipping Services offer a variety of <strong>Shipping Benefits</strong>, including several Shipping Options
 if you need to expedite your delivery.</p>

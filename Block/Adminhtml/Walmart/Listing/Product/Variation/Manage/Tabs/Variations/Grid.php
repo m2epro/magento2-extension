@@ -184,7 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $this->addColumn('product_options', [
-            'header' => $this->__('Magento Variation'),
+            'header' => __('Magento Variation'),
             'align' => 'left',
             'width' => '210px',
             'sortable' => false,
@@ -197,7 +197,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('channel_options', [
-            'header' => $this->__('Walmart Variation'),
+            'header' => __('Walmart Variation'),
             'align' => 'left',
             'width' => '210px',
             'sortable' => false,
@@ -210,7 +210,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
+            'header' => __('SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'sku',
@@ -220,7 +220,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('gtin', [
-            'header' => $this->__('GTIN'),
+            'header' => __('GTIN'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
@@ -232,7 +232,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('online_qty', [
-            'header' => $this->__('QTY'),
+            'header' => __('QTY'),
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
@@ -243,7 +243,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $priceColumn = [
-            'header' => $this->__('Price'),
+            'header' => __('Price'),
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
@@ -256,17 +256,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addColumn('online_price', $priceColumn);
 
         $statusColumn = [
-            'header' => $this->__('Status'),
+            'header' => __('Status'),
             'width' => '100px',
             'index' => 'status',
             'filter_index' => 'status',
             'type' => 'options',
             'sortable' => false,
             'options' => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => __('Not Listed'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
             ],
             'is_variation_grid' => true,
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status::class,
@@ -296,37 +296,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Set mass-action
         // ---------------------------------------
         $this->getMassactionBlock()->addItem('list', [
-            'label' => $this->__('List Item(s)'),
+            'label' => __('List Item(s)'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('revise', [
-            'label' => $this->__('Revise Item(s)'),
+            'label' => __('Revise Item(s)'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('relist', [
-            'label' => $this->__('Relist Item(s)'),
+            'label' => __('Relist Item(s)'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('stop', [
-            'label' => $this->__('Stop Item(s)'),
+            'label' => __('Stop Item(s)'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
-            'label' => $this->__('Stop on Channel / Remove from Listing'),
+            'label' => __('Stop on Channel / Remove from Listing'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('deleteAndRemove', [
-            'label' => $this->__('Retire on Channel / Remove from Listing'),
+            'label' => __('Retire on Channel / Remove from Listing'),
             'url' => '',
         ]);
 
         $this->getMassactionBlock()->addItem('resetProducts', [
-            'label' => $this->__('Reset Incomplete Item(s)'),
+            'label' => __('Reset Incomplete Item(s)'),
             'url' => '',
         ], 'other');
 
@@ -406,12 +406,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $attributes = array_keys($typeModel->getParentTypeModel()->getMatchedAttributes());
             $variationsTree = $this->getProductVariationsTree($row, $attributes);
 
-            $linkTitle = $this->__('Change Variation');
-            $linkContent = $this->__('Change Variation');
+            $linkTitle = __('Change Variation');
+            $linkContent = __('Change Variation');
 
-            $attributes = $this->dataHelper->escapeHtml($this->dataHelper->jsonEncode($attributes));
+            $attributes = $this->dataHelper->escapeHtml(
+                \Ess\M2ePro\Helper\Json::encode($attributes)
+            );
             $variationsTree = $this->dataHelper->escapeHtml(
-                $this->dataHelper->jsonEncode($variationsTree)
+                \Ess\M2ePro\Helper\Json::encode($variationsTree)
             );
 
             $html .= <<<HTML
@@ -506,7 +508,7 @@ HTML;
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if ($row->getData('status') == Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         $onlinePrice = $row->getChildObject()->getData('online_price');
@@ -516,7 +518,7 @@ HTML;
                 $row->getData('status') == Product::STATUS_NOT_LISTED
                 || $row->getData('status') == Product::STATUS_BLOCKED
             ) {
-                return $this->__('N/A');
+                return __('N/A');
             }
 
             return '<i style="color:gray;">receiving...</i>';
@@ -532,7 +534,7 @@ HTML;
 Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
 Once the changes are applied, Walmart Item will become Active automatically.
 HTML;
-            $msg = '<p>' . $this->__($message) . '</p>';
+            $msg = '<p>' . __($message) . '</p>';
             if (empty($msg)) {
                 return $priceValue;
             }
@@ -552,7 +554,7 @@ HTML;
 
         $isSetOnlinePromotions = (bool)$row->getData('is_set_online_promotions');
         if ($isSetOnlinePromotions) {
-            $promotionTooltipText = $this->__('Price without promotions<br>Actual price is available on Walmart.');
+            $promotionTooltipText = __('Price without promotions<br>Actual price is available on Walmart.');
             $promotionTooltipHtml = $this->getTooltipHtml(
                 $promotionTooltipText,
                 '',
@@ -696,7 +698,7 @@ HTML;
         if ($this->isNewChildAllowed()) {
             // ---------------------------------------
             $data = [
-                'label' => $this->__('Add New Child Product'),
+                'label' => __('Add New Child Product'),
                 'onclick' => 'ListingProductVariationManageVariationsGridObj.showNewChildForm('
                     . $this->getListingProduct()->getId() . ')',
                 'class' => 'action primary',
@@ -779,7 +781,7 @@ HTML;
         ]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -820,7 +822,7 @@ JS
         );
 
         if ($this->getParam($this->getVarNameFilter()) == 'searched_by_child') {
-            $noticeMessage = $this->__('This list includes a Product you are searching for.');
+            $noticeMessage = __('This list includes a Product you are searching for.');
             $this->js->add(
                 <<<JS
     require([

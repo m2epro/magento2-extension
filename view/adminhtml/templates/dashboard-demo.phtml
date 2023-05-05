@@ -1,0 +1,32 @@
+<?php
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\DashboardDemo $block */
+
+$charts = $block->getCharts();
+?>
+
+<div class="row">
+    <div class="col-m-12 dashboard-text">
+        <p>The tool to help you keep an eye on and analyze the channel data that matters most for your business: total sales and shipments, canceled orders, number of products affected by errors and issues, etc.</p>
+        <p>You are welcome to contact our Support Team at support@m2epro.com to share your ideas on the analytics metrics that bring benefit your business.</p>
+    </div>
+    <div class="col-m-12">
+        <div class="dashboard-img-wrapper">
+            <?php foreach ($charts as $chart): ?>
+                <img
+                    class="tool-tip-image"
+                    style="<?= /* @noEscape */ $chart['style'];?>"
+                    alt="<?= /* @noEscape */ $chart['alt'];?>"
+                    src="<?= /* @noEscape */ $chart['url'];?>"
+                >
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>

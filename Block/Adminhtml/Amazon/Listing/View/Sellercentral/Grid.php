@@ -231,7 +231,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
-            'header' => $this->__('Product ID'),
+            'header' => __('Product ID'),
             'align' => 'right',
             'width' => '100px',
             'type' => 'number',
@@ -241,7 +241,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Product Title / Product SKU'),
+            'header' => __('Product Title / Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -252,7 +252,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('amazon_sku', [
-            'header' => $this->__('SKU'),
+            'header' => __('SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
@@ -262,7 +262,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('general_id', [
-            'header' => $this->__('ASIN / ISBN'),
+            'header' => __('ASIN / ISBN'),
             'align' => 'left',
             'width' => '140px',
             'type' => 'text',
@@ -274,7 +274,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('online_qty', [
-            'header' => $this->__('QTY'),
+            'header' => __('QTY'),
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
@@ -286,7 +286,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $priceColumn = [
-            'header' => $this->__('Price'),
+            'header' => __('Price'),
             'align' => 'right',
             'width' => '110px',
             'type' => 'number',
@@ -305,17 +305,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->addColumn('online_price', $priceColumn);
 
         $this->addColumn('status', [
-            'header' => $this->__('Status'),
+            'header' => __('Status'),
             'width' => '155px',
             'index' => 'amazon_status',
             'filter_index' => 'amazon_status',
             'type' => 'options',
             'sortable' => false,
             'options' => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => $this->__('Unknown'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Incomplete'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => __('Unknown'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
@@ -334,44 +334,44 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Set mass-action
         // ---------------------------------------
         $groups = [
-            'actions' => $this->__('Actions'),
-            'edit_fulfillment' => $this->__('Fulfillment'),
+            'actions' => __('Actions'),
+            'edit_fulfillment' => __('Fulfillment'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
 
         $this->getMassactionBlock()->addItem('revise', [
-            'label' => $this->__('Revise Item(s)'),
+            'label' => __('Revise Item(s)'),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('relist', [
-            'label' => $this->__('Relist Item(s)'),
+            'label' => __('Relist Item(s)'),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stop', [
-            'label' => $this->__('Stop Item(s)'),
+            'label' => __('Stop Item(s)'),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('stopAndRemove', [
-            'label' => $this->__('Stop on Channel / Remove from Listing'),
+            'label' => __('Stop on Channel / Remove from Listing'),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('deleteAndRemove', [
-            'label' => $this->__('Remove from Channel & Listing'),
+            'label' => __('Remove from Channel & Listing'),
             'url' => '',
         ], 'actions');
 
         $this->getMassactionBlock()->addItem('switchToAfn', [
-            'label' => $this->__('Switch to AFN'),
+            'label' => __('Switch to AFN'),
             'url' => '',
         ], 'edit_fulfillment');
 
         $this->getMassactionBlock()->addItem('switchToMfn', [
-            'label' => $this->__('Switch to MFN'),
+            'label' => __('Switch to MFN'),
             'url' => '',
         ], 'edit_fulfillment');
 
@@ -388,7 +388,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                                   ->setProductId($row->getData('entity_id'))
                                   ->getSku();
 
-        $value .= '<br/><strong>' . $this->__('SKU') .
+        $value .= '<br/><strong>' . __('SKU') .
             ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
 
         $listingProductId = (int)$row->getData('id');
@@ -430,7 +430,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             }
 
             $value .= '<div style="font-weight:bold;font-size: 11px;color: grey;margin-left: 7px;margin-top: 5px;">' .
-                $this->__('Magento Variation') . '</div>';
+                __('Magento Variation') . '</div>';
             $value .= '<div style="font-size: 11px; color: grey; margin-left: 24px">';
             foreach ($productOptions as $attribute => $option) {
                 $style = '';
@@ -447,7 +447,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $value .= '</div>';
 
             $value .= '<div style="font-weight:bold;font-size: 11px;color: grey;margin-left: 7px;margin-top: 5px;">' .
-                $this->__('Amazon Variation') . '</div>';
+                __('Amazon Variation') . '</div>';
             $value .= '<div style="font-size: 11px; color: grey; margin-left: 24px">';
             foreach ($channelOptions as $attribute => $option) {
                 $style = '';
@@ -488,7 +488,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {
         if ($value === null || $value === '') {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         $url = $this->amazonHelper->getItemUrl($value, $this->listing->getMarketplaceId());
@@ -499,7 +499,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                                                 margin-bottom: 5px;
                                                 font-size: 10px;
                                                 color: grey;">' .
-                $this->__(
+                __(
                     'child ASIN/ISBN<br/>of parent %parent_asin%',
                     $this->getParentAsin($row->getData('id'))
                 ) . '</span>';
@@ -508,7 +508,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $generalIdOwnerHtml = '';
         if ($row->getData('is_general_id_owner') == 1) {
             $generalIdOwnerHtml = '<span style="font-size: 10px; color: grey; display: block;">' .
-                $this->__('creator of ASIN/ISBN') .
+                __('creator of ASIN/ISBN') .
                 '</span>';
         }
 
@@ -808,7 +808,7 @@ HTML;
         $collection->getSelect()->where($condition);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -828,7 +828,7 @@ JS
 
     public function getEmptyText()
     {
-        return $this->__(
+        return __(
             'Only Simple and Child Products listed on Amazon will be shown in Seller Сentral View Mode.'
         );
     }

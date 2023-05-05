@@ -548,7 +548,7 @@ class Parts extends AbstractModel
         $categoryData = $this->getEbayMarketplace()->getCategory($categoryId);
 
         $features = !empty($categoryData['features']) ?
-            (array)$this->getHelper('Data')->jsonDecode($categoryData['features']) : [];
+            (array)\Ess\M2ePro\Helper\Json::decode($categoryData['features']) : [];
 
         $attributes = !empty($features['parts_compatibility_attributes']) ?
             $features['parts_compatibility_attributes'] : [];

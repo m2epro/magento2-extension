@@ -13,10 +13,8 @@
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
+use Magento\Framework\Data\Collection\AbstractDb;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Order\Item
- */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     public const STATUS_CREATED = 'created';
@@ -27,11 +25,12 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
     /** @var \Ess\M2ePro\Model\Walmart\Item $channelItem */
     private $channelItem = null;
-
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other */
+    private $listingOtherResourceModel;
+    /** @var \Ess\M2ePro\Model\Magento\Product\BuilderFactory */
     protected $productBuilderFactory;
+    /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Product\BuilderFactory $productBuilderFactory,
@@ -43,12 +42,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Other $listingOtherResourceModel,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->productBuilderFactory = $productBuilderFactory;
         $this->productFactory = $productFactory;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
+
         parent::__construct(
             $walmartFactory,
             $parentFactory,
@@ -63,15 +65,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         );
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Order\Item::class);
     }
-
-    //########################################
 
     public function getProxy()
     {
@@ -79,8 +77,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
             'item' => $this,
         ]);
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Order
@@ -97,8 +93,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         return $this->getWalmartOrder()->getWalmartAccount();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Walmart\Item|null
@@ -128,8 +122,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         return $this->channelItem->getId() !== null ? $this->channelItem : null;
     }
 
-    //########################################
-
     public function getWalmartOrderItemId()
     {
         return $this->getData('walmart_order_item_id');
@@ -140,14 +132,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         return $this->getSettings('merged_walmart_order_item_ids');
     }
 
-    // ---------------------------------------
-
     public function getStatus()
     {
         return $this->getData('status');
     }
-
-    // ---------------------------------------
 
     public function getTitle()
     {
@@ -158,8 +146,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     {
         return $this->getData('sku');
     }
-
-    // ---------------------------------------
 
     /**
      * @return float
@@ -180,17 +166,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     /**
      * @return int
      */
-    public function getQtyPurchased()
+    public function getQtyPurchased(): int
     {
         return (int)$this->getData('qty_purchased');
     }
 
-    // ---------------------------------------
-
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getVariationProductOptions()
+    public function getVariationProductOptions(): array
     {
         $channelItem = $this->getChannelItem();
 
@@ -204,7 +189,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     /**
      * @return array
      */
-    public function getVariationChannelOptions()
+    public function getVariationChannelOptions(): array
     {
         $channelItem = $this->getChannelItem();
 
@@ -214,8 +199,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
         return $channelItem->getVariationChannelOptions();
     }
-
-    //########################################
 
     /**
      * @return int
@@ -230,41 +213,40 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
                 : $this->getChannelItem()->getStoreId();
         }
 
-        // ---------------------------------------
-
         return $this->getWalmartAccount()->getMagentoOrdersListingsOtherStoreId();
     }
 
-    //########################################
-
-    public function canCreateMagentoOrder()
+    public function canCreateMagentoOrder(): bool
     {
         return $this->isOrdersCreationEnabled();
     }
 
-    public function isReservable()
+    public function isReservable(): bool
     {
         return $this->isOrdersCreationEnabled();
     }
 
-    // ---------------------------------------
-
-    private function isOrdersCreationEnabled()
+    private function isOrdersCreationEnabled(): bool
     {
         $channelItem = $this->getChannelItem();
+        $isOtherListingsEnabled = $this->getWalmartAccount()->isMagentoOrdersListingsOtherModeEnabled();
 
-        if ($channelItem !== null && !$this->getWalmartAccount()->isMagentoOrdersListingsModeEnabled()) {
-            return false;
+        if ($channelItem === null) {
+            return $isOtherListingsEnabled;
         }
 
-        if ($channelItem === null && !$this->getWalmartAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
-            return false;
+        if (
+            $this->listingOtherResourceModel->isItemFromOtherListing(
+                $channelItem->getProductId(),
+                $channelItem->getAccountId(),
+                $channelItem->getMarketplaceId()
+            )
+        ) {
+            return $isOtherListingsEnabled;
         }
 
-        return true;
+        return $this->getWalmartAccount()->isMagentoOrdersListingsModeEnabled();
     }
-
-    //########################################
 
     /**
      * @return int|mixed
@@ -299,7 +281,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
                 return $product->getId();
             }
         }
-        // ---------------------------------------
 
         $product = $this->createProduct();
 
@@ -315,7 +296,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
      * @return \Magento\Catalog\Model\Product
      * @throws \Ess\M2ePro\Model\Exception
      */
-    private function createProduct()
+    private function createProduct(): \Magento\Catalog\Model\Product
     {
         if (!$this->getWalmartAccount()->isMagentoOrdersListingsOtherProductImportEnabled()) {
             throw new ProductCreationDisabled(

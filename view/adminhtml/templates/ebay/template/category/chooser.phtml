@@ -42,11 +42,11 @@ $block->jsTranslator->addTranslations([
     'Try to refreshStoreCategories.' => $block->__('Try to <a href="javascript:void(0)" onclick="EbayTemplateCategoryChooserObj.refreshStoreCategories()">refresh eBay Store Data</a> and repeat the Search.'),
 ]);
 
-$categoryModeJson       = $block->getHelper('Data')->jsonEncode($block->getCategoryMode());
+$categoryModeJson       = \Ess\M2ePro\Helper\Json::encode($block->getCategoryMode());
 $selectedCategoriesJson = json_encode($categoriesData, JSON_FORCE_OBJECT);
-$attributesJson         = $block->getHelper('Data')->jsonEncode($block->getAttributes());
+$attributesJson         = \Ess\M2ePro\Helper\Json::encode($block->getAttributes());
 $isEditCategoryAllowed  = (int)$block->getIsEditCategoryAllowed();
-$isWizardModeJson       = $block->getHelper('Data')->jsonEncode(!$block->ebayViewHelper->isInstallationWizardFinished());
+$isWizardModeJson       = \Ess\M2ePro\Helper\Json::encode(!$block->ebayViewHelper->isInstallationWizardFinished());
 
 
 $js = "

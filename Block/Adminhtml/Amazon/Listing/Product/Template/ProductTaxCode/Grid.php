@@ -74,7 +74,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareColumns()
     {
         $this->addColumn('title', [
-            'header' => $this->__('Title'),
+            'header' => __('Title'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -85,7 +85,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('action', [
-            'header' => $this->__('Action'),
+            'header' => __('Action'),
             'align' => 'left',
             'type' => 'number',
             'width' => '55px',
@@ -103,7 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                  ->setData([
                      'id' => 'productTaxCode_template_refresh_btn',
-                     'label' => $this->__('Refresh'),
+                     'label' => __('Refresh'),
                      'class' => 'action primary',
                      'onclick' => "ListingGridObj.templateProductTaxCodeHandler.loadGrid()",
                  ])
@@ -144,7 +144,7 @@ HTML;
 
     public function callbackColumnAction($value, $row, $column, $isExport)
     {
-        $assignText = $this->__('Assign');
+        $assignText = __('Assign');
 
         return <<<HTML
 <a href="javascript:void(0)"
@@ -178,7 +178,7 @@ JS
         ]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -187,8 +187,8 @@ JS
 
     protected function setNoTemplatesText()
     {
-        $messageTxt = $this->__('Product Tax Code Policies are not found.');
-        $linkTitle = $this->__('Create New Product Tax Code Policy.');
+        $messageTxt = __('Product Tax Code Policies are not found.');
+        $linkTitle = __('Create New Product Tax Code Policy.');
 
         $message = <<<HTML
 <p>{$messageTxt} <a href="javascript:void(0);"

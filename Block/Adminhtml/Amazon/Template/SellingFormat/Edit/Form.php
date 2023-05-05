@@ -116,7 +116,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_selling_format_general',
             [
-                'legend' => $this->__('General'),
+                'legend' => __('General'),
                 'collapsable' => false,
             ]
         );
@@ -126,7 +126,7 @@ class Form extends AbstractForm
             'text',
             [
                 'name' => 'title',
-                'label' => $this->__('Title'),
+                'label' => __('Title'),
                 'value' => $formData['title'],
                 'class' => 'M2ePro-price-tpl-title',
                 'required' => true,
@@ -153,7 +153,7 @@ class Form extends AbstractForm
             $fieldset = $form->addFieldset(
                 'magento_block_amazon_template_selling_format_business',
                 [
-                    'legend' => $this->__('Selling Type'),
+                    'legend' => __('Selling Type'),
                     'collapsable' => false,
                 ]
             );
@@ -162,15 +162,15 @@ class Form extends AbstractForm
                 'is_regular_customer_allowed',
                 'select',
                 [
-                    'label' => $this->__('B2C Enabled'),
+                    'label' => __('B2C Enabled'),
                     'name' => 'is_regular_customer_allowed',
                     'values' => [
-                        0 => $this->__('No'),
-                        1 => $this->__('Yes'),
+                        0 => __('No'),
+                        1 => __('Yes'),
                     ],
                     'class' => 'M2ePro-customer-allowed-types',
                     'value' => $formData['is_regular_customer_allowed'],
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         'Products with B2C Price will be available for both B2B and B2C
                                             Customers.<br /><strong>Note:</strong> B2B Customers will see the B2B Price
                                             once you additionally enable the ‘B2B pricing’ type of Selling.
@@ -183,15 +183,15 @@ class Form extends AbstractForm
                 'is_business_customer_allowed',
                 'select',
                 [
-                    'label' => $this->__('B2B Pricing'),
+                    'label' => __('B2B Pricing'),
                     'name' => 'is_business_customer_allowed',
                     'values' => [
-                        0 => $this->__('No'),
-                        1 => $this->__('Yes'),
+                        0 => __('No'),
+                        1 => __('Yes'),
                     ],
                     'class' => 'M2ePro-customer-allowed-types',
                     'value' => $formData['is_business_customer_allowed'],
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         'B2B Price will be available only for B2B Customers.<br />
                                             <strong>Note:</strong> B2C Customers will not see these Products if you
                                             disable the ‘B2C enabled’ type of Selling.
@@ -204,7 +204,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_selling_format_qty',
             [
-                'legend' => $this->__('Quantity'),
+                'legend' => __('Quantity'),
                 'collapsable' => false,
             ]
         );
@@ -212,7 +212,7 @@ class Form extends AbstractForm
         $preparedAttributes = [
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED,
-                'label' => $this->__('QTY'),
+                'label' => __('QTY'),
             ],
         ];
 
@@ -252,13 +252,13 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'qty_mode_tr',
-                'label' => $this->__('Quantity'),
+                'label' => __('Quantity'),
                 'name' => 'qty_mode',
                 'values' => [
-                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => $this->__('Product Quantity'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER => $this->__('Custom Value'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => __('Product Quantity'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_NUMBER => __('Custom Value'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'new_option_value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
@@ -269,7 +269,7 @@ class Form extends AbstractForm
                 'value' => $formData['qty_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
                     ? $formData['qty_mode'] : '',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Product Quantity for Amazon Listing(s).'),
+                'tooltip' => __('Product Quantity for Amazon Listing(s).'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
@@ -287,7 +287,7 @@ class Form extends AbstractForm
             'text',
             [
                 'container_id' => 'qty_custom_value_tr',
-                'label' => $this->__('Quantity Value'),
+                'label' => __('Quantity Value'),
                 'name' => 'qty_custom_value',
                 'value' => $formData['qty_custom_value'],
                 'class' => 'validate-digits',
@@ -308,11 +308,11 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'qty_percentage_tr',
-                'label' => $this->__('Quantity Percentage'),
+                'label' => __('Quantity Percentage'),
                 'name' => 'qty_percentage',
                 'values' => $preparedAttributes,
                 'value' => $formData['qty_percentage'],
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'Sets the percentage for calculation of Items number to be Listed on Amazon basing on
                     Product Quantity or Magento Attribute. <br/><br/>
                     E.g., if QTY percentage is set to 10% and Product Quantity is 100,
@@ -326,14 +326,14 @@ class Form extends AbstractForm
             'select',
             [
                 'container_id' => 'qty_modification_mode_tr',
-                'label' => $this->__('Conditional Quantity'),
+                'label' => __('Conditional Quantity'),
                 'name' => 'qty_modification_mode',
                 'values' => [
-                    SellingFormat::QTY_MODIFICATION_MODE_OFF => $this->__('Disabled'),
-                    SellingFormat::QTY_MODIFICATION_MODE_ON => $this->__('Enabled'),
+                    SellingFormat::QTY_MODIFICATION_MODE_OFF => __('Disabled'),
+                    SellingFormat::QTY_MODIFICATION_MODE_ON => __('Enabled'),
                 ],
                 'value' => $formData['qty_modification_mode'],
-                'tooltip' => $this->__('<b>Enables</b> to set the Quantity that will be sent on Amazon.'),
+                'tooltip' => __('<b>Enables</b> to set the Quantity that will be sent on Amazon.'),
             ]
         );
 
@@ -342,12 +342,12 @@ class Form extends AbstractForm
             'text',
             [
                 'container_id' => 'qty_min_posted_value_tr',
-                'label' => $this->__('Minimum Quantity to Be Listed'),
+                'label' => __('Minimum Quantity to Be Listed'),
                 'name' => 'qty_min_posted_value',
                 'value' => $formData['qty_min_posted_value'],
                 'class' => 'M2ePro-validate-qty',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'If you have 2 pieces in Stock but set a Minimum Quantity to Be Listed of 5,
                     Item will not be Listed on Amazon.
                     Otherwise, the Item will be Listed with Quantity according to the Settings in the Selling Policy.'
@@ -360,12 +360,12 @@ class Form extends AbstractForm
             'text',
             [
                 'container_id' => 'qty_max_posted_value_tr',
-                'label' => $this->__('Maximum Quantity to Be Listed'),
+                'label' => __('Maximum Quantity to Be Listed'),
                 'name' => 'qty_max_posted_value',
                 'value' => $formData['qty_max_posted_value'],
                 'class' => 'M2ePro-validate-qty',
                 'required' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'If you have 5 pieces in Stock but set a Maximum Quantity of 2 to be Listed,
                     a QTY of 2 will be Listed on Amazon.
                     If you have 1 piece in Stock but Maximum Quantity is set to 3, only 1 will be Listed on Amazon.'
@@ -374,8 +374,8 @@ class Form extends AbstractForm
         );
 
         $priceTitle = $this->configuration->isEnabledBusinessMode() ?
-            $this->__('Price (B2C)') :
-            $this->__('Price');
+            __('Price (B2C)') :
+            __('Price');
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_selling_format_prices',
@@ -409,14 +409,14 @@ class Form extends AbstractForm
             'regular_price_mode',
             self::SELECT,
             [
-                'label' => $this->__('Price'),
+                'label' => __('Price'),
                 'class' => 'select-main',
                 'name' => 'regular_price_mode',
                 'values' => [
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => $this->__('Product Price'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => $this->__('Special Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -450,15 +450,15 @@ class Form extends AbstractForm
             'regular_price_variation_mode',
             self::SELECT,
             [
-                'label' => $this->__('Variation Price Source'),
+                'label' => __('Variation Price Source'),
                 'class' => 'select-main',
                 'name' => 'regular_price_variation_mode',
                 'values' => [
-                    SellingFormat::PRICE_VARIATION_MODE_PARENT => $this->__('Main Product'),
-                    SellingFormat::PRICE_VARIATION_MODE_CHILDREN => $this->__('Associated Products'),
+                    SellingFormat::PRICE_VARIATION_MODE_PARENT => __('Main Product'),
+                    SellingFormat::PRICE_VARIATION_MODE_CHILDREN => __('Associated Products'),
                 ],
                 'value' => $formData['regular_price_variation_mode'],
-                'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
+                'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
             ]
         );
 
@@ -482,15 +482,15 @@ class Form extends AbstractForm
             'regular_map_price_mode',
             self::SELECT,
             [
-                'label' => $this->__('Minimum Advertised Price'),
+                'label' => __('Minimum Advertised Price'),
                 'class' => 'select-main',
                 'name' => 'regular_map_price_mode',
                 'values' => [
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => $this->__('None'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => $this->__('Product Price'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => $this->__('Special Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -501,7 +501,7 @@ class Form extends AbstractForm
                 != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
                     ? $formData['regular_map_price_mode'] : '',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     'The Selling Price for your Product will not be displayed on the Product Detail
                     Page or Offer Listing Page if it is less than the Minimum Advertised Price.
                     The Customer only sees the Price you\'re selling the Item for if they add the
@@ -543,15 +543,15 @@ class Form extends AbstractForm
             'regular_sale_price_mode',
             self::SELECT,
             [
-                'label' => $this->__('Sale Price'),
+                'label' => __('Sale Price'),
                 'class' => 'select-main',
                 'name' => 'regular_sale_price_mode',
                 'values' => [
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => $this->__('None'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => $this->__('Product Price'),
-                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => $this->__('Special Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -602,13 +602,13 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'regular_sale_price_start_date_mode_tr',
-                'label' => $this->__('Start Date'),
+                'label' => __('Start Date'),
                 'class' => 'select-main',
                 'name' => 'regular_sale_price_start_date_mode',
                 'values' => [
-                    SellingFormat::DATE_VALUE => $this->__('Custom Value'),
+                    SellingFormat::DATE_VALUE => __('Custom Value'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -618,7 +618,7 @@ class Form extends AbstractForm
                 'value' => $formData['regular_sale_price_start_date_mode'] != SellingFormat::DATE_ATTRIBUTE
                     ? $formData['regular_sale_price_start_date_mode'] : '',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Time and date when the <i>Sale Price</i> will be displayed on Amazon.'),
+                'tooltip' => __('Time and date when the <i>Sale Price</i> will be displayed on Amazon.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
@@ -636,7 +636,7 @@ class Form extends AbstractForm
             'date',
             [
                 'container_id' => 'regular_sale_price_start_date_value_tr',
-                'label' => $this->__('Start Date Value'),
+                'label' => __('Start Date Value'),
                 'name' => 'regular_sale_price_start_date_value',
                 'value' => $formData['regular_sale_price_start_date_value'],
                 'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
@@ -664,13 +664,13 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'container_id' => 'regular_sale_price_end_date_mode_tr',
-                'label' => $this->__('End Date'),
+                'label' => __('End Date'),
                 'class' => 'select-main',
                 'name' => 'regular_sale_price_end_date_mode',
                 'values' => [
-                    SellingFormat::DATE_VALUE => $this->__('Custom Value'),
+                    SellingFormat::DATE_VALUE => __('Custom Value'),
                     [
-                        'label' => $this->__('Magento Attributes'),
+                        'label' => __('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'is_magento_attribute' => true,
@@ -680,7 +680,7 @@ class Form extends AbstractForm
                 'value' => $formData['regular_sale_price_end_date_mode'] != SellingFormat::DATE_ATTRIBUTE
                     ? $formData['regular_sale_price_end_date_mode'] : '',
                 'create_magento_attribute' => true,
-                'tooltip' => $this->__('Time and date when the <i>Sale Price</i> will be hidden on Amazon.'),
+                'tooltip' => __('Time and date when the <i>Sale Price</i> will be hidden on Amazon.'),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
@@ -698,7 +698,7 @@ class Form extends AbstractForm
             'date',
             [
                 'container_id' => 'regular_sale_price_end_date_value_tr',
-                'label' => $this->__('End Date Value'),
+                'label' => __('End Date Value'),
                 'name' => 'regular_sale_price_end_date_value',
                 'value' => $formData['regular_sale_price_end_date_value'],
                 'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
@@ -718,15 +718,15 @@ class Form extends AbstractForm
             'regular_price_increase_vat_percent',
             self::SELECT,
             [
-                'label' => $this->__('Add VAT Percentage'),
+                'label' => __('Add VAT Percentage'),
                 'class' => 'select-main',
                 'name' => 'regular_price_increase_vat_percent',
                 'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
+                    0 => __('No'),
+                    1 => __('Yes'),
                 ],
                 'value' => (int)($formData['regular_price_vat_percent'] > 0),
-                'tooltip' => $this->__(
+                'tooltip' => __(
                     <<<HTML
 Enable this option to add a specified VAT percent value to the Price when a Product is listed on Amazon.
 <br/>
@@ -749,7 +749,7 @@ HTML
             'text',
             [
                 'container_id' => 'regular_price_vat_percent_tr',
-                'label' => $this->__('VAT Rate, %'),
+                'label' => __('VAT Rate, %'),
                 'name' => 'regular_price_vat_percent',
                 'value' => $formData['regular_price_vat_percent'],
                 'class' => 'M2ePro-validate-vat-percent',
@@ -761,7 +761,7 @@ HTML
             $fieldset = $form->addFieldset(
                 'magento_block_amazon_template_selling_format_business_prices',
                 [
-                    'legend' => $this->__('Price (B2B)'),
+                    'legend' => __('Price (B2B)'),
                     'collapsable' => false,
                 ]
             );
@@ -790,14 +790,14 @@ HTML
                 'business_price_mode',
                 self::SELECT,
                 [
-                    'label' => $this->__('Price'),
+                    'label' => __('Price'),
                     'class' => 'select-main',
                     'name' => 'business_price_mode',
                     'values' => [
-                        \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => $this->__('Product Price'),
-                        \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => $this->__('Special Price'),
+                        \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                        \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
                         [
-                            'label' => $this->__('Magento Attributes'),
+                            'label' => __('Magento Attributes'),
                             'value' => $preparedAttributes,
                             'attrs' => [
                                 'is_magento_attribute' => true,
@@ -831,15 +831,15 @@ HTML
                 'business_price_variation_mode',
                 self::SELECT,
                 [
-                    'label' => $this->__('Variation Price Source'),
+                    'label' => __('Variation Price Source'),
                     'class' => 'select-main',
                     'name' => 'business_price_variation_mode',
                     'values' => [
-                        SellingFormat::PRICE_VARIATION_MODE_PARENT => $this->__('Main Product'),
-                        SellingFormat::PRICE_VARIATION_MODE_CHILDREN => $this->__('Associated Products'),
+                        SellingFormat::PRICE_VARIATION_MODE_PARENT => __('Main Product'),
+                        SellingFormat::PRICE_VARIATION_MODE_CHILDREN => __('Associated Products'),
                     ],
                     'value' => $formData['business_price_variation_mode'],
-                    'tooltip' => $this->__('Choose the source of the price value for Bundle Products variations.'),
+                    'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
                 ]
             );
 
@@ -847,15 +847,15 @@ HTML
                 'business_price_increase_vat_percent',
                 self::SELECT,
                 [
-                    'label' => $this->__('Add VAT Percentage'),
+                    'label' => __('Add VAT Percentage'),
                     'class' => 'select-main',
                     'name' => 'business_price_increase_vat_percent',
                     'values' => [
-                        0 => $this->__('No'),
-                        1 => $this->__('Yes'),
+                        0 => __('No'),
+                        1 => __('Yes'),
                     ],
                     'value' => (int)($formData['business_price_vat_percent'] > 0),
-                    'tooltip' => $this->__(
+                    'tooltip' => __(
                         <<<HTML
 Enable this option to add a specified VAT percent value to the Price when a Product is listed on Amazon.
 <br/>
@@ -878,7 +878,7 @@ HTML
                 'text',
                 [
                     'container_id' => 'business_price_vat_percent_tr',
-                    'label' => $this->__('VAT Rate, %'),
+                    'label' => __('VAT Rate, %'),
                     'name' => 'business_price_vat_percent',
                     'value' => $formData['business_price_vat_percent'],
                     'class' => 'M2ePro-validate-vat-percent',
@@ -912,13 +912,13 @@ HTML
                 'business_discounts_mode',
                 self::SELECT,
                 [
-                    'label' => $this->__('Discounts'),
+                    'label' => __('Discounts'),
                     'class' => 'select-main M2ePro-business-discount-availability',
                     'name' => 'business_discounts_mode',
                     'values' => [
-                        SellingFormat::BUSINESS_DISCOUNTS_MODE_NONE => $this->__('None'),
-                        SellingFormat::BUSINESS_DISCOUNTS_MODE_TIER => $this->__('Product Tier Price'),
-                        SellingFormat::BUSINESS_DISCOUNTS_MODE_CUSTOM_VALUE => $this->__('Custom Value'),
+                        SellingFormat::BUSINESS_DISCOUNTS_MODE_NONE => __('None'),
+                        SellingFormat::BUSINESS_DISCOUNTS_MODE_TIER => __('Product Tier Price'),
+                        SellingFormat::BUSINESS_DISCOUNTS_MODE_CUSTOM_VALUE => __('Custom Value'),
                     ],
                     'value' => $formData['business_discounts_mode'],
                     'after_element_html' => $tooltipDiscountPriceMode,
@@ -941,13 +941,13 @@ HTML
                 self::SELECT,
                 [
                     'container_id' => 'business_discounts_tier_customer_group_id_tr',
-                    'label' => $this->__('Customer Group'),
+                    'label' => __('Customer Group'),
                     'class' => 'select-main',
                     'name' => 'business_discounts_tier_customer_group_id',
                     'values' => $values,
                     'value' => $formData['business_discounts_tier_customer_group_id'],
                     'required' => true,
-                    'tooltip' => $this->__('Select a Customer Group that a tier pricing is available for.'),
+                    'tooltip' => __('Select a Customer Group that a tier pricing is available for.'),
                 ]
             );
 
@@ -968,7 +968,7 @@ HTML
         $fieldSet = $form->addFieldset(
             'magento_block_amazon_template_selling_format_repricer',
             [
-                'legend' => $this->__('Repricer'),
+                'legend' => __('Repricer'),
                 'collapsable' => false,
             ]
         );
@@ -1037,57 +1037,57 @@ HTML
         ]);
 
         $this->jsTranslator->addTranslations([
-            'QTY' => $this->__('QTY'),
-            'Price' => $this->__('Price'),
-            'Regular Price' => $this->__('Regular Price'),
-            'Wrong date range.' => $this->__('Wrong date range.'),
+            'QTY' => __('QTY'),
+            'Price' => __('Price'),
+            'Regular Price' => __('Regular Price'),
+            'Wrong date range.' => __('Wrong date range.'),
 
-            'Product Price for Amazon Listing(s).' => $this->__('Product Price for Amazon Listing(s).'),
+            'Product Price for Amazon Listing(s).' => __('Product Price for Amazon Listing(s).'),
             'Business Product Price for Amazon Listing(s).' =>
-                $this->__('Business Product Price for Amazon Listing(s).'),
+                __('Business Product Price for Amazon Listing(s).'),
             'The Price of Products in Amazon Listing(s).<br/><b>Note:</b>
             The Final Price is only used for Simple Products.' =>
-                $this->__(
+                __(
                     'The Price of Products in Amazon Listing(s).
                     <br/><b>Note:</b> The Final Price is only used for Simple Products.'
                 ),
 
             'The Price, at which you want to sell your Product(s) at specific time.' =>
-                $this->__(
+                __(
                     'The Price, at which you want to sell your Product(s) at specific time.'
                 ),
             'The Price, at which you want to sell your Product(s) at specific time.
             <br/><b>Note:</b> The Final Price is only used for Simple Products.' =>
-                $this->__(
+                __(
                     'The Price, at which you want to sell your Product(s) at specific time.
                     <br/><b>Note:</b> The Final Price is only used for Simple Products.'
                 ),
 
-            'Add Selling Policy' => $this->__('Add Selling Policy'),
+            'Add Selling Policy' => __('Add Selling Policy'),
             'The specified Title is already used for other Policy. Policy Title must be unique.' =>
-                $this->__(
+                __(
                     'The specified Title is already used for other Policy. Policy Title must be unique.'
                 ),
             'You should select Attribute Sets first and press Confirm Button.' =>
-                $this->__(
+                __(
                     'You should select Attribute Sets first and press Confirm Button.'
                 ),
-            'Coefficient is not valid.' => $this->__('Coefficient is not valid.'),
+            'Coefficient is not valid.' => __('Coefficient is not valid.'),
 
-            'Wrong value. Only integer numbers.' => $this->__('Wrong value. Only integer numbers.'),
-            'wrong_value_more_than_30' => $this->__(
+            'Wrong value. Only integer numbers.' => __('Wrong value. Only integer numbers.'),
+            'wrong_value_more_than_30' => __(
                 'Wrong value. Must be no more than 30. Max applicable length is 6 characters,
                  including the decimal (e.g., 12.345).'
             ),
-            'At least one Selling Type should be enabled.' => $this->__('At least one Selling Type should be enabled.'),
-            'The Quantity value should be unique.' => $this->__('The Quantity value should be unique.'),
+            'At least one Selling Type should be enabled.' => __('At least one Selling Type should be enabled.'),
+            'The Quantity value should be unique.' => __('The Quantity value should be unique.'),
             'You should specify a unique pair of Magento Attribute and Price Change value for each Discount Rule.' =>
-                $this->__(
+                __(
                     'You should specify a unique pair of Magento Attribute and Price Change value
                     for each Discount Rule.'
                 ),
-            'You should add at least one Discount Rule.' => $this->__('You should add at least one Discount Rule.'),
-            'Price Change is not valid.' => $this->__('Price Change is not valid.'),
+            'You should add at least one Discount Rule.' => __('You should add at least one Discount Rule.'),
+            'Price Change is not valid.' => __('Price Change is not valid.'),
         ]);
 
         $this->js->add("M2ePro.formData.id = '{$this->getRequest()->getParam('id')}';");
@@ -1112,8 +1112,9 @@ HTML
             $this->js->add("M2ePro.formData.$item = '{$this->dataHelper->escapeJs($formData[$item])}';");
         }
 
+        $jsonFormData = \Ess\M2ePro\Helper\Json::encode($formData['discount_rules']);
         $this->js->add(
-            "M2ePro.formData.discount_rules = {$this->dataHelper->jsonEncode($formData['discount_rules'])};"
+            "M2ePro.formData.discount_rules = {$jsonFormData};"
         );
 
         $injectPriceChangeJs = $this->getPriceChangeInjectorJs($formData);
@@ -1198,7 +1199,7 @@ JS
             $key = $priceType . '_modifier';
             if (!empty($formData[$key])) {
                 // ensure that data always have a valid json format
-                $json = \Ess\M2ePro\Helper\json::encode(
+                $json = \Ess\M2ePro\Helper\Json::encode(
                     \Ess\M2ePro\Helper\Json::decode($formData[$key]) ?: []
                 );
 

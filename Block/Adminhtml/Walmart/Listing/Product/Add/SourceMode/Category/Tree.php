@@ -27,9 +27,6 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
 
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Catalog\Model\ResourceModel\Category\TreeFactory $categoryTreeFactory,
@@ -39,11 +36,11 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->categoryTreeFactory = $categoryTreeFactory;
+        $this->databaseHelper = $databaseHelper;
         parent::__construct(
             $blockContext,
             $context,
@@ -52,8 +49,6 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
             $categoryFactory,
             $data
         );
-        $this->databaseHelper = $databaseHelper;
-        $this->dataHelper = $dataHelper;
     }
 
     //########################################
@@ -360,7 +355,7 @@ HTML;
 
     public function getInfoJson()
     {
-        return $this->dataHelper->jsonEncode([
+        return \Ess\M2ePro\Helper\Json::encode([
             'category_products' => $this->getProductsCountForEachCategory(),
             'total_products_count' => count($this->getSelectedIds()),
             'total_categories_count' => $this->getAffectedCategoriesCount(),

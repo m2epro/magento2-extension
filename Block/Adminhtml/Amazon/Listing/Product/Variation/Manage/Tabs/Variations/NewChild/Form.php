@@ -264,7 +264,7 @@ CSS
     protected function _toHtml()
     {
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-            'content' => $this->__(
+            'content' => __(
                 'To sell Amazon Child Products it is necessary to set correspondence between Magento Variations
                 and Amazon Variations. <br/><br/>
 

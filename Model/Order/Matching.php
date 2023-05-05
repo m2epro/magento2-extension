@@ -88,8 +88,8 @@ class Matching extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $matching->addData([
             'product_id' => (int)$productId,
-            'input_variation_options' => $this->getHelper('Data')->jsonEncode($input),
-            'output_variation_options' => $this->getHelper('Data')->jsonEncode($output),
+            'input_variation_options' => \Ess\M2ePro\Helper\Json::encode($input),
+            'output_variation_options' => \Ess\M2ePro\Helper\Json::encode($output),
             'hash' => $hash,
             'component' => $component,
         ]);

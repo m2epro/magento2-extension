@@ -24,7 +24,7 @@ class AllItems extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AllItems::class));
-        $this->getResultPage()->getConfig()->getTitle()->prepend(__('Items'));
+        $this->getResultPage()->getConfig()->getTitle()->prepend(__('All Items'));
 
         return $this->getResult();
     }

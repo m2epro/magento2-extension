@@ -156,7 +156,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     //########################################
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

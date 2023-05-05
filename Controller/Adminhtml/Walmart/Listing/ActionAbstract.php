@@ -136,7 +136,7 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Walmart\M
             'action_type' => $action,
             'is_force' => true,
             'tag' => null,
-            'additional_data' => $this->getHelper('Data')->jsonEncode(
+            'additional_data' => \Ess\M2ePro\Helper\Json::encode(
                 [
                     'params' => $params,
                 ]

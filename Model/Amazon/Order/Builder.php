@@ -20,6 +20,7 @@ class Builder extends AbstractModel
 
     public const UPDATE_STATUS = 'status';
     public const UPDATE_EMAIL = 'email';
+    public const UPDATE_B2B_VAT_REVERSE_CHARGE = 'b2b_vat_reverse_charge';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
@@ -95,10 +96,10 @@ class Builder extends AbstractModel
         // Init sale data
         // ---------------------------------------
         $this->setData('paid_amount', (float)$data['paid_amount']);
-        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($this->prepareTaxDetails($data)));
+        $this->setData('tax_details', \Ess\M2ePro\Helper\Json::encode($this->prepareTaxDetails($data)));
         $this->setData('ioss_number', $data['items'][0]['ioss_number']);
         $this->setData('tax_registration_id', $this->prepareTaxRegistrationId($data));
-        $this->setData('discount_details', $this->getHelper('Data')->jsonEncode($data['discount_details']));
+        $this->setData('discount_details', \Ess\M2ePro\Helper\Json::encode($data['discount_details']));
         $this->setData('currency', $data['currency']);
         $this->setData('qty_shipped', $data['qty_shipped']);
         $this->setData('qty_unshipped', $data['qty_unshipped']);
@@ -399,7 +400,7 @@ class Builder extends AbstractModel
         } else {
             $this->setData(
                 'shipping_address',
-                $this->getHelper('Data')->jsonEncode($this->getData('shipping_address'))
+                \Ess\M2ePro\Helper\Json::encode($this->getData('shipping_address'))
             );
 
             foreach ($this->getData() as $key => $value) {
@@ -444,13 +445,18 @@ class Builder extends AbstractModel
 
     //########################################
 
-    protected function checkUpdates()
+    protected function checkUpdates(): void
     {
         if ($this->hasUpdatedStatus()) {
             $this->updates[] = self::UPDATE_STATUS;
         }
+
         if ($this->hasUpdatedEmail()) {
             $this->updates[] = self::UPDATE_EMAIL;
+        }
+
+        if ($this->hasUpdatedVat()) {
+            $this->updates[] = self::UPDATE_B2B_VAT_REVERSE_CHARGE;
         }
     }
 
@@ -477,6 +483,27 @@ class Builder extends AbstractModel
         }
 
         return filter_var($newEmail, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    protected function hasUpdatedVat(): bool
+    {
+        if (!$this->isUpdated()) {
+            return false;
+        }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Order $amazonOrder */
+        $amazonOrder = $this->order->getChildObject();
+        if (!$amazonOrder->isBusiness()) {
+            return false;
+        }
+
+        $oldTaxDetails = \Ess\M2ePro\Helper\Json::decode($amazonOrder->getData('tax_details'));
+        $oldTaxSum = (float)array_sum(array_values($oldTaxDetails));
+
+        $newTaxDetails = \Ess\M2ePro\Helper\Json::decode($this->getData('tax_details'));
+        $newTaxSum = (float)array_sum(array_values($newTaxDetails));
+
+        return $newTaxSum !== $oldTaxSum;
     }
 
     //########################################
@@ -520,6 +547,19 @@ class Builder extends AbstractModel
 
         if ($this->hasUpdate(self::UPDATE_EMAIL)) {
             $magentoOrderUpdater->updateCustomerEmail($this->order->getChildObject()->getBuyerEmail());
+        }
+
+        if ($this->hasUpdate(self::UPDATE_B2B_VAT_REVERSE_CHARGE)) {
+            $this->order->markAsVatChanged();
+            $message = 'Reverse charge (0% VAT) applied on Amazon';
+            $magentoOrderUpdater->updateComments([__($message)]);
+            $this->order->addInfoLog(
+                $message,
+                [],
+                [],
+                false,
+                [\Ess\M2ePro\Model\Order::ADDITIONAL_DATA_KEY_VAT_REVERSE_CHARGE => true]
+            );
         }
 
         $magentoOrderUpdater->finishUpdate();

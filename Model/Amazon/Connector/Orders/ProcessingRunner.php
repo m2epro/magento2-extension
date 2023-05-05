@@ -29,7 +29,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
                 'processing_id' => $this->getProcessingObject()->getId(),
                 'order_id' => $params['order_id'],
                 'type' => $params['action_type'],
-                'request_data' => $this->getHelper('Data')->jsonEncode($params['request_data']),
+                'request_data' => \Ess\M2ePro\Helper\Json::encode($params['request_data']),
             ]
         );
         $processingAction->save();

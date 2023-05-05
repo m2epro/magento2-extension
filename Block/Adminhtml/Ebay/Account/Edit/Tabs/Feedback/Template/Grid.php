@@ -138,7 +138,7 @@ HTML;
         return $this->getUrl('*/ebay_account_feedback_template/getGrid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }

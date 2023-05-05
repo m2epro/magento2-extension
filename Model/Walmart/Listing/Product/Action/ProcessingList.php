@@ -67,20 +67,14 @@ class ProcessingList extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return (int)$this->getData('relist_request_pending_single_id');
     }
 
-    /**
-     * @return array
-     */
     public function getRelistRequestData()
     {
-        return $this->getHelper('Data')->jsonDecode($this->getData('relist_request_data'));
+        return \Ess\M2ePro\Helper\Json::decode($this->getData('relist_request_data'));
     }
 
-    /**
-     * @return array
-     */
     public function getRelistConfiguratorData()
     {
-        return $this->getHelper('Data')->jsonDecode($this->getData('relist_configurator_data'));
+        return \Ess\M2ePro\Helper\Json::decode($this->getData('relist_configurator_data'));
     }
 
     //####################################

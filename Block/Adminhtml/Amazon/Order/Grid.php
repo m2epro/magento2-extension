@@ -142,7 +142,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'purchase_create_date',
             [
-                'header' => $this->__('Sale Date'),
+                'header' => __('Sale Date'),
                 'align' => 'left',
                 'type' => 'datetime',
                 'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
@@ -157,7 +157,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'shipping_date_to',
             [
-                'header' => $this->__('Ship By Date'),
+                'header' => __('Ship By Date'),
                 'align' => 'left',
                 'type' => 'datetime',
                 'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
@@ -172,7 +172,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'magento_order_num',
             [
-                'header' => $this->__('Magento Order #'),
+                'header' => __('Magento Order #'),
                 'align' => 'left',
                 'index' => 'so.increment_id',
                 'width' => '110px',
@@ -183,7 +183,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'amazon_order_id',
             [
-                'header' => $this->__('Amazon Order #'),
+                'header' => __('Amazon Order #'),
                 'align' => 'left',
                 'width' => '160px',
                 'index' => 'amazon_order_id',
@@ -194,7 +194,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'amazon_order_items',
             [
-                'header' => $this->__('Items'),
+                'header' => __('Items'),
                 'align' => 'left',
                 'index' => 'amazon_order_items',
                 'sortable' => false,
@@ -207,7 +207,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'buyer',
             [
-                'header' => $this->__('Buyer'),
+                'header' => __('Buyer'),
                 'align' => 'left',
                 'index' => 'buyer_name',
                 'width' => '120px',
@@ -219,7 +219,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'paid_amount',
             [
-                'header' => $this->__('Total Paid'),
+                'header' => __('Total Paid'),
                 'align' => 'left',
                 'width' => '110px',
                 'index' => 'paid_amount',
@@ -231,15 +231,15 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'is_afn_channel',
             [
-                'header' => $this->__('Fulfillment'),
+                'header' => __('Fulfillment'),
                 'width' => '100px',
                 'index' => 'is_afn_channel',
                 'filter_index' => 'second_table.is_afn_channel',
                 'type' => 'options',
                 'sortable' => false,
                 'options' => [
-                    0 => $this->__('Merchant'),
-                    1 => $this->__('Amazon'),
+                    0 => __('Merchant'),
+                    1 => __('Amazon'),
                 ],
                 'frame_callback' => [$this, 'callbackColumnAfnChannel'],
             ]
@@ -248,24 +248,24 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'status',
             [
-                'header' => $this->__('Status'),
+                'header' => __('Status'),
                 'align' => 'left',
                 'width' => '50px',
                 'index' => 'status',
                 'filter_index' => 'second_table.status',
                 'type' => 'options',
                 'options' => [
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING => $this->__('Pending'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING => __('Pending'),
                     \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING_RESERVED =>
-                        $this->__('Pending / QTY Reserved'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY => $this->__('Partially Shipped'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED => $this->__('Shipped'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => $this->__('Invoice Not Confirmed'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE => $this->__('Unfulfillable'),
-                    \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED => $this->__('Canceled'),
+                        __('Pending / QTY Reserved'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED => __('Unshipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY => __('Partially Shipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED => __('Shipped'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => __('Invoice Not Confirmed'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE => __('Unfulfillable'),
+                    \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED => __('Canceled'),
                     \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED =>
-                        $this->__('Unshipped (Cancellation Requested)'),
+                        __('Unshipped (Cancellation Requested)'),
                 ],
                 'frame_callback' => [$this, 'callbackColumnStatus'],
                 'filter_condition_callback' => [$this, 'callbackFilterStatus'],
@@ -275,7 +275,7 @@ class Grid extends AbstractGrid
         $this->addColumn(
             'actions',
             [
-                'header' => $this->__('Actions'),
+                'header' => __('Actions'),
                 'align' => 'left',
                 'width' => '100px',
                 'type' => 'action',
@@ -286,26 +286,26 @@ class Grid extends AbstractGrid
                 'getter' => 'getId',
                 'actions' => [
                     [
-                        'caption' => $this->__('View'),
+                        'caption' => __('View'),
                         'url' => [
                             'base' => '*/amazon_order/view',
                         ],
                         'field' => 'id',
                     ],
                     [
-                        'caption' => $this->__('Create Magento Order'),
+                        'caption' => __('Create Magento Order'),
                         'url' => [
                             'base' => '*/amazon_order/createMagentoOrder',
                         ],
                         'field' => 'id',
                     ],
                     [
-                        'caption' => $this->__('Mark As Shipped'),
+                        'caption' => __('Mark As Shipped'),
                         'field' => 'id',
                         'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.markAsShippedAction',
                     ],
                     [
-                        'caption' => $this->__('Amazon\'s Shipping Services'),
+                        'caption' => __('Amazon\'s Shipping Services'),
                         'field' => 'id',
                         'onclick_action' => 'AmazonOrderMerchantFulfillmentObj.getPopupAction',
                     ],
@@ -329,54 +329,54 @@ class Grid extends AbstractGrid
         $this->getMassactionBlock()->addItem(
             'reservation_place',
             [
-                'label' => $this->__('Reserve QTY'),
+                'label' => __('Reserve QTY'),
                 'url' => $this->getUrl('*/order/reservationPlace'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'reservation_cancel',
             [
-                'label' => $this->__('Cancel QTY Reserve'),
+                'label' => __('Cancel QTY Reserve'),
                 'url' => $this->getUrl('*/order/reservationCancel'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'ship',
             [
-                'label' => $this->__('Mark Order(s) as Shipped'),
+                'label' => __('Mark Order(s) as Shipped'),
                 'url' => $this->getUrl('*/amazon_order/updateShippingStatus'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'resend_shipping',
             [
-                'label' => $this->__('Resend Shipping Information'),
+                'label' => __('Resend Shipping Information'),
                 'url' => $this->getUrl('*/order/resubmitShippingInfo'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'resend_invoice_creditmemo',
             [
-                'label' => $this->__('Resend Invoice / Credit Memo'),
+                'label' => __('Resend Invoice / Credit Memo'),
                 'url' => $this->getUrl('*/amazon_order/resendInvoiceCreditmemo'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
         $this->getMassactionBlock()->addItem(
             'create_order',
             [
-                'label' => $this->__('Create Magento Order'),
+                'label' => __('Create Magento Order'),
                 'url' => $this->getUrl('*/amazon_order/createMagentoOrder'),
-                'confirm' => $this->__('Are you sure?'),
+                'confirm' => __('Are you sure?'),
             ]
         );
 
@@ -452,7 +452,7 @@ HTML;
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
 
         if ($notes) {
-            $htmlNotesCount = $this->__(
+            $htmlNotesCount = __(
                 'You have a custom note for the order. It can be reviewed on the order detail page.'
             );
 
@@ -474,7 +474,7 @@ HTML;
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)
     {
         $magentoOrderId = $row['magento_order_id'];
-        $returnString = $this->__('N/A');
+        $returnString = __('N/A');
 
         if ($magentoOrderId !== null) {
             if ($row['magento_order_num']) {
@@ -482,7 +482,7 @@ HTML;
                 $orderUrl = $this->getUrl('sales/order/view', ['order_id' => $magentoOrderId]);
                 $returnString = '<a href="' . $orderUrl . '" target="_blank">' . $magentoOrderNumber . '</a>';
             } else {
-                $returnString = '<span style="color: red;">' . $this->__('Deleted') . '</span>';
+                $returnString = '<span style="color: red;">' . __('Deleted') . '</span>';
             }
         }
 
@@ -548,7 +548,7 @@ HTML;
             $editItemHtml = '';
             if ($isShowEditLink) {
                 $orderItemId = $item->getId();
-                $orderItemEditLabel = $this->__('edit');
+                $orderItemEditLabel = __('edit');
 
                 $js = "{OrderEditItemObj.edit('{$gridId}', {$orderItemId});}";
 
@@ -559,7 +559,7 @@ HTML;
 
             $skuHtml = '';
             if ($item->getChildObject()->getSku()) {
-                $skuLabel = $this->__('SKU');
+                $skuLabel = __('SKU');
                 $sku = $this->dataHelper->escapeHtml($item->getChildObject()->getSku());
                 if ($product !== null) {
                     $productUrl = $this->getUrl('catalog/product/edit', ['id' => $product->getId()]);
@@ -573,7 +573,7 @@ STRING;
 STRING;
             }
 
-            $generalIdLabel = $this->__($item->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
+            $generalIdLabel = __($item->getChildObject()->getIsIsbnGeneralId() ? 'ISBN' : 'ASIN');
             $generalId = $this->dataHelper->escapeHtml($item->getChildObject()->getGeneralId());
 
             $itemUrl = $this->amazonHelper->getItemUrl(
@@ -588,7 +588,7 @@ STRING;
 STRING;
 
             $itemTitle = $this->dataHelper->escapeHtml($item->getChildObject()->getTitle());
-            $qtyLabel = $this->__('QTY');
+            $qtyLabel = __('QTY');
             $qtyHtml = <<<HTML
 <span style="padding-left: 10px;"><b>{$qtyLabel}:</b> {$item->getChildObject()->getQtyPurchased()}</span>
 HTML;
@@ -605,7 +605,7 @@ HTML;
     public function callbackColumnBuyer($value, $row, $column, $isExport)
     {
         if ($row->getChildObject()->getData('buyer_name') == '') {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         return $this->dataHelper->escapeHtml($row->getChildObject()->getData('buyer_name'));
@@ -638,24 +638,24 @@ HTML;
         if (
             $row->getChildObject()->getData('is_afn_channel') == Product::IS_AFN_CHANNEL_YES
         ) {
-            return '<span style="font-weight: bold;">' . $this->__('Amazon') . '</span>';
+            return '<span style="font-weight: bold;">' . __('Amazon') . '</span>';
         }
 
-        return $this->__('Merchant');
+        return __('Merchant');
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
         $statuses = [
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING => $this->__('Pending'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY => $this->__('Partially Shipped'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED => $this->__('Shipped'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => $this->__('Invoice Not Confirmed'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE => $this->__('Unfulfillable'),
-            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED => $this->__('Canceled'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING => __('Pending'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNSHIPPED => __('Unshipped'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED_PARTIALLY => __('Partially Shipped'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_SHIPPED => __('Shipped'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_INVOICE_UNCONFIRMED => __('Invoice Not Confirmed'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_UNFULFILLABLE => __('Unfulfillable'),
+            \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED => __('Canceled'),
             \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED =>
-                $this->__('Unshipped (Cancellation Requested)'),
+                __('Unshipped (Cancellation Requested)'),
         ];
         $status = $row->getChildObject()->getData('status');
 
@@ -674,7 +674,7 @@ HTML;
         if ($row->isSetProcessingLock('update_order_status')) {
             $value .= '<br/>';
             $value .= '<span style="color: gray;">['
-                . $this->__('Status Update in Progress...') . ']</span>';
+                . __('Status Update in Progress...') . ']</span>';
         }
 
         return $value;
@@ -790,7 +790,7 @@ HTML;
         return $this->getUrl('*/amazon_order/grid', ['_current' => true]);
     }
 
-    public function getRowUrl($row)
+    public function getRowUrl($item)
     {
         return false;
     }
@@ -826,22 +826,22 @@ JS
 
         $this->jsTranslator->addTranslations(
             [
-                'View Full Order Log' => $this->__('View Full Order Log'),
-                'Amazon\'s Shipping Services' => $this->__('Amazon\'s Shipping Services'),
-                'Please select an option.' => $this->__('Please select an option.'),
-                'This is a required fields.' => $this->__('This is a required fields.'),
+                'View Full Order Log' => __('View Full Order Log'),
+                'Amazon\'s Shipping Services' => __('Amazon\'s Shipping Services'),
+                'Please select an option.' => __('Please select an option.'),
+                'This is a required fields.' => __('This is a required fields.'),
                 'Please enter a number greater than 0 in this fields.' =>
-                    $this->__('Please enter a number greater than 0 in this fields.'),
+                    __('Please enter a number greater than 0 in this fields.'),
                 'Are you sure you want to create Shipment now?' =>
-                    $this->__('Are you sure you want to create Shipment now?'),
-                'Please enter a valid date.' => $this->__('Please enter a valid date.'),
+                    __('Are you sure you want to create Shipment now?'),
+                'Please enter a valid date.' => __('Please enter a valid date.'),
             ]
         );
 
         $tempGridIds = [];
         $this->amazonHelper->isEnabled() && $tempGridIds[] = $this->getId();
 
-        $tempGridIds = $this->dataHelper->jsonEncode($tempGridIds);
+        $tempGridIds = \Ess\M2ePro\Helper\Json::encode($tempGridIds);
 
         $this->js->add(
             <<<JS
