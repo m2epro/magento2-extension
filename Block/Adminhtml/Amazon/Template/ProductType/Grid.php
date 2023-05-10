@@ -85,7 +85,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'type' => 'text',
                 'index' => 'product_type_title',
                 'escape' => true,
-                'filter_index' => 'product_type_title',
+                'filter_index' => 'adpt.title',
                 'frame_callback' => [$this, 'callbackColumnTitle'],
             ]
         );

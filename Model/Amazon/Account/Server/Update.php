@@ -21,14 +21,11 @@ class Update
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Amazon\Account $account
-     * @param string $oAuthCode
-     *
-     * @return void
-     */
-    public function process(\Ess\M2ePro\Model\Amazon\Account $account, string $oAuthCode): void
-    {
+    public function process(
+        \Ess\M2ePro\Model\Amazon\Account $account,
+        string $oAuthCode,
+        string $merchantId
+    ): void {
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Account\Update\EntityRequester $connectorObj */
         $connectorObj = $this->dispatcher->getConnector(
             'account',
@@ -38,11 +35,20 @@ class Update
                 'account_server_hash' => $account->getServerHash(),
                 'oauth_code' => $oAuthCode,
                 'marketplace_id' => $account->getMarketplace()->getNativeId(),
-                'merchant_id' => $account->getMerchantId(),
+                'merchant_id' => $merchantId,
             ]
         );
 
         $this->dispatcher->process($connectorObj);
+
+        $messages = $connectorObj->getResponse()->getMessages();
+        if ($messages->hasErrorEntities()) {
+            $errorMessages = $messages->getErrorEntities();
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+            $message = reset($errorMessages);
+
+            throw new \Ess\M2ePro\Model\Exception((string)$message->getText());
+        }
 
         $responseData = $connectorObj->getResponseData();
 

@@ -1,22 +1,61 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Dashboard;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
-    /**
-     * @ingeritdoc
-     */
+    /** @var \Ess\M2ePro\Block\Adminhtml\DashboardFactory */
+    private $dashboardFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Dashboard\Sales\CachedCalculator */
+    private $salesCalculator;
+    /** @var \Ess\M2ePro\Model\Amazon\Dashboard\Products\CachedCalculator */
+    private $productsCalculator;
+    /** @var \Ess\M2ePro\Model\Amazon\Dashboard\Shipments\CachedCalculator */
+    private $shipmentsCalculator;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Shipments\UrlStorage */
+    private $shipmentsUrlStorage;
+    /** @var \Ess\M2ePro\Model\Amazon\Dashboard\Errors\CachedCalculator */
+    private $errorsCalculator;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Errors\UrlStorage */
+    private $errorsUrlStorage;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\DashboardFactory $dashboardFactory,
+        \Ess\M2ePro\Model\Amazon\Dashboard\Sales\CachedCalculator $salesCalculator,
+        \Ess\M2ePro\Model\Amazon\Dashboard\Products\CachedCalculator $productsCalculator,
+        \Ess\M2ePro\Model\Amazon\Dashboard\Shipments\CachedCalculator $shipmentsCalculator,
+        \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Shipments\UrlStorage $shipmentsUrlStorage,
+        \Ess\M2ePro\Model\Amazon\Dashboard\Errors\CachedCalculator $errorsCalculator,
+        \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Errors\UrlStorage $errorsUrlStorage,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->dashboardFactory = $dashboardFactory;
+        $this->salesCalculator = $salesCalculator;
+        $this->productsCalculator = $productsCalculator;
+        $this->shipmentsCalculator = $shipmentsCalculator;
+        $this->shipmentsUrlStorage = $shipmentsUrlStorage;
+        $this->errorsCalculator = $errorsCalculator;
+        $this->errorsUrlStorage = $errorsUrlStorage;
+    }
+
     public function execute()
     {
-        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\DashboardDemo::class));
-        $this->getResultPage()->getConfig()->getTitle()->prepend(__('Dashboard. Coming soon...'));
+        $block = $this->dashboardFactory->create(
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            $this->getLayout(),
+            $this->salesCalculator,
+            $this->productsCalculator,
+            $this->shipmentsCalculator,
+            $this->shipmentsUrlStorage,
+            $this->errorsCalculator,
+            $this->errorsUrlStorage
+        );
+
+        $this->addContent($block);
+        $this->getResultPage()->getConfig()->getTitle()->prepend($block->getTitle());
 
         return $this->getResult();
     }

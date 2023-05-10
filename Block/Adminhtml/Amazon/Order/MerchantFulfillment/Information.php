@@ -250,8 +250,8 @@ HTML;
                 ) {
                     $dimensionValue .= __('in');
                 } elseif (
-                    $fulfillmentData['package']['dimensions']['DIMENSION_MEASURE_CENTIMETERS'] ==
-                    MerchantFulfillment::DIMENSION_MEASURE_INCHES
+                    $fulfillmentData['package']['dimensions']['unit_of_measure'] ==
+                    MerchantFulfillment::DIMENSION_MEASURE_CENTIMETERS
                 ) {
                     $dimensionValue .= __('cm');
                 } else {

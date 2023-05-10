@@ -16,6 +16,8 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
 {
     public const LISTING_ID_FIELD = 'listing_id';
     public const PRODUCT_ID_FIELD = 'product_id';
+    public const COMPONENT_MODE_FIELD = 'component_mode';
+    public const STATUS_FIELD = 'status';
 
     /** @var \Magento\Framework\EntityManager\MetadataPool  */
     protected $metadataPool;

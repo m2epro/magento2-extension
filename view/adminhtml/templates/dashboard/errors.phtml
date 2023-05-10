@@ -1,0 +1,14 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors $block */ ?>
+
+<div class="cards">
+    <?php foreach ($block->getCardItems() as $item): ?>
+        <div class="card-item">
+            <h4><?= $item['title'] ?></h4>
+            <?php if($item['url']): ?>
+                <p><a href="<?= $item['url'] ?>" target="_blank"><?= $item['value'] ?></a></p>
+            <?php else: ?>
+                <p><?= $item['value'] ?></p>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+</div>

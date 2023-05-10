@@ -1,0 +1,26 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard $block */ ?>
+
+<div class="col-m-12 component-tabs-container">
+    <?= $block->getComponentTabs()->toHtml() ?>
+</div>
+
+<div class="row">
+    <div class="col-m-3 right-border-line">
+        <div class="shipments-block">
+            <h2>Shipments</h2>
+            <?= $block->getShipments()->toHtml() ?>
+        </div>
+        <div class="errors-block">
+            <h2>Errors</h2>
+            <?= $block->getErrors()->toHtml() ?>
+        </div>
+    </div>
+    <div class="col-m-6 sales-block">
+        <h2>Sales</h2>
+        <?= $block->getSales()->toHtml() ?>
+    </div>
+    <div class="col-m-3">
+        <h2>Products</h2>
+        <?= $block->getProducts()->toHtml() ?>
+    </div>
+</div>

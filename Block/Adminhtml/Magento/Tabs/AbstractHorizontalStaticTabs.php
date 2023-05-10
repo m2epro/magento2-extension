@@ -12,21 +12,17 @@ abstract class AbstractHorizontalStaticTabs extends \Ess\M2ePro\Block\Adminhtml\
 {
     /** @var array<string, array{content: string, url:string, title: string}> */
     private $tabs = [];
-    /** @var string[]  */
+    /** @var string[] */
     private $registeredCss = [];
+    /** @var string */
+    private $commonCssForTabsContainer = '';
     /** @var string|null */
     private $activeTabId = null;
     /** @var string */
     protected $_template = 'Ess_M2ePro::magento/tabs/horizontal_static.phtml';
 
-    /**
-     * @return void
-     */
     abstract protected function init(): void;
 
-    /**
-     * @inheritDoc
-     */
     protected function _prepareLayout()
     {
         $this->init();
@@ -34,14 +30,6 @@ abstract class AbstractHorizontalStaticTabs extends \Ess\M2ePro\Block\Adminhtml\
         return parent::_prepareLayout();
     }
 
-    /**
-     * @param string $tabId
-     * @param string $content
-     * @param string $url
-     * @param string|null $title
-     *
-     * @return void
-     */
     protected function addTab(
         string $tabId,
         string $content,
@@ -71,57 +59,40 @@ abstract class AbstractHorizontalStaticTabs extends \Ess\M2ePro\Block\Adminhtml\
         return $resultTabs;
     }
 
-    /**
-     * @param string $tabId
-     * @return bool
-     */
     private function isActiveTab(string $tabId): bool
     {
         return $this->activeTabId === $tabId;
     }
 
-    /**
-     * @param string $tabId
-     *
-     * @return void
-     */
-    protected function setActiveTabId(string $tabId): void
+    public function setActiveTabId(string $tabId): void
     {
         $this->activeTabId = $tabId;
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function _toHtml()
     {
-        foreach ($this->registeredCss as $tabId => $css) {
+        $styles = $this->commonCssForTabsContainer;
+        foreach ($this->registeredCss as $tabId => $tabCss) {
             if ($this->isActiveTab($tabId)) {
-                $this->addCss($css);
+                $styles .= $tabCss;
                 break;
             }
+        }
+
+        if (!empty($styles)) {
+            $this->css->add('.m2epro-tabs-horizontal-static{ ' . $styles . ' }');
         }
 
         return parent::_toHtml();
     }
 
-    /**
-     * @param string $styles
-     * @return void
-     */
-    protected function addCss(string $styles): void
-    {
-        $this->css->add('.m2epro-tabs-horizontal-static{ ' . $styles . ' }');
-    }
-
-    /**
-     * @param string $tabId
-     * @param string $css
-     *
-     * @return void
-     */
     protected function registerCssForTab(string $tabId, string $css): void
     {
         $this->registeredCss[$tabId] = $css;
+    }
+
+    protected function addCssForTabsContainer(string $css): void
+    {
+        $this->commonCssForTabsContainer = $css;
     }
 }

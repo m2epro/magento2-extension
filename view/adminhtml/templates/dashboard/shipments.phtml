@@ -1,0 +1,10 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\Shipments $block */ ?>
+
+<div class="cards">
+    <?php foreach ($block->getCardItems() as $item): ?>
+        <div class="card-item">
+            <h4><?= $item['title'] ?></h4>
+            <p><a href="<?= $item['url'] ?>" target="_blank"><?= $item['value'] ?></a></p>
+        </div>
+    <?php endforeach; ?>
+</div>

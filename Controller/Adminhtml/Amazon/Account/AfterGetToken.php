@@ -89,7 +89,11 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             );
         }
 
-        return $this->processExistingAccount((int)$params['account_id'], (string)$params['spapi_oauth_code']);
+        return $this->processExistingAccount(
+            (int)$params['account_id'],
+            (string)$params['spapi_oauth_code'],
+            (string)$params['selling_partner_id']
+        );
     }
 
     private function processNewAccount(
@@ -154,16 +158,19 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         return $this->_redirect('*/*/index');
     }
 
-    private function processExistingAccount(int $accountId, string $spApiOAuthCode): ResponseInterface
-    {
+    private function processExistingAccount(
+        int $accountId,
+        string $spApiOAuthCode,
+        string $sellingPartnerId
+    ): ResponseInterface {
         try {
             /** @var \Ess\M2ePro\Model\Account $account */
             $account = $this->amazonFactory->getObjectLoaded('Account', $accountId);
-            $this->accountServerUpdate->process($account->getChildObject(), $spApiOAuthCode);
+            $this->accountServerUpdate->process($account->getChildObject(), $spApiOAuthCode, $sellingPartnerId);
         } catch (\Exception $exception) {
             $this->helperException->process($exception);
 
-            $this->messageManager->addErrorMessage(
+            $this->messageManager->addError(
                 $this->__(
                     'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%',
                     $exception->getMessage()

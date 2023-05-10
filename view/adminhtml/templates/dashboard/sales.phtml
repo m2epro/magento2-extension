@@ -1,0 +1,13 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\Sales $block */ ?>
+
+<div class="date-period-switcher">
+    <select name="period" id="dashboard_chart_period" class="admin__control-select">
+        <?php foreach ($block->getDatePeriods() as $period): ?>
+            <option value="<?= $period['value'] ?>" <?= $period['is_active']? 'selected': ''?>>
+                <?= $period['title'] ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
+<?= $block->getTabs()->toHtml() ?>

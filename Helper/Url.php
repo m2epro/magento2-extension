@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper;
 
 class Url
@@ -38,12 +32,6 @@ class Url
         return base64_encode($backIdOrRoute . $paramsString);
     }
 
-    /**
-     * @param string $defaultBackIdOrRoute
-     * @param array $defaultBackParams
-     *
-     * @return string
-     */
     public function getBackUrlParam(
         string $defaultBackIdOrRoute = 'index',
         array $defaultBackParams = []
@@ -54,13 +42,6 @@ class Url
         );
     }
 
-    /**
-     * @param string $defaultBackIdOrRoute
-     * @param array $defaultBackParams
-     * @param array $extendedRoutersParams
-     *
-     * @return string
-     */
     public function getBackUrl(
         string $defaultBackIdOrRoute = 'index',
         array $defaultBackParams = [],
@@ -100,11 +81,6 @@ class Url
         return $this->urlBuilder->getUrl($route, $params);
     }
 
-    /**
-     * @param string $route
-     *
-     * @return string
-     */
     private function replaceRoute(string $route): string
     {
         $map = [
@@ -115,5 +91,12 @@ class Url
         ];
 
         return $map[$route] ?? $route;
+    }
+
+    public function getUrlWithFilter(string $route, array $params): string
+    {
+        $params = http_build_query($params);
+
+        return $this->urlBuilder->getUrl($route, ['filter' => base64_encode($params)]);
     }
 }

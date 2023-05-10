@@ -1,6 +1,7 @@
 var config = {
     paths: {
-        "M2ePro": "Ess_M2ePro/js"
+        "M2ePro": "Ess_M2ePro/js",
+        "M2ePro/External": "Ess_M2ePro/external/js",
     },
     map: {
         '*': {

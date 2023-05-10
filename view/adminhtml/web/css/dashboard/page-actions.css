@@ -1,0 +1,8 @@
+.action-btn > span {
+    font-size: 1.6rem;
+}
+
+.action-btn.external-link:after {
+    font-size: 1.4rem;
+    color: #ffffff;
+}

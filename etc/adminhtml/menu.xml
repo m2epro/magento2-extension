@@ -12,7 +12,7 @@
         <!-- ebay dashboard -->
 
         <add id="Ess_M2ePro::ebay_dashboard" module="Ess_M2ePro" sortOrder="5" parent="Ess_M2ePro::ebay" title="Overview" resource="Ess_M2ePro::ebay"/>
-        <add id="Ess_M2ePro::ebay_dashboard_m2epro" title="Dashboard [coming soon…]" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_dashboard" action="m2epro/ebay_dashboard/index" resource="Ess_M2ePro::ebay"/>
+        <add id="Ess_M2ePro::ebay_dashboard_m2epro" title="Dashboard" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_dashboard" action="m2epro/ebay_dashboard/index" resource="Ess_M2ePro::ebay"/>
 
         <!-- ebay listings -->
 
@@ -50,7 +50,7 @@
         <!-- amazon dashboard -->
 
         <add id="Ess_M2ePro::amazon_dashboard" module="Ess_M2ePro" sortOrder="5" parent="Ess_M2ePro::amazon" title="Overview" resource="Ess_M2ePro::amazon"/>
-        <add id="Ess_M2ePro::amazon_dashboard_m2epro" title="Dashboard [coming soon…]" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_dashboard" action="m2epro/amazon_dashboard/index" resource="Ess_M2ePro::amazon"/>
+        <add id="Ess_M2ePro::amazon_dashboard_m2epro" title="Dashboard" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_dashboard" action="m2epro/amazon_dashboard/index" resource="Ess_M2ePro::amazon"/>
 
         <!-- amazon listings -->
 
@@ -94,7 +94,7 @@
         <!-- walmart dashboard -->
 
         <add id="Ess_M2ePro::walmart_dashboard" module="Ess_M2ePro" sortOrder="5" parent="Ess_M2ePro::walmart" title="Overview" resource="Ess_M2ePro::walmart"/>
-        <add id="Ess_M2ePro::walmart_dashboard_m2epro" title="Dashboard [coming soon…]" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::walmart_dashboard" action="m2epro/walmart_dashboard/index" resource="Ess_M2ePro::walmart"/>
+        <add id="Ess_M2ePro::walmart_dashboard_m2epro" title="Dashboard" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::walmart_dashboard" action="m2epro/walmart_dashboard/index" resource="Ess_M2ePro::walmart"/>
 
         <!-- walmart listings -->
 

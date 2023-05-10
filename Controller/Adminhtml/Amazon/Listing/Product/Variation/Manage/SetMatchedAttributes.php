@@ -76,16 +76,7 @@ class SetMatchedAttributes extends Main
             empty($additionalData['migrated_to_product_types'])
             && $amazonListingProduct->isGeneralIdOwner()
         ) {
-            if (!empty($additionalData['backup_variation_matched_attributes'])) {
-                $previousInfo = $additionalData['backup_variation_matched_attributes'];
-
-                $replacements = [];
-                foreach ($matchedAttributes as $magentoAttr => $channelAttr) {
-                    if (isset($previousInfo[$magentoAttr])) {
-                        $replacements[$previousInfo[$magentoAttr]] = $channelAttr;
-                    }
-                }
-
+            if ($replacements = $this->getAttributeReplacements($additionalData)) {
                 unset($additionalData['backup_variation_matched_attributes']);
                 if (!empty($additionalData['backup_variation_channel_attributes_sets'])) {
                     $additionalData['variation_channel_attributes_sets'] =
@@ -257,5 +248,43 @@ class SetMatchedAttributes extends Main
         }
 
         return $additionalData;
+    }
+
+    private function getAttributeReplacements(array $additionalData): array
+    {
+        if (empty($additionalData['variation_matched_attributes'])) {
+            return [];
+        }
+
+        $replacements = [];
+        $matchedAttributes = $additionalData['variation_matched_attributes'];
+
+        if (!empty($additionalData['backup_variation_matched_attributes'])) {
+            $previousInfo = $additionalData['backup_variation_matched_attributes'];
+            foreach ($matchedAttributes as $magentoAttr => $channelAttr) {
+                if (isset($previousInfo[$magentoAttr])) {
+                    $replacements[$previousInfo[$magentoAttr]] = $channelAttr;
+                }
+            }
+
+            return $replacements;
+        }
+
+        if (!empty($additionalData['variation_channel_variations'])) {
+            $item = reset($additionalData['variation_channel_variations']);
+            $variationAttributesFound = array_keys($item);
+
+            if (
+                count($variationAttributesFound) === 1
+                && count($matchedAttributes) === 1
+            ) {
+                $previousName = reset($variationAttributesFound);
+                $currentName = reset($matchedAttributes);
+
+                return [$previousName => $currentName];
+            }
+        }
+
+        return [];
     }
 }
