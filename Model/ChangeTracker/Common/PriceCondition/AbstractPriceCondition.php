@@ -165,6 +165,6 @@ abstract class AbstractPriceCondition
             }
         }
 
-        return "ROUND( $sql * (1+$vat/100), 2)";
+        return "ROUND( $sql * (1+$vat/100) * product.currency_rate, 2)";
     }
 }

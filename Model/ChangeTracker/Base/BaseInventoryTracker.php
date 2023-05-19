@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
 
 use Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger;
+use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory;
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
 
@@ -16,23 +17,28 @@ abstract class BaseInventoryTracker implements TrackerInterface
     protected $inventoryStock;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger */
     protected $logger;
+    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
+    private $attributesQueryBuilder;
 
     /**
      * @param string $channel
      * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory
      * @param \Ess\M2ePro\Model\ChangeTracker\Base\InventoryStock $inventoryStock
+     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder
      * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
      */
     public function __construct(
         string $channel,
         QueryBuilderFactory $queryBuilderFactory,
         InventoryStock $inventoryStock,
+        ProductAttributesQueryBuilder $attributesQueryBuilder,
         TrackerLogger $logger
     ) {
         $this->channel = $channel;
         $this->inventoryStock = $inventoryStock;
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->logger = $logger;
+        $this->attributesQueryBuilder = $attributesQueryBuilder;
     }
 
     /**
@@ -64,10 +70,30 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('listing_product_id', 'base.listing_product_id')
             ->from('base', $query);
 
-        $conditionalReviseCondition = '(base.calculated_qty > online_qty AND online_qty < revise_threshold)
-            OR (base.calculated_qty != online_qty) AND (base.calculated_qty < base.revise_threshold)';
+        $isMeetChangeQty = '
+            (base.calculated_qty > online_qty AND online_qty < revise_threshold)
+            OR (base.calculated_qty != online_qty) AND (base.calculated_qty < base.revise_threshold)
+        ';
 
-        $mainQuery->andWhere($conditionalReviseCondition);
+        $mainQuery->andWhere($isMeetChangeQty);
+
+        $isMeetStop = '
+            base.status = 2 AND (
+                (base.stop_when_product_disabled AND base.product_disabled)
+                OR (base.stop_when_product_out_of_stock AND base.is_in_stock = 0)
+                OR (base.stop_when_qty_less_than >= base.stock_qty)
+            )
+        ';
+        $mainQuery->orWhere($isMeetStop);
+
+        $isMeetRelist = '
+           base.status IN (1, 3, 4, 5) AND (
+                (base.stock_qty >= base.relist_when_qty_more_or_equal)
+                AND (base.relist_when_product_is_in_stock AND base.is_in_stock = 1)
+                AND (base.relist_when_product_status_enabled AND NOT base.product_disabled)
+            )
+        ';
+        $mainQuery->orWhere($isMeetRelist);
 
         $message = sprintf(
             'Data query %s %s',
@@ -106,6 +132,15 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id')
             ->addSelect('is_variation', 'IFNULL(c_lp.is_variation_parent, 0)');
 
+        $query->addSelect(
+            'product_enabled',
+            $this->attributesQueryBuilder->getQueryForAttribute(
+                'status',
+                'l.store_id',
+                $productIdExpression
+            )
+        );
+
         $onlineQtyExpression = 'IFNULL(c_lp.online_qty, 0)';
         $query->addSelect('online_qty', $onlineQtyExpression);
 
@@ -140,11 +175,11 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'lpvo.listing_product_variation_id = lpv.id'
             );
 
-        /* Не включаем в выборку grouped and bundle товары */
+        /* We do not include grouped and bundle products in the selection */
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'bundle');
 
-        /* Не включаємо у вибірку товари з поміткою duplicate */
+        /* We do not include products marked duplicate in the sample */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
         return $query;
@@ -193,6 +228,34 @@ abstract class BaseInventoryTracker implements TrackerInterface
                             999999
                         )'
             )
+            ->addSelect(
+                'stop_when_product_disabled',
+                'IF(ts.stop_mode = 1 AND ts.stop_status_disabled = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'stop_when_product_out_of_stock',
+                'IF(ts.stop_mode = 1 AND ts.stop_out_off_stock = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'stop_when_qty_less_than',
+                'IF(ts.stop_mode = 1 AND ts.stop_qty_calculated = 1, ts.stop_qty_calculated_value, -999999)'
+            )
+            ->addSelect(
+                'relist_when_stopped_manually',
+                'IF(ts.relist_mode = 1 AND ts.relist_filter_user_lock = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'relist_when_product_status_enabled',
+                'IF(ts.relist_mode = 1 AND ts.relist_status_enabled = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'relist_when_product_is_in_stock',
+                'IF(ts.relist_mode = 1 AND ts.relist_is_in_stock = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'relist_when_qty_more_or_equal',
+                'IF(ts.relist_mode = 1 AND ts.relist_qty_calculated = 1, relist_qty_calculated_value, 999999)'
+            )
             ->from(
                 'ts',
                 $this->setChannelToTableName('m2epro_%s_template_synchronization')
@@ -211,6 +274,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('listing_product_id', 'product.listing_product_id')
             ->addSelect('product_id', 'product.product_id')
             ->addSelect('status', 'product.status')
+            ->addSelect('product_disabled', new \Zend_Db_Expr('product.product_enabled = 2'))
             ->addSelect('store_id', 'product.store_id')
             ->addSelect('sync_template_id', 'product.sync_template_id')
             ->addSelect('selling_template_id', 'product.selling_template_id')
@@ -218,7 +282,15 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('stock_qty', 'FLOOR(stock.qty)')
             ->addSelect('online_qty', 'product.online_qty')
             ->addSelect('is_variation', 'product.is_variation')
-            ->addSelect('revise_threshold', 'sync_policy.revise_threshold');
+            ->addSelect('revise_threshold', 'sync_policy.revise_threshold')
+            ->addSelect('stop_when_product_disabled', 'sync_policy.stop_when_product_disabled')
+            ->addSelect('stop_when_product_out_of_stock', 'sync_policy.stop_when_product_out_of_stock')
+            ->addSelect('stop_when_qty_less_than', 'sync_policy.stop_when_qty_less_than')
+            ->addSelect('relist_when_stopped_manually', 'sync_policy.relist_when_stopped_manually')
+            ->addSelect('relist_when_product_status_enabled', 'sync_policy.relist_when_product_status_enabled')
+            ->addSelect('relist_when_product_is_in_stock', 'sync_policy.relist_when_product_is_in_stock')
+            ->addSelect('relist_when_qty_more_or_equal', 'sync_policy.relist_when_qty_more_or_equal')
+        ;
 
         $query->addSelect('calculated_qty', $this->calculatedQtyExpression());
 

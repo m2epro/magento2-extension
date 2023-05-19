@@ -829,7 +829,7 @@ JS
     public function getEmptyText()
     {
         return __(
-            'Only Simple and Child Products listed on Amazon will be shown in Seller Сentral View Mode.'
+            'Only Simple and Child Products listed on Amazon will be shown in Seller Central View Mode.'
         );
     }
 

@@ -46,6 +46,11 @@
     height: 170px;
 }
 
+.card-item:hover {
+    background-color: #e3e3e3;
+    transition: background 0.5s;
+}
+
 .card-item > h4 {
     margin: 5%;
 }

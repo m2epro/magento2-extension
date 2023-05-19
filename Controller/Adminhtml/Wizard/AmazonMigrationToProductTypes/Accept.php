@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\AmazonMigrationToProductTypes;
 
-use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory
-    as AmazonDictionaryMarketplaceCollectionFactory;
-
 class Accept extends \Ess\M2ePro\Controller\Adminhtml\Wizard\AmazonMigrationToProductTypes
 {
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
@@ -19,8 +16,6 @@ class Accept extends \Ess\M2ePro\Controller\Adminhtml\Wizard\AmazonMigrationToPr
     private $marketplaceSynchronizationFactory;
     /** @var \Ess\M2ePro\Model\Servicing\DispatcherFactory */
     private $servicingDispatcherFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory */
-    private $amazonDictionaryMarketplaceCollectionFactory;
 
     /** @var string|null */
     private $errorMessage = null;
@@ -29,7 +24,6 @@ class Accept extends \Ess\M2ePro\Controller\Adminhtml\Wizard\AmazonMigrationToPr
         \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\Amazon\Marketplace\SynchronizationFactory $marketplaceSynchronizationFactory,
         \Ess\M2ePro\Model\Servicing\DispatcherFactory $servicingDispatcherFactory,
-        AmazonDictionaryMarketplaceCollectionFactory $amazonDictionaryMarketplaceCollectionFactory,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -38,7 +32,6 @@ class Accept extends \Ess\M2ePro\Controller\Adminhtml\Wizard\AmazonMigrationToPr
         $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
         $this->marketplaceSynchronizationFactory = $marketplaceSynchronizationFactory;
         $this->servicingDispatcherFactory = $servicingDispatcherFactory;
-        $this->amazonDictionaryMarketplaceCollectionFactory = $amazonDictionaryMarketplaceCollectionFactory;
     }
 
     public function execute()
@@ -77,16 +70,9 @@ class Accept extends \Ess\M2ePro\Controller\Adminhtml\Wizard\AmazonMigrationToPr
     {
         session_write_close();
 
-        $marketplacesIds = [];
-        $dictionaryMarketplaceCollection = $this->amazonDictionaryMarketplaceCollectionFactory->create();
-
-        /** @var \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace $item */
-        foreach ($dictionaryMarketplaceCollection->getItems() as $item) {
-            $marketplacesIds[] = $item->getMarketplaceId();
-        }
-
         $marketplaceCollection = $this->marketplaceCollectionFactory->create()
-            ->addFieldToFilter('id', ['in' => $marketplacesIds]);
+            ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK)
+            ->addFieldToFilter('status', 1);
 
         /** @var \Ess\M2ePro\Model\Marketplace $item */
         foreach ($marketplaceCollection->getItems() as $item) {

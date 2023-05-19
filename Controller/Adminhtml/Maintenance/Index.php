@@ -20,6 +20,10 @@ class Index extends \Magento\Backend\App\Action
 
     /** @var \Magento\Framework\View\Result\PageFactory */
     private $pageFactory;
+    /** @var \Magento\Framework\App\ProductMetadataInterface */
+    private $productMetadata;
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper,
@@ -53,6 +57,11 @@ class Index extends \Magento\Backend\App\Action
         $block = $result->getLayout()->createBlock(\Magento\Framework\View\Element\Template::class);
         $block->setData('is_migration', $this->isMigration());
         $block->setData('migration_wizard_url', $this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
+        $block->setData(
+            'is_maintenance_due_low_magento_version',
+            $this->moduleMaintenanceHelper->isEnabledDueLowMagentoVersion()
+        );
+
         $block->setTemplate('Ess_M2ePro::maintenance.phtml');
 
         $this->_addContent($block);

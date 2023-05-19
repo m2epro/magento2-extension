@@ -36,19 +36,6 @@ use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
     </tr>
     <?php endif; ?>
 
-    <?php if (!$block->getData('is_support_mode') && $this->latestVersion) : ?>
-    <tr>
-        <td class="label">
-            <label><?php echo $block->__('Latest Available Build Version'); ?>: </label>
-        </td>
-        <td class="value">
-            <?php echo $this->latestVersion; ?>
-            <?php $versionForUrl = str_replace('.', '-', $this->latestVersion); ?>
-            <a href="<?php echo $block->getHelper('Module_Support')->getDocumentationArticleUrl("x/BwAMB"); ?>" target="_blank"><?php echo $block->__('[release notes]'); ?></a>
-        </td>
-    </tr>
-    <?php endif; ?>
-
     <?php if (!$block->getData('is_support_mode')) : ?>
     <tr>
         <td class="label">

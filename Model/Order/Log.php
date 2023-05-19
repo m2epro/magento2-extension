@@ -134,17 +134,10 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             $order = $this->parentFactory->getObjectLoaded($this->getComponentMode(), 'Order', $order);
         }
 
-        $map = [
-            Message::TYPE_NOTICE => self::TYPE_INFO,
-            Message::TYPE_SUCCESS => self::TYPE_SUCCESS,
-            Message::TYPE_WARNING => self::TYPE_WARNING,
-            Message::TYPE_ERROR => self::TYPE_ERROR,
-        ];
-
         $this->addMessage(
             $order,
             $message->getText(),
-            isset($map[$message->getType()]) ? $map[$message->getType()] : self::TYPE_ERROR
+            $this->convertServerMessageTypeToExtensionMessageType((string)$message->getType())
         );
     }
 
@@ -163,5 +156,15 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         return false;
     }
 
-    //########################################
+    public function convertServerMessageTypeToExtensionMessageType(string $type): int
+    {
+        $map = [
+            Message::TYPE_NOTICE => self::TYPE_INFO,
+            Message::TYPE_SUCCESS => self::TYPE_SUCCESS,
+            Message::TYPE_WARNING => self::TYPE_WARNING,
+            Message::TYPE_ERROR => self::TYPE_ERROR,
+        ];
+
+        return $map[$type] ?? self::TYPE_ERROR;
+    }
 }

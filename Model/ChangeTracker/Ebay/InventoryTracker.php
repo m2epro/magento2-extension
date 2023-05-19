@@ -44,6 +44,8 @@ class InventoryTracker extends BaseInventoryTracker
         )';
         $query->addSelect('online_qty', $channelQtyExpression);
 
+        $query->andWhere('c_lp.template_category_id IS NOT NULL');
+
         return $query;
     }
 }

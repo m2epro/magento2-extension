@@ -8,4 +8,9 @@ class Analytics
     {
         return 'https://analytics.m2e.cloud';
     }
+
+    public function getLoginUrl(): string
+    {
+        return $this->getUrl() . '/login';
+    }
 }

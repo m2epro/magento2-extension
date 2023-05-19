@@ -62,6 +62,17 @@ class DashboardFactory
             'errors' => $errors,
         ]);
 
+        $dashboard->appendHelpBlock([
+            'content' => $this->getHelpBlockHtml(),
+        ]);
+
         return $dashboard;
+    }
+
+    private function getHelpBlockHtml(): string
+    {
+        return __('<p>The dashboard is to give you an instant overview of your key performance(s).</p>
+            <p>With the help of the dashboard, you get a quick and clear insight into how your sales
+            and shipments are doing and whether there are any issues that block updates of your items.</p>');
     }
 }

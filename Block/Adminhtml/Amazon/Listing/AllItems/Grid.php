@@ -103,6 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'general_id',
             'filter_index' => 'general_id',
             'frame_callback' => [$this, 'callbackColumnGeneralId'],
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\GeneralId::class,
             'filter_condition_callback' => [$this, 'callbackFilterAsinIsbn'],
         ]);
 
@@ -762,12 +763,26 @@ HTML;
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $value = $column->getFilter()->getValue();
-        if ($value == null) {
+        if (empty($value)) {
             return;
         }
 
         $childCollection = $this->getChildProductsCollection();
-        $childCollection->addFieldToFilter('general_id', ['like' => '%' . $value . '%']);
+
+        $inputValue = $column->getFilter()->getValue('input');
+        if ($inputValue !== null) {
+            $childCollection->addFieldToFilter('general_id', ['like' => '%' . $inputValue . '%']);
+            $collection->addFieldToFilter([
+                ['attribute' => 'general_id', 'like' => '%' . $inputValue . '%'],
+                ['attribute' => 'asin_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
+            ]);
+        }
+
+        $selectValue = $column->getFilter()->getValue('select');
+        if ($selectValue !== null) {
+            $childCollection->addFieldToFilter('is_general_id_owner', $selectValue);
+            $collection->addFieldToFilter('is_general_id_owner', $selectValue);
+        }
 
         $collection->getSelect()->joinLeft(
             ['asin_subQuery' => $childCollection->getSelect()],
@@ -777,11 +792,6 @@ HTML;
                 'asin_searched_by_child' => 'searched_by_child',
             ]
         );
-
-        $collection->addFieldToFilter([
-            ['attribute' => 'general_id', 'like' => '%' . $value . '%'],
-            ['attribute' => 'asin_subQuery.searched_by_child', 'eq' => '1', 'raw' => true],
-        ]);
     }
 
     protected function callbackFilterPrice($collection, $column)

@@ -59,9 +59,19 @@ abstract class BasePriceTracker implements TrackerInterface
     }
 
     /**
+     * Condition for select, in which we calculate the online price of the product.
+     *
      * @return string
      */
     abstract protected function getOnlinePriceCondition(): string;
+
+    /**
+     * The field in which the currency for the marketplace. `m2epro_<chanel>_marketplace` tables.
+     * For Amazon and Walmart this is `default_currency`, for eBay it is `currency`
+     *
+     * @return string
+     */
+    abstract protected function getMarketplaceCurrencyField(): string;
 
     /**
      * @return \Magento\Framework\DB\Select
@@ -77,7 +87,9 @@ abstract class BasePriceTracker implements TrackerInterface
             ->from('base', $query);
 
         $mainQuery->andWhere('calculated_price IS NOT NULL')
-                  ->andWhere('calculated_price != online_price')
+                  // The condition `calculated_price != online_price` is not suitable,
+                  // since rounding may not work correctly https://stackoverflow.com/a/41484519
+                  ->andWhere('ABS(calculated_price - online_price) > 0.01')
                   ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
                   ->andWhere('base.revise_update_price = 1');
 
@@ -115,6 +127,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id');
 
         $query->addSelect('online_price', $this->getOnlinePriceCondition());
+        $query->addSelect('currency_rate', $this->getCurrencyRateSubQuery()->getQuery());
 
         /* Select base attributes */
         $attributes = [
@@ -164,13 +177,19 @@ abstract class BasePriceTracker implements TrackerInterface
                 'lpvo',
                 'm2epro_listing_product_variation_option',
                 'lpvo.listing_product_variation_id = lpv.id'
-            );
+            )
+            ->leftJoin(
+                'marketplace',
+                $this->setChannelToTableName('m2epro_%s_marketplace'),
+                'marketplace.marketplace_id = l.marketplace_id'
+            )
+        ;
 
-        /* Не включаємо у вибірку grouped and bundle товари */
+        /* We do not include grouped and bundle products in the sample */
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'bundle');
 
-        /* Не включаємо у вибірку товари з поміткою duplicate */
+        /* We do not include products marked duplicate in the sample */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
         $query->addGroup('lp.id');
@@ -277,5 +296,25 @@ abstract class BasePriceTracker implements TrackerInterface
         }
 
         return 'product.price';
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
+     */
+    protected function getCurrencyRateSubQuery(): SelectQueryBuilder
+    {
+        $baseCurrencySubquery = $this->queryBuilder
+            ->makeSubQuery()
+            ->addSelect('base_currency', 'value')
+            ->from('core_config', 'core_config_data')
+            ->andWhere('core_config.path = ?', \Magento\Directory\Model\Currency::XML_PATH_CURRENCY_BASE)
+        ;
+
+        return $this->queryBuilder
+            ->makeSubQuery()
+            ->addSelect('rate', 'cr.rate')
+            ->from('cr', 'directory_currency_rate')
+            ->andWhere('cr.currency_from = ?', $baseCurrencySubquery->getQuery())
+            ->andWhere("cr.currency_to = marketplace.{$this->getMarketplaceCurrencyField()}");
     }
 }

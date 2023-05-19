@@ -15,7 +15,10 @@ class Ebay extends AbstractPriceCondition
 
         $sellingPolicyQuery
             ->addSelect('id', 'template_selling_format_id')
-            ->addSelect('vat', 'vat_percent')
+            ->addSelect(
+                'vat',
+                new \Zend_Db_Expr('IF(vat_mode = 2, vat_percent, 0)')
+            )
             ->addSelect('modifier', 'fixed_price_modifier')
             ->addSelect('mode', 'fixed_price_mode')
             ->addSelect('mode_attribute', 'fixed_price_custom_attribute');

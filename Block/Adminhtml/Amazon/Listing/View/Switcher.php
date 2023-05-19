@@ -102,7 +102,7 @@ HTML
                     ],
                     [
                         'value' => self::VIEW_MODE_SELLERCENTRAL,
-                        'label' => __('Seller Сentral'),
+                        'label' => __('Seller Central'),
                     ],
                     [
                         'value' => self::VIEW_MODE_MAGENTO,

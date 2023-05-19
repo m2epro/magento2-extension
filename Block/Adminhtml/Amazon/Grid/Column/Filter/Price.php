@@ -35,7 +35,7 @@ class Price extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
         <label for="{$this->_getHtmlName()}"
                style="cursor: pointer;vertical-align: text-bottom; white-space: nowrap;"
                class="admin__field-label">
-            {$this->__('On Repricing')}
+            {$this->__('On Repricer')}
         </label>
         <select id="{$this->_getHtmlName()}"
                 class="admin__control-select"

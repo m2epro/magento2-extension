@@ -7,7 +7,8 @@ class SelectQueryBuilder
     private const PART_SELECT = 'select';
     private const PART_FROM = 'from';
     private const PART_JOIN = 'join';
-    private const PART_WHERE = 'where';
+    private const PART_AND_WHERE = 'and_where';
+    private const PART_OR_WHERE = 'or_where';
     private const PART_GROUP = 'group';
     private const PART_DISTINCT = 'distinct';
 
@@ -15,7 +16,8 @@ class SelectQueryBuilder
         self::PART_SELECT => [],
         self::PART_FROM => [],
         self::PART_JOIN => [],
-        self::PART_WHERE => [],
+        self::PART_AND_WHERE => [],
+        self::PART_OR_WHERE => [],
         self::PART_GROUP => [],
         self::PART_DISTINCT => false,
     ];
@@ -165,7 +167,20 @@ class SelectQueryBuilder
      */
     public function andWhere(string $condition, $params = null): SelectQueryBuilder
     {
-        $this->queryParts[self::PART_WHERE][] = [$condition, $params];
+        $this->queryParts[self::PART_AND_WHERE][] = [$condition, $params];
+
+        return $this;
+    }
+
+    /**
+     * @param string $condition
+     * @param mixed $params
+     *
+     * @return SelectQueryBuilder
+     */
+    public function orWhere(string $condition, $params = null): SelectQueryBuilder
+    {
+        $this->queryParts[self::PART_OR_WHERE][] = [$condition, $params];
 
         return $this;
     }
@@ -201,8 +216,12 @@ class SelectQueryBuilder
             $join->appendToQuery($select);
         }
 
-        foreach ($this->queryParts[self::PART_WHERE] as $whereArgs) {
+        foreach ($this->queryParts[self::PART_AND_WHERE] as $whereArgs) {
             $select->where(...$whereArgs);
+        }
+
+        foreach ($this->queryParts[self::PART_OR_WHERE] as $whereArgs) {
+            $select->orWhere(...$whereArgs);
         }
 
         return $select;

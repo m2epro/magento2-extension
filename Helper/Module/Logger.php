@@ -68,8 +68,13 @@ class Logger
      */
     private function getLogMessage($logData, string $type): string
     {
-        // @codingStandardsIgnoreLine
-        !is_string($logData) && $logData = print_r($logData, true);
+        if ($logData instanceof \Magento\Framework\Phrase) {
+            $logData = (string) $logData;
+        }
+
+        if (!is_string($logData)) {
+            $logData = print_r($logData, true);
+        }
 
         // @codingStandardsIgnoreLine
         return '[DATE] ' . date('Y-m-d H:i:s', (int)gmdate('U')) . PHP_EOL .

@@ -78,11 +78,6 @@ class InventoryStock
                 'catalog_product_entity',
                 'isi.sku = product.sku'
             )
-            ->innerJoin(
-                'ssc',
-                'inventory_stock_sales_channel',
-                'ssc.stock_id = issl.stock_id'
-            )
             ->andWhere('source.enabled = ?', 1)
             ->andWhere('product.entity_id IS NOT NULL')
             ->addGroup('issl.stock_id')

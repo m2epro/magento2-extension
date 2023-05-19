@@ -1037,7 +1037,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getQty($lifeMode = false)
     {
-        if ($lifeMode && (!$this->isStatusEnabled() || !$this->isStockAvailability())) {
+        if ($lifeMode && !$this->isStatusEnabled()) {
             return 0;
         }
 
@@ -1054,7 +1054,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->calculateQty(
-            $this->inventoryFactory->getObject($this->getProduct())->getQty(),
+            $this->getStockItem()->getQty(),
             $this->getStockItem()->getManageStock(),
             $this->getStockItem()->getUseConfigManageStock(),
             $this->getStockItem()->getBackorders(),
@@ -1123,14 +1123,17 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $stockItem = $inventory->getStockItem();
 
             $qty = $this->calculateQty(
-                $inventory->getQty(),
+                $stockItem->getQty(),
                 $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
                 $stockItem->getBackorders(),
                 $stockItem->getUseConfigBackorders()
             );
 
-            if ($lifeMode && (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
+            if (
+                $lifeMode
+                && $childProduct->getStatus() != Status::STATUS_ENABLED
+            ) {
                 continue;
             }
 
@@ -1154,7 +1157,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $inventory = $this->inventoryFactory->getObject($childProduct);
             $stockItem = $inventory->getStockItem();
 
-            if ($lifeMode && (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
+            if (
+                $lifeMode
+                && $childProduct->getStatus() != Status::STATUS_ENABLED
+            ) {
                 if (\Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET == $this->isGroupedProductMode) {
                     return 0; // not sellable product if any child "Out Of Stock" or Disable
                 }
@@ -1163,7 +1169,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $qty = $this->calculateQty(
-                $inventory->getQty(),
+                $stockItem->getQty(),
                 $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
                 $stockItem->getBackorders(),
@@ -1228,14 +1234,17 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $stockItem = $inventory->getStockItem(false);
 
             $qty = $this->calculateQty(
-                $inventory->getQty(),
+                $stockItem->getQty(),
                 $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
                 $stockItem->getBackorders(),
                 $stockItem->getUseConfigBackorders()
             );
 
-            if ($lifeMode && (!$inventory->isInStock() || $item->getStatus() != Status::STATUS_ENABLED)) {
+            if (
+                $lifeMode
+                && $item->getStatus() != Status::STATUS_ENABLED
+            ) {
                 continue;
             }
 
@@ -1744,6 +1753,4 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->notFoundAttributes = [];
     }
-
-    //########################################
 }

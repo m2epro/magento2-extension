@@ -202,7 +202,8 @@ class AmazonProductTypes extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstract
 
         $query = $this->getConnection()
             ->select()
-            ->from($this->getFullTableName('amazon_listing_product'))
+            ->from($this->getFullTableName('marketplace'))
+            ->where('component_mode = "amazon" AND status = 1')
             ->query();
 
         $row = $query->fetch();

@@ -12,9 +12,6 @@ use Ess\M2ePro\Model\AbstractModel;
 use Ess\M2ePro\Model\Ebay\Order as EbayOrder;
 use Ess\M2ePro\Model\Ebay\Order\Helper as OrderHelper;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Order\Builder
- */
 class Builder extends AbstractModel
 {
     public const STATUS_NOT_MODIFIED = 0;
@@ -53,6 +50,8 @@ class Builder extends AbstractModel
     private $status = self::STATUS_NOT_MODIFIED;
 
     private $updates = [];
+    /** @var array<array{type:string, text:string}> */
+    private $messages = [];
     /** @var bool */
     private $isBuyerCancellationRequested = false;
 
@@ -70,8 +69,6 @@ class Builder extends AbstractModel
         $this->ebayFactory = $ebayFactory;
         $this->helper = $orderHelper;
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
@@ -112,6 +109,22 @@ class Builder extends AbstractModel
         $this->setData('saved_amount', (float)$data['selling']['saved_amount']);
         $this->setData('currency', $data['selling']['currency']);
         $this->setData('tax_reference', $data['selling']['tax_reference']);
+
+        if (!empty($data['messages']) && is_array($data['messages'])) {
+            foreach ($data['messages'] as $message) {
+                if (
+                    empty($message['text'])
+                    || empty($message['type'])
+                ) {
+                    continue;
+                }
+
+                $this->messages[] = [
+                    'text' => $message['text'],
+                    'type' => $message['type'],
+                ];
+            }
+        }
 
         if (empty($data['selling']['tax_details']) || !is_array($data['selling']['tax_details'])) {
             $this->setData('tax_details', null);
@@ -576,6 +589,23 @@ class Builder extends AbstractModel
                 $ebayOrder->addData($this->getData());
                 $ebayOrder->save();
                 break;
+            }
+        }
+
+        if (
+            $this->order->getId()
+            && !empty($this->messages)
+        ) {
+            $orderLog = $this->order->getLog();
+
+            foreach ($this->messages as $message) {
+                $orderLog->addMessage(
+                    $this->order,
+                    $message['text'],
+                    $orderLog->convertServerMessageTypeToExtensionMessageType($message['type']),
+                    [],
+                    true
+                );
             }
         }
 

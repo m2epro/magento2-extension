@@ -5,6 +5,10 @@
  * @license    Commercial use is forbidden
  */
 
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ */
+
 // @codingStandardsIgnoreFile
 ?>
 
@@ -32,6 +36,35 @@
 
     <p>If the issue persists, please contact our Support at <a href="mailto:support@m2epro.com">support@m2epro.com</a>.</p>
 
+<?php elseif ($block->getData('is_maintenance_due_low_magento_version')) : ?>
+    <p>M2E Pro has been placed on maintenance mode because your current Magento version is no longer supported
+        and compatible with the latest version of M2E Pro extension.</p>
+    <p>To restore the  functionality, we recommend considering one of the following conditions:</p>
+    <ol style="margin-left: 30px; max-width: 800px;">
+        <li>
+            <p>Upgrade your Magento:</p>
+            <p>
+                Upgrading your Magento to the latest stable version will not only ensure
+                compatibility with the latest M2E Pro version but also provide access to new features,
+                performance enhancements, and security patches.
+            </p>
+        </li>
+        <li>
+            <p>
+                <a
+                    href="https://m2e.atlassian.net/wiki/spaces/m2/pages/68944014/Install+Upgrade+M2E+Pro"
+                    target="_blank"
+                >Install an older M2E Pro version</a> (1.35.0):</p>
+            <p>
+                If you are unable to upgrade your Magento at the moment,
+                you can opt for installing the older version of M2E Pro, specifically version 1.35.0.
+                Although it may not include the latest features and improvements, it will be compatible with your
+                current Magento version.
+            </p>
+        </li>
+    </ol>
+    <p>If you require any guidance or have questions to clarify, you are welcome to reach out
+        to our support team at <a href="mailto:support@m2epro.com">support@m2epro.com</a></p>
 <?php else : ?>
     <p>Inventory and Order synchronization is not running. The Module interface is unavailable. M2E Pro can be put under maintenance automatically due to the following reasons:</p>
 
@@ -45,5 +78,4 @@
     </ul>
 
     <p>Please contact Support at <a href="mailto:support@m2epro.com">support@m2epro.com</a> to resolve the issue.</p>
-
 <?php endif; ?>

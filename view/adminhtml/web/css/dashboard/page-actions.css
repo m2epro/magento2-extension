@@ -5,4 +5,58 @@
 .action-btn.external-link:after {
     font-size: 1.4rem;
     color: #ffffff;
+    position: relative;
+    top: -2px;
+}
+
+.action-btn.external-link:before {
+    display: inline-block;
+    position: relative;
+    content: "";
+    width: 2rem;
+    height: 2rem;
+    top: 4px;
+    margin-right: 5px;
+    background-image: url(../../images/analytics-logo.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.action-btn:hover + .go_to_analytics_tooltip_content {
+    opacity: 1;
+    transition: opacity 0.5s
+}
+
+.go_to_analytics_tooltip_content {
+    opacity: 0;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+    background: #fffbbb;
+    border: 1px solid #afadac;
+    border-radius: 1px;
+    padding: 1.5rem 2.5rem;
+    position: absolute;
+    width: 45rem;
+    z-index: 500;
+    right: 0;
+    bottom: 125%;
+}
+
+.go_to_analytics_tooltip_content:after,
+.go_to_analytics_tooltip_content:before {
+    border: 1rem solid transparent;
+    height: 0;
+    width: 0;
+    border-top-color: #afadac;
+    content: '';
+    display: block;
+    position: absolute;
+    right: 2rem;
+    top: 100%;
+    z-index: 3;
+
+}
+.go_to_analytics_tooltip_content:after {
+    border-top-color: #fffbbb;
+    margin-top: -1px;
+    z-index: 4;
 }

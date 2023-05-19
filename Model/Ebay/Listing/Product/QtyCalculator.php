@@ -65,17 +65,27 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
             return 0;
         }
 
-        return parent::getVariationValue($variation);
+        $qty = parent::getVariationValue($variation);
+        $ebaySynchronizationTemplate = $variation->getListingProduct()
+            ->getChildObject()
+            ->getEbaySynchronizationTemplate();
+
+        if ($ebaySynchronizationTemplate->isStopWhenQtyCalculatedHasValue()) {
+            $minQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyCalculatedHasValueMin();
+
+            if ($qty <= $minQty) {
+                return 0;
+            }
+        }
+
+        return $qty;
     }
 
     //########################################
 
     protected function getOptionBaseValue(\Ess\M2ePro\Model\Listing\Product\Variation\Option $option)
     {
-        if (
-            !$option->getMagentoProduct()->isStatusEnabled() ||
-            !$option->getMagentoProduct()->isStockAvailability()
-        ) {
+        if (!$option->getMagentoProduct()->isStatusEnabled()) {
             return 0;
         }
 
@@ -83,10 +93,7 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
             $this->getIsMagentoMode() ||
             $this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
         ) {
-            if (
-                !$this->getMagentoProduct()->isStatusEnabled() ||
-                !$this->getMagentoProduct()->isStockAvailability()
-            ) {
+            if (!$this->getMagentoProduct()->isStatusEnabled()) {
                 return 0;
             }
         }

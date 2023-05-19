@@ -13,4 +13,9 @@ class PriceTracker extends BasePriceTracker
     {
         return 'IFNULL(c_lp.online_price, 0)';
     }
+
+    protected function getMarketplaceCurrencyField(): string
+    {
+        return 'default_currency';
+    }
 }

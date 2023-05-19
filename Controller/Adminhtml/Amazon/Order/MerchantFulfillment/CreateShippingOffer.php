@@ -13,7 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 use Ess\M2ePro\Helper\Component\Amazon\MerchantFulfillment;
 
 /**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\MerchantFulfillment\СreateShippingOffer
+ * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\MerchantFulfillment\CreateShippingOffer
  */
 class CreateShippingOffer extends Order
 {

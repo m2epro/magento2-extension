@@ -47,4 +47,9 @@ class PriceTracker extends BasePriceTracker
 
         return $query;
     }
+
+    protected function getMarketplaceCurrencyField(): string
+    {
+        return 'currency';
+    }
 }
