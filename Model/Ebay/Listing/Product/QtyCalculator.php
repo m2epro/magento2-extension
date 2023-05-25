@@ -85,7 +85,10 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
 
     protected function getOptionBaseValue(\Ess\M2ePro\Model\Listing\Product\Variation\Option $option)
     {
-        if (!$option->getMagentoProduct()->isStatusEnabled()) {
+        if (
+            !$option->getMagentoProduct()->isStatusEnabled() ||
+            !$option->getMagentoProduct()->isStockAvailability()
+        ) {
             return 0;
         }
 
@@ -93,7 +96,10 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
             $this->getIsMagentoMode() ||
             $this->getSource('mode') == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT
         ) {
-            if (!$this->getMagentoProduct()->isStatusEnabled()) {
+            if (
+                !$this->getMagentoProduct()->isStatusEnabled() ||
+                !$this->getMagentoProduct()->isStockAvailability()
+            ) {
                 return 0;
             }
         }
