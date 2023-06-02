@@ -27,6 +27,7 @@ class Grid extends AccountGrid
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -38,7 +39,53 @@ class Grid extends AccountGrid
         $this->ebayViewHelper = $ebayViewHelper;
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
-        parent::__construct($viewHelper, $context, $backendHelper, $data);
+        parent::__construct($supportHelper, $viewHelper, $context, $backendHelper, $data);
+    }
+
+    public function _construct()
+    {
+        parent::_construct();
+
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class));
+
+        $this->jsTranslator->addTranslations(
+            [
+                'The specified Title is already used for other Account. Account Title must be unique.' => __(
+                    'The specified Title is already used for other Account. Account Title must be unique.'
+                ),
+                'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
+                . 'This will cause inappropriate work of all Accounts\' copies.' => __(
+                    'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
+                    . 'This will cause inappropriate work of all Accounts\' copies.'
+                ),
+                'No Customer entry is found for specified ID.' => __(
+                    'No Customer entry is found for specified ID.'
+                ),
+                'If Yes is chosen, you must select at least one Attribute for Product Linking.' => __(
+                    'If Yes is chosen, you must select at least one Attribute for Product Linking.'
+                ),
+                'You should create at least one Response Template.' => __(
+                    'You should create at least one Response Template.'
+                ),
+                'You must get token.' => __(
+                    'You must get token.'
+                ),
+            ]
+        );
+
+        $this->jsUrl->addUrls([
+            '*/ebay_account/delete/' => $this->getUrl('*/ebay_account/delete/'),
+        ]);
+
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Ebay/Account',
+    ], function(){
+        window.EbayAccountObj = new EbayAccount();
+    });
+JS
+        );
     }
 
     protected function _prepareCollection()
@@ -154,6 +201,19 @@ HTML;
         return $html;
     }
 
+    public function callbackColumnActions($value, $row, $column, $isExport)
+    {
+        $delete = __('Delete');
+
+        return <<<HTML
+<div>
+    <a class="action-default" href="javascript:" onclick="EbayAccountObj.deleteClick('{$row->getId()}')">
+        {$delete}
+    </a>
+</div>
+HTML;
+    }
+
     //########################################
 
     protected function callbackFilterTitle($collection, $column)
@@ -181,6 +241,4 @@ HTML;
             '%' . $value . '%'
         );
     }
-
-    //########################################
 }

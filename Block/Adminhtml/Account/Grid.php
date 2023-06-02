@@ -15,13 +15,18 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
 
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
         $this->viewHelper = $viewHelper;
+        $this->supportHelper = $supportHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -48,6 +53,22 @@ class Grid extends AbstractGrid
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
         // ---------------------------------------
+
+        $this->jsTranslator->add(
+            'confirmation_account_delete',
+            __(
+                <<<HTML
+<p>You are about to delete your eBay/Amazon/Walmart seller account from M2E Pro. This will remove the
+account-related Listings and Products from the extension and disconnect the synchronization.
+Your listings on the channel will <b>not</b> be affected.</p>
+<p>Please confirm if you would like to delete the account.</p>
+<p>Note: once the account is no longer connected to your M2E Pro, please remember to delete it from
+<a href="%1">M2E Accounts</a></p>
+HTML
+                ,
+                $this->supportHelper->getAccountsUrl()
+            )
+        );
     }
 
     //########################################
@@ -78,10 +99,6 @@ class Grid extends AbstractGrid
             'filter_index' => 'main_table.update_date',
         ]);
 
-        $confirm = 'Attention! By Deleting Account you delete all information on it from M2E Pro Server. ';
-        $confirm .= 'This will cause inappropriate work of all Accounts\' copies.';
-        $confirm = $this->__($confirm);
-
         $this->addColumn('actions', [
             'header' => $this->__('Actions'),
             'align' => 'left',
@@ -92,15 +109,7 @@ class Grid extends AbstractGrid
             'sortable' => false,
             'getter' => 'getId',
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action::class,
-            'actions' => [
-                [
-                    'caption' => $this->__('Delete'),
-                    'class' => 'action-default scalable add primary account-delete-btn',
-                    'url' => ['base' => '*/*/delete'],
-                    'field' => 'id',
-                    'confirm' => $confirm,
-                ],
-            ],
+            'frame_callback' => [$this, 'callbackColumnActions'],
         ]);
 
         return parent::_prepareColumns();
@@ -118,6 +127,4 @@ class Grid extends AbstractGrid
         return $this->viewHelper
             ->getUrl($item, 'account', 'edit', ['id' => $item->getData('id')]);
     }
-
-    //########################################
 }

@@ -60,34 +60,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     //########################################
 
-    public function delete()
+    public function getListings()
     {
-        if ($this->isLocked()) {
-            return false;
-        }
-
-        $otherListings = $this->getOtherListings(true);
-        foreach ($otherListings as $otherListing) {
-            $otherListing->delete();
-        }
-
-        if ($this->isComponentModeEbay() && $this->getChildObject()->isModeSandbox()) {
-            $listings = $this->getRelatedComponentItems('Listing', 'account_id', true);
-            foreach ($listings as $listing) {
-                $listing->delete();
-            }
-        }
-
-        $orders = $this->getOrders(true);
-        foreach ($orders as $order) {
-            $order->delete();
-        }
-
-        $this->deleteChildInstance();
-
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
-
-        return parent::delete();
+        return $this->getRelatedComponentItems('Listing', 'account_id', true);
     }
 
     //########################################

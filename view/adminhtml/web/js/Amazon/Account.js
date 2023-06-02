@@ -144,12 +144,18 @@ define([
 
         // ---------------------------------------
 
-        deleteClick: function() {
+        deleteClick: function(id) {
             this.confirm({
-                content: M2ePro.translator.translate('Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. This will cause inappropriate work of all Accounts\' copies.'),
+                content: M2ePro.translator.translate('confirmation_account_delete'),
                 actions: {
                     confirm: function() {
-                        setLocation(M2ePro.url.get('deleteAction'));
+                        if (id === undefined) {
+                            setLocation(M2ePro.url.get('deleteAction'));
+                        } else {
+                            setLocation(M2ePro.url.get('*/amazon_account/delete/', {
+                                id: id,
+                            }));
+                        }
                     },
                     cancel: function() {
                         return false;

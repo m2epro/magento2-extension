@@ -88,7 +88,8 @@ class Details extends AbstractModel
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE:
                 return $setting['value'];
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE:
-                $magentoProduct = $this->getMagentoProduct();
+                $magentoProduct = $this->getAmazonListingProduct()
+                    ->getActualMagentoProduct();
                 if (!$magentoProduct->exists()) {
                     return null;
                 }

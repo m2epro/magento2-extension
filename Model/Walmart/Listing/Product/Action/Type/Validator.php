@@ -72,6 +72,16 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         return $this->params;
     }
 
+    protected function isChangerUser(): bool
+    {
+        $params = $this->getParams();
+        if (!array_key_exists('status_changer', $params)) {
+            return false;
+        }
+
+        return (int)$params['status_changer'] === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
+    }
+
     // ---------------------------------------
 
     /**
@@ -316,6 +326,10 @@ HTML;
 
     protected function validateGeneralBlocked()
     {
+        if ($this->isChangerUser()) {
+            return true;
+        }
+
         if (
             $this->getListingProduct()->isBlocked() &&
             !$this->getWalmartListingProduct()->isMissedOnChannel() &&

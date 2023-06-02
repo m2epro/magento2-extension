@@ -117,52 +117,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function delete()
-    {
-        if ($this->isLocked()) {
-            return false;
-        }
-
-        $storeCategoriesTable = $this->getHelper('Module_Database_Structure')
-                                     ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
-
-        $this->getResource()->getConnection()
-             ->delete($storeCategoriesTable, ['account_id = ?' => $this->getId()]);
-
-        $storeCategoryTemplates = $this->getStoreCategoryTemplates(true);
-        foreach ($storeCategoryTemplates as $storeCategoryTemplate) {
-            $storeCategoryTemplate->delete();
-        }
-
-        $feedbacks = $this->getFeedbacks(true);
-        foreach ($feedbacks as $feedback) {
-            $feedback->delete();
-        }
-
-        $feedbackTemplates = $this->getFeedbackTemplates(true);
-        foreach ($feedbackTemplates as $feedbackTemplate) {
-            $feedbackTemplate->delete();
-        }
-
-        $items = $this->getEbayItems(true);
-        foreach ($items as $item) {
-            $item->delete();
-        }
-
-        $shippingTemplateCollection = $this->shippingTemplateCollectionFactory
-            ->create()
-            ->applyLinkedAccountFilter($this->getId());
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Shipping $item */
-        foreach ($shippingTemplateCollection->getItems() as $item) {
-            $item->deleteShippingRateTables($this->getParentObject());
-            $item->save();
-        }
-
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
-
-        return parent::delete();
-    }
-
     /**
      * @param bool $asObjects
      * @param array $filters

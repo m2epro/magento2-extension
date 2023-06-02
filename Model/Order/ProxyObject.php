@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Order;
 
 use Ess\M2ePro\Model\Amazon\Order as AmazonOrder;
@@ -383,22 +377,35 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 
     abstract public function isVatTax();
 
+    // ---------------------------------------
+
     /**
      * @return float|int
-     * @deprecated
-     * @see \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
      */
     abstract public function getProductPriceTaxRate();
 
     /**
-     * @return \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface|null
+     * @return \Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface|null
      */
-    public function getProductPriceTax(): ?\Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+    public function getProductPriceTaxRateObject(): ?\Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
     {
         return null;
     }
 
+    /**
+     * @return float|int
+     */
     abstract public function getShippingPriceTaxRate();
+
+    /**
+     * @return \Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface|null
+     */
+    public function getShippingPriceTaxRateObject(): ?\Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
+    {
+        return null;
+    }
+
+    // ---------------------------------------
 
     /**
      * @return bool|null

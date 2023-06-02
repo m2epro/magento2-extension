@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento\Quote\Store;
 
-/**
- * Class \Ess\M2ePro\Model\Magento\Quote\Store\Configurator
- */
+use Ess\M2ePro\Model\Magento\Quote\Total\RoundTaxPercent;
+
 class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $taxHelper;
@@ -203,7 +196,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $hasRatesForCountry = $this->taxHelper->hasRatesForCountry($this->quote->getShippingAddress()->getCountryId());
         $storeShippingTaxRate = $this->taxHelper->getStoreShippingTaxRate($this->getStore());
         $calculationBasedOnOrigin = $this->taxHelper->isCalculationBasedOnOrigin($this->getStore());
-        $shippingPriceTaxRate = $proxyOrder->getShippingPriceTaxRate();
+        $shippingPriceTaxRate = $this->getShippingPriceTaxRate();
 
         $isTaxSourceChannel = $proxyOrder->isTaxModeChannel()
             || ($proxyOrder->isTaxModeMixed() && $shippingPriceTaxRate > 0);
@@ -218,7 +211,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
         if (
             $proxyOrder->isTaxModeMagento()
-            || $proxyOrder->getShippingPriceTaxRate() <= 0
+            || $shippingPriceTaxRate <= 0
             || $shippingPriceTaxRate == $storeShippingTaxRate
         ) {
             return $this->taxConfig->getShippingTaxClass($this->getStore());
@@ -240,6 +233,29 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
 
         return array_shift($productTaxClasses);
+    }
+
+    /**
+     * @return float|int
+     */
+    private function getShippingPriceTaxRate()
+    {
+        $shippingTaxRateObject = $this->proxyOrder->getShippingPriceTaxRateObject();
+        if ($shippingTaxRateObject === null) {
+            return $this->proxyOrder->getShippingPriceTaxRate();
+        }
+
+        $rateValue = $shippingTaxRateObject->getValue();
+        if (!$shippingTaxRateObject->isEnabledRoundingOfValue()) {
+            return $rateValue;
+        }
+
+        $notRoundedRateValue = $shippingTaxRateObject->getNotRoundedValue();
+        if ($rateValue !== $notRoundedRateValue) {
+            $this->quote->setData(RoundTaxPercent::SHIPPING_PRICE_TAX_DATA_KEY, $shippingTaxRateObject);
+        }
+
+        return $notRoundedRateValue;
     }
 
     //########################################

@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon;
+
+use Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -29,31 +25,28 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
-
     /** @var \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory */
     private $shippingAddressFactory;
-
     /** @var \Magento\Sales\Model\Order\Email\Sender\OrderSender */
     private $orderSender;
-
     /** @var \Magento\Sales\Model\Order\Email\Sender\InvoiceSender */
     private $invoiceSender;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory */
+    private $priceTaxRateFactory;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory */
+    protected $amazonFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other */
+    private $listingOtherResourceModel;
+
     /** @var null|float  */
     private $subTotalPrice = null;
     /** @var null|float  */
     private $grandTotalPrice = null;
 
-    /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory */
-    private $productPriceTaxFactory;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon */
-    private $amazonHelper;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory */
-    private $amazonFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other */
-    private $listingOtherResourceModel;
-
     public function __construct(
-        Order\Tax\ProductPriceTaxFactory $productPriceTaxFactory,
+        \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Magento\Order\ShipmentFactory $shipmentFactory,
@@ -83,7 +76,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $data
         );
 
-        $this->productPriceTaxFactory = $productPriceTaxFactory;
+        $this->priceTaxRateFactory = $priceTaxRateFactory;
         $this->amazonHelper = $amazonHelper;
         $this->amazonFactory = $amazonFactory;
         $this->shipmentFactory = $shipmentFactory;
@@ -261,26 +254,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getProductPriceTaxRate()
     {
-        return $this->productPriceTaxFactory->createByOrder($this)->getTaxRateValue();
-    }
-
-    /**
-     * @return float|int
-     */
-    public function getShippingPriceTaxRate()
-    {
-        $taxAmount = $this->getShippingPriceTaxAmount();
-        if ($taxAmount <= 0) {
-            return 0;
-        }
-
-        if ($this->getShippingPrice() - $this->getShippingDiscountAmount() <= 0) {
-            return 0;
-        }
-
-        $taxRate = ($taxAmount / ($this->getShippingPrice() - $this->getShippingDiscountAmount())) * 100;
-
-        return round($taxRate, 4);
+        return $this->priceTaxRateFactory->createProductPriceTaxRateByOrder($this)->getValue();
     }
 
     /**
@@ -457,10 +431,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getData('seller_order_id');
     }
 
-    /**
-     * @return float|null
-     */
-    public function getSubtotalPrice()
+    public function getSubtotalPrice(): float
     {
         if ($this->subTotalPrice === null) {
             $this->subTotalPrice = $this->getResource()->getItemsTotal($this->getId());

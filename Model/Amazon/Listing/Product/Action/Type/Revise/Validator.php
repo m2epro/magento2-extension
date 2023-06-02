@@ -86,8 +86,9 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
         }
 
         if (
-            !$this->getAmazonListingProduct()->isAfnChannel() &&
-            (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isRevisable())
+            !$this->getAmazonListingProduct()->isAfnChannel()
+            && ($this->isChangerUser() && !$this->getListingProduct()->isBlocked())
+            && (!$this->getListingProduct()->isListed() || !$this->getListingProduct()->isRevisable())
         ) {
             $this->addMessage('Item is not Listed or not available');
 

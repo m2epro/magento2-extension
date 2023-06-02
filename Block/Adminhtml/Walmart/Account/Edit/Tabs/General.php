@@ -48,6 +48,27 @@ class General extends AbstractForm
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
+    public function _construct()
+    {
+        parent::_construct();
+
+        $this->jsTranslator->add(
+            'confirmation_account_delete',
+            __(
+                <<<HTML
+<p>You are about to delete your eBay/Amazon/Walmart seller account from M2E Pro. This will remove the
+account-related Listings and Products from the extension and disconnect the synchronization.
+Your listings on the channel will <b>not</b> be affected.</p>
+<p>Please confirm if you would like to delete the account.</p>
+<p>Note: once the account is no longer connected to your M2E Pro, please remember to delete it from
+<a href="%1">M2E Accounts</a></p>
+HTML
+                ,
+                $this->supportHelper->getAccountsUrl()
+            )
+        );
+    }
+
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Model\Account $account */

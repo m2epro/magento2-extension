@@ -122,6 +122,11 @@ HTML
                             __('I will upload my own Invoices'),
                     ],
                     'value' => '',
+                    'tooltip' => __(
+                        'Learn how to set up automatic invoice uploading in this
+                               <a href="%1"  target="_blank">article</a>.',
+                        $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219394')
+                    ),
                 ]
             );
 

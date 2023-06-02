@@ -285,7 +285,10 @@ class Config extends AbstractConfig
                 'RemoveUnavailableDataType',
                 'EbayBuyerInitiatedOrderCancellation',
                 'UpdateEbayVatMode',
-            ]
+            ],
+            'y23_m06' => [
+                'RemoveBuildLastVersionFromRegistry',
+            ],
         ];
     }
 

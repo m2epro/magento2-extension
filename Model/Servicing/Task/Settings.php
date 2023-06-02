@@ -217,10 +217,6 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
             '/installation/public_last_version/',
             $data['last_version']['magento_2']['public']
         );
-        $this->registryManager->setValue(
-            '/installation/build_last_version/',
-            $data['last_version']['magento_2']['build']
-        );
     }
 
     /**

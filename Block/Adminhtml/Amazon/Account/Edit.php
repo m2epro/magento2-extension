@@ -162,8 +162,6 @@ class Edit extends AbstractContainer
             <li>Street Address</li>
         </ul>
 HTML
-                ,
-                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219394')
             ),
         ]);
 

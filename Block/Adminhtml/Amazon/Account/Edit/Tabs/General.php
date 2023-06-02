@@ -184,11 +184,18 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->jsTranslator->add('Please enter correct value.', __('Please enter correct value.'));
 
         $this->jsTranslator->add(
-            'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
-            . 'This will cause inappropriate work of all Accounts\' copies.',
+            'confirmation_account_delete',
             __(
-                'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
-                . 'This will cause inappropriate work of all Accounts\' copies.'
+                <<<HTML
+<p>You are about to delete your eBay/Amazon/Walmart seller account from M2E Pro. This will remove the
+account-related Listings and Products from the extension and disconnect the synchronization.
+Your listings on the channel will <b>not</b> be affected.</p>
+<p>Please confirm if you would like to delete the account.</p>
+<p>Note: once the account is no longer connected to your M2E Pro, please remember to delete it from
+<a href="%1">M2E Accounts</a></p>
+HTML
+                ,
+                $this->supportHelper->getAccountsUrl()
             )
         );
 

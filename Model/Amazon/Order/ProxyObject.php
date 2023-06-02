@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 /**
@@ -15,11 +9,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 {
     /** @var \Ess\M2ePro\Model\Amazon\Order\Item\ProxyObject[] */
     protected $removedProxyItems = [];
-    /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory */
-    private $productPriceTaxFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory */
+    private $priceTaxRateFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory $productPriceTaxFactory,
+        \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
@@ -40,7 +34,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $userInfoFactory
         );
 
-        $this->productPriceTaxFactory = $productPriceTaxFactory;
+        $this->priceTaxRateFactory = $priceTaxRateFactory;
     }
 
     /**
@@ -434,15 +428,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getProductPriceTaxRate()
     {
-        return $this->getProductPriceTax()->getTaxRateValue();
+        return $this->getProductPriceTaxRateObject()->getValue();
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface|null
+     * @return \Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
      */
-    public function getProductPriceTax(): ?\Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+    public function getProductPriceTaxRateObject(): ?\Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
     {
-        return $this->productPriceTaxFactory->createByOrder($this->order);
+        return $this->priceTaxRateFactory->createProductPriceTaxRateByOrder($this->order);
     }
 
     /**
@@ -450,6 +444,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getShippingPriceTaxRate()
     {
-        return $this->order->getShippingPriceTaxRate();
+        return $this->getShippingPriceTaxRateObject()->getValue();
+    }
+
+    public function getShippingPriceTaxRateObject(): ?\Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
+    {
+        return $this->priceTaxRateFactory->createShippingPriceTaxRateByOrder($this->order);
     }
 }

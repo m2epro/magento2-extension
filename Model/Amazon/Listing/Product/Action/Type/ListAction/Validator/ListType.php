@@ -77,7 +77,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
                     $this->addMessage(
                         $this->log->encodeDescription(
                             'Magento Parent Product was linked
-                             to Amazon Parent Product by %general_id_type% "%general_id%" via Search Settings.',
+                             to Amazon Parent Product by %general_id_type% "%general_id%" via Main Settings.',
                             ['!general_id_type' => $generalIdType, '!general_id' => $generalId]
                         ),
                         \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
@@ -169,7 +169,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
             $this->addMessage(
                 $this->log->encodeDescription(
                     'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings
-                    for ASIN/ISBN Search were specified in Listing Search Settings and a value
+                    for ASIN/ISBN Search were specified in Main Settings and a value
                     %general_id% were set in Magento Attribute for that Product.',
                     ['!general_id' => $generalId->getIdentifier()]
                 ),
@@ -180,7 +180,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         if ($generalId->hasUnresolvedType()) {
             $this->addMessage(
                 $this->log->encodeDescription(
-                    'The value "%general_id%" provided for ASIN/ISBN in Listing Search Settings is invalid.
+                    'The value "%general_id%" provided for ASIN/ISBN in Main Settings is invalid.
                      Please set the correct value and try again.',
                     ['!general_id' => $generalId->getIdentifier()]
                 )
@@ -195,7 +195,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         if (empty($amazonData)) {
             $this->addMessage(
                 $this->log->encodeDescription(
-                    '%general_id_type% %general_id% provided in Listing Search Settings
+                    '%general_id_type% %general_id% provided in Main Settings
                      is not found on Amazon.
                      Please set the correct value and try again.
                      Note: Due to Amazon API restrictions M2E Pro
@@ -294,7 +294,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         $changingListTypeMessage = $this->log->encodeDescription(
             'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings
-            for UPC/EAN Search were specified in Listing Search Settings and a value
+            for UPC/EAN Search were specified in Main Settings and a value
             %worldwide_id% were set in Magento Attribute for that Product.',
             ['!worldwide_id' => $worldwideId->getIdentifier()]
         );
@@ -309,7 +309,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
             $this->addMessage(
                 $this->log->encodeDescription(
-                    'The value "%worldwide_id%" provided for UPC/EAN in Listing Search Settings is invalid.
+                    'The value "%worldwide_id%" provided for UPC/EAN in Main Settings is invalid.
                      Please set the correct value and try again.',
                     ['!worldwide_id' => $worldwideId->getIdentifier()]
                 )
@@ -328,7 +328,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
             $this->addMessage(
                 $this->log->encodeDescription(
-                    '%worldwide_id_type% %worldwide_id% provided in Search Settings
+                    '%worldwide_id_type% %worldwide_id% provided in Main Settings
                      is not found on Amazon. Please set Product Type to create New ASIN/ISBN.',
                     ['!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId->getIdentifier()]
                 )
@@ -542,7 +542,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         if (!$this->getAmazonListingProduct()->isGeneralIdOwner()) {
             $this->addMessage(
                 'Product cannot be Listed because ASIN/ISBN is not assigned, UPC/EAN value
-                 is not provided and the Search Settings are invalid. Please set the required
+                 is not provided and the Main Settings are invalid. Please set the required
                  Settings and try again.'
             );
 

@@ -74,6 +74,26 @@ define([
             }, M2ePro.translator.translate('Coefficient is not valid.'));
         },
 
+        deleteClick: function(id) {
+            this.confirm({
+                content: M2ePro.translator.translate('confirmation_account_delete'),
+                actions: {
+                    confirm: function() {
+                        if (id === undefined) {
+                            setLocation(M2ePro.url.get('deleteAction'));
+                        } else {
+                            setLocation(M2ePro.url.get('*/walmart_account/delete/', {
+                                id: id,
+                            }));
+                        }
+                    },
+                    cancel: function() {
+                        return false;
+                    }
+                }
+            });
+        },
+
         initTokenValidation: function() {
             var self = this;
 

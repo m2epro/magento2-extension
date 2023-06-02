@@ -66,6 +66,16 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         return $this->params;
     }
 
+    protected function isChangerUser(): bool
+    {
+        $params = $this->getParams();
+        if (!array_key_exists('status_changer', $params)) {
+            return false;
+        }
+
+        return (int)$params['status_changer'] === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
+    }
+
     // ---------------------------------------
 
     /**
@@ -191,6 +201,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     protected function validateBlocked()
     {
+        if ($this->isChangerUser()) {
+            return true;
+        }
+
         if ($this->getListingProduct()->isBlocked()) {
             $this->addMessage(
                 'The Action can not be executed as the Item was Closed, Incomplete or Blocked on Amazon.

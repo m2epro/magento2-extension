@@ -951,6 +951,21 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         // ---------------------------------------
     }
 
+    /**
+     * @return void
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function deleteListingProductsForce(): void
+    {
+        $listingProducts = $this->getProducts(true);
+
+        foreach ($listingProducts as $listingProduct) {
+            /**@var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+            $listingProduct->canBeForceDeleted(true);
+            $listingProduct->delete();
+        }
+    }
+
     //########################################
 
     public function isCacheEnabled()

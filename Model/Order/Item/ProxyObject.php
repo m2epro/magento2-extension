@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Order\Item;
 
 use Ess\M2ePro\Model\Ebay\Order\Item as EbayItem;
@@ -222,11 +216,11 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface|null
+     * @return \Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface|null
      */
-    public function getProductPriceTax(): ?\Ess\M2ePro\Model\Order\Tax\ProductPriceTaxInterface
+    public function getProductPriceTaxRateObject(): ?\Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
     {
-        return $this->getProxyOrder()->getProductPriceTax();
+        return $this->getProxyOrder()->getProductPriceTaxRateObject();
     }
 
     public function getWasteRecyclingFee()

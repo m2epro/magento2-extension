@@ -26,7 +26,11 @@ class Tabs extends AbstractTabs
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
+    /** @var \Ess\M2ePro\Helper\Module\Support */
+    private $supportHelper;
+
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
@@ -38,6 +42,7 @@ class Tabs extends AbstractTabs
 
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
+        $this->supportHelper = $supportHelper;
     }
 
     protected function _construct()
@@ -171,6 +176,22 @@ class Tabs extends AbstractTabs
         $this->jsPhp->addConstants(
             $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Model\Ebay\Account::class)
+        );
+
+        $this->jsTranslator->add(
+            'confirmation_account_delete',
+            __(
+                <<<HTML
+<p>You are about to delete your eBay/Amazon/Walmart seller account from M2E Pro. This will remove the
+account-related Listings and Products from the extension and disconnect the synchronization.
+Your listings on the channel will <b>not</b> be affected.</p>
+<p>Please confirm if you would like to delete the account.</p>
+<p>Note: once the account is no longer connected to your M2E Pro, please remember to delete it from
+<a href="%1">M2E Accounts</a></p>
+HTML
+                ,
+                $this->supportHelper->getAccountsUrl()
+            )
         );
 
         $this->jsTranslator->addTranslations(

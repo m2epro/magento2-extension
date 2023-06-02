@@ -123,31 +123,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return parent::save();
     }
 
-    public function delete()
-    {
-        if ($this->isLocked()) {
-            return false;
-        }
-
-        $items = $this->getAmazonItems(true);
-        foreach ($items as $item) {
-            $item->delete();
-        }
-
-        if ($this->isRepricing()) {
-            $this->getRepricing()->delete();
-            $this->repricingModel = null;
-        }
-
-        $this->deleteShippingPolicies();
-
-        $this->marketplaceModel = null;
-
-        $this->cachePermanent->removeTagValues('account');
-
-        return parent::delete();
-    }
-
     public function getAmazonItems($asObjects = false, array $filters = [])
     {
         return $this->getRelatedSimpleItems('Amazon\Item', 'account_id', $asObjects, $filters);
@@ -233,7 +208,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function deleteShippingPolicies(): void
+    public function deleteShippingPolicies(): void
     {
         $policies = $this->getShippingPolicies();
 
@@ -242,22 +217,46 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getShippingTemplates(): array
+    public function getInventorySku(): array
     {
-        $tableDictionaryTemplateShipping = $this->moduleDatabaseStructure
-                                            ->getTableNameWithPrefix('m2epro_amazon_dictionary_template_shipping');
+        return $this->getRelatedSimpleItems('Amazon_Inventory_Sku', 'account_id', true);
+    }
 
-        $connRead = $this->resourceConnection->getConnection();
+    public function deleteInventorySku(): void
+    {
+        $items = $this->getInventorySku();
 
-        $dbSelect = $connRead->select()
-                             ->from($tableDictionaryTemplateShipping, '*')
-                             ->where('`account_id` = ?', (int)$this->getId())
-                             ->order(['title ASC']);
+        foreach ($items as $item) {
+            $item->delete();
+        }
+    }
 
-        return $connRead->fetchAll($dbSelect);
+    public function getProcessingListSku(): array
+    {
+        return $this->getRelatedSimpleItems('Amazon_Listing_Product_Action_ProcessingListSku', 'account_id', true);
+    }
+
+    public function deleteProcessingListSku(): void
+    {
+        $items = $this->getProcessingListSku();
+
+        foreach ($items as $item) {
+            $item->delete();
+        }
+    }
+
+    public function getDictionaryTemplateShipping($asObjects = false): array
+    {
+        return $this->getRelatedSimpleItems('Amazon_Dictionary_TemplateShipping', 'account_id', $asObjects);
+    }
+
+    public function deleteDictionaryTemplateShipping(): void
+    {
+        $templates = $this->getDictionaryTemplateShipping(true);
+
+        foreach ($templates as $template) {
+            $template->delete();
+        }
     }
 
     public function getServerHash()

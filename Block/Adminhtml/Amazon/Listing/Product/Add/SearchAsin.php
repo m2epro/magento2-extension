@@ -104,10 +104,11 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
                 <p>You can use a Manual Search for each added Product by clicking on the icon in the
                 "ASIN/ISBN" Column of the Grid. Also you can use Automatic Search for added
                 Product(s) by choosing <strong>"Search ASIN/ISBN Automatically"</strong>
-                Option in a mass Actions bulk. The Search will be performed according to the values which set in
-                Search Settings.</p><br>
-                <p>You can always set or change Settings of the source for ASIN/ISBN and UPC/EAN by clicking
-                <strong>Edit Search Settings</strong> button in the right top corner.</p><br>
+                Option in a mass Actions bulk. The Search will be performed based on the Product Identifiers Settings"
+                </p>
+                <br>
+                <p>You can always set or change Settings of the source for ASIN/ISBN and UPC/EAN</p>
+                <br>
                 <p><strong>Note:</strong> The process of Automatic Search might be time-consuming, depending on
                 the number of added Products the Search is applied to.</p>
 HTML

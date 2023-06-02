@@ -8,8 +8,8 @@
     padding: 1em .5em 1em 1.8rem;
 }
 
-#product_type_search_results {
-    min-width: 320px;
+#product_type_browse_results, #product_type_search_results {
+    min-width: 450px;
     max-height: none;
     display: inline-block;
     margin-bottom: 30px;
@@ -21,12 +21,12 @@
     overflow-x: auto;
 }
 
-#chooser_search_input_container {
+.chooser_input_container {
     margin-bottom: 30px;
 }
 
-#product_type_search_query {
-    width: 320px;
+#product_type_browse_query, #product_type_search_query {
+    width: 450px;
     box-sizing: border-box;
     border: 1px solid #adadad;
     border-radius: 1px;

@@ -23,9 +23,19 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\CollectionFactory $variationCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option $variationOptionResource,
+        array $data = []
     ) {
-        parent::__construct($helperFactory, $modelFactory, $supportHelper);
+        parent::__construct(
+            $helperFactory,
+            $modelFactory,
+            $supportHelper,
+            $variationCollectionFactory,
+            $variationOptionResource,
+            $data
+        );
 
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;

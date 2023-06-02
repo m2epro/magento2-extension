@@ -13,14 +13,34 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
     protected $walmartFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $WalmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->walmartFactory = $WalmartFactory;
-        parent::__construct($viewHelper, $context, $backendHelper, $data);
+        $this->walmartFactory = $walmartFactory;
+        parent::__construct($supportHelper, $viewHelper, $context, $backendHelper, $data);
+    }
+
+    public function _construct()
+    {
+        parent::_construct();
+
+        $this->jsUrl->addUrls([
+            '*/walmart_account/delete/' => $this->getUrl('*/walmart_account/delete/'),
+        ]);
+
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Walmart/Account',
+    ], function(){
+        window.WalmartAccountObj = new WalmartAccount();
+    });
+JS
+        );
     }
 
     protected function _prepareCollection()
@@ -92,6 +112,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Account\Grid
 HTML;
     }
 
+    public function callbackColumnActions($value, $row, $column, $isExport)
+    {
+        $delete = __('Delete');
+
+        return <<<HTML
+<div>
+    <a class="action-default" href="javascript:" onclick="WalmartAccountObj.deleteClick('{$row->getId()}')">
+        {$delete}
+    </a>
+</div>
+HTML;
+    }
+
     //########################################
 
     protected function callbackFilterTitle($collection, $column)
@@ -107,6 +140,4 @@ HTML;
             '%' . $value . '%'
         );
     }
-
-    //########################################
 }

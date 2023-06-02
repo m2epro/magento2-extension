@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento\Quote;
 
 use Ess\M2ePro\Model\Magento\Quote\Total\RoundTaxPercent;
@@ -153,22 +147,22 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
      */
     private function getTaxRateOfProxyItem()
     {
-        $productPriceTax = $this->proxyItem->getProductPriceTax();
+        $productPriceTaxRateObject = $this->proxyItem->getProductPriceTaxRateObject();
 
-        if (empty($productPriceTax)) {
+        if (empty($productPriceTaxRateObject)) {
             return $this->proxyItem->getTaxRate();
         }
 
-        $rateValue = $productPriceTax->getTaxRateValue();
-        if (!$productPriceTax->isEnabledRoundingOfTaxRateValue()) {
+        $rateValue = $productPriceTaxRateObject->getValue();
+        if (!$productPriceTaxRateObject->isEnabledRoundingOfValue()) {
             return $rateValue;
         }
 
-        $notRoundedTaxRateValue = $productPriceTax->getNotRoundedTaxRateValue();
+        $notRoundedTaxRateValue = $productPriceTaxRateObject->getNotRoundedValue();
         if ($rateValue !== $notRoundedTaxRateValue) {
             $this->quote->setData(
                 RoundTaxPercent::PRODUCT_PRICE_TAX_DATA_KEY,
-                $productPriceTax
+                $productPriceTaxRateObject
             );
         }
 

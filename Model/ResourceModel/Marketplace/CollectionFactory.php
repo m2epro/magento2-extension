@@ -30,4 +30,26 @@ class CollectionFactory
     {
         return $this->objectManager->create(Collection::class, $data);
     }
+
+    public function createWithEbayChildMode(): Collection
+    {
+        return $this->createWithChildMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
+    }
+
+    public function createWithAmazonChildMode(): Collection
+    {
+        return $this->createWithChildMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
+    }
+
+    public function createWithWalmartChildMode(): Collection
+    {
+        return $this->createWithChildMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
+    }
+
+    private function createWithChildMode(string $componentMode): Collection
+    {
+        return $this->objectManager->create(Collection::class, [
+            'childMode' => $componentMode,
+        ]);
+    }
 }

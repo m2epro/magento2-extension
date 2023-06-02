@@ -79,7 +79,7 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
             /** @var \Magento\Framework\View\Element\Messages $messages */
             $messages = $this->getLayout()->createBlock(\Magento\Framework\View\Element\Messages::class);
             $messages->addWarning(
-                'There were no Products found on Amazon according to the Listing Search Settings.'
+                'There were no Products found on Amazon.'
             );
 
             return <<<HTML

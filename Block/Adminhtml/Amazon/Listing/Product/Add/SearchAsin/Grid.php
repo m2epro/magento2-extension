@@ -170,7 +170,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             || $this->config->isWorldwideIdModeCustomAttribute()
         ) {
             $this->addColumn('settings', [
-                'header' => __('Search Settings Values'),
+                'header' => __('Search Values'),
                 'align' => 'left',
                 'width' => '240px',
                 'filter' => false,
@@ -352,10 +352,7 @@ HTML;
 
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND:
                 $msg = __('Product was not found');
-                $tip = __(
-                    'There are no Products found on Amazon after the Automatic Search
-                                                   was performed according to Listing Search Settings.'
-                );
+                $tip = __('There are no Products found on Amazon after the Automatic Search was performed.');
 
                 return <<<HTML
 <span style="color: red; {$style}">{$msg}</span>&nbsp;

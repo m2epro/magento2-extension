@@ -80,32 +80,40 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     //########################################
 
-    public function delete()
-    {
-        if ($this->isLocked()) {
-            return false;
-        }
-
-        $items = $this->getWalmartItems(true);
-        foreach ($items as $item) {
-            $item->delete();
-        }
-
-        $this->marketplaceModel = null;
-
-        $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
-
-        return parent::delete();
-    }
-
-    //########################################
-
     public function getWalmartItems($asObjects = false, array $filters = [])
     {
         return $this->getRelatedSimpleItems('Walmart\Item', 'account_id', $asObjects, $filters);
     }
 
     //########################################
+
+    public function getInventoryWpid(): array
+    {
+        return $this->getRelatedSimpleItems('Walmart_Inventory_Wpid', 'account_id', true);
+    }
+
+    public function deleteInventoryWpid(): void
+    {
+        $items = $this->getInventoryWpid();
+
+        foreach ($items as $item) {
+            $item->delete();
+        }
+    }
+
+    public function getProcessingList(): array
+    {
+        return $this->getRelatedSimpleItems('Walmart_Listing_Product_Action_ProcessingList', 'account_id', true);
+    }
+
+    public function deleteProcessingList(): void
+    {
+        $items = $this->getProcessingList();
+
+        foreach ($items as $item) {
+            $item->delete();
+        }
+    }
 
     /**
      * @return \Ess\M2ePro\Model\Marketplace

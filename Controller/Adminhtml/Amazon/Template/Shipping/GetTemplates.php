@@ -33,7 +33,7 @@ class GetTemplates extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $account = $this->accountFactory->create()->load($accountId);
         $account->setChildMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
-        $templatesArray = $account->getChildObject()->getShippingTemplates();
+        $templatesArray = $account->getChildObject()->getDictionaryTemplateShipping();
 
         $this->setJsonContent($templatesArray);
 

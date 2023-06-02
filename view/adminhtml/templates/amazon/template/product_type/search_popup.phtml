@@ -16,7 +16,7 @@
     <div id="chooser_container">
         <div id="selected_product_type_container">
             <div style="vertical-align: middle;">
-                <strong>Product Type</strong>
+                <strong><?php echo $block->__('Product Type'); ?></strong>
 
                 <span style="vertical-align: middle; padding-left: 5px">
                     <span id="search_popup_selected_product_type_title"></span>
@@ -24,20 +24,88 @@
                 </span>
 
                 <a style="vertical-align: middle; padding-left: 5px"
-                   href="javascript:void(0)" id="product_type_reset_link">Reset</a>
+                   href="javascript:void(0)" id="product_type_reset_link"><?php echo $block->__('Reset'); ?></a>
             </div>
         </div>
+    </div>
 
-        <div class="">
-            <div id="chooser_search_input_container">
-                <input id="product_type_search_query" type="text" placeholder="Enter keyword(s)"
-                       onkeyup="AmazonTemplateProductTypeSearchObj.applySearchFilter();">
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <a onclick="AmazonTemplateProductTypeSearchObj.resetFilter()">Reset</a>
+    <div class="m2epro-tabs-horizontal">
+        <div id="productTypeChooserTabs" class="ui-tabs ui-corner-all ui-widget ui-widget-content">
+            <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"
+                role="tablist" style="display: block;">
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0"
+                    aria-controls="productTypeChooserTabs_search_content"
+                    aria-labelledby="productTypeChooserTabs_search" aria-selected="true"
+                    aria-expanded="true">
+                    <a href="#productTypeChooserTabs_search_content"
+                       id="productTypeChooserTabs_search" title="<?php echo $block->__('Search'); ?>"
+                       onclick="AmazonTemplateProductTypeSearchObj.onClickPopupTab(this);"
+                       class="tab-item-link ui-tabs-anchor" data-tab-type="" role="presentation" tabindex="-1">
+                        <span><?php echo $block->__('Search'); ?></span>
+                    </a>
+                </li>
+
+                <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1"
+                    aria-controls="productTypeChooserTabs_browse_content"
+                    aria-labelledby="productTypeChooserTabs_browse" aria-selected="false"
+                    aria-expanded="false">
+                    <a href="#productTypeChooserTabs_browse_content"
+                       id="productTypeChooserTabs_browse" title="<?php echo $block->__('Browse'); ?>"
+                       onclick="AmazonTemplateProductTypeSearchObj.onClickPopupTab(this);"
+                       class="tab-item-link ui-tabs-anchor" data-tab-type="" role="presentation" tabindex="-1">
+                        <span><?php echo $block->__('Browse'); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="chooser_tabs_container">
+        <div id="productTypeChooserTabs_search_content"
+             aria-labelledby="productTypeChooserTabs_search"
+             class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="false">
+
+            <div class="chooser_input_container">
+                <input id="product_type_search_query" type="text"
+                       placeholder="<?php echo $block->__('Enter keywords separated by commas'); ?>">
+
+                <button class="action primary"
+                        onclick="AmazonTemplateProductTypeSearchObj.applySearchFilter()"
+                        style="margin-left: 2rem;">
+                    <?php echo $block->__('Search'); ?>
+                </button>
+
+                <a onclick="AmazonTemplateProductTypeSearchObj.resetSearchFilter()"
+                   style="margin-left: 2rem;">
+                    <?php echo $block->__('Reset'); ?>
+                </a>
             </div>
 
             <div class="chooser_browser">
                 <select id="product_type_search_results" size="8"
+                        class="multiselect admin__control-multiselect">
+                </select>
+            </div>
+        </div>
+
+        <div id="productTypeChooserTabs_browse_content"
+             aria-labelledby="productTypeChooserTabs_browse"
+             class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="true"
+             style="display: none;">
+
+            <div class="chooser_input_container">
+                <input id="product_type_browse_query" type="text"
+                       placeholder="<?php echo $block->__('Enter product type name'); ?>"
+                       onkeyup="AmazonTemplateProductTypeSearchObj.applyBrowseFilter();">
+
+                <a onclick="AmazonTemplateProductTypeSearchObj.resetBrowseFilter()"
+                   style="margin-left: 2rem;">
+                    <?php echo $block->__('Reset'); ?>
+                </a>
+            </div>
+
+            <div class="chooser_browser">
+                <select id="product_type_browse_results" size="8"
                         class="multiselect admin__control-multiselect">
                 </select>
             </div>

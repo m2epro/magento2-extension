@@ -51,8 +51,5 @@ class VersionInfo extends AbstractInspection
         $this->latestPublicVersion = $this->registry->getValue(
             '/installation/public_last_version/'
         );
-        $this->latestVersion = $this->registry->getValue(
-            '/installation/build_last_version/'
-        );
     }
 }
