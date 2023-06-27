@@ -97,15 +97,14 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const ACTION_REMAP_LISTING_PRODUCT = 34;
     public const _ACTION_REMAP_LISTING_PRODUCT = 'Relink';
 
-    //########################################
+    public const ACTION_REPRICER = 36;
+    public const _ACTION_REPRICER = 'Repricer';
 
     protected function _construct(): void
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Listing\Log::class);
     }
-
-    //########################################
 
     public function addListingMessage(
         $listingId,
@@ -157,9 +156,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->createMessage($dataForAdd);
     }
 
-    // ---------------------------------------
-
-    public function clearMessages($listingId = null)
+    public function clearMessages($listingId = null): void
     {
         $filters = [];
 
@@ -173,9 +170,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->getResource()->clearMessages($filters);
     }
 
-    //########################################
-
-    protected function createMessage($dataForAdd)
+    protected function createMessage($dataForAdd): void
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->parentFactory->getCachedObjectLoaded(
@@ -213,7 +208,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $description = null,
         $type = self::TYPE_INFO,
         array $additionalData = []
-    ) {
+    ): array {
         return [
             'listing_id' => (int)$listingId,
             'initiator' => $initiator,

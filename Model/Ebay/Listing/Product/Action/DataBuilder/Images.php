@@ -126,8 +126,8 @@ class Images extends AbstractModel
                         $attributeLabels[] = trim($storeLabel);
                     }
 
-                    $attributeLabels[] = trim($configurableAttribute->getData('label'));
-                    $attributeLabels[] = trim($attribute->getFrontendLabel());
+                    $attributeLabels[] = trim((string)$configurableAttribute->getData('label'));
+                    $attributeLabels[] = trim((string)$attribute->getFrontendLabel());
 
                     $attributeLabels = array_filter($attributeLabels);
 

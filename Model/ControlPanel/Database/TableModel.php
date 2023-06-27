@@ -64,12 +64,15 @@ class TableModel extends \Magento\Framework\DataObject
 
     private function init()
     {
+        /** @var \Ess\M2ePro\Helper\Module\Database\Structure $helper */
         $helper = $this->helperFactory->getObject('Module_Database_Structure');
-        $this->modelName = $helper->getTableModel($this->tableName);
+        $modelName = $helper->getTableModel($this->tableName);
 
-        if (!$this->modelName) {
+        if (!$modelName) {
             throw new Exception("Specified table '{$this->tableName}' cannot be managed.");
         }
+
+        $this->modelName = $this->resolveModelNameBySubClass($modelName);
 
         if (!$this->isMergeModeEnabled) {
             return;
@@ -91,6 +94,24 @@ class TableModel extends \Magento\Framework\DataObject
         if (!$this->mergeModeComponent && $this->isMergeModeEnabled) {
             $this->isMergeModeEnabled = false;
         }
+    }
+
+    /**
+     * @see \Ess\M2ePro\Model\ActiveRecord\Factory::getObject()
+     */
+    private function resolveModelNameBySubClass(string $modelName): string
+    {
+        $modelClassName = sprintf('\Ess\M2ePro\Model\%s', $modelName);
+        $reflection = new \ReflectionClass($modelClassName);
+
+        if (
+            $reflection->isSubclassOf(\Ess\M2ePro\Model\ActiveRecord\ActiveRecordAbstract::class)
+            || $reflection->isSubclassOf(\Ess\M2ePro\Model\ActiveRecord\AbstractModel::class)
+        ) {
+            return $modelName;
+        }
+
+        return sprintf('%s\Entity', $modelName);
     }
 
     //########################################

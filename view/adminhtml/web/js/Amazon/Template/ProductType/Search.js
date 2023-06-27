@@ -17,8 +17,8 @@ define(
                 this.applyBrowseFilter();
 
                 $('product_type_reset_link').observe('click', this.resetCurrentProductType.bind(this));
-                $('product_type_browse_results').observe('change', this.updateProductTypeByBrowseResult.bind(this));
-                $('product_type_search_results').observe('change', this.updateProductTypeBySearchResult.bind(this));
+                $('product_type_browse_results').observe('change', this.updateProductTypeByResult.bind(this));
+                $('product_type_search_results').observe('change', this.updateProductTypeByResult.bind(this));
                 $('product_type_search_query').addEventListener('keyup', this.handleSearchInputKeyUps.bind(this));
             },
 
@@ -60,9 +60,12 @@ define(
 
                 const container = $('product_type_browse_results');
                 container.innerHTML = '';
+                var productTypeId;
 
                 for (var i = 0; i < productTypes.length; i++) {
-                    this.insertOption(container, productTypes[i].nick, productTypes[i].title);
+                    productTypeId = productTypes[i]['exist_product_type_id'] !== undefined ?
+                            productTypes[i]['exist_product_type_id'] : false;
+                    this.insertOption(container, productTypes[i].nick, productTypes[i].title, productTypeId);
                 }
             },
 
@@ -132,10 +135,13 @@ define(
                         }
 
                         container.innerHTML = '';
+                        var productTypeId;
 
                         const productTypes = response.data;
                         for (var i = 0; i < productTypes.length; i++) {
-                            self.insertOption(container, productTypes[i].nick, productTypes[i].title);
+                            productTypeId = productTypes[i]['exist_product_type_id'] !== undefined ?
+                                    productTypes[i]['exist_product_type_id'] : false;
+                            self.insertOption(container, productTypes[i].nick, productTypes[i].title, productTypeId);
                         }
                     }
                 });
@@ -150,14 +156,41 @@ define(
                 $(item.id + '_content').style.display = 'block';
             },
 
-            updateProductTypeByBrowseResult: function ()
+            updateProductTypeByResult: function (event)
             {
-                this.setCurrentProductType($('product_type_browse_results').value);
-            },
+                const selectValue = event.target.value;
+                const selectElement = event.target;
+                const options = Array.from(selectElement.options)
+                const selectOption = options.find(option => option.value === selectValue);
+                const errorContentWrapper = jQuery(selectElement).siblings('.product_type_error_content');
 
-            updateProductTypeBySearchResult: function ()
-            {
-                this.setCurrentProductType($('product_type_search_results').value);
+                if (selectOption.dataset.existProductTypeId) {
+                    jQuery(selectElement).closest('.modal-inner-wrap')
+                            .find('.product-type-confirm')
+                            .prop('disabled', true);
+
+                    if (errorContentWrapper.length > 0) {
+                        const url = M2ePro.url.get(
+                                'amazon_template_productType/edit',
+                                {id: selectOption.dataset.existProductTypeId}
+                        );
+                        const errorContent = str_replace(
+                                'exist_product_type_url',
+                                url,
+                                M2ePro.translator.translate('product_type_configured')
+                        );
+                        jQuery(errorContentWrapper).html(errorContent);
+                    }
+                } else {
+                    jQuery(selectElement).closest('.modal-inner-wrap')
+                            .find('.product-type-confirm')
+                            .prop('disabled', false);
+
+                    if (errorContentWrapper.length > 0 && !errorContentWrapper.is(':empty')) {
+                        errorContentWrapper.empty();
+                    }
+                    this.setCurrentProductType(selectValue);
+                }
             },
 
             resetCurrentProductType: function ()
@@ -167,14 +200,16 @@ define(
                 $('product_type_search_results').value = '';
             },
 
-            insertOption: function (container, value, title)
+            insertOption: function (container, value, title, typeId)
             {
-                const option = new Element(
-                    'option',
-                    {value: value}
-                );
-                option.innerHTML = title;
+                const productTypeOptions = {value: value};
 
+                if (typeId) {
+                    productTypeOptions['data-exist-product-type-id'] = typeId;
+                }
+
+                const option = new Element('option', productTypeOptions);
+                option.innerHTML = title;
                 container.appendChild(option);
             }
         });

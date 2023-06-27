@@ -93,10 +93,10 @@ class Url
         return $map[$route] ?? $route;
     }
 
-    public function getUrlWithFilter(string $route, array $params): string
+    public function getUrlWithFilter(string $route, array $filters, array $routeParams = []): string
     {
-        $params = http_build_query($params);
+        $routeParams['filter'] = base64_encode(http_build_query($filters));
 
-        return $this->urlBuilder->getUrl($route, ['filter' => base64_encode($params)]);
+        return $this->urlBuilder->getUrl($route, $routeParams);
     }
 }

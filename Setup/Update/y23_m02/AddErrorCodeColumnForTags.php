@@ -18,6 +18,11 @@ class AddErrorCodeColumnForTags extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\A
     public function execute()
     {
         $modifier = $this->getTableModifier('tag');
+
+        if ($modifier->isColumnExists('error_code')) {
+            return;
+        }
+
         $modifier->addColumn(
             'error_code',
             'VARCHAR(100)',

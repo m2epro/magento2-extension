@@ -721,8 +721,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         if (
-            $trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
-            !empty($trackingDetails['shipping_method'])
+            !empty($trackingDetails['carrier_title'])
+            && $trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE
+            && !empty($trackingDetails['shipping_method'])
         ) {
             $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
         }

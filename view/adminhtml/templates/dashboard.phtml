@@ -7,20 +7,24 @@
 <div class="row">
     <div class="col-m-3 right-border-line">
         <div class="shipments-block">
-            <h2>Shipments</h2>
+            <h2><?= __('Shipments') ?></h2>
             <?= $block->getShipments()->toHtml() ?>
         </div>
         <div class="errors-block">
-            <h2>Errors</h2>
+            <h2><?= __('Errors') ?></h2>
             <?= $block->getErrors()->toHtml() ?>
         </div>
     </div>
     <div class="col-m-6 sales-block">
-        <h2>Sales</h2>
+        <h2><?= __('Sales') ?></h2>
         <?= $block->getSales()->toHtml() ?>
     </div>
     <div class="col-m-3">
-        <h2>Products</h2>
+        <h2><?= __('Products') ?></h2>
         <?= $block->getProducts()->toHtml() ?>
+    </div>
+    <div class="col-m-9 listing-product-issues-block">
+        <h2><?= __('Top 5 Issues') ?></h2>
+        <?= $block->getListingProductIssues()->toHtml() ?>
     </div>
 </div>

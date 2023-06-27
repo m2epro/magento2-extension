@@ -10,44 +10,15 @@ namespace Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory;
 
 use Ess\M2ePro\Helper\Component\Walmart;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\SynchronizeInventory\ProcessingRunner
- */
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Partial\Runner
 {
     public const LOCK_ITEM_PREFIX = 'synchronization_walmart_listings_products_update';
 
-    //##################################
-
-    /** @var \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\BlockedProductsHandler */
-    protected $blockedProductsHandler;
-
-    /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
-    //##################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Data $helperData,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Listing\SynchronizeInventory\Walmart\BlockedProductsHandler $blockedProductsHandler,
-        \Magento\Framework\App\ResourceConnection $resourceConnection
-    ) {
-        parent::__construct($parentFactory, $activeRecordFactory, $helperData, $helperFactory, $modelFactory);
-
-        $this->blockedProductsHandler = $blockedProductsHandler;
-        $this->resourceConnection = $resourceConnection;
-    }
-
-    //##################################
-
     /**
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function setLocks()
+    protected function setLocks(): void
     {
         parent::setLocks();
 
@@ -67,9 +38,10 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
     }
 
     /**
+     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function unsetLocks()
+    protected function unsetLocks(): void
     {
         parent::unsetLocks();
 
@@ -87,23 +59,4 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $account->deleteProcessingLocks('synchronization_walmart', $this->getProcessingObject()->getId());
         $account->deleteProcessingLocks(self::LOCK_ITEM_PREFIX, $this->getProcessingObject()->getId());
     }
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Zend_Db_Statement_Exception
-     */
-    protected function afterLastDataPartProcessed()
-    {
-        parent::afterLastDataPartProcessed();
-
-        $responserParams = $this->getResponserParams();
-        $this->blockedProductsHandler->setResponserParams($responserParams)->handle();
-
-        $this->resourceConnection->getConnection()->truncateTable(
-            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_walmart_inventory_wpid')
-        );
-    }
-
-    //##################################
 }

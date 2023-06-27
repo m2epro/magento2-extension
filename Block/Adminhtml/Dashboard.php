@@ -4,6 +4,9 @@ namespace Ess\M2ePro\Block\Adminhtml;
 
 class Dashboard extends Magento\AbstractBlock
 {
+    /** @var string */
+    protected $_template = 'Ess_M2ePro::dashboard.phtml';
+
     /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\ComponentTabs */
     private $componentTabs;
     /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\Sales */
@@ -14,8 +17,8 @@ class Dashboard extends Magento\AbstractBlock
     private $shipments;
     /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors */
     private $errors;
-    /** @var string */
-    protected $_template = 'Ess_M2ePro::dashboard.phtml';
+    /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\ListingProductIssues */
+    private $listingProductIssues;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Dashboard\ComponentTabs $componentTabs,
@@ -23,6 +26,7 @@ class Dashboard extends Magento\AbstractBlock
         \Ess\M2ePro\Block\Adminhtml\Dashboard\Products $products,
         \Ess\M2ePro\Block\Adminhtml\Dashboard\Shipments $shipments,
         \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors $errors,
+        \Ess\M2ePro\Block\Adminhtml\Dashboard\ListingProductIssues $listingProductIssues,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
@@ -33,6 +37,7 @@ class Dashboard extends Magento\AbstractBlock
         $this->products = $products;
         $this->shipments = $shipments;
         $this->errors = $errors;
+        $this->listingProductIssues = $listingProductIssues;
     }
 
     protected function _prepareLayout()
@@ -71,5 +76,10 @@ class Dashboard extends Magento\AbstractBlock
     public function getErrors(): Dashboard\Errors
     {
         return $this->errors;
+    }
+
+    public function getListingProductIssues(): Dashboard\ListingProductIssues
+    {
+        return $this->listingProductIssues;
     }
 }

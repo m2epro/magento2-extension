@@ -18,15 +18,11 @@
     margin-top: 145px;
 }
 
-.shipments-block > h2 {
-    margin-bottom: 70px;
-}
-
 .errors-block {
     margin-top: 40px;
 }
 
-.sales-block {
+.sales-block, .listing-product-issues-block {
     padding-left: 50px;
 }
 
@@ -44,6 +40,7 @@
     transition: border-radius 0.8s;
     box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0 3px 7px -3px;
     height: 170px;
+    text-decoration: none;
 }
 
 .card-item:hover {
@@ -51,8 +48,22 @@
     transition: background 0.5s;
 }
 
+.main-col a:not(.ui-tabs-anchor).card-item {
+    text-decoration: none;
+    color: rgb(235, 82, 2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .card-item > h4 {
     margin: 5%;
+    color: initial!important;
+    position: absolute;
+    top: 0;
+    align-self: flex-start;
 }
 
 .card-item > p {
@@ -62,13 +73,29 @@
     margin: 15% 0;
 }
 
-.card-item > p > a:not(.ui-tabs-anchor) {
-    text-decoration: none;
-    color: rgb(235, 82, 2);
+.issues-cursor {
+    cursor: pointer;
 }
 
-.card-item > p > a:not(.ui-tabs-anchor):hover {
-    color: rgba(232, 83, 2, 0.7);
+.issues-row:hover {
+    background-color: #e3e3e3;
+    transition: background 0.5s;
+}
+
+.issues-text {
+    width: 70%;
+}
+
+.issues-total {
+    text-align: center!important;
+}
+
+.issues-impact-rate {
+    text-align: right!important;
+}
+
+.issues-view-more-btn {
+    margin-top: 15px;
 }
 
 @media (max-width: 1755px) {

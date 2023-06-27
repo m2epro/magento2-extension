@@ -2,9 +2,9 @@
 
 <div class="cards">
     <?php foreach ($block->getCardItems() as $item): ?>
-        <div class="card-item">
+        <a href="<?= $item['url'] ?>" target="_blank" class="card-item">
             <h4><?= $item['title'] ?></h4>
-            <p><a href="<?= $item['url'] ?>" target="_blank"><?= $item['value'] ?></a></p>
-        </div>
+            <p><?= $item['value'] ?></p>
+        </a>
     <?php endforeach; ?>
 </div>

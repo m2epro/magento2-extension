@@ -1,45 +1,32 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
 abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Responser
 {
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product
-     */
-    protected $listingProduct = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Logger
-     */
+    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Buffer */
+    private $tagBuffer;
+    /** @var \Ess\M2ePro\Model\Amazon\TagFactory */
+    private $amazonTagFactory;
+    /** @var \Ess\M2ePro\Model\TagFactory */
+    private $baseTagFactory;
+    /** @var \Ess\M2ePro\Model\Listing\Product */
+    protected $listingProduct;
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Logger */
     protected $logger = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
     protected $configurator = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response */
     protected $responseObject = null;
-
-    /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
-     */
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData*/
     protected $requestDataObject = null;
     /** @var bool  */
     protected $isSuccess = false;
 
-    //########################################
-
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
+        \Ess\M2ePro\Model\Amazon\TagFactory $tagFactory,
+        \Ess\M2ePro\Model\TagFactory $baseTagFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -60,13 +47,14 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             $params
         );
 
+        $this->tagBuffer = $tagBuffer;
+        $this->amazonTagFactory = $tagFactory;
+        $this->baseTagFactory = $baseTagFactory;
         $this->listingProduct = $this->amazonFactory->getObjectLoaded(
             'Listing\Product',
             $this->params['product']['id']
         );
     }
-
-    //########################################
 
     public function failDetected($messageText)
     {
@@ -93,7 +81,57 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         parent::eventAfterExecuting();
 
+        $this->handleTags();
+
         $this->processParentProcessor();
+    }
+
+    private function handleTags(): void
+    {
+        $this->tagBuffer->removeAllTags($this->listingProduct);
+        $this->tagBuffer->flush();
+
+        $allowedCodesOfWarnings = [];
+        $tags = [];
+
+        foreach ($this->getMessagesFromResponseData() as $message) {
+            if (!$message->isSenderComponent() || $message->getCode() === null) {
+                continue;
+            }
+
+            if (
+                $message->isError()
+                || ($message->isWarning() && in_array($message->getCode(), $allowedCodesOfWarnings))
+            ) {
+                $tags[] = $this->amazonTagFactory->createByErrorCode($message->getCode(), $message->getText());
+            }
+        }
+
+        if (!empty($tags)) {
+            $tags[] = $this->baseTagFactory->createWithHasErrorCode();
+            $this->tagBuffer->addTags($this->listingProduct, $tags);
+            $this->tagBuffer->flush();
+        }
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
+     */
+    private function getMessagesFromResponseData(): array
+    {
+        $responseData = $this->getPreparedResponseData();
+
+        $messages = [];
+
+        foreach ($responseData['messages'] as $messageData) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+            $message->initFromResponseData($messageData);
+
+            $messages[] = $message;
+        }
+
+        return $messages;
     }
 
     protected function processParentProcessor()
@@ -124,8 +162,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         $parentTypeModel->getProcessor()->process();
     }
 
-    //########################################
-
     protected function validateResponse()
     {
         $responseData = $this->getResponse()->getResponseData();
@@ -136,8 +172,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     protected function processResponseData()
     {
         $messages = [];
-
-        $responseData = $this->getPreparedResponseData();
 
         $requestLogMessages = isset($this->params['product']['request_metadata']['log_messages'])
             ? $this->params['product']['request_metadata']['log_messages'] : [];
@@ -150,13 +184,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             $messages[] = $message;
         }
 
-        foreach ($responseData['messages'] as $messageData) {
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
-            $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
-            $message->initFromResponseData($messageData);
-
-            $messages[] = $message;
-        }
+        $messages = array_merge($messages, $this->getMessagesFromResponseData());
 
         if (!$this->processMessages($messages)) {
             return;
@@ -214,8 +242,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
      */
     abstract protected function getSuccessfulMessage();
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Logger
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -261,8 +287,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         return $this->configurator;
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
@@ -312,8 +336,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         return $this->requestDataObject;
     }
 
-    //########################################
-
     protected function getActionType()
     {
         return $this->params['action_type'];
@@ -343,8 +365,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
         return (int)$this->params['status_changer'];
     }
 
-    //########################################
-
     protected function getOrmActionType()
     {
         switch ($this->getActionType()) {
@@ -362,8 +382,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         throw new \Ess\M2ePro\Model\Exception('Wrong Action type');
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $messages
@@ -385,6 +403,4 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
         return false;
     }
-
-    //########################################
 }

@@ -338,16 +338,19 @@ HTML;
                 );
 
                 return <<<HTML
-<span style="color: orange; {$style}">{$msg}</span>&nbsp;
-{$this->getTooltipHtml($tip)}
+<div class="status-wrap">
+<span style="color: orange; {$style}">{$msg}
+{$this->getTooltipHtml($tip)}</span></div>
 HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_IDENTIFIER_INVALID:
                 $msg = __('Invalid Product ID');
                 $tip = __('Product ID is missing or has invalid format');
 
                 return <<<HTML
-<span style="color: red; {$style}">{$msg}</span>&nbsp;
-{$this->getTooltipHtml($tip)}
+<div class="status-wrap">
+<span style="color: red; {$style}">{$msg}
+{$this->getTooltipHtml($tip)}</span>
+</div>
 HTML;
 
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_NOT_FOUND:
@@ -355,8 +358,10 @@ HTML;
                 $tip = __('There are no Products found on Amazon after the Automatic Search was performed.');
 
                 return <<<HTML
-<span style="color: red; {$style}">{$msg}</span>&nbsp;
-{$this->getTooltipHtml($tip)}
+<div class="status-wrap">
+<span style="color: red; {$style}">{$msg}
+{$this->getTooltipHtml($tip)}</span>
+</div>
 HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED:
                 $searchData = \Ess\M2ePro\Helper\Json::decode($row->getData('search_settings_data'));
@@ -370,7 +375,7 @@ HTML;
                 $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
                 $productTitle = __(
-                    'Search ASIN/ISBN For &quot;%product_title%&quot;',
+                    'Search ASIN/ISBN For &quot;%1&quot;',
                     $productTitle
                 );
                 $productTitle = $this->dataHelper->escapeJs($productTitle);
@@ -391,8 +396,10 @@ HTML;
                 );
 
                 return <<<HTML
-<span style="color: orange; {$style}">{$msg}</span>&nbsp;
-{$this->getTooltipHtml($tip)}
+<div class="status-wrap">
+<span style="color: orange; {$style}">{$msg}
+{$this->getTooltipHtml($tip)}</span>
+</div>
 HTML;
         }
 
@@ -400,14 +407,16 @@ HTML;
 
         $msg = __('Completed');
         $tip = __(
-            'Product was found by %type% "%value%"',
+            'Product was found by %1 "%2"',
             $this->prepareSearchType($searchInfo['type']),
             $searchInfo['value']
         );
 
         return <<<HTML
-<span style="color: green; {$style}">{$msg}</span>&nbsp;
-{$this->getTooltipHtml($tip)}
+<div class="status-wrap">
+<span style="color: green; {$style}">{$msg}
+{$this->getTooltipHtml($tip)}</span>
+</div>
 HTML;
     }
 
@@ -431,7 +440,7 @@ HTML;
         }
         $productTitle = $this->dataHelper->escapeHtml($productTitle);
 
-        $productTitle = __('Search ASIN/ISBN For &quot;%product_title%&quot;', $productTitle);
+        $productTitle = __('Search ASIN/ISBN For &quot;%1&quot;', $productTitle);
         $productTitle = $this->dataHelper->escapeJs($productTitle);
         // ---------------------------------------
 

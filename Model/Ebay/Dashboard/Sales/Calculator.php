@@ -82,7 +82,10 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Sales\CalculatorInterfac
         $select->reset('columns');
         $select->columns(
             [
-                'purchase_update_date AS date',
+                sprintf(
+                    'DATE_FORMAT(purchase_update_date, "%s") AS date',
+                    $isHourlyInterval ? '%Y-%m-%d %H' : '%Y-%m-%d'
+                ),
                 sprintf('%s AS value', $valueColumn),
             ]
         );
@@ -109,12 +112,32 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Sales\CalculatorInterfac
 
         $queryData = $select->query()->fetchAll();
 
-        $set = $this->pointFactory->createSet();
-        foreach ($queryData as $dataItem) {
-            $point = $this->pointFactory->createPoint((float)$dataItem['value'], $dataItem['date']);
-            $set->addPoint($point);
+        $keyValueData = array_combine(
+            array_column($queryData, 'date'),
+            array_column($queryData, 'value')
+        );
+
+        return $this->makePointSet($keyValueData, $dateRange, $isHourlyInterval);
+    }
+
+    private function makePointSet(array $data, DateRange $dateRange, bool $isHourlyInterval): PointSet
+    {
+        $intervalFormat = $isHourlyInterval ? 'PT1H' : 'P1D';
+        $dateFormat = $isHourlyInterval ? 'Y-m-d H' : 'Y-m-d';
+
+        $period = new \DatePeriod(
+            $dateRange->getDateStart(),
+            new \DateInterval($intervalFormat),
+            $dateRange->getDateEnd()
+        );
+
+        $pointSet = $this->pointFactory->createSet();
+        foreach ($period as $value) {
+            $pointValue = $data[$value->format($dateFormat)] ?? 0;
+            $point = $this->pointFactory->createPoint($pointValue, $value->format('Y-m-d H:i:s'));
+            $pointSet->addPoint($point);
         }
 
-        return $set;
+        return $pointSet;
     }
 }

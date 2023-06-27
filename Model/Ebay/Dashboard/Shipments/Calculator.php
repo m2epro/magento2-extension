@@ -27,41 +27,37 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Shipments\CalculatorInte
         $select->where('shipping_date_to < ?', $currentDate->format('Y-m-d H:i:s'));
         $select->where('shipping_status != ?', \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED);
         $select->where('payment_status = ?', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED);
-        $select->where(
-            'cancellation_status = ?',
-            \Ess\M2ePro\Model\Ebay\Order::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
-        );
+        $select->where('cancellation_status = 0');
 
-        $count = $select->query()->fetch()['value'];
-
-        return (int)$count;
+        return (int)$select->query()->fetchColumn();
     }
 
-    public function getCountByOver2Days(): int
+    public function getCountOfShipByToday(): int
     {
         $currentDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
-        $dateIn2Days = $currentDate->modify('+2 days');
+        $dateRange = $this->dateRangeFactory->createForToday();
 
         $select = $this->resourceCollectionFactory->create()->getSelect();
         $select->reset('columns');
         $select->columns('COUNT(*) AS value');
         $select->where('shipping_date_to IS NOT NULL');
-        $select->where('shipping_date_to >= ?', $dateIn2Days->format('Y-m-d H:i:s'));
+        $select->where(
+            sprintf(
+                "shipping_date_to BETWEEN '%s' AND '%s'",
+                $currentDate->format('Y-m-d H:i:s'),
+                $dateRange->getDateEnd()->format('Y-m-d H:i:s')
+            )
+        );
         $select->where('shipping_status != ?', \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED);
         $select->where('payment_status = ?', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED);
-        $select->where(
-            'cancellation_status = ?',
-            \Ess\M2ePro\Model\Ebay\Order::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
-        );
+        $select->where('cancellation_status = 0');
 
-        $count = $select->query()->fetch()['value'];
-
-        return (int)$count;
+        return (int)$select->query()->fetchColumn();
     }
 
-    public function getCountForToday(): int
+    public function getCountOfShipByTomorrow(): int
     {
-        $dateRange = $this->dateRangeFactory->createForToday();
+        $dateRange = $this->dateRangeFactory->createForTomorrow();
 
         $select = $this->resourceCollectionFactory->create()->getSelect();
         $select->reset('columns');
@@ -76,31 +72,24 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Shipments\CalculatorInte
         );
         $select->where('shipping_status != ?', \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED);
         $select->where('payment_status = ?', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED);
-        $select->where(
-            'cancellation_status = ?',
-            \Ess\M2ePro\Model\Ebay\Order::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
-        );
+        $select->where('cancellation_status = 0');
 
-        $count = $select->query()->fetch()['value'];
-
-        return (int)$count;
+        return (int)$select->query()->fetchColumn();
     }
 
-    public function getTotalCount(): int
+    public function getCountForTwoAndMoreDays(): int
     {
+        $dateRange = $this->dateRangeFactory->createForTwoAndMoreDays();
+
         $select = $this->resourceCollectionFactory->create()->getSelect();
         $select->reset('columns');
         $select->columns('COUNT(*) AS value');
         $select->where('shipping_date_to IS NOT NULL');
+        $select->where('shipping_date_to >= ?', $dateRange->getDateStart()->format('Y-m-d H:i:s'));
         $select->where('shipping_status != ?', \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED);
         $select->where('payment_status = ?', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED);
-        $select->where(
-            'cancellation_status = ?',
-            \Ess\M2ePro\Model\Ebay\Order::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
-        );
+        $select->where('cancellation_status = 0');
 
-        $count = $select->query()->fetch()['value'];
-
-        return (int)$count;
+        return (int)$select->query()->fetchColumn();
     }
 }

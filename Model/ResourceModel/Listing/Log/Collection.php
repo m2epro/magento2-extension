@@ -15,6 +15,37 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 {
     //########################################
 
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account */
+    private $accountResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
+    private $marketplaceResource;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
+    ) {
+        parent::__construct(
+            $helperFactory,
+            $activeRecordFactory,
+            $entityFactory,
+            $logger,
+            $fetchStrategy,
+            $eventManager,
+            $connection,
+            $resource
+        );
+        $this->accountResource = $accountResource;
+        $this->marketplaceResource = $marketplaceResource;
+    }
+
     public function _construct()
     {
         parent::_construct();
@@ -46,6 +77,24 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $countSelect->columns(new \Zend_Db_Expr('COUNT(*)'));
 
         return $countSelect;
+    }
+
+    public function skipIncorrectAccounts(): void
+    {
+        $this->getSelect()->joinInner(
+            ['account' => $this->accountResource->getMainTable()],
+            'main_table.account_id = account.id',
+            []
+        );
+    }
+
+    public function skipIncorrectMarketplaces(): void
+    {
+        $this->getSelect()->joinInner(
+            ['marketplace' => $this->marketplaceResource->getMainTable()],
+            'main_table.marketplace_id = marketplace.id',
+            []
+        );
     }
 
     //########################################

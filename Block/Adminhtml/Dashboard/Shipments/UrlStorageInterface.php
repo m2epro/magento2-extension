@@ -6,9 +6,9 @@ interface UrlStorageInterface
 {
     public function getUrlForLateShipments(): string;
 
-    public function getUrlForOver2Days(): string;
+    public function getUrlForShipByToday(): string;
 
-    public function getUrlForToday(): string;
+    public function getUrlForShipByTomorrow(): string;
 
-    public function getUrlForTotal(): string;
+    public function getUrlForTwoAndMoreDays(): string;
 }

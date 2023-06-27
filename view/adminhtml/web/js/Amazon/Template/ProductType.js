@@ -144,7 +144,7 @@ define(
                                 },
                                 {
                                     text: M2ePro.translator.translate('Confirm'),
-                                    class: 'primary modal-action-button',
+                                    class: 'primary modal-action-button product-type-confirm',
                                     click: function () {
                                         self.confirmSearchProductTypePopup(self.productTypeSearchPopup);
                                     }
@@ -204,7 +204,10 @@ define(
                             response.data['scheme'],
                             response.data['settings'],
                             response.data['groups'],
-                            response.data['timezone_shift']
+                            response.data['timezone_shift'],
+                            response.data['specifics_default_settings'],
+                            response.data['main_image_specifics'],
+                            response.data['other_images_specifics']
                         );
 
                         self.originalFormData = jQuery('#edit_form').serialize();

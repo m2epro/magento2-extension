@@ -87,20 +87,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     //########################################
 
-    public function getInventoryWpid(): array
-    {
-        return $this->getRelatedSimpleItems('Walmart_Inventory_Wpid', 'account_id', true);
-    }
-
-    public function deleteInventoryWpid(): void
-    {
-        $items = $this->getInventoryWpid();
-
-        foreach ($items as $item) {
-            $item->delete();
-        }
-    }
-
     public function getProcessingList(): array
     {
         return $this->getRelatedSimpleItems('Walmart_Listing_Product_Action_ProcessingList', 'account_id', true);

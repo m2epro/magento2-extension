@@ -6,78 +6,78 @@ define([
 
     window.Bar = Class.create(Common, {
 
-        renderWithData: function (selector, dataset, label) {
-
-            new Chart($(selector), {
-                type: 'bar',
-                data: {
-                    datasets: [{
-                        data: dataset,
-                        label: label,
-                        backgroundColor: '#f1d4b3',
-                        borderColor: '#eb5202',
-                        borderWidth: 1
-                    }]
+        renderChart: function (selector, dataset, label) {
+            let charJsOptions= {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        suggestedMin: 5,
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value) {if (value % 1 === 0) {return value;}}
+                        }
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            titleFont: {
-                                size: 15
-                            },
-                            bodyFont: {
-                                size: 15
-                            },
-                            footerFont: {
-                                size: 15
+                plugins: {
+                    tooltip: {
+                        titleFont: {
+                            size: 15
+                        },
+                        callbacks: {
+                            title: function (context) {
+                                return context[0].raw.tooltipTitle || context[0].label;
                             }
+                        },
+                        bodyFont: {
+                            size: 15
+                        },
+                        footerFont: {
+                            size: 15
                         }
                     }
                 }
-            })
-        },
+            }
 
-        renderWithoutData: function (selector, label) {
+            let charJsData = {
+                datasets: [{
+                    data: dataset,
+                    label: label,
+                    backgroundColor: '#f1d4b3',
+                    borderColor: '#eb5202',
+                    borderWidth: 1
+                }]
+            }
+
+            let charJsPlugins = [];
+            if (Math.max(...dataset.map(function (item) { return item.y })) === 0) {
+                charJsPlugins[0] = {
+                    beforeDraw: function (chart) {
+                        let width = chart.width;
+                        let height = chart.height;
+                        let ctx = chart.ctx;
+
+                        ctx.restore();
+                        let fontSize = (height / 130).toFixed(2);
+                        ctx.font = fontSize + "em sans-serif";
+                        ctx.fillStyle = '#bbb7b7';
+                        ctx.textBaseline = "middle";
+
+                        let text = M2ePro.translator.translate('No Data');
+                        let textX = Math.round((width - ctx.measureText(text).width) / 2);
+                        let textY = height / 2;
+
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }
+            }
 
             new Chart($(selector), {
                 type: 'bar',
-                data: {
-                    datasets: [{
-                        data: [],
-                        label: label,
-                        backgroundColor: '#f1d4b3',
-                        borderColor: '#eb5202',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                },
-                plugins: [
-                    {
-                        beforeDraw: function (chart) {
-                            var width = chart.width;
-                            var height = chart.height;
-                            var ctx = chart.ctx;
-
-                            ctx.restore();
-                            var fontSize = (height / 130).toFixed(2);
-                            ctx.font = fontSize + "em sans-serif";
-                            ctx.fillStyle = '#bbb7b7';
-                            ctx.textBaseline = "middle";
-
-                            var text = M2ePro.translator.translate('No Data');
-                            var textX = Math.round((width - ctx.measureText(text).width) / 2);
-                            var textY = height / 2;
-
-                            ctx.fillText(text, textX, textY);
-                            ctx.save();
-                        }
-                    }
-                ]
+                data: charJsData,
+                options: charJsOptions,
+                plugins: charJsPlugins
             })
         },
     });

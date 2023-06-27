@@ -29,26 +29,11 @@ class Item extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         $points = $this->pointSet->getPoints();
         $chartId = $this->getChartIdentifier();
+        $this->jsTranslator->addTranslations([
+            'No Data' => __('No Data'),
+        ]);
 
-        if (empty($points)) {
-            $this->jsTranslator->addTranslations([
-                'No Data' => __('No Data'),
-            ]);
-
-            $js = <<<JS
-require([
-    'M2ePro/ChartJs/Bar'
-], function() {
-    var chart = new Bar();
-    chart.renderWithoutData('#$chartId', '$this->label')
-});
-JS;
-            $this->js->add($js);
-
-            return parent::_beforeToHtml();
-        }
-
-        $dateFormat = $this->isHourlyShowingModeEnabled ? 'Y-m-d H:i' : 'Y-m-d';
+        $dateFormat = $this->isHourlyShowingModeEnabled ? 'g A' : 'j M';
         $dateTimeZone = new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone());
 
         $chartData = array_map(function ($point) use ($dateTimeZone, $dateFormat) {
@@ -59,6 +44,7 @@ JS;
             return [
                 'x' => $dateStr,
                 'y' => round($point->getValue(), 2),
+                'tooltipTitle' => $date->format('M j, Y H:i a'),
             ];
         }, $points);
 
@@ -68,8 +54,8 @@ JS;
 require([
     'M2ePro/ChartJs/Bar'
 ], function() {
-    var chart = new Bar();
-    chart.renderWithData('#$chartId', $dataset, '$this->label')
+    var barChart = new Bar();
+    barChart.renderChart('#$chartId', $dataset, '$this->label')
 });
 JS;
         $this->js->add($js);

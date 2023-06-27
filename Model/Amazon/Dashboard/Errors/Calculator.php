@@ -48,22 +48,26 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Errors\CalculatorInterfa
     private function getQuantityAmazonLogs(DateRange $dateRange = null): int
     {
         $listingLogCollection = $this->listingLogCollectionFactory->create();
+        $listingLogCollection->skipIncorrectAccounts();
+        $listingLogCollection->skipIncorrectMarketplaces();
         $select = $listingLogCollection->getSelect();
         $select->reset('columns');
         $select->columns('COUNT(*)');
-        $select->where('component_mode = ?', \Ess\M2ePro\Helper\Component\Amazon::NICK);
-        $select->where('type = ?', \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR);
+        $select->where('main_table.component_mode = ?', \Ess\M2ePro\Helper\Component\Amazon::NICK);
+        $select->where('main_table.type = ?', \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR);
 
         if ($dateRange) {
             $select->where(
                 sprintf(
-                    "create_date BETWEEN '%s' AND '%s'",
+                    "main_table.create_date BETWEEN '%s' AND '%s'",
                     $dateRange->getDateStart()->format('Y-m-d H:i:s'),
                     $dateRange->getDateEnd()->format('Y-m-d H:i:s')
                 )
             );
         }
 
-        return (int)$listingLogCollection->getConnection()->fetchOne($select);
+        $select->group(['main_table.listing_product_id', 'main_table.description']);
+
+        return $listingLogCollection->getSize();
     }
 }

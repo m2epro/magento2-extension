@@ -163,15 +163,15 @@ class Repository
      */
     public function getAutoCategoryGroups(Group $group): array
     {
-        $listingId = $group->getListingId();
-        if (isset($this->cacheAutoCategoryGroups[$listingId])) {
-            return $this->cacheAutoCategoryGroups[$listingId];
-        }
-
-        $autoCategoryGroupIds = $group->getAutoCategoryGroupIds();
-
+        $autoCategoryGroupIds = array_unique($group->getAutoCategoryGroupIds());
         if (count($autoCategoryGroupIds) === 0) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Not allowed value');
+        }
+
+        sort($autoCategoryGroupIds);
+        $cacheKey = implode(',', $autoCategoryGroupIds);
+        if (isset($this->cacheAutoCategoryGroups[$cacheKey])) {
+            return $this->cacheAutoCategoryGroups[$cacheKey];
         }
 
         $collection = $this->autoCategoryGroupCollectionFactory->create();
@@ -180,6 +180,6 @@ class Repository
         $collection->whereAddingOrDeletingModeEnabled();
         $items = $collection->getItems();
 
-        return $this->cacheAutoCategoryGroups[$listingId] = $items;
+        return $this->cacheAutoCategoryGroups[$cacheKey] = $items;
     }
 }

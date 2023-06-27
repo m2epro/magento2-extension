@@ -153,8 +153,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
     protected function processResponseData()
     {
         try {
-            $this->storeReceivedWpids();
-
             $filteredData = $this->listingProductHandler
                 ->setResponserParams($this->params)
                 ->handle($this->getPreparedResponseData());
@@ -166,26 +164,6 @@ class Responser extends \Ess\M2ePro\Model\Walmart\Connector\Inventory\Get\ItemsR
             $this->getHelper('Module\Exception')->process($e);
             $this->getSynchronizationLog()->addMessageFromException($e);
         }
-    }
-
-    //########################################
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function storeReceivedWpids()
-    {
-        $insertData = [];
-        $accountId = $this->getAccount()->getId();
-
-        foreach (array_keys($this->preparedResponseData) as $wpid) {
-            $insertData[] = ['account_id' => $accountId, 'wpid' => $wpid];
-        }
-
-        $this->resourceConnection->getConnection()->insertOnDuplicate(
-            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_walmart_inventory_wpid'),
-            $insertData
-        );
     }
 
     //########################################

@@ -6,9 +6,9 @@ interface CalculatorInterface
 {
     public function getCountOfLateShipments(): int;
 
-    public function getCountByOver2Days(): int;
+    public function getCountOfShipByToday(): int;
 
-    public function getCountForToday(): int;
+    public function getCountOfShipByTomorrow(): int;
 
-    public function getTotalCount(): int;
+    public function getCountForTwoAndMoreDays(): int;
 }

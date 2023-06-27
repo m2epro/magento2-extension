@@ -18,11 +18,16 @@ define(
 
             templates: {
                 field: '',
-                fieldset: ''
+                fieldset: '',
+                image_option: '',
+                images_optgroup: ''
             },
 
             groups: {},
             settings: {},
+            specificsDefaultSettings: {},
+            mainImageSpecifics: [],
+            otherImagesSpecifics: [],
             arraySize: {},
             htmlIdToScheme: {},
             controlElementInit: {},
@@ -61,9 +66,19 @@ define(
                 );
             },
 
-            load: function (scheme, settings, groups, timezoneShift)
-            {
+            load: function (
+                scheme,
+                settings,
+                groups,
+                timezoneShift,
+                specificsDefaultSettings,
+                mainImageSpecifics,
+                otherImagesSpecifics
+            ) {
                 this.settings = settings;
+                this.specificsDefaultSettings = specificsDefaultSettings;
+                this.mainImageSpecifics = mainImageSpecifics;
+                this.otherImagesSpecifics = otherImagesSpecifics;
                 this.initGroups(groups);
                 this.timezoneShift = timezoneShift;
 
@@ -261,6 +276,20 @@ define(
                     modeClass = 'required-entry';
                 }
 
+                var additionalAttributeOptions = '';
+
+                const isMainImageField = this.mainImageSpecifics
+                    .includes(htmlId.slice(0, -2));
+                if (isMainImageField) {
+                    additionalAttributeOptions = this.templates['image_option'];
+                }
+
+                const isOtherImagesField = this.otherImagesSpecifics
+                    .includes(htmlId.slice(0, -2));
+                if (isOtherImagesField) {
+                    additionalAttributeOptions = this.templates['images_optgroup'];
+                }
+
                 const html = this.templates.field
                     .replaceAll('%id%', htmlId)
                     .replaceAll('%formId%', formId)
@@ -268,7 +297,8 @@ define(
                     .replaceAll('%tooltip%', scheme['description'] ? scheme['description'].escapeHTML() : '')
                     .replaceAll('%tooltipStyle%', scheme['description'] ? '' : 'display: none;')
                     .replaceAll('%containerClass%', containerClass)
-                    .replaceAll('%modeClass%', modeClass);
+                    .replaceAll('%modeClass%', modeClass)
+                    .replaceAll('%additional_attribute_options%', additionalAttributeOptions);
 
                 const temp = new Element('div');
                 temp.innerHTML = html;
@@ -502,9 +532,15 @@ define(
                 if (itemData !== null && itemData['mode']) {
                     if (itemData['mode'] == this.constFieldCustomAttribute) {
                         modeElement.value = itemData['mode'];
-                        attributeElement.value = itemData['attribute_code'];
                         attributeElement.style.display = 'inline';
                         customValueContainer.style.display = 'inline';
+
+                        var isOtherImagesField = this.otherImagesSpecifics.includes(htmlId.slice(0, -2));
+                        if (isOtherImagesField) {
+                            attributeElement.value = itemData['images_limit'];
+                        } else {
+                            attributeElement.value = itemData['attribute_code'];
+                        }
                     } else if (itemData['mode'] == this.constFieldCustomValue) {
                         if (itemScheme['format'] === 'date-time') {
                             const date = new Date(itemData['value']);
@@ -531,12 +567,30 @@ define(
                     } else {
                         modeElement.style.color = 'grey';
                     }
-                } else if (itemScheme['default_value'] !== null && isFirstArrayField) {
-                    modeElement.value = this.constFieldCustomValue;
-                    valueElement.value = itemScheme['default_value'];
-                    customValueContainer.style.display = 'inline';
                 } else {
-                    modeElement.style.color = 'grey';
+                    var key = htmlId.split('/')
+                        .slice(0, -1)
+                        .join('/');
+                    if (isFirstArrayField && this.specificsDefaultSettings[key] !== undefined) {
+                        const defaultSettings = this.specificsDefaultSettings[key];
+
+                        if (defaultSettings['mode'] === this.constFieldCustomAttribute) {
+                            modeElement.value = defaultSettings['mode'];
+                            attributeElement.value = defaultSettings['attribute_code'];
+                            attributeElement.style.display = 'inline';
+                            customValueContainer.style.display = 'inline';
+                        } else if (defaultSettings['mode'] === this.constFieldCustomValue) {
+                            modeElement.value = defaultSettings['mode'];
+                            valueElement.value = defaultSettings['value'];
+                            customValueContainer.style.display = 'inline';
+                        }
+                    } else if (isFirstArrayField && itemScheme['default_value'] !== null) {
+                        modeElement.value = this.constFieldCustomValue;
+                        valueElement.value = itemScheme['default_value'];
+                        customValueContainer.style.display = 'inline';
+                    } else {
+                        modeElement.style.color = 'grey';
+                    }
                 }
 
                 var selectOnChangeHandler = function () {

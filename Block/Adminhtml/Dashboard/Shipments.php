@@ -28,24 +28,24 @@ class Shipments extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         return [
             [
-                'title' => __('Late Shipments'),
+                'title' => __('Late Shipment'),
                 'value' => $this->calculator->getCountOfLateShipments(),
                 'url' => $this->urlStorage->getUrlForLateShipments(),
             ],
             [
-                'title' => __('By Today'),
-                'value' => $this->calculator->getCountForToday(),
-                'url' => $this->urlStorage->getUrlForToday(),
+                'title' => __('Ship by Today'),
+                'value' => $this->calculator->getCountOfShipByToday(),
+                'url' => $this->urlStorage->getUrlForShipByToday(),
             ],
             [
-                'title' => __('By 2+ days'),
-                'value' => $this->calculator->getCountByOver2Days(),
-                'url' => $this->urlStorage->getUrlForOver2Days(),
+                'title' => __('Ship by Tomorrow'),
+                'value' => $this->calculator->getCountOfShipByTomorrow(),
+                'url' => $this->urlStorage->getUrlForShipByTomorrow(),
             ],
             [
-                'title' => __('Total'),
-                'value' => $this->calculator->getTotalCount(),
-                'url' => $this->urlStorage->getUrlForTotal(),
+                'title' => __('Ship by 2+ Days'),
+                'value' => $this->calculator->getCountForTwoAndMoreDays(),
+                'url' => $this->urlStorage->getUrlForTwoAndMoreDays(),
             ],
         ];
     }

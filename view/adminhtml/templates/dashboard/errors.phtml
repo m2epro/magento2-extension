@@ -2,13 +2,16 @@
 
 <div class="cards">
     <?php foreach ($block->getCardItems() as $item): ?>
-        <div class="card-item">
-            <h4><?= $item['title'] ?></h4>
-            <?php if($item['url']): ?>
-                <p><a href="<?= $item['url'] ?>" target="_blank"><?= $item['value'] ?></a></p>
-            <?php else: ?>
+        <?php if($item['url']): ?>
+            <a href="<?= $item['url'] ?>" target="_blank" class="card-item">
+                <h4><?= $item['title'] ?></h4>
                 <p><?= $item['value'] ?></p>
-            <?php endif; ?>
-        </div>
+            </a>
+        <?php else: ?>
+            <div class="card-item">
+                <h4><?= $item['title'] ?></h4>
+                <p><?= $item['value'] ?></p>
+            </div>
+        <?php endif; ?>
     <?php endforeach; ?>
 </div>

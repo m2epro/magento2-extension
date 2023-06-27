@@ -59,7 +59,6 @@ class DeleteManager
         /** @var \Ess\M2ePro\Model\Walmart\Account $walmartAccount */
         $walmartAccount = $account->getChildObject();
 
-        $walmartAccount->deleteInventoryWpid();
         $walmartAccount->deleteProcessingList();
 
         $items = $walmartAccount->getWalmartItems(true);

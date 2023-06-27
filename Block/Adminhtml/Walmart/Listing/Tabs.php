@@ -31,7 +31,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalSt
 
         $this->addTab(
             self::UNMANAGED_ITEMS_TAB_ID,
-            __('Unmanaged items'),
+            __('Unmanaged Items'),
             $this->getUrl('*/walmart_listing_unmanaged/index')
         );
         $this->registerCssForTab(self::UNMANAGED_ITEMS_TAB_ID, $cssMb20);

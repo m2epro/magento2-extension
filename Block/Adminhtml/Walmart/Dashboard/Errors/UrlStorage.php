@@ -22,8 +22,9 @@ class UrlStorage implements \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStor
         $dateRange = $this->dateRangeFactory->createForToday();
 
         return $this->getUrl([
-            'create_date[from]' => $dateRange->getDateStart()->format('Y-m-d H:i:s'),
-            'create_date[to]' => $dateRange->getDateEnd()->format('Y-m-d H:i:s'),
+            'create_date[from]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateStart()),
+            'create_date[to]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateEnd()),
+            'create_date[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
             'type' => \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
         ]);
     }
@@ -33,8 +34,9 @@ class UrlStorage implements \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStor
         $dateRange = $this->dateRangeFactory->createForYesterday();
 
         return $this->getUrl([
-            'create_date[from]' => $dateRange->getDateStart()->format('Y-m-d H:i:s'),
-            'create_date[to]' => $dateRange->getDateEnd()->format('Y-m-d H:i:s'),
+            'create_date[from]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateStart()),
+            'create_date[to]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateEnd()),
+            'create_date[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
             'type' => \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
         ]);
     }
@@ -44,8 +46,9 @@ class UrlStorage implements \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStor
         $dateRange = $this->dateRangeFactory->createFor2DaysAgo();
 
         return $this->getUrl([
-            'create_date[from]' => $dateRange->getDateStart()->format('Y-m-d H:i:s'),
-            'create_date[to]' => $dateRange->getDateEnd()->format('Y-m-d H:i:s'),
+            'create_date[from]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateStart()),
+            'create_date[to]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateEnd()),
+            'create_date[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
             'type' => \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
         ]);
     }
@@ -60,6 +63,9 @@ class UrlStorage implements \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStor
     private function getUrl(array $filterParams): string
     {
         /** @see \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid */
-        return $this->url->getUrlWithFilter('*/walmart_log_listing_product/index', $filterParams);
+        return $this->url->getUrlWithFilter('*/walmart_log_listing_product/index', $filterParams, [
+            'only_unique_messages' => 1,
+            'view_mode' => 'separated',
+        ]);
     }
 }

@@ -1,47 +1,46 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Tag;
 
 class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 {
     public const TAG_ID_REQUEST_PARAM_KEY = 'tag';
 
-    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\CollectionFactory */
-    private $collectionFactory;
     /** @var string */
     protected $paramName = self::TAG_ID_REQUEST_PARAM_KEY;
+    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Repository */
+    private $tagRelationRepository;
+    /** @var string */
+    private $label;
+    /** @var string */
+    private $componentMode;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Tag\CollectionFactory $collectionFactory,
+        string $label,
+        string $componentMode,
+        string $controllerName,
+        \Ess\M2ePro\Model\Tag\ListingProduct\Repository $tagRelationRepository,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
-        $this->collectionFactory = $collectionFactory;
+        /** @see parent::getSwitchUrl() */
+        $this->setData('controller_name', $controllerName);
+
+        $this->label = $label;
+        $this->componentMode = $componentMode;
+        $this->tagRelationRepository = $tagRelationRepository;
     }
 
-    /**
-     * @inheridoc
-     */
     public function getLabel()
     {
-        return __('eBay Error');
+        return $this->label;
     }
 
-    /**
-     * @inheridoc
-     */
     protected function loadItems()
     {
-        $collection = $this->collectionFactory->create();
-        $tags = $collection->getItemsWithoutHasErrorsTag();
+        $tags = $this->tagRelationRepository->getTagEntitiesWithoutHasErrorsTag($this->componentMode);
 
         if (empty($tags)) {
             $this->items = [];
@@ -51,21 +50,13 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 
         $items = [];
         foreach ($tags as $tag) {
-            $items[$this->getComponentMode()]['value'][] = [
+            $items[$this->componentMode]['value'][] = [
                 'value' => $tag->getId(),
                 'label' => $tag->getErrorCode(),
             ];
         }
 
         $this->items = $items;
-    }
-
-    /**
-     * @return string
-     */
-    public function getComponentMode(): string
-    {
-        return $this->getData('component_mode');
     }
 
     /**

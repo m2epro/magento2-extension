@@ -21,6 +21,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
+        \Ess\M2ePro\Model\Amazon\TagFactory $amazonTagFactory,
+        \Ess\M2ePro\Model\TagFactory $baseTagFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -33,6 +36,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
     ) {
         $this->localeCurrency = $localeCurrency;
         parent::__construct(
+            $tagBuffer,
+            $amazonTagFactory,
+            $baseTagFactory,
             $amazonFactory,
             $activeRecordFactory,
             $walmartFactory,

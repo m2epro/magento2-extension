@@ -220,8 +220,17 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    protected function processMagentoDocument($account, $order, $change)
-    {
+    private function processMagentoDocument(
+        \Ess\M2ePro\Model\Account $account,
+        \Ess\M2ePro\Model\Order $order,
+        \Ess\M2ePro\Model\Order\Change $change
+    ): void {
+        $magentoOrder = $order->getMagentoOrder();
+
+        if ($magentoOrder === null) {
+            return;
+        }
+
         $changeParams = $change->getParams();
         $documentData = $this->getMagentoDocumentData($order, $changeParams['document_type']);
 
@@ -232,6 +241,8 @@ class SendInvoice extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             'document_number' => $documentData['document_number'],
             'document_type' => $changeParams['document_type'],
             'document_pdf' => $documentData['document_pdf'],
+            'document_total_amount' => $magentoOrder->getGrandTotal(),
+            'document_total_vat_amount' => $magentoOrder->getTaxAmount(),
         ];
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */

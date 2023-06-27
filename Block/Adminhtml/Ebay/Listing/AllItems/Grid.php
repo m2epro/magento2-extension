@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AllItems;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option as ProductVariationOption;
-use Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite;
 use Ess\M2ePro\Block\Adminhtml\Tag\Switcher as TagSwitcher;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -81,9 +74,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->urlHelper = $urlHelper;
     }
 
-    /**
-     * @ingeritdoc
-     */
     public function _construct()
     {
         parent::_construct();
@@ -95,17 +85,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setUseAjax(true);
     }
 
-    /**
-     * @inheridoc
-     */
     public function getGridUrl()
     {
         return $this->getUrl('*/ebay_listing/allItems', ['_current' => true]);
     }
 
-    /**
-     * @ingeritdoc
-     */
     protected function _prepareCollection()
     {
         $collection = $this->magentoProductCollectionFactory->create();
@@ -195,9 +179,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareCollection();
     }
 
-    /**
-     * @ingeritdoc
-     */
     protected function _prepareColumns()
     {
         $this->addColumn('product_id', [
@@ -305,19 +286,95 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareColumns();
     }
 
-    /**
-     * @param string $value
-     * @param \Magento\Catalog\Model\Product $row
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     * @param bool $isExport
-     *
-     * @return string
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
+    protected function _prepareMassaction()
+    {
+        $this->setMassactionIdField('id');
+        $this->setMassactionIdFieldOnlyIndexValue(true);
+
+        $this->getMassactionBlock()->addItem('list', [
+            'label' => __('List Item(s) on eBay'),
+            'url' => '',
+        ], 'actions');
+
+        $this->getMassactionBlock()->addItem('revise', [
+            'label' => __('Revise Item(s) on eBay'),
+            'url' => '',
+        ], 'actions');
+
+        $this->getMassactionBlock()->addItem('relist', [
+            'label' => __('Relist Item(s) on eBay'),
+            'url' => '',
+        ], 'actions');
+
+        $this->getMassactionBlock()->addItem('stop', [
+            'label' => __('Stop Item(s) on eBay'),
+            'url' => '',
+        ], 'actions');
+
+        $this->getMassactionBlock()->addItem('stopAndRemove', [
+            'label' => __('Stop on eBay / Remove From Listing'),
+            'url' => '',
+        ], 'actions');
+
+        return parent::_prepareMassaction();
+    }
+
+    protected function _toHtml()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->js->add(
+                <<<JS
+                EbayListingAllItemsGrid.afterInitPage();
+JS
+            );
+
+            return parent::_toHtml();
+        }
+
+        $this->jsUrl->addUrls([
+            'runListProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runListProducts'),
+            'runRelistProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runRelistProducts'),
+            'runReviseProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runReviseProducts'),
+            'runStopProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runStopProducts'),
+            'runStopAndRemoveProducts' => $this->getUrl('*/ebay_listing_allItems_actions/runStopAndRemoveProducts'),
+        ]);
+
+        $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
+
+        $this->jsTranslator->addTranslations([
+            'task_completed_warning_message' => __('"%task_title%" task has completed with warnings.'),
+            'task_completed_error_message' => __('"%task_title%" task has completed with errors.'),
+            'task_completed_message' => __('Task completed. Please wait ...'),
+            'task_completed_success_message' => __('"%task_title%" task has completed.'),
+            'sending_data_message' => __('Sending %product_title% Product(s) data on eBay.'),
+            'listing_selected_items_message' => __('Listing Selected Items On eBay'),
+            'revising_selected_items_message' => __('Revising Selected Items On eBay'),
+            'relisting_selected_items_message' => __('Relisting Selected Items On eBay'),
+            'stopping_selected_items_message' => __('Stopping Selected Items On eBay'),
+            'stopping_and_removing_selected_items_message' => __(
+                'Stopping On eBay And Removing From Listing Selected Items'
+            ),
+            'please_select_the_products' => __('Please select the Products you want to perform the Action on.'),
+        ]);
+
+        $this->js->addOnReadyJs(
+            <<<JS
+    require([
+        'M2ePro/Ebay/Listing/AllItems/Grid'
+    ], function(){
+        window.EbayListingAllItemsGrid = new EbayListingAllItemsGrid('{$this->getId()}');
+        EbayListingAllItemsGrid.afterInitPage();
+    });
+JS
+        );
+
+        return parent::_toHtml();
+    }
+
     public function callbackColumnProductTitle(
         string $value,
         \Magento\Catalog\Model\Product $row,
-        Rewrite $column,
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
         bool $isExport
     ): string {
         $title = $row->getName();
@@ -333,12 +390,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return $value . $additionalHtml;
     }
 
-    /**
-     * @param \Magento\Catalog\Model\Product $row
-     *
-     * @return string
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     protected function getColumnProductTitleAdditionalHtml(\Magento\Catalog\Model\Product $row): string
     {
         $listingWord = __('Listing');
@@ -388,18 +439,10 @@ HTML;
         return $html;
     }
 
-    /**
-     * @param string $value
-     * @param \Magento\Catalog\Model\Product $row
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     * @param bool $isExport
-     *
-     * @return string
-     */
     public function callbackColumnActions(
         string $value,
         \Magento\Catalog\Model\Product $row,
-        Rewrite $column,
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
         bool $isExport
     ): string {
         $productId = (int)$row->getEntityId();
@@ -439,11 +482,6 @@ HTML;
         return $searchedChildHtml . $html;
     }
 
-    /**
-     * @param \Magento\Catalog\Model\Product $row
-     *
-     * @return bool
-     */
     private function wasFoundByChild(\Magento\Catalog\Model\Product $row): bool
     {
         foreach (['product_id', 'product_sku'] as $item) {
@@ -456,11 +494,6 @@ HTML;
         return false;
     }
 
-    /**
-     * @param \Magento\Catalog\Model\Product $row
-     *
-     * @return string
-     */
     private function getChildVariationIds(\Magento\Catalog\Model\Product $row): string
     {
         $ids = [];
@@ -487,16 +520,9 @@ HTML;
         return implode(',', array_keys($ids));
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     *
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     protected function callbackFilterProductId(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-        Rewrite $column
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
     ): void {
         $cond = $column->getFilter()->getCondition();
 
@@ -522,16 +548,9 @@ HTML;
         ]);
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     *
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     protected function callbackFilterTitle(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-        Rewrite $column
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
     ): void {
         $value = $column->getFilter()->getValue();
 
@@ -569,15 +588,9 @@ HTML;
         ]);
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     *
-     * @return void
-     */
     protected function callbackFilterOnlineQty(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-        Rewrite $column
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
     ): void {
         $cond = $column->getFilter()->getCondition();
 
@@ -606,15 +619,9 @@ HTML;
         $collection->getSelect()->where($where);
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     *
-     * @return void
-     */
     protected function callbackFilterPrice(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-        Rewrite $column
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
     ): void {
         $cond = $column->getFilter()->getCondition();
 
@@ -625,15 +632,9 @@ HTML;
         $collection->addFieldToFilter('online_current_price', $cond);
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     *
-     * @return void
-     */
     protected function callbackFilterStatus(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-        Rewrite $column
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
     ): void {
         $value = $column->getFilter()->getValue();
 
@@ -654,15 +655,9 @@ HTML;
         }
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection
-     * @param \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
-     *
-     * @return void
-     */
     protected function callbackFilterItemId(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-        Rewrite $column
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column
     ): void {
         $cond = $column->getFilter()->getCondition();
 
@@ -673,9 +668,6 @@ HTML;
         $collection->addFieldToFilter('item_id', $cond);
     }
 
-    /**
-     * @ingeritdoc
-     */
     protected function _setCollectionOrder($column)
     {
         $collection = $this->getCollection();

@@ -75,14 +75,15 @@ class SearchProductTypePopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Tem
         $alreadyUsedProductTypes = $this->productTypeHelper->getConfiguredProductTypesList($marketplaceId);
 
         foreach ($productTypes as $productType) {
-            if (!empty($alreadyUsedProductTypes[$productType['nick']])) {
-                continue;
-            }
-
-            $result[] = [
+            $productTypeData = [
                 'nick' => $productType['nick'],
                 'title' => $productType['title'],
             ];
+
+            if (!empty($alreadyUsedProductTypes[$productType['nick']])) {
+                $productTypeData['exist_product_type_id'] = $alreadyUsedProductTypes[$productType['nick']];
+            }
+            $result[] = $productTypeData;
         }
 
         return $result;

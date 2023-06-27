@@ -177,7 +177,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'price',
             'filter' => false,
             'sortable' => false,
-            'type' => 'number',
+            'type' => 'text',
             'frame_callback' => [$this, 'callbackColumnPrice'],
         ]);
 

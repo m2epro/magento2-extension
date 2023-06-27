@@ -23,34 +23,44 @@ class UrlStorage implements \Ess\M2ePro\Block\Adminhtml\Dashboard\Shipments\UrlS
 
         return $this->getUrl([
             'status' => \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED,
-            'shipping_date_to[from]' => $currentDate->format('Y-m-d H:i:s'),
+            'shipping_date_to[to]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($currentDate),
+            'shipping_date_to[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
         ]);
     }
 
-    public function getUrlForToday(): string
+    public function getUrlForShipByToday(): string
     {
         $dateRange = $this->dateRangeFactory->createForToday();
+        $currentDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
 
         return $this->getUrl([
             'status' => \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED,
-            'shipping_date_to[from]' => $dateRange->getDateStart()->format('Y-m-d H:i:s'),
-            'shipping_date_to[to]' => $dateRange->getDateEnd()->format('Y-m-d H:i:s'),
+            'shipping_date_to[from]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($currentDate),
+            'shipping_date_to[to]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateEnd()),
+            'shipping_date_to[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
         ]);
     }
 
-    public function getUrlForTotal(): string
+    public function getUrlForShipByTomorrow(): string
     {
-        return $this->getUrl(['status' => \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED]);
-    }
-
-    public function getUrlForOver2Days(): string
-    {
-        $currentDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
-        $dateIn2Days = $currentDate->modify('+2 days');
+        $dateRange = $this->dateRangeFactory->createForTomorrow();
 
         return $this->getUrl([
             'status' => \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED,
-            'shipping_date_to[from]' => $dateIn2Days->format('Y-m-d H:i:s'),
+            'shipping_date_to[from]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateStart()),
+            'shipping_date_to[to]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateEnd()),
+            'shipping_date_to[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
+        ]);
+    }
+
+    public function getUrlForTwoAndMoreDays(): string
+    {
+        $dateRange = $this->dateRangeFactory->createForTwoAndMoreDays();
+
+        return $this->getUrl([
+            'status' => \Ess\M2ePro\Model\Walmart\Order::STATUS_UNSHIPPED,
+            'shipping_date_to[from]' => \Ess\M2ePro\Helper\Date::convertToLocalFormat($dateRange->getDateStart()),
+            'shipping_date_to[locale]' => \Ess\M2ePro\Helper\Date::getLocaleResolver()->getLocale(),
         ]);
     }
 

@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AllItems;
+
+use Ess\M2ePro\Block\Adminhtml\Tag\Switcher as TagSwitcher;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -26,8 +22,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $databaseHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
+    private $tagRelationResource;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -38,6 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
+        $this->tagRelationResource = $tagRelationResource;
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
@@ -202,6 +202,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'additional_data' => 'additional_data',
             ]
         );
+
+        if ($tagId = $this->getRequest()->getParam(TagSwitcher::TAG_ID_REQUEST_PARAM_KEY, false)) {
+            $collection->joinTable(
+                ['tr' => $this->tagRelationResource->getMainTable()],
+                'listing_product_id=id',
+                ['tag_id' => 'tag_id'],
+                ['tag_id' => $tagId]
+            );
+        }
 
         $collection->addExpressionAttributeToSelect(
             'online_actual_qty',

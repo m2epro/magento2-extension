@@ -15,7 +15,22 @@
     margin-bottom: 30px;
 }
 
+.product_type_error_content {
+    text-align: center;
+    margin: auto 1rem;
+    font-size: large;
+}
+
+option[data-exist-product-type-id] {
+    color: darkgray;
+}
+
+.product_type_error_content > p {
+    white-space: normal;
+}
+
 .chooser_browser {
+    display: flex;
     white-space: nowrap;
     overflow: hidden;
     overflow-x: auto;

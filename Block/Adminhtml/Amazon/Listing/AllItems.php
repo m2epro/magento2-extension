@@ -1,20 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
-
-use Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher;
 
 class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    /**
-     * @inheritDoc
-     */
+    /** @var \Ess\M2ePro\Block\Adminhtml\Tag\SwitcherFactory */
+    private $tagSwitcherFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Tag\SwitcherFactory $tagSwitcherFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->tagSwitcherFactory = $tagSwitcherFactory;
+    }
+
     public function _construct()
     {
         parent::_construct();
@@ -31,9 +33,6 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->buttonList->remove('edit');
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function _prepareLayout()
     {
         $this->css->addFile('listing/search/grid.css');
@@ -42,9 +41,6 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         return parent::_prepareLayout();
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function _toHtml()
     {
         $filterBlockHtml = $this->getFilterBlockHtml();
@@ -57,31 +53,28 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         return $filterBlockHtml . $tabsBlockHtml . parent::_toHtml();
     }
 
-    /**
-     * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     private function getFilterBlockHtml(): string
     {
-        $marketplaceSwitcherBlock = $this->createSwitcher(Switcher::class);
+        $marketplaceSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class);
         $accountSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class);
+        $tagSwitcherBlock = $this->tagSwitcherFactory->create(
+            $this->getLayout(),
+            __('Amazon Error'),
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            $this->getRequest()->getControllerName()
+        );
 
         return <<<HTML
 <div class="page-main-actions">
     <div class="filter_block">
         {$accountSwitcherBlock->toHtml()}
         {$marketplaceSwitcherBlock->toHtml()}
+        {$tagSwitcherBlock->toHtml()}
     </div>
 </div>
 HTML;
     }
 
-    /**
-     * @param string $switcherClass
-     *
-     * @return \Ess\M2ePro\Block\Adminhtml\Component\Switcher
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     private function createSwitcher(string $switcherClass): \Ess\M2ePro\Block\Adminhtml\Switcher
     {
         return $this->getLayout()

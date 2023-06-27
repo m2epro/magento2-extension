@@ -1,15 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Tag\SwitcherFactory */
+    private $tagSwitcherFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Tag\SwitcherFactory $tagSwitcherFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
+        array $data = []
+    ) {
+        parent::__construct($context, $data);
+
+        $this->tagSwitcherFactory = $tagSwitcherFactory;
+    }
+
     /**
      * @ingeritdoc
      */
@@ -43,19 +50,11 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         return parent::_prepareLayout();
     }
 
-    /**
-     * @ingeritdoc
-     */
     protected function _toHtml()
     {
-        $filterBlockHtml = $this->getFilterBlockHtml();
-
-        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Tabs $tabsBlock */
-        $tabsBlock = $this->getLayout()->createBlock(Tabs::class);
-        $tabsBlock->activateAllItemsTab();
-        $tabsBlockHtml = $tabsBlock->toHtml();
-
-        return $filterBlockHtml . $tabsBlockHtml . parent::_toHtml();
+        return $this->getFilterBlockHtml()
+            . $this->getTabsBlockHtml()
+            . $this->getHtmlForActions(parent::_toHtml());
     }
 
     /**
@@ -66,7 +65,12 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $marketplaceSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class);
         $accountSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class);
-        $tagSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Tag\Switcher::class);
+        $tagSwitcherBlock = $this->tagSwitcherFactory->create(
+            $this->getLayout(),
+            __('eBay Error'),
+            \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            $this->getRequest()->getControllerName()
+        );
 
         return <<<HTML
 <div class="page-main-actions">
@@ -77,6 +81,22 @@ class AllItems extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     </div>
 </div>
 HTML;
+    }
+
+    private function getTabsBlockHtml(): string
+    {
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Tabs $tabsBlock */
+        $tabsBlock = $this->getLayout()->createBlock(Tabs::class);
+        $tabsBlock->activateAllItemsTab();
+
+        return $tabsBlock->toHtml();
+    }
+
+    private function getHtmlForActions(string $content): string
+    {
+        return '<div id="all_items_progress_bar"></div>'
+            . '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>'
+            . '<div id="all_items_content_container">' . $content . '</div>';
     }
 
     /**

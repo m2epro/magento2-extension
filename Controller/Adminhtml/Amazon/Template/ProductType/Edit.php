@@ -77,7 +77,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        $this->setPageHelpLink('x/OP8UB'); // TODO writing
+        $this->setPageHelpLink('x/FACOFg');
 
         return $this->getResultPage();
     }

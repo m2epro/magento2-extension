@@ -5,20 +5,24 @@ namespace Ess\M2ePro\Model\Tag\ListingProduct;
 class Repository
 {
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory */
-    private $collectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\ProductFactory */
-    private $resourceProductFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\TagFactory */
-    private $tagFactory;
+    private $relationCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\CollectionFactory */
+    private $tagCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
+    private $relationResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
+    private $listingProductResource;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $collectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\TagFactory $tagFactory,
-        \Ess\M2ePro\Model\ResourceModel\Listing\ProductFactory $resourceProductFactory
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $relationCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Tag\CollectionFactory $tagCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $relationResource,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource
     ) {
-        $this->collectionFactory = $collectionFactory;
-        $this->resourceProductFactory = $resourceProductFactory;
-        $this->tagFactory = $tagFactory;
+        $this->relationCollectionFactory = $relationCollectionFactory;
+        $this->tagCollectionFactory = $tagCollectionFactory;
+        $this->relationResource = $relationResource;
+        $this->listingProductResource = $listingProductResource;
     }
 
     /**
@@ -28,7 +32,7 @@ class Repository
      */
     public function findRelationsByProductIds(array $ids): array
     {
-        $collection = $this->collectionFactory->create();
+        $collection = $this->relationCollectionFactory->create();
         $collection->addFieldToFilter(
             \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation::LISTING_PRODUCT_ID_FIELD,
             [
@@ -45,64 +49,42 @@ class Repository
         return $result;
     }
 
-    public function getCountOfErrorTagsForPeriod(string $componentMode, \DateTime $from, \DateTime $to): int
+    /**
+     * @param string $componentMode
+     *
+     * @return \Ess\M2ePro\Model\Tag\Entity[]
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getTagEntitiesWithoutHasErrorsTag(string $componentMode): array
     {
-        $tagTable = $this->tagFactory->create()->getMainTable();
-        $productTable = $this->resourceProductFactory->create()->getMainTable();
+        $collection = $this->tagCollectionFactory->create();
 
-        $select = $this->collectionFactory->create()->getSelect();
-        $select->join(
-            ['lp' => $productTable],
-            'lp.id=listing_product_id',
-            ['component_mode' => 'component_mode']
-        );
-        $select->join(
-            ['tag' => $tagTable],
-            'tag.id=tag_id'
+        $collection->getSelect()->join(
+            ['rel' => $this->relationResource->getMainTable()],
+            'main_table.id = rel.tag_id'
         );
 
-        $select->reset('columns');
-        $select->columns('COUNT(*) AS value');
-
-        $select->where(sprintf("lp.component_mode = '%s'", $componentMode));
-        $select->where(sprintf("tag.error_code = '%s'", \Ess\M2ePro\Model\Tag::HAS_ERROR_ERROR_CODE));
-        $select->where(
-            sprintf(
-                "main_table.create_date BETWEEN '%s' AND '%s'",
-                $from->format('Y-m-d H:i:s'),
-                $to->format('Y-m-d H:i:s')
-            )
+        $collection->getSelect()->join(
+            ['lp' => $this->listingProductResource->getMainTable()],
+            'rel.listing_product_id = lp.id'
         );
 
-        $count = $select->query()->fetch()['value'];
+        $collection->distinct(true);
 
-        return (int)$count;
-    }
+        $collection->getSelect()->reset('columns');
+        $collection->getSelect()->columns([
+            'main_table.' . \Ess\M2ePro\Model\ResourceModel\Tag::ID_FIELD,
+            'main_table.' . \Ess\M2ePro\Model\ResourceModel\Tag::TEXT_FIELD,
+            'main_table.' . \Ess\M2ePro\Model\ResourceModel\Tag::ERROR_CODE_FIELD,
+            'main_table.' . \Ess\M2ePro\Model\ResourceModel\Tag::CREATE_DATE_FIELD,
+        ]);
 
-    public function getTotalCountOfErrorTags(string $componentMode): int
-    {
-        $tagTable = $this->tagFactory->create()->getMainTable();
-        $productTable = $this->resourceProductFactory->create()->getMainTable();
-
-        $select = $this->collectionFactory->create()->getSelect();
-        $select->join(
-            ['lp' => $productTable],
-            'lp.id=listing_product_id',
-            ['component_mode' => 'component_mode']
-        );
-        $select->join(
-            ['tag' => $tagTable],
-            'tag.id=tag_id'
+        $collection->getSelect()->where('lp.component_mode = ?', $componentMode);
+        $collection->getSelect()->where(
+            \Ess\M2ePro\Model\ResourceModel\Tag::ERROR_CODE_FIELD . ' != ?',
+            \Ess\M2ePro\Model\Tag::HAS_ERROR_ERROR_CODE
         );
 
-        $select->reset('columns');
-        $select->columns('COUNT(*) AS value');
-
-        $select->where(sprintf("lp.component_mode = '%s'", $componentMode));
-        $select->where(sprintf("tag.error_code = '%s'", \Ess\M2ePro\Model\Tag::HAS_ERROR_ERROR_CODE));
-
-        $count = $select->query()->fetch()['value'];
-
-        return (int)$count;
+        return $collection->getAll();
     }
 }

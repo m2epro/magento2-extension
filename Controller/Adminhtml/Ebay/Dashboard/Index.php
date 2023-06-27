@@ -10,12 +10,16 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
     private $salesCalculator;
     /** @var \Ess\M2ePro\Model\Ebay\Dashboard\Products\CachedCalculator */
     private $productsCalculator;
-    /** @var \Ess\M2ePro\Model\Ebay\Dashboard\Shipments\Calculator */
+    /** @var \Ess\M2ePro\Model\Ebay\Dashboard\Shipments\CachedCalculator */
     private $shipmentsCalculator;
     /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Dashboard\Shipments\UrlStorage */
     private $shipmentsUrlStorage;
-    /** @var \Ess\M2ePro\Model\Ebay\Dashboard\Errors\Calculator */
+    /** @var \Ess\M2ePro\Model\Ebay\Dashboard\Errors\CachedCalculator */
     private $errorsCalculator;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Dashboard\Errors\UrlStorage */
+    private $errorsUrlStorage;
+    /** @var \Ess\M2ePro\Model\Dashboard\ListingProductIssues\CalculatorInterface */
+    private $listingProductsIssuesCalculator;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\DashboardFactory $dashboardFactory,
@@ -24,6 +28,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         \Ess\M2ePro\Model\Ebay\Dashboard\Shipments\CachedCalculator $shipmentsCalculator,
         \Ess\M2ePro\Block\Adminhtml\Ebay\Dashboard\Shipments\UrlStorage $shipmentsUrlStorage,
         \Ess\M2ePro\Model\Ebay\Dashboard\Errors\CachedCalculator $errorsCalculator,
+        \Ess\M2ePro\Block\Adminhtml\Ebay\Dashboard\Errors\UrlStorage $errorsUrlStorage,
+        \Ess\M2ePro\Model\Ebay\Dashboard\ListingProductIssues\CachedCalculator $listingProductsIssuesCalculator,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
@@ -35,6 +41,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         $this->shipmentsCalculator = $shipmentsCalculator;
         $this->shipmentsUrlStorage = $shipmentsUrlStorage;
         $this->errorsCalculator = $errorsCalculator;
+        $this->errorsUrlStorage = $errorsUrlStorage;
+        $this->listingProductsIssuesCalculator = $listingProductsIssuesCalculator;
     }
 
     public function execute()
@@ -46,7 +54,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             $this->productsCalculator,
             $this->shipmentsCalculator,
             $this->shipmentsUrlStorage,
-            $this->errorsCalculator
+            $this->errorsCalculator,
+            $this->errorsUrlStorage,
+            $this->listingProductsIssuesCalculator
         );
 
         $this->addContent($block);

@@ -288,6 +288,7 @@ class Config extends AbstractConfig
             ],
             'y23_m06' => [
                 'RemoveBuildLastVersionFromRegistry',
+                'RemoveWalmartInventoryWpid',
             ],
         ];
     }

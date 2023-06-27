@@ -59,6 +59,9 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
         $settings = $this->productTypeHelper->getProductTypeSettings((int)$marketplaceId, (string)$productType);
         $groups = $this->productTypeHelper->getProductTypeGroups((int)$marketplaceId, (string)$productType);
         $timezoneShift = $this->productTypeHelper->getTimezoneShift();
+        $specificsDefaultSettings = $this->productTypeHelper->getSpecificsDefaultSettings();
+        $mainImageSpecifics = $this->productTypeHelper->getMainImageSpecifics();
+        $otherImagesSpecifics = $this->productTypeHelper->getOtherImagesSpecifics();
 
         $this->setJsonContent([
             'result' => true,
@@ -67,6 +70,9 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
                 'settings' => $settings,
                 'groups' => $groups,
                 'timezone_shift' => $timezoneShift,
+                'specifics_default_settings' => $specificsDefaultSettings,
+                'main_image_specifics' => $mainImageSpecifics,
+                'other_images_specifics' => $otherImagesSpecifics,
             ],
         ]);
 

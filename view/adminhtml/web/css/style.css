@@ -628,3 +628,20 @@ a.walmart-listing-view-switch-variation-mode:before {
 button.action * {
     pointer-events: none;
 }
+
+/* Datepicker fixes */
+
+.ui-datepicker-trigger {
+    font-size: 0 !important;
+}
+
+._has-datepicker {
+    width: auto !important;
+    padding-right: 2.6rem !important;
+    max-width: 16rem !important;
+}
+
+._has-datepicker + .ui-datepicker-trigger {
+    width: auto !important;
+    margin-left: -2.6rem !important;
+}

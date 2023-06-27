@@ -36,14 +36,15 @@ abstract class AbstractManual
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
      * @param array $params
      *
-     * @return void
+     * @return Result
      */
     abstract protected function processListingsProducts(array $listingsProducts, array $params): Result;
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
-     *
-     * @return void
+     * @param array $params
+     * @param int $logsActionId
+     * @return Result
      */
     public function process(array $listingsProducts, array $params, int $logsActionId): Result
     {

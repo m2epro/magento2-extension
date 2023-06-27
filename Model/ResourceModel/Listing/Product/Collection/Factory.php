@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection;
 
+/**
+ * @deprecated
+ * @see \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory
+ */
 class Factory
 {
     /** @var \Magento\Framework\ObjectManagerInterface */

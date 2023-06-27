@@ -10,6 +10,8 @@
 
 /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs\General\SearchPopup $block */
 
+$searchTooltip = __('Enter keywords in marketplace-specific language. Use plurals to get better search results.');
+
 ?>
 
 <div>
@@ -69,9 +71,14 @@
                 <input id="product_type_search_query" type="text"
                        placeholder="<?php echo $block->__('Enter keywords separated by commas'); ?>">
 
+                <div class="m2epro-field-tooltip admin__field-tooltip ">
+                    <a class="admin__field-tooltip-action" href="javascript://"></a>
+                    <div class="admin__field-tooltip-content"><?= $searchTooltip ?></div>
+                </div>
+
                 <button class="action primary"
                         onclick="AmazonTemplateProductTypeSearchObj.applySearchFilter()"
-                        style="margin-left: 2rem;">
+                        style="margin-left: 7rem;">
                     <?php echo $block->__('Search'); ?>
                 </button>
 
@@ -85,6 +92,31 @@
                 <select id="product_type_search_results" size="8"
                         class="multiselect admin__control-multiselect">
                 </select>
+                <div class="product_type_error_content"></div>
+            </div>
+        </div>
+
+        <div id="productTypeChooserTabs_browse_content"
+             aria-labelledby="productTypeChooserTabs_browse"
+             class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="true"
+             style="display: none;">
+
+            <div class="chooser_input_container">
+                <input id="product_type_browse_query" type="text"
+                       placeholder="<?php echo $block->__('Enter product type name'); ?>"
+                       onkeyup="AmazonTemplateProductTypeSearchObj.applyBrowseFilter();">
+
+                <a onclick="AmazonTemplateProductTypeSearchObj.resetBrowseFilter()"
+                   style="margin-left: 2rem;">
+                    <?php echo $block->__('Reset'); ?>
+                </a>
+            </div>
+
+            <div class="chooser_browser">
+                <select id="product_type_browse_results" size="8"
+                        class="multiselect admin__control-multiselect">
+                </select>
+                <div class="product_type_error_content"></div>
             </div>
         </div>
 

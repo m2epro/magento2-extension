@@ -52,14 +52,21 @@ class ItemsByIssue extends AbstractContainer
         return $filterBlockHtml . $tabsBlockHtml . parent::_toHtml();
     }
 
-    /**
-     * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     private function getFilterBlockHtml(): string
     {
-        $marketplaceSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class);
-        $accountSwitcherBlock = $this->createSwitcher(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class);
+        $marketplaceSwitcherBlock = $this->getLayout()
+             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Marketplace\Switcher::class)
+             ->setData([
+                 'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
+                 'controller_name' => $this->getRequest()->getControllerName(),
+             ]);
+
+        $accountSwitcherBlock = $this->getLayout()
+             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Account\Switcher::class)
+             ->setData([
+                 'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
+                 'controller_name' => $this->getRequest()->getControllerName(),
+             ]);
 
         return <<<HTML
 <div class="page-main-actions">
@@ -69,21 +76,5 @@ class ItemsByIssue extends AbstractContainer
     </div>
 </div>
 HTML;
-    }
-
-    /**
-     * @param string $switcherClass
-     *
-     * @return \Ess\M2ePro\Block\Adminhtml\Component\Switcher
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function createSwitcher(string $switcherClass): \Ess\M2ePro\Block\Adminhtml\Switcher
-    {
-        return $this->getLayout()
-                    ->createBlock($switcherClass)
-                    ->setData([
-                        'component_mode' => \Ess\M2ePro\Helper\View\Ebay::NICK,
-                        'controller_name' => $this->getRequest()->getControllerName(),
-                    ]);
     }
 }

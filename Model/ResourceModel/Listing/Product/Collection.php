@@ -39,6 +39,11 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         $this->getSelect()->where(ListingProductResource::PRODUCT_ID_FIELD . ' = ?', $value);
     }
 
+    public function whereComponentMode(string $componentMode): void
+    {
+        $this->getSelect()->where(ListingProductResource::COMPONENT_MODE_FIELD . ' = ?', $componentMode);
+    }
+
     /**
      * @param array $columns
      *

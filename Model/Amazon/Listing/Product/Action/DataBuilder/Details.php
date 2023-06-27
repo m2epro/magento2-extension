@@ -78,9 +78,8 @@ class Details extends AbstractModel
     }
 
     /**
-     * @param array $setting
-     *
-     * @return string|null
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function buildSingleSpecificData(array $setting): ?string
     {
@@ -94,7 +93,15 @@ class Details extends AbstractModel
                     return null;
                 }
 
-                return $magentoProduct->getAttributeValue($setting['attribute_code'], false);
+                $attributeValue = $magentoProduct->getAttributeValue($setting['attribute_code'], false);
+
+                if (!empty($setting['images_limit'])) {
+                    $imagesList = explode(',', $attributeValue);
+                    $imagesList = array_slice($imagesList, 0, (int)$setting['images_limit']);
+                    $attributeValue = implode(',', $imagesList);
+                }
+
+                return $attributeValue;
         }
 
         return null;

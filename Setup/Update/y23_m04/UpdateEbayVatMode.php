@@ -12,6 +12,12 @@ class UpdateEbayVatMode extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractF
 {
     public function execute(): void
     {
+        $modifier = $this->getTableModifier('ebay_template_selling_format');
+
+        if (!$modifier->isColumnExists('price_increase_vat_percent')) {
+            return;
+        }
+
         $this->getConnection()->update(
             $this->getFullTableName('ebay_template_selling_format'),
             ['vat_mode' => '2'],
@@ -21,8 +27,7 @@ class UpdateEbayVatMode extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\AbstractF
             ]
         );
 
-        $this->getTableModifier('ebay_template_selling_format')
-             ->dropColumn('price_increase_vat_percent', true, false)
-             ->commit();
+        $modifier->dropColumn('price_increase_vat_percent', true, false);
+        $modifier->commit();
     }
 }

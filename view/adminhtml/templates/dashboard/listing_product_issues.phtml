@@ -1,0 +1,34 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Dashboard\ListingProductIssues $block */ ?>
+
+<?php if ($notificationMessage = $block->getNotificationMessage()): ?>
+    <p><?= $notificationMessage ?></p>
+<?php endif; ?>
+
+<?php if ($block->isIssuesTableVisible()): ?>
+
+    <table class="admin__table-primary" id="dashboard_listing_product_issues">
+        <thead>
+            <tr>
+                <th class="data-grid-th"><span><?= __('Issues') ?></span></th>
+                <th class="data-grid-th issues-total"><span><?= __('Items') ?></span></th>
+                <th class="data-grid-th issues-impact-rate"><span><?= __('Impact Rate') ?></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($block->getIssues() as $issue): ?>
+                <tr title="<?= $issue['url'] ?>" data-url="<?= $issue['url'] ?>" class="issues-row issues-cursor">
+                    <td class="issues-text"><?= $issue['text'] ?></td>
+                    <td class="issues-total"><?= $issue['total'] ?></td>
+                    <td class="issues-impact-rate"><?= $issue['impact_rate'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <?php if ($viewMoreUrl = $block->getItemsByIssueViewUrl()): ?>
+        <button id="dashboard_listing_product_issues_view_more" data-url="<?= $viewMoreUrl ?>" title="View more" type="button" class="action-default scalable action-primary issues-view-more-btn">
+            <span><?= __('View more') ?></span>
+        </button>
+    <?php endif; ?>
+
+<?php endif; ?>

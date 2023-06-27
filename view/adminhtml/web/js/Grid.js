@@ -142,13 +142,11 @@ define([
 
         massActionSubmitClick: function()
         {
-            var self = this;
-
-            if (self.getSelectedProductsString() == '' || self.getSelectedProductsArray().length == 0) {
-                self.alert(M2ePro.translator.translate('Please select Items.'));
+            if (this.validateItemsForMassAction() === false) {
                 return;
             }
 
+            var self = this;
             var selectAction = true;
             $$('select#'+self.gridId+'_massaction-select option').each(function(o) {
                 if (o.selected && o.value == '') {
@@ -187,6 +185,16 @@ define([
                     }
                 }
             });
+        },
+
+        validateItemsForMassAction: function () {
+            if (this.getSelectedProductsString() === '' || this.getSelectedProductsArray().length === 0) {
+                this.alert(M2ePro.translator.translate('Please select Items.'));
+
+                return false;
+            }
+
+            return true;
         },
 
         // ---------------------------------------

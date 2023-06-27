@@ -315,8 +315,13 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function modifyToTimeConsideringOrderLastSynch(\Ess\M2ePro\Model\Account $account, \DateTime $toTime)
     {
+        $ordersLastSynchronization = $account->getChildObject()->getData('orders_last_synchronization');
+        if (empty($ordersLastSynchronization)) {
+            return $toTime;
+        }
+
         $orderLastSynchDate = new \DateTime(
-            $account->getChildObject()->getData('orders_last_synchronization'),
+            $ordersLastSynchronization,
             new \DateTimeZone('UTC')
         );
 

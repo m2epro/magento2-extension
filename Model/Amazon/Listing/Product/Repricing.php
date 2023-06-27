@@ -174,6 +174,30 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     /**
      * @return float|int
      */
+    public function getOnlineRegularPrice()
+    {
+        return $this->getData('online_regular_price');
+    }
+
+    /**
+     * @return float|int
+     */
+    public function getOnlineMinPrice()
+    {
+        return $this->getData('online_min_price');
+    }
+
+    /**
+     * @return float|int
+     */
+    public function getOnlineMaxPrice()
+    {
+        return $this->getData('online_max_price');
+    }
+
+    /**
+     * @return float|int
+     */
     public function getLastUpdatedRegularPrice()
     {
         return $this->getData('last_updated_regular_price');
@@ -385,7 +409,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $source = $this->getAccountRepricing()->getDisableSource();
 
         if ($source['mode'] == AccountRepricing::DISABLE_MODE_MANUAL) {
-            return null;
+            return false;
         }
 
         if ($source['mode'] == AccountRepricing::DISABLE_MODE_ATTRIBUTE) {

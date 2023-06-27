@@ -12,7 +12,8 @@ class DashboardFactory
         \Ess\M2ePro\Model\Dashboard\Shipments\CalculatorInterface $shipmentsCalculator,
         \Ess\M2ePro\Block\Adminhtml\Dashboard\Shipments\UrlStorageInterface $shipmentsUrlStorage,
         \Ess\M2ePro\Model\Dashboard\Errors\CalculatorInterface $errorsCalculator,
-        \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStorageInterface $errorsUrlStorage = null
+        \Ess\M2ePro\Block\Adminhtml\Dashboard\Errors\UrlStorageInterface $errorsUrlStorage,
+        \Ess\M2ePro\Model\Dashboard\ListingProductIssues\CalculatorInterface $listingProductIssuesCalculator = null
     ): Dashboard {
         $allowedNicks = [
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
@@ -47,11 +48,19 @@ class DashboardFactory
         /** @var Dashboard\Errors $errors */
         $errors = $layout->createBlock(Dashboard\Errors::class, 'dashboard_errors', [
             'calculator' => $errorsCalculator,
+            'urlStorage' => $errorsUrlStorage,
         ]);
 
-        if ($errorsUrlStorage) {
-            $errors->setUrlStorage($errorsUrlStorage);
-        }
+        /** @var Dashboard\ListingProductIssues $listingProductIssues */
+        $listingProductIssues = $layout->createBlock(
+            Dashboard\ListingProductIssues::class,
+            'dashboard_listing_products_issues',
+            [
+                'componentNick' => $activeComponentNick,
+                'productsCalculator' => $productsCalculator,
+                'issuesCalculator' => $listingProductIssuesCalculator,
+            ]
+        );
 
         /** @var Dashboard $dashboard */
         $dashboard = $layout->createBlock(Dashboard::class, 'dashboard', [
@@ -60,6 +69,7 @@ class DashboardFactory
             'products' => $products,
             'shipments' => $shipments,
             'errors' => $errors,
+            'listingProductIssues' => $listingProductIssues,
         ]);
 
         $dashboard->appendHelpBlock([
@@ -71,8 +81,10 @@ class DashboardFactory
 
     private function getHelpBlockHtml(): string
     {
-        return __('<p>The dashboard is to give you an instant overview of your key performance(s).</p>
+        return __(
+            '<p>The dashboard is to give you an instant overview of your key performance(s).</p>
             <p>With the help of the dashboard, you get a quick and clear insight into how your sales
-            and shipments are doing and whether there are any issues that block updates of your items.</p>');
+            and shipments are doing and whether there are any issues that block updates of your items.</p>'
+        );
     }
 }

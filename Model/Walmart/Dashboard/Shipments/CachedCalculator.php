@@ -24,24 +24,24 @@ class CachedCalculator implements \Ess\M2ePro\Model\Dashboard\Shipments\Calculat
         });
     }
 
-    public function getCountByOver2Days(): int
+    public function getCountOfShipByTomorrow(): int
     {
         return $this->getCachedValue(__METHOD__, function () {
-            return $this->calculator->getCountByOver2Days();
+            return $this->calculator->getCountOfShipByTomorrow();
         });
     }
 
-    public function getCountForToday(): int
+    public function getCountOfShipByToday(): int
     {
         return $this->getCachedValue(__METHOD__, function () {
-            return $this->calculator->getCountForToday();
+            return $this->calculator->getCountOfShipByToday();
         });
     }
 
-    public function getTotalCount(): int
+    public function getCountForTwoAndMoreDays(): int
     {
         return $this->getCachedValue(__METHOD__, function () {
-            return $this->calculator->getTotalCount();
+            return $this->calculator->getCountForTwoAndMoreDays();
         });
     }
 

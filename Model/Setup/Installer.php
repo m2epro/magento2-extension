@@ -11880,44 +11880,6 @@ class Installer
         $this->getConnection()->createTable($walmartIndexerListingProductParent);
 
         /**
-         * Create table 'm2epro_walmart_inventory_wpid'
-         */
-        $walmartInventoryWpidTable = $this->getConnection()->newTable($this->getFullTableName('walmart_inventory_wpid'))
-                                          ->addColumn(
-                                              'id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              [
-                                                  'unsigned' => true,
-                                                  'primary' => true,
-                                                  'nullable' => false,
-                                                  'auto_increment' => true,
-                                              ]
-                                          )
-                                          ->addColumn(
-                                              'account_id',
-                                              Table::TYPE_INTEGER,
-                                              null,
-                                              ['unsigned' => true, 'nullable' => false]
-                                          )
-                                          ->addColumn(
-                                              'wpid',
-                                              Table::TYPE_TEXT,
-                                              255,
-                                              ['nullable' => false]
-                                          )
-                                          ->addIndex(
-                                              'account_id__wpid',
-                                              ['account_id', 'wpid'],
-                                              ['type' => AdapterInterface::INDEX_TYPE_UNIQUE]
-                                          )
-                                          ->setOption('type', 'INNODB')
-                                          ->setOption('charset', 'utf8')
-                                          ->setOption('collate', 'utf8_general_ci')
-                                          ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($walmartInventoryWpidTable);
-
-        /**
          * Create table 'm2epro_walmart_item'
          */
         $walmartItem = $this->getConnection()->newTable($this->getFullTableName('walmart_item'))

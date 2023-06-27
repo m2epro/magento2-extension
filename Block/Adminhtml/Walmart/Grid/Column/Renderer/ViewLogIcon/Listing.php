@@ -10,17 +10,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\ViewLogIcon;
 
 use Ess\M2ePro\Model\Listing\Log;
 
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\ViewLogIcon\Listing
- */
 class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIcon\Listing
 {
-    //########################################
-
-    protected function getAvailableActions()
+    protected function getAvailableActions(): array
     {
-        $translator = $this->translationHelper;
-
         return parent::getAvailableActions() +
             [
                 Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT => __('Remove from Channel'),
@@ -32,9 +25,14 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
             ];
     }
 
-    //########################################
-
-    protected function getLastActions($listingProductId, $logs)
+    /**
+     * @param $listingProductId
+     * @param $logs
+     *
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function getLastActions($listingProductId, $logs): string
     {
         $summary = $this->getLayout()
                         ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Log\Grid\LastActions::class)
@@ -49,6 +47,4 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Grid\Column\Renderer\ViewLogIc
 
         return $summary->toHtml();
     }
-
-    //########################################
 }

@@ -334,7 +334,7 @@ class ProductType
         $result = [];
         /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType $item */
         foreach ($collection->getItems() as $item) {
-            $result[$item->getNick()] = true;
+            $result[$item->getNick()] = (int)$item->getId();
         }
 
         return $result;
@@ -412,5 +412,51 @@ class ProductType
         $dateUTC = \Ess\M2ePro\Helper\Date::createDateGmt($dateLocal->format('Y-m-d H:i:s'));
 
         return $dateUTC->getTimestamp() - $dateLocal->getTimestamp();
+    }
+
+    public function getSpecificsDefaultSettings(): array
+    {
+        return [
+            'item_name#array/value' => [
+                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'attribute_code' => 'name',
+            ],
+            'brand#array/value' => [
+                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'attribute_code' => 'manufacturer',
+            ],
+            'manufacturer#array/value' => [
+                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'attribute_code' => 'manufacturer',
+            ],
+            'product_description#array/value' => [
+                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'attribute_code' => 'description',
+            ],
+            'country_of_origin#array/value' => [
+                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'attribute_code' => 'country_of_manufacture',
+            ],
+            'item_package_weight#array/value' => [
+                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'attribute_code' => 'weight',
+            ],
+        ];
+    }
+
+    public function getMainImageSpecifics(): array
+    {
+        return [
+            'main_product_image_locator#array/media_location',
+            'main_offer_image_locator#array/media_location',
+        ];
+    }
+
+    public function getOtherImagesSpecifics(): array
+    {
+        return [
+            'other_product_image_locator_1#array/media_location',
+            'other_offer_image_locator_1#array/media_location',
+        ];
     }
 }

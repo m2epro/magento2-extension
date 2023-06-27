@@ -18,6 +18,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     private $errorsCalculator;
     /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Errors\UrlStorage */
     private $errorsUrlStorage;
+    /** @var \Ess\M2ePro\Model\Amazon\Dashboard\ListingProductIssues\CachedCalculator */
+    private $listingProductsIssuesCalculator;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\DashboardFactory $dashboardFactory,
@@ -27,10 +29,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Shipments\UrlStorage $shipmentsUrlStorage,
         \Ess\M2ePro\Model\Amazon\Dashboard\Errors\CachedCalculator $errorsCalculator,
         \Ess\M2ePro\Block\Adminhtml\Amazon\Dashboard\Errors\UrlStorage $errorsUrlStorage,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $ebayFactory,
+        \Ess\M2ePro\Model\Amazon\Dashboard\ListingProductIssues\CachedCalculator $listingProductsIssuesCalculator,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($ebayFactory, $context);
+        parent::__construct($amazonFactory, $context);
 
         $this->dashboardFactory = $dashboardFactory;
         $this->salesCalculator = $salesCalculator;
@@ -39,6 +42,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $this->shipmentsUrlStorage = $shipmentsUrlStorage;
         $this->errorsCalculator = $errorsCalculator;
         $this->errorsUrlStorage = $errorsUrlStorage;
+        $this->listingProductsIssuesCalculator = $listingProductsIssuesCalculator;
     }
 
     public function execute()
@@ -51,7 +55,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->shipmentsCalculator,
             $this->shipmentsUrlStorage,
             $this->errorsCalculator,
-            $this->errorsUrlStorage
+            $this->errorsUrlStorage,
+            $this->listingProductsIssuesCalculator
         );
 
         $this->addContent($block);

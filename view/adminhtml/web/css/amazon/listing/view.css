@@ -89,3 +89,30 @@ a.amazon-listing-view-icon.amazon-listing-view-generalId-remove:before {
     margin-right: 8px;
     vertical-align: middle;
 }
+
+.m2epro-amazon_listing_product_add-index #search_asin_content_container .data-grid td.grid-listing-column-name {
+    max-width: 300px;
+    min-width: 40px;
+}
+
+.m2epro-amazon_listing_product_add-index #search_asin_content_container .data-grid td.grid-listing-column-status
+.status-wrap span {
+    min-width: 120px;
+}
+
+.m2epro-amazon_listing_product_add-index #search_asin_content_container .data-grid td.grid-listing-column-status
+.status-wrap .admin__field-tooltip {
+    margin-left: 1rem;
+}
+
+.m2epro-amazon_listing_product_add-index #search_asin_content_container .data-grid td.grid-listing-column-status
+.admin__field-tooltip .admin__field-tooltip-action {
+    margin-left: 0;
+    top: -8px;
+}
+
+.m2epro-amazon_listing_product_add-index #search_asin_content_container .data-grid td.grid-listing-column-status
+.admin__field-tooltip .admin__field-tooltip-content {
+    right: -5rem;
+    bottom: 4.8rem;
+}

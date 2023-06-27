@@ -62,15 +62,22 @@ class SuggestManager
         $suggestedProductTypes = $connector->getResponseData();
 
         $result = [];
+        $alreadyUsedProductTypes = $this->productTypeHelper->getConfiguredProductTypesList($marketplaceId);
         foreach ($suggestedProductTypes as $nick) {
             if (empty($dictionaryProductTypes[$nick])) {
                 continue;
             }
 
-            $result[] = [
+            $productTypeData = [
                 'nick' => $nick,
                 'title' => $dictionaryProductTypes[$nick]['title'],
             ];
+
+            if (!empty($alreadyUsedProductTypes[$nick])) {
+                $productTypeData['exist_product_type_id'] = $alreadyUsedProductTypes[$nick];
+            }
+
+            $result[] = $productTypeData;
         }
 
         usort(

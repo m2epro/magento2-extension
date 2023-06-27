@@ -12,6 +12,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
     /** @var array */
     private $specifics = [];
+    /** @var array */
+    private $otherImagesSpecifics;
 
     /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
     private $productTypeHelper;
@@ -30,6 +32,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->productTypeHelper = $productTypeHelper;
+        $this->otherImagesSpecifics = $productTypeHelper->getOtherImagesSpecifics();
     }
 
     /**
@@ -95,7 +98,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     $this->specifics[$pathString] = [];
                 }
 
-                if ($fieldData = $this->collectFieldData($value)) {
+                if ($fieldData = $this->collectFieldData($value, $path)) {
                     $this->specifics[$pathString][] = $fieldData;
                 }
             } else {
@@ -111,13 +114,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     }
 
     /**
-     * @param array $field
-     *
-     * @return array
      * @throws \Ess\M2ePro\Model\Exception
-     * @throws \Exception
      */
-    private function collectFieldData(array $field): array
+    private function collectFieldData(array $field, array $path): array
     {
         if (empty($field['mode'])) {
             return [];
@@ -140,6 +139,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE:
                 if (empty($field['attribute_code'])) {
                     return [];
+                }
+
+                $key = implode('/', $path);
+                if (in_array($key, $this->otherImagesSpecifics)) {
+                    return [
+                        'mode' => (int)$field['mode'],
+                        'attribute_code' => 'media_gallery',
+                        'images_limit' => (int)$field['attribute_code']
+                    ];
                 }
 
                 return [
