@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
-    use Traits\BlockTrait;
-
-    /** @var \Ess\M2ePro\Model\Factory */
-    protected $modelFactory;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
@@ -23,41 +18,42 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->helperFactory = $helperFactory;
-        $this->modelFactory = $modelFactory;
         $this->localeCurrency = $localeCurrency;
         $this->ebayFactory = $ebayFactory;
-        $this->translationHelper = $translationHelper;
         $this->dataHelper = $dataHelper;
     }
 
     //########################################
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
-        $translator = $this->translationHelper;
+        return $this->renderGeneral($row, false);
+    }
+
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, true);
+    }
+
+    public function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport): string
+    {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+            if ($isExport) {
+                return '';
+            }
+
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
         $currency = $this->getColumn()->getData('currency');
         $onlineMinPrice = $row->getData('min_online_price');
@@ -66,10 +62,18 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
         $onlineCurrentPrice = $row->getData('online_current_price');
 
         if ($onlineMinPrice === null || $onlineMinPrice === '') {
-            return $translator->__('N/A');
+            if ($isExport) {
+                return '';
+            }
+
+            return __('N/A');
         }
 
         if ((float)$onlineMinPrice <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             return '<span style="color: #f00;">0</span>';
         }
 
@@ -79,26 +83,30 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
 
             $onlineStartStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineStartPrice);
 
-            $startPriceText = $translator->__('Start Price');
+            if ($isExport) {
+                return $onlineStartStr;
+            }
+
+            $startPriceText = __('Start Price');
 
             $onlineCurrentPriceHtml = '';
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
 
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
-                $currentPriceText = $translator->__('Current Price');
+                $currentPriceText = __('Current Price');
                 $onlineCurrentStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
                 $onlineCurrentPriceHtml = '<strong>' . $currentPriceText . ':</strong> ' . $onlineCurrentStr . '<br/><br/>';
             }
 
             if ($onlineReservePrice > 0) {
-                $reservePriceText = $translator->__('Reserve Price');
+                $reservePriceText = __('Reserve Price');
                 $onlineReserveStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineReservePrice);
                 $onlineReservePriceHtml = '<strong>' . $reservePriceText . ':</strong> ' . $onlineReserveStr . '<br/>';
             }
 
             if ($onlineBuyItNowPrice > 0) {
-                $buyItNowText = $translator->__('Buy It Now Price');
+                $buyItNowText = __('Buy It Now Price');
                 $onlineBuyItNowStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineBuyItNowPrice);
                 $onlineBuyItNowPriceHtml = '<strong>' . $buyItNowText . ':</strong> ' . $onlineBuyItNowStr;
             }
@@ -129,6 +137,14 @@ HTML;
             $onlineMinPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineMinPrice);
             $onlineMaxPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineMaxPrice);
 
+            if ($isExport) {
+                if ($onlineMinPrice != $onlineMaxPrice) {
+                    return $onlineMinPriceStr . ' - ' . $onlineMaxPriceStr;
+                }
+
+                return $onlineMinPriceStr;
+            }
+
             $resultHtml = '<span class="product-price-value">' . $onlineMinPriceStr . '</span>' .
                 (($onlineMinPrice != $onlineMaxPrice) ? ' - ' . $onlineMaxPriceStr : '');
         }
@@ -146,11 +162,11 @@ HTML;
 
             $title = $this->dataHelper->escapeHtml($title);
 
-            $bidsPopupTitle = $translator->__('Bids of &quot;%s&quot;', $title);
+            $bidsPopupTitle = __('Bids of &quot;%1&quot;', $title);
             $bidsPopupTitle = addslashes($bidsPopupTitle);
 
-            $bidsTitle = $translator->__('Show bids list');
-            $bidsText = $translator->__('Bid(s)');
+            $bidsTitle = __('Show bids list');
+            $bidsText = __('Bid(s)');
 
             if ($listingProduct->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED) {
                 $resultHtml .= '<br/><br/><span style="font-size: 10px; color: gray;">' .
@@ -171,6 +187,4 @@ HTML;
 
         return $resultHtml;
     }
-
-    //########################################
 }

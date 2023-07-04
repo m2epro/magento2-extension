@@ -181,6 +181,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/exportCsvAllItemsGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => __('Product ID'),
             'align' => 'right',
@@ -194,6 +196,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->addColumn('name', [
             'header' => __('Product Title / Listing / Product SKU'),
+            'header_export' => __('Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -281,6 +284,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter' => false,
             'sortable' => false,
             'frame_callback' => [$this, 'callbackColumnActions'],
+            'is_system' => true,
         ]);
 
         return parent::_prepareColumns();
@@ -377,6 +381,10 @@ JS
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
         bool $isExport
     ): string {
+        if ($isExport) {
+            return $this->dataHelper->escapeHtml($row->getData('sku'));
+        }
+
         $title = $row->getName();
         $onlineTitle = $row->getData('online_title');
 

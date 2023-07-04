@@ -63,8 +63,8 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->listing = $this->globalDataHelper->getValue('listing_for_products_add');
 
         $url = $this->getUrl('*/*/index', [
+            'id' => $this->getRequest()->getParam('id'),
             'step' => 3,
-            '_current' => true,
         ]);
         $this->addButton('back', [
             'label' => __('Back'),
@@ -72,10 +72,9 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'onclick' => 'setLocation(\'' . $url . '\');',
         ]);
 
-        $url = $this->getUrl(
-            '*/amazon_listing_product_add/exitToListing',
-            ['id' => $this->getRequest()->getParam('id')]
-        );
+        $url = $this->getUrl('*/amazon_listing_product_add/exitToListing', [
+            'id' => $this->getRequest()->getParam('id')
+        ]);
         $confirm =
             '<strong>' . __('Are you sure?') . '</strong><br><br>'
             . __('All unsaved changes will be lost and you will be returned to the Listings grid.');

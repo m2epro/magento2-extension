@@ -16,15 +16,11 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
     private $amazonComponentHelper;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
     private $productTypeFactory;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registryManager;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonComponentHelper
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Registry\Manager $registryManager,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Amazon $amazonComponentHelper,
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
@@ -35,6 +31,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         $this->dataHelper = $dataHelper;
         $this->amazonComponentHelper = $amazonComponentHelper;
         $this->productTypeFactory = $productTypeFactory;
+        $this->registryManager = $registryManager;
     }
 
     /**
@@ -59,13 +56,29 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         }
 
         $this->addContent(
-            $this->getLayout()
-                ->createBlock(
-                    \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit::class,
-                    '',
-                    ['productType' => $productType]
-                )
+            $this
+            ->getLayout()
+            ->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit::class,
+                '',
+                ['productType' => $productType]
+            )
         );
+
+        $block = $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\ProductType\Validate\Popup::class);
+
+        $registryKey = "/amazon/product_type/validation/validate_by_id/$id/";
+        if ($this->registryManager->getValue($registryKey)) {
+            $this->registryManager->deleteValue($registryKey);
+            $block->setData(
+                'validate_product_type_function',
+                "ProductTypeValidatorPopup.openForProductType($id);"
+            );
+        }
+
+        $this->addContent($block);
 
         if ($productType->getId()) {
             $headerText = $this->__("Edit Product Type Settings");

@@ -26,7 +26,7 @@ class ShowNewAsinStep extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Pr
         $this->setJsonContent([
             'redirect' => $this->getUrl('*/*/index', [
                 'id' => $this->getRequest()->getParam('id'),
-                'step' => $showNewAsinStep ? 4 : 5,
+                'step' => $showNewAsinStep ? 4 : 6,
                 'wizard' => $this->getRequest()->getParam('wizard'),
             ]),
         ]);

@@ -150,6 +150,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/exportCsvListingGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => $this->__('Product ID'),
             'align' => 'right',
@@ -162,6 +164,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->addColumn('name', [
             'header' => $this->__('Product Title / Product SKU / eBay Category'),
+            'header_export' => __('Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'online_title',
@@ -338,6 +341,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $onlineSku = $row->getData('online_sku');
         !empty($onlineSku) && $sku = $onlineSku;
+
+        if ($isExport) {
+            return $this->dataHelper->escapeHtml($sku);
+        }
 
         $valueHtml .= '<br/>' .
             '<strong>' . $this->__('SKU') . ':</strong>&nbsp;' .

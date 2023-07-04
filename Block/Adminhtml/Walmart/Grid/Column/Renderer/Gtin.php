@@ -8,17 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
-    use Traits\BlockTrait;
-
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
@@ -27,17 +19,13 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
     private $walmartHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Walmart $walmartHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
-        $this->helperFactory = $helperFactory;
-        $this->translationHelper = $translationHelper;
         $this->dataHelper = $dataHelper;
         $this->walmartHelper = $walmartHelper;
     }
@@ -56,7 +44,7 @@ class Gtin extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if (empty($gtin)) {
-            return $this->translationHelper->__('N/A');
+            return __('N/A');
         }
 
         $productId = $row->getData('id');
@@ -117,7 +105,7 @@ HTML;
                 $htmlAdditional .= "<div class='separator-line'></div>";
             }
 
-            $identifierCode = $this->translationHelper->__($title);
+            $identifierCode = __($title);
             $identifierValue = $this->dataHelper->escapeHtml($value);
 
             $htmlAdditional .= <<<HTML
@@ -142,5 +130,10 @@ HTML;
         }
 
         return $html;
+    }
+
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->_getValue($row) ?? '';
     }
 }

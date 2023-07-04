@@ -19,14 +19,18 @@ abstract class Add extends Main
 
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     protected $variationHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
+    private $amazonListingProductResource;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
         $this->variationHelper = $variationHelper;
+        $this->amazonListingProductResource = $amazonListingProductResource;
     }
 
     //########################################
@@ -87,19 +91,33 @@ abstract class Add extends Main
 
     //########################################
 
-    protected function setProductTypeTemplate($productsIds, $templateId)
+    protected function setProductTypeTemplate($listingProductIds, $templateId): void
     {
-        $connWrite = $this->resourceConnection->getConnection();
-        $tableAmazonListingProduct = $this->activeRecordFactory
-            ->getObject('Amazon_Listing_Product')
-            ->getResource()
-            ->getMainTable();
+        $connection = $this->amazonListingProductResource->getConnection();
+        $tableAmazonListingProduct = $this->amazonListingProductResource->getMainTable();
 
-        $productsIds = array_chunk($productsIds, 1000);
-        foreach ($productsIds as $productsIdsChunk) {
-            $connWrite->update($tableAmazonListingProduct, [
+        $listingProductIds = array_chunk($listingProductIds, 1000);
+        foreach ($listingProductIds as $listingProductsIdsChunk) {
+            $connection->update($tableAmazonListingProduct, [
                 'template_product_type_id' => $templateId,
-            ], '`listing_product_id` IN (' . implode(',', $productsIdsChunk) . ')');
+            ], '`listing_product_id` IN (' . implode(',', $listingProductsIdsChunk) . ')');
+        }
+    }
+
+    protected function deleteProductTypeTemplate($listingProductIds): void
+    {
+        $connection = $this->amazonListingProductResource->getConnection();
+        $tableAmazonListingProduct = $this->amazonListingProductResource->getMainTable();
+
+        $listingProductIds = array_chunk($listingProductIds, 1000);
+        foreach ($listingProductIds as $listingProductsIdsChunk) {
+            $where = 'template_product_type_id IS NOT NULL';
+            $where .= ' AND listing_product_id IN (' . implode(',', $listingProductsIdsChunk) . ')';
+
+            $connection->update($tableAmazonListingProduct, [
+                'template_product_type_id' => null,
+                'is_general_id_owner' => 0,
+            ], $where);
         }
     }
 

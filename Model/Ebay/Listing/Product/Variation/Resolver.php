@@ -719,7 +719,10 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         $channelMpn = isset($channelVariation['details']['mpn']) ? $channelVariation['details']['mpn'] : null;
         $moduleMpn = isset($moduleVariation['details']['mpn']) ? $moduleVariation['details']['mpn'] : null;
 
-        if ($channelMpn != $moduleMpn) {
+        if (
+            $channelMpn != $moduleMpn
+            && $this->componentEbayConfiguration->getIgnoreVariationMpnInResolver() === false
+        ) {
             return false;
         }
 

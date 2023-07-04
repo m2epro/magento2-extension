@@ -382,6 +382,14 @@ class Configuration
         );
     }
 
+    public function getIgnoreVariationMpnInResolver(): bool
+    {
+        return (bool)$this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'ignore_variation_mpn_in_resolver'
+        );
+    }
+
     // ----------------------------------------
 
     /**

@@ -6699,6 +6699,7 @@ class Installer
         $moduleConfig->insert('/ebay/order/settings/marketplace_8/', 'use_first_street_line_as_company', '1');
         $moduleConfig->insert('/ebay/configuration/', 'prevent_item_duplicates_mode', '1');
         $moduleConfig->insert('/ebay/configuration/', 'variation_mpn_can_be_changed', '0');
+        $moduleConfig->insert('/ebay/configuration/', 'ignore_variation_mpn_in_resolver', '0');
         $moduleConfig->insert('/ebay/configuration/', 'motors_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'uk_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute');
@@ -9495,6 +9496,52 @@ class Installer
                                      ->setOption('collate', 'utf8_general_ci')
                                      ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonOrderItemTable);
+
+        $amazonProductTypeValidationTable = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName('amazon_product_type_validation'))
+            ->addColumn(
+                'id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'listing_product_id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'status',
+                Table::TYPE_INTEGER,
+                1,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'error_messages',
+                Table::TYPE_TEXT,
+                null,
+                ['default' => '', 'nullable' => false]
+            )
+            ->addColumn(
+                'create_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'update_date',
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addIndex('listing_product_id', 'listing_product_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+
+        $this->getConnection()->createTable($amazonProductTypeValidationTable);
 
         $amazonOrderInvoiceTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_order_invoice')

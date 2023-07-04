@@ -59,7 +59,6 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         // ---------------------------------------
         $url = $this->getUrl('*/*/removeAddedProducts', [
             'id' => $this->listing['id'],
-            '_current' => true,
         ]);
         $this->addButton('back', [
             'label' => __('Back'),
@@ -166,16 +165,6 @@ HTML
         ) . ' ' . __('Press "Save And Update" Button after redirect on Marketplace Page.');
 
         $newAsinPopupTitle = __('New ASIN/ISBN creation');
-        $notCompletedPopupTitle = __('Adding of New Products to the Listing was not competed');
-        $notCompletedPopupText = __(
-            "
-            You didn't finish adding Products to the Listing.<br/><br/>
-            To add selected Products to the Listing, you need to specify the required information first.
-            Once you're done, click <strong>Continue</strong>.<br/><br/>
-            If you don't want to add selected Products to the Listing, click <strong>Back</strong> to return
-            to the previous step. Or <strong>Cancel</strong> the adding process to return to the Listing.
-        "
-        );
 
         $variationManageMatchedAttributesErrorDuplicateSelection = __(
             'You can not choose the same Attribute twice.'
@@ -204,8 +193,6 @@ HTML
             'confirm' => $textConfirm,
 
             'new_asin_popup_title' => $newAsinPopupTitle,
-            'not_completed_popup_title' => $notCompletedPopupTitle,
-            'not_completed_popup_text' => $notCompletedPopupText,
 
             'variation_manage_matched_attributes_error_duplicate' =>
                 $variationManageMatchedAttributesErrorDuplicateSelection,

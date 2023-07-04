@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/m2epro/ebay/orders" method="GET">
+        <service class="\Ess\M2ePro\Api\Ebay\OrderRepositoryInterface" method="getList" />
+        <resources>
+            <resource ref="Ess_M2ePro::orders_operation_actions_view" />
+        </resources>
+    </route>
+    <route url="/V1/m2epro/ebay/orders/:id" method="GET">
+        <service class="\Ess\M2ePro\Api\Ebay\OrderRepositoryInterface" method="get" />
+        <resources>
+            <resource ref="Ess_M2ePro::orders_operation_actions_view" />
+        </resources>
+    </route>
+    <route url="/V1/m2epro/ebay/orders/:id/shipment" method="POST">
+        <service class="\Ess\M2ePro\Api\Ebay\OrderManagementInterface" method="markAsShipment" />
+        <resources>
+            <resource ref="Ess_M2ePro::orders_operation_actions_update" />
+        </resources>
+    </route>
+    <route url="/V1/m2epro/ebay/orders/:id/paid" method="POST">
+        <service class="\Ess\M2ePro\Api\Ebay\OrderManagementInterface" method="markAsPaid" />
+        <resources>
+            <resource ref="Ess_M2ePro::orders_operation_actions_update" />
+        </resources>
+    </route>
+</routes>

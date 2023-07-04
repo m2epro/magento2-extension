@@ -8,36 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\ItemId
- */
 class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-
-        $this->helperFactory = $helperFactory;
-        $this->translationHelper = $translationHelper;
+    public function render(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, false);
     }
 
-    //########################################
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, true);
+    }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport): string
     {
         $itemId = $this->_getValue($row);
 
@@ -46,11 +31,23 @@ class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
+            if ($isExport) {
+                return '';
+            }
+
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         if ($itemId === null || $itemId === '') {
-            return $this->translationHelper->__('N/A');
+            if ($isExport) {
+                return '';
+            }
+
+            return __('N/A');
+        }
+
+        if ($isExport) {
+            return $itemId;
         }
 
         $accountId = ($this->getColumn()->getData('account_id')) ? $this->getColumn()->getData('account_id')
@@ -69,6 +66,4 @@ class ItemId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
         return '<a href="' . $url . '" target="_blank">' . $itemId . '</a>';
     }
-
-    //########################################
 }

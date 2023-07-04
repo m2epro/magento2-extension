@@ -30,20 +30,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
     private $productTypeAffectedProductsFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType\ChangeProcessorFactory */
     private $productTypeChangeProcessorFactory;
+    /** @var \Ess\M2ePro\Model\Registry\Manager */
+    private $registryManager;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory $productTypeBuilderFactory
-     * @param ProductTypeCollectionFactory $productTypeCollectionFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType\SnapshotBuilderFactory $productTypeSnapshotBuilderFactory
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType\DiffFactory $productTypeDiffFactory
-     * @param ProductTypeAffectedListingsProductsFactory $productTypeAffectedProductsFactory
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType\ChangeProcessorFactory $productTypeChangeProcessorFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Registry\Manager $registryManager,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory $productTypeBuilderFactory,
@@ -64,6 +55,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         $this->productTypeDiffFactory = $productTypeDiffFactory;
         $this->productTypeAffectedProductsFactory = $productTypeAffectedProductsFactory;
         $this->productTypeChangeProcessorFactory = $productTypeChangeProcessorFactory;
+        $this->registryManager = $registryManager;
     }
 
     /**
@@ -161,22 +153,24 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
             $affectedListingsProducts->getObjectsData(['id', 'status'])
         );
 
+        $backUrl = $this->dataHelper->getBackUrl(
+            '*/amazon_template_productType/index',
+            [],
+            ['edit' => ['id' => $productType->getId()]]
+        );
+
         if ($this->isAjax()) {
             $this->setJsonContent([
                 'status' => true,
+                'product_type_id' => $id,
+                'back_url' => $backUrl,
             ]);
             return $this->getResult();
         }
 
-        return $this->_redirect(
-            $this->dataHelper->getBackUrl(
-                'index',
-                [],
-                ['edit' => [
-                    'id' => $productType->getId()
-                ]]
-            )
-        );
+        $this->registryManager->setValue("/amazon/product_type/validation/validate_by_id/$id/", true);
+
+        return $this->_redirect($backUrl);
     }
 
     /**

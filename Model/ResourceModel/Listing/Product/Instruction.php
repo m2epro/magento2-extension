@@ -1,19 +1,35 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction
- */
 class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
+    private $tagResource;
+    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Relation */
+    private $tagRelationResource;
+
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        $connectionName = null
+    ) {
+        parent::__construct(
+            $helperFactory,
+            $activeRecordFactory,
+            $parentFactory,
+            $context,
+            $connectionName
+        );
+        $this->tagResource = $tagResource;
+        $this->tagRelationResource = $tagRelationResource;
+    }
 
     public function _construct()
     {
@@ -114,6 +130,35 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
                 'skip_until IS NULL OR ? > skip_until' => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
             ]
         );
+    }
+
+    public function deleteByTagErrorCodes(array $errorCodes): void
+    {
+        if (empty($errorCodes)) {
+            return;
+        }
+
+        $instructionTableName = $this->getMainTable();
+
+        $select = $this->getConnection()->select();
+        $select->from($instructionTableName);
+        $select->joinLeft(
+            ['relation' => $this->tagRelationResource->getMainTable()],
+            $instructionTableName . '.listing_product_id = relation.listing_product_id'
+        );
+        $select->joinLeft(
+            ['tag' => $this->tagResource->getMainTable()],
+            'tag.id = relation.tag_id'
+        );
+        $select->where('tag.error_code IN (?)', $errorCodes);
+
+        $deleteSql = $this
+            ->getConnection()
+            ->deleteFromSelect($select, $instructionTableName);
+
+        $this
+            ->getConnection()
+            ->query($deleteSql);
     }
 
     //########################################

@@ -140,4 +140,41 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         return array_unique($customAttributes);
     }
+
+    public function getCustomAttributesList(): array
+    {
+        $result = [];
+        foreach ($this->getCustomAttributes() as $attributeName => $values) {
+            foreach ($values as $value) {
+                if ((int)$value['mode'] !== self::FIELD_CUSTOM_ATTRIBUTE) {
+                    continue;
+                }
+
+                $result[] = [
+                    'name' => $attributeName,
+                    'attribute_code' => $value['attribute_code']
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    private function getCustomAttributes(): array
+    {
+        $specifics = $this->getSettings('settings');
+        $filterCallback = static function (array $values) {
+            foreach ($values as $value) {
+                if (!isset($value['mode'])) {
+                    continue;
+                }
+
+                return (int)$value['mode'] === self::FIELD_CUSTOM_ATTRIBUTE;
+            }
+
+            return false;
+        };
+
+        return array_filter($specifics, $filterCallback);
+    }
 }

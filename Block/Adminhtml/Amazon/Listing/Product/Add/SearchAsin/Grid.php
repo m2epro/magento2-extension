@@ -618,11 +618,6 @@ JS
             return parent::_toHtml();
         }
 
-        $showNotCompletedPopup = '';
-        if ($this->getRequest()->getParam('not_completed', false)) {
-            $showNotCompletedPopup = 'ListingGridObj.showNotCompletedPopup();';
-        }
-
         $this->js->add(
             <<<JS
     require([
@@ -637,8 +632,6 @@ JS
         ListingGridObj.actionHandler.setProgressBar('search_asin_progress_bar');
         ListingGridObj.actionHandler.setGridWrapper('search_asin_content_container');
         ListingGridObj.afterInitPage();
-
-        {$showNotCompletedPopup}
     });
 JS
         );

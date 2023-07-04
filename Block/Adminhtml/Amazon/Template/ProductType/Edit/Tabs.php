@@ -98,11 +98,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $this->jsUrl->addUrls([
             'formSubmit'    => $this->getUrl(
                 '*/amazon_template_productType/save',
-                ['_current' => true]
+                ['id' => $this->productType->getId()]
             ),
             'deleteAction'  => $this->getUrl(
                 '*/amazon_template_productType/delete',
-                ['_current' => true]
+                ['id' => $this->productType->getId()]
             ),
         ]);
 

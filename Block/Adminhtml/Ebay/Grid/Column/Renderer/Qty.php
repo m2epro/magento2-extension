@@ -8,36 +8,14 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     public const ONLINE_QTY_SOLD = 'online_qty_sold';
     public const ONLINE_AVAILABLE_QTY = 'online_available_qty';
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-
-        $this->helperFactory = $helperFactory;
-        $this->translationHelper = $translationHelper;
-    }
-
-    //########################################
-
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
         $value = $this->_getValue($row);
 
@@ -46,11 +24,11 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         }
 
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         if ($value === null || $value === '') {
-            return $this->translationHelper->__('N/A');
+            return __('N/A');
         }
 
         if ($value <= 0) {
@@ -70,5 +48,14 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
         return $value;
     }
 
-    //########################################
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        $result = strip_tags($this->render($row));
+
+        if (is_numeric($result)) {
+            return $result;
+        }
+
+        return '';
+    }
 }

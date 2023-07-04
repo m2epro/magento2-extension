@@ -188,7 +188,6 @@ HTML
     require([
         'Magento_Ui/js/modal/modal'
     ],function(modal) {
-
         $('mode1same').observe('change', function (e) {
             $('edit_product_type').show();
         });
@@ -241,10 +240,13 @@ HTML
 
         productTypeTemplateModeFormSubmit = function()
         {
-            if ($('mode1same').checked && $('product_type_id').value == '') {
+            var productTypeId = $('product_type_id').value;
+
+            if ($('mode1same').checked && productTypeId === '') {
                 $('same_product_type_error').show();
                 return;
             }
+
             $('edit_form').submit();
         };
 

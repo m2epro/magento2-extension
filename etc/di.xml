@@ -121,4 +121,39 @@
         </arguments>
     </type>
 
+    <preference for="Ess\M2ePro\Api\Ebay\OrderRepositoryInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\OrderRepository" />
+    <preference for="Ess\M2ePro\Api\Ebay\OrderManagementInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\OrderManagement" />
+    <preference for="Ess\M2ePro\Api\Ebay\OrderSearchResultInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\OrderSearchResult" />
+    <preference for="Ess\M2ePro\Api\Ebay\OrderSearchCriteriaInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\OrderSearchCriteria" />
+    <!--  DTO  -->
+    <preference for="Ess\M2ePro\Api\Ebay\Data\OrderInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\BuyerInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\Buyer" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\ShippingDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\PaymentDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\PaymentDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\TaxDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\TaxDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\AddressInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\ShippingDetails\Address" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\ClickAndCollectDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\ShippingDetails\ClickAndCollectDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\GlobalShippingDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\ShippingDetails\GlobalShippingDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\InStorePickupDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\ShippingDetails\InStorePickupDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\OrderItemInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\OrderItem" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\OrderItem\TrackingDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\OrderItem\TrackingDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\OrderItem\TaxDetailsInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\OrderItem\TaxDetails" />
+    <preference for="Ess\M2ePro\Api\Ebay\Data\Order\OrderItem\TaxDetails\CollectAndRemitInterface"
+                type="Ess\M2ePro\Model\Ebay\Api\Data\Order\OrderItem\TaxDetails\CollectAndRemit" />
 </config>

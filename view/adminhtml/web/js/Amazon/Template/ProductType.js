@@ -259,65 +259,74 @@ define(
 
             saveClick: function ($super, url, confirmText)
             {
+                var self = this;
                 if (!this.isValidForm()) {
                     return;
                 }
 
                 if (confirmText && this.showConfirmMsg) {
-                    this.confirm(
-                        confirmText,
-                        function() {
-                            AmazonTemplateProductTypeObj.isPageLeavingSafe = true;
-                            $super(url);
-                        }
-                    );
-                    return;
+                    this.confirm(confirmText, function () {
+                        self.isPageLeavingSafe = true;
+                        ProductTypeValidatorPopup.closePopupCallback = function (response) {
+                            setLocation(response.back_url);
+                        };
+                        self.saveFormUsingAjax()
+                    });
+                } else {
+                    self.isPageLeavingSafe = true;
+                    ProductTypeValidatorPopup.closePopupCallback = function (response) {
+                        setLocation(response.back_url);
+                    };
+                    self.saveFormUsingAjax()
                 }
-
-                this.isPageLeavingSafe = true;
-                $super(url, true);
             },
 
             saveAndEditClick: function ($super, url, confirmText)
             {
+                var self = this;
                 if (!this.isValidForm()) {
                     return;
                 }
 
                 if (confirmText && this.showConfirmMsg) {
-                    this.confirm(
-                        confirmText,
-                        function() {
-                            AmazonTemplateProductTypeObj.isPageLeavingSafe = true;
-                            $super(url);
-                        }
-                    );
-                    return;
+                    this.confirm(confirmText, function () {
+                        self.isPageLeavingSafe = true;
+                        ProductTypeValidatorPopup.closePopupCallback = function (response) {
+                            setLocation(window.location.href);
+                        };
+                        self.saveFormUsingAjax()
+                    });
+                } else {
+                    self.isPageLeavingSafe = true;
+                    ProductTypeValidatorPopup.closePopupCallback = function (response) {
+                        setLocation(window.location.href);
+                    };
+                    self.saveFormUsingAjax()
                 }
-
-                this.isPageLeavingSafe = true;
-                $super(url)
             },
 
             saveAndCloseClick: function ($super, confirmText)
             {
+                var self = this;
                 if (!this.isValidForm()) {
                     return;
                 }
 
                 if (confirmText && this.showConfirmMsg) {
-                    this.confirm(
-                        confirmText,
-                        function() {
-                            AmazonTemplateProductTypeObj.isPageLeavingSafe = true;
-                            AmazonTemplateProductTypeObj.saveFormUsingAjax();
+                    this.confirm(confirmText, function () {
+                        self.isPageLeavingSafe = true;
+                        ProductTypeValidatorPopup.closePopupCallback = function () {
+                            window.close();
                         }
-                    );
-                    return;
+                        self.saveFormUsingAjax();
+                    });
+                } else {
+                    self.isPageLeavingSafe = true;
+                    ProductTypeValidatorPopup.closePopupCallback = function () {
+                        window.close();
+                    }
+                    self.saveFormUsingAjax();
                 }
-
-                this.isPageLeavingSafe = true;
-                this.saveFormUsingAjax();
             },
 
             saveFormUsingAjax: function() {
@@ -328,7 +337,9 @@ define(
                         const response = transport.responseText.evalJSON();
 
                         if (response.status) {
-                            window.close();
+                            localStorage.set('is_need_revalidate_product_types', true);
+                            ProductTypeValidatorPopup.closePopupCallbackArguments = [response];
+                            ProductTypeValidatorPopup.openForProductType((response.product_type_id));
                         } else {
                             messageObj.clear();
                             messageObj.addError(response.message);

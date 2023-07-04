@@ -8,47 +8,43 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
-    use Traits\BlockTrait;
-
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    protected $amazonFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
-        $this->helperFactory = $helperFactory;
-        $this->amazonFactory = $amazonFactory;
-        $this->translationHelper = $translationHelper;
         $this->dataHelper = $dataHelper;
     }
 
-    //########################################
+    public function render(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, false);
+    }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        $result = strip_tags($this->renderGeneral($row, true));
+
+        if (is_numeric($result)) {
+            return $result;
+        }
+
+        return '';
+    }
+
+    private function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport): string
     {
         $rowObject = $row;
         $value = $this->_getValue($row);
-        $translator = $this->translationHelper;
         $isVariationGrid = ($this->getColumn()->getData('is_variation_grid') !== null)
             ? $this->getColumn()->getData('is_variation_grid')
             : false;
@@ -81,9 +77,9 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
             if ($value === null || $value === '') {
                 if ($showReceiving) {
                     return '<i style="color:gray;">receiving...</i>';
-                } else {
-                    return __('N/A');
                 }
+
+                return __('N/A');
             }
 
             if ($value <= 0) {
@@ -124,13 +120,17 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
             return $value;
         }
 
+        if ($isExport) {
+            return $value;
+        }
+
         $resultValue = __('AFN');
         $additionalData = (array)\Ess\M2ePro\Helper\Json::decode($row->getData('additional_data'));
 
         $filter = base64_encode('online_qty[afn]=1');
 
         $productTitle = $this->dataHelper->escapeHtml($row->getData('name'));
-        $vpmt = $translator->__('Manage Variations of &quot;%s%&quot; ', $productTitle);
+        $vpmt = __('Manage Variations of &quot;%1&quot; ', $productTitle);
         // @codingStandardsIgnoreLine
         $vpmt = addslashes($vpmt);
 
@@ -150,6 +150,4 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
     <div>{$resultValue}</div>
 HTML;
     }
-
-    //########################################
 }

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree;
@@ -17,21 +11,20 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
-     * @param \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($variationHelper, $amazonFactory, $context);
+        parent::__construct(
+            $amazonListingProductResource,
+            $variationHelper,
+            $amazonFactory,
+            $context
+        );
         $this->globalDataHelper = $globalDataHelper;
         $this->sessionHelper = $sessionHelper;
     }
@@ -54,6 +47,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->globalDataHelper->setValue('listing_for_products_add', $listing);
 
         $step = (int)$this->getRequest()->getParam('step');
+        $this->updateWizardCurrentStepId($step);
+        $lastStep = 6;
 
         switch ($step) {
             case 1:
@@ -82,10 +77,24 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                 $this->addNewAsinView();
                 break;
             case 5:
+                $this->validateProductType();
+                break;
+            case $lastStep:
                 $this->review();
                 break;
             default:
                 return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
+        }
+
+        if (
+            $step !== $lastStep
+            && $this->isAjax() === false
+            && $this->getRequest()->getParam('not_completed', false)
+        ) {
+            $this->addContent(
+                $this->getLayout()
+                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NotCompleteWizardPopup::class)
+            );
         }
 
         return $this->getResult();
@@ -296,6 +305,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
+        $this->deleteProductTypeTemplate($listingProductsIds);
+
         $this->setPageHelpLink('x/1QkVB');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New ASIN/ISBN Creation'));
@@ -303,6 +314,48 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\NewAsin::class)
         );
+    }
+
+    protected function validateProductType()
+    {
+        $this->setWizardStep('validateProductType');
+
+        $listingProductIds = $this->getAddedListingProductsIds();
+
+        if (empty($listingProductIds)) {
+            $this->_redirect('*/amazon_listing/view', [
+                'id' => $this->getRequest()->getParam('id')
+            ]);
+
+            return;
+        }
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $productTypeValidationGrid = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Amazon\ProductType\Validate\Grid::class,
+                '',
+                ['listingProductIds' => $listingProductIds]
+            );
+            $this->setAjaxContent($productTypeValidationGrid);
+
+            return;
+        }
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend(
+            __('Product Data Validation')
+        );
+        $this->setPageHelpLink('x/FACOFg');
+
+        $block = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\ValidateProductTypes::class,
+            '',
+            [
+                'listing' => $this->listing,
+                'listingProductIds' => $listingProductIds,
+            ]
+        );
+
+        $this->addContent($block);
     }
 
     protected function getAddedListingProductsIds()
@@ -321,6 +374,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         return $listingProductsIds;
     }
 
+    public function updateWizardCurrentStepId(int $step): void
+    {
+        $listing = $this->getListing();
+        $listing->setSetting('additional_data', 'wizard_current_step', $step);
+        $listing->save();
+    }
+
     protected function review()
     {
         $this->endWizard();
@@ -337,6 +397,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $listing->setSetting('additional_data', 'adding_listing_products_ids', []);
         $listing->setSetting('additional_data', 'adding_new_asin_listing_products_ids', []);
         $listing->setSetting('additional_data', 'auto_search_was_performed', 0);
+        $listing->setSetting('additional_data', 'wizard_current_step', 0);
         $listing->save();
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));

@@ -163,8 +163,128 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_afterLoadCollection();
     }
 
+    protected function _prepareColumns()
+    {
+        $this->addExportType('*/*/exportCsvAllItemsGrid', __('CSV'));
+
+        $this->addColumn('entity_id', [
+            'header' => __('Product ID'),
+            'align' => 'right',
+            'width' => '100px',
+            'type' => 'number',
+            'index' => 'entity_id',
+            'filter_index' => 'entity_id',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
+            'filter_condition_callback' => [$this, 'callbackFilterProductId'],
+        ]);
+
+        $this->addColumn('name', [
+            'header' => __('Product Title / Listing / Product SKU'),
+            'header_export' => __('SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'name',
+            'filter_index' => 'name',
+            'escape' => false,
+            'frame_callback' => [$this, 'callbackColumnProductTitle'],
+            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
+        ]);
+
+        $this->addColumn('online_sku', [
+            'header' => __('SKU'),
+            'header_export' => __('Walmart SKU'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'text',
+            'index' => 'online_sku',
+            'filter_index' => 'online_sku',
+            'show_edit_sku' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class,
+            'filter_condition_callback' => [$this, 'callbackFilterOnlineSku'],
+        ]);
+
+        $this->addColumn('gtin', [
+            'header' => __('GTIN'),
+            'align' => 'left',
+            'width' => '150px',
+            'type' => 'text',
+            'index' => 'gtin',
+            'show_edit_identifier' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
+            'filter_index' => 'gtin',
+            'filter_condition_callback' => [$this, 'callbackFilterGtin'],
+        ]);
+
+        $this->addColumn('online_qty', [
+            'header' => __('QTY'),
+            'align' => 'right',
+            'width' => '70px',
+            'type' => 'number',
+            'index' => 'online_qty',
+            'filter_index' => 'online_qty',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty::class,
+            'filter_condition_callback' => [$this, 'callbackFilterQty'],
+        ]);
+
+        $this->addColumn('online_price', [
+            'header' => __('Price'),
+            'align' => 'right',
+            'width' => '110px',
+            'type' => 'number',
+            'index' => 'online_price',
+            'filter_index' => 'online_price',
+            'frame_callback' => [$this, 'callbackColumnPrice'],
+            'filter_condition_callback' => [$this, 'callbackFilterPrice'],
+        ]);
+
+        $statusColumn = [
+            'header' => __('Status'),
+            'width' => '125px',
+            'index' => 'status',
+            'filter_index' => 'status',
+            'type' => 'options',
+            'sortable' => false,
+            'options' => [
+                \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => __('Not Listed'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
+            ],
+            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
+        ];
+
+        $listingType = $this->getRequest()->getParam(
+            'listing_type',
+            \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
+        );
+
+        if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
+            unset($statusColumn['options'][\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
+        }
+
+        $this->addColumn('status', $statusColumn);
+
+        $this->addColumn('goto_listing_item', [
+            'header' => __('Manage'),
+            'align' => 'center',
+            'width' => '50px',
+            'type' => 'text',
+            'filter' => false,
+            'sortable' => false,
+            'frame_callback' => [$this, 'callbackColumnActions'],
+            'is_system' => true,
+        ]);
+
+        return parent::_prepareColumns();
+    }
+
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $this->dataHelper->escapeHtml($row->getData('sku'));
+        }
+
         $title = $row->getData('name');
         $title = $this->dataHelper->escapeHtml($title);
 
@@ -271,6 +391,10 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+
         $value = $this->getProductStatus($row->getData('status'));
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -364,12 +488,20 @@ HTML;
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if ((!$row->getData('is_variation_parent') && $row->getData('status') == Product::STATUS_NOT_LISTED)) {
+            if ($isExport) {
+                return '';
+            }
+
             return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         $currentOnlinePrice = (float)$row->getData('online_price');
 
         if (empty($currentOnlinePrice) || $row->getData('status') == Product::STATUS_BLOCKED) {
+            if ($isExport) {
+                return '';
+            }
+
             return __('N/A');
         }
 
@@ -380,6 +512,10 @@ HTML;
         $priceValue = $this->convertAndFormatPriceCurrency($currentOnlinePrice, $currency);
 
         if ($row->getData('is_online_price_invalid')) {
+            if ($isExport) {
+                return $priceValue;
+            }
+
             $message = <<<HTML
 Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
 Once the changes are applied, Walmart Item will become Active automatically.
@@ -399,6 +535,10 @@ HTML;
         }
 
         if ($row->getData('is_variation_parent')) {
+            if ($isExport) {
+                return $priceValue;
+            }
+
             $noticeText = __('The value is calculated as minimum price of all Child Products.');
             $priceHtml = <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip" style="display: inline;">
@@ -415,6 +555,10 @@ HTML;
         }
 
         if ($currentOnlinePrice <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             $priceValue = '<span style="color: #f00;">0</span>';
         }
 
@@ -884,117 +1028,6 @@ SQL;
         }
 
         return implode(',', array_keys($ids));
-    }
-
-    protected function _prepareColumns()
-    {
-        $this->addColumn('entity_id', [
-            'header' => __('Product ID'),
-            'align' => 'right',
-            'width' => '100px',
-            'type' => 'number',
-            'index' => 'entity_id',
-            'filter_index' => 'entity_id',
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId::class,
-            'filter_condition_callback' => [$this, 'callbackFilterProductId'],
-        ]);
-
-        $this->addColumn('name', [
-            'header' => __('Product Title / Listing / Product SKU'),
-            'align' => 'left',
-            'type' => 'text',
-            'index' => 'name',
-            'filter_index' => 'name',
-            'escape' => false,
-            'frame_callback' => [$this, 'callbackColumnProductTitle'],
-            'filter_condition_callback' => [$this, 'callbackFilterTitle'],
-        ]);
-
-        $this->addColumn('online_sku', [
-            'header' => __('SKU'),
-            'align' => 'left',
-            'width' => '150px',
-            'type' => 'text',
-            'index' => 'online_sku',
-            'filter_index' => 'online_sku',
-            'show_edit_sku' => false,
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku::class,
-            'filter_condition_callback' => [$this, 'callbackFilterOnlineSku'],
-        ]);
-
-        $this->addColumn('gtin', [
-            'header' => __('GTIN'),
-            'align' => 'left',
-            'width' => '150px',
-            'type' => 'text',
-            'index' => 'gtin',
-            'show_edit_identifier' => false,
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Gtin::class,
-            'filter_index' => 'gtin',
-            'filter_condition_callback' => [$this, 'callbackFilterGtin'],
-        ]);
-
-        $this->addColumn('online_qty', [
-            'header' => __('QTY'),
-            'align' => 'right',
-            'width' => '70px',
-            'type' => 'number',
-            'index' => 'online_qty',
-            'filter_index' => 'online_qty',
-            'renderer' => \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Qty::class,
-            'filter_condition_callback' => [$this, 'callbackFilterQty'],
-        ]);
-
-        $this->addColumn('online_price', [
-            'header' => __('Price'),
-            'align' => 'right',
-            'width' => '110px',
-            'type' => 'number',
-            'index' => 'online_price',
-            'filter_index' => 'online_price',
-            'frame_callback' => [$this, 'callbackColumnPrice'],
-            'filter_condition_callback' => [$this, 'callbackFilterPrice'],
-        ]);
-
-        $statusColumn = [
-            'header' => __('Status'),
-            'width' => '125px',
-            'index' => 'status',
-            'filter_index' => 'status',
-            'type' => 'options',
-            'sortable' => false,
-            'options' => [
-                \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => __('Not Listed'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
-            ],
-            'frame_callback' => [$this, 'callbackColumnStatus'],
-            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
-        ];
-
-        $listingType = $this->getRequest()->getParam(
-            'listing_type',
-            \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
-        );
-
-        if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
-            unset($statusColumn['options'][\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
-        }
-
-        $this->addColumn('status', $statusColumn);
-
-        $this->addColumn('goto_listing_item', [
-            'header' => __('Manage'),
-            'align' => 'center',
-            'width' => '50px',
-            'type' => 'text',
-            'filter' => false,
-            'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnActions'],
-        ]);
-
-        return parent::_prepareColumns();
     }
 
     protected function getProductStatus($status)

@@ -181,4 +181,16 @@ td.help_line .hl_footer {
     right: -1px;
 }
 
+button.action-default.scalable.task[title="Export"]:before {
+    -webkit-font-smoothing: antialiased;
+    content: '\e635';
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+
 /* ================================================ */

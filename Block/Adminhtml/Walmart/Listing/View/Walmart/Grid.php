@@ -198,6 +198,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/exportCsvListingGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => __('Product ID'),
             'align' => 'right',
@@ -210,6 +212,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->addColumn('name', [
             'header' => __('Product Title / Product SKU'),
+            'header_export' => __('Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -221,6 +224,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->addColumn('sku', [
             'header' => __('SKU'),
+            'header_export' => __('Walmart SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
@@ -371,6 +375,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $sku = $this->modelFactory->getObject('Magento\Product')
                                       ->setProductId($row->getData('entity_id'))
                                       ->getSku();
+        }
+
+        if ($isExport) {
+            return $this->dataHelper->escapeHtml($sku);
         }
 
         $value .= '<br/><strong>' . __('SKU') .
@@ -606,10 +614,15 @@ HTML;
      * @param $isExport
      *
      * @return mixed|string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if (!$row->getData('is_variation_parent') && $row->getData('status') == Product::STATUS_NOT_LISTED) {
+            if ($isExport) {
+                return '';
+            }
+
             return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
@@ -617,6 +630,10 @@ HTML;
         $onlineMaxPrice = (float)$row->getData('max_online_price');
 
         if (empty($onlineMinPrice)) {
+            if ($isExport) {
+                return '';
+            }
+
             if (
                 $row->getData('status') == Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent') ||
@@ -633,6 +650,10 @@ HTML;
         $priceValue = $this->convertAndFormatPriceCurrency($value, $currency);
 
         if ($row->getData('is_online_price_invalid')) {
+            if ($isExport) {
+                return $priceValue;
+            }
+
             $message = <<<HTML
 Item Price violates Walmart pricing rules. Please adjust the Item Price to comply with the Walmart requirements.<br>
 Once the changes are applied, Walmart Item will become Active automatically.
@@ -657,8 +678,20 @@ HTML;
                 $onlineMinPriceStr = $this->convertAndFormatPriceCurrency($onlineMinPrice, $currency);
                 $onlineMaxPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxPrice, $currency);
 
+                if ($isExport) {
+                    if ($onlineMinPrice != $onlineMaxPrice) {
+                        return $onlineMinPriceStr . ' - ' . $onlineMaxPriceStr;
+                    }
+
+                    return $onlineMinPriceStr;
+                }
+
                 $onlinePriceStr = $onlineMinPriceStr
                     . (($onlineMinPrice != $onlineMaxPrice) ? ' - ' . $onlineMaxPriceStr : '');
+            }
+
+            if ($isExport) {
+                return 0;
             }
 
             return $onlinePriceStr;
@@ -666,9 +699,17 @@ HTML;
 
         $onlinePrice = $row->getData('online_price');
         if ((float)$onlinePrice <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             $priceValue = '<span style="color: #f00;">0</span>';
         } else {
             $priceValue = $this->convertAndFormatPriceCurrency($onlinePrice, $currency);
+
+            if ($isExport) {
+                return $priceValue;
+            }
         }
 
         $resultHtml = '';
@@ -693,6 +734,10 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+
         /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status $status */
         $status = $this->getLayout()
                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Status::class);

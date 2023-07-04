@@ -123,6 +123,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/exportCsvUnmanagedGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => $this->__('Product ID'),
             'align' => 'left',
@@ -137,6 +139,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->addColumn('title', [
             'header' => $this->__('Product Title / Product SKU / eBay Category'),
+            'header_export' => __('Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -266,6 +269,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
         if (empty($value)) {
+            if ($isExport) {
+                return '';
+            }
+
             $productTitle = $row->getChildObject()->getData('title');
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
@@ -280,6 +287,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                     );">' . $this->__('Link') . '</a>';
 
             return $htmlValue;
+        }
+
+        if ($isExport) {
+            return $row->getData('product_id');
         }
 
         $htmlValue = '&nbsp<a href="'
@@ -314,6 +325,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $tempSku = $this->dataHelper->escapeHtml($tempSku);
         }
 
+        if ($isExport) {
+            return strip_tags($tempSku);
+        }
+
         $categoryHtml = '';
         if ($category = $row->getChildObject()->getData('online_main_category')) {
             $categoryHtml = <<<HTML
@@ -332,6 +347,11 @@ HTML;
     public function callbackColumnItemId($value, $row, $column, $isExport)
     {
         $value = $row->getChildObject()->getData('item_id');
+
+        if ($isExport) {
+            return $value;
+        }
+
         if (empty($value)) {
             return $this->__('N/A');
         }
@@ -350,10 +370,18 @@ HTML;
     {
         $value = $row->getChildObject()->getData('online_price');
         if ($value === null || $value === '') {
+            if ($isExport) {
+                return '';
+            }
+
             return $this->__('N/A');
         }
 
         if ((float)$value <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             return '<span style="color: #f00;">0</span>';
         }
 
@@ -362,6 +390,10 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+
         $coloredStstuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 'green',
             \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => 'red',

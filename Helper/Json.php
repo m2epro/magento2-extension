@@ -44,19 +44,19 @@ class Json
     }
 
     /**
-     * @param string $data
+     * @param mixed $json
      * @param bool $throwError
      *
      * @return array|bool|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public static function decode($data, $throwError = false)
+    public static function decode($json, $throwError = false)
     {
-        if ($data === null || $data === '' || strtolower($data) === 'null') {
+        if ($json === null || $json === '' || strtolower($json) === 'null') {
             return null;
         }
 
-        $decoded = json_decode($data, true);
+        $decoded = json_decode($json, true);
         if ($decoded !== null) {
             return $decoded;
         }
@@ -64,10 +64,10 @@ class Json
         if ($throwError) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 'Unable to decode JSON.',
-                ['source' => $data]
+                ['source' => $json]
             );
         }
 
-        return $decoded;
+        return null;
     }
 }

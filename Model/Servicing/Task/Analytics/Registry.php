@@ -11,7 +11,10 @@ namespace Ess\M2ePro\Model\Servicing\Task\Analytics;
 class Registry
 {
     public const STORAGE_KEY = 'servicing/analytics';
-
+    /** @var array $storageData */
+    private $storageData = [];
+    /** @var bool  */
+    private $isUpdateStorageData = false;
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registry;
 
@@ -80,7 +83,6 @@ class Registry
     public function markStarted(): void
     {
         $regData = $this->getStoredData();
-
         $regData['started_at'] = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         $regData['progress'] = [];
 
@@ -117,10 +119,19 @@ class Registry
     protected function setStoredData($data): void
     {
         $this->registry->setValue(self::STORAGE_KEY, $data);
+        $this->isUpdateStorageData = false;
     }
 
+    /**
+     * @return array|bool|null
+     */
     protected function getStoredData()
     {
-        return $this->registry->getValueFromJson(self::STORAGE_KEY);
+        if (!$this->isUpdateStorageData) {
+            $this->storageData = $this->registry->getValueFromJson(self::STORAGE_KEY);
+            $this->isUpdateStorageData = true;
+        }
+
+        return $this->storageData;
     }
 }

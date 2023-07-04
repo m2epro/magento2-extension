@@ -8,14 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
-    use Traits\BlockTrait;
-
-    /** @var \Ess\M2ePro\Model\Factory */
-    protected $modelFactory;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
@@ -23,47 +18,56 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
     /** @var \Magento\Framework\Locale\CurrencyInterface */
     protected $localeCurrency;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
-        $this->helperFactory = $helperFactory;
-        $this->modelFactory = $modelFactory;
         $this->ebayFactory = $ebayFactory;
         $this->localeCurrency = $localeCurrency;
-        $this->translationHelper = $translationHelper;
     }
 
     //########################################
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
-        $translator = $this->translationHelper;
+        return $this->renderGeneral($row, false);
+    }
+
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, true);
+    }
+
+    private function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport): string
+    {
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+            if ($isExport) {
+                return '';
+            }
+
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         $onlineStartPrice = $row->getData('online_start_price');
         $onlineCurrentPrice = $row->getData('online_current_price');
 
         if ($onlineCurrentPrice === null || $onlineCurrentPrice === '') {
-            return $translator->__('N/A');
+            if ($isExport) {
+                return '';
+            }
+
+            return __('N/A');
         }
 
         if ((float)$onlineCurrentPrice <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             return '<span style="color: #f00;">0</span>';
         }
 
@@ -81,26 +85,30 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
 
             $onlineStartStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineStartPrice);
 
-            $startPriceText = $translator->__('Start Price');
+            if ($isExport) {
+                return $onlineStartStr;
+            }
+
+            $startPriceText = __('Start Price');
 
             $onlineCurrentPriceHtml = '';
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
 
             if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
-                $currentPriceText = $translator->__('Current Price');
+                $currentPriceText = __('Current Price');
                 $onlineCurrentStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
                 $onlineCurrentPriceHtml = '<strong>' . $currentPriceText . ':</strong> ' . $onlineCurrentStr . '<br/><br/>';
             }
 
             if ($onlineReservePrice > 0) {
-                $reservePriceText = $translator->__('Reserve Price');
+                $reservePriceText = __('Reserve Price');
                 $onlineReserveStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineReservePrice);
                 $onlineReservePriceHtml = '<strong>' . $reservePriceText . ':</strong> ' . $onlineReserveStr . '<br/>';
             }
 
             if ($onlineBuyItNowPrice > 0) {
-                $buyItNowText = $translator->__('Buy It Now Price');
+                $buyItNowText = __('Buy It Now Price');
                 $onlineBuyItNowStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineBuyItNowPrice);
                 $onlineBuyItNowPriceHtml = '<strong>' . $buyItNowText . ':</strong> ' . $onlineBuyItNowStr;
             }
@@ -130,12 +138,16 @@ HTML;
             return $resultHtml;
         }
 
+        if ($isExport) {
+            return $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
+        }
+
         $noticeHtml = '';
         if ($listingProductId = $row->getData('listing_product_id')) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
             if ($listingProduct->getChildObject()->isVariationsReady()) {
-                $noticeText = $translator->__('The value is calculated as minimum price of all Child Products.');
+                $noticeText = __('The value is calculated as minimum price of all Child Products.');
                 $noticeHtml = <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip" style="display: inline;">
     <a class="admin__field-tooltip-action" href="javascript://" style="margin-left: 0;"></a>
@@ -154,6 +166,4 @@ HTML;
             '</span>' .
             '</div>';
     }
-
-    //########################################
 }

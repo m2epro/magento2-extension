@@ -127,6 +127,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::class);
     }
 
+    public function getListingProductId(): int
+    {
+        return (int)$this->getData('listing_product_id');
+    }
+
     //########################################
 
     /**
@@ -613,13 +618,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     }
 
     /**
-     * @param int|string $productType
+     * @param int|string|null $productType - null as default value
      *
      * @return void
      */
     public function setTemplateProductTypeId($productType)
     {
-        $this->setData('template_product_type_id', (int)$productType);
+        $this->setData('template_product_type_id', $productType);
     }
 
     /**

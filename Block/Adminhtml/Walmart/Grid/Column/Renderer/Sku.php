@@ -8,37 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
-/**
- * Class  \Ess\M2ePro\Block\Adminhtml\Walmart\Grid\Column\Renderer\Sku
- */
 class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-
-        $this->helperFactory = $helperFactory;
-        $this->translationHelper = $translationHelper;
+    public function render(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, false);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function render(\Magento\Framework\DataObject $row)
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, true);
+    }
+
+    private function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport)
     {
         $value = $this->_getValue($row);
         $isVariationParent = $row->getData('is_variation_parent');
@@ -51,7 +35,15 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
         }
 
         if ($value === null || $value === '') {
-            $value = $this->translationHelper->__('N/A');
+            if ($isExport) {
+                return '';
+            }
+
+            $value = __('N/A');
+        }
+
+        if ($isExport) {
+            return $value;
         }
 
         $showEditSku = ($this->getColumn()->getData('show_edit_sku') !== null)

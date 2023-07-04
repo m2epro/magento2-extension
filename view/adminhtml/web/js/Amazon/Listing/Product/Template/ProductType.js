@@ -92,6 +92,7 @@ define([
                         });
 
                         self.productTypePopup.modal('closeModal');
+                        ProductTypeValidatorPopup.open(self.productTypePopup.productsIds)
                     },
                     cancel: function () {
                         return false;

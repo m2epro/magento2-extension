@@ -16,19 +16,22 @@ class Ebay extends Command
 {
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Repository */
     protected $repository;
-
     /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory */
     protected $handlerFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    private $listingProductCollectionFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\View\ControlPanel $controlPanelHelper,
         Context $context,
         \Ess\M2ePro\Model\ControlPanel\Inspection\Repository $repository,
-        \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory
+        \Ess\M2ePro\Model\ControlPanel\Inspection\HandlerFactory $handlerFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
     ) {
         parent::__construct($controlPanelHelper, $context);
         $this->repository = $repository;
         $this->handlerFactory = $handlerFactory;
+        $this->listingProductCollectionFactory = $listingProductCollectionFactory;
     }
 
     /**
@@ -374,6 +377,91 @@ HTML;
 
 </form>
 HTML;
+    }
+
+    /**
+     * @title "View variations_that_can_not_be_deleted"
+     * @description "[View or delete array variations_that_can_not_be_deleted]"
+     * @new_line
+     */
+    public function viewVariationsThatCanNotBeDeletedAction()
+    {
+        $collection = $this->listingProductCollectionFactory->createWithEbayChildMode();
+        $collection->getSelect()->where("additional_data LIKE '%variations_that_can_not_be_deleted%'");
+        $collection->getSelect()->where('additional_data NOT LIKE "%\"variations_that_can_not_be_deleted\":[]%"');
+
+        // Delete All action
+        if ($this->getRequest()->getParam('delete_all')) {
+            foreach ($collection->getItems() as $item) {
+                $item->setSetting('additional_data', 'variations_that_can_not_be_deleted', []);
+                $item->save();
+            }
+
+            $this->getMessageManager()
+                 ->addNoticeMessage('Cleared all <code>variations_that_can_not_be_deleted</code> arrays');
+            return $this->_redirect($this->redirect->getRefererUrl(), ['_query' => '']);
+        }
+        // Delete by id action
+        $deleteId = $this->getRequest()->getParam('delete_id');
+        if (!empty($deleteId)) {
+            $collection->addFieldToFilter('id', $deleteId);
+            $item = $collection->getFirstItem();
+            $item->setSetting('additional_data', 'variations_that_can_not_be_deleted', []);
+            $item->save();
+
+            $message = sprintf(
+                'Array <code>variations_that_can_not_be_deleted</code> cleared for listing_product_id %s.',
+                $deleteId
+            );
+            $this->getMessageManager()->addNoticeMessage($message);
+            return $this->_redirect($this->redirect->getRefererUrl(), ['_query' => '']);
+        }
+
+        $html = '';
+        foreach ($this->getMessageManager()->getMessages(true)->getItems() as $message) {
+            $html .= '<p>' . $message->getText() . '</p>';
+        }
+
+        if ($collection->getSize() === 0) {
+            $html .= '<p>All products have an empty array <code>variations_that_can_not_be_deleted</code></p>';
+
+            return $this->getResponse()->setBody($html);
+        }
+
+        $addTableColumnFunction = function ($content) {
+            return '<td style="border: 1px solid black; padding: 3px 5px">' . $content . '</td>';
+        };
+
+        $tableHtml = '<div style="padding: 7px 0"><a href="?delete_all=1">Delete All</a></div>';
+        $tableHtml .= '<table style="width: 100%; border-collapse: collapse; border: 1px solid black">';
+        $tableHtml .= '<tr>'
+            . $addTableColumnFunction('listing_product_id')
+            . $addTableColumnFunction('product_id')
+            . $addTableColumnFunction('variations_that_can_not_be_deleted')
+            . $addTableColumnFunction('action')
+            . '</tr>';
+        /** @var  $item */
+        foreach ($collection->getItems() as $item) {
+            $additionalData = $item->getSettings('additional_data');
+            if (!array_key_exists('variations_that_can_not_be_deleted', $additionalData)) {
+                continue;
+            }
+            $prettyVariations = json_encode($additionalData['variations_that_can_not_be_deleted'], JSON_PRETTY_PRINT);
+
+            $tableHtml .= '<tr>';
+            $tableHtml .= $addTableColumnFunction($item->getId());
+            $tableHtml .= $addTableColumnFunction($item->getProductId());
+            $tableHtml .= $addTableColumnFunction(
+                '<textarea rows="5" style="width: 100%">'
+                . $prettyVariations
+                . '</textarea>'
+            );
+            $tableHtml .= $addTableColumnFunction("<a href='?delete_id={$item->getId()}'>Delete</a>");
+            $tableHtml .= '</tr>';
+        }
+        $tableHtml .= '</table>';
+
+        return $this->getResponse()->setBody($html . $tableHtml);
     }
 
     //########################################

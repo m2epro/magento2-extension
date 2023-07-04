@@ -297,7 +297,7 @@ HTML;
                 <<<JS
     require([
         'M2ePro/Plugin/Messages'
-    ],function(MessageObj) {
+    ], function(MessageObj) {
         var button = $('add_products_new_asin_category_continue');
         if ({$isNotExistProductsWithProductType}) {
             button.addClassName('disabled');

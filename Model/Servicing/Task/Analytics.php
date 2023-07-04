@@ -12,34 +12,27 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
     public const NAME = 'analytics';
 
-    /** In bytes. It is equal 1 Mb */
-    private const REQUEST_SIZE_MAX = 1048576;
+    private const REQUEST_MAX_SIZE_ONE_MB_IN_BYTES = 1024 * 1024;
 
     /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry */
     private $registry;
-    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer */
-    private $serializer;
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $helperException;
-    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManagerFactory */
-    private $entityManagerFactory;
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\ProgressManagerFactory */
+    private $progressManagerFactory;
+    /** @var \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorFactory */
+    private $collectorFactory;
 
-    /**
-     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry
-     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer $serializer
-     * @param \Ess\M2ePro\Helper\Module\Exception $helperException
-     * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManagerFactory $entityManagerFactory
-     */
     public function __construct(
         \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry,
-        \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager\Serializer $serializer,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
-        \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManagerFactory $entityManagerFactory
+        \Ess\M2ePro\Model\Servicing\Task\Analytics\ProgressManagerFactory $progressManagerFactory,
+        \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorFactory $collectorFactory
     ) {
         $this->registry = $registry;
-        $this->serializer = $serializer;
         $this->helperException = $helperException;
-        $this->entityManagerFactory = $entityManagerFactory;
+        $this->progressManagerFactory = $progressManagerFactory;
+        $this->collectorFactory = $collectorFactory;
     }
 
     //----------------------------------------
@@ -70,7 +63,14 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
     public function getRequestData(): array
     {
         try {
-            return $this->collectAnalytics();
+            return [
+                'analytics' => [
+                    'entities' => $this->collectAnalytics(),
+                    'planned_at' => $this->registry->getPlannedAt(),
+                    'started_at' => $this->registry->getStartedAt(),
+                    'finished_at' => $this->registry->getFinishedAt(),
+                ],
+            ];
         } catch (\Throwable $e) {
             $this->helperException->process($e);
 
@@ -100,33 +100,43 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
         }
 
         $progress = [];
-        $entities = [];
+        $collectedData = [];
 
-        foreach ($this->getEntitiesTypes() as $component => $entitiesTypes) {
-            foreach ($entitiesTypes as $entityType) {
-                $manager = $this->entityManagerFactory->create(
-                    ['component' => $component, 'entityType' => $entityType]
-                );
+        foreach ($this->getCollectors() as $collectorClassName) {
+            $collector = $this->collectorFactory->create($collectorClassName);
 
-                $progress[$manager->getEntityKey()] = false;
+            $collectorId = $collector->getComponent() . '::' . $collector->getEntityName();
+            $progressManager = $this->progressManagerFactory->create($collectorId);
 
-                if ($manager->isCompleted()) {
-                    $progress[$manager->getEntityKey()] = true;
-                    continue;
+            $progress[$collectorId] = false;
+
+            if (!$progressManager->isInProcess()) {
+                $lastEntityId = $collector->getLastEntityId();
+                $progressManager->start($lastEntityId);
+            }
+
+            if ($progressManager->isCompleted()) {
+                $progress[$collectorId] = true;
+
+                continue;
+            }
+
+            $iteration = 0;
+
+            foreach ($collector->getRows($progressManager->getCurrent(), $progressManager->getLastId()) as $row) {
+                $collectedData[] = [
+                    'component' => $collector->getComponent(),
+                    'entity' => $collector->getEntityName(),
+                    'id' => $row->id,
+                    'data' => \Ess\M2ePro\Helper\Json::encode($row->data),
+                ];
+
+                if ($iteration % 10 === 0 && $this->isEntitiesPackFull($collectedData)) {
+                    break 2;
                 }
 
-                $iteration = 0;
-                foreach ($manager->getEntities() as $item) {
-                    /** @var \Ess\M2ePro\Model\ActiveRecord\AbstractModel $item */
-
-                    if ($iteration && $iteration % 10 === 0 && $this->isEntitiesPackFull($entities)) {
-                        break 3;
-                    }
-
-                    $entities[] = $this->serializer->serializeData($item, $manager);
-                    $manager->setLastProcessedId($item->getId());
-                    $iteration++;
-                }
+                $progressManager->setCurrent($row->id);
+                $iteration++;
             }
         }
 
@@ -134,50 +144,37 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
             $this->registry->markFinished();
         }
 
-        return [
-            'analytics' => [
-                'entities' => $entities,
-                'planned_at' => $this->registry->getPlannedAt(),
-                'started_at' => $this->registry->getStartedAt(),
-                'finished_at' => $this->registry->getFinishedAt(),
-            ],
-        ];
+        return $collectedData;
     }
 
     //----------------------------------------
 
     /**
-     * @return array[]
+     * @return string[]
      */
-    private function getEntitiesTypes(): array
+    private function getCollectors(): array
     {
         return [
-            \Ess\M2ePro\Helper\Component\Amazon::NICK => [
-                'Account',
-                'Listing',
-                'Template_Synchronization',
-                'Template_SellingFormat',
-                'Amazon_Template_ProductTaxCode',
-                'Amazon_Template_Shipping',
-            ],
-            \Ess\M2ePro\Helper\Component\Ebay::NICK => [
-                'Account',
-                'Listing',
-                'Template_Synchronization',
-                'Template_Description',
-                'Template_SellingFormat',
-                'Ebay_Template_ReturnPolicy',
-                'Ebay_Template_Shipping',
-                'Ebay_Template_Category',
-            ],
-            \Ess\M2ePro\Helper\Component\Walmart::NICK => [
-                'Account',
-                'Listing',
-                'Template_Synchronization',
-                'Template_Description',
-                'Template_SellingFormat',
-                'Walmart_Template_Category',
-            ],
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Amazon\Account::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\Account::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\Account::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Amazon\Listing::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\Listing::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\Listing::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Amazon\TemplateSynchronization::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\TemplateSynchronization::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\TemplateSynchronization::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Amazon\TemplateSellingFormat::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\TemplateSellingFormat::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\TemplateSellingFormat::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Amazon\AmazonTemplateProductTaxCode::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Amazon\AmazonTemplateShipping::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\EbayTemplateShipping::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\TemplateDescription::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\TemplateDescription::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\EbayTemplateReturnPolicy::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\EbayTemplateCategory::class,
+            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\WalmartTemplateCategory::class,
         ];
     }
 
@@ -187,10 +184,10 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    private function isEntitiesPackFull(&$entities): bool
+    private function isEntitiesPackFull($entities): bool
     {
         $dataSize = strlen(\Ess\M2ePro\Helper\Json::encode($entities));
 
-        return $dataSize > self::REQUEST_SIZE_MAX;
+        return $dataSize > self::REQUEST_MAX_SIZE_ONE_MB_IN_BYTES;
     }
 }

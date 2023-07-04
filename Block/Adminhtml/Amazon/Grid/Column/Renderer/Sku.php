@@ -8,38 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-
-        $this->helperFactory = $helperFactory;
-        $this->translationHelper = $translationHelper;
-        $this->dataHelper = $dataHelper;
+    public function render(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, false);
     }
 
-    //########################################
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, true);
+    }
 
-    public function render(\Magento\Framework\DataObject $row)
+    private function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport)
     {
         $value = $this->_getValue($row);
 
@@ -48,11 +31,23 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
                 $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')
         ) {
-            return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
+            if ($isExport) {
+                return '';
+            }
+
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         if ($value === null || $value === '') {
-            $value = $this->translationHelper->__('N/A');
+            if ($isExport) {
+                return '';
+            }
+
+            $value = __('N/A');
+        }
+
+        if ($isExport) {
+            return $value;
         }
 
         $showDefectedMessages = ($this->getColumn()->getData('show_defected_messages') !== null)
@@ -77,7 +72,7 @@ class Sku extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Text
 
                 $msg .= '<p>' . $message['message'] . '&nbsp;';
                 if (!empty($message['value'])) {
-                    $msg .= $this->translationHelper->__('Current Value') . ': "' . $message['value'] . '"';
+                    $msg .= __('Current Value') . ': "' . $message['value'] . '"';
                 }
                 $msg .= '</p>';
             }
@@ -102,6 +97,4 @@ HTML;
 
         return $value;
     }
-
-    //########################################
 }

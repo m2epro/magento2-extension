@@ -220,6 +220,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/exportCsvListingGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => $this->__('Product ID'),
             'align' => 'right',
@@ -232,6 +234,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->addColumn('name', [
             'header' => $this->__('Product Title / Product SKU'),
+            'header_export' => __('Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -243,6 +246,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $this->addColumn('amazon_sku', [
             'header' => $this->__('SKU'),
+            'header_export' => __('Amazon SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',
@@ -400,6 +404,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $sku = $this->modelFactory->getObject('Magento\Product')
                                   ->setProductId($row->getData('entity_id'))
                                   ->getSku();
+
+        if ($isExport) {
+            return $this->dataHelper->escapeHtml($sku);
+        }
 
         $value .= '<br/><strong>' . $this->__('SKU') .
             ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
@@ -647,6 +655,10 @@ HTML;
 
     public function callbackColumnGeneralId($generalId, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $generalId;
+        }
+
         if (empty($generalId)) {
             if ($row->getData('is_general_id_owner') == 1) {
                 return $this->getGeneralIdColumnValueGeneralIdOwner($row);
@@ -661,6 +673,10 @@ HTML;
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED) {
+            if ($isExport) {
+                return '';
+            }
+
             return $this->__('N/A');
         }
 
@@ -669,7 +685,11 @@ HTML;
                 $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) ||
             ($row->getData('is_variation_parent') && $row->getData('general_id') == '')
         ) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            if ($isExport) {
+                return '';
+            }
+
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         $listingProductId = (int)$row->getData('id');
@@ -785,14 +805,18 @@ HTML;
         $onlineMaxBusinessPrice = (float)$row->getData('max_online_business_price');
 
         if (empty($onlineMinRegularPrice) && empty($onlineMinBusinessPrice)) {
+            if ($isExport) {
+                return '';
+            }
+
             if (
                 $row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
                 return $this->__('N/A') . $repricingHtml;
-            } else {
-                return '<i style="color:gray;">receiving...</i>' . $repricingHtml;
             }
+
+            return '<i style="color:gray;">' . __('receiving...') . '</i>' . $repricingHtml;
         }
 
         $currency = $this->listing->getMarketplace()->getChildObject()->getDefaultCurrency();
@@ -808,12 +832,21 @@ HTML;
             }
 
             $onlineBusinessPriceStr = '';
+            $onlineBusinessPriceStrExport = '';
+
             if (!empty($onlineMinBusinessPrice) && !empty($onlineMaxBusinessPrice)) {
                 $onlineMinBusinessPriceStr = $this->convertAndFormatPriceCurrency($onlineMinBusinessPrice, $currency);
                 $onlineMaxBusinessPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxBusinessPrice, $currency);
 
                 $onlineBusinessPriceStr = '<br /><strong>B2B: </strong>' . $onlineMinBusinessPriceStr
                     . (($onlineMinBusinessPrice != $onlineMaxBusinessPrice) ? ' - ' . $onlineMaxBusinessPriceStr : '');
+
+                $onlineBusinessPriceStrExport = $onlineMinBusinessPriceStr
+                    . (($onlineMinBusinessPrice != $onlineMaxBusinessPrice) ? ' - ' . $onlineMaxBusinessPriceStr : '');
+            }
+
+            if ($isExport) {
+                return $onlineRegularPriceStr . $onlineBusinessPriceStrExport;
             }
 
             return $onlineRegularPriceStr . $onlineBusinessPriceStr . $repricingHtml;
@@ -832,6 +865,10 @@ HTML;
             !$row->getData('is_repricing_inactive') &&
             !$row->getData('is_variation_parent')
         ) {
+            if ($isExport) {
+                return $this->convertAndFormatPriceCurrency($onlineRegularPrice, $currency);
+            }
+
             $accountId = $this->listing['account_id'];
             $sku = $row->getData('amazon_sku');
 
@@ -880,6 +917,10 @@ HTML;
                 $intervalHtml = $this->getTooltipHtml($intervalHtml, '', ['m2epro-field-tooltip-price-info']);
                 $salePriceValue = $this->convertAndFormatPriceCurrency($salePrice, $currency);
 
+                if ($isExport) {
+                    return $salePriceValue;
+                }
+
                 if (
                     $currentTimestamp >= $startDateTimestamp &&
                     $currentTimestamp <= $endDateTimestamp &&
@@ -897,11 +938,19 @@ HTML;
         }
 
         if (empty($resultHtml)) {
+            if ($isExport) {
+                return strip_tags($regularPriceValue);
+            }
+
             $resultHtml = $regularPriceValue . $repricingHtml;
         }
 
         $onlineBusinessPrice = $row->getData('online_business_price');
         if ((float)$onlineBusinessPrice > 0) {
+            if ($isExport) {
+                return $this->convertAndFormatPriceCurrency($onlineBusinessPrice, $currency);
+            }
+
             $businessPriceValue = '<strong>B2B:</strong> ' .
                 $this->convertAndFormatPriceCurrency($onlineBusinessPrice, $currency);
 
@@ -930,6 +979,10 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status $status */
         $status = $this->getLayout()
                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Renderer\Status::class);

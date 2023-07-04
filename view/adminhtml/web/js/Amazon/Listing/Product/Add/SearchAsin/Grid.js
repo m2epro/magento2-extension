@@ -215,32 +215,6 @@ define([
         },
 
         // ---------------------------------------
-
-        showNotCompletedPopup: function () {
-            var self = this;
-
-            if (!$('not_completed_popup')) {
-                $('html-body').insert({bottom: '<div id="not_completed_popup">' + M2ePro.translator.translate('not_completed_popup_text') + '</div>'});
-            }
-
-            var popup = jQuery('#not_completed_popup');
-
-            modal({
-                title: M2ePro.translator.translate('not_completed_popup_title'),
-                type: 'popup',
-                buttons: [{
-                    text: M2ePro.translator.translate('Close'),
-                    class: 'action-secondary action-dismiss',
-                    click: function () {
-                        popup.modal('closeModal');
-                    }
-                }]
-            }, popup);
-
-            popup.modal('openModal');
-        }
-
-        // ---------------------------------------
     });
 
 });

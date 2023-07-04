@@ -8,33 +8,21 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class DateTime extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Datetime
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Backend\Block\Context $context,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-
-        $this->helperFactory = $helperFactory;
-        $this->translationHelper = $translationHelper;
+    public function render(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, false);
     }
 
-    //########################################
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return $this->renderGeneral($row, true);
+    }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function renderGeneral(\Magento\Framework\DataObject $row, bool $isExport): string
     {
         $value = parent::render($row);
 
@@ -45,11 +33,19 @@ class DateTime extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Dateti
         }
 
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->translationHelper->__('Not Listed') . '</span>';
+            if ($isExport) {
+                return '';
+            }
+
+            return '<span style="color: gray;">' . __('Not Listed') . '</span>';
         }
 
         if ($row->getChildObject() && ($value === null || $value === '')) {
-            return $this->translationHelper->__('N/A');
+            if ($isExport) {
+                return '';
+            }
+
+            return __('N/A');
         }
 
         return $value;

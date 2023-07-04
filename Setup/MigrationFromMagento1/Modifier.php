@@ -214,6 +214,7 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m04\RemoveUnavailableDataType::class,
             \Ess\M2ePro\Setup\Update\y23_m04\EbayBuyerInitiatedOrderCancellation::class,
             \Ess\M2ePro\Setup\Update\y22_m02\ChangeDocumentationUrl::class,
+            \Ess\M2ePro\Setup\Update\y23_m06\CreateProductTypeValidationTable::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

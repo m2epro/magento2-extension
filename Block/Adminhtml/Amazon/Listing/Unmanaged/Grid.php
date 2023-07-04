@@ -84,6 +84,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/exportCsvUnmanagedGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => __('Product ID'),
             'align' => 'left',
@@ -98,6 +100,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->addColumn('title', [
             'header' => __('Title / SKU'),
+            'header_export' => __('Product SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -212,6 +215,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductId($value, $row, $column, $isExport): string
     {
         if (empty($value)) {
+            if ($isExport) {
+                return '';
+            }
+
             $productTitle = $row->getChildObject()->getData('title');
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
@@ -225,6 +232,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                     );">' . __('Link') . '</a>';
 
             return $htmlValue;
+        }
+
+        if ($isExport) {
+            return $row->getData('product_id');
         }
 
         $htmlValue = '&nbsp<a href="'
@@ -257,6 +268,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $tempSku = $row->getChildObject()->getData('sku');
+
+        if ($isExport) {
+            return $tempSku;
+        }
+
         empty($tempSku) && $tempSku = __('N/A');
 
         $title .= '<br/><strong>'
@@ -269,10 +285,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnGeneralId($value, $row, $column, $isExport)
     {
-        $url = $this->amazonHelper
-            ->getItemUrl($row->getChildObject()->getData('general_id'), $row->getData('marketplace_id'));
+        $generalId = $row->getChildObject()->getData('general_id');
 
-        return '<a href="' . $url . '" target="_blank">' . $row->getChildObject()->getData('general_id') . '</a>';
+        if ($isExport) {
+            return $generalId;
+        }
+
+        $url = $this->amazonHelper->getItemUrl($generalId, $row->getData('marketplace_id'));
+
+        return '<a href="' . $url . '" target="_blank">' . $generalId . '</a>';
     }
 
     public function callbackColumnAvailableQty($value, $row, $column, $isExport)
@@ -285,10 +306,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $value = $row->getChildObject()->getData('online_qty');
         if ($value === null || $value === '') {
+            if ($isExport) {
+                return '';
+            }
+
             return __('N/A');
         }
 
         if ($value <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             return '<span style="color: red;">0</span>';
         }
 
@@ -326,10 +355,18 @@ HTML;
         }
 
         if ($value === null || $value === '') {
+            if ($isExport) {
+                return '';
+            }
+
             return __('N/A') . $html;
         }
 
         if ((float)$value <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             return '<span style="color: #f00;">0</span>' . $html;
         }
 
@@ -337,6 +374,10 @@ HTML;
             ->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'))
             ->getChildObject()
             ->getDefaultCurrency();
+
+        if ($isExport) {
+            return $this->localeCurrency->getCurrency($currency)->toCurrency($value);
+        }
 
         $priceValue = $this->localeCurrency->getCurrency($currency)->toCurrency($value) . $html;
 
@@ -364,6 +405,10 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+
         $coloredStstuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => 'gray',
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 'green',

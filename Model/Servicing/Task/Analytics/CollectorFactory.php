@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Servicing\Task\Analytics;
 
-class EntityManagerFactory
+class CollectorFactory
 {
     /** @var \Magento\Framework\ObjectManagerInterface */
     private $objectManager;
@@ -18,11 +18,13 @@ class EntityManagerFactory
         $this->objectManager = $objectManager;
     }
 
-    public function create(array $params): \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager
+    public function create(string $collectorClass): CollectorInterface
     {
-        return $this->objectManager->create(
-            \Ess\M2ePro\Model\Servicing\Task\Analytics\EntityManager::class,
-            ['params' => $params]
-        );
+        $collector = $this->objectManager->create($collectorClass);
+        if (!$collector instanceof CollectorInterface) {
+            throw new \Ess\M2ePro\Model\Exception\Logic(sprintf("Collector '%s' is not valid.", $collectorClass));
+        }
+
+        return $collector;
     }
 }

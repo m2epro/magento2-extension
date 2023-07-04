@@ -8,27 +8,18 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\ProductId
- */
 class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
-
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -36,18 +27,15 @@ class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Numbe
         parent::__construct($context, $data);
 
         $this->modelFactory = $modelFactory;
-        $this->helperFactory = $helperFactory;
         $this->moduleConfiguration = $moduleConfiguration;
     }
-
-    //########################################
 
     public function render(\Magento\Framework\DataObject $row)
     {
         $productId = $this->_getValue($row);
 
         if ($productId === null) {
-            return $this->__('N/A');
+            return __('N/A');
         }
 
         if ($this->getColumn()->getData('store_id') !== null) {
@@ -83,5 +71,8 @@ class ProductId extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Numbe
 HTML;
     }
 
-    //########################################
+    public function renderExport(\Magento\Framework\DataObject $row)
+    {
+        return $this->_getValue($row) ?? '';
+    }
 }

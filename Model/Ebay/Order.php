@@ -1054,8 +1054,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     }
 
     /**
-     * @param array $trackingDetails
-     * @param array $items
+     * @param array{"carrier_code": string, "carrier_title": string} $trackingDetails
+     * @param \Ess\M2ePro\Model\Order\Item[] $items
      *
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -1091,7 +1091,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         $params = $trackingDetails;
         foreach ($items as $item) {
-            /** @var \Ess\M2ePro\Model\Order\Item $item */
             $params['items'][] = [
                 'item_id' => $item->getId(),
             ];

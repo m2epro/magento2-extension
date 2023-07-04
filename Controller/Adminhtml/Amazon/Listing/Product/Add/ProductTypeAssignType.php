@@ -17,21 +17,20 @@ class ProductTypeAssignType extends \Ess\M2ePro\Controller\Adminhtml\Amazon\List
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType */
     private $productTypeResource;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType $productTypeResource
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType $productTypeResource,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($variationHelper, $amazonFactory, $context);
+        parent::__construct(
+            $amazonListingProductResource,
+            $variationHelper,
+            $amazonFactory,
+            $context
+        );
         $this->productTypeFactory = $productTypeFactory;
         $this->productTypeResource = $productTypeResource;
     }

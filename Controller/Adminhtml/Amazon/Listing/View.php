@@ -60,10 +60,11 @@ class View extends Main
         $listingProductsIds = $listing->getSetting('additional_data', 'adding_listing_products_ids');
 
         if (!empty($listingProductsIds)) {
+            $step = $listing->getSetting('additional_data', 'wizard_current_step', 0);
             return $this->_redirect('*/amazon_listing_product_add/index', [
                 'id' => $id,
                 'not_completed' => 1,
-                'step' => 3,
+                'step' => $step,
             ]);
         }
 
@@ -84,7 +85,13 @@ class View extends Main
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
-        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::class));
+        $this->addContent($this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::class));
+
+        $this->addContent($this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\ProductType\Validate\Popup::class));
 
         // Set rule model
         // ---------------------------------------

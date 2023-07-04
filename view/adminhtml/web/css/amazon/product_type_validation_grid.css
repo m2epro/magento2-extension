@@ -1,0 +1,14 @@
+#product_type_validation_grid_modal_table .grid-listing-column-product_type,
+#product_type_validation_grid_table .grid-listing-column-product_type {
+    width: 200px;
+}
+
+#product_type_validation_grid_modal_table .grid-listing-column-name,
+#product_type_validation_grid_table .grid-listing-column-name {
+    width: 300px;
+}
+
+#product_type_validation_grid_modal_table .grid-listing-column-status,
+#product_type_validation_grid_table .grid-listing-column-status {
+    width: 130px;
+}

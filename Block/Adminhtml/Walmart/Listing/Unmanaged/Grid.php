@@ -79,6 +79,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
+        $this->addExportType('*/*/ExportCsvUnmanagedGrid', __('CSV'));
+
         $this->addColumn('product_id', [
             'header' => __('Product ID'),
             'align' => 'left',
@@ -93,6 +95,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $this->addColumn('title', [
             'header' => __('Title / SKU'),
+            'header_export' => __('SKU'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'title',
@@ -123,7 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterQty'],
         ]);
 
-        $priceColumn = [
+        $this->addColumn('online_price', [
             'header' => __('Price'),
             'align' => 'right',
             'width' => '160px',
@@ -132,9 +135,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_index' => 'online_price',
             'frame_callback' => [$this, 'callbackColumnPrice'],
             'filter_condition_callback' => [$this, 'callbackFilterPrice'],
-        ];
-
-        $this->addColumn('online_price', $priceColumn);
+        ]);
 
         $this->addColumn('status', [
             'header' => __('Status'),
@@ -194,6 +195,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductId($value, $row, $column, $isExport): string
     {
         if (empty($value)) {
+            if ($isExport) {
+                return '';
+            }
+
             $productTitle = $row->getChildObject()->getData('title');
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
@@ -209,6 +214,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                     );">' . __('Link') . '</a>';
 
             return $htmlValue;
+        }
+
+        if ($isExport) {
+            return $row->getData('product_id');
         }
 
         $htmlValue = '&nbsp<a href="'
@@ -241,6 +250,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $tempSku = $row->getChildObject()->getData('sku');
+
+        if ($isExport) {
+            return $tempSku;
+        }
+
         empty($tempSku) && $tempSku = __('N/A');
 
         $value .= '<br/><strong>'
@@ -255,6 +269,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $childObject = $row->getChildObject();
         $gtin = $childObject->getData('gtin');
+
+        if ($isExport) {
+            return $gtin ?? '';
+        }
 
         if (empty($gtin)) {
             return __('N/A');
@@ -329,10 +347,18 @@ HTML;
     {
         $value = $row->getChildObject()->getData('online_qty');
         if ($value === null || $value === '' || $row->getData('status') == Product::STATUS_BLOCKED) {
+            if ($isExport) {
+                return '';
+            }
+
             return __('N/A');
         }
 
         if ($value <= 0) {
+            if ($isExport) {
+                return 0;
+            }
+
             return '<span style="color: red;">0</span>';
         }
 
@@ -343,6 +369,10 @@ HTML;
     {
         $value = $row->getChildObject()->getData('online_price');
         if ($value === null || $value === '' || $row->getData('status') == Product::STATUS_BLOCKED) {
+            if ($isExport) {
+                return '';
+            }
+
             return __('N/A');
         }
 
@@ -350,7 +380,12 @@ HTML;
             ->getObjectLoaded('Marketplace', $row->getData('marketplace_id'))
             ->getChildObject()
             ->getDefaultCurrency();
+
         $value = $this->localeCurrency->getCurrency($currency)->toCurrency($value);
+
+        if ($isExport) {
+            return $value;
+        }
 
         if ($row->getChildObject()->getData('is_online_price_invalid')) {
             $message = <<<HTML
@@ -376,6 +411,10 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
+        if ($isExport) {
+            return $value;
+        }
+
         switch ($row->getData('status')) {
             case Product::STATUS_LISTED:
                 $value = '<span style="color: green;">' . $value . '</span>';

@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer;
 
-use Ess\M2ePro\Block\Adminhtml\Traits;
-
 class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 {
-    use Traits\BlockTrait;
+    use \Ess\M2ePro\Block\Adminhtml\Traits\BlockTrait;
 
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
@@ -23,40 +21,25 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
-    /** @var \Magento\Framework\App\ResourceConnection */
-    protected $resourceConnection;
-
-    /** @var \Ess\M2ePro\Helper\Factory */
-    protected $helperFactory;
-
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
 
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
-
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View $viewHelper,
         \Magento\Backend\Block\Context $context,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->resourceConnection = $resourceConnection;
         $this->viewHelper = $viewHelper;
-        $this->translationHelper = $translationHelper;
     }
 
-    public function render(\Magento\Framework\DataObject $row)
+    public function render(\Magento\Framework\DataObject $row): string
     {
         $html = '';
         $listingProductId = (int)$row->getData('listing_product_id');
@@ -92,18 +75,19 @@ HTML;
                 }
             }
         }
-        $translator = $this->translationHelper;
         $html .= $this->getCurrentStatus($row);
 
         if ($row->getData('is_duplicate') && isset($additionalData['item_duplicate_action_required'])) {
             if ($this->getColumn()->getData('showLogIcon')) {
+                $duplicateText = __('Duplicate');
                 $duplicateContent = <<<HTML
 <a href="javascript:" onclick="EbayListingViewEbayGridObj.openItemDuplicatePopUp({$listingProductId});">
-    {$translator->__('Duplicate')}
+    {$duplicateText}
 </a>
 HTML;
             } else {
-                $duplicateContent = "<span style='color: #ea7601;'>{$translator->__('duplicate')}</span>";
+                $duplicateText = __('duplicate');
+                $duplicateContent = "<span style='color: #ea7601;'>{$duplicateText}</span>";
             }
 
             $html .= <<<HTML
@@ -121,38 +105,37 @@ HTML;
 
     // ----------------------------------------
 
-    protected function getCurrentStatus($row)
+    protected function getCurrentStatus($row): string
     {
         $html = '';
-        $translator = $this->translationHelper;
 
         switch ($row->getData('status')) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
-                $html .= '<span style="color: gray;">' . $translator->__('Not Listed') . '</span>';
+                $html .= '<span style="color: gray;">' . __('Not Listed') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
-                $html .= '<span style="color: green;">' . $translator->__('Listed') . '</span>';
+                $html .= '<span style="color: green;">' . __('Listed') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN:
-                $html .= '<span style="color: red;">' . $translator->__('Listed (Hidden)') . '</span>';
+                $html .= '<span style="color: red;">' . __('Listed (Hidden)') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD:
-                $html .= '<span style="color: brown;">' . $translator->__('Inactive (Sold)') . '</span>';
+                $html .= '<span style="color: brown;">' . __('Inactive (Sold)') . '</span>';
 
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html .= '<span style="color: red;">' . $translator->__('Inactive (Stopped)') . '</span>';
+                $html .= '<span style="color: red;">' . __('Inactive (Stopped)') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED:
-                $html .= '<span style="color: blue;">' . $translator->__('Inactive (Finished)') . '</span>';
+                $html .= '<span style="color: blue;">' . __('Inactive (Finished)') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                $html .= '<span style="color: orange;">' . $translator->__('Inactive (Blocked)') . '</span>';
+                $html .= '<span style="color: orange;">' . __('Inactive (Blocked)') . '</span>';
                 break;
 
             default:
@@ -300,5 +283,10 @@ HTML;
         }
 
         return $html;
+    }
+
+    public function renderExport(\Magento\Framework\DataObject $row): string
+    {
+        return strip_tags($this->getCurrentStatus($row));
     }
 }

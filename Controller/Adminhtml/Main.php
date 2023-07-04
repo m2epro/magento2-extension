@@ -532,10 +532,19 @@ abstract class Main extends Base
         }
 
         $activeWizardNick = $wizardHelper->getNick($activeWizard);
+        $activeControllerName = $this->getRequest()->getControllerName();
 
         if (
-            (bool)$this->getRequest()->getParam('wizard', false) ||
-            $this->getRequest()->getControllerName() == 'wizard_' . $activeWizardNick
+            $this->getRequest()->getParam('wizard', false)
+            || $activeControllerName === 'wizard_' . $activeWizardNick
+        ) {
+            return false;
+        }
+
+        // Allow access to create product type page.
+        if (
+            $activeWizardNick === \Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK
+            && $activeControllerName === 'amazon_template_productType'
         ) {
             return false;
         }

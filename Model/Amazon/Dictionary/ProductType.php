@@ -8,8 +8,14 @@
 
 namespace Ess\M2ePro\Model\Amazon\Dictionary;
 
+use Ess\M2ePro\Model\Amazon\ProductType\Validator\ValidatorBuilder;
+use Ess\M2ePro\Model\Amazon\ProductType\Validator\ValidatorInterface;
+
 class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
+    /** @var ?array */
+    private $flatScheme;
+
     /**
      * @return void
      */
@@ -121,5 +127,46 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $this->setData('invalid', $invalid);
 
         return $this;
+    }
+
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getValidatorByPath(string $path): ValidatorInterface
+    {
+        if ($this->flatScheme === null) {
+            $this->flatScheme = $this->convertSchemeToFlat($this->getScheme());
+        }
+
+        if (!array_key_exists($path, $this->flatScheme)) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Not found specific path');
+        }
+
+        return (new ValidatorBuilder($this->flatScheme[$path]))->build();
+    }
+
+    private function convertSchemeToFlat(array $array, array $parentAttributes = []): array
+    {
+        $result = [];
+        foreach ($array as $item) {
+            if ($parentAttributes !== []) {
+                if ($parentAttributes['title'] !== $item['title']) {
+                    $item['title'] = $parentAttributes['title'] . ' >> ' . $item['title'];
+                }
+                $item['name'] = $parentAttributes['name'] . '/' . $item['name'];
+            }
+
+            if (array_key_exists('children', $item) && $item['children'] && $item['type'] !== null) {
+                $result += $this->convertSchemeToFlat($item['children'], [
+                    'name' => $item['name'],
+                    'title' => $item['title'],
+                ]);
+                continue;
+            }
+
+            $result[$item['name']] = $item;
+        }
+
+        return $result;
     }
 }

@@ -92,8 +92,6 @@ Product Type is used.
         $this->buttonList->remove('reset');
         // ---------------------------------------
 
-        // ---------------------------------------
-
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
         if (!$isSaveAndClose && $this->isEditMode()) {

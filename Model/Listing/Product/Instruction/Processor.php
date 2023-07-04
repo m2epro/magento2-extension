@@ -52,9 +52,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
-
-    public function registerHandler(HandlerInterface $handler)
+    public function registerHandler(HandlerInterface $handler): self
     {
         $this->handlers[] = $handler;
 
@@ -67,6 +65,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->removeInstructionOlderThenWeek();
         $this->deleteInstructionsWithoutListingProducts();
+        $this->deleteAmazonInstruction();
 
         $listingsProducts = $this->getNeededListingsProducts();
 
@@ -194,6 +193,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                                                   ->modify('-7 day')
                                                   ->format('Y-m-d');
 
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $productInstructionResource */
         $productInstructionResource = $this->activeRecordFactory
             ->getObject('Listing_Product_Instruction')
             ->getResource();
@@ -204,5 +204,17 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                 $productInstructionResource->getMainTable(),
                 ['? > create_date' => $greaterThenDate]
             );
+    }
+
+    private function deleteAmazonInstruction(): void
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $productInstructionResource */
+        $productInstructionResource = $this->activeRecordFactory
+            ->getObject('Listing_Product_Instruction')
+            ->getResource();
+
+        $productInstructionResource->deleteByTagErrorCodes([
+            \Ess\M2ePro\Model\Amazon\ProductType\AttributesValidator::ERROR_TAG_CODE
+        ]);
     }
 }
