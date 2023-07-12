@@ -154,15 +154,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('status', [
-            'header' => __('Data Validity'),
+            'header' => __('Product Data'),
             'sortable' => false,
             'align' => 'center',
             'index' => 'validation_status',
             'filter_index' => 'validation_status',
             'type' => 'options',
             'options' => [
-                \Ess\M2ePro\Model\Amazon\ProductType\Validation::STATUS_INVALID => __('Failed'),
-                \Ess\M2ePro\Model\Amazon\ProductType\Validation::STATUS_VALID => __('OK')
+                \Ess\M2ePro\Model\Amazon\ProductType\Validation::STATUS_INVALID => __('Incomplete'),
+                \Ess\M2ePro\Model\Amazon\ProductType\Validation::STATUS_VALID => __('Complete')
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
             'filter_condition_callback' => [$this, 'callbackFilterStatus'],
@@ -276,10 +276,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         if ((int)$status === \Ess\M2ePro\Model\Amazon\ProductType\Validation::STATUS_VALID) {
-            return sprintf('<span style="color: green">%s</span>', __('OK'));
+            return sprintf('<span style="color: green">%s</span>', __('Complete'));
         }
 
-        return sprintf('<span style="color: red">%s</span>', __('Failed'));
+        return sprintf('<span style="color: red">%s</span>', __('Incomplete'));
     }
 
     protected function callbackFilterStatus($collection, $column): void

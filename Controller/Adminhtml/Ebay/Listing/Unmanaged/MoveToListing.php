@@ -8,18 +8,29 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Unmanaged;
 
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Main;
-use Ess\M2ePro\Helper\Component\Ebay as ComponentEbay;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 use Ess\M2ePro\Helper\Component\Ebay\Category as EbayCategory;
 
-class MoveToListing extends Main
+class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    protected $sessionDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->sessionDataHelper = $sessionDataHelper;
+    }
+
     public function execute()
     {
-        $sessionHelper = $this->getHelper('Data\Session');
-        $sessionKey = ComponentEbay::NICK . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
-        $selectedProducts = $sessionHelper->getValue($sessionKey);
+        $sessionKey = \Ess\M2ePro\Helper\Component\Ebay::NICK . '_'
+            . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
+        $selectedProducts = $this->sessionDataHelper->getValue($sessionKey);
 
         /** @var \Ess\M2ePro\Model\Listing $listingInstance */
         $listingInstance = $this->ebayFactory->getCachedObjectLoaded(
@@ -80,15 +91,16 @@ class MoveToListing extends Main
             $listingInstance->getChildObject()->save();
             $listingInstance->save();
         }
-        $sessionHelper->removeValue($sessionKey);
+        $this->sessionDataHelper->removeValue($sessionKey);
 
         if ($errorsCount) {
             if (count($selectedProducts) == $errorsCount) {
                 $this->setJsonContent(
                     [
                         'result' => false,
-                        'message' => $this->__(
-                            'Products were not moved because they already exist in the selected Listing.'
+                        'message' => __(
+                            'Products were not moved because they already exist in the selected Listing or do not
+                            belong to the channel account or marketplace of the listing.'
                         ),
                     ]
                 );
@@ -100,8 +112,9 @@ class MoveToListing extends Main
                 [
                     'result' => true,
                     'isFailed' => true,
-                    'message' => $this->__(
-                        'Some products were not moved because they already exist in the selected Listing.'
+                    'message' => __(
+                        'Some products were not moved because they already exist in the selected Listing or do not
+                        belong to the channel account or marketplace of the listing.'
                     ),
                 ]
             );
@@ -111,7 +124,7 @@ class MoveToListing extends Main
                 $allProductsHaveOnlineCategory = true;
             }
 
-            $this->messageManager->addSuccess($this->__('Product(s) was Moved.'));
+            $this->messageManager->addSuccess(__('Product(s) was Moved.'));
             $this->setJsonContent(['result' => true, 'hasOnlineCategory' => $allProductsHaveOnlineCategory]);
         }
 

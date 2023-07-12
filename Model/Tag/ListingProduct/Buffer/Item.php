@@ -4,7 +4,7 @@ namespace Ess\M2ePro\Model\Tag\ListingProduct\Buffer;
 
 class Item
 {
-    /** @var int */
+    /** @var int This is listing_product_id */
     private $productId;
     /** @var array<string, \Ess\M2ePro\Model\Tag> */
     private $addedTags = [];

@@ -90,21 +90,6 @@ class Tabs extends AbstractTabs
 
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
-        $this->js->addOnReadyJs(
-            <<<JS
-
-    var urlHash = location.hash.substr(1);
-    if (urlHash != '') {
-        setTimeout(function() {
-            jQuery('#{$this->getId()}').tabs(
-                'option', 'active', jQuery('li[aria-labelledby="{$this->getId()}_' + urlHash + '"]').index()
-                );
-            location.hash = '';
-        }, 100);
-    }
-JS
-        );
-
         return parent::_prepareLayout();
     }
 }

@@ -58,6 +58,7 @@ class ValidatorBuilder
     {
         $validator = new StringValidator();
         $validator->setFieldTitle($this->validatorData['title']);
+        $validator->setFieldGroup($this->validatorData['group_title']);
 
         $validationRules = $this->validatorData['validation_rules'] ?? [];
         if (array_key_exists('is_required', $validationRules)) {
@@ -77,6 +78,7 @@ class ValidatorBuilder
     {
         $validator = new SelectValidator();
         $validator->setFieldTitle($this->validatorData['title']);
+        $validator->setFieldGroup($this->validatorData['group_title']);
         $validator->setAllowedOptions($this->validatorData['options']);
 
         $validationRules = $this->validatorData['validation_rules'] ?? [];
@@ -91,6 +93,7 @@ class ValidatorBuilder
     {
         $validator = new BooleanValidator();
         $validator->setFieldTitle($this->validatorData['title']);
+        $validator->setFieldGroup($this->validatorData['group_title']);
 
         $validationRules = $this->validatorData['validation_rules'] ?? [];
         if (array_key_exists('is_required', $validationRules)) {
@@ -104,6 +107,7 @@ class ValidatorBuilder
     {
         $validator = new NumberValidator();
         $validator->setFieldTitle($this->validatorData['title']);
+        $validator->setFieldGroup($this->validatorData['group_title']);
 
         $validationRules = $this->validatorData['validation_rules'] ?? [];
         if (array_key_exists('is_required', $validationRules)) {
@@ -123,6 +127,7 @@ class ValidatorBuilder
     {
         $validator = new IntegerValidator();
         $validator->setFieldTitle($this->validatorData['title']);
+        $validator->setFieldGroup($this->validatorData['group_title']);
 
         $validationRules = $this->validatorData['validation_rules'] ?? [];
         if (array_key_exists('is_required', $validationRules)) {
@@ -153,6 +158,10 @@ class ValidatorBuilder
 
         if (!array_key_exists('title', $validatorData)) {
             $this->throwException('Empty validator title');
+        }
+
+        if (!array_key_exists('group_title', $validatorData)) {
+            $this->throwException('Empty validator group title');
         }
     }
 

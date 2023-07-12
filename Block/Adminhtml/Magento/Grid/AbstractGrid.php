@@ -124,4 +124,54 @@ abstract class AbstractGrid extends Extended
             $this->_setFilterValues($this->_defaultFilter);
         }
     }
+
+    public function getCsv(): string
+    {
+        $csv = '';
+        $this->_isExport = true;
+        $this->_prepareGrid();
+        $this->getCollection()->getSelect()->limit();
+        $this->getCollection()->setPageSize(0);
+        $this->getCollection()->load();
+        $this->_afterLoadCollection();
+
+        $data = [];
+        foreach ($this->getColumns() as $column) {
+            if (!$column->getIsSystem()) {
+                $data[] = '"' . $column->getExportHeader() . '"';
+            }
+        }
+        $csv .= implode(',', $data) . "\n";
+
+        foreach ($this->getCollection() as $item) {
+            $data = [];
+            foreach ($this->getColumns() as $column) {
+                if (!$column->getIsSystem()) {
+                    $exportField = (string)$column->getRowFieldExport($item);
+                    $data[] = '"' . str_replace(
+                        ['"', '\\'],
+                        ['""', '\\\\'],
+                        is_numeric($exportField) ? $exportField : ($exportField ?: '')
+                    ) . '"';
+                }
+            }
+            $csv .= implode(',', $data) . "\n";
+        }
+
+        if ($this->getCountTotals()) {
+            $data = [];
+            foreach ($this->getColumns() as $column) {
+                if (!$column->getIsSystem()) {
+                    $data[] = '"' . str_replace(
+                        ['"', '\\'],
+                        ['""', '\\\\'],
+                        $column->getRowFieldExport($this->getTotals()) ?: ''
+                    ) . '"';
+                }
+            }
+            $csv .= implode(',', $data) . "\n";
+        }
+
+        return $csv;
+    }
 }

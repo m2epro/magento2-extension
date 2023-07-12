@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -19,7 +13,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
     public const COMPONENT_MODE_FIELD = 'component_mode';
     public const STATUS_FIELD = 'status';
 
-    /** @var \Magento\Framework\EntityManager\MetadataPool  */
+    /** @var \Magento\Framework\EntityManager\MetadataPool */
     protected $metadataPool;
 
     //########################################
@@ -220,6 +214,38 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
                        );
 
         return $this->getConnection()->fetchCol($select);
+    }
+
+    public function updateLastBlockingErrorDate(array $listingProductIds, \DateTime $dateTime): int
+    {
+        return $this->changeLastBlockingErrorDate(
+            $listingProductIds,
+            $dateTime->format('Y-m-d H:i:s')
+        );
+    }
+
+    public function deleteLastBlockingErrorDate(array $listingProductIds): int
+    {
+        return $this->changeLastBlockingErrorDate(
+            $listingProductIds,
+            new \Zend_Db_Expr('NULL')
+        );
+    }
+
+    /**
+     * @param array $listingProductIds
+     * @param \Zend_Db_Expr|string $value
+     *
+     * @return int
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function changeLastBlockingErrorDate(array $listingProductIds, $value): int
+    {
+        return $this->getConnection()->update(
+            $this->getMainTable(),
+            ['last_blocking_error_date' => $value],
+            ['id IN (?)' => $listingProductIds]
+        );
     }
 
     //########################################

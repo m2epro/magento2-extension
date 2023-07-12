@@ -6,6 +6,8 @@ class SelectValidator implements ValidatorInterface
 {
     /** @var string */
     private $fieldTitle = '';
+    /** @var string */
+    private $fieldGroup = '';
     /** @var bool */
     private $isRequired = false;
     /** @var string[]  */
@@ -23,7 +25,8 @@ class SelectValidator implements ValidatorInterface
         $value = $this->tryConvertToString($value);
         if (empty($value)) {
             $this->errors[] = sprintf(
-                'The value of "%s" is missing.',
+                '[%s] The value of "%s" is missing.',
+                $this->fieldGroup,
                 $this->fieldTitle
             );
 
@@ -32,7 +35,8 @@ class SelectValidator implements ValidatorInterface
 
         if (!array_key_exists($value, $this->allowedOptions)) {
             $message = sprintf(
-                'The value of "%s" is invalid.',
+                '[%s] The value of "%s" is invalid.',
+                $this->fieldGroup,
                 $this->fieldTitle
             );
 
@@ -54,25 +58,21 @@ class SelectValidator implements ValidatorInterface
         return $this->isRequired;
     }
 
-    /**
-     * @param string $fieldTitle
-     */
     public function setFieldTitle(string $fieldTitle): void
     {
         $this->fieldTitle = $fieldTitle;
     }
 
-    /**
-     * @param bool $isRequired
-     */
+    public function setFieldGroup(string $fieldGroup): void
+    {
+        $this->fieldGroup = $fieldGroup;
+    }
+
     public function setIsRequired(bool $isRequired): void
     {
         $this->isRequired = $isRequired;
     }
 
-    /**
-     * @param string[] $allowedOptions
-     */
     public function setAllowedOptions(array $allowedOptions): void
     {
         $this->allowedOptions = $allowedOptions;
@@ -80,8 +80,6 @@ class SelectValidator implements ValidatorInterface
 
     /**
      * @param mixed $value
-     *
-     * @return string|null
      */
     private function tryConvertToString($value): ?string
     {

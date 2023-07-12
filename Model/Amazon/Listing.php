@@ -859,6 +859,13 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             return false;
         }
 
+        if (
+            $this->getAccount()->getId() !== $listingOtherProduct->getAccount()->getId()
+            || $this->getMarketplace()->getId() !== $listingOtherProduct->getMarketplace()->getId()
+        ) {
+            return false;
+        }
+
         $productId = $listingOtherProduct->getProductId();
         $result = $this->getParentObject()->addProduct($productId, $initiator, false, true);
 

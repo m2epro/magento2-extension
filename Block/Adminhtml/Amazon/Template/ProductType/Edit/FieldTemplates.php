@@ -26,8 +26,6 @@ class FieldTemplates extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         array $data = []
     ) {
         parent::__construct($context, $data);
-
-        // get all attributes except multiselect
         $this->attributes = $magentoAttributeHelper->filterAllAttrByInputTypes(
             [
                 'boolean',
@@ -41,7 +39,8 @@ class FieldTemplates extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 'select',
                 'text',
                 'textarea',
-                'weight'
+                'weight',
+                'multiselect',
             ]
         );
     }

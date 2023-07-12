@@ -1,64 +1,52 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Listing\Product\Instruction\Handler;
 
 use Ess\M2ePro\Model\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\Input
- */
 class Input extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Listing\Product */
-    protected $listingProduct = null;
-
+    /** @var Product */
+    protected $listingProduct;
     /** @var \Ess\M2ePro\Model\Listing\Product\Instruction[] */
     protected $instructions = [];
 
-    //########################################
-
-    public function setListingProduct(Product $listingProduct)
+    public function setListingProduct(Product $listingProduct): self
     {
         $this->listingProduct = $listingProduct;
 
         return $this;
     }
 
-    public function getListingProduct()
+    public function getListingProduct(): Product
     {
         return $this->listingProduct;
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product\Instruction[] $instructions
      *
      * @return $this
      */
-    public function setInstructions(array $instructions)
+    public function setInstructions(array $instructions): self
     {
         $this->instructions = $instructions;
 
         return $this;
     }
 
-    // ---------------------------------------
-
-    public function getInstructions()
+    /**
+     * @return \Ess\M2ePro\Model\Listing\Product\Instruction[]
+     */
+    public function getInstructions(): array
     {
         return $this->instructions;
     }
 
-    // ---------------------------------------
-
-    public function getUniqueInstructionTypes()
+    /**
+     * @return string[]
+     */
+    public function getUniqueInstructionTypes(): array
     {
         $types = [];
 
@@ -69,15 +57,13 @@ class Input extends \Ess\M2ePro\Model\AbstractModel
         return array_unique($types);
     }
 
-    public function hasInstructionWithType($instructionType)
+    public function hasInstructionWithType(string $instructionType): bool
     {
-        return in_array($instructionType, $this->getUniqueInstructionTypes());
+        return in_array($instructionType, $this->getUniqueInstructionTypes(), true);
     }
 
-    public function hasInstructionWithTypes(array $instructionTypes)
+    public function hasInstructionWithTypes(array $instructionTypes): bool
     {
-        return array_intersect($this->getUniqueInstructionTypes(), $instructionTypes);
+        return count(array_intersect($this->getUniqueInstructionTypes(), $instructionTypes)) > 0;
     }
-
-    //########################################
 }

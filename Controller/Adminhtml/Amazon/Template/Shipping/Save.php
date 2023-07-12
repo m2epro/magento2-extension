@@ -9,12 +9,25 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Shipping;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
+use Ess\M2ePro\Helper\Data;
 
 /**
  * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Shipping\Save
  */
 class Save extends Template
 {
+    /** @var \Ess\M2ePro\Helper\Url */
+    private $urlHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Url $urlHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+        $this->urlHelper = $urlHelper;
+    }
+
     public function execute()
     {
         if (!$post = $this->getRequest()->getPost()) {
@@ -61,18 +74,23 @@ class Save extends Template
             $affectedListingsProducts->getObjectsData(['id', 'status'], ['only_physical_units' => true])
         );
 
+        $this->getMessageManager()->addSuccess(__('Policy was saved'));
+
         if ($this->isAjax()) {
             $this->setJsonContent([
                 'status' => true,
+                'url' =>  $this->urlHelper->getBackUrl('*/amazon_template/index', [], [
+                    'edit' => [
+                        'id' => $model->getId(),
+                    ],
+                ])
             ]);
 
             return $this->getResult();
         }
 
-        $this->getMessageManager()->addSuccess($this->__('Policy was saved'));
-
         return $this->_redirect(
-            $this->getHelper('Data')->getBackUrl('*/amazon_template/index', [], [
+            $this->urlHelper->getBackUrl('*/amazon_template/index', [], [
                 'edit' => [
                     'id' => $model->getId(),
                     'close_on_save' => $this->getRequest()->getParam('close_on_save'),

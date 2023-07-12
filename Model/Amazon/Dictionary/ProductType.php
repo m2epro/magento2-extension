@@ -13,8 +13,37 @@ use Ess\M2ePro\Model\Amazon\ProductType\Validator\ValidatorInterface;
 
 class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
+    private $productTypeHelper;
     /** @var ?array */
     private $flatScheme;
+    /** @var ?array */
+    private $groups;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct(
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+
+        $this->productTypeHelper = $productTypeHelper;
+    }
 
     /**
      * @return void
@@ -142,7 +171,10 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Not found specific path');
         }
 
-        return (new ValidatorBuilder($this->flatScheme[$path]))->build();
+        $validatorBuilderData = $this->flatScheme[$path];
+        $validatorBuilderData['group_title'] = $this->getGroupTitleByNick($validatorBuilderData['group_nick']);
+
+        return (new ValidatorBuilder($validatorBuilderData))->build();
     }
 
     private function convertSchemeToFlat(array $array, array $parentAttributes = []): array
@@ -168,5 +200,22 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         return $result;
+    }
+
+    private function getGroupTitleByNick(string $groupNick): string
+    {
+        if ($this->groups === null) {
+            $groups = $this->productTypeHelper->getProductTypeGroups(
+                $this->getMarketplaceId(),
+                $this->getNick()
+            );
+
+            $this->groups = array_combine(
+                array_column($groups, 'nick'),
+                array_column($groups, 'title')
+            );
+        }
+
+        return $this->groups[$groupNick] ?? '';
     }
 }

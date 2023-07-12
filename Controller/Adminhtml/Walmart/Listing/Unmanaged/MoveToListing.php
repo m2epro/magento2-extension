@@ -8,11 +8,9 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Unmanaged;
 
-use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
-use Ess\M2ePro\Helper\Component\Walmart as ComponentWalmart;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-class MoveToListing extends Main
+class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Main
 {
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
@@ -29,7 +27,8 @@ class MoveToListing extends Main
 
     public function execute()
     {
-        $sessionKey = ComponentWalmart::NICK . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
+        $sessionKey = \Ess\M2ePro\Helper\Component\Walmart::NICK . '_'
+            . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
         $selectedProducts = $this->sessionHelper->getValue($sessionKey);
 
         /** @var \Ess\M2ePro\Model\Listing $listingInstance */
@@ -75,8 +74,9 @@ class MoveToListing extends Main
                 $this->setJsonContent(
                     [
                         'result' => false,
-                        'message' => $this->__(
-                            'Products were not moved because they already exist in the selected Listing.'
+                        'message' => __(
+                            'Products were not moved because they already exist in the selected Listing or do not
+                            belong to the channel account or marketplace of the listing'
                         ),
                     ]
                 );
@@ -88,8 +88,9 @@ class MoveToListing extends Main
                 [
                     'result' => true,
                     'isFailed' => true,
-                    'message' => $this->__(
-                        'Some products were not moved because they already exist in the selected Listing.'
+                    'message' => __(
+                        'Some products were not moved because they already exist in the selected Listing or do not
+                        belong to the channel account or marketplace of the listing.'
                     ),
                 ]
             );
@@ -97,7 +98,7 @@ class MoveToListing extends Main
             $this->setJsonContent(
                 [
                     'result' => true,
-                    'message' => $this->__('Product(s) was Moved.'),
+                    'message' => __('Product(s) was Moved.'),
                 ]
             );
         }

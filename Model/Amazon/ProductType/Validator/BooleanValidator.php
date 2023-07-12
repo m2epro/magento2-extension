@@ -6,6 +6,8 @@ class BooleanValidator implements ValidatorInterface
 {
     /** @var string */
     private $fieldTitle = '';
+    /** @var string */
+    private $fieldGroup = '';
     /** @var bool */
     private $isRequired = false;
     /** @var array */
@@ -20,7 +22,8 @@ class BooleanValidator implements ValidatorInterface
 
         if ($value === null || $value === '') {
             $this->errors[] = sprintf(
-                'The value of "%s" is missing.',
+                '[%s] The value of "%s" is missing.',
+                $this->fieldGroup,
                 $this->fieldTitle
             );
 
@@ -30,7 +33,8 @@ class BooleanValidator implements ValidatorInterface
         $value = $this->tryConvertToBooleanString($value);
         if ($value === null) {
             $this->errors[] = sprintf(
-                'The value of "%s" is invalid.',
+                '[%s] The value of "%s" is invalid.',
+                $this->fieldGroup,
                 $this->fieldTitle
             );
 
@@ -50,17 +54,16 @@ class BooleanValidator implements ValidatorInterface
         return $this->isRequired;
     }
 
-    /**
-     * @param string $fieldTitle
-     */
     public function setFieldTitle(string $fieldTitle): void
     {
         $this->fieldTitle = $fieldTitle;
     }
 
-    /**
-     * @param bool $isRequired
-     */
+    public function setFieldGroup(string $fieldGroup): void
+    {
+        $this->fieldGroup = $fieldGroup;
+    }
+
     public function setIsRequired(bool $isRequired): void
     {
         $this->isRequired = $isRequired;

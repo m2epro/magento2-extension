@@ -8,16 +8,26 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Unmanaged;
 
-use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
-use Ess\M2ePro\Helper\Component\Amazon as ComponentAmazon;
-
-class MoveToListing extends Main
+class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    protected $sessionDataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->sessionDataHelper = $sessionDataHelper;
+    }
+
     public function execute()
     {
-        $sessionHelper = $this->getHelper('Data\Session');
-        $sessionKey = ComponentAmazon::NICK . '_' . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
-        $selectedProducts = $sessionHelper->getValue($sessionKey);
+        $sessionKey = \Ess\M2ePro\Helper\Component\Amazon::NICK . '_'
+            . \Ess\M2ePro\Helper\View::MOVING_LISTING_OTHER_SELECTED_SESSION_KEY;
+        $selectedProducts = $this->sessionDataHelper->getValue($sessionKey);
 
         /** @var \Ess\M2ePro\Model\Listing $listingInstance */
         $listingInstance = $this->amazonFactory->getCachedObjectLoaded(
@@ -43,15 +53,16 @@ class MoveToListing extends Main
             $listingOther->moveToListingSucceed();
         }
 
-        $sessionHelper->removeValue($sessionKey);
+        $this->sessionDataHelper->removeValue($sessionKey);
 
         if ($errorsCount) {
             if (count($selectedProducts) == $errorsCount) {
                 $this->setJsonContent(
                     [
                         'result' => false,
-                        'message' => $this->__(
-                            'Products were not moved because they already exist in the selected Listing.'
+                        'message' => __(
+                            'Products were not moved because they already exist in the selected Listing or do not
+                            belong to the channel account or marketplace of the listing.'
                         ),
                     ]
                 );
@@ -63,8 +74,9 @@ class MoveToListing extends Main
                 [
                     'result' => true,
                     'isFailed' => true,
-                    'message' => $this->__(
-                        'Some products were not moved because they already exist in the selected Listing.'
+                    'message' => __(
+                        'Some products were not moved because they already exist in the selected Listing or do not
+                        belong to the channel account or marketplace of the listing.'
                     ),
                 ]
             );
@@ -72,7 +84,7 @@ class MoveToListing extends Main
             $this->setJsonContent(
                 [
                     'result' => true,
-                    'message' => $this->__('Product(s) was Moved.'),
+                    'message' => __('Product(s) was Moved.'),
                 ]
             );
         }

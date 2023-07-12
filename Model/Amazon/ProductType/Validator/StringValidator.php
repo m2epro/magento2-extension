@@ -6,6 +6,8 @@ class StringValidator implements ValidatorInterface
 {
     /** @var string */
     private $fieldTitle = '';
+    /** @var string */
+    private $fieldGroup = '';
     /** @var bool */
     private $isRequired = false;
     /** @var int */
@@ -23,7 +25,8 @@ class StringValidator implements ValidatorInterface
         $value = $this->tryConvertToString($value);
         if ($value === null) {
             $this->errors[] = sprintf(
-                'The value of "%s" is invalid.',
+                '[%s] The value of "%s" is invalid.',
+                $this->fieldGroup,
                 $this->fieldTitle
             );
 
@@ -32,7 +35,8 @@ class StringValidator implements ValidatorInterface
 
         if (empty($value)) {
             $this->errors[] = sprintf(
-                'The value of "%s" is missing.',
+                '[%s] The value of "%s" is missing.',
+                $this->fieldGroup,
                 $this->fieldTitle
             );
 
@@ -42,9 +46,6 @@ class StringValidator implements ValidatorInterface
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getErrors(): array
     {
         return $this->errors;
@@ -55,33 +56,26 @@ class StringValidator implements ValidatorInterface
         return $this->isRequired;
     }
 
-    /**
-     * @param string $fieldTitle
-     */
     public function setFieldTitle(string $fieldTitle): void
     {
         $this->fieldTitle = $fieldTitle;
     }
 
-    /**
-     * @param bool $isRequired
-     */
+    public function setFieldGroup(string $fieldGroup): void
+    {
+        $this->fieldGroup = $fieldGroup;
+    }
+
     public function setIsRequired(bool $isRequired): void
     {
         $this->isRequired = $isRequired;
     }
 
-    /**
-     * @param int $minLength
-     */
     public function setMinLength(int $minLength): void
     {
         $this->minLength = $minLength;
     }
 
-    /**
-     * @param int $maxLength
-     */
     public function setMaxLength(int $maxLength): void
     {
         $this->maxLength = $maxLength;
@@ -89,8 +83,6 @@ class StringValidator implements ValidatorInterface
 
     /**
      * @param mixed $value
-     *
-     * @return string|null
      */
     private function tryConvertToString($value): ?string
     {

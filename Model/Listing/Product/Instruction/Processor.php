@@ -1,51 +1,62 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Listing\Product\Instruction;
 
 use Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
 
-/**
- * Class \Ess\M2ePro\Model\Listing\Product\Instruction\Processor
- */
 class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
-    protected $component = null;
-
-    protected $maxListingsProductsCount = null;
-
+    /** @var string */
+    private $component;
+    /** @var int */
+    private $maxListingsProductsCount;
     /** @var HandlerInterface[] */
-    protected $handlers = [];
-
-    protected $activeRecordFactory;
-
-    //########################################
+    private $handlers = [];
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction */
+    private $instructionResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\CollectionFactory */
+    private $instructionCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
+    private $listingProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
+    private $listingProductCollectionFactory;
+    /** @var \Ess\M2ePro\Helper\Module\Exception */
+    private $exceptionHelper;
+    /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory */
+    private $handlerInputFactory;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
+    private $blockingErrorConfig;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\CollectionFactory $instructionCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
+        \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory $handlerInputFactory,
+        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
+        $this->instructionResource = $instructionResource;
+        $this->instructionCollectionFactory = $instructionCollectionFactory;
+        $this->listingProductResource = $listingProductResource;
+        $this->listingProductCollectionFactory = $listingProductCollectionFactory;
+        $this->exceptionHelper = $exceptionHelper;
+        $this->handlerInputFactory = $handlerInputFactory;
+        $this->blockingErrorConfig = $blockingErrorConfig;
     }
 
-    //########################################
-
-    public function setComponent($component)
+    public function setComponent(string $component): self
     {
         $this->component = $component;
 
         return $this;
     }
 
-    public function setMaxListingsProductsCount($count)
+    public function setMaxListingsProductsCount(int $count): self
     {
         $this->maxListingsProductsCount = $count;
 
@@ -59,11 +70,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
-
-    public function process()
+    public function process(): void
     {
-        $this->removeInstructionOlderThenWeek();
+        $this->deleteInstructionsOlderThenWeek();
         $this->deleteInstructionsWithoutListingProducts();
         $this->deleteAmazonInstruction();
 
@@ -77,8 +86,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\Listing\Product\Instruction[] $listingProductInstructions */
         foreach ($instructions as $listingProductId => $listingProductInstructions) {
             try {
-                /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\Input $handlerInput */
-                $handlerInput = $this->modelFactory->getObject('Listing_Product_Instruction_Handler_Input');
+                $handlerInput = $this->handlerInputFactory->create();
                 $handlerInput->setListingProduct($listingsProducts[$listingProductId]);
                 $handlerInput->setInstructions($listingProductInstructions);
 
@@ -89,11 +97,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                         break;
                     }
                 }
-            } catch (\Exception $exception) {
-                $this->helperFactory->getObject('Module\Exception')->process($exception);
+            } catch (\Throwable $exception) {
+                $this->exceptionHelper->process($exception);
             }
 
-            $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->remove(
+            $this->instructionResource->remove(
                 array_keys($listingProductInstructions)
             );
         }
@@ -112,8 +120,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return [];
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $instructionCollection */
-        $instructionCollection = $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getCollection();
+        $instructionCollection = $this->instructionCollectionFactory->create();
         $instructionCollection->applySkipUntilFilter();
         $instructionCollection->addFieldToFilter('listing_product_id', array_keys($listingsProducts));
 
@@ -123,7 +130,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $instructionsByListingsProducts = [];
 
         foreach ($instructions as $instruction) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $listingsProducts[$instruction->getListingProductId()];
             $instruction->setListingProduct($listingProduct);
 
@@ -138,8 +144,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getNeededListingsProducts()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getCollection();
+        $collection = $this->instructionCollectionFactory->create();
         $collection->applyNonBlockedFilter();
         $collection->applySkipUntilFilter();
         $collection->addFieldToFilter('main_table.component', $this->component);
@@ -157,63 +162,46 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return [];
         }
 
-        $listingsProductsCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $listingsProductsCollection = $this->listingProductCollectionFactory->create();
         $listingsProductsCollection->addFieldToFilter('id', $ids);
 
         return $listingsProductsCollection->getItems();
     }
 
-    //########################################
-
-    protected function deleteInstructionsWithoutListingProducts()
+    protected function deleteInstructionsWithoutListingProducts(): void
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getCollection();
+        $collection = $this->instructionCollectionFactory->create();
         $collection->getSelect()->joinLeft(
-            ['second_table' => $this->activeRecordFactory->getObject('Listing_Product')->getResource()->getMainTable()],
+            ['second_table' => $this->listingProductResource->getMainTable()],
             'main_table.listing_product_id = second_table.id'
         );
         $collection->getSelect()->where('second_table.id IS NULL');
         $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
         $collection->getSelect()->columns('main_table.id');
 
-        $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->remove(
+        $this->instructionResource->remove(
             $collection->getColumnValues('id')
         );
     }
 
-    /**
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    public function removeInstructionOlderThenWeek()
+    public function deleteInstructionsOlderThenWeek(): void
     {
-        $greaterThenDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()
-                                                  ->modify('-7 day')
-                                                  ->format('Y-m-d');
+        $greaterThenDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
+        $greaterThenDate->modify('-7 day');
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $productInstructionResource */
-        $productInstructionResource = $this->activeRecordFactory
-            ->getObject('Listing_Product_Instruction')
-            ->getResource();
+        $productInstructionResource = $this->instructionResource;
 
         $productInstructionResource
             ->getConnection()
             ->delete(
                 $productInstructionResource->getMainTable(),
-                ['? > create_date' => $greaterThenDate]
+                ['? > create_date' => $greaterThenDate->format('Y-m-d')]
             );
     }
 
     private function deleteAmazonInstruction(): void
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $productInstructionResource */
-        $productInstructionResource = $this->activeRecordFactory
-            ->getObject('Listing_Product_Instruction')
-            ->getResource();
-
-        $productInstructionResource->deleteByTagErrorCodes([
+        $this->instructionResource->deleteByTagErrorCodes([
             \Ess\M2ePro\Model\Amazon\ProductType\AttributesValidator::ERROR_TAG_CODE
         ]);
     }

@@ -275,12 +275,49 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         empty($tempSku) && $tempSku = __('N/A');
 
-        $title .= '<br/><strong>'
-            . __('SKU')
-            . ':</strong> '
-            . $this->dataHelper->escapeHtml($tempSku);
+        if (empty($tempSku)) {
+            $tempSku = __('N/A');
+        }
+
+        $additionalInfo = $this->getProductTitleAdditionalInfo(
+            $row->getAccount()->getTitle(),
+            $row->getMarketplace()->getTitle(),
+            $this->getRequest()->getParam('amazonAccount') === null,
+            $this->getRequest()->getParam('amazonMarketplace') === null
+        ) ?? '';
+
+        $title .= '<br/><strong>' . __('SKU') . ':</strong> '
+            . $this->dataHelper->escapeHtml($tempSku)
+            . $additionalInfo;
 
         return $title;
+    }
+
+    private function getProductTitleAdditionalInfo(
+        string $accountTitle,
+        string $marketplaceTitle,
+        bool $accountUnfiltered,
+        bool $marketplaceUnfiltered
+    ): ?string {
+        if ($accountUnfiltered && $marketplaceUnfiltered) {
+            return sprintf(
+                '<br/><strong>%s:</strong> %s, <strong>%s:</strong> %s',
+                __('Account'),
+                $accountTitle,
+                __('Marketplace'),
+                $marketplaceTitle
+            );
+        }
+
+        if ($accountUnfiltered) {
+            return sprintf('<br/><strong>%s:</strong> %s', __('Account'), $accountTitle);
+        }
+
+        if ($marketplaceUnfiltered) {
+            return sprintf('<br/><strong>%s:</strong> %s', __('Marketplace'), $marketplaceTitle);
+        }
+
+        return null;
     }
 
     public function callbackColumnGeneralId($value, $row, $column, $isExport)

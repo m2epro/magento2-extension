@@ -1,6 +1,7 @@
 define([
+    'M2ePro/Plugin/Messages',
     'M2ePro/Amazon/Template/Edit'
-], function () {
+], function (MessageObj) {
 
     window.AmazonTemplateShipping = Class.create(AmazonTemplateEdit,  {
 
@@ -21,12 +22,38 @@ define([
 
         duplicateClick: function($headId)
         {
+            this.showConfirmMsg = false;
+
             this.setValidationCheckRepetitionValue('M2ePro-shipping-tpl-title',
                 M2ePro.translator.translate('The specified Title is already used for other Policy. Policy Title must be unique.'),
                 'Amazon\\Template\\Shipping', 'title', 'id', ''
             );
 
             CommonObj.duplicateClick($headId, M2ePro.translator.translate('Add Shipping Policy'));
+        },
+
+        submitForm: function(url, newWindow = false)
+        {
+            var form = $('edit_form');
+            form.target = newWindow ? '_blank' : '_self';
+
+            var formData = {};
+            jQuery(form).find ('input, select').each(function (){
+                formData[this.name] = jQuery(this).val();
+            });
+
+            new Ajax.Request(url, {
+                method: 'post',
+                parameters: formData,
+                onSuccess: function (transport) {
+                    var resultResponse = transport.responseText.evalJSON();
+                    if (resultResponse.status === true) {
+                        window.location = resultResponse.url;
+                    } else {
+                        MessageObj.addError(M2ePro.translator.translate('Policy Saving Error'));
+                    }
+                }
+            });
         },
 
         accountChange: function()

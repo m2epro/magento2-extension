@@ -20,26 +20,23 @@ abstract class BasePriceTracker implements TrackerInterface
     protected $attributesQueryBuilder;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition */
     private $priceConditionBuilder;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
+    private $blockingErrorConfig;
 
-    /**
-     * @param string $channel
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\PriceConditionFactory $conditionFactory
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
-     */
     public function __construct(
         string $channel,
         QueryBuilderFactory $queryBuilderFactory,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         PriceConditionFactory $conditionFactory,
-        TrackerLogger $logger
+        TrackerLogger $logger,
+        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig
     ) {
         $this->channel = $channel;
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->attributesQueryBuilder = $attributesQueryBuilder;
         $this->priceConditionBuilder = $conditionFactory->create($channel);
         $this->logger = $logger;
+        $this->blockingErrorConfig = $blockingErrorConfig;
     }
 
     /**
@@ -191,6 +188,16 @@ abstract class BasePriceTracker implements TrackerInterface
 
         /* We do not include products marked duplicate in the sample */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
+
+        $blockingErrorsRetryHours = $this->blockingErrorConfig->getEbayBlockingErrorRetrySeconds();
+        $minRetryDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
+        $minRetryDate->modify("-$blockingErrorsRetryHours seconds");
+
+        /* Exclude products with a blocking error */
+        $query->andWhere(
+            "lp.last_blocking_error_date IS NULL OR ? >= lp.last_blocking_error_date",
+            $minRetryDate->format('Y-m-d H:i:s')
+        );
 
         $query->addGroup('lp.id');
         $query->addGroup('IFNULL(lpvo.product_id, lp.product_id)');

@@ -21,15 +21,13 @@ abstract class AbstractTabs extends Tabs
 
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
-
     /** @var \Ess\M2ePro\Model\Factory */
     protected $modelFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
-
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
+    protected $_template = 'Ess_M2ePro::magento/tabs/default.phtml';
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,

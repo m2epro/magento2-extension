@@ -246,7 +246,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($title === null) {
             $value = '<i style="color:gray;">receiving...</i>';
         } else {
-            $value = '<span>' . $this->escapeHtml($title) . '</span>';
+            $value = '<span>' . $this->dataHelper->escapeHtml($title) . '</span>';
         }
 
         $tempSku = $row->getChildObject()->getData('sku');
@@ -257,12 +257,49 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         empty($tempSku) && $tempSku = __('N/A');
 
-        $value .= '<br/><strong>'
-            . __('SKU')
-            . ':</strong> '
-            . $this->escapeHtml($tempSku);
+        if (empty($tempSku)) {
+            $tempSku = __('N/A');
+        }
+
+        $additionalInfo = $this->getProductTitleAdditionalInfo(
+            $row->getAccount()->getTitle(),
+            $row->getMarketplace()->getTitle(),
+            $this->getRequest()->getParam('walmartAccount') === null,
+            $this->getRequest()->getParam('walmartMarketplace') === null
+        ) ?? '';
+
+        $value .= '<br/><strong>' . __('SKU') . ':</strong> '
+            . $this->dataHelper->escapeHtml($tempSku)
+            . $additionalInfo;
 
         return $value;
+    }
+
+    private function getProductTitleAdditionalInfo(
+        string $accountTitle,
+        string $marketplaceTitle,
+        bool $accountUnfiltered,
+        bool $marketplaceUnfiltered
+    ): ?string {
+        if ($accountUnfiltered && $marketplaceUnfiltered) {
+            return sprintf(
+                '<br/><strong>%s:</strong> %s, <strong>%s:</strong> %s',
+                __('Account'),
+                $accountTitle,
+                __('Marketplace'),
+                $marketplaceTitle
+            );
+        }
+
+        if ($accountUnfiltered) {
+            return sprintf('<br/><strong>%s:</strong> %s', __('Account'), $accountTitle);
+        }
+
+        if ($marketplaceUnfiltered) {
+            return sprintf('<br/><strong>%s:</strong> %s', __('Marketplace'), $marketplaceTitle);
+        }
+
+        return null;
     }
 
     public function callbackColumnGtin($gtin, $row, $column, $isExport)

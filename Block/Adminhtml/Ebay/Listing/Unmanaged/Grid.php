@@ -316,6 +316,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $title = $row->getChildObject()->getData('title');
 
+        $titleSku = __('SKU');
+
         $tempSku = $row->getChildObject()->getData('sku');
         if ($tempSku === null) {
             $tempSku = '<i style="color:gray;">receiving...</i>';
@@ -333,15 +335,50 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($category = $row->getChildObject()->getData('online_main_category')) {
             $categoryHtml = <<<HTML
 <strong>{$this->__('Category')}:</strong>&nbsp;
-{$this->escapeHtml($category)}
+{$this->dataHelper->escapeHtml($category)}
 HTML;
         }
 
+        $additionalInfo = $this->getProductTitleAdditionalInfo(
+            $row->getAccount()->getTitle(),
+            $row->getMarketplace()->getTitle(),
+            $this->getRequest()->getParam('ebayAccount') === null,
+            $this->getRequest()->getParam('ebayMarketplace') === null
+        ) ?? '';
+
         return <<<HTML
-<span>{$this->escapeHtml($title)}</span><br/>
-<strong>{$this->__('SKU')}:</strong>&nbsp;{$tempSku}<br/>
+<span>{$this->dataHelper->escapeHtml($title)}</span><br/>
+<strong>{$titleSku}:</strong>&nbsp;{$tempSku}<br/>
 {$categoryHtml}
+{$additionalInfo}
 HTML;
+    }
+
+    private function getProductTitleAdditionalInfo(
+        string $accountTitle,
+        string $marketplaceTitle,
+        bool $accountUnfiltered,
+        bool $marketplaceUnfiltered
+    ): ?string {
+        if ($accountUnfiltered && $marketplaceUnfiltered) {
+            return sprintf(
+                '<br/><strong>%s:</strong> %s, <strong>%s:</strong> %s',
+                __('Account'),
+                $accountTitle,
+                __('Marketplace'),
+                $marketplaceTitle
+            );
+        }
+
+        if ($accountUnfiltered) {
+            return sprintf('<br/><strong>%s:</strong> %s', __('Account'), $accountTitle);
+        }
+
+        if ($marketplaceUnfiltered) {
+            return sprintf('<br/><strong>%s:</strong> %s', __('Marketplace'), $marketplaceTitle);
+        }
+
+        return null;
     }
 
     public function callbackColumnItemId($value, $row, $column, $isExport)

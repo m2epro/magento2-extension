@@ -11,34 +11,31 @@ abstract class BaseInventoryTracker implements TrackerInterface
 {
     /** @var string */
     private $channel;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder */
+    /** @var SelectQueryBuilder */
     protected $queryBuilder;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Base\InventoryStock */
+    /** @var InventoryStock */
     protected $inventoryStock;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger */
     protected $logger;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
     private $attributesQueryBuilder;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
+    private $blockingErrorConfig;
 
-    /**
-     * @param string $channel
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory $queryBuilderFactory
-     * @param \Ess\M2ePro\Model\ChangeTracker\Base\InventoryStock $inventoryStock
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
-     */
     public function __construct(
         string $channel,
         QueryBuilderFactory $queryBuilderFactory,
         InventoryStock $inventoryStock,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
-        TrackerLogger $logger
+        TrackerLogger $logger,
+        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig
     ) {
         $this->channel = $channel;
         $this->inventoryStock = $inventoryStock;
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->logger = $logger;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
+        $this->blockingErrorConfig = $blockingErrorConfig;
     }
 
     /**
@@ -112,7 +109,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
     /**
      * Base product sub query.
      * Includes all necessary information regarding the listing product
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
+     * @return SelectQueryBuilder
      */
     protected function productSubQuery(): SelectQueryBuilder
     {
@@ -181,6 +178,16 @@ abstract class BaseInventoryTracker implements TrackerInterface
 
         /* We do not include products marked duplicate in the sample */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
+
+        $blockingErrorsRetryHours = $this->blockingErrorConfig->getEbayBlockingErrorRetrySeconds();
+        $minRetryDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
+        $minRetryDate->modify("-$blockingErrorsRetryHours seconds");
+
+        /* Exclude products with a blocking error */
+        $query->andWhere(
+            "lp.last_blocking_error_date IS NULL OR ? >= lp.last_blocking_error_date",
+            $minRetryDate->format('Y-m-d H:i:s')
+        );
 
         return $query;
     }

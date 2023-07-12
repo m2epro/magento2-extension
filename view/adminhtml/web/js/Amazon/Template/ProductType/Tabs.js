@@ -16,7 +16,7 @@ define(
                 this.tabsContainer = $$('#amazonTemplateProductTypeEditTabs > ul')[0];
                 this.contentContainer = $('tabs_edit_form_data');
 
-                this.tabTemplate = $('amazonTemplateProductTypeEditTabs_template').outerHTML;
+                this.tabTemplate = $('amazonTemplateProductTypeEditTabs_template_item').outerHTML;
                 this.contentTemplate = $('amazonTemplateProductTypeEditTabs_template_content').outerHTML;
             },
 

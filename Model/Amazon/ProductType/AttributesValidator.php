@@ -98,6 +98,7 @@ class AttributesValidator
             $this->addErrorTags($listingProduct);
         }
 
+        $validationResult->touchCreateDate();
         $validationResult->touchUpdateDate();
         $resource->save($validationResult);
     }

@@ -291,6 +291,11 @@ class Config extends AbstractConfig
                 'RemoveWalmartInventoryWpid',
                 'CreateProductTypeValidationTable',
                 'IgnoreVariationMpnInResolverConfig',
+                'AddEbayBlockingErrorSetting',
+            ],
+            'y23_m07' => [
+                'ChangeProductTypeValidationTableErrorMessageField',
+                'DropTemplateDescriptionIdIndex',
             ],
         ];
     }

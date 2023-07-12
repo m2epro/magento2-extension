@@ -719,6 +719,12 @@ class Installer
                                         ['default' => null]
                                     )
                                     ->addColumn(
+                                        'last_blocking_error_date',
+                                        Table::TYPE_DATETIME,
+                                        null,
+                                        ['default' => null]
+                                    )
+                                    ->addColumn(
                                         'additional_data',
                                         Table::TYPE_TEXT,
                                         self::LONG_COLUMN_SIZE,
@@ -2758,6 +2764,11 @@ class Installer
         $moduleConfig->insert('/health_status/notification/', 'mode', 1);
         $moduleConfig->insert('/health_status/notification/', 'email', '');
         $moduleConfig->insert('/health_status/notification/', 'level', 40);
+        $moduleConfig->insert('/blocking_errors/ebay/', 'retry_seconds', 28800);
+        $moduleConfig->insert('/blocking_errors/ebay/', 'errors_list', json_encode([
+            '17', '36', '70', '231', '106', '240', '21916750', '21916799', '21919136', '21919188', '21919301',
+            '21919303',
+        ]));
 
         $this->getConnection()->insertMultiple(
             $this->getFullTableName('wizard'),
@@ -9522,7 +9533,7 @@ class Installer
                 'error_messages',
                 Table::TYPE_TEXT,
                 null,
-                ['default' => '', 'nullable' => false]
+                ['default' => null]
             )
             ->addColumn(
                 'create_date',

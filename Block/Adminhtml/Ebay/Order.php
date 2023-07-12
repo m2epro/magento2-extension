@@ -14,13 +14,19 @@ class Order extends AbstractContainer
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory */
+    private $accountCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection */
+    private $accountCollection;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
+        $this->accountCollectionFactory = $accountCollectionFactory;
         parent::__construct($context, $data);
     }
 
@@ -38,6 +44,8 @@ class Order extends AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
 
+        $this->addOrderSettingButton();
+
         $this->addButton(
             'upload_by_user',
             [
@@ -47,8 +55,6 @@ class Order extends AbstractContainer
             ]
         );
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -113,5 +119,81 @@ JS
         return parent::_beforeToHtml();
     }
 
-    //########################################
+    private function addOrderSettingButton(): void
+    {
+        $accountId = $this->getEbayAccountId();
+        $url = $accountId ? $this->getSettingButtonUrl($accountId) : '';
+        $classAttribute = $accountId ? 'action-primary' : 'drop_down edit_default_settings_drop_down primary';
+        $className = !$accountId ? \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class : null;
+        $this->addButton(
+            'order_settings',
+            [
+                'label' => __('Order Settings'),
+                'onclick' => $url,
+                'class' => $classAttribute,
+                'class_name' => $className,
+                'options' => $this->getAccountSettingsDropDownItems($accountId)
+                //'after_html' => $toolTipContent,
+                //'disabled' => !$accountId
+            ]
+        );
+    }
+
+    private function getEbayAccountId(): int
+    {
+        return $this->getAccountIdFromRequest() ?: $this->getAccountIdFromCollection();
+    }
+
+    private function getAccountIdFromRequest(): int
+    {
+        return (int)$this->getRequest()->getParam('ebayAccount');
+    }
+
+    private function getAccountIdFromCollection(): int
+    {
+        $accountCollection = $this->getAccountCollection();
+
+        return $accountCollection->getSize() < 2 ? (int)$accountCollection->getFirstItem()->getId() : 0;
+    }
+
+    private function getAccountCollection(): \Ess\M2ePro\Model\ResourceModel\Account\Collection
+    {
+        if (!$this->accountCollection) {
+            $this->accountCollection = $this->accountCollectionFactory->create();
+            $this->accountCollection->addFieldToFilter(
+                'component_mode',
+                \Ess\M2ePro\Helper\View\Ebay::NICK
+            );
+        }
+
+        return $this->accountCollection;
+    }
+
+    private function getSettingButtonUrl(int $accountId): string
+    {
+        $url = $this->getUrl('*/ebay_account/edit', ['id' => $accountId, 'tab' => 'order']);
+
+        return sprintf("window.open('%s', '_blank')", $url);
+    }
+
+    private function getAccountSettingsDropDownItems(int $accountId): array
+    {
+        $dropDownItems = [];
+
+        if (!$accountId) {
+            foreach ($this->getAccountCollection() as $accountItem) {
+                $accountTitle = $this->filterManager->truncate(
+                    $accountItem->getTitle(),
+                    ['length' => 15]
+                );
+
+                $dropDownItems[] = [
+                    'label' => __($accountTitle),
+                    'onclick' => $this->getSettingButtonUrl((int)$accountItem->getId())
+                ];
+            }
+        }
+
+        return $dropDownItems;
+    }
 }

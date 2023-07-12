@@ -66,4 +66,10 @@ class Validation extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $date = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
         $this->setData('update_date', $date);
     }
+
+    public function touchCreateDate(): void
+    {
+        $date = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+        $this->setData('create_date', $date);
+    }
 }

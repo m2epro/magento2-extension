@@ -22,15 +22,23 @@ class Buffer
     private $tagRepository;
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Repository */
     private $listingProductTagRepository;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
+    private $listingProductResource;
+    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
+    private $blockingErrorConfig;
 
     public function __construct(
         \Ess\M2ePro\Model\Tag\Repository $tagRepository,
         ResourceModel\Tag\ListingProduct\Relation $relationResource,
-        \Ess\M2ePro\Model\Tag\ListingProduct\Repository $listingProductTagRepository
+        \Ess\M2ePro\Model\Tag\ListingProduct\Repository $listingProductTagRepository,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
+        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig
     ) {
         $this->relationResource = $relationResource;
         $this->tagRepository = $tagRepository;
         $this->listingProductTagRepository = $listingProductTagRepository;
+        $this->listingProductResource = $listingProductResource;
+        $this->blockingErrorConfig = $blockingErrorConfig;
     }
 
     public function addTag(\Ess\M2ePro\Model\Listing\Product $listingProduct, \Ess\M2ePro\Model\Tag $tag): void
@@ -149,12 +157,19 @@ class Buffer
     private function flushAdd(array $items, array $tagsEntitiesByErrorCode, array $existsRelations): void
     {
         $pack = [];
+        $blockingErrorsPack = [];
+
+        $ebayBlockingErrorsList = $this->blockingErrorConfig->getEbayBlockingErrorsList();
 
         foreach ($items as $item) {
             $existRelation = $existsRelations[$item->getProductId()] ?? [];
             foreach ($item->getAddedTags() as $tag) {
                 if (!isset($existRelation[$tag->getErrorCode()])) {
                     $pack[$item->getProductId()][] = (int)$tagsEntitiesByErrorCode[$tag->getErrorCode()]->getId();
+
+                    if (in_array($tag->getErrorCode(), $ebayBlockingErrorsList, true)) {
+                        $blockingErrorsPack[] = $item->getProductId();
+                    }
                 }
             }
         }
@@ -162,6 +177,13 @@ class Buffer
         if (!empty($pack)) {
             foreach (array_chunk($pack, self::MAX_PACK_SIZE, true) as $chunk) {
                 $this->relationResource->insertTags($chunk);
+            }
+        }
+
+        if (!empty($blockingErrorsPack)) {
+            $lastBlockingErrorDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
+            foreach (array_chunk($blockingErrorsPack, self::MAX_PACK_SIZE, true) as $chunk) {
+                $this->listingProductResource->updateLastBlockingErrorDate($chunk, $lastBlockingErrorDate);
             }
         }
     }
@@ -189,6 +211,7 @@ class Buffer
         if (!empty($pack)) {
             foreach (array_chunk($pack, self::MAX_PACK_SIZE, true) as $chunk) {
                 $this->relationResource->removeTags($chunk);
+                $this->listingProductResource->deleteLastBlockingErrorDate(array_keys($chunk));
             }
         }
     }
