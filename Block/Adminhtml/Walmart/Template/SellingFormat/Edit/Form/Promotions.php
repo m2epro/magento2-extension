@@ -147,7 +147,7 @@ class Promotions extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $promotionsToDateMode->addCustomAttribute('allowed_attribute_types', 'text,date');
         $this->setData('promotions_to_date_mode', $promotionsToDateMode);
 
-        $docUrl = $this->supportHelper->getDocumentationArticleUrl('x/dP1IB');
+        $docUrl = $this->supportHelper->getDocumentationArticleUrl('creating-promotions');
         $toDateTooltip = <<<HTML
         <span>The end date of the promotion is within 365 days from the current date and time.
         Promotions beyond 365 days will be returned an error.</span>

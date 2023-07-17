@@ -33,6 +33,6 @@ class Content extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     public function getSupportUrl(): string
     {
-        return $this->supportHelper->getDocumentationArticleUrl('x/jgAcB');
+        return $this->supportHelper->getDocumentationArticleUrl('help/m2/install-upgrade-m2e-pro');
     }
 }

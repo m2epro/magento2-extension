@@ -108,7 +108,7 @@ class Dashboard extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         if ($this->latestPublicVersion) {
             $documentationArticleUrl = $this->moduleSupportHelper->getDocumentationArticleUrl(
-                'x/BwAMB'
+                'help/m2/release-notes-policy'
             );
             $fieldSet->addField(
                 'latest_public_version',

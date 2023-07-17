@@ -37,7 +37,7 @@ class ProductTypeAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adminhtm
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/cwQVB');
+        $this->setPageHelpLink('listing-products-on-amazon');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Product Type for New ASIN/ISBN Creation')
         );

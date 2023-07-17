@@ -16,7 +16,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Order::class));
-        $this->setPageHelpLink('x/f-1IB');
+        $this->setPageHelpLink('wmt-sales-orders');
 
         return $this->getResult();
     }

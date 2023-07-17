@@ -105,7 +105,7 @@ HTML
 </div>
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
+                $this->supportHelper->getDocumentationArticleUrl('help/m2/walmart-integration/account-configurations')
             );
         } else {
             $content = $this->__(
@@ -118,7 +118,7 @@ HTML
 </div>
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
+                $this->supportHelper->getDocumentationArticleUrl('help/m2/walmart-integration/account-configurations')
             );
         }
 

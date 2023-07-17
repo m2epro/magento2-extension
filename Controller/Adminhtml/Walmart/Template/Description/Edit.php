@@ -59,7 +59,9 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Description Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->setPageHelpLink('x/b-1IB');
+        $this->setPageHelpLink(
+            'help/m2/walmart-integration/m2e-pro-listing-set-up/configuring-policies/description-policy'
+        );
         $this->addContent(
             $this->getLayout()
                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Template\Description\Edit::class)

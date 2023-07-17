@@ -46,7 +46,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Settings
         $this->addLeft($tabsBlock);
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings::class));
 
-        $this->setPageHelpLink('x/jf1IB');
+        $this->setPageHelpLink('display/WalmartMagento2/Settings');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Settings'));
 

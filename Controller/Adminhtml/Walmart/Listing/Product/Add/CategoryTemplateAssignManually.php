@@ -48,7 +48,7 @@ class CategoryTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml\Wa
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/zeVaAg');
+        $this->setPageHelpLink('walmart-integration');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Category Policy')
         );

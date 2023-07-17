@@ -126,7 +126,7 @@ class Form extends AbstractForm
                     for detailed information.</p><br>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/cv1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('selling-policy')
                 ),
             ]
         );
@@ -734,7 +734,7 @@ HTML
                         20th November and stop selling on 30th November. <br><br>
 
                         Read more details <a href="%url%" target="_blank">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/cv1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('selling-policy')
                 ),
             ]
         );

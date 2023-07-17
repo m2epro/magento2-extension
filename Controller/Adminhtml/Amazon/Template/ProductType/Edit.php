@@ -90,7 +90,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        $this->setPageHelpLink('x/FACOFg');
+        $this->setPageHelpLink('amazon-product-type');
 
         return $this->getResultPage();
     }

@@ -74,7 +74,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 values will be used in the Listing settings.</p><br>
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->supportHelper->getDocumentationArticleUrl('x/hf8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('step-1-general-settings')
                 ),
             ]
         );

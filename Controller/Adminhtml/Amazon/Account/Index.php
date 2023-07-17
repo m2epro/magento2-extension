@@ -19,7 +19,7 @@ class Index extends Account
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
-        $this->setPageHelpLink('x/Hv8UB');
+        $this->setPageHelpLink('accounts');
 
         return $this->getResultPage();
     }

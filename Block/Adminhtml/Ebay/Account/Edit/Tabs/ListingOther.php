@@ -109,7 +109,7 @@ automatically link them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/FP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('the-unmanaged-listings')
                 ),
             ]
         );

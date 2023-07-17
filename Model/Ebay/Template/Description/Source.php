@@ -498,12 +498,20 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $watermarkPositions = [
-            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_TOP =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_TOP_RIGHT =>
                 \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_TOP_RIGHT,
             \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_MIDDLE =>
                 \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_CENTER,
-            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_BOTTOM =>
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_BOTTOM_RIGHT =>
                 \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_BOTTOM_RIGHT,
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_TOP_LEFT =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_TOP_LEFT,
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_BOTTOM_LEFT =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_BOTTOM_LEFT,
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_TILE =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_TILE,
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_STRETCH =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_STRETCH,
         ];
 
         /** @var \Magento\Framework\Image $image */
@@ -512,7 +520,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             'fileName' => $imageObj->getPath(),
         ]);
         $imageOriginalHeight = $image->getOriginalHeight();
-        $imageOriginalWidth = $image->getOriginalWidth();
         $image->open();
 
         $image->keepTransparency(true);
@@ -525,42 +532,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             'fileName' => $watermarkPath,
         ]);
         $watermarkOriginalHeight = $watermark->getOriginalHeight();
-        $watermarkOriginalWidth = $watermark->getOriginalWidth();
 
         if ((int)$imageOriginalHeight === 0 || (int)$watermarkOriginalHeight === 0) {
             return;
-        }
-
-        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeStretch()) {
-            $image->setWatermarkPosition(\Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_STRETCH);
-        }
-
-        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeInWidth()) {
-            $watermarkWidth = $imageOriginalWidth;
-            $heightPercent = $watermarkOriginalWidth / $watermarkWidth;
-            $watermarkHeight = (int)($watermarkOriginalHeight / $heightPercent);
-
-            $image->setWatermarkWidth($watermarkWidth);
-            $image->setWatermarkHeight($watermarkHeight);
-        }
-
-        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeNone()) {
-            $image->setWatermarkWidth($watermarkOriginalWidth);
-            $image->setWatermarkHeight($watermarkOriginalHeight);
-
-            if ($watermarkOriginalHeight > $imageOriginalHeight) {
-                $image->setWatermarkHeight($imageOriginalHeight);
-                $widthPercent = $watermarkOriginalHeight / $imageOriginalHeight;
-                $watermarkWidth = (int)($watermarkOriginalWidth / $widthPercent);
-                $image->setWatermarkWidth($watermarkWidth);
-            }
-
-            if ($watermarkOriginalWidth > $imageOriginalWidth) {
-                $image->setWatermarkWidth($imageOriginalWidth);
-                $heightPercent = $watermarkOriginalWidth / $imageOriginalWidth;
-                $watermarkHeight = (int)($watermarkOriginalHeight / $heightPercent);
-                $image->setWatermarkHeight($watermarkHeight);
-            }
         }
 
         $opacity = 100;

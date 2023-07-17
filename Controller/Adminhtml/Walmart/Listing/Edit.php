@@ -32,7 +32,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
             $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
         );
 
-        $this->setPageHelpLink('x/a-1IB');
+        $this->setPageHelpLink('configuring-policies');
 
         return $this->getResult();
     }

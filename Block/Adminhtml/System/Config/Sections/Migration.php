@@ -38,7 +38,7 @@ class Migration extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sections
                     'Here you can start M2E Pro data migration from Magento v1.x.
                     Read the <a href="%url%" target="_blank">Migration Guide</a>
                     for more details.',
-                    $this->moduleSupport->getDocumentationArticleUrl('x/Ov0kB')
+                    $this->moduleSupport->getDocumentationArticleUrl('migration-from-m1-to-m2')
                 ),
             ]
         );

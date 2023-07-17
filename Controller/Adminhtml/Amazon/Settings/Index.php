@@ -52,7 +52,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
         $this->addLeft($tabsBlock);
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings::class));
 
-        $this->setPageHelpLink('x/uQ03B');
+        $this->setPageHelpLink('amazon-global-set-up');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Settings'));
 

@@ -104,7 +104,7 @@ Policies for the Listing.</p>
 <p>More details in <a href="%url%" target="_blank">our documentation</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/FQAVB ')
+                    $this->supportHelper->getDocumentationArticleUrl('step-2-policies')
                 ),
                 'style' => 'margin-top: 30px',
             ]

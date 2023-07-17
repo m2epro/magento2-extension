@@ -49,7 +49,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     it in case you need to use it in a different M2E Pro Listing in the future.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->supportHelper->getDocumentationArticleUrl('x/GwAVB')
+                    $this->supportHelper->getDocumentationArticleUrl('m2e-pro-policies')
                 ),
             ]
         );

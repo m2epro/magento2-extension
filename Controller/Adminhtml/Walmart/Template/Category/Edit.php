@@ -70,7 +70,9 @@ class Edit extends Category
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        $this->setPageHelpLink('x/bf1IB');
+        $this->setPageHelpLink(
+            'help/m2/walmart-integration/m2e-pro-listing-set-up/configuring-policies/category-policy'
+        );
 
         return $this->getResultPage();
     }

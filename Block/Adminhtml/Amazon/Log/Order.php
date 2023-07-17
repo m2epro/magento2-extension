@@ -54,18 +54,20 @@ class Order extends \Ess\M2ePro\Block\Adminhtml\Log\Order\AbstractContainer
         if ($this->getRequest()->getParam('magento_order_failed')) {
             $message = <<<TEXT
 This Log contains information about your recent Amazon orders for which Magento orders were not created.<br/><br/>
-Find detailed info in <a href="%url%" target="_blank">the article</a>.
+Find detailed info in <a href="%1" target="_blank">the article</a>.
 TEXT;
         } else {
             $message = <<<TEXT
 This Log contains information about Order processing.<br/><br/>
-Find detailed info in <a href="%url%" target="_blank">the article</a>.
+Find detailed info in <a href="%1" target="_blank">the article</a>.
 TEXT;
         }
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => __(
                 $message,
-                $this->supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-Orderlogs')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/amazon-integration/logs#a40303a296834d4a95ddeb5457af628d'
+                )
             ),
         ]);
 

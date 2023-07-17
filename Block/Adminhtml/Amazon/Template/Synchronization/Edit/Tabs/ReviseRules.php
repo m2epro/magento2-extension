@@ -70,7 +70,7 @@ Policy Templates.</p><br>
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/b-8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('revise-rules')
                 ),
             ]
         );

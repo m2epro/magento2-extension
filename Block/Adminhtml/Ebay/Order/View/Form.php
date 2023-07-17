@@ -341,6 +341,8 @@ class Form extends AbstractContainer
 
     protected function _toHtml()
     {
+        $url = 'help/m2/ebay-integration/sales-and-orders/viewing-order-detailsviewing-ebay-order-details';
+
         $orderNoteGridId = $this->getChildBlock('order_note_grid')->getId();
         $this->jsTranslator->add('Custom Note', $this->__('Custom Note'))
                            ->add(
@@ -358,7 +360,7 @@ If you consent, click <strong>Confirm</strong>. You will be redirected to M2E Pr
 Account configuration.<br><br>
 HTML
                                    ,
-                                   $this->supportHelper->getDocumentationArticleUrl('x/xAcVB')
+                                   $this->supportHelper->getDocumentationArticleUrl($url)
                                )
                            );
 

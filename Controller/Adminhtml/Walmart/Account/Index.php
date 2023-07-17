@@ -16,7 +16,7 @@ class Index extends Account
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
-        $this->setPageHelpLink('x/hv1IB');
+        $this->setPageHelpLink('help/m2/walmart-integration/account-configurations');
 
         return $this->getResultPage();
     }

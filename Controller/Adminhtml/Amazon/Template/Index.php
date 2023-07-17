@@ -23,7 +23,7 @@ class Index extends Template
 
         $this->getResultPage()->getConfig()->getTitle()->prepend('Policies');
         $this->addContent($content);
-        $this->setPageHelpLink('x/Gv8UB');
+        $this->setPageHelpLink('help/m2/amazon-integration/configurations/policies');
 
         return $this->getResultPage();
     }

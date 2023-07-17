@@ -80,7 +80,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 break;
         }
 
-        $this->setPageHelpLink('x/Kv8UB');
+        $this->setPageHelpLink('m2e-pro-listings');
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('New Listing Creation'));
 
         return $this->getResult();

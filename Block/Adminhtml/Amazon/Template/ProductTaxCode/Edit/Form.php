@@ -161,7 +161,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'tooltip' => $this->__(
                     'Apply Amazon Product Tax Codes to display VAT-exclusive prices to B2B customers. Find more info in
                     <a href="%url%" target="_blank">this article</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/-A03B')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/amazon-integration/configurations/policies/product-tax-code-policies'
+                    )
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,select');

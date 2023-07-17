@@ -76,7 +76,7 @@ class Edit extends Account
 
         $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs::class));
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit::class));
-        $this->setPageHelpLink('x/Cv8UB');
+        $this->setPageHelpLink('display/eBayMagentoV6X/Accounts');
 
         return $this->getResultPage();
     }

@@ -296,6 +296,8 @@ class Config extends AbstractConfig
             'y23_m07' => [
                 'ChangeProductTypeValidationTableErrorMessageField',
                 'DropTemplateDescriptionIdIndex',
+                'RemoveScaleFromWatermarkSetting',
+                'ChangeDocumentationUrl',
             ],
         ];
     }

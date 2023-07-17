@@ -50,7 +50,7 @@ class Edit extends Template
                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductTaxCode\Edit::class)
         );
 
-        $this->setPageHelpLink('x/-A03B');
+        $this->setPageHelpLink('help/m2/amazon-integration/configurations/policies/product-tax-code-policies');
 
         return $this->getResultPage();
     }

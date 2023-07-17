@@ -2733,7 +2733,7 @@ class Installer
         $moduleConfig->insert('/logs/clearing/orders/', 'days', '90');
         $moduleConfig->insert('/logs/listings/', 'last_action_id', '0');
         $moduleConfig->insert('/logs/grouped/', 'max_records_count', '100000');
-        $moduleConfig->insert('/support/', 'documentation_url', 'https://m2e.atlassian.net/wiki/');
+        $moduleConfig->insert('/support/', 'documentation_url', 'https://docs-m2.m2epro.com/');
         $moduleConfig->insert('/support/', 'accounts_url', 'https://accounts.m2e.cloud/');
         $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
         $moduleConfig->insert('/support/', 'support_url', 'https://help.m2epro.com');

@@ -80,13 +80,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const WATERMARK_MODE_NO = 0;
     public const WATERMARK_MODE_YES = 1;
 
-    public const WATERMARK_POSITION_TOP = 0;
+    public const WATERMARK_POSITION_TOP_RIGHT = 0;
     public const WATERMARK_POSITION_MIDDLE = 1;
-    public const WATERMARK_POSITION_BOTTOM = 2;
-
-    public const WATERMARK_SCALE_MODE_NONE = 0;
-    public const WATERMARK_SCALE_MODE_IN_WIDTH = 1;
-    public const WATERMARK_SCALE_MODE_STRETCH = 2;
+    public const WATERMARK_POSITION_BOTTOM_RIGHT = 2;
+    public const WATERMARK_POSITION_TOP_LEFT = 3;
+    public const WATERMARK_POSITION_BOTTOM_LEFT = 4;
+    public const WATERMARK_POSITION_TILE = 5;
+    public const WATERMARK_POSITION_STRETCH = 6;
 
     public const WATERMARK_TRANSPARENT_MODE_NO = 0;
     public const WATERMARK_TRANSPARENT_MODE_YES = 1;
@@ -967,14 +967,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     /**
      * @return int
      */
-    public function getWatermarkScaleMode()
-    {
-        return (int)$this->getSetting('watermark_settings', 'scale');
-    }
-
-    /**
-     * @return int
-     */
     public function getWatermarkTransparentMode()
     {
         return (int)$this->getSetting('watermark_settings', 'transparent');
@@ -990,58 +982,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             'opacity_level',
             \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_OPACITY_LEVEL_DEFAULT
         );
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isWatermarkPositionTop()
-    {
-        return $this->getWatermarkPosition() == self::WATERMARK_POSITION_TOP;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWatermarkPositionMiddle()
-    {
-        return $this->getWatermarkPosition() == self::WATERMARK_POSITION_MIDDLE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWatermarkPositionBottom()
-    {
-        return $this->getWatermarkPosition() == self::WATERMARK_POSITION_BOTTOM;
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isWatermarkScaleModeNone()
-    {
-        return $this->getWatermarkScaleMode() == self::WATERMARK_SCALE_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWatermarkScaleModeInWidth()
-    {
-        return $this->getWatermarkScaleMode() == self::WATERMARK_SCALE_MODE_IN_WIDTH;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWatermarkScaleModeStretch()
-    {
-        return $this->getWatermarkScaleMode() == self::WATERMARK_SCALE_MODE_STRETCH;
     }
 
     // ---------------------------------------

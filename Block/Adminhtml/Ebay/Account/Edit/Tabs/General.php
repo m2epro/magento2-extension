@@ -108,7 +108,7 @@ More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>.
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/Uv8UB')
+                $this->supportHelper->getDocumentationArticleUrl('ebay-account-activation')
             );
         }
 

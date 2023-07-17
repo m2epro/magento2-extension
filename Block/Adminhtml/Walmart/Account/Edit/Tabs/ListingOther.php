@@ -88,7 +88,7 @@ class ListingOther extends AbstractForm
         The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/ev1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('unmanaged-items')
                 ),
             ]
         );

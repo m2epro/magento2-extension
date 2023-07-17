@@ -104,7 +104,9 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 <p>More detailed information about creation of New Amazon Products and Product Types
                  you can find in the following article article
                  <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/amazon-integration/m2e-pro-listings/asin-isbn-management'
+                )
             ),
         ]);
 

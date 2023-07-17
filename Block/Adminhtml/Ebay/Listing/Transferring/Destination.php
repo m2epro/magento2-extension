@@ -101,7 +101,7 @@ To do it, you have to choose From and To Accounts, Marketplaces, Store Views and
 Click <a href="%url%" target="_blank">here</a> to learn more detailed information.
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/o1oJAg')
+                $this->supportHelper->getDocumentationArticleUrl('display/eBayMagentoV6X/Sell+on+another+eBay+Site')
             ),
             'style' => 'margin-top: 15px;',
             'title' => $this->__('Sell on Another Marketplace'),

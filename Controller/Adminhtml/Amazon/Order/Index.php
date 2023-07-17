@@ -19,7 +19,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order::class));
-        $this->setPageHelpLink('x/1v4UB');
+        $this->setPageHelpLink('sales-orders');
 
         return $this->getResult();
     }

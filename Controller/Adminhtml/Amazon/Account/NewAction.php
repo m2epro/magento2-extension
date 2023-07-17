@@ -45,7 +45,7 @@ class NewAction extends Account
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Create::class)
         );
-        $this->setPageHelpLink('x/Hv8UB');
+        $this->setPageHelpLink('accounts');
 
         return $this->getResultPage();
     }

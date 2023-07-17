@@ -111,7 +111,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode::class)
         );
-        $this->setPageHelpLink('x/PQBhAQ');
+        $this->setPageHelpLink('adding-magento-products-to-listing');
     }
 
     public function stepOneSourceProducts()
@@ -155,7 +155,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/PwBhAQ');
+        $this->setPageHelpLink('adding-products-manually');
 
         $this->addContent(
             $this->getLayout()
@@ -215,7 +215,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/PwBhAQ');
+        $this->setPageHelpLink('adding-products-manually');
 
         $gridContainer = $this->getLayout()
                               ->createBlock(
@@ -265,7 +265,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/bf1IB');
+        $this->setPageHelpLink(
+            'help/m2/walmart-integration/m2e-pro-listing-set-up/configuring-policies/category-policy'
+        );
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Category Policy'));
 

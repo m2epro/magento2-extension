@@ -93,7 +93,7 @@ class Edit extends Account
 
         $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs::class));
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit::class));
-        $this->setPageHelpLink('x/hv1IB');
+        $this->setPageHelpLink('help/m2/walmart-integration/account-configurations');
 
         return $this->getResultPage();
     }

@@ -24,28 +24,40 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $dataHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
     private $tagRelationResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\CollectionFactory */
+    private $amazonProductCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
+    private $amazonProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
+    private $tagResource;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\CollectionFactory $amazonProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonProductResource,
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation $tagRelationResource,
+        \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        $this->tagRelationResource = $tagRelationResource;
+        parent::__construct($context, $backendHelper, $data);
+
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->amazonFactory = $amazonFactory;
         $this->amazonHelper = $amazonHelper;
-
-        parent::__construct($context, $backendHelper, $data);
+        $this->tagRelationResource = $tagRelationResource;
+        $this->amazonProductCollectionFactory = $amazonProductCollectionFactory;
+        $this->amazonProductResource = $amazonProductResource;
+        $this->tagResource = $tagResource;
     }
 
     public function _construct()
@@ -208,15 +220,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
 
-        if ($tagId = $this->getRequest()->getParam(TagSwitcher::TAG_ID_REQUEST_PARAM_KEY, false)) {
-            $collection->joinTable(
-                ['tr' => $this->tagRelationResource->getMainTable()],
-                'listing_product_id=id',
-                ['tag_id' => 'tag_id'],
-                ['tag_id' => $tagId]
-            );
-        }
-
         $collection->addExpressionAttributeToSelect(
             'online_actual_qty',
             self::ACTUAL_QTY_EXPRESSION,
@@ -297,9 +300,45 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collection->getSelect()->where('l.marketplace_id = ?', $marketplaceId);
         }
 
+        if ($tagId = $this->getRequest()->getParam(TagSwitcher::TAG_ID_REQUEST_PARAM_KEY, false)) {
+            $subSelect = $this->getSubSelectForAmazonListingProductsWithTags((int)$tagId);
+            $collection->getSelect()->where('alp.listing_product_id IN (?)', $subSelect);
+        }
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
+    }
+
+    /**
+     * If child variation product has tag, then select parent product.
+     * And select not variation products with tag.
+     */
+    private function getSubSelectForAmazonListingProductsWithTags(int $tagId): \Magento\Framework\DB\Select
+    {
+        $collection = $this->amazonProductCollectionFactory->create();
+        $collection->distinct(true);
+        $collection->joinLeft(
+            ['main_table_child' => $this->amazonProductResource->getMainTable()],
+            'main_table.listing_product_id = main_table_child.variation_parent_id'
+        );
+        $collection->join(
+            ['tag_rel' => $this->tagRelationResource->getMainTable()],
+            'main_table.listing_product_id = tag_rel.listing_product_id'
+            . ' OR main_table_child.listing_product_id = tag_rel.listing_product_id'
+        );
+        $collection->join(
+            ['tag' => $this->tagResource->getMainTable()],
+            'tag.id = tag_rel.tag_id'
+        );
+
+        $collection->getSelect()->where('main_table.variation_parent_id IS NULL');
+        $collection->getSelect()->where('tag.id = ?', $tagId);
+
+        $collection->getSelect()->reset('columns');
+        $collection->getSelect()->columns('main_table.listing_product_id');
+
+        return $collection->getSelect();
     }
 
     protected function _afterLoadCollection()

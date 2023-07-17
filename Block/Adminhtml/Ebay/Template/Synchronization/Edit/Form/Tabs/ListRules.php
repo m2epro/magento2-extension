@@ -84,7 +84,9 @@ class ListRules extends AbstractTab
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/Zf8UB')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/ebay-integration/m2e-pro-listing/create-new-listing/step-2-policies/synchronization/list-action'
+                    )
                 ),
             ]
         );

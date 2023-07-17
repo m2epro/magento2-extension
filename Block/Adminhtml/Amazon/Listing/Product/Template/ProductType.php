@@ -48,7 +48,7 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Tem
                 To assign it, select either an existing Product Type or create a new one.<br><br>
                 Learn how to manage Amazon Product Types in
                 <a href="%url%" target="_blank" class="external-link">this article</a>',
-                $this->supportHelper->getDocumentationArticleUrl('x/OP8UB')
+                $this->supportHelper->getDocumentationArticleUrl('description-policies')
             ),
         ]);
 

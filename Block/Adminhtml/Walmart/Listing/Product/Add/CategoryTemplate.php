@@ -97,7 +97,9 @@ class CategoryTemplate extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
                 <p>The detailed information can be found
                  <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->supportHelper->getDocumentationArticleUrl('x/bf1IB')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/walmart-integration/m2e-pro-listing-set-up/configuring-policies/category-policy'
+                )
             ),
         ]);
 

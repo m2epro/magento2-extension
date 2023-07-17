@@ -123,7 +123,9 @@ select tax settings to apply to an Order, activate an automatic invoice and ship
 The detailed information can be found <a href="%url%" target="_blank">here</a>.
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/hv1IB')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/walmart-integration/account-configurations'
+                    )
                 ),
             ]
         );
@@ -574,7 +576,9 @@ HTML
                 'tooltip' => $this->__(
                     'Choose where the tax settings for your Magento Order will be taken from. See
                     <a href="%url%" target="_blank">this article</a> for more details.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/3oVcBQ#CalculationTaxSettings-TaxSource')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/walmart-integration/managing-sales/calculation-tax-settings#8d7b63463f81489184a4666c13c1d4d0'
+                    )
                 ),
             ]
         );

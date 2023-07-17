@@ -38,7 +38,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Items By Listing'));
-        $this->setPageHelpLink('x/Kv8UB');
+        $this->setPageHelpLink('m2e-pro-listings');
 
         return $this->getResult();
     }

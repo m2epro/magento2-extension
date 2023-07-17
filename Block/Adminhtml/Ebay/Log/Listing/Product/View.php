@@ -44,7 +44,7 @@ TEXT;
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 $message,
-                $this->supportHelper->getDocumentationArticleUrl('x/85BCB#Logs&Events-M2EProListinglogs')
+                $this->supportHelper->getDocumentationArticleUrl('help/m2/ebay-integration/logs-and-events')
             ),
         ]);
 

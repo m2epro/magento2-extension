@@ -38,7 +38,7 @@ class ProductTypeAssignManually extends \Ess\M2ePro\Controller\Adminhtml\Amazon\
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/cwQVB');
+        $this->setPageHelpLink('listing-products-on-amazon');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Product Type for New ASIN/ISBN Creation')
         );

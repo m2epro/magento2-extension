@@ -56,7 +56,7 @@ class ModuleAndChannels extends \Ess\M2ePro\Block\Adminhtml\System\Config\Sectio
 Read the <a href="%url%" target="_blank">article</a> for more details.</p>
 HTML
                     ,
-                    $this->moduleSupport->getDocumentationArticleUrl('x/KX50B')
+                    $this->moduleSupport->getDocumentationArticleUrl('display/eBayMagentoV6X/Global+Settings')
                 ),
             ]
         );

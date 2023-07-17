@@ -666,15 +666,6 @@ class Data extends AbstractForm
         );
 
         $watermarkFieldset->addField(
-            'old_watermark_settings_scale',
-            'hidden',
-            [
-                'name' => 'description[old_watermark_settings][scale]',
-                'value' => $formData['watermark_settings']['scale'],
-            ]
-        );
-
-        $watermarkFieldset->addField(
             'old_watermark_settings_position',
             'hidden',
             [
@@ -805,23 +796,6 @@ HTML
         );
 
         $watermarkFieldset->addField(
-            'watermark_scale',
-            'select',
-            [
-                'container_id' => 'watermark_scale_container',
-                'label' => $this->__('Scale Image'),
-                'name' => 'description[watermark_settings][scale]',
-                'values' => [
-                    Description::WATERMARK_SCALE_MODE_NONE => $this->__('None'),
-                    Description::WATERMARK_SCALE_MODE_IN_WIDTH => $this->__('In Width'),
-                    Description::WATERMARK_SCALE_MODE_STRETCH => $this->__('Full Image'),
-                ],
-                'value' => $formData['watermark_settings']['scale'],
-                'tooltip' => $this->__('Scales watermark image in width or full image.'),
-            ]
-        );
-
-        $watermarkFieldset->addField(
             'watermark_position',
             'select',
             [
@@ -829,9 +803,13 @@ HTML
                 'label' => $this->__('Position'),
                 'name' => 'description[watermark_settings][position]',
                 'values' => [
-                    Description::WATERMARK_POSITION_TOP => $this->__('Top'),
-                    Description::WATERMARK_POSITION_MIDDLE => $this->__('Middle'),
-                    Description::WATERMARK_POSITION_BOTTOM => $this->__('Bottom'),
+                    Description::WATERMARK_POSITION_TOP_RIGHT => $this->__('Top/Right'),
+                    Description::WATERMARK_POSITION_TOP_LEFT => $this->__('Top/Left'),
+                    Description::WATERMARK_POSITION_MIDDLE => $this->__('Center'),
+                    Description::WATERMARK_POSITION_BOTTOM_RIGHT => $this->__('Bottom/Right'),
+                    Description::WATERMARK_POSITION_BOTTOM_LEFT => $this->__('Bottom/Left'),
+                    Description::WATERMARK_POSITION_TILE => $this->__('Tile'),
+                    Description::WATERMARK_POSITION_STRETCH => $this->__('Stretch'),
                 ],
                 'value' => $formData['watermark_settings']['position'],
                 'tooltip' => $this->__('Watermark position on the image.'),
@@ -1455,9 +1433,6 @@ JS
 
             if (isset($watermarkSettings['position'])) {
                 $data['watermark_settings']['position'] = $watermarkSettings['position'];
-            }
-            if (isset($watermarkSettings['scale'])) {
-                $data['watermark_settings']['scale'] = $watermarkSettings['scale'];
             }
             if (isset($watermarkSettings['transparent'])) {
                 $data['watermark_settings']['transparent'] = $watermarkSettings['transparent'];

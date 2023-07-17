@@ -25,7 +25,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Unmanaged
         );
         $this->getResultPage()->getConfig()->getTitle()->prepend(__('All Unmanaged Items'));
 
-        $this->setPageHelpLink('x/ev1IB');
+        $this->setPageHelpLink('unmanaged-items');
 
         return $this->getResult();
     }

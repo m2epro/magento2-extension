@@ -72,6 +72,8 @@ class Form extends AbstractForm
         $form->setUseContainer(true);
         $this->setForm($form);
 
+        $repricerDocs = 'https://docs.m2ecloud.com/amazon-repricer';
+
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->globalDataHelper->getValue('edit_account');
 
@@ -98,7 +100,7 @@ class Form extends AbstractForm
 <p>Head over to <a href="%url%" target="_blank" class="external-link">docs</a> for detailed information.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                    $this->supportHelper->getDocumentationArticleUrl('repricer')
                 ),
             ]
         );
@@ -215,8 +217,8 @@ HTML
     <br /><br />
     More detailed information on how to work with this option can be found
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
-                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                    $repricerDocs,
+                    $this->supportHelper->getDocumentationArticleUrl('repricer')
                 )
             ) .
             '</div>';
@@ -365,8 +367,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
-                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                    $repricerDocs,
+                    $this->supportHelper->getDocumentationArticleUrl('repricer')
                 )
             ) .
             '</div>';
@@ -579,8 +581,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
-                    $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                    $repricerDocs,
+                    $this->supportHelper->getDocumentationArticleUrl('repricer')
                 )
             ) .
             '</div>';
@@ -800,8 +802,8 @@ Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
 <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                            $this->supportHelper->getDocumentationArticleUrl('x/AAAZD'),
-                            $this->supportHelper->getDocumentationArticleUrl('x/CP4kB')
+                            $repricerDocs,
+                            $this->supportHelper->getDocumentationArticleUrl('repricer')
                         )
                     ) . '</div>',
             ]

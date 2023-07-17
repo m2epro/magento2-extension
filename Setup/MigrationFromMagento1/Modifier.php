@@ -213,11 +213,12 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m03\AddWizardVersionDowngrade::class,
             \Ess\M2ePro\Setup\Update\y23_m04\RemoveUnavailableDataType::class,
             \Ess\M2ePro\Setup\Update\y23_m04\EbayBuyerInitiatedOrderCancellation::class,
-            \Ess\M2ePro\Setup\Update\y22_m02\ChangeDocumentationUrl::class,
             \Ess\M2ePro\Setup\Update\y23_m06\AddEbayBlockingErrorSetting::class,
             \Ess\M2ePro\Setup\Update\y23_m06\CreateProductTypeValidationTable::class,
             \Ess\M2ePro\Setup\Update\y23_m07\ChangeProductTypeValidationTableErrorMessageField::class,
             \Ess\M2ePro\Setup\Update\y23_m07\DropTemplateDescriptionIdIndex::class,
+            \Ess\M2ePro\Setup\Update\y23_m07\RemoveScaleFromWatermarkSetting::class,
+            \Ess\M2ePro\Setup\Update\y23_m07\ChangeDocumentationUrl::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

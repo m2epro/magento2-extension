@@ -47,7 +47,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Synchronization Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->setPageHelpLink('x/Ov8UB');
+        $this->setPageHelpLink('synchronization-policies');
         $this->addContent(
             $this->getLayout()
                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Synchronization\Edit::class)

@@ -55,7 +55,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 Enable <a href="%url%" target="_blank" class="external-link">Amazon Business (B2B)</a> to apply the
                 Business Price and QTY Discounts to your offers on the selected marketplaces.
                 ',
-                    $this->support->getDocumentationArticleUrl('x/qQ03B')
+                    $this->support->getDocumentationArticleUrl('help/m2/amazon-integration/amazon-business')
                 ),
             ]
         );

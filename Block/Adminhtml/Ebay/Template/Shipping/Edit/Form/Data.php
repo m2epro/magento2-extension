@@ -2680,7 +2680,7 @@ one which should be applied to your Items.<br><br>
 <strong>Note</strong>, you need to repeat the procedure above for each eBay Account separately.
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/94FkB')
+                    $this->supportHelper->getDocumentationArticleUrl('display/eBayMagentoV6X/eBay+Guaranteed+Delivery')
                 ),
                 'You are submitting different Shipping Rate Table modes for the domestic and international shipping. ' .
                 'It contradicts eBay requirements. Please edit the settings.' => $this->__(

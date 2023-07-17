@@ -140,13 +140,19 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
     private function getUrls()
     {
         return [
-            'Ess_M2ePro::ebay_help_center_documentation' => $this->support->getDocumentationArticleUrl('x/AAAMB'),
+            'Ess_M2ePro::ebay_help_center_documentation' => $this->support->getDocumentationArticleUrl(
+                'ebay-integration'
+            ),
             'Ess_M2ePro::ebay_help_center_knowledge_base' => $this->support->getKnowledgebaseComponentUrl('ebay'),
 
-            'Ess_M2ePro::amazon_help_center_documentation' => $this->support->getDocumentationArticleUrl('x/BAAMB'),
+            'Ess_M2ePro::amazon_help_center_documentation' => $this->support->getDocumentationArticleUrl(
+                'amazon-integration'
+            ),
             'Ess_M2ePro::amazon_help_center_knowledge_base' => $this->support->getKnowledgebaseComponentUrl('amazon'),
 
-            'Ess_M2ePro::walmart_help_center_documentation' => $this->support->getDocumentationArticleUrl('x/Tf1IB'),
+            'Ess_M2ePro::walmart_help_center_documentation' => $this->support->getDocumentationArticleUrl(
+                'walmart-integration'
+            ),
             'Ess_M2ePro::walmart_help_center_knowledge_base' =>
                 $this->support->getKnowledgebaseComponentUrl('walmart'),
         ];

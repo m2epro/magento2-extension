@@ -67,7 +67,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 Select Account under which you want to manage this Listing. Assign the Policy Templates and
                 Magento Store View.<br/><br/>
                 <p>The detailed information can be found <a href="%url%" target="_blank">here</a></p>',
-                    $this->supportHelper->getDocumentationArticleUrl('x/Xf1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('create-a-new-listing')
                 ),
             ]
         );

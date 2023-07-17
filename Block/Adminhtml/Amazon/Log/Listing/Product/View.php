@@ -59,7 +59,9 @@ TEXT;
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 $message,
-                $this->supportHelper->getDocumentationArticleUrl('x/PZFCB#Logs&Events-M2EProListinglogs')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/amazon-integration/logs#502948b5d4264752a8b4f45880b9ca2a'
+                )
             ),
         ]);
 

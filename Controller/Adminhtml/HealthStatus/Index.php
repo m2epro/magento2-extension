@@ -46,7 +46,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\HealthStatus
         $this->addLeft($tabsBlock);
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HealthStatus::class));
 
-        $this->setPageHelpLink('x/2gY3B');
+        $this->setPageHelpLink('display/eBayMagento2/Help-Center');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Health Status'));

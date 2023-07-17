@@ -677,7 +677,9 @@ To remove the specified VAT rate from the Item Price on the channel and let eBay
 For more information, please check this <a href="%1" target='_blank'>article</a>
 TEXT
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/e-8UB#Taxation')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/ebay-integration/m2e-pro-listing/create-new-listing/step-2-policies/selling#d3f67ad57d374431b86d1810223fe3ce'
+                    )
                 ),
             ]
         );

@@ -16,7 +16,7 @@ class Index extends Marketplace
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace::class));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Marketplaces'));
-        $this->setPageHelpLink('x/Tf1IB');
+        $this->setPageHelpLink('walmart-integration');
 
         return $this->getResult();
     }

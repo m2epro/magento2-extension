@@ -29,7 +29,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
 
         $this->addContent($this->getLayout()->createBlock(ItemsByListing::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Items By Listing'));
-        $this->setPageHelpLink('x/Wv1IB ');
+        $this->setPageHelpLink('m2e-pro-listing-set-up ');
 
         return $this->getResult();
     }

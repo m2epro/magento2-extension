@@ -200,7 +200,7 @@ shipment notifications.</p><br/>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/Xv8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('orders')
                 ),
             ]
         );
@@ -795,7 +795,9 @@ HTML
                 'tooltip' => $this->__(
                     'Choose where the tax settings for your Magento Order will be taken from. See
                     <a href="%url%" target="_blank">this article</a> for more details.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/r4VcBQ')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m1/amazon-integration/sales-orders/tax-calculation-settings'
+                    )
                 ),
             ]
         );
@@ -850,7 +852,7 @@ HTML
                         "VAT won't be included in orders with UK shipment. Find more info "
                         . '<a href="%url%" target="_blank">here</a>.',
                         $this->supportHelper->getDocumentationArticleUrl(
-                            'x/r4VcBQ#TaxCalculationSettings-SkipTaxinUKOrders'
+                            'help/m1/amazon-integration/sales-orders/tax-calculation-settings'
                         )
                     )
                 ),

@@ -65,7 +65,7 @@ class ListRules extends AbstractForm
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/bf8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('display/m1/List+Rules')
                 ),
             ]
         );

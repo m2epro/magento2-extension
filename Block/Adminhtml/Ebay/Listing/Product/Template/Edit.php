@@ -63,7 +63,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         <p>Find more details on configuring Policies in the <a href="%url%" target="_blank">documentation</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/_v4UB')
+                    $this->supportHelper->getDocumentationArticleUrl('policy-set-up')
                 ),
                 'style' => 'margin-top: 30px',
             ]

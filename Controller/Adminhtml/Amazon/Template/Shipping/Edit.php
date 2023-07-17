@@ -50,7 +50,7 @@ class Edit extends Template
                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\Shipping\Edit::class)
         );
 
-        $this->setPageHelpLink('x/6-0kB');
+        $this->setPageHelpLink('help/m2/amazon-integration/configurations/policies/shipping-template-policies');
 
         return $this->getResultPage();
     }

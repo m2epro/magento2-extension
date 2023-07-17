@@ -60,7 +60,7 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
                     Catalog, the Item will be removed from the Listing and its sale will be stopped on Channel.</p><br>
                     <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->supportHelper->getDocumentationArticleUrl('x/uAMVB')
+                    $this->supportHelper->getDocumentationArticleUrl('auto-add-remove-rules')
                 ),
             ]
         );

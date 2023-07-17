@@ -46,7 +46,7 @@ class CategoryTemplateAssignByMagentoCategory extends \Ess\M2ePro\Controller\Adm
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/zeVaAg');
+        $this->setPageHelpLink('walmart-integration');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Category Policy')
         );

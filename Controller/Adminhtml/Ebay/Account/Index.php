@@ -18,7 +18,7 @@ class Index extends Account
     public function execute()
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account::class));
-        $this->setPageHelpLink('x/Cv8UB');
+        $this->setPageHelpLink('display/eBayMagentoV6X/Accounts');
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
 
         return $this->getResultPage();

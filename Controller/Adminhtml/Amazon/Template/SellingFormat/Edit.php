@@ -52,7 +52,7 @@ class Edit extends Template
                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit::class)
         );
 
-        $this->setPageHelpLink('x/Nv8UB');
+        $this->setPageHelpLink('help/m2/amazon-integration/configurations/policies/selling-policies');
 
         return $this->getResultPage();
     }

@@ -63,7 +63,9 @@ class RelistRules extends AbstractTab
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/af8UB')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/ebay-integration/m2e-pro-listing/create-new-listing/step-2-policies/synchronization/relist-action'
+                    )
                 ),
             ]
         );

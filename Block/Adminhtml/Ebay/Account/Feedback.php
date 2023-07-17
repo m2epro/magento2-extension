@@ -47,7 +47,7 @@ More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/pf0bB')
+                $this->supportHelper->getDocumentationArticleUrl('feedback')
             ),
         ]);
 

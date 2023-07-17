@@ -89,7 +89,7 @@ Settings. We recommend you to edit '<strong>Carrier Will Pick Up</strong>' and '
 Conditions.
 HTML
                         ,
-                        $this->supportHelper->getDocumentationArticleUrl('x/YAMVB')
+                        $this->supportHelper->getDocumentationArticleUrl('display/m2/Definition')
                     ),
                     'no_hide' => true,
                     'no_collapse' => true,

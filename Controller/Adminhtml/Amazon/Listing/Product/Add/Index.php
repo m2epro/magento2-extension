@@ -117,7 +117,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::class)
         );
-        $this->setPageHelpLink('x/tgMVB');
+        $this->setPageHelpLink('adding-magento-products-manually2');
     }
 
     public function stepOneSourceProducts()
@@ -163,7 +163,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/tgMVB');
+        $this->setPageHelpLink('adding-magento-products-manually2');
 
         $this->addContent(
             $this->getLayout()
@@ -225,7 +225,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/tgMVB');
+        $this->setPageHelpLink('adding-magento-products-manually2');
 
         $gridContainer = $this->getLayout()
                               ->createBlock(
@@ -280,13 +280,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/1QkVB');
+        $this->setPageHelpLink('help/m2/amazon-integration/m2e-pro-listings/asin-isbn-management');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Search Existing Amazon Products (ASIN/ISBN)')
         );
 
-        $this->setPageHelpLink('x/1QkVB');
+        $this->setPageHelpLink('help/m2/amazon-integration/m2e-pro-listings/asin-isbn-management');
 
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin::class)
@@ -307,7 +307,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         $this->deleteProductTypeTemplate($listingProductsIds);
 
-        $this->setPageHelpLink('x/1QkVB');
+        $this->setPageHelpLink('help/m2/amazon-integration/m2e-pro-listings/asin-isbn-management');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New ASIN/ISBN Creation'));
 
@@ -344,7 +344,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             __('Product Data Validation')
         );
-        $this->setPageHelpLink('x/FACOFg');
+        $this->setPageHelpLink('amazon-product-type');
 
         $block = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\ValidateProductTypes::class,

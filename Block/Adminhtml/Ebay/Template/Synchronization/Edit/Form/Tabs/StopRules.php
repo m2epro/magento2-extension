@@ -57,7 +57,7 @@ class StopRules extends AbstractTab
                     Conditions is met.<br/><br/>
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/a-8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('stop-action')
                 ),
             ]
         );

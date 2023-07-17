@@ -55,7 +55,7 @@ details.</p><br>
 <p>Click <strong>Save Config</strong> if you make any changes.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/KX50B')
+                    $this->supportHelper->getDocumentationArticleUrl('display/eBayMagentoV6X/Global+Settings')
                 ),
             ]
         );
@@ -254,8 +254,8 @@ performance of your Magento site and synchronization with Channels.</li>
 </ul>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/3Pxw'),
-                    $this->supportHelper->getDocumentationArticleUrl('x/1fxw')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000228224'),
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000228276')
                 ),
             ]
         );

@@ -25,7 +25,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         );
         $this->getResultPage()->getConfig()->getTitle()->prepend(__('All Unmanaged Items'));
 
-        $this->setPageHelpLink('x/KP8UB');
+        $this->setPageHelpLink('unmanaged-listings');
 
         return $this->getResult();
     }

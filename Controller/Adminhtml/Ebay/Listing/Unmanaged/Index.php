@@ -24,7 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Unmanaged::class)
         );
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('All Unmanaged Items'));
-        $this->setPageHelpLink('x/FP8UB');
+        $this->setPageHelpLink('the-unmanaged-listings');
 
         return $this->getResult();
     }

@@ -124,7 +124,9 @@ for your Magento Orders as well as specify the automatic creation of invoices an
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/Vv8UB')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/ebay-integration/configuration/account-set-up/order-import'
+                    )
                 ),
             ]
         );
@@ -256,7 +258,7 @@ HTML
                         for the creation of full-fledged products in your Magento catalog.
                         <a href="%url%" target="_blank">See why</a>',
                         $this->supportHelper->getDocumentationArticleUrl(
-                            'x/Vv8UB#Product-Is-Listed-by-Any-Other-Software'
+                            'help/m2/ebay-integration/configuration/account-set-up/order-import#42e3bf5561994c4e89b70a681c94a254'
                         )
                     )
                     . '</span>',
@@ -645,7 +647,9 @@ HTML
                 'tooltip' => $this->__(
                     'Enable to cancel or refund eBay orders and automatically update their statuses on the Channel.
                     Find more details <a href="%url%" target="_blank">here</a>.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/kP-kB')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m2/ebay-integration/sales-and-orders/orders-cancelation-refund'
+                    )
                 ),
             ]
         );
@@ -674,7 +678,9 @@ HTML
                 'tooltip' => $this->__(
                     'Choose where the tax settings for your Magento Order will be taken from. See
                     <a href="%url%" target="_blank">this article</a> for more details.',
-                    $this->supportHelper->getDocumentationArticleUrl('x/r4VcBQ#TaxCalculationSettings-TaxSource')
+                    $this->supportHelper->getDocumentationArticleUrl(
+                        'help/m1/amazon-integration/sales-orders/tax-calculation-settings'
+                    )
                 ),
             ]
         );

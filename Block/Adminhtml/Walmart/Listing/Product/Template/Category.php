@@ -41,7 +41,9 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Templ
     Press Add New Category Policy, to create a new Category Policy template.<br><br>
 
     The detailed information can be found <a href="%url%" target="_blank">here</a>.',
-                $this->supportHelper->getDocumentationArticleUrl('x/bf1IB')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/walmart-integration/m2e-pro-listing-set-up/configuring-policies/category-policy'
+                )
             ),
         ]);
 

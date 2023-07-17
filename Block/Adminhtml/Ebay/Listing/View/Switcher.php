@@ -57,7 +57,9 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
             <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
             ,
-            $this->supportHelper->getDocumentationArticleUrl('x/wP8UB')
+            $this->supportHelper->getDocumentationArticleUrl(
+                'help/m2/ebay-integration/m2e-pro-listing/listing-view-mode'
+            )
         );
     }
 

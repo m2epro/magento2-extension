@@ -67,7 +67,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 
             More detailed information about Policy configuration can be found
             <a href="%url%" target="_blank" class="external-link">here</a>.',
-            $this->supportHelper->getDocumentationArticleUrl('x/Gv8UB')
+            $this->supportHelper->getDocumentationArticleUrl('help/m2/amazon-integration/configurations/policies')
         );
 
         $this->appendHelpBlock(

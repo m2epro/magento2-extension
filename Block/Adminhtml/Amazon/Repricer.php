@@ -54,7 +54,7 @@ class Repricer extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
 <p>Click on the Amazon account in the grid to view additional settings.</p>
 HTML
                 ,
-                $this->supportHelper->getDocumentationArticleUrl('x/AAAZD')
+                'https://docs.m2ecloud.com/amazon-repricer'
             ),
         ]);
 

@@ -85,7 +85,7 @@ configure the automatic linking and moving settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/KP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('unmanaged-listings')
                 ),
             ]
         );

@@ -903,7 +903,7 @@ HTML
                     ‘Request a quantity discount’: QTY >= 5, price 4,75 £, where: QTY <= 5 is the number of
                     purchased Products to which the Discount will be applied, price 4,75 £ is the final Price
                     per Product with the Discount applied (7£ - 2,25).',
-                    $this->supportHelper->getDocumentationArticleUrl('x/8oZP')
+                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000228205')
                 )
                 . '</span>'
             );
@@ -1146,7 +1146,9 @@ JS
                 Quantity, VAT settings, etc.<br/><br/>
 
                 Head over to <a href="%url%" target="_blank" class="external-link">docs</a> for detailed information.',
-                $this->supportHelper->getDocumentationArticleUrl('x/Nv8UB')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/amazon-integration/configurations/policies/selling-policies'
+                )
             ),
         ]);
 

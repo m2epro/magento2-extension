@@ -70,7 +70,7 @@ Policy Templates.</p><br>
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/eP1IB')
+                    $this->supportHelper->getDocumentationArticleUrl('synchronization-policy')
                 ),
             ]
         );

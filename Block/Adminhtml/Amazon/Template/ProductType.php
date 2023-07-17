@@ -58,7 +58,7 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
             Here you can add a new Product Type, edit or delete existing ones.
             Learn how to manage Amazon Product Types in
             <a href="%url%" target="_blank" class="external-link">this article</a>.',
-            $this->supportHelper->getDocumentationArticleUrl('x/OP8UB')
+            $this->supportHelper->getDocumentationArticleUrl('description-policies')
         );
 
         $this->appendHelpBlock(

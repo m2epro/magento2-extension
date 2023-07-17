@@ -69,7 +69,7 @@ Category settings via M2E Pro.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('x/WP8UB')
+                    $this->supportHelper->getDocumentationArticleUrl('display/eBayMagentoV6X/eBay+Store')
                 ),
             ]
         );

@@ -21,7 +21,7 @@ class Index extends Marketplace
     {
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace::class));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Marketplaces'));
-        $this->setPageHelpLink('x/HP8UB');
+        $this->setPageHelpLink('amazon-marketplaces');
 
         return $this->getResult();
     }

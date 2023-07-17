@@ -63,7 +63,9 @@ TEXT;
         $helpBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
             'content' => $this->__(
                 $message,
-                $this->supportHelper->getDocumentationArticleUrl('x/gv1IB#Logs&Events-M2EProListinglogs')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/walmart-integration/logs#ec36505a9dfc4478a0b41d6c46aaca3d'
+                )
             ),
         ]);
 

@@ -72,10 +72,6 @@ define([
                 .observe('change', EbayTemplateDescriptionObj.condition_note_mode_change)
                 .simulate('change');
 
-            $('watermark_scale')
-                .observe('change', EbayTemplateDescriptionObj.watermark_scale_mode_change)
-                .simulate('change');
-
             $('watermark_mode')
                 .observe('change', EbayTemplateDescriptionObj.watermark_mode_change)
                 .simulate('change');
@@ -238,11 +234,6 @@ define([
                 self.setTextVisibilityMode(this, 'watermark_uploaded_image_container');
             }
 
-            if ($('watermark_scale').value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::WATERMARK_SCALE_MODE_STRETCH')) {
-                self.setTextVisibilityMode(this, 'watermark_position_container');
-            }
-
-            self.setTextVisibilityMode(this, 'watermark_scale_container');
             self.setTextVisibilityMode(this, 'watermark_transparent_container');
 
             if ($('watermark_transparent').value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::WATERMARK_TRANSPARENT_MODE_NO')) {
@@ -256,16 +247,6 @@ define([
             }
             else {
                 $('watermark_opacity_level_container').show();
-            }
-        },
-
-        watermark_scale_mode_change: function() {
-            var self = EbayTemplateDescriptionObj;
-
-            $('watermark_position_container').show();
-
-            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::WATERMARK_SCALE_MODE_STRETCH')) {
-                $('watermark_position_container').hide();
             }
         },
 

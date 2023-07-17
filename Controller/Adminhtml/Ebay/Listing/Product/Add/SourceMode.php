@@ -48,7 +48,7 @@ class SourceMode extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\A
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::class)
         );
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Add Magento Products'));
-        $this->setPageHelpLink('x/n-8UB');
+        $this->setPageHelpLink('display/AmazonMagentoV6X/Add+Magento+Products');
 
         return $this->getResult();
     }

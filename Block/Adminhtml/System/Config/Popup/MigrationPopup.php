@@ -40,7 +40,7 @@ class MigrationPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         $config = $this->moduleHelper->getConfig();
 
-        $url = $this->moduleSupport->getDocumentationArticleUrl('x/Ov0kB');
+        $url = $this->moduleSupport->getDocumentationArticleUrl('migration-from-m1-to-m2');
         $confirmContent = <<<HTML
 <p>You are going to run the migration of M2E Pro data from Magento v1.x to
 Magento v2.x. Before you proceed, please read the <a href="{$url}" target="_blank">Migration Guide.</a>.</p>

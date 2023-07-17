@@ -196,17 +196,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             }
         }
 
-        if (isset($this->rawData['watermark_settings']['scale'])) {
-            $watermarkSettings['scale'] = (int)$this->rawData['watermark_settings']['scale'];
-
-            if (
-                isset($this->rawData['old_watermark_settings']) &&
-                $this->rawData['watermark_settings']['scale'] !== $this->rawData['old_watermark_settings']['scale']
-            ) {
-                $hashChange = true;
-            }
-        }
-
         if (isset($this->rawData['watermark_settings']['transparent'])) {
             $watermarkSettings['transparent'] = (int)$this->rawData['watermark_settings']['transparent'];
 
@@ -331,8 +320,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             'watermark_settings' => \Ess\M2ePro\Helper\Json::encode(
                 [
-                    'position' => Description::WATERMARK_POSITION_TOP,
-                    'scale' => Description::WATERMARK_SCALE_MODE_NONE,
+                    'position' => Description::WATERMARK_POSITION_TOP_RIGHT,
                     'transparent' => Description::WATERMARK_TRANSPARENT_MODE_NO,
                     'opacity_level' => Description::WATERMARK_OPACITY_LEVEL_DEFAULT,
 

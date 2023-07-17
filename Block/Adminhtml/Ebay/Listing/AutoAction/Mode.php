@@ -27,6 +27,6 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\AbstractMode
 
     public function getHelpPageUrl()
     {
-        return $this->supportHelper->getDocumentationArticleUrl('x/uv8UB');
+        return $this->supportHelper->getDocumentationArticleUrl('set-auto-add-remove-rules');
     }
 }

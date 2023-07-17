@@ -70,7 +70,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Log\Listing
             $this->getResult()->getConfig()->getTitle()->prepend($this->__('Listings Logs & Events'));
         }
 
-        $this->setPageHelpLink('x/gv1IB');
+        $this->setPageHelpLink('help/m2/walmart-integration/logs');
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Log\Listing\Product\View::class)
         );

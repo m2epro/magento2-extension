@@ -16,7 +16,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Order::class));
-        $this->setPageHelpLink('x/xv4UB');
+        $this->setPageHelpLink('sales-and-orders');
 
         return $this->getResultPage();
     }

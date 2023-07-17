@@ -93,7 +93,7 @@ class View extends Main
 
         $this->globalData->setValue('view_listing', $listing);
 
-        $this->setPageHelpLink('x/Y-1IB');
+        $this->setPageHelpLink('help/m2/walmart-integration/m2e-pro-listing-set-up/managing-listing-products');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())

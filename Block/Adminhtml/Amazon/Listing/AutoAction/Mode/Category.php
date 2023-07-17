@@ -94,7 +94,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
                 create as many groups as you need, but one Magento Category can be used only in one Rule.</p><br>
                 <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                $this->supportHelper->getDocumentationArticleUrl('x/uAMVB')
+                $this->supportHelper->getDocumentationArticleUrl('auto-add-remove-rules')
             ),
         ]);
 

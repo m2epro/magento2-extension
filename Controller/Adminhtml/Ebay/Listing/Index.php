@@ -32,7 +32,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(__('Items By Listing'));
-        $this->setPageHelpLink('x/Fv8UB');
+        $this->setPageHelpLink('listings');
 
         return $this->getResult();
     }

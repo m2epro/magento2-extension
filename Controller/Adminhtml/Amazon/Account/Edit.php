@@ -74,7 +74,7 @@ class Edit extends Account
 
         $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs::class));
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit::class));
-        $this->setPageHelpLink('x/Hv8UB');
+        $this->setPageHelpLink('accounts');
 
         return $this->getResultPage();
     }

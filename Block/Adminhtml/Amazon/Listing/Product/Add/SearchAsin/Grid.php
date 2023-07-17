@@ -641,7 +641,9 @@ JS
                 "To have your products assigned to the existing ASIN/ISBN in the Amazon catalog, please configure"
                 . " Product Identifiers settings in Amazon > Configuration > Settings > Main"
                 . " or use <a href='%url%' target='_blank' class='external-link'>New ASIN creation</a> option.",
-                $this->supportHelper->getDocumentationArticleUrl('x/1QkVB')
+                $this->supportHelper->getDocumentationArticleUrl(
+                    'help/m2/amazon-integration/m2e-pro-listings/asin-isbn-management'
+                )
             );
 
             $this->js->add(
