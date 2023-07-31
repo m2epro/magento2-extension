@@ -1278,7 +1278,7 @@ define([
 
             // ---------------------------------------
             $$('#shipping_variant_locations_' + i + '_tr td')[0].innerHTML = '<div style="margin: 5px 10px">' + html + '</div>';
-            $$('#shipping_variant_locations_' + i + '_tr td')[0].innerHTML += '<div style="clear: both; margin-bottom: 10px;" />';
+            $$('#shipping_variant_locations_' + i + '_tr td')[0].innerHTML += '<div style="clear: both; margin-bottom: 10px;"></div>';
             // ---------------------------------------
 
             if (!EbayTemplateShippingObj.shippingMethods[i]) {

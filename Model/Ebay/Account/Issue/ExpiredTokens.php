@@ -185,13 +185,13 @@ TEXT
         if ($tokenExpirationTimeStamp <= 0 || $tokenExpirationTimeStamp > $dateInFutureOn10days->getTimestamp()) {
             return null;
         } else {
-            $tempMessage = $this->translationHelper->__(
-                <<<TEXT
-Attention! The Sell API token for <a href="%url%" target="_blank">"%name%"</a> eBay Account expires on %date%.
-You need to generate a new access token to reauthorize M2E Pro.
-TEXT
-                ,
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
+            $tempMessage = __(
+                'Please go to eBay > Configuration > Accounts > "%1" eBay Account >
+ General and click Get Token to generate a new one.',
+                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
+            );
+            $title = __(
+                'Attention! The Sell API token for "%1" eBay Account expires on %2.',
                 $this->helperData->escapeHtml($account->getParentObject()->getTitle()),
                 $this->_localeDate->formatDate(
                     $account->getSellApiTokenExpiredDate(),
@@ -199,33 +199,23 @@ TEXT
                     true
                 )
             );
-            $title = $this->translationHelper->__(
-                'Attention! The Sell API token for "%name%" eBay account is to expire.
-                    You need to generate a new access token to reauthorize M2E Pro.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
-            );
             $url = $this->getSupportUrl(
                 (int)$account->getId(),
                 $tokenExpirationTimeStamp,
                 \Magento\Framework\Message\MessageInterface::TYPE_ERROR,
                 __METHOD__
             );
-            $issue = $this->issueFactory->createNoticeDataObject($title, $tempMessage, $url);
+            $issue = $this->issueFactory->createWarningDataObject($title, $tempMessage, $url);
         }
 
         if ($tokenExpirationTimeStamp < $currentTimeStamp) {
-            $tempMessage = $this->translationHelper->__(
-                <<<TEXT
-Attention! The Sell API token for <a href="%url%" target="_blank">"%name%"</a> eBay account has expired.
-You need to generate a new access token to reauthorize M2E Pro.
-TEXT
-                ,
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
+            $tempMessage = __(
+                'Please go to eBay > Configuration > Accounts > "%1" eBay Account >
+ General and click Get Token to generate a new one.',
                 $this->helperData->escapeHtml($account->getParentObject()->getTitle())
             );
-            $title = $this->translationHelper->__(
-                'Attention! The Sell API token for "%name%" eBay account has expired.
-                    You need to generate a new access token to reauthorize M2E Pro.',
+            $title = __(
+                'Attention! The Sell API token for "%1" eBay Account has expired.',
                 $this->helperData->escapeHtml($account->getParentObject()->getTitle())
             );
             $url = $this->getSupportUrl(

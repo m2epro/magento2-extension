@@ -159,11 +159,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $paymentData;
     }
 
-    /**
-     * @return array
-     */
-    public function getShippingData()
+    public function getShippingData(): array
     {
+        $amazonAccount = $this->order->getAmazonAccount();
+
         $additionalData = '';
 
         if ($this->order->isPrime()) {
@@ -174,7 +173,9 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $additionalData .= 'Is Business | ';
         }
 
-        if ($this->order->isSoldByAmazon()) {
+        $isImportSoldByAmazon = $amazonAccount->isImportSoldByAmazonToMagentoOrder();
+
+        if ($isImportSoldByAmazon && $this->order->isSoldByAmazon()) {
             $additionalData .= 'Invoice by Amazon | ';
         }
 
@@ -200,9 +201,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         $shippingDateTo = $this->order->getShippingDateTo();
-        $isImportShipByDate = $this->order
-            ->getAmazonAccount()
-            ->isImportShipByDateToMagentoOrder();
+        $isImportShipByDate = $amazonAccount->isImportShipByDateToMagentoOrder();
 
         if (!empty($shippingDateTo) && $isImportShipByDate) {
             $shippingDate = $this->getHelper('Data')->gmtDateToTimezone(

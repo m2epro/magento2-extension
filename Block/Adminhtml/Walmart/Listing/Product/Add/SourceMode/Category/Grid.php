@@ -148,16 +148,19 @@ CSS
      */
     public function setCollection($collection)
     {
-        $collection->joinTable(
-            [
-                'ccp' => $this->databaseHelper
-                    ->getTableNameWithPrefix('catalog_category_product'),
-            ],
-            'product_id=entity_id',
-            ['category_id' => 'category_id']
-        );
+        $from = $collection->getSelect()->getPart('from');
+        if (empty($from['ccp'])) {
+            $collection->joinTable(
+                [
+                    'ccp' => $this->databaseHelper
+                        ->getTableNameWithPrefix('catalog_category_product'),
+                ],
+                'product_id=entity_id',
+                ['category_id' => 'category_id']
+            );
 
-        $collection->addFieldToFilter('category_id', $this->currentCategoryId);
+            $collection->addFieldToFilter('category_id', $this->currentCategoryId);
+        }
 
         parent::setCollection($collection);
     }

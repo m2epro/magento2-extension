@@ -96,7 +96,7 @@ class Product extends AbstractModel
 
             if ($attr && $attr->getFrontendInput() == 'multiselect') {
                 $value = $object->getData($attrCode);
-                $value = strlen($value) ? explode(',', $value) : [];
+                $value = strlen((string)$value) ? explode(',', $value) : [];
 
                 return $this->validateAttribute($value);
             }
@@ -131,7 +131,7 @@ class Product extends AbstractModel
                     );
                 }
             } elseif ($attr && $attr->getFrontendInput() == 'multiselect') {
-                $attributeValue = strlen($attributeValue) ? explode(',', $attributeValue) : [];
+                $attributeValue = strlen((string)$attributeValue) ? explode(',', $attributeValue) : [];
             }
 
             return (bool)$this->validateAttribute($attributeValue);

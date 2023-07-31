@@ -289,6 +289,7 @@ HTML
                      a new offer on Walmart.'
                 ),
                 'after_element_html' => $warningToolTip,
+                'required' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 

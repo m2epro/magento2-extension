@@ -137,9 +137,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'sale_time_start_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
             'sale_time_end_date_value' => $this->helperData->getCurrentGmtDate(false, 'Y-m-d'),
 
-            'item_weight_mode' => WalmartSellingFormat::WEIGHT_MODE_CUSTOM_VALUE,
+            'item_weight_mode' => WalmartSellingFormat::WEIGHT_MODE_CUSTOM_ATTRIBUTE,
             'item_weight_custom_value' => '',
-            'item_weight_custom_attribute' => '',
+            'item_weight_custom_attribute' => 'weight',
 
             'price_vat_percent' => 0,
 

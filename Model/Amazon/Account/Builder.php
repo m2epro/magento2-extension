@@ -356,6 +356,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             ? $this->rawData['magento_orders_settings'][$tempKey] : [];
 
         $keys = [
+            'sold_by_amazon',
             'ship_by_date',
             'update_without_track',
             'shipping_address_region_override',
@@ -478,6 +479,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'stock_mode' => 0,
                 ],
                 'shipping_information' => [
+                    'sold_by_amazon' => 1,
                     'ship_by_date' => 1,
                     'update_without_track' => 1,
                     'shipping_address_region_override' => 1,
