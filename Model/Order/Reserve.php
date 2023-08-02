@@ -314,9 +314,8 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 $qty = $item->getQtyReserved();
                 $item->setData('qty_reserved', 0);
 
-                $itemMagentoProduct = $item->getMagentoProduct()->getProduct();
-                if ($itemMagentoProduct->getTypeId() === 'bundle') {
-                    $this->ensureParentStockStatusInStock($itemMagentoProduct->getId());
+                if ($item->getMagentoProduct()->isBundleType()) {
+                    $this->ensureParentStockStatusInStock($item->getMagentoProduct()->getProductId());
                 }
             }
 
@@ -330,6 +329,13 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 /** @var \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem */
                 [$magentoProduct, $magentoStockItem] = $productData;
                 $productsAffectedCount++;
+
+                if ($item->getMagentoProduct()->isBundleType()) {
+                    $bundleDefaultQty = $item
+                        ->getMagentoProduct()
+                        ->getBundleDefaultQty($magentoProduct->getProductId());
+                    $qty *= $bundleDefaultQty;
+                }
 
                 $changeResult = $this->isMsiMode($magentoProduct)
                     ? $this->changeMSIProductQty($item, $magentoProduct, $magentoStockItem, $action, $qty, $transaction)

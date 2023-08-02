@@ -214,12 +214,20 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
             $optionsQtyArray = [];
 
             // grouping qty by product id
-            foreach ($variation->getOptions(true) as $option) {
+            $options = $variation->getOptions(true);
+            foreach ($options as $option) {
                 if (!$option->getProductId()) {
                     continue;
                 }
 
-                $optionsQtyArray[$option->getProductId()][] = $this->getOptionBaseValue($option);
+                $qty = $this->getOptionBaseValue($option);
+                $bundleDefaultQty = $this
+                    ->getMagentoProduct()
+                    ->getBundleDefaultQty($option->getProductId());
+
+                $qty /= $bundleDefaultQty;
+
+                $optionsQtyArray[$option->getProductId()][] = $qty;
             }
 
             foreach ($optionsQtyArray as $optionQty) {

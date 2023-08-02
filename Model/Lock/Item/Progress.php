@@ -83,6 +83,12 @@ class Progress extends \Ess\M2ePro\Model\AbstractModel
     {
         $contentData = $this->lockItemManager->getContentData();
 
+        if ($contentData === null) {
+            $this->lockItemManager->setContentData([]);
+
+            return $this;
+        }
+
         unset($contentData[self::CONTENT_DATA_KEY][$this->progressNick]);
 
         $this->lockItemManager->setContentData($contentData);

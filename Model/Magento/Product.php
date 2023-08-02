@@ -1062,6 +1062,23 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
+    public function getBundleDefaultQty(int $productId)
+    {
+        $product = $this->getProduct();
+        $productInstance = $this->getTypeInstance();
+        $optionCollection = $productInstance->getOptionsCollection($product);
+        $selectionsCollection = $productInstance->getSelectionsCollection($optionCollection->getAllIds(), $product);
+        $items = $selectionsCollection->getItems();
+
+        foreach ($items as $item) {
+            if ((int)$item->getId() === $productId) {
+                return $item->getSelectionQty();
+            }
+        }
+
+        return 1;
+    }
+
     // ---------------------------------------
 
     protected function calculateQty(
