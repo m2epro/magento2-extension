@@ -456,6 +456,13 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     // ---------------------------------------
 
+    public function isShippingIrregular(): bool
+    {
+        return (bool)$this->getData('shipping_irregular');
+    }
+
+    // ---------------------------------------
+
     /**
      * @return bool
      */

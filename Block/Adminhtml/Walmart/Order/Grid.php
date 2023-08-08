@@ -316,25 +316,64 @@ class Grid extends AbstractGrid
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));
-
-        if ($notes) {
-            $htmlNotesCount = __(
-                'You have a custom note for the order. It can be reviewed on the order detail page.'
-            );
-
-            $returnString .= <<<HTML
-<div class="note_icon admin__field-tooltip">
-    <a class="admin__field-tooltip-note-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content" style="right: -4.4rem">
-        <div class="walmart-identifiers">
-           {$htmlNotesCount}
-        </div>
-    </div>
-</div>
-HTML;
-        }
+        $returnString .= $this->formatNotes($notes);
 
         return $returnString;
+    }
+
+    /**
+     * @param string $text
+     * @param int $maxLength
+     *
+     * @return string
+     */
+    private function cutText(string $text, int $maxLength): string
+    {
+        return mb_strlen($text) > $maxLength ? mb_substr($text, 0, $maxLength) . "..." : $text;
+    }
+
+    /**
+     * @param $notes
+     *
+     * @return string
+     */
+    private function formatNotes($notes)
+    {
+        $notesHtml = '';
+        $maxLength = 250;
+
+        if (!$notes) {
+            return '';
+        }
+
+        $notesHtml .= <<<HTML
+    <div class="note_icon admin__field-tooltip">
+        <a class="admin__field-tooltip-note-action" href="javascript://"></a>
+        <div class="admin__field-tooltip-content" style="right: -4.4rem">
+            <div class="walmart-identifiers">
+HTML;
+
+        if (count($notes) === 1) {
+            $noteValue = $notes[0]->getNote();
+            $shortenedNote = $this->cutText($noteValue, $maxLength);
+            $notesHtml .= "<div>{$shortenedNote}</div>";
+        } else {
+            $notesHtml .= "<ul>";
+            foreach ($notes as $note) {
+                $noteValue = $note->getNote();
+                $shortenedNote = $this->cutText($noteValue, $maxLength);
+                $notesHtml .= "<li>{$shortenedNote}</li>";
+            }
+            $notesHtml .= "</ul>";
+        }
+
+        $notesHtml .= <<<HTML
+            </div>
+        </div>
+    </div>
+HTML;
+
+        return $notesHtml;
     }
 
     public function callbackColumnMagentoOrder($value, $row, $column, $isExport)

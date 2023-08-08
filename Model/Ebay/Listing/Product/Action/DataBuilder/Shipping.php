@@ -40,7 +40,12 @@ class Shipping extends AbstractModel
             'country' => $this->getShippingSource()->getCountry(),
             'address' => $this->getShippingSource()->getAddress(),
             'postal_code' => $this->getShippingSource()->getPostalCode(),
+            'shipping_irregular' => false,
         ];
+
+        if ($this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
+            $data['shipping_irregular'] = $this->getShippingTemplate()->isShippingIrregular();
+        }
 
         if (
             $this->getShippingTemplate()->isLocalShippingFlatEnabled() ||

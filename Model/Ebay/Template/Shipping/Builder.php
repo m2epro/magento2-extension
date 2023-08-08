@@ -104,6 +104,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data[$key] = isset($this->rawData[$key]) ? $this->rawData[$key] : '';
         }
 
+        $data['shipping_irregular'] = $this->getIrregularShippingValue($this->rawData);
+
         if (isset($this->rawData['local_shipping_rate_table'])) {
             $data['local_shipping_rate_table'] = \Ess\M2ePro\Helper\Json::encode(
                 $this->rawData['local_shipping_rate_table']
@@ -157,6 +159,18 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         }
 
         return $data;
+    }
+
+    private function getIrregularShippingValue(array $rawData): int
+    {
+        if (
+            !isset($rawData['local_shipping_mode'])
+            || $rawData['local_shipping_mode'] != \Ess\M2ePro\Model\Ebay\Template\Shipping::SHIPPING_TYPE_CALCULATED
+        ) {
+            return 0;
+        }
+
+        return (int)$rawData['shipping_irregular'];
     }
 
     //########################################
@@ -368,6 +382,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'excluded_locations' => \Ess\M2ePro\Helper\Json::encode([]),
 
             'local_shipping_mode' => Shipping::SHIPPING_TYPE_FLAT,
+            'shipping_irregular' => 0,
             'local_shipping_discount_promotional_mode' => 0,
             'local_shipping_discount_combined_profile_id' => \Ess\M2ePro\Helper\Json::encode([]),
             'local_shipping_rate_table_mode' => 0,

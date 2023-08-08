@@ -336,6 +336,28 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
+        $fieldSet->addField(
+            'shipping_irregular',
+            self::SELECT,
+            [
+                'name' => 'shipping[shipping_irregular]',
+                'label' => __('Irregular Package'),
+                'title' => __('Irregular Package'),
+                'values' => [
+                    ['value' => 0, 'label' => __('No')],
+                    ['value' => 1, 'label' => __('Yes')],
+                ],
+                'value' => $this->formData['shipping_irregular'],
+                'tooltip' => __(
+                    'Specify whether a package is irregular and cannot go through the stamping machine at the'
+                    . ' shipping service office and requires special or fragile handling.'
+                    . ' For calculated shipping only.'
+                ),
+            ]
+        );
+
+        // ---------------------------------------
+
         if ($this->canDisplayLocalShippingRateTable()) {
             $shippingRateTableModeToolTipHtmlAccept = $this->__(
                 <<<HTML

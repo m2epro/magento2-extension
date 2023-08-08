@@ -534,6 +534,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Shipping $dataBuilder */
         $dataBuilder = $this->getDataBuilder('shipping');
         $data = $dataBuilder->getBuilderData();
 

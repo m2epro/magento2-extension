@@ -6207,6 +6207,12 @@ class Installer
                                               ['default' => null]
                                           )
                                           ->addColumn(
+                                              'shipping_irregular',
+                                              Table::TYPE_SMALLINT,
+                                              null,
+                                              ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                          )
+                                          ->addColumn(
                                               'cash_on_delivery_cost',
                                               Table::TYPE_TEXT,
                                               255,

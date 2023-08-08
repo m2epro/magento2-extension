@@ -288,6 +288,9 @@ define([
             if (EbayTemplateShippingObj.isLocalShippingModeCalculated()) {
                 $('magento_block_ebay_template_shipping_form_data_international-wrapper').show();
                 $('local_shipping_methods_tr').show();
+                jQuery('.field-shipping_irregular').show();
+            } else {
+                jQuery('.field-shipping_irregular').hide();
             }
             // ---------------------------------------
 

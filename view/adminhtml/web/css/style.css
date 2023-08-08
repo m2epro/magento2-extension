@@ -574,7 +574,9 @@ a.walmart-listing-view-switch-variation-mode:before {
 .m2epro-field-tooltip-to-right .admin__field-tooltip-action {
     margin-left: 2rem;
 }
-
+.note_icon.admin__field-tooltip {
+    width: auto;
+}
 .admin__field-tooltip-note-action:before {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

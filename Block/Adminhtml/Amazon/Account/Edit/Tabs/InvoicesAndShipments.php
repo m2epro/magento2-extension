@@ -119,7 +119,7 @@ HTML
                         AmazonAccount::INVOICE_GENERATION_BY_AMAZON =>
                             __('I want Amazon to generate VAT Invoices'),
                         AmazonAccount::INVOICE_GENERATION_BY_EXTENSION =>
-                            __('I will upload my own Invoices'),
+                            __('M2E Pro will generate and upload invoices'),
                     ],
                     'value' => '',
                     'tooltip' => __(

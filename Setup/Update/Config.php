@@ -299,6 +299,9 @@ class Config extends AbstractConfig
                 'RemoveScaleFromWatermarkSetting',
                 'ChangeDocumentationUrl',
             ],
+            'y23_m08' => [
+                'AddShippingIrregularForEbay',
+            ]
         ];
     }
 
