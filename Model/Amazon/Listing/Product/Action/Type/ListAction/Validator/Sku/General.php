@@ -30,7 +30,7 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             return false;
         }
 
-        if (strlen($sku) > self::SKU_MAX_LENGTH) {
+        if (mb_strlen($sku) > self::SKU_MAX_LENGTH) {
             $this->addMessage('The length of SKU must be less than 40 characters.');
 
             return false;

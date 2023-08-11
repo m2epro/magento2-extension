@@ -82,11 +82,13 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 
                 /** @var \Ess\M2ePro\Model\Walmart\Order\Item $item */
                 $item = $parentObject->getChildObject();
+                $qtyPurchased = $item->getQtyPurchased();
 
                 /**
                  * Walmart returns the same Order Item more than one time with single QTY. That data was merged
                  */
                 $mergedOrderItems = $item->getMergedWalmartOrderItemIds();
+                $walmartOrderItemsCount = 1 + count($mergedOrderItems);
                 $orderItemId = $item->getWalmartOrderItemId();
                 while ($mergedOrderItemId = array_shift($mergedOrderItems)) {
                     if (!isset($data['refunded_qty'][$mergedOrderItemId])) {
@@ -100,7 +102,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                  * - Walmart Order Item QTY is always equals 1
                  */
                 $itemQtyRef = isset($data['refunded_qty'][$orderItemId]) ? $data['refunded_qty'][$orderItemId] : 0;
-                $itemQty = 1;
+                $itemQty = $qtyPurchased / $walmartOrderItemsCount;
 
                 if ($itemQtyRef >= $itemQty) {
                     continue;

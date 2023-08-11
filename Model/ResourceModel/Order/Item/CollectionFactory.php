@@ -1,6 +1,6 @@
 <?php
 
-namespace Ess\M2ePro\Model\ResourceModel\Account;
+namespace Ess\M2ePro\Model\ResourceModel\Order\Item;
 
 class CollectionFactory
 {

@@ -65,11 +65,11 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
         }
 
         $orderItem = $this->getOrderItem($additionalData);
-        $itemQty = $orderItem->getChildObject()->getQtyPurchased();
+        $itemQtyPurchased = $orderItem->getChildObject()->getQtyPurchased();
         $qtyAvailable = (int)$this->shipmentItem->getQty();
 
-        if ($itemQty > $qtyAvailable) {
-            $itemQty = $qtyAvailable;
+        if ($itemQtyPurchased > $qtyAvailable) {
+            $itemQtyPurchased = $qtyAvailable;
         }
 
         $orderItemAdditionalData = $orderItem->getAdditionalData();
@@ -88,18 +88,19 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
          * - Walmart returns the same Order Item more than one time with single QTY. That data was merged.
          * - Walmart Order Item QTY is always equals 1.
          */
+
+        $itemQty = $itemQtyPurchased / count($orderItemIds);
+
         $items = [];
         foreach ($orderItemIds as $orderItemId) {
-            if ($itemQty <= 0) {
+            if ($itemQtyPurchased <= 0) {
                 continue;
             }
 
             $items[$orderItemId] = [
                 'walmart_order_item_id' => $orderItemId,
-                'qty' => 1,
+                'qty' => $itemQty,
             ];
-
-            $itemQty--;
         }
 
         $orderItemIdsInShipped += array_keys($items);

@@ -76,7 +76,9 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
                 $orderBuilder->initialize($account, $orderData);
 
                 $order = $orderBuilder->process();
-                $order && $orders[] = $order;
+                if ($order) {
+                    $orders[] = $order;
+                }
             } catch (\Exception $e) {
                 $this->_synchronizationLog->addMessageFromException($e);
                 $this->getHelper('Module_Exception')->process($e);

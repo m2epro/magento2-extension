@@ -198,13 +198,7 @@ class Variations extends AbstractModel
             return $ebayVariation->getOnlineSku();
         }
 
-        $sku = $ebayVariation->getSku();
-
-        if (strlen($sku) >= \Ess\M2ePro\Helper\Component\Ebay::VARIATION_SKU_MAX_LENGTH) {
-            $sku = $this->dataHelper->hashString($sku, 'sha1', 'RANDOM_');
-        }
-
-        return $sku;
+        return $ebayVariation->getSku();
     }
 
     /**

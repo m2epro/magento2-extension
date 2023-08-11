@@ -14,6 +14,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var bool */
     private $previousBuyerCancellationRequested;
+    /** @var int */
+    private $walmartOrderItemId;
+    /** @var array */
+    private $mergedWalmartOrderItemIds = [];
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -29,7 +33,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     {
         // Init general data
         // ---------------------------------------
-        $this->setData('walmart_order_item_id', $data['walmart_order_item_id']);
+        $this->walmartOrderItemId = (int)$data['walmart_order_item_id'];
+        $this->setData('walmart_order_item_id', $this->walmartOrderItemId);
         $this->setData('status', $data['status']);
         $this->setData('order_id', $data['order_id']);
         $this->setData('sku', trim($data['sku']));
@@ -57,6 +62,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
          */
         // ---------------------------------------
         if (!empty($data['merged_walmart_order_item_ids'])) {
+            $this->mergedWalmartOrderItemIds = $data['merged_walmart_order_item_ids'];
             $this->setData(
                 'merged_walmart_order_item_ids',
                 \Ess\M2ePro\Helper\Json::encode($data['merged_walmart_order_item_ids'])
@@ -74,14 +80,14 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public function process()
     {
         /** @var \Ess\M2ePro\Model\Order\Item $existItem */
-        $existItem = $this->walmartFactory->getObject('Order\Item')->getCollection()
-                                          ->addFieldToFilter(
-                                              'walmart_order_item_id',
-                                              $this->getData('walmart_order_item_id')
-                                          )
-                                          ->addFieldToFilter('order_id', $this->getData('order_id'))
-                                          ->addFieldToFilter('sku', $this->getData('sku'))
-                                          ->getFirstItem();
+        $existItem = $this
+            ->walmartFactory
+            ->getObject('Order\Item')
+            ->getCollection()
+            ->addFieldToFilter('order_id', $this->getData('order_id'))
+            ->addFieldToFilter('sku', $this->getData('sku'))
+            ->addFieldToFilter('walmart_order_item_id', $this->getAllWalmartOrderItemIds())
+            ->getFirstItem();
 
         $this->previousBuyerCancellationRequested = false;
         if ($existItem->getId()) {
@@ -97,6 +103,15 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $walmartItem = $existItem->getChildObject();
+
+        if (
+            $existItem->getId() !== null
+            && $walmartItem->getWalmartOrderItemId() !== $this->walmartOrderItemId
+        ) {
+            $this->setData('walmart_order_item_id', $walmartItem->getWalmartOrderItemId());
+            $this->setData('merged_walmart_order_item_ids', $walmartItem->getData('merged_walmart_order_item_ids'));
+        }
+
         foreach ($this->getData() as $key => $value) {
             if (!$existItem->getId() || ($walmartItem->hasData($key) && $walmartItem->getData($key) != $value)) {
                 $walmartItem->addData($this->getData());
@@ -114,5 +129,17 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     public function getPreviousBuyerCancellationRequested(): bool
     {
         return $this->previousBuyerCancellationRequested;
+    }
+
+    private function getAllWalmartOrderItemIds(): array
+    {
+        if ($this->mergedWalmartOrderItemIds === []) {
+            return [$this->walmartOrderItemId];
+        }
+
+        $allIds = $this->mergedWalmartOrderItemIds;
+        $allIds[] = $this->walmartOrderItemId;
+
+        return array_map('intval', $allIds);
     }
 }

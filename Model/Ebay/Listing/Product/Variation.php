@@ -486,7 +486,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
                 . $this->getHelper('Data')->convertStringToSku($option->getOption());
         }
 
-        if (strlen($sku) >= 80) {
+        if (mb_strlen($sku) > \Ess\M2ePro\Helper\Component\Ebay::VARIATION_SKU_MAX_LENGTH) {
             $sku = 'RANDOM_' . sha1($sku);
         }
 

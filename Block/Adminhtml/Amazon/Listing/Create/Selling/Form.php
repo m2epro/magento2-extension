@@ -225,12 +225,9 @@ class Form extends AbstractForm
                 ],
                 'value' => $formData['generate_sku_mode'],
                 'tooltip' => $this->__(
-                    'If <strong>Yes</strong>, then if Merchant SKU of the Amazon Item you list is found in the
-                    Unmanaged Listings,
-                    M2E Pro Listings or among the Amazon Items that are currently in process of Listing,
-                    another SKU will be automatically created and the Amazon Item will be Listed.<br/><br/>
-                    Has to be set to <strong>Yes</strong> if you are going to use the same
-                    Magento Product under different ASIN(s)/ISBN(s)'
+                    'Enable this option to allow M2E Pro to generate a new SKU on Amazon
+                     if the product\'s SKU already exists there. Useful for listing the same Magento product on Amazon
+                      more than once (e.g., listing it as both AFN and MFN).'
                 ),
             ]
         );

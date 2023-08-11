@@ -312,7 +312,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
         }
 
         $sku = $this->getSku();
-        if (strlen($sku) > \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
+        if (mb_strlen($sku) > \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH) {
             $hashLength = 10;
             $savedSkuLength = \Ess\M2ePro\Helper\Magento\Product::SKU_MAX_LENGTH - $hashLength - 1;
             $hash = $this->getHelper('Data')->generateUniqueHash($sku, $hashLength);

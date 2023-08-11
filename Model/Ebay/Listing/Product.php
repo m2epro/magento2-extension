@@ -874,7 +874,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $sku = $this->getMagentoProduct()->getSku();
 
-        if (strlen($sku) >= 50) {
+        if (mb_strlen($sku) > \Ess\M2ePro\Helper\Component\Ebay::ITEM_SKU_MAX_LENGTH) {
             $sku = 'RANDOM_' . sha1($sku);
         }
 

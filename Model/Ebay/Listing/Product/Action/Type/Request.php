@@ -380,13 +380,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      */
     public function getSku()
     {
-        $sku = $this->getEbayListingProduct()->getSku();
-
-        if (strlen($sku) > \Ess\M2ePro\Helper\Component\Ebay::ITEM_SKU_MAX_LENGTH) {
-            $sku = $this->getHelper('Data')->hashString($sku, 'sha1', 'RANDOM_');
-        }
-
-        return $sku;
+        return $this->getEbayListingProduct()->getSku();
     }
 
     /**

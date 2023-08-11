@@ -72,16 +72,19 @@ class PretendedToBeSimple extends DefaultObject implements ItemToShipLoaderInter
          * - Walmart returns the same Order Item more than one time with single QTY. That data was merged.
          * - Walmart Order Item QTY is always equals 1.
          */
-        $items = [];
         $orderItemIds = array_merge(
             [$orderItem->getChildObject()->getWalmartOrderItemId()],
             $orderItem->getChildObject()->getMergedWalmartOrderItemIds()
         );
 
+        $qtyPurchased = $orderItem->getChildObject()->getQtyPurchased();
+        $itemQty = $qtyPurchased / count($orderItemIds);
+
+        $items = [];
         foreach ($orderItemIds as $orderItemId) {
             $items[] = [
                 'walmart_order_item_id' => $orderItemId,
-                'qty' => 1,
+                'qty' => $itemQty,
             ];
         }
 

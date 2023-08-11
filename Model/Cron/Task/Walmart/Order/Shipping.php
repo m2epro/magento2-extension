@@ -42,6 +42,7 @@ class Shipping extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $order = $this->parentFactory->getObjectLoaded(Walmart::NICK, 'Order', $orderChange->getOrderId());
             $order->getLog()->setInitiator($orderChange->getCreatorType());
 
+            /** @var \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Shipping $actionHandler */
             $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Shipping');
             $actionHandler->setOrder($order);
             $actionHandler->setOrderChange($orderChange);

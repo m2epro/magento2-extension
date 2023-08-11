@@ -42,6 +42,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $order = $this->parentFactory->getObjectLoaded(Walmart::NICK, 'Order', $orderChange->getOrderId());
             $order->getLog()->setInitiator($orderChange->getCreatorType());
 
+            /** @var \Ess\M2ePro\Model\Walmart\Order\Action\Handler\Refund $actionHandler */
             $actionHandler = $this->modelFactory->getObject('Walmart_Order_Action_Handler_Refund');
             $actionHandler->setOrder($order);
             $actionHandler->setOrderChange($orderChange);
