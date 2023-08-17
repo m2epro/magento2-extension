@@ -69,11 +69,6 @@ class ShippingDetails extends \Ess\M2ePro\Api\DataObject implements
         return $inStorePickUp;
     }
 
-    public function getCashOnDeliveryCost(): float
-    {
-        return (float)$this->getData(self::CASH_ON_DELIVERY_COST_KEY);
-    }
-
     public function getAddress(): \Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\AddressInterface
     {
         $address = $this->addressFactory->create();

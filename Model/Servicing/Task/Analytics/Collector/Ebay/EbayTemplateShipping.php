@@ -90,7 +90,6 @@ class EbayTemplateShipping implements \Ess\M2ePro\Model\Servicing\Task\Analytics
                     $item->getData('local_shipping_discount_promotional_mode'),
                 'local_shipping_discount_combined_profile_id' =>
                     $item->getData('local_shipping_discount_combined_profile_id'),
-                'cash_on_delivery_cost' => $item->getData('cash_on_delivery_cost'),
                 'international_shipping_mode' => $item->getData('international_shipping_mode'),
                 'international_shipping_discount_promotional_mode' =>
                     $item->getData('international_shipping_discount_promotional_mode'),

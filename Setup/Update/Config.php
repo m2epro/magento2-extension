@@ -301,6 +301,9 @@ class Config extends AbstractConfig
             ],
             'y23_m08' => [
                 'AddShippingIrregularForEbay',
+                'AddIsGetDeliveryPreferencesColumnToAmazonOrderTable',
+                'RemoveCashOnDelivery',
+                'RemoveAmazonDescriptionPolicyRelatedData',
             ]
         ];
     }

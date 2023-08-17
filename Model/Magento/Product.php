@@ -1062,7 +1062,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    public function getBundleDefaultQty(int $productId)
+    public function getBundleDefaultQty(int $productId): int
     {
         $product = $this->getProduct();
         $productInstance = $this->getTypeInstance();
@@ -1072,7 +1072,12 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($items as $item) {
             if ((int)$item->getId() === $productId) {
-                return $item->getSelectionQty();
+                $qty = (int)$item->getSelectionQty();
+                if ($qty > 0) {
+                    return $qty;
+                }
+
+                return 1;
             }
         }
 

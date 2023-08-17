@@ -226,6 +226,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'group' => self::GROUP_AMAZON,
         ],
+        \Ess\M2ePro\Model\Cron\Task\Amazon\Order\DeliveryPreferences::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'group' => self::GROUP_AMAZON,
+        ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'group' => self::GROUP_AMAZON,

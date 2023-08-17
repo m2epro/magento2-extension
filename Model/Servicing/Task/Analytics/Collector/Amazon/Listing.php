@@ -67,12 +67,8 @@ class Listing implements \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorInt
                 'auto_website_deleting_mode' => $item->getData('auto_website_deleting_mode'),
                 'update_date' => $item->getData('update_date'),
                 'create_date' => $item->getData('create_date'),
-                'auto_global_adding_description_template_id' =>
-                    $childItem->getData('auto_global_adding_description_template_id'),
                 'auto_global_adding_product_type_template_id' =>
                     $childItem->getData('auto_global_adding_product_type_template_id'),
-                'auto_website_adding_description_template_id' =>
-                    $childItem->getData('auto_website_adding_description_template_id'),
                 'auto_website_adding_product_type_template_id' =>
                     $childItem->getData('auto_website_adding_product_type_template_id'),
                 'template_selling_format_id' => $childItem->getData('template_selling_format_id'),
@@ -88,11 +84,6 @@ class Listing implements \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorInt
                 'condition_custom_attribute' => $childItem->getData('condition_custom_attribute'),
                 'condition_note_mode' => $childItem->getData('condition_note_mode'),
                 'condition_note_value' => $childItem->getData('condition_note_value'),
-                'image_main_mode' => $childItem->getData('image_main_mode'),
-                'image_main_attribute' => $childItem->getData('image_main_attribute'),
-                'gallery_images_mode' => $childItem->getData('gallery_images_mode'),
-                'gallery_images_limit' => $childItem->getData('gallery_images_limit'),
-                'gallery_images_attribute' => $childItem->getData('gallery_images_attribute'),
                 'gift_wrap_mode' => $childItem->getData('gift_wrap_mode'),
                 'gift_wrap_attribute' => $childItem->getData('gift_wrap_attribute'),
                 'gift_message_mode' => $childItem->getData('gift_message_mode'),

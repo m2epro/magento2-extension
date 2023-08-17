@@ -1054,4 +1054,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return parent::delete();
     }
+
+    public function setIsGetDeliveryPreferences(): Order
+    {
+        $this->setData('is_get_delivery_preferences', 1);
+
+        return $this;
+    }
 }

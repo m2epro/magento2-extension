@@ -156,14 +156,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     /**
      * @return bool
      */
-    public function isCashOnDeliveryEnabled()
-    {
-        return (bool)(int)$this->getData('is_cash_on_delivery');
-    }
-
-    /**
-     * @return bool
-     */
     public function isFreightShippingEnabled()
     {
         return (bool)(int)$this->getData('is_freight_shipping');

@@ -143,9 +143,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['excluded_locations'] = $this->rawData['excluded_locations'];
         }
 
-        $key = 'cash_on_delivery_cost';
-        $data[$key] = (isset($this->rawData[$key]) && $this->rawData[$key] != '') ? $this->rawData[$key] : null;
-
         $modes = [
             'local_shipping_mode',
             'local_shipping_discount_promotional_mode',
@@ -376,7 +373,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'dispatch_time_mode' => Shipping::DISPATCH_TIME_MODE_VALUE,
             'dispatch_time_value' => 1,
             'dispatch_time_attribute' => '',
-            'cash_on_delivery_cost' => null,
             'global_shipping_program' => 0,
             'cross_border_trade' => Shipping::CROSS_BORDER_TRADE_NONE,
             'excluded_locations' => \Ess\M2ePro\Helper\Json::encode([]),

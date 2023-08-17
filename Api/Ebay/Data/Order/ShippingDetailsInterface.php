@@ -13,7 +13,6 @@ interface ShippingDetailsInterface
     public const GLOBAL_SHIPPING_DETAILS_KEY = 'global_shipping_details';
     public const CLICK_AND_COLLECT_DETAILS_KEY = 'click_and_collect_details';
     public const IN_STORE_PICKUP_DETAILS_KEY = 'in_store_pickup_details';
-    public const CASH_ON_DELIVERY_COST_KEY = 'cash_on_delivery_cost';
 
     /**
      * @return \Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\AddressInterface
@@ -49,9 +48,4 @@ interface ShippingDetailsInterface
      * @return \Ess\M2ePro\Api\Ebay\Data\Order\ShippingDetails\InStorePickupDetailsInterface
      */
     public function getInStorePickupDetails(): ShippingDetails\InStorePickupDetailsInterface;
-
-    /**
-     * @return float
-     */
-    public function getCashOnDeliveryCost(): float;
 }

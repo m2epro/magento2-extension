@@ -374,17 +374,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     }
 
     /**
-     * @return float
-     */
-    public function getCashOnDeliveryCost()
-    {
-        $shippingDetails = $this->getShippingDetails();
-
-        return isset($shippingDetails['cash_on_delivery_cost'])
-            ? (float)$shippingDetails['cash_on_delivery_cost'] : 0.0;
-    }
-
-    /**
      * @return \Ess\M2ePro\Model\Ebay\Order\ShippingAddress
      */
     public function getShippingAddress()

@@ -176,6 +176,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         return $this->getData('store_id');
     }
 
+    public function getCreateDate()
+    {
+        return $this->getData('create_date');
+    }
+
     /**
      * @return int
      */

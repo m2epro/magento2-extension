@@ -220,6 +220,8 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m07\RemoveScaleFromWatermarkSetting::class,
             \Ess\M2ePro\Setup\Update\y23_m07\ChangeDocumentationUrl::class,
             \Ess\M2ePro\Setup\Update\y23_m08\AddShippingIrregularForEbay::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddIsGetDeliveryPreferencesColumnToAmazonOrderTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\RemoveAmazonDescriptionPolicyRelatedData::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

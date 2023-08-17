@@ -4522,12 +4522,6 @@ class Installer
                                          ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                      )
                                      ->addColumn(
-                                         'is_cash_on_delivery',
-                                         Table::TYPE_SMALLINT,
-                                         null,
-                                         ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                     )
-                                     ->addColumn(
                                          'is_global_shipping_program',
                                          Table::TYPE_SMALLINT,
                                          null,
@@ -4559,7 +4553,6 @@ class Installer
                                      )
                                      ->addIndex('is_calculated_shipping', 'is_calculated_shipping')
                                      ->addIndex('is_managed_payments', 'is_managed_payments')
-                                     ->addIndex('is_cash_on_delivery', 'is_cash_on_delivery')
                                      ->addIndex('is_charity', 'is_charity')
                                      ->addIndex('is_english_measurement_system', 'is_english_measurement_system')
                                      ->addIndex('is_freight_shipping', 'is_freight_shipping')
@@ -6213,12 +6206,6 @@ class Installer
                                               ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                           )
                                           ->addColumn(
-                                              'cash_on_delivery_cost',
-                                              Table::TYPE_TEXT,
-                                              255,
-                                              ['default' => null]
-                                          )
-                                          ->addColumn(
                                               'international_shipping_mode',
                                               Table::TYPE_SMALLINT,
                                               null,
@@ -7048,7 +7035,6 @@ class Installer
                     'is_english_measurement_system' => 1,
                     'is_metric_measurement_system' => 0,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 1,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7073,7 +7059,6 @@ class Installer
                     'is_english_measurement_system' => 1,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7098,7 +7083,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 1,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7123,7 +7107,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7148,7 +7131,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 1,
@@ -7173,7 +7155,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
 
@@ -7199,7 +7180,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 1,
@@ -7224,7 +7204,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 1,
@@ -7249,7 +7228,6 @@ class Installer
                     'is_english_measurement_system' => 1,
                     'is_metric_measurement_system' => 0,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 1,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7274,7 +7252,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 1,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 1,
@@ -7299,7 +7276,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7324,7 +7300,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7349,7 +7324,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 1,
@@ -7374,7 +7348,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7399,7 +7372,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7424,7 +7396,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7449,7 +7420,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7474,7 +7444,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7499,7 +7468,6 @@ class Installer
                     'is_english_measurement_system' => 1,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7524,7 +7492,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7549,7 +7516,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -7574,7 +7540,6 @@ class Installer
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
-                    'is_cash_on_delivery' => 0,
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
@@ -8334,19 +8299,7 @@ class Installer
                                        ['unsigned' => true, 'primary' => true, 'nullable' => false]
                                    )
                                    ->addColumn(
-                                       'auto_global_adding_description_template_id', // @deprecated
-                                       Table::TYPE_INTEGER,
-                                       null,
-                                       ['unsigned' => true, 'default' => null]
-                                   )
-                                   ->addColumn(
                                        'auto_global_adding_product_type_template_id',
-                                       Table::TYPE_INTEGER,
-                                       null,
-                                       ['unsigned' => true, 'default' => null]
-                                   )
-                                   ->addColumn(
-                                       'auto_website_adding_description_template_id', // @deprecated
                                        Table::TYPE_INTEGER,
                                        null,
                                        ['unsigned' => true, 'default' => null]
@@ -8436,36 +8389,6 @@ class Installer
                                        ['nullable' => false]
                                    )
                                    ->addColumn(
-                                       'image_main_mode', // @deprecated
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'image_main_attribute', // @deprecated
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'gallery_images_mode', // @deprecated
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false]
-                                   )
-                                   ->addColumn(
-                                       'gallery_images_limit', // @deprecated
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                   )
-                                   ->addColumn(
-                                       'gallery_images_attribute', // @deprecated
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['nullable' => false]
-                                   )
-                                   ->addColumn(
                                        'gift_wrap_mode',
                                        Table::TYPE_SMALLINT,
                                        null,
@@ -8532,17 +8455,9 @@ class Installer
                                        ['default' => null]
                                    )
                                    ->addIndex(
-                                       'auto_global_adding_description_template_id',
-                                       'auto_global_adding_description_template_id'
-                                   ) // @deprecated
-                                   ->addIndex(
                                        'auto_global_adding_product_type_template_id`',
                                        'auto_global_adding_product_type_template_id'
                                    )
-                                   ->addIndex(
-                                       'auto_website_adding_description_template_id',
-                                       'auto_website_adding_description_template_id'
-                                   ) // @deprecated
                                    ->addIndex(
                                        'auto_website_adding_product_type_template_id',
                                        'auto_website_adding_product_type_template_id'
@@ -8567,21 +8482,11 @@ class Installer
                                                         ['unsigned' => true, 'primary' => true, 'nullable' => false]
                                                     )
                                                     ->addColumn(
-                                                        'adding_description_template_id', // @deprecated
-                                                        Table::TYPE_INTEGER,
-                                                        null,
-                                                        ['unsigned' => true, 'default' => null]
-                                                    )
-                                                    ->addColumn(
                                                         'adding_product_type_template_id',
                                                         Table::TYPE_INTEGER,
                                                         null,
                                                         ['unsigned' => true, 'default' => null]
                                                     )
-                                                    ->addIndex(
-                                                        'adding_description_template_id',
-                                                        'adding_description_template_id'
-                                                    ) // @deprecated
                                                     ->addIndex(
                                                         'adding_product_type_template_id',
                                                         'adding_product_type_template_id'
@@ -8849,12 +8754,6 @@ class Installer
         );
         $amazonListingProductTable->addColumn(
             'online_details_data',
-            Table::TYPE_TEXT,
-            40,
-            ['default' => null]
-        );
-        $amazonListingProductTable->addColumn(
-            'online_images_data', // @deprecated
             Table::TYPE_TEXT,
             40,
             ['default' => null]
@@ -9259,6 +9158,12 @@ class Installer
                                      null,
                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                  )
+                                ->addColumn(
+                                    'is_get_delivery_preferences',
+                                    Table::TYPE_SMALLINT,
+                                    null,
+                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                )
                                  ->addColumn(
                                      'invoice_data_report',
                                      Table::TYPE_TEXT,
@@ -10005,606 +9910,6 @@ class Installer
                                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonTemplateProductTypeTable);
 
-        $amazonTemplateDescriptionTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_template_description')
-        )
-                                               ->addColumn(
-                                                   'template_description_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                               )
-                                               ->addColumn(
-                                                   'marketplace_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   ['unsigned' => true, 'nullable' => false]
-                                               )
-                                               ->addColumn(
-                                                   'is_new_asin_accepted',
-                                                   Table::TYPE_SMALLINT,
-                                                   null,
-                                                   ['unsigned' => true, 'default' => 0]
-                                               )
-                                               ->addColumn(
-                                                   'product_data_nick',
-                                                   Table::TYPE_TEXT,
-                                                   255,
-                                                   ['default' => null]
-                                               )
-                                               ->addColumn(
-                                                   'category_path',
-                                                   Table::TYPE_TEXT,
-                                                   255,
-                                                   ['default' => null]
-                                               )
-                                               ->addColumn(
-                                                   'browsenode_id',
-                                                   Table::TYPE_DECIMAL,
-                                                   [20, 0],
-                                                   ['unsigned' => true, 'default' => null]
-                                               )
-                                               ->addIndex('marketplace_id', 'marketplace_id')
-                                               ->addIndex('is_new_asin_accepted', 'is_new_asin_accepted')
-                                               ->addIndex('product_data_nick', 'product_data_nick')
-                                               ->addIndex('browsenode_id', 'browsenode_id')
-                                               ->setOption('type', 'INNODB')
-                                               ->setOption('charset', 'utf8')
-                                               ->setOption('collate', 'utf8_general_ci')
-                                               ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($amazonTemplateDescriptionTable);
-
-        // @deprecated
-        $amazonTemplateDescriptionDefinitionTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_template_description_definition')
-        )
-                                                         ->addColumn(
-                                                             'template_description_id',
-                                                             Table::TYPE_INTEGER,
-                                                             null,
-                                                             [
-                                                                 'unsigned' => true,
-                                                                 'primary' => true,
-                                                                 'nullable' => false,
-                                                             ]
-                                                         )
-                                                         ->addColumn(
-                                                             'title_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'title_template',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'brand_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'brand_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'brand_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'manufacturer_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'manufacturer_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'manufacturer_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'manufacturer_part_number_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'manufacturer_part_number_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'manufacturer_part_number_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_package_quantity_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_package_quantity_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_package_quantity_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'number_of_items_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'number_of_items_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'number_of_items_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'msrp_rrp_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'msrp_rrp_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => true, 'default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_length_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_width_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_height_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_length_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_width_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_height_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_unit_of_measure_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_unit_of_measure_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_volume_unit_of_measure_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_weight_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_weight_custom_value',
-                                                             Table::TYPE_DECIMAL,
-                                                             [10, 2],
-                                                             ['unsigned' => true, 'default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_weight_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_weight_unit_of_measure_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_weight_unit_of_measure_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'item_dimensions_weight_unit_of_measure_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_length_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_width_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_height_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_length_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_width_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_height_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_unit_of_measure_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_unit_of_measure_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_dimensions_volume_unit_of_measure_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'shipping_weight_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'shipping_weight_custom_value',
-                                                             Table::TYPE_DECIMAL,
-                                                             [10, 2],
-                                                             ['unsigned' => true, 'default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'shipping_weight_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'shipping_weight_unit_of_measure_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 1]
-                                                         )
-                                                         ->addColumn(
-                                                             'shipping_weight_unit_of_measure_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'shipping_weight_unit_of_measure_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_weight_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_weight_custom_value',
-                                                             Table::TYPE_DECIMAL,
-                                                             [10, 2],
-                                                             ['unsigned' => true, 'default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_weight_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_weight_unit_of_measure_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'default' => 1]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_weight_unit_of_measure_custom_value',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'package_weight_unit_of_measure_custom_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'target_audience_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'target_audience',
-                                                             Table::TYPE_TEXT,
-                                                             null,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'search_terms_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'search_terms',
-                                                             Table::TYPE_TEXT,
-                                                             null,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'bullet_points_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'bullet_points',
-                                                             Table::TYPE_TEXT,
-                                                             null,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'description_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'description_template',
-                                                             Table::TYPE_TEXT,
-                                                             self::LONG_COLUMN_SIZE,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'image_main_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'image_main_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'image_variation_difference_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'image_variation_difference_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'gallery_images_mode',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'gallery_images_limit',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                                         )
-                                                         ->addColumn(
-                                                             'gallery_images_attribute',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'update_date',
-                                                             Table::TYPE_DATETIME,
-                                                             null,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addColumn(
-                                                             'create_date',
-                                                             Table::TYPE_DATETIME,
-                                                             null,
-                                                             ['default' => null]
-                                                         )
-                                                         ->setOption('type', 'INNODB')
-                                                         ->setOption('charset', 'utf8')
-                                                         ->setOption('collate', 'utf8_general_ci')
-                                                         ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($amazonTemplateDescriptionDefinitionTable);
-
-        $amazonTemplateDescriptionSpecificTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_template_description_specific')
-        )
-                                                       ->addColumn(
-                                                           'id',
-                                                           Table::TYPE_INTEGER,
-                                                           null,
-                                                           [
-                                                               'unsigned' => true,
-                                                               'primary' => true,
-                                                               'nullable' => false,
-                                                               'auto_increment' => true,
-                                                           ]
-                                                       )
-                                                       ->addColumn(
-                                                           'template_description_id',
-                                                           Table::TYPE_INTEGER,
-                                                           null,
-                                                           ['unsigned' => true, 'nullable' => false]
-                                                       )
-                                                       ->addColumn(
-                                                           'xpath',
-                                                           Table::TYPE_TEXT,
-                                                           255,
-                                                           ['nullable' => false]
-                                                       )
-                                                       ->addColumn(
-                                                           'mode',
-                                                           Table::TYPE_TEXT,
-                                                           25,
-                                                           ['nullable' => false]
-                                                       )
-                                                       ->addColumn(
-                                                           'is_required',
-                                                           Table::TYPE_SMALLINT,
-                                                           null,
-                                                           ['unsigned' => true, 'default' => 0]
-                                                       )
-                                                       ->addColumn(
-                                                           'recommended_value',
-                                                           Table::TYPE_TEXT,
-                                                           255,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addColumn(
-                                                           'custom_value',
-                                                           Table::TYPE_TEXT,
-                                                           255,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addColumn(
-                                                           'custom_attribute',
-                                                           Table::TYPE_TEXT,
-                                                           255,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addColumn(
-                                                           'type',
-                                                           Table::TYPE_TEXT,
-                                                           25,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addColumn(
-                                                           'attributes',
-                                                           Table::TYPE_TEXT,
-                                                           null,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addColumn(
-                                                           'update_date',
-                                                           Table::TYPE_DATETIME,
-                                                           null,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addColumn(
-                                                           'create_date',
-                                                           Table::TYPE_DATETIME,
-                                                           null,
-                                                           ['default' => null]
-                                                       )
-                                                       ->addIndex('template_description_id', 'template_description_id')
-                                                       ->setOption('type', 'INNODB')
-                                                       ->setOption('charset', 'utf8')
-                                                       ->setOption('collate', 'utf8_general_ci')
-                                                       ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($amazonTemplateDescriptionSpecificTable);
-
         $amazonTemplateSellingFormatTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_template_selling_format')
         )
@@ -10954,12 +10259,6 @@ class Installer
                                                        ['unsigned' => true, 'nullable' => false]
                                                    )
                                                    ->addColumn(
-                                                       'revise_update_images', // @deprecated
-                                                       Table::TYPE_SMALLINT,
-                                                       null,
-                                                       ['unsigned' => true, 'nullable' => false]
-                                                   )
-                                                   ->addColumn(
                                                        'relist_mode',
                                                        Table::TYPE_SMALLINT,
                                                        null,
@@ -11079,11 +10378,6 @@ class Installer
         $moduleConfig->insert('/amazon/listing/product/action/revise_qty/', 'min_allowed_wait_interval', '900');
         $moduleConfig->insert('/amazon/listing/product/action/revise_price/', 'min_allowed_wait_interval', '1800');
         $moduleConfig->insert('/amazon/listing/product/action/revise_details/', 'min_allowed_wait_interval', '7200');
-        $moduleConfig->insert(
-            '/amazon/listing/product/action/revise_images/',
-            'min_allowed_wait_interval',
-            '7200'
-        ); // @deprecated
         $moduleConfig->insert('/amazon/listing/product/action/stop/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/listing/product/action/delete/', 'min_allowed_wait_interval', '600');
         $moduleConfig->insert('/amazon/order/settings/marketplace_25/', 'use_first_street_line_as_company', '1');
@@ -11091,7 +10385,6 @@ class Installer
         $moduleConfig->insert('/amazon/configuration/', 'business_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'worldwide_id_custom_attribute');
-        $moduleConfig->insert('/amazon/configuration/', 'product_id_override_mode', '0'); // @deprecated
         $moduleConfig->insert('/amazon/configuration/', 'general_id_mode', '0');
         $moduleConfig->insert('/amazon/configuration/', 'general_id_custom_attribute');
 

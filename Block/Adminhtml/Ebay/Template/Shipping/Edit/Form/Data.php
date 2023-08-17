@@ -706,24 +706,6 @@ HTML;
 
         // ---------------------------------------
 
-        if ($this->canDisplayCashOnDeliveryCost()) {
-            $fieldSet->addField(
-                'cash_on_delivery_cost',
-                'text',
-                [
-                    'name' => 'shipping[cash_on_delivery_cost]',
-                    'label' => $this->__('"Cash On Delivery" Cost'),
-                    'title' => $this->__('"Cash On Delivery" Cost'),
-                    'value' => $this->formData['cash_on_delivery_cost'],
-                    'class' => 'input-text M2ePro-validation-float',
-                    'field_extra_attributes' => 'id="cash_on_delivery_cost_cv_tr"',
-                    'tooltip' => $this->__('Required when using COD Payment Method.'),
-                ]
-            );
-        }
-
-        // ---------------------------------------
-
         $fieldSet = $form->addFieldset(
             'magento_block_ebay_template_shipping_form_data_international',
             [
@@ -2502,11 +2484,6 @@ HTML;
     public function canDisplayInternationalShippingRateTable()
     {
         return $this->getMarketplace()->getChildObject()->isInternationalShippingRateTableEnabled();
-    }
-
-    public function canDisplayCashOnDeliveryCost()
-    {
-        return $this->getMarketplace()->getChildObject()->isCashOnDeliveryEnabled();
     }
 
     public function canDisplayNorthAmericaCrossBorderTradeOption()

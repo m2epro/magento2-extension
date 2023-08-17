@@ -345,20 +345,6 @@ if ($isBuyerCancellationAvailable) {
                             </td>
                         </tr>
 
-                        <?php if ($block->order->getChildObject()->getCashOnDeliveryCost() > 0) : ?>
-                            <tr>
-                                <td class="label"><?php echo $block->__('Cash On Delivery Cost'); ?>:</td>
-                                <td class="value">
-                                    <strong>
-                                        <?php echo $block->formatPrice(
-                                            $block->order->getChildObject()->getCurrency(),
-                                            round($block->order->getChildObject()->getCashOnDeliveryCost(), 2)
-                                        ); ?>
-                                    </strong>
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-
                         </tbody>
                     </table>
 

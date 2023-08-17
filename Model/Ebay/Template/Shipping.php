@@ -794,20 +794,6 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return is_array($excludedLocations) ? $excludedLocations : [];
     }
 
-    /**
-     * @return float|null
-     */
-    public function getCashOnDeliveryCost()
-    {
-        $tempData = $this->getData('cash_on_delivery_cost');
-
-        if (!empty($tempData)) {
-            return (float)$tempData;
-        }
-
-        return null;
-    }
-
     // ---------------------------------------
 
     /**

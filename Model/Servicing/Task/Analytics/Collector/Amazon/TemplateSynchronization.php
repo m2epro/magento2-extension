@@ -73,7 +73,6 @@ class TemplateSynchronization implements \Ess\M2ePro\Model\Servicing\Task\Analyt
                     $childItem->getData('revise_update_qty_max_applied_value'),
                 'revise_update_price' => $childItem->getData('revise_update_price'),
                 'revise_update_details' => $childItem->getData('revise_update_details'),
-                'revise_update_images' => $childItem->getData('revise_update_images'),
                 'relist_mode' => $childItem->getData('relist_mode'),
                 'relist_filter_user_lock' => $childItem->getData('relist_filter_user_lock'),
                 'relist_status_enabled' => $childItem->getData('relist_status_enabled'),
