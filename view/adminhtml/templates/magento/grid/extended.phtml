@@ -36,9 +36,7 @@ $numColumns = sizeof($block->getColumns());
         <?php if ($block->getPagerVisibility() || $block->getExportTypes() || $block->getFilterVisibility() || $massActionAvailable): ?>
             <div class="admin__data-grid-header admin__data-grid-toolbar">
                 <div class="admin__data-grid-header-row">
-                    <?php if ($massActionAvailable): ?>
-                        <?php echo $block->getMainButtonsHtml() ? '<div class="admin__filter-actions">' . $block->getMainButtonsHtml() . '</div>' : ''; ?>
-                    <?php endif; ?>
+                    <?php echo $block->getMainButtonsHtml() ? '<div class="admin__filter-actions">' . $block->getMainButtonsHtml() . '</div>' : ''; ?>
                     <?php if ($block->getExportTypes()): ?>
                         <div class="admin__data-grid-export">
                             <label
@@ -53,13 +51,87 @@ $numColumns = sizeof($block->getColumns());
                             <?php echo $block->getExportButtonHtml() ?>
                         </div>
                     <?php endif; ?>
+                    <?php if ($block->hasAdvancedFilters()) : ?>
+                        <div class="data-grid-filters-actions-wrap">
+                            <div class="data-grid-filters-action-wrap">
+                                <button class="action-default"><?= __('Filters') ?></button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
+
+                <?php if ($block->hasAdvancedFilters()) : ?>
+
+                    <?php if ($selectedFilters = $block->getSelectedAdvancedFilterColumns()) : ?>
+                        <div class="admin__data-grid-filters-current _show">
+                            <div class="admin__current-filters-title-wrap">
+                                <span class="admin__current-filters-title"><?= __('Active filters') ?>:</span>
+                            </div>
+                            <div class="admin__current-filters-list-wrap">
+                                <ul class="admin__current-filters-list">
+                                    <?php foreach ($selectedFilters as $selectedFilter) : ?>
+                                        <li><?= $selectedFilter->getSelectedHtml() ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="admin__data-grid-filters-wrap">
+                        <fieldset class="admin__fieldset admin__data-grid-filters" data-role="filter-form">
+                            <?php foreach ($block->getAdvancedFilters() as $filter): ?>
+                                <?= $filter->getFilterHtml() ?>
+                            <?php endforeach; ?>
+                        </fieldset>
+                    </div>
+                    <script>
+                        require(['jquery'], function($) {
+                            function getGrid () {
+                                return <?= $block->getId() ?>JsObject;
+                            }
+
+                            var filterBlock = $('.admin__data-grid-filters-wrap');
+                            var filterButton = $('.data-grid-filters-action-wrap button');
+                            var removeFilterButton = $('.admin__current-filters-list .action-remove');
+
+                            removeFilterButton.on('click', function () {
+                                var id = $(this).attr('data-id');
+                                var selector = '[name*=' + id +']'
+
+                                $('input' + selector).val('');
+                                $('select' + selector + ' option:selected').prop("selected", false)
+                                getGrid().doFilter();
+                            });
+
+                            $('.admin__current-filters-actions-wrap .action-clear').on('click', function () {
+                                getGrid().resetFilter()
+                            })
+
+                            filterButton.on('click', function () {
+                                if (filterButton.hasClass('_active')) {
+                                    return close();
+                                }
+
+                                return open();
+                            });
+
+                            function open() {
+                                filterButton.addClass('_active');
+                                filterBlock.addClass('_show');
+                            }
+
+                            function close() {
+                                filterButton.removeClass('_active');
+                                filterBlock.removeClass('_show');
+                            }
+
+                        });
+                    </script>
+                <?php endif; ?>
 
                 <div class="admin__data-grid-header-row <?php echo $massActionAvailable ? '_massaction' : '';?>">
                     <?php if ($massActionAvailable): ?>
                         <?php echo $block->getMassactionBlockHtml() ?>
-                    <?php else: ?>
-                        <?php echo $block->getMainButtonsHtml() ? '<div class="admin__filter-actions">' . $block->getMainButtonsHtml() . '</div>' : ''; ?>
                     <?php endif; ?>
                     <?php $countRecords = $block->getCollection()->getSize(); ?>
                     <div class="admin__control-support-text">
@@ -170,8 +242,7 @@ $numColumns = sizeof($block->getColumns());
                     <?php endif; ?>
                     <?php if ($block->getFilterVisibility()): ?>
                         <tr class="data-grid-filters" data-role="filter-form">
-                            <?php $i = 0;
-                            foreach ($block->getColumns() as $_column): ?>
+                            <?php foreach ($block->getColumns() as $_column): ?>
                                 <td data-column="<?php /* @escapeNotVerified */ echo $_column->getId() ?>" <?php echo $_column->getHeaderHtmlProperty() ?>>
                                     <?php echo $_column->getFilterHtml() ?>
                                 </td>
@@ -196,9 +267,8 @@ $numColumns = sizeof($block->getColumns());
                 <?php if (($block->getCollection()->getSize() > 0) && (!$block->getIsCollapsed())): ?>
                     <?php foreach ($block->getCollection() as $_index => $_item): ?>
                         <tr title="<?php /* @escapeNotVerified */ echo $block->getRowUrl($_item) ?>"<?php if ($_class = $block->getRowClass($_item)): ?>
-                            class="<?php /* @escapeNotVerified */ echo $_class; ?>"<?php endif; ?> ><?php
-                            $i = 0;
-                            foreach ($block->getColumns() as $_column):
+                            class="<?php /* @escapeNotVerified */ echo $_class; ?>"<?php endif; ?> >
+                            <?php foreach ($block->getColumns() as $_column):
                                 if ($block->shouldRenderCell($_item, $_column)):
                                     $_rowspan = $block->getRowspan($_item, $_column);
                                     ?>
@@ -218,8 +288,7 @@ $numColumns = sizeof($block->getColumns());
                         <?php if ($_multipleRows = $block->getMultipleRows($_item)): ?>
                             <?php foreach ($_multipleRows as $_i): ?>
                                 <tr>
-                                    <?php $i = 0;
-                                    foreach ($block->getMultipleRowColumns($_i) as $_column): ?>
+                                    <?php foreach ($block->getMultipleRowColumns($_i) as $_column): ?>
                                         <td class="<?php /* @escapeNotVerified */ echo $_column->getCssProperty() ?>
                                         <?php /* @escapeNotVerified */ echo $_column->getId() == 'massaction' ? 'data-grid-checkbox-cell': ''?>">
                                             <?php echo(($_html = $_column->getRowField($_i)) != '' ? $_html : '&nbsp;') ?>
@@ -231,8 +300,7 @@ $numColumns = sizeof($block->getColumns());
 
                         <?php if ($block->shouldRenderSubTotal($_item)): ?>
                             <tr class="subtotals">
-                                <?php $i = 0;
-                                foreach ($block->getSubTotalColumns() as $_column): ?>
+                                <?php foreach ($block->getSubTotalColumns() as $_column): ?>
                                     <td class="<?php /* @escapeNotVerified */ echo $_column->getCssProperty() ?>
                                            <?php /* @escapeNotVerified */ echo $_column->getId() == 'massaction' ? 'data-grid-checkbox-cell': ''?>">
                                         <?php /* @escapeNotVerified */ echo($_column->hasSubtotalsLabel() ? $_column->getSubtotalsLabel() :

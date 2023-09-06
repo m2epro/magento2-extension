@@ -20,6 +20,15 @@ class Url
     }
 
     /**
+     * Encoding an array with filters into a string to be passed as a link parameter `filter`.
+     * Use for grid filters
+     */
+    public static function encodeFilterQuery(array $filters): string
+    {
+        return base64_encode(http_build_query($filters));
+    }
+
+    /**
      * @param string $backIdOrRoute
      * @param array $backParams
      *
@@ -95,7 +104,7 @@ class Url
 
     public function getUrlWithFilter(string $route, array $filters, array $routeParams = []): string
     {
-        $routeParams['filter'] = base64_encode(http_build_query($filters));
+        $routeParams['filter'] = self::encodeFilterQuery($filters);
 
         return $this->urlBuilder->getUrl($route, $routeParams);
     }

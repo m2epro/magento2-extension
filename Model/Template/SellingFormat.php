@@ -35,6 +35,9 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
     public const PRICE_MODIFIER_PERCENTAGE_DECREASE = 4;
     public const PRICE_MODIFIER_ATTRIBUTE = 5;
 
+    public const LIST_PRICE_MODE_NONE = 0;
+    public const LIST_PRICE_MODE_ATTRIBUTE = 3;
+
     public function _construct()
     {
         parent::_construct();

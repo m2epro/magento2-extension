@@ -837,29 +837,23 @@ HTML;
     protected function _prepareLayout()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->js->add(
-                <<<JS
-                OrderObj.initializeGrids();
-JS
-            );
+            $this->js->add("OrderObj.initializeGrids();");
+
+            return parent::_toHtml();
         }
 
-        $this->jsPhp->addConstants(
-            $this->dataHelper
-                ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
-        );
+        $classConstants = $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class);
+        $this->jsPhp->addConstants($classConstants);
 
-        $this->jsUrl->addUrls(
-            [
-                'amazon_order/view' => $this->getUrl(
-                    '*/amazon_order/view',
-                    ['back' => $this->dataHelper->makeBackUrlParam('*/amazon_order/index')]
-                ),
-                'getEditShippingAddressForm' => $this->getUrl(
-                    '*/amazon_order_shippingAddress/edit/'
-                ),
-            ]
-        );
+        $this->jsUrl->addUrls([
+            'amazon_order/view' => $this->getUrl(
+                '*/amazon_order/view',
+                ['back' => $this->dataHelper->makeBackUrlParam('*/amazon_order/index')]
+            ),
+            'getEditShippingAddressForm' => $this->getUrl(
+                '*/amazon_order_shippingAddress/edit/'
+            ),
+        ]);
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Order'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon\Order\MerchantFulfillment'));
 
@@ -878,8 +872,9 @@ JS
         );
 
         $tempGridIds = [];
-        $this->amazonHelper->isEnabled() && $tempGridIds[] = $this->getId();
-
+        if ($this->amazonHelper->isEnabled()) {
+            $tempGridIds[] = $this->getId();
+        }
         $tempGridIds = \Ess\M2ePro\Helper\Json::encode($tempGridIds);
 
         $this->js->add(

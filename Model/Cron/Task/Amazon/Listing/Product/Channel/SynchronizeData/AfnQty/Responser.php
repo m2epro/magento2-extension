@@ -218,23 +218,26 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
             )
             ->where('aa.merchant_id = ? AND is_afn_channel = 1', $merchantId);
 
-        /** @var \Ess\M2ePro\Model\Listing\Product $item */
-        foreach ($m2eproListingProductCollection->getItems() as $item) {
-            $this->updateItem(
-                $item,
-                $receivedItems[$item->getChildObject()->getSku()]
-            );
-        }
+        $normalizedReceivedItems = array_change_key_case($receivedItems, CASE_LOWER);
 
-        /** @var \Ess\M2ePro\Model\Listing\Other $item */
-        foreach ($unmanagedListingProductCollection->getItems() as $item) {
-            $this->updateItem(
-                $item,
-                $receivedItems[$item->getChildObject()->getSku()]
-            );
-        }
+        $this->updateItemsFromCollection($m2eproListingProductCollection, $normalizedReceivedItems);
+        $this->updateItemsFromCollection($unmanagedListingProductCollection, $normalizedReceivedItems);
 
         $this->refreshLastUpdate(true);
+    }
+
+    private function updateItemsFromCollection($collection, array $normalizedReceivedItems): void
+    {
+        foreach ($collection->getItems() as $item) {
+            $sku = strtolower($item->getChildObject()->getSku());
+
+            if (isset($normalizedReceivedItems[$sku])) {
+                $this->updateItem(
+                    $item,
+                    $normalizedReceivedItems[$sku]
+                );
+            }
+        }
     }
 
     /**

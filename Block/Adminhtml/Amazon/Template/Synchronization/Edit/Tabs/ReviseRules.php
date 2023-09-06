@@ -164,7 +164,7 @@ HTML
                 ],
                 'tooltip' => $this->__(
                     'Automatically revises Condition Note, Gift Message, Gift Wrap settings,
-                    data from Product Type, Shipping Template Policy and Product Tax Code Policy
+                    data from Product Type, List Price, Shipping Template Policy and Product Tax Code Policy
                     in Amazon Listing when there are changes made to Magento Attribute
                     of at least one mentioned parameter.'
                 ),

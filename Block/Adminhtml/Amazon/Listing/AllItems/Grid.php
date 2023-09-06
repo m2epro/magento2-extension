@@ -2,8 +2,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AllItems;
 
-use Ess\M2ePro\Block\Adminhtml\Tag\Switcher as TagSwitcher;
-
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private const ACTUAL_QTY_EXPRESSION = 'IF(alp.is_afn_channel = 1, alp.online_afn_qty, alp.online_qty)';
@@ -24,14 +22,35 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $dataHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
     private $tagRelationResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
+    private $listingProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
+    private $amazonListingProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
+    private $listingResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing */
+    private $amazonListingResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing */
+    private $amazonListingProductRepricingResource;
+    /** @var \Ess\M2ePro\Model\Amazon\AdvancedFilter\AllItemsOptions */
+    private $advancedFilterAllItemsOptions;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\CollectionFactory */
     private $amazonProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product */
     private $amazonProductResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
     private $tagResource;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
+    private $advancedFilterFactory;
 
     public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
+        \Ess\M2ePro\Model\Amazon\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource,
+        \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing $amazonListingResource,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing $amazonListingProductRepricingResource,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -55,9 +74,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->amazonFactory = $amazonFactory;
         $this->amazonHelper = $amazonHelper;
         $this->tagRelationResource = $tagRelationResource;
+        $this->listingProductResource = $listingProductResource;
+        $this->amazonListingProductResource = $amazonListingProductResource;
+        $this->listingResource = $listingResource;
+        $this->amazonListingResource = $amazonListingResource;
+        $this->amazonListingProductRepricingResource = $amazonListingProductRepricingResource;
+        $this->advancedFilterAllItemsOptions = $advancedFilterAllItemsOptions;
         $this->amazonProductCollectionFactory = $amazonProductCollectionFactory;
         $this->amazonProductResource = $amazonProductResource;
         $this->tagResource = $tagResource;
+        $this->advancedFilterFactory = $advancedFilterFactory;
     }
 
     public function _construct()
@@ -195,9 +221,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return parent::_prepareColumns();
     }
 
+    protected function _prepareAdvancedFilters()
+    {
+        $this->addMarketplaceAdvancedFilter();
+        $this->addAccountAdvancedFilter();
+
+        $this->addSellingPolicyAdvancedFilter();
+        $this->addSynchronizationPolicyAdvancedFilter();
+        $this->addShippingPolicyAdvancedFilter();
+        $this->addTaxCodePolicyAdvancedFilter();
+
+        $this->addProductTypeAdvancedFilter();
+
+        $this->addErrorsAdvancedFilter();
+
+        parent::_prepareAdvancedFilters();
+    }
+
     protected function _prepareCollection()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->distinct();
@@ -207,10 +249,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->addAttributeToSelect('name');
 
         $collection->joinTable(
-            [
-                'lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
-            ],
-            'product_id=entity_id',
+            ['lp' => $this->listingProductResource->getMainTable()],
+            'product_id = entity_id',
             [
                 'id' => 'id',
                 'amazon_status' => 'status',
@@ -227,10 +267,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $collection->joinTable(
-            [
-                'alp' => $this->activeRecordFactory->getObject('Amazon_Listing_Product')->getResource()->getMainTable(),
-            ],
-            'listing_product_id=id',
+            ['alp' => $this->amazonListingProductResource->getMainTable()],
+            'listing_product_id = id',
             [
                 'listing_product_id' => 'listing_product_id',
                 'is_general_id_owner' => 'is_general_id_owner',
@@ -267,7 +305,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'variation_parent_id IS NULL'
         );
         $collection->joinTable(
-            ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
+            ['l' => $this->listingResource->getMainTable()],
             'id=listing_id',
             [
                 'store_id' => 'store_id',
@@ -276,11 +314,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'listing_title' => 'title',
             ]
         );
+        $collection->getSelect()->joinLeft(
+            ['al' => $this->amazonListingResource->getMainTable()],
+            'l.id = al.listing_id',
+            null
+        );
+
         $collection->joinTable(
-            [
-                'malpr' => $this->activeRecordFactory->getObject('Amazon_Listing_Product_Repricing')
-                                                     ->getResource()->getMainTable(),
-            ],
+            ['malpr' => $this->amazonListingProductRepricingResource->getMainTable()],
             'listing_product_id=listing_product_id',
             [
                 'is_repricing_disabled' => 'is_online_disabled',
@@ -288,22 +329,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             null,
             'left'
         );
-
-        $accountId = (int)$this->getRequest()->getParam('amazonAccount', false);
-        $marketplaceId = (int)$this->getRequest()->getParam('amazonMarketplace', false);
-
-        if ($accountId) {
-            $collection->getSelect()->where('l.account_id = ?', $accountId);
-        }
-
-        if ($marketplaceId) {
-            $collection->getSelect()->where('l.marketplace_id = ?', $marketplaceId);
-        }
-
-        if ($tagId = $this->getRequest()->getParam(TagSwitcher::TAG_ID_REQUEST_PARAM_KEY, false)) {
-            $subSelect = $this->getSubSelectForAmazonListingProductsWithTags((int)$tagId);
-            $collection->getSelect()->where('alp.listing_product_id IN (?)', $subSelect);
-        }
 
         $this->setCollection($collection);
 
@@ -1560,5 +1585,234 @@ JS
         );
 
         return parent::_toHtml();
+    }
+
+    private function addMarketplaceAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllItemsOptions->getMarketplaceOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ) {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->addFieldToFilter('marketplace_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'marketplace',
+            __('Marketplace'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addAccountAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllItemsOptions->getAccountOptions();
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->addFieldToFilter('account_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'account',
+            __('Account'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addSellingPolicyAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllItemsOptions->getSellingPolicyOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('al.template_selling_format_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'selling_policy',
+            __('Selling Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addSynchronizationPolicyAdvancedFilter()
+    {
+        $options = $this->advancedFilterAllItemsOptions->getSynchronizationPolicyOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('al.template_synchronization_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'synchronization_policy',
+            __('Synchronization Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addShippingPolicyAdvancedFilter()
+    {
+        $options = $this->advancedFilterAllItemsOptions->getShippingPolicyOptions();
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('IF (
+                    alp.template_shipping_id IS NOT NULL,
+                    alp.template_shipping_id,
+                    al.template_shipping_id
+                ) = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'shipping_policy',
+            __('Shipping Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addProductTypeAdvancedFilter()
+    {
+        $options = $this->advancedFilterAllItemsOptions->getProductTypeOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('alp.template_product_type_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'product_type',
+            __('Product Type'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addErrorsAdvancedFilter()
+    {
+        $options = $this->advancedFilterAllItemsOptions->getErrorOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $subSelect = $this->getSubSelectForAmazonListingProductsWithTags((int)$filterValue);
+            $collection->getSelect()->where('alp.listing_product_id IN (?)', $subSelect);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'errors_filter',
+            __('Amazon Error'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addTaxCodePolicyAdvancedFilter()
+    {
+        $options = $this->advancedFilterAllItemsOptions->getTaxCodeOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->getSelect()->where('alp.template_product_tax_code_id = ?', $filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'tax_code',
+            __('Tax Code Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
     }
 }

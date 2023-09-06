@@ -1225,7 +1225,7 @@ HTML;
                 'value' => $this->formData['dimension_width_attribute'],
                 'class' => 'M2ePro-required-when-visible dimension-custom-input',
                 'required' => true,
-                'note' => $this->__('inches'),
+                'note' => ' ',
                 'create_magento_attribute' => true,
                 'after_element_html' => ' <span style="color: #303030">&times;</span> '
                     . $heightAttrBlock->toHtml()
@@ -1269,7 +1269,7 @@ HTML;
                 'value' => $this->formData['dimension_width_value'],
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
                 'required' => true,
-                'note' => $this->__('inches'),
+                'note' => ' ',
                 'after_element_html' => ' <span style="color: #303030">&times;</span> '
                     . $heightValBlock->toHtml()
                     . ' <span style="color: #303030">&times;</span> '
@@ -1311,8 +1311,7 @@ HTML;
                     ? $this->formData['weight_mode'] : '',
                 'class' => 'select',
                 'field_extra_attributes' => 'id="weight_tr"',
-                'note' => ($this->canDisplayEnglishMeasurementSystemOption() ?
-                    $this->__('lbs. oz.') : $this->__('kg. g.')),
+                'note' => ' ',
                 'create_magento_attribute' => true,
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
@@ -1341,8 +1340,7 @@ HTML;
                 'class' => 'M2ePro-required-when-visible M2ePro-validation-float input-text',
                 'style' => 'width: 30%',
                 'required' => true,
-                'note' => ($this->canDisplayEnglishMeasurementSystemOption() ? $this->__('lbs. oz.') :
-                    $this->__('kg. g.')),
+                'note' => ' ',
                 'after_element_html' => '<span style="color: black;"> &times; </span>' . $weightMinorBlock->toHtml(),
             ]
         );
@@ -2667,6 +2665,10 @@ HTML;
                 'Download Shipping Rate Tables' => $this->__(
                     'Download Shipping Rate Tables'
                 ),
+                'lbs.oz' => $this->__('lbs.oz'),
+                'kg, g' => $this->__('kg, g'),
+                'inches' => $this->__('inches'),
+                'cm' => $this->__('cm'),
                 'sell_api_popup_text' => $this->__(
                     <<<HTML
     To download the Shipping Rate Tables, you should grant M2E Pro access to your eBay data.

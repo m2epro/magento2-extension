@@ -11,6 +11,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     protected $removedProxyItems = [];
     /** @var \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory */
     private $priceTaxRateFactory;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $helper;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
@@ -21,7 +23,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory
+        \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory,
+        \Ess\M2ePro\Helper\Component\Amazon $helper
     ) {
         parent::__construct(
             $currency,
@@ -33,7 +36,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $modelFactory,
             $userInfoFactory
         );
-
+        $this->helper = $helper;
         $this->priceTaxRateFactory = $priceTaxRateFactory;
     }
 
@@ -43,6 +46,30 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function getChannelOrderNumber()
     {
         return $this->order->getAmazonOrderId();
+    }
+
+    /**
+     * @return array|mixed|string|null
+     */
+    public function getMagentoShippingCode()
+    {
+        $marketplaceId = $this->order->getAmazonAccount()->getMarketplaceId();
+        $shippingMethod = $this->order->getShippingCategory();
+        $location = $this->order->getShippingMapping();
+        $amazonShippingMap = $this->helper->getAmazonShippingMap($shippingMethod, $marketplaceId, $location);
+        $magentoCode = $amazonShippingMap->getId()
+            ? $amazonShippingMap->getMagentoCode()
+            : self::DEFAULT_SHIPPING_CODE;
+
+        return $magentoCode;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getCarrierCode()
+    {
+        return explode('_', $this->getMagentoShippingCode())[0];
     }
 
     /**

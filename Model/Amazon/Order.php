@@ -141,6 +141,16 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getData('shipping_service');
     }
 
+    public function getShippingCategory()
+    {
+        return $this->getData('shipping_category');
+    }
+
+    public function getShippingMapping()
+    {
+        return $this->getData('shipping_mapping');
+    }
+
     /**
      * @return float
      */

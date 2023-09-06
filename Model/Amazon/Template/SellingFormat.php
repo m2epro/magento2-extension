@@ -343,6 +343,27 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     }
 
     /**
+     * @return array{mode: int, attribute: string}
+     */
+    public function getRegularListPriceSource(): array
+    {
+        return [
+            'mode' => $this->getRegularListPriceMode(),
+            'attribute' => $this->getRegularListPriceCustomAttribute(),
+        ];
+    }
+
+    public function getRegularListPriceMode(): int
+    {
+        return (int)$this->getData('regular_list_price_mode');
+    }
+
+    public function getRegularListPriceCustomAttribute(): string
+    {
+        return (string)$this->getData('regular_list_price_custom_attribute');
+    }
+
+    /**
      * @return array
      */
     public function getRegularPriceAttributes()

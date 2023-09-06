@@ -304,7 +304,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getRegularPriceSource();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getRegularPriceModifier());
@@ -312,6 +311,25 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getRegularPriceVariationMode());
 
         return $calculator->getVariationValue($this->getParentObject());
+    }
+
+    /**
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function getRegularListPrice(): float
+    {
+        if (!$this->getAmazonListingProduct()->isAllowedForRegularCustomers()) {
+            return 0.0;
+        }
+
+        $src = $this->getAmazonSellingFormatTemplate()->getRegularListPriceSource();
+
+        $calculator = $this->amazonPriceCalculatorFactory->create();
+        $calculator->setSource($src);
+        $calculator->setProduct($this->getListingProduct());
+
+        return (float)$calculator->getVariationValue($this->getParentObject());
     }
 
     public function getRegularMapPrice()
@@ -322,7 +340,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getRegularMapPriceSource();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getRegularPriceVariationMode());
@@ -343,7 +360,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceSource();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setIsSalePrice(true);
@@ -369,7 +385,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
 
         $src = $this->getAmazonSellingFormatTemplate()->getBusinessPriceSource();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
         $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getBusinessPriceModifier());
@@ -400,7 +415,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
             $storeId = $this->getListing()->getStoreId();
             $src['tier_website_id'] = $this->getHelper('Magento\Store')->getWebsite($storeId)->getId();
 
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
             $calculator = $this->amazonPriceCalculatorFactory->create();
             $calculator->setSource($src)->setProduct($this->getListingProduct());
             $calculator->setSourceModeMapping([
@@ -430,7 +444,6 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         $resultValue = [];
 
         foreach ($businessDiscounts as $businessDiscount) {
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator $calculator */
             $calculator = $this->amazonPriceCalculatorFactory->create();
             $calculator->setSource($businessDiscount->getSource())->setProduct($this->getListingProduct());
             $calculator->setSourceModeMapping([

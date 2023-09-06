@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Helper\Component;
 use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\TemplateShipping\CollectionFactory
     as TemplateShippingDictionaryCollectionFactory;
+use Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory;
 
 class Amazon
 {
@@ -66,6 +67,10 @@ class Amazon
     protected $activeRecordFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
     private $accountCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
+    protected $marketplaceCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap\CollectionFactory */
+    protected $amazonShippingMapCollectionFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
@@ -76,8 +81,12 @@ class Amazon
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap\CollectionFactory $amazonShippingMapCollectionFactory,
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
+        $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
+        $this->amazonShippingMapCollectionFactory = $amazonShippingMapCollectionFactory;
         $this->accountCollectionFactory = $accountCollectionFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->templateShippingDictionaryCollectionFactory = $templateShippingDictionaryCollectionFactory;
@@ -220,6 +229,50 @@ class Amazon
                                    ->addFieldToFilter('component_mode', self::NICK)
                                    ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
                                    ->setOrder('sorder', 'ASC');
+    }
+
+    public function getMarketplacesList()
+    {
+        $collection = $this->marketplaceCollectionFactory->create();
+
+        return $collection->addFieldToFilter('component_mode', self::NICK)
+                          ->setOrder('sorder', 'ASC');
+    }
+
+    public function getMarketplacesListByActiveAccounts()
+    {
+        $accountsCollection =  $this->accountCollectionFactory->createWithAmazonChildMode();
+        $accountsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $accountsCollection->getSelect()->columns([
+            'marketplace_id' => 'second_table.marketplace_id'
+        ]);
+        $accountsCollection->getSelect()->joinInner(
+            ['marketplace' => 'm2e_m2epro_marketplace'],
+            'second_table.marketplace_id = marketplace.id',
+            ['marketplace_title' => 'title']
+        );
+        $marketplacesList = [];
+        foreach ($accountsCollection as $item) {
+            $marketplacesList[$item['marketplace_id']] = $item['marketplace_title'];
+        }
+
+        return $marketplacesList;
+    }
+
+    /**
+     * @param $amazonCode
+     * @param $marketplaceId
+     * @param $location
+     *
+     * @return \Magento\Framework\DataObject
+     */
+    public function getAmazonShippingMap($amazonCode, $marketplaceId, $location)
+    {
+        $collection = $this->amazonShippingMapCollectionFactory->create();
+        $collection->addFieldToFilter('amazon_code', $amazonCode)
+                   ->addFieldToFilter('marketplace_id', $marketplaceId)
+                   ->addFieldToFilter('location', $location);
+        return $collection->getFirstItem();
     }
 
     public function getMarketplacesAvailableForAsinCreation()

@@ -466,6 +466,62 @@ class Form extends AbstractForm
         foreach ($attributesByInputTypes['text_price'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
+                $formData['regular_list_price_mode']
+                    == \Ess\M2ePro\Model\Template\SellingFormat::LIST_PRICE_MODE_ATTRIBUTE
+                && $formData['regular_list_price_custom_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $selectValue =
+            $formData['regular_list_price_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::LIST_PRICE_MODE_ATTRIBUTE
+            ? $formData['regular_list_price_mode']
+            : '';
+
+        $fieldset->addField(
+            'regular_list_price_mode',
+            self::SELECT,
+            [
+                'label' => __('List Price Attribute'),
+                'name' => 'regular_list_price_mode',
+                'class' => 'select-main',
+                'value' => $selectValue,
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::LIST_PRICE_MODE_NONE => __('None'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'create_magento_attribute' => true,
+                'tooltip' => __('Provide the list price for the product not including tax.
+                List Price is the suggested retail price of a product as provided by a manufacturer,
+                supplier, or seller. This is not the offering or cost price.'),
+            ]
+        );
+
+        $fieldset->addField(
+            'regular_list_price_custom_attribute',
+            'hidden',
+            [
+                'name' => 'regular_list_price_custom_attribute',
+                'value' => $formData['regular_list_price_custom_attribute'],
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
                 $formData['regular_map_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
                 && $formData['regular_map_price_custom_attribute'] == $attribute['code']
             ) {

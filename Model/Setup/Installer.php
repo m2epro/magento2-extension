@@ -7905,6 +7905,57 @@ class Installer
                                               ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonDictionaryCategoryTable);
 
+        $shippingMethodsTable = $this->getConnection()->newTable(
+            $this->getFullTableName('amazon_shipping_map')
+        )
+                                          ->addColumn(
+                                              'id',
+                                              Table::TYPE_INTEGER,
+                                              null,
+                                              [
+                                                  'unsigned' => true,
+                                                  'primary' => true,
+                                                  'nullable' => false,
+                                                  'auto_increment' => true,
+                                              ],
+                                              'ID'
+                                          )
+                                          ->addColumn(
+                                              'marketplace_id',
+                                              Table::TYPE_INTEGER,
+                                              null,
+                                              ['unsigned' => true, 'nullable' => false],
+                                              'Marketplace ID'
+                                          )
+                                          ->addColumn(
+                                              'location',
+                                              Table::TYPE_TEXT,
+                                              255,
+                                              ['nullable' => false],
+                                              'Location (Domestic/International)'
+                                          )
+                                          ->addColumn(
+                                              'amazon_code',
+                                              Table::TYPE_TEXT,
+                                              255,
+                                              ['nullable' => false],
+                                              'Amazon shipping code'
+                                          )
+                                          ->addColumn(
+                                              'magento_code',
+                                              Table::TYPE_TEXT,
+                                              255,
+                                              ['nullable' => false],
+                                              'Magento shipping code'
+                                          )
+                                          ->setComment('Shipping Methods Table')
+                                          ->setOption('type', 'INNODB')
+                                          ->setOption('charset', 'utf8')
+                                          ->setOption('collate', 'utf8_general_ci')
+                                          ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($shippingMethodsTable);
+
         $amazonDictionaryCategoryProductDataTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_dictionary_category_product_data')
         )
@@ -9188,6 +9239,18 @@ class Installer
                                      255,
                                      ['default' => null]
                                  )
+                                ->addColumn(
+                                    'shipping_category',
+                                    Table::TYPE_TEXT,
+                                    255,
+                                    ['default' => null]
+                                )
+                                ->addColumn(
+                                    'shipping_mapping',
+                                    Table::TYPE_TEXT,
+                                    255,
+                                    ['default' => null]
+                                )
                                  ->addColumn(
                                      'shipping_address',
                                      Table::TYPE_TEXT,
@@ -10026,6 +10089,18 @@ class Installer
                                                      Table::TYPE_SMALLINT,
                                                      null,
                                                      ['unsigned' => true, 'nullable' => false]
+                                                 )
+                                                 ->addColumn(
+                                                     'regular_list_price_mode',
+                                                     Table::TYPE_SMALLINT,
+                                                     null,
+                                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                                 )
+                                                 ->addColumn(
+                                                     'regular_list_price_custom_attribute',
+                                                     Table::TYPE_TEXT,
+                                                     255,
+                                                     ['nullable' => true, 'default' => null]
                                                  )
                                                  ->addColumn(
                                                      'regular_sale_price_start_date_mode',

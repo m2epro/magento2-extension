@@ -69,7 +69,7 @@
 
                     <!-- amazon repricer acl -->
 
-                    <resource id="Ess_M2ePro::amazon_repricer" title="Repricer [NEW]" sortOrder="2">
+                    <resource id="Ess_M2ePro::amazon_repricer" title="Repricer" sortOrder="2">
                         <resource id="Ess_M2ePro::amazon_repricer_source" title="Go to Repricer" sortOrder="1" />
                         <resource id="Ess_M2ePro::amazon_repricer_accounts" title="Settings" sortOrder="2" />
                     </resource>

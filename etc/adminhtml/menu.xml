@@ -30,11 +30,11 @@
         <!-- ebay configuration -->
 
         <add id="Ess_M2ePro::ebay_configuration" title="Configuration" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay" resource="Ess_M2ePro::ebay_configuration" />
-        <add id="Ess_M2ePro::ebay_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_account/index" resource="Ess_M2ePro::ebay_configuration_accounts" />
-        <add id="Ess_M2ePro::ebay_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_marketplace/index" resource="Ess_M2ePro::ebay_configuration_marketplaces" />
-        <add id="Ess_M2ePro::ebay_configuration_categories" title="Categories" module="Ess_M2ePro" sortOrder="35" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_category/index" resource="Ess_M2ePro::ebay_configuration_categories" />
-        <add id="Ess_M2ePro::ebay_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_template/index" resource="Ess_M2ePro::ebay_configuration_templates" />
-        <add id="Ess_M2ePro::ebay_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_settings/index" resource="Ess_M2ePro::ebay_configuration_settings" />
+        <add id="Ess_M2ePro::ebay_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="25" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_template/index" resource="Ess_M2ePro::ebay_configuration_templates" />
+        <add id="Ess_M2ePro::ebay_configuration_categories" title="Categories" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_category/index" resource="Ess_M2ePro::ebay_configuration_categories" />
+        <add id="Ess_M2ePro::ebay_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="35" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_account/index" resource="Ess_M2ePro::ebay_configuration_accounts" />
+        <add id="Ess_M2ePro::ebay_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_settings/index" resource="Ess_M2ePro::ebay_configuration_settings" />
+        <add id="Ess_M2ePro::ebay_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="45" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_marketplace/index" resource="Ess_M2ePro::ebay_configuration_marketplaces" />
 
         <!-- ebay help center -->
 
@@ -61,7 +61,7 @@
 
         <!-- amazon repricer -->
 
-        <add id="Ess_M2ePro::amazon_repricer" title="Repricer [NEW]" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_repricer" />
+        <add id="Ess_M2ePro::amazon_repricer" title="Repricer" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_repricer" />
         <add id="Ess_M2ePro::amazon_repricer_source" title="Go to Repricer" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_repricer" action="m2epro/amazon_repricer/source" resource="Ess_M2ePro::amazon_repricer_source" target="_blank"/>
         <add id="Ess_M2ePro::amazon_repricer_accounts" title="Settings" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_repricer" action="m2epro/amazon_repricer_settings/index" resource="Ess_M2ePro::amazon_repricer_accounts" />
 
@@ -74,11 +74,11 @@
         <!-- amazon configuration -->
 
         <add id="Ess_M2ePro::amazon_configuration" title="Configuration" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_configuration" />
-        <add id="Ess_M2ePro::amazon_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_account" resource="Ess_M2ePro::amazon_configuration_accounts" />
-        <add id="Ess_M2ePro::amazon_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_marketplace/" resource="Ess_M2ePro::amazon_configuration_marketplaces" />
-        <add id="Ess_M2ePro::amazon_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_template/index" resource="Ess_M2ePro::amazon_configuration_templates" />
-        <add id="Ess_M2ePro::amazon_configuration_product_types" title="Product Types" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_template_productType/index" resource="Ess_M2ePro::amazon_configuration_product_types" />
-        <add id="Ess_M2ePro::amazon_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_settings/index" resource="Ess_M2ePro::amazon_configuration_settings" />
+        <add id="Ess_M2ePro::amazon_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="25" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_template/index" resource="Ess_M2ePro::amazon_configuration_templates" />
+        <add id="Ess_M2ePro::amazon_configuration_product_types" title="Product Types" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_template_productType/index" resource="Ess_M2ePro::amazon_configuration_product_types" />
+        <add id="Ess_M2ePro::amazon_configuration_shipping_mapping" title="Shipping Mapping [NEW]" module="Ess_M2ePro" sortOrder="35" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_shippingMap/index" resource="Ess_M2ePro::amazon_configuration_shipping_mapping" />
+        <add id="Ess_M2ePro::amazon_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_account" resource="Ess_M2ePro::amazon_configuration_accounts" />
+        <add id="Ess_M2ePro::amazon_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="45" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_settings/index" resource="Ess_M2ePro::amazon_configuration_settings" />
 
         <!-- amazon help center -->
 

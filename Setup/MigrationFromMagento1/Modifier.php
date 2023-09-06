@@ -222,6 +222,9 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m08\AddShippingIrregularForEbay::class,
             \Ess\M2ePro\Setup\Update\y23_m08\AddIsGetDeliveryPreferencesColumnToAmazonOrderTable::class,
             \Ess\M2ePro\Setup\Update\y23_m08\RemoveAmazonDescriptionPolicyRelatedData::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\CreateAmazonShippingMapTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddNewColumnsToAmazonOrder::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddAmazonSellingFormatListPrice::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

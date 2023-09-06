@@ -77,6 +77,17 @@ class Request extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Reque
         return array_merge($data, $productIdentifierData);
     }
 
+    protected function prepareFinalData(array $data)
+    {
+        // Don`t sending amazon list price on "List Action",
+        // but this data saved in metaData and use for adding instruction.
+        if (isset($data['list_price'])) {
+            unset($data['list_price']);
+        }
+
+        return parent::prepareFinalData($data);
+    }
+
     private function getExistProductIdentifierData()
     {
         return [

@@ -64,7 +64,7 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
             return $this->getFailResult(
                 __(
-                    'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message%',
+                    'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message',
                     $exception->getMessage()
                 )
             );
@@ -131,8 +131,7 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     {
         $marketplaceCollection = $this->marketplaceCollectionFactory->create();
         $marketplaceCollection->addFieldToFilter('id', $marketplaceId)
-            ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK)
-            ->addFieldToFilter('status', 1);
+            ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
 
         /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
         $marketplace = $marketplaceCollection->getFirstItem();

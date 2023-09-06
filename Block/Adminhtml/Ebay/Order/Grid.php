@@ -806,39 +806,33 @@ HTML;
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->js->add(
-                <<<JS
-                OrderObj.initializeGrids();
-JS
-            );
+            $this->js->add("OrderObj.initializeGrids();");
 
             return parent::_toHtml();
         }
 
-        $tempGridIds = [];
-        $this->ebayHelper->isEnabled() && $tempGridIds[] = $this->getId();
-        $tempGridIds = \Ess\M2ePro\Helper\Json::encode($tempGridIds);
+        $classConstants = $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class);
+        $this->jsPhp->addConstants($classConstants);
 
-        $this->jsPhp->addConstants(
-            $this->dataHelper
-                ->getClassConstants(\Ess\M2ePro\Model\Log\AbstractModel::class)
-        );
-
-        $this->jsUrl->addUrls(
-            [
-                'ebay_order/view' => $this->getUrl(
-                    '*/ebay_order/view',
-                    ['back' => $this->dataHelper->makeBackUrlParam('*/ebay_order/index')]
-                ),
-            ]
-        );
+        $this->jsUrl->addUrls([
+            'ebay_order/view' => $this->getUrl(
+                '*/ebay_order/view',
+                ['back' => $this->dataHelper->makeBackUrlParam('*/ebay_order/index')]
+            ),
+        ]);
 
         $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));
+
+        $tempGridIds = [];
+        if ($this->ebayHelper->isEnabled()) {
+            $tempGridIds[] = $this->getId();
+        }
+        $tempGridIds = \Ess\M2ePro\Helper\Json::encode($tempGridIds);
 
         $this->js->add(
             <<<JS
     require([
-        'M2ePro/Order',
+        'M2ePro/Order'
     ], function(){
         window.OrderObj = new Order('$tempGridIds');
         OrderObj.initializeGrids();

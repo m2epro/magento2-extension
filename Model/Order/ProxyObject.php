@@ -10,6 +10,7 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
 {
     public const CHECKOUT_GUEST = 'guest';
     public const CHECKOUT_REGISTER = 'register';
+    public const DEFAULT_SHIPPING_CODE = 'm2eproshipping_m2eproshipping';
 
     /** @var \Ess\M2ePro\Model\Currency */
     protected $currency;
@@ -149,6 +150,16 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->store;
+    }
+
+    public function getMagentoShippingCode()
+    {
+        return self::DEFAULT_SHIPPING_CODE;
+    }
+
+    public function getCarrierCode()
+    {
+        return 'm2eproshipping';
     }
 
     /**

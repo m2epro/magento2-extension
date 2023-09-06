@@ -8,13 +8,31 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
+use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
+
 /**
  * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Response
  */
 class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
 {
-    //########################################
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction */
+    private $instructionResource;
 
+    public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct(
+            $activeRecordFactory,
+            $helperFactory,
+            $modelFactory,
+            $data
+        );
+        $this->instructionResource = $instructionResource;
+    }
     /**
      * @ingeritdoc
      */
@@ -30,6 +48,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendIdentifiersData($data, $generalId);
         $data = $this->appendDetailsValues($data);
+        $this->addReviseInstructionForListPrice();
 
         $variationManager = $this->getAmazonListingProduct()->getVariationManager();
 
@@ -202,4 +221,25 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     }
 
     //########################################
+
+    private function addReviseInstructionForListPrice(): void
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        if (!isset($requestMetadata['details_data'])) {
+            return;
+        }
+
+        if (!isset($requestMetadata['details_data']['list_price'])) {
+            return;
+        }
+
+        $instructionData = [
+            'listing_product_id' => $this->getAmazonListingProduct()->getId(),
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'type' => ChangeProcessor::INSTRUCTION_TYPE_DETAILS_DATA_CHANGED,
+            'initiator' => self::INSTRUCTION_INITIATOR,
+            'priority' => 100,
+        ];
+        $this->instructionResource->add([$instructionData]);
+    }
 }

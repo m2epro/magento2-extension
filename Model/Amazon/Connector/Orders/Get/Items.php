@@ -197,6 +197,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $shipping = $orderData['shipping'];
 
                 $order['shipping_service'] = trim((string)$shipping['level']);
+                $order['shipping_category'] = trim($shipping['category']);
+                $order['shipping_mapping'] = trim((string)$orderData['shipping_mapping']);
                 $order['shipping_price'] = isset($orderData['price']['shipping'])
                     ? (float)$orderData['price']['shipping'] : 0;
 

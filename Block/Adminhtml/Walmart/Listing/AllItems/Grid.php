@@ -24,8 +24,26 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $localeCurrency;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
     private $walmartFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
+    private $listingResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
+    private $listingProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product */
+    private $walmartListingProductResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing */
+    private $walmartListingResource;
+    /** @var \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions */
+    private $advancedFiltersAllItemsOptions;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
+    private $advancedFilterFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions $advancedFiltersAllItemsOptions,
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
+        \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing $walmartListingResource,
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product $walmartListingProductResource,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -40,6 +58,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->walmartFactory = $walmartFactory;
+        $this->listingResource = $listingResource;
+        $this->listingProductResource = $listingProductResource;
+        $this->walmartListingProductResource = $walmartListingProductResource;
+        $this->walmartListingResource = $walmartListingResource;
+        $this->advancedFiltersAllItemsOptions = $advancedFiltersAllItemsOptions;
+        $this->advancedFilterFactory = $advancedFilterFactory;
 
         parent::__construct($context, $backendHelper, $data);
     }
@@ -57,7 +81,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->getSelect()->distinct();
@@ -67,10 +90,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->addAttributeToSelect('name');
 
         $collection->joinTable(
-            [
-                'lp' => $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable(),
-            ],
-            'product_id=entity_id',
+            ['lp' => $this->listingProductResource->getMainTable()],
+            'product_id = entity_id',
             [
                 'id' => 'id',
                 'status' => 'status',
@@ -80,11 +101,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
         $collection->joinTable(
-            [
-                'wlp' => $this->activeRecordFactory->getObject('Walmart_Listing_Product')->getResource()->getMainTable(
-                ),
-            ],
-            'listing_product_id=id',
+            ['wlp' => $this->walmartListingProductResource->getMainTable()],
+            'listing_product_id = id',
             [
                 'listing_product_id' => 'listing_product_id',
                 'listing_other_id' => new \Zend_Db_Expr('NULL'),
@@ -105,8 +123,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'variation_parent_id IS NULL'
         );
         $collection->joinTable(
-            ['l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()],
-            'id=listing_id',
+            ['l' => $this->listingResource->getMainTable()],
+            'id = listing_id',
             [
                 'store_id' => 'store_id',
                 'account_id' => 'account_id',
@@ -114,17 +132,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'listing_title' => 'title',
             ]
         );
-
-        $accountId = (int)$this->getRequest()->getParam('walmartAccount', false);
-        $marketplaceId = (int)$this->getRequest()->getParam('walmartMarketplace', false);
-
-        if ($accountId) {
-            $collection->getSelect()->where('l.account_id = ?', $accountId);
-        }
-
-        if ($marketplaceId) {
-            $collection->getSelect()->where('l.marketplace_id = ?', $marketplaceId);
-        }
+        $collection->getSelect()->joinLeft(
+            ['wl' => $this->walmartListingResource->getMainTable()],
+            'wl.listing_id = l.id',
+            []
+        );
 
         $this->setCollection($collection);
 
@@ -277,6 +289,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         return parent::_prepareColumns();
+    }
+
+    protected function _prepareAdvancedFilters()
+    {
+        $this->addMarketplaceAdvancedFilter();
+        $this->addAccountAdvancedFilter();
+
+        $this->addSellingPolicyAdvancedFilter();
+        $this->addSynchronizationPolicyAdvancedFilter();
+        $this->addDescriptionPolicyAdvancedFilter();
+
+        $this->addCategoryAdvancedFilter();
+
+        parent::_prepareAdvancedFilters();
     }
 
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
@@ -1075,5 +1101,179 @@ HTML;
     public function getRowUrl($item)
     {
         return false;
+    }
+
+    private function addMarketplaceAdvancedFilter(): void
+    {
+        $options = $this->advancedFiltersAllItemsOptions->getMarketplaceOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ) {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->addFieldToFilter('marketplace_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'marketplace',
+            __('Marketplace'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addAccountAdvancedFilter(): void
+    {
+        $options = $this->advancedFiltersAllItemsOptions->getAccountOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->addFieldToFilter('account_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'account',
+            __('Account'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addSellingPolicyAdvancedFilter(): void
+    {
+        $options = $this->advancedFiltersAllItemsOptions->getSellingPolicyOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('wl.template_selling_format_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'selling_policy',
+            __('Selling Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addSynchronizationPolicyAdvancedFilter()
+    {
+        $options = $this->advancedFiltersAllItemsOptions->getSynchronizationPolicyOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('wl.template_synchronization_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'synchronization_policy',
+            __('Synchronization Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addDescriptionPolicyAdvancedFilter()
+    {
+        $options = $this->advancedFiltersAllItemsOptions->getDescriptionPolicyOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection
+                ->getSelect()
+                ->where('wl.template_description_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'description_policy',
+            __('Description Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addCategoryAdvancedFilter()
+    {
+        $options = $this->advancedFiltersAllItemsOptions->getCategoryOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->getSelect()->where('wlp.template_category_id = ?', (int)$filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'category',
+            __('Category'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
     }
 }

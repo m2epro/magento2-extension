@@ -182,8 +182,11 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $billingAddress = $this->quote->getBillingAddress();
         $billingAddress->addData($this->proxyOrder->getBillingAddressData());
 
-        $billingAddress->setLimitCarrier('m2eproshipping');
-        $billingAddress->setShippingMethod('m2eproshipping_m2eproshipping');
+        $magentoCode = $this->proxyOrder->getMagentoShippingCode();
+        $carrierCode = $this->proxyOrder->getCarrierCode();
+
+        $billingAddress->setLimitCarrier($carrierCode);
+        $billingAddress->setShippingMethod($magentoCode);
         $billingAddress->setCollectShippingRates(true);
         $billingAddress->setShouldIgnoreValidation($this->proxyOrder->shouldIgnoreBillingAddressValidation());
 
@@ -193,10 +196,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $shippingAddress->setSameAsBilling(0); // maybe just set same as billing?
         $shippingAddress->addData($this->proxyOrder->getAddressData());
 
-        $shippingAddress->setLimitCarrier('m2eproshipping');
-        $shippingAddress->setShippingMethod('m2eproshipping_m2eproshipping');
+        $shippingAddress->setLimitCarrier($carrierCode);
+        $shippingAddress->setShippingMethod($magentoCode);
         $shippingAddress->setCollectShippingRates(true);
-        // ---------------------------------------
     }
 
     //########################################

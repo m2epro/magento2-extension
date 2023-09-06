@@ -71,8 +71,13 @@ class ListingProductIssues extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractB
                 throw new \Ess\M2ePro\Model\Exception('Invalid component title');
             }
 
-            $message = __("Currently, there are no items listed on %s. Start Listing now to get more sales.");
-            $this->notificationMessage = sprintf($message, $componentTitle);
+            $startListingUrl = $this->getStartListingUrl();
+
+            $message = __(
+                "<h2>Currently, there are no items listed on %s. <a href='%s' target='_blank'>Start Listing now</a>
+                           to get more sales.</h2>"
+            );
+            $this->notificationMessage = sprintf($message, $componentTitle, $startListingUrl);
 
             return;
         }
@@ -84,6 +89,20 @@ class ListingProductIssues extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractB
         }
 
         $this->isIssuesTableVisible = true;
+    }
+
+    private function getStartListingUrl(): string
+    {
+        $map = [
+            \Ess\M2ePro\Helper\Component\Amazon::NICK => '*/amazon_listing_create/index',
+            \Ess\M2ePro\Helper\Component\Ebay::NICK => '*/ebay_listing_create/index',
+        ];
+
+        if (isset($map[$this->componentNick])) {
+            return $this->urlBuilder->getUrl($map[$this->componentNick], ['step' => 1]);
+        }
+
+        return '';
     }
 
     public function getIssues(): array
@@ -121,9 +140,11 @@ class ListingProductIssues extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractB
             throw new \Ess\M2ePro\Model\Exception('Unresolved component');
         }
 
-        return $this->urlBuilder->getUrl($map[$this->componentNick], [
-            \Ess\M2ePro\Block\Adminhtml\Tag\Switcher::TAG_ID_REQUEST_PARAM_KEY => $tagId,
-        ]);
+        $routeParams = [
+            'filter' => \Ess\M2ePro\Helper\Url::encodeFilterQuery(['errors_filter' => $tagId]),
+        ];
+
+        return $this->urlBuilder->getUrl($map[$this->componentNick], $routeParams);
     }
 
     public function getItemsByIssueViewUrl(): ?string

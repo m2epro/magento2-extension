@@ -129,6 +129,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'regular_price_variation_mode' => AmazonSellingFormat::PRICE_VARIATION_MODE_PARENT,
 
+            'regular_list_price_mode' => SellingFormat::LIST_PRICE_MODE_NONE,
+            'regular_list_price_custom_attribute' => '',
+
             'regular_sale_price_start_date_mode' => AmazonSellingFormat::DATE_VALUE,
             'regular_sale_price_end_date_mode' => AmazonSellingFormat::DATE_VALUE,
 

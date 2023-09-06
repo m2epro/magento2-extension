@@ -885,15 +885,18 @@ define([
             return $('measurement_system').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Shipping\\Calculated::MEASUREMENT_SYSTEM_ENGLISH');
         },
 
-        measurementSystemChange: function ()
+        changeMeasurementPrompts: function ()
         {
-            $$('.measurement-system-english, .measurement-system-metric').invoke('hide');
-
-            if (EbayTemplateShippingObj.isMeasurementSystemEnglish()) {
-                $$('.measurement-system-english').invoke('show');
-            } else {
-                $$('.measurement-system-metric').invoke('show');
-            }
+            var weightField = $('weight_mode_container-note');
+            var dimensionField1 = $('dimension-note');
+            var dimensionField2 = $('dimension_width_attribute_text-note');
+            var weightSourceNote = $('weight-note');
+            var weightNoteText = EbayTemplateShippingObj.isMeasurementSystemEnglish() ? M2ePro.translator.translate('lbs.oz') : M2ePro.translator.translate('kg, g');
+            var dimensionNoteText = EbayTemplateShippingObj.isMeasurementSystemEnglish() ? M2ePro.translator.translate('inches') : M2ePro.translator.translate('cm');
+            weightField.innerText = weightNoteText;
+            dimensionField1.innerText = dimensionNoteText;
+            dimensionField2.innerText = dimensionNoteText;
+            weightSourceNote.innerText = weightNoteText;
         },
 
         // ---------------------------------------
@@ -907,7 +910,7 @@ define([
         prepareMeasurementObservers: function ()
         {
             jQuery('#measurement_system')
-                .on('change', EbayTemplateShippingObj.measurementSystemChange)
+                .on('change', EbayTemplateShippingObj.changeMeasurementPrompts)
                 .trigger('change');
 
             jQuery('#package_size')

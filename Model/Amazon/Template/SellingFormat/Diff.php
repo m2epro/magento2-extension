@@ -51,6 +51,8 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'regular_sale_price_end_date_value',
             'regular_sale_price_end_date_custom_attribute',
             'regular_price_variation_mode',
+            'regular_list_price_mode',
+            'regular_list_price_custom_attribute',
             'regular_price_vat_percent',
         ];
 

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Grid;
 
 use Magento\Backend\Block\Widget\Grid\Extended;
@@ -24,11 +18,12 @@ abstract class AbstractGrid extends Extended
     protected $activeRecordFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
-
     /** @var string */
     protected $_template = 'magento/grid/extended.phtml';
     /** @var bool */
     protected $customPageSize = false;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AdvancedFilterCollection */
+    private $advancedFilterCollection;
 
     /**
      * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
@@ -52,6 +47,48 @@ abstract class AbstractGrid extends Extended
         $this->jsUrl = $context->getJsUrl();
 
         parent::__construct($context, $backendHelper, $data);
+    }
+
+    protected function _prepareGrid()
+    {
+        $this->_prepareAdvancedFilters();
+        parent::_prepareGrid();
+
+        return $this;
+    }
+
+    protected function _prepareAdvancedFilters()
+    {
+    }
+
+    public function hasAdvancedFilters(): bool
+    {
+        return $this->getAdvancedFilterCollection()->hasFilters();
+    }
+
+    public function addAdvancedFilter(
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\Filters\FilterInterface $filter
+    ): AbstractGrid {
+        $filter->setGrid($this);
+        $this->getAdvancedFilterCollection()->addFilter($filter);
+
+        return $this;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\Filters\FilterInterface[]
+     */
+    public function getAdvancedFilters(): array
+    {
+        return $this->getAdvancedFilterCollection()->getFilters();
+    }
+
+    /**
+     * @return \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\Filters\FilterInterface[]
+     */
+    public function getSelectedAdvancedFilterColumns(): array
+    {
+        return $this->getAdvancedFilterCollection()->getSelectedFilters();
     }
 
     public function addColumn($columnId, $column)
@@ -173,5 +210,38 @@ abstract class AbstractGrid extends Extended
         }
 
         return $csv;
+    }
+
+    protected function _setFilterValues($data)
+    {
+        $this->applyAdvancedFilters($data);
+
+        return parent::_setFilterValues($data);
+    }
+
+    private function applyAdvancedFilters(array $data)
+    {
+        foreach ($this->getAdvancedFilters() as $filter) {
+            $filterId = $filter->getId();
+
+            if (empty($data[$filterId])) {
+                continue;
+            }
+
+            $filterValue = $data[$filterId];
+            $filter->setSelectedValue($filterValue);
+
+            $filterCallback = $filter->getFilterCallback();
+            $filterCallback($this->getCollection(), $filterValue);
+        }
+    }
+
+    private function getAdvancedFilterCollection(): \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\Collection
+    {
+        if ($this->advancedFilterCollection === null) {
+            $this->advancedFilterCollection = new \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\Collection();
+        }
+
+        return $this->advancedFilterCollection;
     }
 }

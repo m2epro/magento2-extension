@@ -111,6 +111,8 @@ class Builder extends AbstractModel
         $this->setData('buyer_email', $data['buyer_email']);
         $this->setData('shipping_service', $data['shipping_service']);
         $this->setData('shipping_address', $data['shipping_address']);
+        $this->setData('shipping_category', $data['shipping_category']);
+        $this->setData('shipping_mapping', $data['shipping_mapping']);
         $this->setData('shipping_price', (float)$data['shipping_price']);
         $this->setData('shipping_date_to', $data['shipping_date_to']);
         $this->setData('delivery_date_to', $data['delivery_date_to']);

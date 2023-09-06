@@ -304,6 +304,9 @@ class Config extends AbstractConfig
                 'AddIsGetDeliveryPreferencesColumnToAmazonOrderTable',
                 'RemoveCashOnDelivery',
                 'RemoveAmazonDescriptionPolicyRelatedData',
+                'CreateAmazonShippingMapTable',
+                'AddNewColumnsToAmazonOrder',
+                'AddAmazonSellingFormatListPrice',
             ]
         ];
     }

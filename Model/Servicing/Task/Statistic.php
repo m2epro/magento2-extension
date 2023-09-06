@@ -553,6 +553,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         $this->fillUpDataByMethod($data, 'appendExtensionOrdersInfo');
 
         $this->fillUpDataByMethod($data, 'appendExtensionLogsInfo');
+        $this->fillUpDataByMethod($data, 'appendShippingMapInfo');
 
         return $data;
     }
@@ -1298,6 +1299,36 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         $data = $this->_appendLogsInfoByType('listings', 'm2epro_listing_log', $data);
         $data = $this->_appendLogsInfoByType('synchronization', 'm2epro_synchronization_log', $data);
         $data = $this->_appendLogsInfoByType('orders', 'm2epro_order_log', $data);
+    }
+
+    private function appendShippingMapInfo(array &$data)
+    {
+        $data['shipping_map'] = [];
+
+        $amazonShippingMapData = $this
+            ->resource
+            ->getConnection()
+            ->select()
+            ->from($this->helperDatabaseStructure->getTableNameWithPrefix('m2epro_amazon_shipping_map'))
+            ->columns([
+                'marketplace_id' => 'marketplace_id',
+                'location' => 'location',
+                'amazon_code' => 'amazon_code',
+                'magento_code' => 'magento_code',
+            ])
+            ->where('magento_code != ?', \Ess\M2ePro\Model\Order\ProxyObject::DEFAULT_SHIPPING_CODE)
+            ->query()
+            ->fetchAll();
+
+        $data['shipping_map']['amazon'] = [];
+        foreach ($amazonShippingMapData as $amazonShippingMap) {
+            $data['shipping_map']['amazon'][] = [
+                'marketplace_id' => (int)$amazonShippingMap['marketplace_id'],
+                'location' => $amazonShippingMap['location'],
+                'amazon_code' => $amazonShippingMap['amazon_code'],
+                'magento_code' => $amazonShippingMap['magento_code'],
+            ];
+        }
     }
 
     // ---------------------------------------

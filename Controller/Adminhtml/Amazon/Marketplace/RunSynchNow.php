@@ -14,14 +14,18 @@ class RunSynchNow extends Marketplace
 {
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     protected $amazonHelper;
+    /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Updater */
+    protected $marketplaceUpdater;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\Amazon\Marketplace\Updater $marketplaceUpdater,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
 
+        $this->marketplaceUpdater = $marketplaceUpdater;
         $this->amazonHelper = $amazonHelper;
     }
 
@@ -36,41 +40,9 @@ class RunSynchNow extends Marketplace
             (int)$this->getRequest()->getParam('marketplace_id')
         );
 
-        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Synchronization $synchronization */
-        $synchronization = $this->modelFactory->getObject('Amazon_Marketplace_Synchronization');
-        $synchronization->setMarketplace($marketplace);
-
-        if ($synchronization->isLocked()) {
-            $synchronization->getLog()->addMessage(
-                $this->__(
-                    'Marketplaces cannot be updated now. '
-                    . 'Please wait until another marketplace synchronization is completed, then try again.'
-                ),
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
-            );
-
-            $this->setJsonContent(['result' => 'error']);
-
-            return $this->getResult();
-        }
-
-        try {
-            $synchronization->process();
-        } catch (\Exception $e) {
-            $synchronization->getLog()->addMessageFromException($e);
-
-            $synchronization->getLockItemManager()->remove();
-
-            $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
-                \Ess\M2ePro\Model\Servicing\Task\License::NAME
-            );
-
-            $this->setJsonContent(['result' => 'error']);
-
-            return $this->getResult();
-        }
-
-        $this->setJsonContent(['result' => 'success']);
+        $this->setJsonContent([
+            'result' => $this->marketplaceUpdater->update($marketplace) ? 'success' : 'error'
+        ]);
 
         return $this->getResult();
     }

@@ -190,6 +190,12 @@ define([
                     .simulate('change');
             }
 
+            if ($('regular_list_price_mode')) {
+                $('regular_list_price_mode')
+                        .observe('change', AmazonTemplateSellingFormatObj.regular_list_price_mode_change)
+                        .simulate('change');
+            }
+
             if ($('regular_map_price_mode')) {
                 $('regular_map_price_mode')
                     .observe('change', AmazonTemplateSellingFormatObj.regular_map_price_mode_change)
@@ -324,6 +330,16 @@ define([
             }
 
             $('regular_price_note').innerHTML = M2ePro.translator.translate('Product Price for Amazon Listing(s).');
+        },
+
+        regular_list_price_mode_change: function()
+        {
+            var self = AmazonTemplateSellingFormatObj;
+
+            $('regular_list_price_custom_attribute').value = '';
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_SellingFormat::LIST_PRICE_MODE_ATTRIBUTE')) {
+                self.updateHiddenValue(this, $('regular_list_price_custom_attribute'));
+            }
         },
 
         regular_map_price_mode_change: function()

@@ -24,6 +24,10 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     private $accountBuilder;
     /** @var \Ess\M2ePro\Model\AccountFactory */
     private $accountFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Updater */
+    protected $marketplaceUpdater;
+    /** @var \Ess\M2ePro\Model\MarketplaceFactory */
+    protected $marketplaceFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Server\Update $accountServerUpdate,
@@ -33,10 +37,14 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\AccountFactory $accountFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\Amazon\Marketplace\Updater $marketplaceUpdater,
+        \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
 
+        $this->marketplaceFactory = $marketplaceFactory;
+        $this->marketplaceUpdater = $marketplaceUpdater;
         $this->helperException = $helperException;
         $this->accountServerUpdate = $accountServerUpdate;
         $this->accountCollectionFactory = $accountCollectionFactory;
@@ -50,6 +58,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     public function execute()
     {
         $params = $this->getRequest()->getParams();
+        $marketplaceId = (int)$params['marketplace_id'];
+        $marketplace = $this->marketplaceFactory->create()->load($marketplaceId);
 
         if (empty($params)) {
             return $this->_redirect('*/*/new');
@@ -79,21 +89,24 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
             return $this->_redirect('*/*/new');
         }
-
+        $result = null;
         if (isset($params['title'])) {
-            return $this->processNewAccount(
+            $result =  $this->processNewAccount(
                 (string)$params['selling_partner_id'],
                 (string)$params['spapi_oauth_code'],
                 rawurldecode((string)$params['title']),
                 (int)$params['marketplace_id']
             );
+        } else {
+            $result = $this->processExistingAccount(
+                (int)$params['account_id'],
+                (string)$params['spapi_oauth_code'],
+                (string)$params['selling_partner_id']
+            );
         }
+        $this->marketplaceUpdater->update($marketplace);
 
-        return $this->processExistingAccount(
-            (int)$params['account_id'],
-            (string)$params['spapi_oauth_code'],
-            (string)$params['selling_partner_id']
-        );
+        return $result;
     }
 
     private function processNewAccount(

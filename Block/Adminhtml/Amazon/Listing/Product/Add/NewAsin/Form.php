@@ -155,9 +155,11 @@ HTML
         return parent::_prepareForm();
     }
 
-    public function getProductsIds()
+    public function getProductsIds(): array
     {
-        return $this->listing->getSetting('additional_data', 'adding_new_asin_listing_products_ids');
+        return $this
+            ->listing
+            ->getSetting('additional_data', 'adding_new_asin_listing_products_ids') ?? [];
     }
 
     public function getProductTypeMode()

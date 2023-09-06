@@ -26,6 +26,62 @@ class Details extends AbstractModel
 
     /**
      * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getBuilderData(): array
+    {
+        $listingProduct = $this->getListingProduct();
+        $amazonListingProduct = $listingProduct->getChildObject();
+
+        $data = $this->getListPrice();
+
+        if ($amazonListingProduct->isGeneralIdOwner()) {
+            $variationManager = $amazonListingProduct->getVariationManager();
+
+            if (
+                $variationManager->isRelationParentType()
+                && !$this->isValidGeneralIdOwner($listingProduct)
+            ) {
+                return $data;
+            }
+
+            if ($variationManager->isRelationChildType()) {
+                $variationParent = $this->listingProductFactory
+                    ->create()
+                    ->load($variationManager->getVariationParentId());
+
+                if (
+                    !$variationParent->getId()
+                    || !$this->isValidGeneralIdOwner($variationParent)
+                ) {
+                    return $data;
+                }
+            }
+        }
+
+        $data = array_merge($data, $this->getSpecifics());
+
+        $listingProduct->getId();
+
+        if (!$this->getVariationManager()->isRelationParentType()) {
+            $data = array_merge(
+                $data,
+                $this->getGiftData()
+            );
+        }
+
+        $data = array_merge($data, $this->getTaxCodeData(), $this->getConditionData());
+
+        if (!$amazonListingProduct->isAfnChannel()) {
+            $data = array_merge($data, $this->getShippingData());
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getSpecifics(): array
@@ -88,7 +144,7 @@ class Details extends AbstractModel
                 return $setting['value'];
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE:
                 $magentoProduct = $this->getAmazonListingProduct()
-                    ->getActualMagentoProduct();
+                                       ->getActualMagentoProduct();
                 if (!$magentoProduct->exists()) {
                     return null;
                 }
@@ -105,73 +161,6 @@ class Details extends AbstractModel
         }
 
         return null;
-    }
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function getBuilderData(): array
-    {
-        $listingProduct = $this->getListingProduct();
-        $amazonListingProduct = $listingProduct->getChildObject();
-
-        if ($amazonListingProduct->isGeneralIdOwner()) {
-            $variationManager = $amazonListingProduct->getVariationManager();
-
-            if (
-                $variationManager->isRelationParentType()
-                && !$this->isValidGeneralIdOwner($listingProduct)
-            ) {
-                return [];
-            }
-
-            if ($variationManager->isRelationChildType()) {
-                $variationParent = $this->listingProductFactory
-                    ->create()
-                    ->load($variationManager->getVariationParentId());
-
-                if (
-                    !$variationParent->getId()
-                    || !$this->isValidGeneralIdOwner($variationParent)
-                ) {
-                    return [];
-                }
-            }
-        }
-
-        $data = $this->getSpecifics();
-
-        $listingProduct->getId();
-
-        if (!$this->getVariationManager()->isRelationParentType()) {
-            $data = array_merge(
-                $data,
-                $this->getGiftData()
-            );
-        }
-
-        $data = array_merge($data, $this->getTaxCodeData(), $this->getConditionData());
-
-        if (!$amazonListingProduct->isAfnChannel()) {
-            $data = array_merge($data, $this->getShippingData());
-        }
-
-        return $data;
-    }
-
-    private function isValidGeneralIdOwner(\Ess\M2ePro\Model\Listing\Product $listingProduct): bool
-    {
-        $additionalData = $listingProduct->getAdditionalData();
-        if (
-            empty($additionalData['variation_channel_theme'])
-            || empty($additionalData['variation_matched_attributes'])
-        ) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -284,5 +273,46 @@ class Details extends AbstractModel
         $this->processNotFoundAttributes('Product Tax Code');
 
         return $data;
+    }
+
+    private function isValidGeneralIdOwner(\Ess\M2ePro\Model\Listing\Product $listingProduct): bool
+    {
+        $additionalData = $listingProduct->getAdditionalData();
+        if (
+            empty($additionalData['variation_channel_theme'])
+            || empty($additionalData['variation_matched_attributes'])
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getListPrice(): array
+    {
+        if ($this->getAmazonListingProduct()->isGeneralIdOwner()) {
+            return [];
+        }
+
+        $variationManager = $this->getAmazonListingProduct()->getVariationManager();
+        if ($variationManager->isVariationParent()) {
+            return [];
+        }
+
+        $productTypeTemplate = $this->getAmazonListingProduct()->getProductTypeTemplate();
+        if (
+            $productTypeTemplate !== null
+            && $productTypeTemplate->getNick()
+                !== \Ess\M2ePro\Model\Amazon\Template\ProductType::GENERAL_PRODUCT_TYPE_NICK
+        ) {
+            return [];
+        }
+
+        $regularListPrice = $this->getAmazonListingProduct()->getRegularListPrice();
+        if ($regularListPrice <= 0) {
+            return [];
+        }
+
+        return ['list_price' => $regularListPrice];
     }
 }

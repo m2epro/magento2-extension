@@ -19,7 +19,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
 
         $this->getResultPage()->getConfig()->getTitle()->prepend('Product Types');
         $this->addContent($content);
-        $this->setPageHelpLink('description-policies');
+        $this->setPageHelpLink('amazon-product-type');
 
         return $this->getResultPage();
     }

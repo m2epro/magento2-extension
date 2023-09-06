@@ -2,7 +2,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByIssue;
 
-use Ess\M2ePro\Block\Adminhtml\Tag\Switcher as TagSwitcher;
 use Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -223,10 +222,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
         bool $isExport
     ): string {
-        $url = $this->getUrl(
-            '*/ebay_listing/allItems',
-            [TagSwitcher::TAG_ID_REQUEST_PARAM_KEY => $row->getData('tag_id')]
-        );
+        $routeParams = [
+            'filter' => \Ess\M2ePro\Helper\Url::encodeFilterQuery([
+                'errors_filter' => $row->getData('tag_id')
+            ])
+        ];
+
+        $url = $this->getUrl('*/ebay_listing/allItems', $routeParams);
 
         return sprintf("<a href='%s'>%s</a>", $url, $row->getData('total_items'));
     }

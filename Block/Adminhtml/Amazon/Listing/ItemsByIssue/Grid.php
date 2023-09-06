@@ -2,8 +2,6 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\ItemsByIssue;
 
-use Ess\M2ePro\Block\Adminhtml\Tag\Switcher as TagSwitcher;
-
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory */
@@ -221,10 +219,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
         bool $isExport
     ): string {
-        $url = $this->getUrl(
-            '*/amazon_listing/allItems',
-            [TagSwitcher::TAG_ID_REQUEST_PARAM_KEY => $row->getData('tag_id')]
-        );
+
+        $routeParams = [
+            'filter' => \Ess\M2ePro\Helper\Url::encodeFilterQuery([
+                'errors_filter' => $row->getData('tag_id')
+            ])
+        ];
+
+        $url = $this->getUrl('*/amazon_listing/allItems', $routeParams);
 
         return sprintf("<a href='%s'>%s</a>", $url, $row->getData('total_items'));
     }

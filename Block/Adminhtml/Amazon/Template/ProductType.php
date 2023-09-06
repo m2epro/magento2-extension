@@ -12,6 +12,8 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
 {
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon */
+    protected $amazonHelper;
 
     /**
      * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
@@ -21,8 +23,10 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
+        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
+        $this->amazonHelper = $amazonHelper;
         $this->supportHelper = $supportHelper;
         parent::__construct($context, $data);
     }
@@ -45,6 +49,12 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
 
         $this->buttonList->update('add', 'label', $this->__('Add Product Type'));
         $this->buttonList->update('add', 'onclick', '');
+
+        $this->addButton('run_update_all', [
+            'label' => __('Refresh Amazon Data'),
+            'onclick' => 'MarketplaceObj.updateAction()',
+            'class' => 'save update_all_marketplace primary',
+        ]);
     }
 
     /**
@@ -57,8 +67,12 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
 
             Here you can add a new Product Type, edit or delete existing ones.
             Learn how to manage Amazon Product Types in
-            <a href="%url%" target="_blank" class="external-link">this article</a>.',
-            $this->supportHelper->getDocumentationArticleUrl('description-policies')
+            <a href="%url%" target="_blank" class="external-link">this article</a>.<br/><br/>
+            To ensure that you have the most up-to-date Product Type information in your M2E Pro,
+            simply click the <b>Refresh Amazon Data</b> button.
+            This will synchronize any changes made to Product Types on Amazon. Whether certain specifics have been
+            added or removed, you will see the updated information after the data is refreshed.',
+            $this->supportHelper->getDocumentationArticleUrl('amazon-product-type')
         );
 
         $this->appendHelpBlock(
@@ -79,5 +93,45 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
         );
 
         return parent::_prepareLayout();
+    }
+    public function _toHtml()
+    {
+        $this->jsUrl->addUrls([
+            'runSynchNow' => $this->getUrl('*/amazon_marketplace/runSynchNow'),
+            'amazon_marketplace/synchGetExecutingInfo' => $this->getUrl(
+                '*/amazon_marketplace/synchGetExecutingInfo'
+            ),
+        ]);
+
+        $storedStatuses = [];
+        foreach ($this->amazonHelper->getMarketplacesListByActiveAccounts() as $marketplaceId => $marketplaceTitle) {
+            $storedStatuses[] = [
+                'marketplace_id' => $marketplaceId,
+                'title' => $marketplaceTitle,
+            ];
+        }
+        $storedStatuses = \Ess\M2ePro\Helper\Json::encode($storedStatuses);
+
+        $this->js->addOnReadyJs(
+            <<<JS
+            require([
+                'M2ePro/MarketplaceBuildUpdate',
+                'M2ePro/SynchProgress',
+                'M2ePro/Plugin/ProgressBar',
+                'M2ePro/Plugin/AreaWrapper'
+            ], function() {
+                window.MarketplaceProgressObj = new SynchProgress(
+                    new ProgressBar('product_type_progress_bar'),
+                    new AreaWrapper('product_type_content_container')
+                );
+                window.MarketplaceObj = new AmazonMarketplacesBuildUpdate(MarketplaceProgressObj, $storedStatuses);
+            });
+JS
+        );
+        return
+            '<div id="product_type_progress_bar"></div>' .
+            '<div id="product_type_content_container">' .
+            parent::_toHtml() .
+            '</div>';
     }
 }

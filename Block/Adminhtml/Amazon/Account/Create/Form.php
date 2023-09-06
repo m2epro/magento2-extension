@@ -109,7 +109,7 @@ JS
      */
     private function getMarketplacesList(): array
     {
-        $collection = $this->amazonHelper->getMarketplacesAvailableForApiCreation();
+        $collection = $this->amazonHelper->getMarketplacesList();
 
         $marketplaces = [''];
         foreach ($collection->getItems() as $item) {
