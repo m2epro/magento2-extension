@@ -9,7 +9,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     protected function _construct()
     {
         $this->_init(
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::class,
+            \Ess\M2ePro\Model\Amazon\ShippingMap::class,
             \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap::class
         );
     }

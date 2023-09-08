@@ -1,8 +1,8 @@
 <?php
 
-namespace Ess\M2ePro\Model\Amazon\ShippingMap;
+namespace Ess\M2ePro\Model\Amazon;
 
-class AmazonShippingMap extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
+class ShippingMap extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     public const STANDARD = 'Standard';
     public const FREE_ECONOMY = 'FreeEconomy';

@@ -1,10 +1,10 @@
 <?php
 
-namespace Ess\M2ePro\Model\Amazon\ShippingMap;
+namespace Ess\M2ePro\Model\Amazon;
 
 use Magento\Framework\ObjectManagerInterface;
 
-class AmazonShippingMapFactory
+class ShippingMapFactory
 {
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
@@ -16,6 +16,6 @@ class AmazonShippingMapFactory
 
     public function create(array $data = [])
     {
-        return $this->objectManager->create(AmazonShippingMap::class, $data);
+        return $this->objectManager->create(ShippingMap::class, $data);
     }
 }

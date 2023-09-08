@@ -71,6 +71,8 @@ class Amazon
     protected $marketplaceCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap\CollectionFactory */
     protected $amazonShippingMapCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
+    private $marketplaceResource;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
@@ -83,6 +85,7 @@ class Amazon
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap\CollectionFactory $amazonShippingMapCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
         $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
@@ -96,6 +99,7 @@ class Amazon
         $this->moduleTranslation = $moduleTranslation;
         $this->cachePermanent = $cachePermanent;
         $this->config = $config;
+        $this->marketplaceResource = $marketplaceResource;
     }
 
     /**
@@ -239,7 +243,7 @@ class Amazon
                           ->setOrder('sorder', 'ASC');
     }
 
-    public function getMarketplacesListByActiveAccounts()
+    public function getMarketplacesListByActiveAccounts(): array
     {
         $accountsCollection =  $this->accountCollectionFactory->createWithAmazonChildMode();
         $accountsCollection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
@@ -247,7 +251,7 @@ class Amazon
             'marketplace_id' => 'second_table.marketplace_id'
         ]);
         $accountsCollection->getSelect()->joinInner(
-            ['marketplace' => 'm2e_m2epro_marketplace'],
+            ['marketplace' => $this->marketplaceResource->getMainTable()],
             'second_table.marketplace_id = marketplace.id',
             ['marketplace_title' => 'title']
         );

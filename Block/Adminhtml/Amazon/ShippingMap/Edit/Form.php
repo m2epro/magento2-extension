@@ -40,13 +40,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ],
         ]);
         $mappingData = [
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::STANDARD => ['magento_code' => ''],
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::FREE_ECONOMY => ['magento_code' => ''],
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::EXPEDITED => ['magento_code' => ''],
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::NEXT_DAY => ['magento_code' => ''],
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::SAME_DAY => ['magento_code' => ''],
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::SECOND_DAY => ['magento_code' => ''],
-            \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::SCHEDULED => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::STANDARD => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::FREE_ECONOMY => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::EXPEDITED => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::NEXT_DAY => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::SAME_DAY => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::SECOND_DAY => ['magento_code' => ''],
+            \Ess\M2ePro\Model\Amazon\ShippingMap::SCHEDULED => ['magento_code' => ''],
         ];
         $shippingMethodsOptions = $this->getShippingMethodsOptions();
 
@@ -61,7 +61,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 ]
             );
 
-            foreach ([\Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::DOMESTIC, \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMap::INTERNATIONAL] as $location) {
+            foreach ([\Ess\M2ePro\Model\Amazon\ShippingMap::DOMESTIC, \Ess\M2ePro\Model\Amazon\ShippingMap::INTERNATIONAL] as $location) {
                 $fieldsetLocation = $fieldsetMarketplace->addFieldset(
                     'location_' . $marketplaceId . '_' . $location,
                     [

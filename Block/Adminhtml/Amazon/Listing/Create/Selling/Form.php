@@ -187,8 +187,7 @@ class Form extends AbstractForm
                 ],
                 'value' => $formData['sku_modification_mode'],
                 'tooltip' => $this->__(
-                    'Select one of the available variants to modify Amazon Item SKU
-                    that was formed based on the Source you provided.'
+                    'Choose from the available options to modify Amazon Item SKU from the Source attribute.'
                 ),
             ]
         );

@@ -4,7 +4,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\ShippingMap;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\ShippingMap
 {
-    /** @var \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMapFactory */
+    /** @var \Ess\M2ePro\Model\Amazon\ShippingMapFactory */
     protected $amazonShippingMapFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap */
     protected $amazonShippingMapResource;
@@ -13,10 +13,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\ShippingMap
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap $amazonShippingMapResource,
-        \Ess\M2ePro\Model\Amazon\ShippingMap\AmazonShippingMapFactory $amazonShippingMapFactory,
-        \Ess\M2ePro\Helper\Component\Amazon $helper
+        \Ess\M2ePro\Controller\Adminhtml\Context                       $context,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\ShippingMap             $amazonShippingMapResource,
+        \Ess\M2ePro\Model\Amazon\ShippingMapFactory              $amazonShippingMapFactory,
+        \Ess\M2ePro\Helper\Component\Amazon                            $helper
     ) {
         parent::__construct($amazonFactory, $context);
         $this->helper = $helper;
