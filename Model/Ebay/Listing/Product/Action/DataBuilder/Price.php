@@ -17,7 +17,21 @@ class Price extends AbstractModel
     public const PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT = 'DuringCheckout';
     public const PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT = 'PreCheckout';
 
+    /** @var \Ess\M2ePro\Helper\Data */
+    protected $dataHelper;
+
     //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        $this->dataHelper = $dataHelper;
+
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
 
     public function getBuilderData()
     {
@@ -84,6 +98,10 @@ class Price extends AbstractModel
             $data['bestoffer_accept_price'] = $this->getEbayListingProduct()->getBestOfferAcceptPrice();
             $data['bestoffer_reject_price'] = $this->getEbayListingProduct()->getBestOfferRejectPrice();
         }
+        $data['best_offer_hash'] = $this->dataHelper->hashString(
+            \Ess\M2ePro\Helper\Json::encode($data),
+            'md5'
+        );
 
         return $data;
     }

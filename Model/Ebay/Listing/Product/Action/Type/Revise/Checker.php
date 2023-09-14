@@ -28,6 +28,8 @@ class Checker
     private $returnPolicyDataBuilderFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\OtherFactory */
     private $otherDataBuilderFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price */
+    private $priceDataBuilderFactory;
     /** @var \Ess\M2ePro\Helper\Data */
     private $helperData;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory */
@@ -44,8 +46,10 @@ class Checker
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ShippingFactory $shippingDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ReturnPolicyFactory $returnPolicyDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\OtherFactory $otherDataBuilderFactory,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PriceFactory $priceDataBuilderFactory,
         \Ess\M2ePro\Helper\Data $helperData
     ) {
+        $this->priceDataBuilderFactory = $priceDataBuilderFactory;
         $this->titleDataBuilderFactory = $titleDataBuilderFactory;
         $this->subtitleDataBuilderFactory = $subtitleDataBuilderFactory;
         $this->descriptionDataBuilderFactory = $descriptionDataBuilderFactory;
@@ -178,6 +182,22 @@ class Checker
         return false;
     }
 
+    public function isNeedReviseForBestOffer(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $listingProduct = $ebayListingProduct->getParentObject();
+        $actionDataBuilder = $this->priceDataBuilderFactory->create();
+        $actionDataBuilder->setListingProduct($listingProduct);
+
+        $onlineBestOffer = $ebayListingProduct->getOnlineBestOffer();
+        $bestOffer = $actionDataBuilder->getBuilderData()['best_offer_hash'];
+
+        if ($onlineBestOffer !== $bestOffer) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * @param \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct
      *
@@ -188,6 +208,10 @@ class Checker
     {
         if (!$this->isPriceReviseEnabled($ebayListingProduct)) {
             return false;
+        }
+
+        if ($this->isNeedReviseForBestOffer($ebayListingProduct)) {
+            return true;
         }
 
         if ($ebayListingProduct->isVariationsReady()) {

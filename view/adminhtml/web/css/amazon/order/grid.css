@@ -19,3 +19,6 @@
 .grid-listing-column-amazon_order_items {
     width: 200px;
 }
+#amazonOrderViewFinalFees_table > tbody > tr:not(:first-child):last-child {
+    font-weight: bold;
+}

@@ -63,6 +63,13 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'price_discount_map_mode',
             'price_discount_map_attribute',
             'price_discount_map_exposure_type',
+            'best_offer_mode',
+            'best_offer_accept_mode',
+            'best_offer_accept_value',
+            'best_offer_accept_attribute',
+            'best_offer_reject_mode',
+            'best_offer_reject_value',
+            'best_offer_reject_attribute',
         ];
 
         return $this->isSettingsDifferent($keys);
@@ -74,13 +81,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isOtherDifferent(): bool
     {
         $keys = [
-            'best_offer_mode',
-            'best_offer_accept_mode',
-            'best_offer_accept_value',
-            'best_offer_accept_attribute',
-            'best_offer_reject_mode',
-            'best_offer_reject_value',
-            'best_offer_reject_attribute',
             'charity',
             'vat_mode',
             'vat_percent',

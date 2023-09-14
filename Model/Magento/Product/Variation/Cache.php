@@ -17,14 +17,14 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
 
     public function getVariationsTypeStandard()
     {
-        $params = [
+        $cacheKeyParams = [
             'virtual_attributes' => $this->getMagentoProduct()->getVariationVirtualAttributes(),
             'filter_attributes' => $this->getMagentoProduct()->getVariationFilterAttributes(),
             'is_ignore_virtual_attributes' => $this->getMagentoProduct()->isIgnoreVariationVirtualAttributes(),
             'is_ignore_filter_attributes' => $this->getMagentoProduct()->isIgnoreVariationFilterAttributes(),
         ];
 
-        return $this->getMethodData(__FUNCTION__, $params);
+        return $this->getMethodData(__FUNCTION__, $cacheKeyParams);
     }
 
     public function getVariationsTypeRaw()
@@ -39,7 +39,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
 
     //########################################
 
-    protected function getMethodData($methodName, $params = null)
+    protected function getMethodData($methodName, $cacheKeyParams = [])
     {
         if ($this->getMagentoProduct() === null) {
             throw new \Ess\M2ePro\Model\Exception('Magento Product was not set.');
@@ -50,8 +50,8 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product\Variation
             $methodName,
         ];
 
-        if ($params !== null) {
-            $cacheKey[] = $params;
+        if ($cacheKeyParams !== []) {
+            $cacheKey[] = $cacheKeyParams;
         }
 
         $cacheResult = $this->getMagentoProduct()->getCacheValue($cacheKey);

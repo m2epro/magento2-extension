@@ -668,6 +668,18 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
+    protected function appendBestOfferValue(array $data): array
+    {
+        $requestMetadata = $this->getRequestMetaData();
+        if (!isset($requestMetadata['best_offer_hash'])) {
+            return $data;
+        }
+
+        $data['online_best_offer'] = $requestMetadata['best_offer_hash'];
+
+        return $data;
+    }
+
     public function throwRepeatActionInstructions()
     {
         $instructions = [];

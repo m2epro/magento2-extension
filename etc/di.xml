@@ -129,6 +129,8 @@
                 type="Ess\M2ePro\Model\Ebay\Api\OrderSearchResult" />
     <preference for="Ess\M2ePro\Api\Ebay\OrderSearchCriteriaInterface"
                 type="Ess\M2ePro\Model\Ebay\Api\OrderSearchCriteria" />
+    <preference for="Ess\M2ePro\Api\Amazon\OrderManagementInterface"
+                type="Ess\M2ePro\Model\Amazon\Api\OrderManagement" />
     <!--  DTO  -->
     <preference for="Ess\M2ePro\Api\Ebay\Data\OrderInterface"
                 type="Ess\M2ePro\Model\Ebay\Api\Data\Order" />

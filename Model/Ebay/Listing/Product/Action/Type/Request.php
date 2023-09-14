@@ -422,6 +422,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
         $dataBuilder = $this->getDataBuilder('price');
 
+        $this->addMetaData('best_offer_hash', $dataBuilder->getBuilderData()['best_offer_hash']);
         return $dataBuilder->getBuilderData();
     }
 

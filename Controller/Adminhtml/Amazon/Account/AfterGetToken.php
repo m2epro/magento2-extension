@@ -28,6 +28,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     protected $marketplaceUpdater;
     /** @var \Ess\M2ePro\Model\MarketplaceFactory */
     protected $marketplaceFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
+    protected $marketplaceResource;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Server\Update $accountServerUpdate,
@@ -39,10 +41,12 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Marketplace\Updater $marketplaceUpdater,
         \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
 
+        $this->marketplaceResource = $marketplaceResource;
         $this->marketplaceFactory = $marketplaceFactory;
         $this->marketplaceUpdater = $marketplaceUpdater;
         $this->helperException = $helperException;
@@ -59,7 +63,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     {
         $params = $this->getRequest()->getParams();
         $marketplaceId = (int)$params['marketplace_id'];
-        $marketplace = $this->marketplaceFactory->create()->load($marketplaceId);
+        $marketplace = $this->marketplaceFactory->create();
+        $this->marketplaceResource->load($marketplace, $marketplaceId);
 
         if (empty($params)) {
             return $this->_redirect('*/*/new');
@@ -89,7 +94,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
             return $this->_redirect('*/*/new');
         }
-        $result = null;
+
         if (isset($params['title'])) {
             $result =  $this->processNewAccount(
                 (string)$params['selling_partner_id'],
@@ -97,6 +102,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
                 rawurldecode((string)$params['title']),
                 (int)$params['marketplace_id']
             );
+            $marketplace->enable();
+            $this->marketplaceResource->save($marketplace);
         } else {
             $result = $this->processExistingAccount(
                 (int)$params['account_id'],

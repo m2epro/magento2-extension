@@ -755,6 +755,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getData('online_duration');
     }
 
+    public function getOnlineBestOffer()
+    {
+        return $this->getData('online_best_offer');
+    }
+
     // ---------------------------------------
 
     /**

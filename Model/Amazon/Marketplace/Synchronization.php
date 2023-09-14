@@ -292,7 +292,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->progressManager = $this->modelFactory->getObject('Lock_Item_Progress', [
             'lockItemManager' => $this->getLockItemManager(),
-            'progressNick' => $this->marketplace->getTitle() . ' Marketplace',
+            'progressNick' => '',
         ]);
     }
 

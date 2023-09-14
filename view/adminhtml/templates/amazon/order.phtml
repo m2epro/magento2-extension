@@ -296,6 +296,36 @@ if (empty($currency)) {
                         <?php } ?>
                         </tbody>
                     </table>
+
+                    <table cellspacing="0" class="form-list order-info">
+                        <tbody>
+                        <tr>
+                            <td colspan="2" class="label" style="width: 100%">
+                                <?php if ($block->order->getChildObject()->getData('final_fees')) { ?>
+                                    <h4 style="margin-bottom: -20px;"><?php echo $block->__('Fees'); ?></h4>
+                                    <?php echo $block->getChildHtml('final_fees'); ?>
+                                <?php } else { ?>
+                                    <h4 style="margin-bottom: -10px;"><?php echo $block->__('Fees'); ?></h4>
+                                    <div id="amazonOrderViewFinalFees" data-grid-id="amazonOrderViewFinalFees">
+                                        <div class="admin__data-grid-wrap admin__data-grid-wrap-static">
+                                            <table class="data-grid" id="amazonOrderViewFinalFees_table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="data-grid-th grid-listing-column-title no-link col-title"><span>Type Of Fee</span></th>                                                                                                                                <th class="data-grid-th grid-listing-column-value no-link col-value"><span>Value</span></th>                                                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr class="data-grid-tr-no-data even">
+                                                    <td class="empty-text" colspan="2">Will be displayed once received from Amazon</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -4079,6 +4079,12 @@ class Installer
                                             ['unsigned' => true, 'default' => null]
                                         )
                                         ->addColumn(
+                                            'online_best_offer',
+                                            Table::TYPE_TEXT,
+                                            32,
+                                            ['default' => null]
+                                        )
+                                        ->addColumn(
                                             'online_qty',
                                             Table::TYPE_INTEGER,
                                             null,
@@ -9359,6 +9365,12 @@ class Installer
                                      null,
                                      ['default' => null]
                                  )
+                                ->addColumn(
+                                    'final_fees',
+                                    Table::TYPE_TEXT,
+                                    null,
+                                    ['default' => null]
+                                )
                                  ->addIndex('amazon_order_id', 'amazon_order_id')
                                  ->addIndex('seller_order_id', 'seller_order_id')
                                  ->addIndex('is_prime', 'is_prime')

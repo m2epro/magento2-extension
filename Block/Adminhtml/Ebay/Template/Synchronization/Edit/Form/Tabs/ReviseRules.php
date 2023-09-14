@@ -133,7 +133,7 @@ HTML
                     1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically revises Item Price on eBay when Product Price, Special Price or Magento Attribute
+                    'Automatically revises Item Price on eBay when Product Price, Special Price, Best Offer or Magento Attribute
                     used for Item Price are modified in Magento or Policy Template.'
                 ),
             ]
@@ -293,7 +293,7 @@ HTML
                     1 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically revises Item Condition, Condition Note, Lot Size, Taxation, Best Offer, Charity
+                    'Automatically revises Item Condition, Condition Note, Lot Size, Taxation, Charity
                     information, and Immediate Payment on eBay when the related data is modified in Policy Templates.'
                 ),
             ]

@@ -9,10 +9,12 @@
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty;
 
 use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager as MerchantManager;
+use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstractModel;
 
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\ItemsResponser
 {
     private const ERROR_CODE_UNACCEPTABLE_REPORT_STATUS = 504;
+    private const INSTRUCTION_INITIATOR = 'amazon_afn_qty_synchronization';
 
     /** @var ?\Ess\M2ePro\Model\Synchronization\Log */
     protected $synchronizationLog = null;
@@ -26,25 +28,13 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
     private $listingResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Account */
     private $amazonAccountResource;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction */
+    private $instructionResource;
+    /** @var array */
+    private $instructionForCheckingProductData = [];
 
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Translation $translationHelper
-     * @param \Ess\M2ePro\Helper\Module\Logger $logger
-     * @param MerchantManager $merchantManager
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing $listingResource
-     * @param \Ess\M2ePro\Model\ResourceModel\Amazon\Account $amazonAccountResource
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
-     * @param \Ess\M2ePro\Model\Connector\Connection\Response $response
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param array $params
-     *
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Module\Logger $logger,
         MerchantManager $merchantManager,
@@ -75,6 +65,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $this->merchantManager->init();
         $this->listingResource = $listingResource;
         $this->amazonAccountResource = $amazonAccountResource;
+        $this->instructionResource = $instructionResource;
     }
 
     /**
@@ -224,6 +215,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $this->updateItemsFromCollection($unmanagedListingProductCollection, $normalizedReceivedItems);
 
         $this->refreshLastUpdate(true);
+        $this->instructionResource->add($this->instructionForCheckingProductData);
     }
 
     private function updateItemsFromCollection($collection, array $normalizedReceivedItems): void
@@ -249,13 +241,27 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
      */
     private function updateItem($item, $afnQty): void
     {
+        $oldStatus = (int)$item->getData('status');
+        $newStatus = $afnQty
+            ? \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED :
+            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+
         $item->getChildObject()->setData('online_afn_qty', $afnQty);
-        $item->setData(
-            'status',
-            $afnQty ?
-                \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED : \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
-        );
+        $item->setData('status', $newStatus);
         $item->save();
+
+        if (
+            $item instanceof \Ess\M2ePro\Model\Listing\Product
+            && $this->isStatusChangedFromInactiveToActive($oldStatus, $newStatus)
+        ) {
+            $this->addInstructionForCheckingProductData($item);
+        }
+    }
+
+    private function isStatusChangedFromInactiveToActive(int $oldStatus, int $newStatus): bool
+    {
+        return $oldStatus === \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+            && $newStatus === \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
     }
 
     /**
@@ -295,5 +301,16 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $this->synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_LISTINGS);
 
         return $this->synchronizationLog;
+    }
+
+    private function addInstructionForCheckingProductData(\Ess\M2ePro\Model\Listing\Product $item)
+    {
+        $this->instructionForCheckingProductData[] = [
+            'listing_product_id' => $item->getId(),
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'type' => ChangeProcessorAbstractModel::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
+            'initiator' => self::INSTRUCTION_INITIATOR,
+            'priority' => 100,
+        ];
     }
 }

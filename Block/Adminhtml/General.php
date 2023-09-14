@@ -86,6 +86,10 @@ class General extends Magento\AbstractBlock
             . '<a target="_blank" href="%url%">View Log</a> for the details.';
         $synchErrorMessage = 'Marketplace synchronization was completed with errors. '
             . '<a target="_blank" href="%url%">View Log</a> for the details.';
+        $synchWarningMessageForAmazon = 'Amazon Data Update was completed with warnings. '
+            . '<a target="_blank" href="%url%">View Log</a> for the details.';
+        $synchErrorMessageForAmazon = 'Amazon Data Update was completed with errors. '
+            . '<a target="_blank" href="%url%">View Log</a> for the details.';
 
         $this->jsTranslator->addTranslations([
             'Are you sure?' => $this->__('Are you sure?'),
@@ -154,8 +158,12 @@ class General extends Magento\AbstractBlock
 
             'Marketplace synchronization was completed.' =>
                 $this->__('Marketplace synchronization was completed.'),
+            'Amazon Data Update was completed.' =>
+                $this->__('Amazon Data Update was completed.'),
             $synchWarningMessage => $this->__($synchWarningMessage),
             $synchErrorMessage => $this->__($synchErrorMessage),
+            $synchWarningMessageForAmazon => $this->__($synchWarningMessageForAmazon),
+            $synchErrorMessageForAmazon => $this->__($synchErrorMessageForAmazon),
             'Unauthorized! Please login again' => $this->__('Unauthorized! Please login again'),
 
             'Reset Unmanaged Listings' => $this->__('Reset Unmanaged Listings'),

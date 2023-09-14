@@ -101,6 +101,7 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
             'amazon_marketplace/synchGetExecutingInfo' => $this->getUrl(
                 '*/amazon_marketplace/synchGetExecutingInfo'
             ),
+            'logViewUrl' => $this->getUrl('*/amazon_synchronization_log/index'),
         ]);
 
         $storedStatuses = [];
@@ -116,11 +117,11 @@ class ProductType extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractConta
             <<<JS
             require([
                 'M2ePro/MarketplaceBuildUpdate',
-                'M2ePro/SynchProgress',
+                'M2ePro/Amazon/MarketplaceUpdateSynchProgress',
                 'M2ePro/Plugin/ProgressBar',
                 'M2ePro/Plugin/AreaWrapper'
             ], function() {
-                window.MarketplaceProgressObj = new SynchProgress(
+                window.MarketplaceProgressObj = new MarketplaceUpdateSynchProgress(
                     new ProgressBar('product_type_progress_bar'),
                     new AreaWrapper('product_type_content_container')
                 );

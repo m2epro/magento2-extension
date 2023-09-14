@@ -45,11 +45,19 @@
 
                     <!-- ebay api acl -->
 
-                    <resource id="Ess_M2ePro::ebay_orders" title="Ebay Orders" translate="title" sortOrder="110">
-                        <resource id="Ess_M2ePro::orders_operation" title="Operations" translate="title" sortOrder="10">
-                            <resource id="Ess_M2ePro::orders_operation_actions" title="Actions" translate="title" sortOrder="10">
-                                <resource id="Ess_M2ePro::orders_operation_actions_update" title="Update" translate="title" sortOrder="10" />
-                                <resource id="Ess_M2ePro::orders_operation_actions_view" title="View" translate="title" sortOrder="20" />
+                    <resource id="Ess_M2ePro::ebay_orders" title="Ebay Orders (API)" translate="title" sortOrder="110">
+                        <resource id="Ess_M2ePro::ebay_orders_operation" title="Operations" translate="title" sortOrder="10">
+                            <resource id="Ess_M2ePro::ebay_orders_operation_actions" title="Actions" translate="title" sortOrder="10">
+                                <resource id="Ess_M2ePro::ebay_orders_operation_actions_update" title="Update" translate="title" sortOrder="10" />
+                                <resource id="Ess_M2ePro::ebay_orders_operation_actions_view" title="View" translate="title" sortOrder="20" />
+                            </resource>
+                        </resource>
+                    </resource>
+
+                    <resource id="Ess_M2ePro::amazon_orders" title="Amazon Orders (API)" translate="title" sortOrder="110">
+                        <resource id="Ess_M2ePro::amazon_orders_operation" title="Operations" translate="title" sortOrder="10">
+                            <resource id="Ess_M2ePro::amazon_orders_operation_actions" title="Actions" translate="title" sortOrder="10">
+                                <resource id="Ess_M2ePro::amazon_orders_operation_actions_view" title="View" translate="title" sortOrder="10" />
                             </resource>
                         </resource>
                     </resource>

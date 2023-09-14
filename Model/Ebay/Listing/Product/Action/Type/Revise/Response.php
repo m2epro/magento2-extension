@@ -43,6 +43,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendShippingValues($data);
         $data = $this->appendReturnValues($data);
         $data = $this->appendOtherValues($data);
+        $data = $this->appendBestOfferValue($data);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = \Ess\M2ePro\Helper\Json::encode($data['additional_data']);

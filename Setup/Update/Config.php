@@ -307,6 +307,11 @@ class Config extends AbstractConfig
                 'CreateAmazonShippingMapTable',
                 'AddNewColumnsToAmazonOrder',
                 'AddAmazonSellingFormatListPrice',
+                'AddFinalFeesColumnToAmazonOrderTable',
+            ],
+            'y23_m09' => [
+                'AddOnlineBestOfferForEbayProduct',
+                'RefactorAmazonOrderColumns',
             ]
         ];
     }

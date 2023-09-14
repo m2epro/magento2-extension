@@ -180,6 +180,10 @@ class Form extends AbstractContainer
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Order\Note\Grid::class)
         );
         $this->setChild('add_note_button', $buttonAddNoteBlock);
+        $this->setChild(
+            'final_fees',
+            $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\View\FinalFees::class)
+        );
 
         return parent::_beforeToHtml();
     }

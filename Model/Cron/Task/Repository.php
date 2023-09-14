@@ -77,7 +77,7 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => self::COMPONENT_GENERAL,
             'group' => self::GROUP_SYSTEM,
         ],
-        \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectSpecialPriceEndDate::NICK => [
+        \Ess\M2ePro\Model\Cron\Task\Magento\Product\DetectSpecialPriceStartEndDate::NICK => [
             'component' => self::COMPONENT_GENERAL,
             'group' => self::GROUP_SYSTEM,
         ],
@@ -227,6 +227,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'group' => self::GROUP_AMAZON,
         ],
         \Ess\M2ePro\Model\Cron\Task\Amazon\Order\DeliveryPreferences::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'group' => self::GROUP_AMAZON,
+        ],
+        \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Get\Fees::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'group' => self::GROUP_AMAZON,
         ],

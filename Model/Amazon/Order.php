@@ -1071,4 +1071,24 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return $this;
     }
+
+    public function setFinalFees(array $data): Order
+    {
+        $this->setData('final_fees', \Ess\M2ePro\Helper\Json::encode($data));
+
+        return $this;
+    }
+
+    public function getFinalFees(): array
+    {
+        return $this->getData('final_fees') !== null
+            ? \Ess\M2ePro\Helper\Json::decode($this->getData('final_fees')) : [];
+    }
+
+    public function isNewFinalFees(array $newFees): bool
+    {
+        $currentFees = $this->getFinalFees();
+
+        return $currentFees !== $newFees;
+    }
 }

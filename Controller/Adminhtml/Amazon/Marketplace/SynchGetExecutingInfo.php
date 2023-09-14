@@ -33,7 +33,7 @@ class SynchGetExecutingInfo extends Marketplace
         $response = ['mode' => 'executing'];
 
         if (!empty($progressData)) {
-            $response['title'] = 'Marketplace Synchronization';
+            $response['title'] = 'Amazon Data Update';
             $response['percents'] = $progressData[key($progressData)]['percentage'];
             $response['status'] = key($progressData);
         }
