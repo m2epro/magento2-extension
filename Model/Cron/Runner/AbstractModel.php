@@ -24,7 +24,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected $activeRecordFactory;
     /** @var null  */
     protected $previousStoreId = null;
-
     /** @var \Ess\M2ePro\Model\Cron\OperationHistory $operationHistory */
     protected $operationHistory = null;
 
@@ -72,7 +71,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->initialize();
-        $this->updateLastAccess();
+        $this->setLastAccess();
 
         if (!$this->isPossibleToRun()) {
             $this->deInitialize();
@@ -81,7 +80,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        $this->updateLastRun();
+        $this->setLastRun();
         $this->beforeStart();
 
         $transactionalManager->unlock();
@@ -169,10 +168,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    protected function updateLastAccess()
+    protected function setLastAccess()
     {
-        $currentDateTime = $this->getHelper('Data')->getCurrentGmtDate();
-        $this->getHelper('Module\Cron')->setLastAccess($currentDateTime);
+        $this->getHelper('Module\Cron')->setLastAccess();
     }
 
     protected function isPossibleToRun()
@@ -188,10 +186,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    protected function updateLastRun()
+    protected function setLastRun()
     {
-        $currentDateTime = $this->getHelper('Data')->getCurrentGmtDate();
-        $this->getHelper('Module\Cron')->setLastRun($currentDateTime);
+        $this->getHelper('Module\Cron')->setLastRun();
     }
 
     // ---------------------------------------

@@ -4,7 +4,7 @@ define(
         'M2ePro/Plugin/Messages',
         'M2ePro/Common'
     ],
-    function(jQuery, messageObj) {
+    function(jQuery) {
         window.AmazonTemplateProductTypeSearch = Class.create(Common, {
             productTypeList: [],
             currentProductType: null,
@@ -14,12 +14,10 @@ define(
                 this.productTypeList = productTypeList;
 
                 this.setCurrentProductType(AmazonTemplateProductTypeObj.getProductType());
-                this.applyBrowseFilter();
+                this.applySearchFilter();
 
                 $('product_type_reset_link').observe('click', this.resetCurrentProductType.bind(this));
-                $('product_type_browse_results').observe('change', this.updateProductTypeByResult.bind(this));
                 $('product_type_search_results').observe('change', this.updateProductTypeByResult.bind(this));
-                $('product_type_search_query').addEventListener('keyup', this.handleSearchInputKeyUps.bind(this));
             },
 
             getProductTypeTitle: function (productType)
@@ -53,12 +51,12 @@ define(
                 }
             },
 
-            applyBrowseFilter: function ()
+            applySearchFilter: function ()
             {
-                const title = $('product_type_browse_query').value;
+                const title = $('product_type_search_query').value;
                 const productTypes = this.searchProductTypeByTitle(title);
 
-                const container = $('product_type_browse_results');
+                const container = $('product_type_search_results');
                 container.innerHTML = '';
                 var productTypeId;
 
@@ -67,24 +65,6 @@ define(
                             productTypes[i]['exist_product_type_id'] : false;
                     this.insertOption(container, productTypes[i].nick, productTypes[i].title, productTypeId);
                 }
-            },
-
-            applySearchFilter: function ()
-            {
-                const keywords = $('product_type_search_query').value;
-                this.searchProductTypeByKeywords(keywords);
-            },
-
-            handleSearchInputKeyUps: function (event) {
-                if (event.keyCode === 13) {
-                    this.applySearchFilter();
-                }
-            },
-
-            resetBrowseFilter: function ()
-            {
-                $('product_type_browse_query').value = '';
-                this.applyBrowseFilter();
             },
 
             resetSearchFilter: function ()
@@ -107,44 +87,6 @@ define(
                             .indexOf(titleLowerCase) !== -1;
                     }
                 );
-            },
-
-            searchProductTypeByKeywords: function(keywords) {
-                var self = this;
-                const container = $('product_type_search_results');
-
-                if (!keywords) {
-                    container.innerHTML = '';
-
-                    return;
-                }
-
-                new Ajax.Request(M2ePro.url.get('amazon_template_productType/searchByKeywords'), {
-                    method: 'post',
-                    asynchronous: true,
-                    parameters: {
-                        marketplace_id: AmazonTemplateProductTypeObj.getMarketplaceId(),
-                        keywords: keywords
-                    },
-                    onSuccess: function(transport) {
-                        const response = transport.responseText.evalJSON();
-                        if (!response.result) {
-                            messageObj.clear();
-                            messageObj.addError(response.message);
-                            return;
-                        }
-
-                        container.innerHTML = '';
-                        var productTypeId;
-
-                        const productTypes = response.data;
-                        for (var i = 0; i < productTypes.length; i++) {
-                            productTypeId = productTypes[i]['exist_product_type_id'] !== undefined ?
-                                    productTypes[i]['exist_product_type_id'] : false;
-                            self.insertOption(container, productTypes[i].nick, productTypes[i].title, productTypeId);
-                        }
-                    }
-                });
             },
 
             onClickPopupTab: function (item)
@@ -196,7 +138,6 @@ define(
             resetCurrentProductType: function ()
             {
                 this.setCurrentProductType('');
-                $('product_type_browse_results').value = '';
                 $('product_type_search_results').value = '';
             },
 

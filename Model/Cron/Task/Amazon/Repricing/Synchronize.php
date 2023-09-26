@@ -43,6 +43,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private $repricingSynchronizationInfo;
 
     public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -55,6 +56,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualInfo $repricingSynchronizationInfo
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

@@ -24,6 +24,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public function __construct(
         \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -36,6 +37,7 @@ class DetectDirectlyAdded extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

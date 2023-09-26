@@ -45,6 +45,7 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Order\Item\CollectionFactory $orderItemCollectionFactory,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -55,6 +56,7 @@ class ReceiveWithCancellationRequested extends \Ess\M2ePro\Model\Cron\Task\Abstr
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

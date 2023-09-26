@@ -31,22 +31,6 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback */
     private $ebayFeedbackResource;
 
-    /**
-     * @param \Ess\M2ePro\Model\Ebay\Feedback\Manager $ebayFeedbackManager
-     * @param \Ess\M2ePro\Model\ResourceModel\Ebay\Account\CollectionFactory $ebayAccountCollectionFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback\CollectionFactory $ebayFeedbackCollectionFactory
-     * @param EbayFeedbackTemplateCollectionFactory $ebayFeedbackTemplateCollectionFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Ebay\Account $ebayAccountResource
-     * @param \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback $ebayFeedbackResource
-     * @param \Ess\M2ePro\Helper\Data $helperData
-     * @param \Magento\Framework\Event\Manager $eventManager
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
-     * @param \Magento\Framework\App\ResourceConnection $resource
-     */
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Feedback\Manager $ebayFeedbackManager,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Account\CollectionFactory $ebayAccountCollectionFactory,
@@ -54,6 +38,7 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback\Template\CollectionFactory $ebayFeedbackTemplateCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Account $ebayAccountResource,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Feedback $ebayFeedbackResource,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -64,6 +49,7 @@ class SendResponse extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

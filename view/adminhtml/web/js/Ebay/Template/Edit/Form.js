@@ -177,15 +177,15 @@ function(jQuery) {
                 onSuccess: function (transport) {
                     var templates = transport.responseText.evalJSON();
 
-                    if (templates.length && templates[0].nick == templateNick) {
-                        if(templateNick == 'description' &&
-                            $('watermark_image').value != ''
-                        ) {
+                    if (templates.length > 0 && templates[0].nick == templateNick) {
+                        if(templateNick == 'description' && $('watermark_image').value != '') {
+                            var params = { id: templates[0].id };
+
                             EbayTemplateDescriptionObj.saveWatermarkImage(
                                 function () {
                                     window.close()
                                 },
-                                false
+                                params
                             );
                         } else {
                             window.close();

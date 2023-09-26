@@ -234,6 +234,7 @@ define([
                 self.setTextVisibilityMode(this, 'watermark_uploaded_image_container');
             }
 
+            self.setTextVisibilityMode(this, 'watermark_position_container');
             self.setTextVisibilityMode(this, 'watermark_transparent_container');
 
             if ($('watermark_transparent').value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::WATERMARK_TRANSPARENT_MODE_NO')) {
@@ -586,7 +587,10 @@ define([
         saveWatermarkImage: function(callback, params) {
             var form = $('edit_form');
 
-            form.action = M2ePro.url.get('ebay_template_description/saveWatermarkImage');
+            form.action = M2ePro.url.get('ebay_template_description/saveWatermarkImage', {
+                 id: params['id'],
+            });
+
             form.target = 'watermark_image_frame';
 
             if ($('watermark_image_frame') === null) {

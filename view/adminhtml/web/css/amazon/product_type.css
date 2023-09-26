@@ -8,7 +8,13 @@
     padding: 1em .5em 1em 1.8rem;
 }
 
-#product_type_browse_results, #product_type_search_results {
+#product_type_browse_results {
+    max-height: none;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+#product_type_search_results {
     min-width: 450px;
     max-height: none;
     display: inline-block;

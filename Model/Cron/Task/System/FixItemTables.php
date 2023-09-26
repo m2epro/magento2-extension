@@ -31,6 +31,7 @@ class FixItemTables extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private $walmartLinkingFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -48,6 +49,7 @@ class FixItemTables extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\LinkingFactory $walmartLinkingFactory
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

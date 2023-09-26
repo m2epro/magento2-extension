@@ -22,6 +22,7 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -32,6 +33,7 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

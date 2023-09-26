@@ -312,6 +312,7 @@ class Config extends AbstractConfig
             'y23_m09' => [
                 'AddOnlineBestOfferForEbayProduct',
                 'RefactorAmazonOrderColumns',
+                'RemoveLastAccessAndRunFromConfigTable',
             ]
         ];
     }

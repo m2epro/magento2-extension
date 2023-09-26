@@ -31,10 +31,11 @@ class SaveWatermarkImage extends Description
     public function execute()
     {
         $templateData = $this->getRequest()->getPost('description');
+        $templateId = $this->getRequest()->getParam('id');
 
         $watermarkImageFile = $this->phpEnvironmentRequest->getFiles('watermark_image');
 
-        if ($templateData['id'] === null || empty($watermarkImageFile['tmp_name'])) {
+        if ($templateId === null || empty($watermarkImageFile['tmp_name'])) {
             $this->setJsonContent([
                 'result' => false,
             ]);
@@ -49,7 +50,7 @@ class SaveWatermarkImage extends Description
             ],
         ]);
 
-        $watermarkPath = $varDir->getPath() . (int)$templateData['id'] . '.png';
+        $watermarkPath = $varDir->getPath() . (int)$templateId . '.png';
 
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         if ($fileDriver->isFile($watermarkPath)) {
@@ -57,7 +58,7 @@ class SaveWatermarkImage extends Description
         }
 
         /** @var \Ess\M2ePro\Model\Template\Description $template */
-        $template = $this->ebayFactory->getObjectLoaded('Template\Description', $templateData['id'], null, false);
+        $template = $this->ebayFactory->getObjectLoaded('Template\Description', $templateId, null, false);
 
         if ($template->getId() === null) {
             $this->setJsonContent([

@@ -40,10 +40,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected $taskRepo;
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
-
+    /** @var \Ess\M2ePro\Model\Cron\Manager */
+    private $cronManager;
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -60,6 +62,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->resource = $resource;
         $this->helperData = $helperData;
         $this->taskRepo = $taskRepo;
+        $this->cronManager = $cronManager;
     }
 
     //########################################
@@ -67,13 +70,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function process()
     {
         $this->initialize();
-        $this->updateLastAccess();
+        $this->cronManager->setLastAccess($this->getConfigGroup());
 
         if (!$this->isPossibleToRun()) {
             return;
         }
 
-        $this->updateLastRun();
+        $this->cronManager->setLastRun($this->getConfigGroup());
         $this->beforeStart();
 
         try {
@@ -218,19 +221,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         $this->activeRecordFactory->getObject('Synchronization_Log')->setFatalErrorHandler();
     }
 
-    protected function updateLastAccess()
-    {
-        $this->setConfigValue('last_access', $this->helperData->getCurrentGmtDate());
-    }
-
-    protected function updateLastRun()
-    {
-        $this->getHelper('Module')->getRegistry()->setValue(
-            $this->getConfigGroup() . 'last_run/',
-            $this->helperData->getCurrentGmtDate()
-        );
-    }
-
     // ---------------------------------------
 
     protected function beforeStart()
@@ -282,7 +272,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function isIntervalExceeded()
     {
-        $lastRun = $this->getHelper('Module')->getRegistry()->getValue($this->getConfigGroup() . 'last_run/');
+        $lastRun = $this->cronManager->getLastRun($this->getConfigGroup());
 
         if ($lastRun === null) {
             return true;
@@ -290,9 +280,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         $currentTimeStamp = $this->helperData->getCurrentGmtDate(true);
 
-        $lastRunTimestamp = (int)$this->helperData
-            ->createGmtDateTime($lastRun)
-            ->format('U');
+        $lastRunTimestamp = (int)$lastRun->format('U');
 
         return $currentTimeStamp > $lastRunTimestamp + $this->getInterval();
     }
@@ -361,7 +349,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         return $this->getHelper('Module')->getConfig();
     }
 
-    protected function getConfigGroup()
+    protected function getConfigGroup(): string
     {
         return '/cron/task/' . $this->getNick() . '/';
     }

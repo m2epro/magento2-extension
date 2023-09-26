@@ -73,6 +73,7 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Other $listingOtherResource,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other $amazonListingOtherResource,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -83,6 +84,7 @@ class AfnQty extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

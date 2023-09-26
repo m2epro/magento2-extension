@@ -125,7 +125,7 @@ class NotUpdated implements \Ess\M2ePro\Model\Issue\LocatorInterface
         );
         $textToTranslate = <<<TEXT
 Data for some Product Types was changed on Amazon. To avoid errors and have access to the latest updates,
-please use the <b>Update</b> button in Amazon > <a href="%url" target="_blank">Product Types</a>
+please use the <b>Refresh Amazon Data</b> button in Amazon > <a href="%url" target="_blank">Product Types</a>
 and re-save the Product Types you have configured.
 TEXT;
 

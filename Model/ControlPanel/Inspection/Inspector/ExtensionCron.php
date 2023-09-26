@@ -44,13 +44,13 @@ class ExtensionCron implements InspectorInterface
             );
         } elseif ($helper->isLastRunMoreThan(1800)) {
             $now = new \DateTime('now', new \DateTimeZone('UTC'));
-            $cron = new \DateTime($helper->getLastRun(), new \DateTimeZone('UTC'));
+            $cron = $helper->getLastRun();
             $diff = round(($now->getTimestamp() - $cron->getTimestamp()) / 60, 0);
 
             $issues[] = $this->issueFactory->create(
                 "Cron [{$helper->getRunner()}] is not working for {$diff} min",
                 <<<HTML
-Last run: {$helper->getLastRun()}
+Last run: {$cron->format('Y-m-d H:i:s')}
 Now:      {$now->format('Y-m-d H:i:s')}
 HTML
             );

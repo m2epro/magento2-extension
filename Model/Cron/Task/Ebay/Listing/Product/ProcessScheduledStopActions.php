@@ -50,6 +50,7 @@ class ProcessScheduledStopActions extends \Ess\M2ePro\Model\Cron\Task\AbstractMo
         \Ess\M2ePro\Model\Listing\Product\Instruction\Factory $listingProductInstructionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLogResource,
         \Ess\M2ePro\Model\Listing\Log\Factory $listingLogFactory,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -60,6 +61,7 @@ class ProcessScheduledStopActions extends \Ess\M2ePro\Model\Cron\Task\AbstractMo
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

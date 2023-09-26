@@ -29,24 +29,8 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     /** @var \Ess\M2ePro\Helper\Module\ChangeTracker */
     private $changeTrackerHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data $helperData
-     * @param \Magento\Framework\Event\Manager $eventManager
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo
-     * @param \Magento\Framework\App\ResourceConnection $resource
-     * @param \Ess\M2ePro\Model\ChangeTracker\Base\InventoryTrackerFactory $inventoryTrackerFactory
-     * @param \Ess\M2ePro\Model\ChangeTracker\Base\PriceTrackerFactory $priceTrackerFactory
-     * @param \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolderFactory $changeHolderFactory
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler $profiler
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger
-     * @param \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountCollection
-     * @param \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -64,6 +48,7 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

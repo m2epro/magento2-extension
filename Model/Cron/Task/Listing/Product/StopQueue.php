@@ -36,6 +36,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public function __construct(
         \Ess\M2ePro\Model\Walmart\ThrottlingManager $walmartThrottlingManager,
         \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -48,6 +49,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->amazonThrottlingManager = $amazonThrottlingManager;
         $this->walmartThrottlingManager = $walmartThrottlingManager;
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

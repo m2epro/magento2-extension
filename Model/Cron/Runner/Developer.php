@@ -81,12 +81,12 @@ class Developer extends AbstractModel
 
     //########################################
 
-    protected function updateLastRun()
+    protected function setLastRun()
     {
         return null;
     }
 
-    protected function updateLastAccess()
+    protected function setLastAccess()
     {
         return null;
     }

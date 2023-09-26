@@ -153,12 +153,16 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'amazon_template_product_type_tabs' => 'M2ePro/Amazon/Template/ProductType/Tabs',
             'amazon_template_product_type_search' => 'M2ePro/Amazon/Template/ProductType/Search',
             'amazon_template_product_type_content' => 'M2ePro/Amazon/Template/ProductType/Content',
+            'amazon_template_product_type_finder' => 'M2ePro/Amazon/Template/ProductType/Finder',
+
         ], <<<JS
 
         window.AmazonTemplateProductTypeTabsObj = new AmazonTemplateProductTypeTabs();
         window.AmazonTemplateProductTypeContentObj = new AmazonTemplateProductTypeContent();
         window.AmazonTemplateProductTypeObj = new AmazonTemplateProductType();
         window.AmazonTemplateProductTypeSearchObj = new AmazonTemplateProductTypeSearch();
+        window.AmazonTemplateProductTypeFinderObj = new AmazonTemplateProductTypeFinder();
+
 
         jQuery(function() {
             AmazonTemplateProductTypeObj.initObservers();

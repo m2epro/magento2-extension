@@ -334,7 +334,7 @@ define(
                     }
                 );
 
-                this.initField(settings, scheme, htmlId, index == 0);
+                this.initField(settings, scheme, htmlId);
             },
 
             renderContainerField: function (insertCallback, container, field, path, isParentRequired)
@@ -518,7 +518,7 @@ define(
                 return groupList;
             },
 
-            initField: function(itemData, itemScheme, htmlId, isFirstArrayField)
+            initField: function(itemData, itemScheme, htmlId)
             {
                 const modeElement = $('field_mode_' + htmlId),
                     attributeElement = $('field_attribute_' + htmlId),
@@ -571,7 +571,7 @@ define(
                     var key = htmlId.split('/')
                         .slice(0, -1)
                         .join('/');
-                    if (isFirstArrayField && this.specificsDefaultSettings[key] !== undefined) {
+                    if (this.specificsDefaultSettings[key] !== undefined) {
                         const defaultSettings = this.specificsDefaultSettings[key];
 
                         if (defaultSettings['mode'] === this.constFieldCustomAttribute) {
@@ -584,7 +584,7 @@ define(
                             valueElement.value = defaultSettings['value'];
                             customValueContainer.style.display = 'inline';
                         }
-                    } else if (isFirstArrayField && itemScheme['default_value'] !== null) {
+                    } else if (itemScheme['default_value'] !== null) {
                         modeElement.value = this.constFieldCustomValue;
                         valueElement.value = itemScheme['default_value'];
                         customValueContainer.style.display = 'inline';

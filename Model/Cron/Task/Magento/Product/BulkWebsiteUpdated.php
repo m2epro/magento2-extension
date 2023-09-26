@@ -33,6 +33,7 @@ class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     public function __construct(
         \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -50,6 +51,7 @@ class BulkWebsiteUpdated extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->websiteCollectionFactory = $websiteCollectionFactory;
         $this->storeFactory = $storeFactory;
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

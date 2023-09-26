@@ -24,6 +24,8 @@ class Cron
     protected $helperData;
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
+    /** @var \Ess\M2ePro\Model\Cron\Manager */
+    private $cronManager;
 
     /**
      * @param \Ess\M2ePro\Helper\Data $helperData
@@ -31,10 +33,12 @@ class Cron
      * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
      */
     public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\Config\Manager $config,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
     ) {
+        $this->cronManager = $cronManager;
         $this->helperData = $helperData;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->config = $config;
@@ -124,14 +128,14 @@ class Cron
 
     //########################################
 
-    public function getLastAccess()
+    public function getLastAccess(): ?\DateTime
     {
-        return $this->getConfigValue('last_access');
+        return $this->cronManager->getLastAccess('/cron/');
     }
 
-    public function setLastAccess($value)
+    public function setLastAccess(): void
     {
-        return $this->setConfigValue('last_access', $value);
+        $this->cronManager->setLastAccess('/cron/');
     }
 
     // ---------------------------------------
@@ -140,28 +144,26 @@ class Cron
     {
         $isHours && $interval *= 3600;
 
-        $lastAccess = $this->getLastAccess();
+        $lastAccess = $this->cronManager->getLastAccess('/cron/');
         if ($lastAccess === null) {
             return false;
         }
 
-        $lastAccessTimestamp = (int)$this->helperData
-            ->createGmtDateTime($lastAccess)
-            ->format('U');
+        $lastAccessTimestamp = (int)$lastAccess->format('U');
 
         return $this->helperData->getCurrentGmtDate(true) > $lastAccessTimestamp + $interval;
     }
 
     //########################################
 
-    public function getLastRun()
+    public function getLastRun(): ?\DateTime
     {
-        return $this->getConfigValue('last_run');
+        return $this->cronManager->getLastRun('/cron/');
     }
 
-    public function setLastRun($value)
+    public function setLastRun(): void
     {
-        return $this->setConfigValue('last_run', $value);
+        $this->cronManager->setLastRun('/cron/');
     }
 
     // ---------------------------------------
@@ -175,9 +177,7 @@ class Cron
             return false;
         }
 
-        $lastRunTimestamp = (int)$this->helperData
-            ->createGmtDateTime($lastRun)
-            ->format('U');
+        $lastRunTimestamp = (int)$lastRun->format('U');
 
         return $this->helperData->getCurrentGmtDate(true) > $lastRunTimestamp + $interval;
     }

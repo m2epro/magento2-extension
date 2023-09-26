@@ -39,6 +39,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
@@ -52,6 +53,7 @@ class SellerOrderId extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->amazonAccountResource = $amazonAccountResource;
 
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

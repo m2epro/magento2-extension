@@ -22,18 +22,16 @@ class DetectSpecialPriceStartEndDate extends \Ess\M2ePro\Model\Cron\Task\Abstrac
     protected $catalogProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory  */
     protected $listingCollectionFactory;
-    /** @var \Ess\M2ePro\Helper\Module */
-    private $module;
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registryManager;
 
     public function __construct(
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
-        \Ess\M2ePro\Helper\Module $module,
         \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $catalogProductCollectionFactory,
         \Ess\M2ePro\PublicServices\Product\SqlChange $publicService,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -44,6 +42,7 @@ class DetectSpecialPriceStartEndDate extends \Ess\M2ePro\Model\Cron\Task\Abstrac
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,
@@ -58,7 +57,6 @@ class DetectSpecialPriceStartEndDate extends \Ess\M2ePro\Model\Cron\Task\Abstrac
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         $this->catalogProductCollectionFactory = $catalogProductCollectionFactory;
         $this->listingCollectionFactory = $listingCollectionFactory;
-        $this->module = $module;
         $this->registryManager = $registryManager;
     }
 

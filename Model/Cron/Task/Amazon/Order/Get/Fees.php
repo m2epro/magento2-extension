@@ -25,6 +25,7 @@ class Fees extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
         \Ess\M2ePro\Helper\Server\Maintenance $serverMaintenanceHelper,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -35,6 +36,7 @@ class Fees extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

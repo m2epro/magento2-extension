@@ -31,6 +31,7 @@ class DeliveryPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ResourceModel\Order\CollectionFactory $orderCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Order $orderAmazonResource,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Account $amazonAccountResource,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -41,6 +42,7 @@ class DeliveryPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Magento\Framework\App\ResourceConnection $resource
     ) {
         parent::__construct(
+            $cronManager,
             $helperData,
             $eventManager,
             $parentFactory,

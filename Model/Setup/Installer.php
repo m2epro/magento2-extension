@@ -2716,7 +2716,6 @@ class Installer
         $moduleConfig->insert('/server/location/', 'current_index', 1);
         $moduleConfig->insert('/cron/', 'mode', '1');
         $moduleConfig->insert('/cron/', 'runner', 'magento');
-        $moduleConfig->insert('/cron/', 'last_access');
         $moduleConfig->insert('/cron/', 'last_runner_change');
         $moduleConfig->insert('/cron/', 'last_executed_slow_task');
         $moduleConfig->insert('/cron/', 'last_executed_task_group');

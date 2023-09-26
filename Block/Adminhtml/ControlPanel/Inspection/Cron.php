@@ -51,7 +51,7 @@ class Cron extends AbstractInspection
 
         $cronLastRunTime = $this->cronHelper->getLastRun();
         if ($cronLastRunTime !== null) {
-            $this->cronLastRunTime = $cronLastRunTime;
+            $this->cronLastRunTime = $cronLastRunTime->format('Y-m-d H:i:s');
             $this->cronIsNotWorking = $this->cronHelper->isLastRunMoreThan(1, true);
         }
 

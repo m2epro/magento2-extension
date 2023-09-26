@@ -76,8 +76,8 @@ define(
                 if (productType) {
                     searchPopupNotSelected.hide();
                     selectedProductTypeTitle
-                        .text(AmazonTemplateProductTypeSearchObj.getProductTypeTitle(productType))
-                        .show();
+                            .text(AmazonTemplateProductTypeSearchObj.getProductTypeTitle(productType))
+                            .show();
                 } else {
                     searchPopupNotSelected.show();
                     selectedProductTypeTitle.hide();
@@ -154,6 +154,7 @@ define(
 
                         self.productTypeSearchPopup.modal('openModal');
                         self.setSearchActivatorVisibility(true);
+                        AmazonTemplateProductTypeFinderObj.renderRootCategories('product_type_browse_results')
                     }
                 });
             },
@@ -165,8 +166,25 @@ define(
 
             confirmSearchProductTypePopup: function (container)
             {
-                this.setProductType(AmazonTemplateProductTypeSearchObj.currentProductType);
+                var currentTabId = this.getActiveTabId();
+                if (currentTabId === 'productTypeChooserTabs_search') {
+                    this.setProductType(AmazonTemplateProductTypeSearchObj.currentProductType);
+                } else if (currentTabId === 'productTypeChooserTabs_browse') {
+                    this.setProductType(AmazonTemplateProductTypeFinderObj.currentProductType);
+                }
+
                 container.modal('closeModal');
+            },
+
+            getActiveTabId: function ()
+            {
+                var activeTab = jQuery('.tabs-horiz li.ui-tabs-active a.tab-item-link');
+
+                if (activeTab.length > 0) {
+                    return activeTab.attr('id');
+                }
+
+                return 'productTypeChooserTabs_search';
             },
 
             setSearchActivatorVisibility: function (visible)
