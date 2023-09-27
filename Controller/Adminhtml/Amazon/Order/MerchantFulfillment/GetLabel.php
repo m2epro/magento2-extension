@@ -38,8 +38,6 @@ class GetLabel extends Order
 
         $this->getResponse()->setHeader('Content-type', $orderFulfillmentData['label']['file']['type']);
 
-        $this->setRawContent($labelContent);
-
-        return $this->getResult();
+        return $this->setRawContent($labelContent);
     }
 }

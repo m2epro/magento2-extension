@@ -42,7 +42,7 @@ class ResetData extends Order
             return $this->getResponse()->setBody('Shipment status should not be Purchased');
         }
 
-        $order->addData(
+        $order->getChildObject()->addData(
             [
                 'merchant_fulfillment_data' => null,
                 'merchant_fulfillment_label' => null,

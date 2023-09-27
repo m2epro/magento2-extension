@@ -59,12 +59,12 @@ class RefreshData extends Order
             $response = $connectorObj->getResponseData();
 
             if (empty($response['label']) && !empty($orderFulfillmentData['label'])) {
-                $order->setData('merchant_fulfillment_label', null);
+                $order->getChildObject()->setData('merchant_fulfillment_label', null);
             }
 
             unset($response['label']['file']['contents']);
 
-            $order->setSettings('merchant_fulfillment_data', $response)->save();
+            $order->getChildObject()->setSettings('merchant_fulfillment_data', $response)->save();
             $responseData['success'] = true;
         } catch (\Exception $exception) {
             $responseData['error_message'] = $exception->getMessage();

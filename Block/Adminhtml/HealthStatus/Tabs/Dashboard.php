@@ -145,9 +145,10 @@ HTML
 
         $cronLastRunTime = $this->cronHelper->getLastRun();
         if ($cronLastRunTime !== null) {
+            $cronLastRunFormatted = $cronLastRunTime->format('Y-m-d H:i:s');
             $this->cronIsNotWorking = $this->cronHelper->isLastRunMoreThan(12, true);
         } else {
-            $cronLastRunTime = 'N/A';
+            $cronLastRunFormatted = 'N/A';
         }
 
         $fieldSet->addField(
@@ -155,7 +156,7 @@ HTML
             'note',
             [
                 'label' => $this->__('Last Run'),
-                'text' => "<span>{$cronLastRunTime}</span>" .
+                'text' => "<span>{$cronLastRunFormatted}</span>" .
                     ($this->cronIsNotWorking ? ' (' . $this->__('not working') . ')' : ''),
                 'style' => $this->cronIsNotWorking ? 'color: red' : '',
             ]

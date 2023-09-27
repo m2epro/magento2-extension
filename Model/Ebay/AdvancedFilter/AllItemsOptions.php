@@ -306,9 +306,8 @@ class AllItemsOptions
             ['category' => $this->categoryResource->getMainTable()],
             'category.id = ebay_listing_product.template_category_id',
             [
-                'id' => 'id',
                 'category_id' => 'category_id',
-                'category_path' => 'category_path',
+                'category_path' => new \Zend_Db_Expr('MAX(category.category_path)'),
             ]
         );
         $select->joinLeft(
@@ -318,21 +317,28 @@ class AllItemsOptions
                 'group' => 'title',
             ]
         );
-        $select->group(['category.id', 'marketplace.title', 'category.category_path']);
+        $select->where('category.category_path IS NOT NULL');
+        $select->group(['category.category_id', 'marketplace.title']);
         $select->order(['marketplace.title', 'category.category_path']);
 
         $categories = $select->query()->fetchAll();
 
         $optionCollection = $this->optionCollectionFactory->create();
         foreach ($categories as $category) {
-            $pathElements = explode('>', $category['category_path']);
-            $firstCategory = array_shift($pathElements);
-            $lastCategory = array_pop($pathElements);
+            if (empty($category['category_path'])) {
+                $firstCategory = '';
+                $lastCategory = '';
+            } else {
+                $pathElements = explode('>', $category['category_path']);
+                $firstCategory = array_shift($pathElements);
+                $lastCategory = array_pop($pathElements);
+            }
+
             $groupLabel = sprintf('%s (%s)', $firstCategory, $category['group']);
 
             $option = $this->optionFactory->create(
                 "$lastCategory ({$category['category_id']})",
-                $category['id'],
+                $category['category_id'],
                 $groupLabel
             );
 

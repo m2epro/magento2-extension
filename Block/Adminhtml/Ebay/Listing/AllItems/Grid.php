@@ -41,10 +41,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $advancedFilterAllItemsOptions;
     /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
     private $advancedFilterFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category */
+    private $ebayCategoryResource;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
         \Ess\M2ePro\Model\Ebay\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category $ebayCategoryResource,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Listing $ebayListingResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product $ebayListingProductResource,
@@ -83,6 +86,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->tagRelationResource = $tagRelationResource;
         $this->advancedFilterAllItemsOptions = $advancedFilterAllItemsOptions;
         $this->advancedFilterFactory = $advancedFilterFactory;
+        $this->ebayCategoryResource = $ebayCategoryResource;
     }
 
     public function _construct()
@@ -998,7 +1002,13 @@ HTML;
                 return;
             }
 
-            $collection->getSelect()->where('elp.template_category_id = ?', (int)$filterValue);
+            $collection->getSelect()->joinLeft(
+                ['category' => $this->ebayCategoryResource->getMainTable()],
+                'elp.template_category_id = category.id',
+                []
+            );
+
+            $collection->getSelect()->where('category.category_id = ?', (int)$filterValue);
         };
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(

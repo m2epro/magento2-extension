@@ -73,7 +73,7 @@ class CreateShippingOffer extends Order
 
             unset($response['label']['file']['contents']);
 
-            $order->addData(
+            $order->getChildObject()->addData(
                 [
                     'merchant_fulfillment_data' => \Ess\M2ePro\Helper\Json::encode($response),
                     'merchant_fulfillment_label' => $labelContent,

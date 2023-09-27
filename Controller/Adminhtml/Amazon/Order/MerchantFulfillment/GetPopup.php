@@ -47,6 +47,7 @@ class GetPopup extends Order
             $popUp->setData('fulfillment_details', $orderFulfillmentData);
             $popUp->setData('order_items', $orderItems);
             $popUp->setData('fulfillment_not_wizard', true);
+            $responseData['status'] = false;
         } elseif (!$order->getMarketplace()->getChildObject()->isMerchantFulfillmentAvailable()) {
             $popUp = $this->getLayout()
                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Order\MerchantFulfillment\Message::class);

@@ -197,7 +197,7 @@ define([
                         });
                     }
 
-                    self.openPopUp(transport.responseText, buttons);
+                    self.openPopUp(data['html'], buttons);
                 }
             });
         },
