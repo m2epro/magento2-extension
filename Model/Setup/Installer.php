@@ -5916,6 +5916,12 @@ class Installer
                                                    ['nullable' => false]
                                                )
                                                ->addColumn(
+                                                   'fixed_price_rounding_option',
+                                                   Table::TYPE_SMALLINT,
+                                                   null,
+                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                               )
+                                               ->addColumn(
                                                    'start_price_mode',
                                                    Table::TYPE_SMALLINT,
                                                    null,
@@ -5932,6 +5938,12 @@ class Installer
                                                    Table::TYPE_TEXT,
                                                    255,
                                                    ['nullable' => false]
+                                               )
+                                               ->addColumn(
+                                                   'start_price_rounding_option',
+                                                   Table::TYPE_SMALLINT,
+                                                   null,
+                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                                )
                                                ->addColumn(
                                                    'reserve_price_mode',
@@ -5952,6 +5964,12 @@ class Installer
                                                    ['nullable' => false]
                                                )
                                                ->addColumn(
+                                                   'reserve_price_rounding_option',
+                                                   Table::TYPE_SMALLINT,
+                                                   null,
+                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                               )
+                                               ->addColumn(
                                                    'buyitnow_price_mode',
                                                    Table::TYPE_SMALLINT,
                                                    null,
@@ -5968,6 +5986,12 @@ class Installer
                                                    Table::TYPE_TEXT,
                                                    255,
                                                    ['nullable' => false]
+                                               )
+                                               ->addColumn(
+                                                   'buyitnow_price_rounding_option',
+                                                   Table::TYPE_SMALLINT,
+                                                   null,
+                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                                )
                                                ->addColumn(
                                                    'price_discount_stp_mode',
@@ -9493,6 +9517,44 @@ class Installer
                                      ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonOrderItemTable);
 
+        $amazonProductTypeAttributeMapping = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName('amazon_product_type_attribute_mapping'))
+            ->addColumn(
+                'id',
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'product_type_attribute_code',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false],
+                'Product Type attribute code'
+            )
+            ->addColumn(
+                'product_type_attribute_name',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false],
+                'Product Type attribute name'
+            )
+            ->addColumn(
+                'magento_attribute_code',
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false, 'default' => ''],
+                'Magento attribute code'
+            )
+            ->setComment('Amazon Product Type Attribute Mapping Table')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($amazonProductTypeAttributeMapping);
+
         $amazonProductTypeValidationTable = $this
             ->getConnection()
             ->newTable($this->getFullTableName('amazon_product_type_validation'))
@@ -10058,6 +10120,12 @@ class Installer
                                                      Table::TYPE_TEXT,
                                                      255,
                                                      ['nullable' => false]
+                                                 )
+                                                 ->addColumn(
+                                                     'price_rounding_option',
+                                                     Table::TYPE_SMALLINT,
+                                                     null,
+                                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                                  )
                                                  ->addColumn(
                                                      'regular_price_modifier',
@@ -10734,7 +10802,7 @@ class Installer
                     'marketplace_id' => 24,
                     'default_currency' => 'CAD',
                     'is_new_asin_available' => 1,
-                    'is_merchant_fulfillment_available' => 0,
+                    'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
@@ -10752,7 +10820,7 @@ class Installer
                     'marketplace_id' => 26,
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
-                    'is_merchant_fulfillment_available' => 0,
+                    'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
@@ -10779,7 +10847,7 @@ class Installer
                     'marketplace_id' => 30,
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
-                    'is_merchant_fulfillment_available' => 0,
+                    'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
@@ -10788,7 +10856,7 @@ class Installer
                     'marketplace_id' => 31,
                     'default_currency' => 'EUR',
                     'is_new_asin_available' => 1,
-                    'is_merchant_fulfillment_available' => 0,
+                    'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
@@ -10797,7 +10865,7 @@ class Installer
                     'marketplace_id' => 34,
                     'default_currency' => 'MXN',
                     'is_new_asin_available' => 1,
-                    'is_merchant_fulfillment_available' => 0,
+                    'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
@@ -12694,6 +12762,12 @@ class Installer
                                                       Table::TYPE_TEXT,
                                                       255,
                                                       ['nullable' => false]
+                                                  )
+                                                  ->addColumn(
+                                                      'price_rounding_option',
+                                                      Table::TYPE_SMALLINT,
+                                                      null,
+                                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                                   )
                                                   ->addColumn(
                                                       'price_modifier',

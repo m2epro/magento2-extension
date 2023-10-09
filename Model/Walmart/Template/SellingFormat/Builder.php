@@ -121,6 +121,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'price_mode' => SellingFormat::PRICE_MODE_PRODUCT,
             'price_modifier' => '[]',
+            'price_rounding_option' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
             'price_custom_attribute' => '',
 
             'price_variation_mode' => WalmartSellingFormat::PRICE_VARIATION_MODE_PARENT,

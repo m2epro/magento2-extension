@@ -163,18 +163,35 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getValidatorByPath(string $path): ValidatorInterface
     {
+        $flatScheme = $this->getFlatScheme();
+        if (!array_key_exists($path, $flatScheme)) {
+            throw new \Ess\M2ePro\Model\Exception\Logic('Not found specific path');
+        }
+
+        $validatorBuilderData = $flatScheme[$path];
+        $validatorBuilderData['group_title'] = $this->getGroupTitleByNick($validatorBuilderData['group_nick']);
+
+        return (new ValidatorBuilder($validatorBuilderData))->build();
+    }
+
+    public function findNameByProductTypeCode(string $code): string
+    {
+        $flatScheme = $this->getFlatScheme();
+
+        if (!array_key_exists($code, $flatScheme)) {
+            return '';
+        }
+
+        return $flatScheme[$code]['title'];
+    }
+
+    private function getFlatScheme(): array
+    {
         if ($this->flatScheme === null) {
             $this->flatScheme = $this->convertSchemeToFlat($this->getScheme());
         }
 
-        if (!array_key_exists($path, $this->flatScheme)) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('Not found specific path');
-        }
-
-        $validatorBuilderData = $this->flatScheme[$path];
-        $validatorBuilderData['group_title'] = $this->getGroupTitleByNick($validatorBuilderData['group_nick']);
-
-        return (new ValidatorBuilder($validatorBuilderData))->build();
+        return $this->flatScheme;
     }
 
     private function convertSchemeToFlat(array $array, array $parentAttributes = []): array

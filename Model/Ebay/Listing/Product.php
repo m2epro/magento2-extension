@@ -59,6 +59,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory */
     private $priceCalculatorFactory;
 
+    /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
+    private $rounder;
+
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory $priceCalculatorFactory,
@@ -68,6 +71,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -84,6 +88,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $data
         );
 
+        $this->rounder = $rounder;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->priceCalculatorFactory = $priceCalculatorFactory;
     }
@@ -1020,10 +1025,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
+        $roundingOption = $this->getEbaySellingFormatTemplate()->getStartPriceRoundingOption();
+
         return $this->getCalculatedPriceWithCoefficient(
             $src,
             $vatPercent,
-            $this->getEbaySellingFormatTemplate()->getStartPriceCoefficient()
+            $this->getEbaySellingFormatTemplate()->getStartPriceCoefficient(),
+            $roundingOption
         );
     }
 
@@ -1045,10 +1053,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
+        $roundingOption = $this->getEbaySellingFormatTemplate()->getReservePriceRoundingOption();
+
         return $this->getCalculatedPriceWithCoefficient(
             $src,
             $vatPercent,
-            $this->getEbaySellingFormatTemplate()->getReservePriceCoefficient()
+            $this->getEbaySellingFormatTemplate()->getReservePriceCoefficient(),
+            $roundingOption
         );
     }
 
@@ -1070,10 +1081,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $vatPercent = $this->getEbaySellingFormatTemplate()->getVatPercent();
         }
 
+        $roundingOption = $this->getEbaySellingFormatTemplate()->getBuyItNowPriceRoundingOption();
+
         return $this->getCalculatedPriceWithCoefficient(
             $src,
             $vatPercent,
-            $this->getEbaySellingFormatTemplate()->getBuyItNowPriceCoefficient()
+            $this->getEbaySellingFormatTemplate()->getBuyItNowPriceCoefficient(),
+            $roundingOption
         );
     }
 
@@ -1111,13 +1125,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ---------------------------------------
 
-    private function getCalculatedPriceWithCoefficient($src, $vatPercent = null, $coefficient = null)
-    {
+    private function getCalculatedPriceWithCoefficient(
+        $src,
+        $vatPercent = null,
+        $coefficient = null,
+        int $roundingOption = \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE
+    ) {
         /** @var $calculator \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculator */
         $calculator = $this->priceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setVatPercent($vatPercent);
         $calculator->setCoefficient($coefficient);
+        $calculator->setRoundingMode($roundingOption);
 
         return $calculator->getProductValue();
     }
@@ -1128,6 +1147,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $calculator = $this->priceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setModifier($modifier);
+        $calculator->setRoundingMode($this->getEbaySellingFormatTemplate()->getFixedPriceRoundingOption());
         $calculator->setVatPercent($vatPercent);
 
         return $calculator->getProductValue();

@@ -313,7 +313,12 @@ class Config extends AbstractConfig
                 'AddOnlineBestOfferForEbayProduct',
                 'RefactorAmazonOrderColumns',
                 'RemoveLastAccessAndRunFromConfigTable',
-            ]
+                'AddAmazonProductTypeAttributeMappingTable',
+                'AddPriceRoundingToEbayAmazonWalmartSellingTemplate',
+            ],
+            'y23_m10' => [
+                'EnableAmazonShippingServiceForSomeMarketplaces',
+            ],
         ];
     }
 

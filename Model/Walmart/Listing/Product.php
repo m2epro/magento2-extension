@@ -26,6 +26,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     private $vocabularyHelper;
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory */
     private $walmartPriceCalculatorFactory;
+    /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
+    private $rounder;
 
     /**
      * @param \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper
@@ -51,6 +53,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -68,6 +71,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $data
         );
 
+        $this->rounder = $rounder;
         $this->vocabularyHelper = $vocabularyHelper;
         $this->walmartPriceCalculatorFactory = $walmartPriceCalculatorFactory;
     }
@@ -712,6 +716,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $calculator = $this->walmartPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setModifier($this->getWalmartSellingFormatTemplate()->getPriceModifier());
+        $calculator->setRoundingMode($this->getWalmartSellingFormatTemplate()->getRoundingOption());
         $calculator->setVatPercent($this->getWalmartSellingFormatTemplate()->getPriceVatPercent());
 
         return $calculator->getProductValue();

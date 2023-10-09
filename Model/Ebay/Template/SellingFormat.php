@@ -76,6 +76,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public const LOT_SIZE_MODE_CUSTOM_VALUE = 1;
     public const LOT_SIZE_MODE_ATTRIBUTE = 2;
 
+    public const PRICE_TYPE_FIXED = 'fixed_price';
+    public const PRICE_TYPE_START = 'start_price';
+    public const PRICE_TYPE_RESERVE = 'reserve_price';
+    public const PRICE_TYPE_BUYITNOW = 'buyitnow_price';
+
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\SellingFormat\Source[]
      */
@@ -660,6 +665,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         return \Ess\M2ePro\Helper\Json::decode($this->getData('fixed_price_modifier')) ?: [];
     }
 
+    public function getFixedPriceRoundingOption(): int
+    {
+        return (int)$this->getData('fixed_price_rounding_option');
+    }
+
     /**
      * @return array
      */
@@ -761,6 +771,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         return $attributes;
     }
 
+    public function getStartPriceRoundingOption(): int
+    {
+        return (int)$this->getData('start_price_rounding_option');
+    }
+
     // ---------------------------------------
 
     /**
@@ -835,6 +850,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         return $attributes;
     }
 
+    public function getReservePriceRoundingOption(): int
+    {
+        return (int)$this->getData('reserve_price_rounding_option');
+    }
+
     // ---------------------------------------
 
     /**
@@ -907,6 +927,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         }
 
         return $attributes;
+    }
+
+    public function getBuyItNowPriceRoundingOption(): int
+    {
+        return (int)$this->getData('buyitnow_price_rounding_option');
     }
 
     // ---------------------------------------

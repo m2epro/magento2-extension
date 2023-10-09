@@ -2,7 +2,7 @@ define([
     'jquery',
     'moment',
     'M2ePro/Amazon/Template/Edit',
-    'M2ePro/Template/Helper/PriceChange',
+    'M2ePro/Template/Helper/PriceChange'
 ], function (jQuery, moment) {
 
     window.AmazonTemplateSellingFormat = Class.create(AmazonTemplateEdit, {
@@ -596,7 +596,6 @@ define([
             if (target.value == M2ePro.php.constant('Ess_M2ePro_Model_Template_SellingFormat::PRICE_MODE_ATTRIBUTE')) {
                 self.updateHiddenValue(target, target.previous());
             }
-        }
-
+        },
     });
 });

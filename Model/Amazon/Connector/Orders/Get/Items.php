@@ -188,6 +188,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
                 $order['buyer_name'] = trim((string)$orderData['buyer']['name']);
                 $order['buyer_email'] = trim((string)$orderData['buyer']['email']);
+                $order['buyer_tax_info'] = $orderData['buyer']['tax_info'] ?? [];
 
                 $order['is_replacement'] = (int)$orderData['is_replacement'];
 

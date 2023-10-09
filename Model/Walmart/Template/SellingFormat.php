@@ -440,6 +440,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
         return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
+    public function getRoundingOption(): int
+    {
+        return (int)$this->getData('price_rounding_option');
+    }
+
     /**
      * @return array
      */

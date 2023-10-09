@@ -810,6 +810,404 @@ TEXT
             ]
         );
 
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['fixed_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                && $formData['fixed_price_custom_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'fixed_price_mode',
+            self::SELECT,
+            [
+                'container_id' => 'fixed_price_tr',
+                'label' => __('Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[fixed_price_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['fixed_price_mode']
+                != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                    ? $formData['fixed_price_mode'] : '',
+                'tooltip' => __('The Price for Fixed Price Items.'),
+                'create_magento_attribute' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'fixed_price_custom_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[fixed_price_custom_attribute]',
+                'value' => $formData['fixed_price_custom_attribute'],
+            ]
+        );
+        $this->addPriceRoundingField($fieldset, \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_FIXED, $formData['fixed_price_rounding_option']);
+
+        $this->appendPriceChangeElements(
+            $fieldset,
+            \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_FIXED,
+            \Ess\M2ePro\Helper\Json::encode($formData['fixed_price_modifier'])
+        );
+
+        $fieldset->addField(
+            'price_variation_mode',
+            self::SELECT,
+            [
+                'container_id' => 'variation_price_tr',
+                'label' => __('Variation Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[price_variation_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_VARIATION_MODE_PARENT => __('Main Product'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_VARIATION_MODE_CHILDREN => __('Associated Products'),
+                ],
+                'value' => $formData['price_variation_mode'],
+                'tooltip' => __('Choose the source of the price value for Bundle Products variations.'),
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['start_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                && $formData['start_price_custom_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'start_price_mode',
+            self::SELECT,
+            [
+                'container_id' => 'start_price_tr',
+                'label' => __('Start Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[start_price_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['start_price_mode']
+                != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                    ? $formData['start_price_mode'] : '',
+                'tooltip' => __('The starting Price at which bidding begins.'),
+                'create_magento_attribute' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'start_price_custom_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[start_price_custom_attribute]',
+                'value' => $formData['start_price_custom_attribute'],
+            ]
+        );
+
+        $this->addPriceCoefField($fieldset, $formData['start_price_coefficient'], \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_START, 'Start Price Coefficient');
+        $this->addPriceRoundingField($fieldset, \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_START, $formData['start_price_rounding_option']);
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['reserve_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                && $formData['reserve_price_custom_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'reserve_price_mode',
+            self::SELECT,
+            [
+                'container_id' => 'reserve_price_tr',
+                'label' => __('Reserve Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[reserve_price_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['reserve_price_mode']
+                != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                    ? $formData['reserve_price_mode'] : '',
+                'tooltip' => __('The lowest Price at which you are selling an Item.<br/><b>Note:</b> eBay charges some additional fee for using this Option.'),
+                'create_magento_attribute' => true,
+            ]
+        );
+        $fieldset->addField(
+            'reserve_price_custom_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[reserve_price_custom_attribute]',
+                'value' => $formData['reserve_price_custom_attribute'],
+            ]
+        );
+
+        $this->addPriceCoefField($fieldset, $formData['reserve_price_coefficient'], \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_RESERVE, 'Reserve Price Coefficient');
+        $this->addPriceRoundingField($fieldset, \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_RESERVE, $formData['reserve_price_rounding_option']);
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['buyitnow_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                && $formData['buyitnow_price_custom_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'buyitnow_price_mode',
+            self::SELECT,
+            [
+                'container_id' => 'buyitnow_price_tr',
+                'label' => __('"Buy It Now" Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[buyitnow_price_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['buyitnow_price_mode']
+                != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                    ? $formData['buyitnow_price_mode'] : '',
+                'tooltip' => __('The Fixed Price for immediate purchase.<br/>Find out more about <a href="https://www.ebay.com/help/selling/listings/selling-buy-now?id=4109#section2" target="_blank">adding a Buy It Now Price</a> to your Listing.'),
+                'create_magento_attribute' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'buyitnow_price_custom_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[buyitnow_price_custom_attribute]',
+                'value' => $formData['buyitnow_price_custom_attribute'],
+            ]
+        );
+        $this->addPriceCoefField($fieldset, $formData['buyitnow_price_coefficient'], \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_BUYITNOW, '"Buy It Now" Price Coefficient');
+        $this->addPriceRoundingField($fieldset, \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_TYPE_BUYITNOW, $formData['buyitnow_price_rounding_option']);
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['price_discount_stp_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                && $formData['price_discount_stp_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'price_discount_stp_mode',
+            self::SELECT,
+            [
+                'container_id' => 'price_discount_stp_tr',
+                'label' => __('Strike-Through Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[price_discount_stp_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['price_discount_stp_mode']
+                != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                    ? $formData['price_discount_stp_mode'] : '',
+                'tooltip' => __('The Strike-Through Price is the original Price of a Product that is discounted shown with a line through it.
+                                    It is only available to certain Sellers who have been pre-approved by eBay.<br/><br/>
+                                    If you qualify to display Strike-Through Price choose the Magento Attribute you want to use for it.'),
+                'create_magento_attribute' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'price_discount_stp_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[price_discount_stp_attribute]',
+                'value' => $formData['price_discount_stp_attribute'],
+            ]
+        );
+
+        $fieldset->addField(
+            'price_discount_stp_type',
+            self::SELECT,
+            [
+                'container_id' => 'price_discount_stp_reason_tr',
+                'label' => __('Reason (UK, DE only)'),
+                'class' => 'select-main',
+                'name' => 'selling_format[price_discount_stp_type]',
+                'values' => [
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_RRP => __('Recommended Retail Price'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_EBAY => __('Previous Selling Price used on eBay'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_OFF_EBAY => __('Previous Selling Price used beyond eBay'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_BOTH => __('Previous Selling Price used both'),
+                ],
+                'value' => $formData['price_discount_stp_type'],
+                'tooltip' => __('<strong>Recommended Retail Price</strong><br/>
+                This Price is recommended by the manufacturer to be used at the initial sale.<br/>
+                <strong>Previous Selling Price used on eBay</strong><br/>
+                This Price was used in another Listing on eBay 30 days prior to Listing the Item, excluding shipping and handling.<br/>
+                <strong>Previous Selling Price used beyond eBay</strong><br/>
+                This Price was used beyond eBay either online or offline 30 days prior to Listing the Item, excluding shipping and handling.<br/>
+                <strong>Previous Selling Price used both on and beyond eBay</strong><br/>
+                    This Price was used both on and beyond eBay 30 days prior to Listing the Item, excluding shipping and handling.'),
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['price_discount_map_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                && $formData['price_discount_map_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'price_discount_map_mode',
+            self::SELECT,
+            [
+                'container_id' => 'price_discount_map_tr',
+                'label' => __('Minimum Advertised Price'),
+                'class' => 'select-main',
+                'name' => 'selling_format[price_discount_map_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT => __('Product Price'),
+                    \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL => __('Special Price'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['price_discount_map_mode']
+                != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE
+                    ? $formData['price_discount_map_mode'] : '',
+                'tooltip' => __('This determines where the Minimum Advertised Price should be taken from.'),
+                'create_magento_attribute' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'price_discount_map_attribute',
+            'hidden',
+            [
+                'name' => 'selling_format[price_discount_map_attribute]',
+                'value' => $formData['price_discount_map_attribute'],
+            ]
+        );
+
+        $fieldset->addField(
+            'price_discount_map_exposure_type',
+            self::SELECT,
+            [
+                'container_id' => 'price_discount_map_exposure_tr',
+                'label' => __('Exposure'),
+                'class' => 'select-main',
+                'name' => 'selling_format[price_discount_map_exposure_type]',
+                'values' => [
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_NONE => __('None'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT => __('During Checkout'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT => __('Pre-Checkout'),
+                ],
+                'value' => $formData['price_discount_map_exposure_type'],
+                'tooltip' => __('<strong>None</strong><br/>
+                                    Discounted Price will not be shown during either Pre-Checkout or Checkout. A Buyer will be aware of discount before the payment is done.<br/>
+                                    <strong>During Checkout</strong><br/>
+                                    Discounted Price will be shown on the eBay Checkout flow Page. A Buyer will be aware of discount before the purchase is confirmed.<br/>
+                                    <strong>PreCheckout</strong><br/>
+                                    The information of discounted Price will be available on the Product Page. A Buyer will be aware of discount before he decides to make a purchase by clicking "See Price" link. Discounted Price will be shown in a pop-up window.'),
+            ]
+        );
+
         $currencyAvailabilityMessage = $this->getCurrencyAvailabilityMessage();
         $fieldset->addField(
             'template_selling_format_messages',
@@ -817,15 +1215,6 @@ TEXT
             [
                 'text' => $currencyAvailabilityMessage,
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom',
-            ]
-        );
-
-        $fieldset->addField(
-            'price_table_container',
-            self::CUSTOM_CONTAINER,
-            [
-                'text' => $this->getPriceTableHtml(),
-                'css_class' => 'm2epro-fieldset-table',
             ]
         );
 
@@ -1191,12 +1580,13 @@ JS;
         }
 
         $fixedPriceModifierRenderJs = '';
-        if (!empty($formData['fixed_price_modifier'])) {
-            $formDataJson = \Ess\M2ePro\Helper\Json::encode($formData['fixed_price_modifier']);
-            $fixedPriceModifierRenderJs = <<<JS
-    EbayTemplateSellingFormatObj.renderFixedPriceChangeRows({$formDataJson});
+        $formDataJson = \Ess\M2ePro\Helper\Json::encode($formData['fixed_price_modifier']);
+        $fixedPriceModifierRenderJs = <<<JS
+    EbayTemplateSellingFormatObj.priceChangeHelper.renderPriceChangeRows(
+        'fixed_price',
+        {$formDataJson}
+        );
 JS;
-        }
 
         $this->js->add(
             <<<JS
@@ -1400,20 +1790,6 @@ JS
 
     //########################################
 
-    private function getPriceTableHtml()
-    {
-        return $this->getLayout()
-                    ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\PriceTable::class)
-                    ->addData([
-                        'currency' => $this->getCurrency(),
-                        'form_data' => $this->getFormData(),
-                        'default' => $this->getDefault(),
-                        'attributes_by_input_types' => $this->getAttributesByInputTypes(),
-                    ])->toHtml();
-    }
-
-    //########################################
-
     public function getCharityDictionary(): array
     {
         $connection = $this->resourceConnection->getConnection();
@@ -1430,5 +1806,107 @@ JS
         }
 
         return $data;
+    }
+
+    /**
+     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
+     * @param string $priceType
+     * @param string|null $priceModifier
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function appendPriceChangeElements(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        string $priceType,
+        ?string $priceModifier
+    ): void {
+        $block = $this->getLayout()
+                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Template\SellingFormat\PriceChange::class)
+                      ->addData([
+                          'price_type' => $priceType,
+                          'price_modifier' => (string)$priceModifier,
+                      ]);
+
+        $fieldset->addField(
+            $priceType . '_change_placement',
+            'label',
+            [
+                'container_id' => $priceType . '_change_placement_tr',
+                'label' => '',
+                'after_element_html' => $block->toHtml(),
+            ]
+        );
+    }
+
+    public function addPriceCoefField($fieldset, $formData, $priceType, $label)
+    {
+        $fieldset->addField(
+            $priceType . '_coefficient_mode',
+            self::SELECT,
+            [
+                'container_id' => $priceType . '_change_td',
+                'label' => __($label),
+                'class' => 'select admin__control-select M2ePro-validate-price-coefficient price_coefficient_mode required-entry',
+                'name' => 'selling_format[' . $priceType . '_coefficient_mode]',
+                'values' => [
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE => __('None'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE => __('Absolute Value increase'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE => __('Absolute Value decrease'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE => __('Percentage increase'),
+                    \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE => __('Percentage decrease'),
+                ],
+                'value' => $formData,
+                'after_element_html' => '
+<div id="' . $priceType . '_coefficient_input_div" class="price_coefficient_container">
+    <div style="width: 10px;">
+        <span id="' . $priceType . '_coefficient_sign_span"></span>
+    </div>
+    <input name="selling_format[' . $priceType . '_coefficient]" value="' . preg_replace('/(%$|^[+-])/', '', $formData) . '" type="text" class="admin__control-text M2ePro-validation-float input-text coef"/>
+    <span id="' . $priceType . '_coefficient_percent_span" style="padding-left: 2px;"></span>
+</div>
+<script type="text/javascript">
+            require(["jquery"], function ($) {
+                $(document).ready(function () {
+                    var priceCoefficient = ' . json_encode($formData) . ';
+                    if (priceCoefficient == "") {
+                        $("#' . $priceType . '_coefficient_mode").val(' . json_encode(\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE) . ');
+                    } else if (priceCoefficient.match(/^\+[0-9.,]*$/)) {
+                        $("#' . $priceType . '_coefficient_mode").val(' . json_encode(\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE) . ');
+                    } else if (priceCoefficient.match(/^\-[0-9.,]*$/)) {
+                        $("#' . $priceType . '_coefficient_mode").val(' . json_encode(\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE) . ');
+                    } else if (priceCoefficient.match(/^\+[0-9.,]*%$/)) {
+                        $("#' . $priceType . '_coefficient_mode").val(' . json_encode(\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE) . ');
+                    } else if (priceCoefficient.match(/^\-[0-9.,]*%$/)) {
+                        $("#' . $priceType . '_coefficient_mode").val(' . json_encode(\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE) . ');
+                    }
+                });
+            });
+        </script>'
+            ]
+        );
+    }
+
+    public function addPriceRoundingField($fieldset, $priceType, $formData)
+    {
+        $fieldset->addField(
+            $priceType . '_rounding_option',
+            'select',
+            [
+                'container_id' => $priceType . '_rounding_option_container',
+                'name' => 'selling_format[' . $priceType . '_rounding_option]',
+                'label' => __('Rounding'),
+                'values' => [
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE, 'label' => __('None')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDREDTH, 'label' => __('Nearest 0.09')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_TENTH, 'label' => __('Nearest 0.99')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_INT, 'label' => __('Nearest 1.00')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDRED, 'label' => __('Nearest 10.00')],
+                ],
+                'value' => $formData,
+                'tooltip' => __('Use <b>Price Rounding</b> to round Product sale prices to convenient numbers like $9.99 or  $10.00<br>
+If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the final Price')
+            ]
+        );
     }
 }

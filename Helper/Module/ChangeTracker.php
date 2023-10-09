@@ -4,81 +4,54 @@ namespace Ess\M2ePro\Helper\Module;
 
 class ChangeTracker
 {
+    public const STATUS_DISABLED = 0;
+    public const STATUS_ENABLED = 1;
+    public const DEFAULT_RUN_INTERVAL = 3600;
+
     private const CHANGE_TRACKER_CONFIG_GROUP = '/change_tracker/';
-    private const DEFAULT_STATUS = 0;
     private const DEFAULT_LOG_LEVEL = 200;
-    private const DEFAULT_RUN_INTERVAL = 3600;
 
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
 
-    /**
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     */
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager $config
-    ) {
+    public function __construct(\Ess\M2ePro\Model\Config\Manager $config)
+    {
         $this->config = $config;
     }
 
-    // ----------------------------------------
-
-    /**
-     * @return int
-     */
     public function getStatus(): int
     {
-        return (int)($this->getValue('status') ?? self::DEFAULT_STATUS) ;
+        return (int)($this->getValue('status') ?? self::STATUS_DISABLED) ;
     }
 
-    /**
-     * @param int $status
-     *
-     * @return bool
-     */
     public function setStatus(int $status): bool
     {
         return $this->setValue('status', $status);
     }
 
-    // ----------------------------------------
-
-    /**
-     * @return int
-     */
     public function getInterval(): int
     {
         return (int)($this->getValue('run_interval') ?? self::DEFAULT_RUN_INTERVAL);
     }
 
-    /**
-     * @param int $timeout
-     *
-     * @return bool
-     */
-    public function setInterval(int $timeout): bool
+    public function setInterval(int $seconds): bool
     {
-        return $this->setValue('run_interval', $timeout);
+        return $this->setValue('run_interval', $seconds);
     }
 
-    // ----------------------------------------
-
-    /**
-     * @return int
-     */
     public function getLogLevel(): int
     {
         return (int)($this->getValue('log_level') ?? self::DEFAULT_LOG_LEVEL);
     }
 
-    /**
-     * @param int $logLevel
-     *
-     * @return bool
-     */
     public function setLogLevel(int $logLevel): bool
     {
         return $this->setValue('log_level', $logLevel);
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->getStatus() === self::STATUS_ENABLED;
     }
 
     /**
@@ -99,11 +72,6 @@ class ChangeTracker
      */
     private function setValue(string $key, $value): bool
     {
-        return $this->config
-            ->setGroupValue(
-                self::CHANGE_TRACKER_CONFIG_GROUP,
-                $key,
-                $value
-            );
+        return $this->config->setGroupValue(self::CHANGE_TRACKER_CONFIG_GROUP, $key, $value);
     }
 }

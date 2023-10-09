@@ -65,7 +65,7 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
             return $this->getFailResult(
                 __(
                     'The Amazon token obtaining is currently unavailable.<br/>Reason: %error_message',
-                    $exception->getMessage()
+                    ['error_message' => $exception->getMessage()]
                 )
             );
         }

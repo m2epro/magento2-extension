@@ -1,6 +1,7 @@
 define([
     'Magento_Ui/js/modal/modal',
-    'M2ePro/Common'
+    'M2ePro/Common',
+    'M2ePro/Template/Helper/PriceChange',
 ], function (modal) {
 
     window.EbayTemplateSellingFormat = Class.create(Common, {
@@ -9,6 +10,14 @@ define([
         charityTpl: '',
         priceChangeIndex: 0,
         priceChangeTpl: '',
+        priceChange: {
+            fixed_price: {
+                index: 0,
+                template: '',
+                enabled: true
+            },
+        },
+        priceChangeHelper: null,
 
         constAbsoluteIncrease: M2ePro.php.constant(
                 '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE'
@@ -31,34 +40,6 @@ define([
         initialize: function ()
         {
             var self = this;
-            jQuery.validator.addMethod('M2ePro-validate-price-coefficient', function (value, el) {
-
-                var tempEl = el;
-
-                if (self.isElementHiddenFromPage(el)) {
-                    return true;
-                }
-
-                var coefficient = el.up().next().down('input');
-
-                coefficient.removeClassName('price_unvalidated');
-
-                if (!coefficient.up('div').visible()) {
-                    return true;
-                }
-
-                if (coefficient.value == '') {
-                    return false;
-                }
-
-                var floatValidator = Validation.get('M2ePro-validation-float');
-                if (floatValidator.test($F(coefficient), coefficient) && parseFloat(coefficient.value) <= 0) {
-                    coefficient.addClassName('price_unvalidated');
-                    return false;
-                }
-
-                return true;
-            }, M2ePro.translator.translate('Price Change is not valid.'));
 
             jQuery.validator.addMethod('M2ePro-validate-price-modifier', function (value, el) {
                 if (self.isElementHiddenFromPage(el)) {
@@ -151,11 +132,8 @@ define([
                 charityRowTemplate.remove();
             }
 
-            var priceChangeRowTemplate = $('fixed_price_change_row_template');
-            if (priceChangeRowTemplate) {
-                this.priceChangeTpl = priceChangeRowTemplate.innerHTML;
-                priceChangeRowTemplate.remove();
-            }
+            this.priceChangeHelper = new TemplateHelperPriceChange();
+            this.priceChangeHelper.initPriceChange(this.priceChange);
         },
 
         initObservers: function()
@@ -283,6 +261,14 @@ define([
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_FIXED')) {
                 $('start_price_tr', 'reserve_price_tr', 'buyitnow_price_tr').invoke('hide');
                 $$('#variation_price_tr .value').invoke('show');
+                $('fixed_price_change_placement_tr').show();
+                $('start_price_change_td').hide();
+                $('reserve_price_change_td').hide();
+                $('buyitnow_price_change_td').hide();
+                $('fixed_price_rounding_option_container').show();
+                $('start_price_rounding_option_container').hide();
+                $('reserve_price_rounding_option_container').hide();
+                $('buyitnow_price_rounding_option_container').hide();
             }
 
             attributeElement.innerHTML = '';
@@ -293,6 +279,14 @@ define([
             bestOfferBlock.show();
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_AUCTION')) {
                 $('fixed_price_tr').hide();
+                $('fixed_price_change_placement_tr').hide();
+                $('fixed_price_rounding_option_container').hide();
+                $('start_price_rounding_option_container').show();
+                $('reserve_price_rounding_option_container').show();
+                $('buyitnow_price_rounding_option_container').show();
+                $('start_price_change_td').show();
+                $('reserve_price_change_td').show();
+                $('buyitnow_price_change_td').show();
                 bestOfferBlock.hide();
                 bestOfferMode.value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::BEST_OFFER_MODE_NO');
                 bestOfferMode.simulate('change');
@@ -434,16 +428,13 @@ define([
         },
 
         updateFixedPrice: function () {
-            var priceLabel = $('fixed_price_label'),
-                bestOfferAcceptPercentageOption = $('best_offer_accept_percentage_option'),
+            var bestOfferAcceptPercentageOption = $('best_offer_accept_percentage_option'),
                 bestOfferRejectPercentageOption = $('best_offer_reject_percentage_option');
 
-            priceLabel.innerHTML = M2ePro.translator.translate('Fixed Price') + ': ';
             bestOfferAcceptPercentageOption.innerHTML = M2ePro.translator.translate('% of Fixed Price');
             bestOfferRejectPercentageOption.innerHTML = M2ePro.translator.translate('% of Fixed Price');
 
             if ($('listing_type').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_FIXED')) {
-                priceLabel.innerHTML = M2ePro.translator.translate('Price') + ': ';
                 bestOfferAcceptPercentageOption.innerHTML = M2ePro.translator.translate('% of Price');
                 bestOfferRejectPercentageOption.innerHTML = M2ePro.translator.translate('% of Price');
             }
@@ -599,15 +590,16 @@ define([
                 attributeElement = $('fixed_price_custom_attribute'),
                 priceChangeTd = $('fixed_price_change_td'),
                 priceChangeTds = $$('#fixed_price_tr td.remove_bottom_border'),
-                variationPriceSelect = $$('#variation_price_tr .value');
+                variationPriceSelect = $$('#variation_price_tr .value'),
+                variationPriceSelect1 = $('price_variation_mode_tr');
 
             variationPriceSelect.invoke('hide');
             priceChangeTds.invoke('removeClassName', 'bottom_border_disabled');
-            priceChangeTd.hide();
+            priceChangeTd && priceChangeTd.hide();
             currencyTd && currencyTd.hide();
 
             if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODE_NONE')) {
-                priceChangeTd.show();
+                priceChangeTd && priceChangeTd.show();
                 currencyTd && currencyTd.show();
                 variationPriceSelect.invoke('show');
                 if (listingType.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::LISTING_TYPE_AUCTION')) {
@@ -634,14 +626,11 @@ define([
         reserve_price_mode_change: function () {
             var self = EbayTemplateSellingFormatObj,
                 attributeElement = $('reserve_price_custom_attribute'),
-                priceChangeTd = $('reserve_price_change_td'),
                 currencyTd = $('reserve_price_currency_td');
 
-            priceChangeTd.hide();
             currencyTd && currencyTd.hide();
 
             if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODE_NONE')) {
-                priceChangeTd.show();
                 currencyTd && currencyTd.show();
             }
 
@@ -654,14 +643,11 @@ define([
         buyitnow_price_mode_change: function () {
             var self = EbayTemplateSellingFormatObj,
                 attributeElement = $('buyitnow_price_custom_attribute'),
-                priceChangeTd = $('buyitnow_price_change_td'),
                 currencyTd = $('buyitnow_price_currency_td');
 
-            priceChangeTd.hide();
             currencyTd && currencyTd.hide();
 
             if (this.value != M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODE_NONE')) {
-                priceChangeTd.show();
                 currencyTd && currencyTd.show();
             }
 
@@ -674,19 +660,15 @@ define([
         price_coefficient_mode_change: function () {
             var coefficientInputDiv = $(this.id.replace('mode', '') + 'input_div'),
                 signSpan = $(this.id.replace('mode', '') + 'sign_span'),
-                percentSpan = $(this.id.replace('mode', '') + 'percent_span'),
-                examplesContainer = $(this.id.replace('coefficient_mode', '') + 'example_container');
+                percentSpan = $(this.id.replace('mode', '') + 'percent_span');
 
             // ---------------------------------------
 
             coefficientInputDiv.show();
-            examplesContainer.show();
 
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_NONE')) {
                 coefficientInputDiv.hide();
-                examplesContainer.hide();
             }
-            // ---------------------------------------
 
             // ---------------------------------------
             signSpan.innerHTML = '';
@@ -699,8 +681,6 @@ define([
                 if (typeof M2ePro.formData.currency != 'undefined') {
                     percentSpan.innerHTML = M2ePro.formData.currency;
                 }
-
-                $(this.id.replace('coefficient_mode', '') + 'example_absolute_increase').show();
             }
 
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE')) {
@@ -709,22 +689,16 @@ define([
                 if (typeof M2ePro.formData.currency != 'undefined') {
                     percentSpan.innerHTML = M2ePro.formData.currency;
                 }
-
-                $(this.id.replace('coefficient_mode', '') + 'example_absolute_decrease').show();
             }
 
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE')) {
                 signSpan.innerHTML = '+';
                 percentSpan.innerHTML = '%';
-
-                $(this.id.replace('coefficient_mode', '') + 'example_percentage_increase').show();
             }
 
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE')) {
                 signSpan.innerHTML = '-';
                 percentSpan.innerHTML = '%';
-
-                $(this.id.replace('coefficient_mode', '') + 'example_percentage_decrease').show();
             }
             // ---------------------------------------
         },
@@ -960,77 +934,6 @@ define([
             });
         },
 
-        renderFixedPriceChangeRows: function (data) {
-            var self = this;
-            for (var i = 0; i < data.length; i++) {
-                self.addFixedPriceChangeRow(data[i]);
-            }
-
-            this.priceChangeCalculationUpdate();
-        },
-
-        addFixedPriceChangeRow: function (priceChangeData) {
-            var priceChangeContainer = $('fixed_price_change_container');
-
-            priceChangeData = priceChangeData || {};
-            this.priceChangeIndex++;
-
-            var tpl = this.priceChangeTpl;
-            tpl = tpl.replace(/%i%/g, this.priceChangeIndex);
-            priceChangeContainer.insert(tpl);
-            var modeElement = $('fixed_price_modifier_mode_' + this.priceChangeIndex),
-                valueElement = $('fixed_price_modifier_value_' + this.priceChangeIndex),
-                removeButtonElement = $('fixed_price_modifier_row_remove_button_' + this.priceChangeIndex);
-
-            var handlerObj = new AttributeCreator('fixed_price_modifier_mode_' + this.priceChangeIndex);
-            handlerObj.setSelectObj(modeElement);
-            handlerObj.injectAddOption();
-
-            if (priceChangeData.mode) {
-                for (var i = 0; i < modeElement.options.length; i++) {
-                    if (modeElement.options[i].value != priceChangeData.mode) {
-                        continue;
-                    }
-
-                    if (modeElement.options[i].value < this.constAttribute) {
-                        modeElement.selectedIndex = i;
-                        valueElement.value = priceChangeData['value'];
-                        break;
-                    } else {
-                        if (modeElement.options[i].getAttribute('attribute_code') == priceChangeData['attribute_code']) {
-                            modeElement.selectedIndex = i;
-                            valueElement.hide();
-                            break;
-                        }
-                    }
-                }
-
-                this.priceChangeCalculationUpdate();
-            }
-
-            var selectOnChangeHandler = function () {
-                this.priceChangeSelectUpdate(modeElement)
-            }.bind(this);
-            modeElement
-                .observe('change', selectOnChangeHandler)
-                .simulate('change');
-
-            var inputOnKeyUpHandler = function () {
-                this.priceChangeCalculationUpdate();
-            }.bind(this);
-            valueElement.observe('keyup', inputOnKeyUpHandler);
-
-            var buttonOnClickHandler = function () {
-                this.removeFixedPriceChangeRow(removeButtonElement);
-            }.bind(this);
-            removeButtonElement.observe('click', buttonOnClickHandler);
-        },
-
-        removeFixedPriceChangeRow: function (element) {
-            element.up('.fixed-price-change-row').remove();
-            this.priceChangeCalculationUpdate();
-        },
-
         // ---------------------------------------
 
         charityMarketplaceChange: function(marketplaceEl, charityData) {
@@ -1182,101 +1085,6 @@ define([
 
             if (charityData.percentage) {
                 percentageEl.value = charityData.percentage;
-            }
-        },
-
-        priceChangeSelectUpdate: function (element) {
-            var valueElement = $('fixed_price_modifier_value_' + element.dataset.priceChangeIndex),
-                attributeElement = $('fixed_price_modifier_attribute_' + element.dataset.priceChangeIndex);
-
-            if (element.options[element.selectedIndex].value == this.constAttribute) {
-                valueElement.hide();
-                this.selectMagentoAttribute(element, attributeElement);
-            } else {
-                valueElement.show();
-                attributeElement.value = '';
-            }
-
-            this.priceChangeCalculationUpdate();
-        },
-
-        priceChangeCalculationUpdate: function () {
-            var select, input, selectedOption, currentValue, result = 100, operations = ['$100'];
-
-            $$('#fixed_price_change_container > *').each(function (element) {
-                select = element.select('select').first();
-                input = element.select('input').first();
-
-                if (select.selectedIndex == -1) {
-                    return;
-                }
-
-                selectedOption = select.options[select.selectedIndex];
-                if (selectedOption.value == this.constAttribute) {
-                    result += 7.5;
-                    operations.push('+ $7.5');
-                    return;
-                }
-
-                currentValue = Number.parseFloat(input.value);
-                if (isNaN(currentValue) || currentValue < 0) {
-                    return;
-                }
-
-                switch (Number.parseInt(selectedOption.value)) {
-                    case this.constAbsoluteIncrease:
-                        if (!isNaN(input.value)) {
-                            result += currentValue;
-                            operations.push(`+ $${currentValue}`);
-                        }
-                        break;
-                    case this.constAbsoluteDecrease:
-                        if (!isNaN(input.value)) {
-                            result -= currentValue;
-                            operations.push(`- $${currentValue}`);
-                        }
-                        break;
-                    case this.constPercentageIncrease:
-                        if (!isNaN(input.value)) {
-                            result *= 1 + currentValue / 100;
-                            operations.push(`+ ${currentValue}%`);
-                        }
-                        break;
-                    case this.constPercentageDecrease:
-                        if (!isNaN(input.value)) {
-                            result *= 1 - currentValue / 100;
-                            operations.push(`- ${currentValue}%`);
-                        }
-                        break;
-                }
-            }.bind(this));
-
-            const calculationExampleElement = $('fixed_price_calculation_example');
-            if (operations.length <= 1) {
-                calculationExampleElement.hide();
-                return;
-            }
-
-            calculationExampleElement.show();
-            calculationExampleElement.innerHTML = 'Ex. ' + operations.join(' ') + ' = '
-                + this.formatPrice(Math.round(result * 100) / 100, '$');
-
-            if (result <= 0) {
-                calculationExampleElement.style.color = 'red';
-            } else {
-                calculationExampleElement.style.color = 'black';
-            }
-        },
-
-        formatPrice: function (price, currency) {
-            if (isNaN(price)) {
-                return currency + 0;
-            }
-
-            if (price >= 0) {
-                return currency + price;
-            } else {
-                return '-' + currency + -price;
             }
         },
 

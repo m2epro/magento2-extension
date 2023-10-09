@@ -59,12 +59,14 @@ define([
                 },
                 onSuccess: function (transport) {
                     var listingProductIds = transport.responseText.evalJSON();
+                    if (listingProductIds.length === 0) {
+                        self.executeClosePopupCallback();
+                        return;
+                    }
 
                     self.open(listingProductIds.join(','));
                 }
             });
-
-
         },
 
         executeClosePopupCallback: function () {

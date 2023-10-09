@@ -37,7 +37,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
         // ---------------------------------------
         foreach ($templateNicks as $nick) {
             if ($this->isSaveAllowed($nick)) {
-                $template = $this->saveTemplate($nick);
+                $data = $this->getTemplateData($nick);
+                $template = $this->saveTemplate($nick, $data);
 
                 if ($template) {
                     $templates[] = [
@@ -110,10 +111,27 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
         return false;
     }
 
-    protected function saveTemplate($nick)
+    private function getTemplateData(string $nick): ?array
     {
-        $data = $this->getRequest()->getPost($nick);
+        $post = $this->getRequest()->getPost();
+        $data = $post[$nick] ?? null;
+        unset($post[$nick]);
 
+        if ($nick === \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT) {
+            foreach ($post as $key => $value) {
+                if (!preg_match('/_price_modifier_/', $key)) {
+                    continue;
+                }
+
+                $data[$key] = $value;
+            }
+        }
+
+        return $data;
+    }
+
+    protected function saveTemplate(string $nick, ?array $data)
+    {
         if ($data === null) {
             return null;
         }

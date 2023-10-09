@@ -440,6 +440,25 @@ class Form extends AbstractForm
             ]
         );
 
+        $fieldset->addField(
+            'price_rounding_option',
+            'select',
+            [
+                'name' => 'price_rounding_option',
+                'label' => __('Rounding'),
+                'values' => [
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE, 'label' => __('None')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDREDTH, 'label' => __('Nearest 0.09')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_TENTH, 'label' => __('Nearest 0.99')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_INT, 'label' => __('Nearest 1.00')],
+                    ['value' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NEAREST_HUNDRED, 'label' => __('Nearest 10.00')],
+                ],
+                'value' => $formData['price_rounding_option'],
+                'tooltip' => __('Use <b>Price Rounding</b> to round Product sale prices to convenient numbers like $9.99 or  $10.00<br>
+If the <b>Price Change</b> is used, the <b>Rounding</b> will be applied to the final Price')
+            ]
+        );
+
         $this->appendPriceChangeElements(
             $fieldset,
             \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_TYPE_REGULAR,

@@ -78,6 +78,7 @@ class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytic
                 'regular_price_mode' => $childItem->getData('regular_price_mode'),
                 'regular_price_custom_attribute' => $childItem->getData('regular_price_custom_attribute'),
                 'regular_price_modifier' => $childItem->getData('regular_price_modifier'),
+                'price_rounding_option' => $childItem->getData('price_rounding_option'),
                 'regular_map_price_mode' => $childItem->getData('regular_map_price_mode'),
                 'regular_map_price_custom_attribute' => $childItem->getData('regular_map_price_custom_attribute'),
                 'regular_sale_price_mode' => $childItem->getData('regular_sale_price_mode'),

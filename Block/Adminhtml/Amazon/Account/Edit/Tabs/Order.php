@@ -31,20 +31,6 @@ class Order extends AbstractForm
     /** @var \Ess\M2ePro\Helper\Magento\Store */
     private $storeHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Magento\Store $storeHelper
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsiteHelper
-     * @param \Magento\Tax\Model\ClassModel $taxClass
-     * @param \Magento\Customer\Model\Group $customerGroup
-     * @param \Magento\Sales\Model\Order\Config $orderConfig
-     * @param \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
@@ -88,10 +74,7 @@ class Order extends AbstractForm
         $value = 0;
         $tooltip = '';
 
-        if (
-            isset($account)
-            && $account->getChildObject()->getMarketplaceId() == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_TR
-        ) {
+        if (isset($account) && $this->isMarketplaceCollectTaxes($account)) {
             $type = 'select';
             $value = $formData['magento_orders_settings']['tax']['import_tax_id_in_magento_order'];
             $tooltip = $this->getTooltipHtml(
@@ -116,6 +99,21 @@ in the Shipping Address of your Magento Order.'
                 'after_element_html' => $tooltip,
             ]
         );
+    }
+
+    private function isMarketplaceCollectTaxes(\Ess\M2ePro\Model\Account $account): bool
+    {
+        $marketplaceId = $account->getChildObject()->getMarketplaceId();
+
+        if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_TR) {
+            return true;
+        }
+
+        if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_BR) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function _prepareForm()

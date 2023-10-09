@@ -125,6 +125,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['fixed_price_custom_attribute'] = $this->rawData['fixed_price_custom_attribute'];
         }
 
+        if (isset($this->rawData['fixed_price_rounding_option'])) {
+            $data['fixed_price_rounding_option'] = $this->rawData['fixed_price_rounding_option'];
+        }
+
         // ---------------------------------------
 
         if (isset($this->rawData['start_price_mode'])) {
@@ -140,6 +144,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         if (isset($this->rawData['start_price_custom_attribute'])) {
             $data['start_price_custom_attribute'] = $this->rawData['start_price_custom_attribute'];
+        }
+
+        if (isset($this->rawData['start_price_rounding_option'])) {
+            $data['start_price_rounding_option'] = $this->rawData['start_price_rounding_option'];
         }
 
         // ---------------------------------------
@@ -159,6 +167,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['reserve_price_custom_attribute'] = $this->rawData['reserve_price_custom_attribute'];
         }
 
+        if (isset($this->rawData['reserve_price_rounding_option'])) {
+            $data['reserve_price_rounding_option'] = $this->rawData['reserve_price_rounding_option'];
+        }
+
         // ---------------------------------------
 
         if (isset($this->rawData['buyitnow_price_mode'])) {
@@ -174,6 +186,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         if (isset($this->rawData['buyitnow_price_custom_attribute'])) {
             $data['buyitnow_price_custom_attribute'] = $this->rawData['buyitnow_price_custom_attribute'];
+        }
+
+        if (isset($this->rawData['buyitnow_price_rounding_option'])) {
+            $data['buyitnow_price_rounding_option'] = $this->rawData['buyitnow_price_rounding_option'];
         }
 
         // ---------------------------------------
@@ -336,18 +352,22 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'fixed_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
             'fixed_price_modifier' => '[]',
             'fixed_price_custom_attribute' => '',
+            'fixed_price_rounding_option' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
 
             'start_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
             'start_price_coefficient' => '',
             'start_price_custom_attribute' => '',
+            'start_price_rounding_option' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
 
             'reserve_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'reserve_price_coefficient' => '',
             'reserve_price_custom_attribute' => '',
+            'reserve_price_rounding_option' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
 
             'buyitnow_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'buyitnow_price_coefficient' => '',
             'buyitnow_price_custom_attribute' => '',
+            'buyitnow_price_rounding_option' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
 
             'price_discount_stp_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'price_discount_stp_attribute' => '',

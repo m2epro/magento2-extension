@@ -41,11 +41,26 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         $this->setDataObject($this->productType);
 
+        $changeAttributeMappingConfirmMessage = __(
+            <<<TEXT
+<p>New Magento attributes have been mapped to some of the Specifics.</p>
+<p>Do you want to save these new Attribute mappings as the default ones?</p>
+<p>Once confirmed, the records in <i>Amazon > Configurations > Settings > Attribute Mapping</i>
+will be updated accordingly.</p>
+TEXT
+        );
+
         $this->jsTranslator->addTranslations([
             'Do not show any more' => $this->__('Do not show this message anymore'),
             'Save Product Type Settings' => $this->__('Save Product Type Settings'),
-            'Search Product Type' => 'Search Product Type',
+            'Search Product Type' => __('Search Product Type'),
+            'Change Attribute Mapping Confirm Message' => $changeAttributeMappingConfirmMessage,
         ]);
+
+        $this->jsUrl->add(
+            $this->_urlBuilder->getUrl('*/*/updateAttributeMapping'),
+            'update_attribute_mappings'
+        );
 
         $this->jsPhp->addConstants(
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Amazon\Template\ProductType::class)

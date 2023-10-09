@@ -22,6 +22,47 @@ define(
                 } else {
                     this.originalFormData = jQuery('#edit_form').serialize();
                 }
+
+                if (localStorage.get('has_changed_mappings_product_type_id')) {
+                    let productTypeId = localStorage.get('has_changed_mappings_product_type_id');
+                    localStorage.remove('has_changed_mappings_product_type_id')
+
+                    this.showUpdateProductTypeAttributeMappingPopup(productTypeId)
+                }
+            },
+
+            showUpdateProductTypeAttributeMappingPopup: function (productTypeId)
+            {
+                confirm({
+                    title: 'Update Attribute Mapping',
+                    content: M2ePro.translator.translate('Change Attribute Mapping Confirm Message'),
+                    buttons: [{
+                        text: M2ePro.translator.translate('Cancel'),
+                        class: 'action-secondary action-dismiss',
+                        click: function (event) {
+                            this.closeModal(event);
+                        }
+                    }, {
+                        text: M2ePro.translator.translate('Confirm'),
+                        class: 'action-primary action-accept',
+                        click: function (event) {
+                            this.closeModal(event, true);
+                        }
+                    }],
+                    actions: {
+                        confirm: function () {
+                            new Ajax.Request(M2ePro.url.get('update_attribute_mappings'), {
+                                method:'post',
+                                parameters: {
+                                    product_type_id: productTypeId
+                                }
+                            });
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
             },
 
             initObservers: function()
@@ -310,14 +351,14 @@ define(
                     this.confirm(confirmText, function () {
                         self.isPageLeavingSafe = true;
                         ProductTypeValidatorPopup.closePopupCallback = function (response) {
-                            setLocation(window.location.href);
+                            setLocation(response.edit_url);
                         };
                         self.saveFormUsingAjax()
                     });
                 } else {
                     self.isPageLeavingSafe = true;
                     ProductTypeValidatorPopup.closePopupCallback = function (response) {
-                        setLocation(window.location.href);
+                        setLocation(response.edit_url);
                     };
                     self.saveFormUsingAjax()
                 }
@@ -358,6 +399,13 @@ define(
                             localStorage.set('is_need_revalidate_product_types', true);
                             ProductTypeValidatorPopup.closePopupCallbackArguments = [response];
                             ProductTypeValidatorPopup.openForProductType((response.product_type_id));
+
+                            if (response.hasOwnProperty('has_changed_mappings_product_type_id')) {
+                                localStorage.set(
+                                        'has_changed_mappings_product_type_id',
+                                        response['has_changed_mappings_product_type_id']
+                                );
+                            }
                         } else {
                             messageObj.clear();
                             messageObj.addError(response.message);

@@ -119,6 +119,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'regular_price_mode' => SellingFormat::PRICE_MODE_PRODUCT,
             'regular_price_modifier' => '[]',
             'regular_price_custom_attribute' => '',
+            'price_rounding_option' => \Ess\M2ePro\Model\Listing\Product\PriceRounder::PRICE_ROUNDING_NONE,
 
             'regular_map_price_mode' => SellingFormat::PRICE_MODE_NONE,
             'regular_map_price_custom_attribute' => '',

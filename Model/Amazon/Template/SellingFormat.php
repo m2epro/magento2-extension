@@ -331,6 +331,11 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
         return \Ess\M2ePro\Helper\Json::decode($value) ?: [];
     }
 
+    public function getPriceRoundOption(): int
+    {
+        return (int)$this->getData('price_rounding_option');
+    }
+
     /**
      * @return array
      */

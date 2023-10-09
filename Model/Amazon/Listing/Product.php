@@ -62,6 +62,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $configuration;
     /** @var \Ess\M2ePro\Helper\Data */
     private $helperData;
+    /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
+    private $rounder;
 
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager|null */
     private $variationManager = null;
@@ -98,10 +100,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->rounder = $rounder;
         $this->productTypeFactory = $productTypeFactory;
         $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
         $this->identifiersFactory = $identifiesFactory;
@@ -922,6 +926,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $calculator = $this->amazonPriceCalculatorFactory->create();
         $calculator->setSource($src)->setProduct($this->getParentObject());
         $calculator->setModifier($this->getAmazonSellingFormatTemplate()->getRegularPriceModifier());
+        $calculator->setRoundingMode($this->getAmazonSellingFormatTemplate()->getPriceRoundOption());
         $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getRegularPriceVatPercent());
 
         return $calculator->getProductValue();

@@ -189,6 +189,11 @@ tr#price_discount_stp_tr, tr#price_discount_map_tr {
     border-top: #d6d6d6 solid 1px;
 }
 
+#magento_block_ebay_template_selling_format_edit_form_prices .price_change_remove  {
+    position: relative;
+    margin-top: 5px;
+}
+
 /* Description Policy Styles */
 
 #description_template {

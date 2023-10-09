@@ -12,8 +12,8 @@ class CollectionFactory
         $this->objectManager = $objectManager;
     }
 
-    public function create(): Collection
+    public function create(array $data = []): Collection
     {
-        return $this->objectManager->create(Collection::class);
+        return $this->objectManager->create(Collection::class, $data);
     }
 }

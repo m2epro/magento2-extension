@@ -1,0 +1,31 @@
+<?php
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\AttributeMapping $block */
+
+?>
+
+<h1><?= __('Attribute Mapping') ?></h1>
+<form method="post" novalidate="novalidate" enctype="multipart/form-data">
+<?php if (count($block->getMappedAttributes()) > 0) : ?>
+<table class="data-grid">
+    <thead>
+        <tr>
+            <th class="data-grid-th"><?= __('Product Type Attribute') ?></th>
+            <th class="data-grid-th"><?= __('Magento Attribute') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($block->getMappedAttributes() as $mappedAttribute) : ?>
+        <tr>
+            <td><?= $mappedAttribute->getProductTypeAttributeName() ?></td>
+            <td><?= $block->makeMagentoAttributesDropDownHtml($mappedAttribute) ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php else : ?>
+<div style="text-align: center">
+    <p><?= $block->getEmptyMappingsText() ?></p>
+</div>
+<?php endif; ?>
+</form>

@@ -71,15 +71,19 @@ abstract class PriceCalculator extends AbstractModel
     private $productValueCache = null;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+    /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
+    private $rounder;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
+        $this->rounder = $rounder;
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
@@ -93,6 +97,11 @@ abstract class PriceCalculator extends AbstractModel
         $this->source = $source;
 
         return $this;
+    }
+
+    public function setRoundingMode(int $mode)
+    {
+        $this->rounder->setMode($mode);
     }
 
     /**
@@ -1072,6 +1081,14 @@ abstract class PriceCalculator extends AbstractModel
                 foreach ($value as $qty => $price) {
                     $value[$qty] = $this->increaseValueByVatPercent($price);
                 }
+            }
+        }
+
+        if (!$this->isSourceModeTier()) {
+            $value = $this->rounder->round($value);
+        } else {
+            foreach ($value as $qty => $price) {
+                $value[$qty] = $this->rounder->round($value);
             }
         }
 

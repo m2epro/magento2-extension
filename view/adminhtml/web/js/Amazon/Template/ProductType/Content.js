@@ -536,7 +536,7 @@ define(
                         customValueContainer.style.display = 'inline';
 
                         var isOtherImagesField = this.otherImagesSpecifics.includes(htmlId.slice(0, -2));
-                        if (isOtherImagesField) {
+                        if (isOtherImagesField && itemData['images_limit'] > 0) {
                             attributeElement.value = itemData['images_limit'];
                         } else {
                             attributeElement.value = itemData['attribute_code'];

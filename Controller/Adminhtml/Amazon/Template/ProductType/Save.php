@@ -32,6 +32,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
     private $productTypeChangeProcessorFactory;
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registryManager;
+    /** @var \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\ManagerFactory */
+    private $attributeMappingManagerFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
@@ -44,6 +46,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         \Ess\M2ePro\Model\Amazon\Template\ProductType\DiffFactory $productTypeDiffFactory,
         ProductTypeAffectedListingsProductsFactory $productTypeAffectedProductsFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\ChangeProcessorFactory $productTypeChangeProcessorFactory,
+        \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\ManagerFactory $attributeMappingManagerFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
@@ -56,6 +59,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         $this->productTypeAffectedProductsFactory = $productTypeAffectedProductsFactory;
         $this->productTypeChangeProcessorFactory = $productTypeChangeProcessorFactory;
         $this->registryManager = $registryManager;
+        $this->attributeMappingManagerFactory = $attributeMappingManagerFactory;
     }
 
     /**
@@ -153,18 +157,34 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
             $affectedListingsProducts->getObjectsData(['id', 'status'])
         );
 
+        $attributeMappingManager = $this->attributeMappingManagerFactory->create($productType);
+        $attributeMappingManager->createNewMappings();
+
         $backUrl = $this->dataHelper->getBackUrl(
             '*/amazon_template_productType/index',
             [],
             ['edit' => ['id' => $productType->getId()]]
         );
 
+        $editUrl = $this->_url->getUrl(
+            '*/*/edit',
+            ['id' => $productType->getId()]
+        );
+
         if ($this->isAjax()) {
-            $this->setJsonContent([
+            $jsonContent = [
                 'status' => true,
-                'product_type_id' => $id,
+                'product_type_id' => $productType->getId(),
                 'back_url' => $backUrl,
-            ]);
+                'edit_url' => $editUrl,
+            ];
+
+            if ($attributeMappingManager->hasChangedMappings()) {
+                $jsonContent['has_changed_mappings_product_type_id'] = $productType->getId();
+            }
+
+            $this->setJsonContent($jsonContent);
+
             return $this->getResult();
         }
 

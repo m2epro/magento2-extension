@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Plugin\Config\Magento\Config\Model;
 
 use Ess\M2ePro\Helper\View\Configuration;
@@ -22,22 +16,16 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
     private $moduleConfigurationHelper;
     /** @var \Ess\M2ePro\Model\Log\Clearing */
     private $logClearing;
+    /** @var \Ess\M2ePro\Helper\Module\ChangeTracker */
+    private $changeTrackerHelper;
 
-    /**
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @param \Ess\M2ePro\Helper\Module $moduleHelper
-     * @param \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper
-     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfigurationHelper
-     * @param \Ess\M2ePro\Model\Log\Clearing $logClearing
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     */
     public function __construct(
         \Magento\Framework\App\RequestInterface $request,
         \Ess\M2ePro\Helper\Module $moduleHelper,
         \Ess\M2ePro\Helper\Module\Maintenance $moduleMaintenanceHelper,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfigurationHelper,
         \Ess\M2ePro\Model\Log\Clearing $logClearing,
+        \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
@@ -48,6 +36,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $this->moduleMaintenanceHelper = $moduleMaintenanceHelper;
         $this->moduleConfigurationHelper = $moduleConfigurationHelper;
         $this->logClearing = $logClearing;
+        $this->changeTrackerHelper = $changeTrackerHelper;
     }
 
     /**
@@ -173,6 +162,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
      */
     private function processInterfaceAndMagentoInventorySection(array $groups): void
     {
+        $this->saveChangeTrackerConfiguration($groups['smart_tracker'] ?? []);
+
         $fields = array_merge(
             $groups['interface']['fields'],
             $groups['quantity_and_price']['fields'],
@@ -210,5 +201,15 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             $groups['sync_logs_and_events_clearing']['fields']['sync_log_mode_field']['value'],
             $groups['sync_logs_and_events_clearing']['fields']['sync_log_days_field']['value']
         );
+    }
+
+    private function saveChangeTrackerConfiguration(array $configuration)
+    {
+        $status = (int)($configuration['status'] ?? \Ess\M2ePro\Helper\Module\ChangeTracker::STATUS_DISABLED);
+        $this->changeTrackerHelper->setStatus($status);
+
+        $runIntervalSeconds = (int)($configuration['run_interval']
+            ?? \Ess\M2ePro\Helper\Module\ChangeTracker::DEFAULT_RUN_INTERVAL);
+        $this->changeTrackerHelper->setInterval($runIntervalSeconds);
     }
 }

@@ -51,7 +51,6 @@ define([
 
         initPriceChange: function (priceChange) {
             this.priceChange = priceChange;
-
             var template, button, handler;
             for (const [type, value] of Object.entries(this.priceChange)) {
                 template = $(type + '_change_row_template');
@@ -74,10 +73,6 @@ define([
         },
 
         renderPriceChangeRows: function (type, data) {
-            if (!this.priceChange[type]['enabled']) {
-                return;
-            }
-
             for (var i = 0; i < data.length; i++) {
                 this.addPriceChangeRow(type, data[i]);
             }

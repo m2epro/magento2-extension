@@ -1,45 +1,23 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 use Ess\M2ePro\Model\Factory;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
- */
 abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $params = [];
-
     /** @var Configurator $configurator */
     protected $configurator = null;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $messages = [];
-
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product
-     */
+    /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
-
+    /** @var \Ess\M2ePro\Helper\Module\Support  */
     private $supportHelper;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\CollectionFactory */
-    private $variationCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option */
-    private $variationOptionResource;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -333,42 +311,64 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
-    protected function validateVariationsOptions()
+    protected function validateVariationsOptions(): bool
     {
-        $collection = $this->variationCollectionFactory->createWithEbayChildMode();
-        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $totalVariationsCount = 0;
+        $totalDeletedVariationsCount = 0;
+        $uniqueAttributesValues = [];
 
-        $collection->getSelect()->joinLeft(
-            ['vo' => $this->variationOptionResource->getMainTable()],
-            'vo.listing_product_variation_id = main_table.id',
-            [
-                'attribute_name' => 'vo.attribute',
-                'count_variation_options'
-                    => new \Zend_Db_Expr('COUNT(DISTINCT IF(second_table.`delete`, NULL, vo.`option`))')
-            ]
-        );
-        $collection->getSelect()->group('vo.attribute');
-        $collection->getSelect()->where(
-            'main_table.listing_product_id = ?',
-            $this->getListingProduct()->getId()
-        );
+        /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+        foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
+            $ebayVariation = $variation->getChildObject();
 
-        $data = $collection->getData();
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
+            foreach ($variation->getOptions(true) as $option) {
+                $uniqueAttributesValues[$option->getAttribute()][$option->getOption()] = true;
 
-        // Max 5 pair attribute-option:
-        // Color: Blue, Size: XL, ...
-        if (count($data) > 5) {
-            $this->addMessage(
-                'Variations of this Magento Product are out of the eBay Variational Item limits.
+                // Max 5 pair attribute-option:
+                // Color: Blue, Size: XL, ...
+                if (count($uniqueAttributesValues) > 5) {
+                    $this->addMessage(
+                        'Variations of this Magento Product are out of the eBay Variational Item limits.
                         Its number of Variational Attributes is more than 5.
                         That is why, this Product cannot be updated on eBay.
                         Please, decrease the number of Attributes to solve this issue.'
-            );
-            return false;
+                    );
+
+                    return false;
+                }
+
+                // Maximum 60 options by one attribute:
+                // Color: Red, Blue, Green, ...
+                if (count($uniqueAttributesValues[$option->getAttribute()]) > 60) {
+                    $this->addMessage(
+                        'Variations of this Magento Product are out of the eBay Variational Item limits.
+                        Its number of Options for some Variational Attribute(s) is more than 60.
+                        That is why, this Product cannot be updated on eBay.
+                        Please, decrease the number of Options to solve this issue.'
+                    );
+
+                    return false;
+                }
+            }
+
+            $totalVariationsCount++;
+            $ebayVariation->isDelete() && $totalDeletedVariationsCount++;
+
+            // Not more than 250 possible variations
+            if ($totalVariationsCount > 250) {
+                $this->addMessage(
+                    'Variations of this Magento Product are out of the eBay Variational Item limits.
+                    The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.
+                    Please, decrease the number of Variations to solve this issue.'
+                );
+
+                return false;
+            }
         }
 
-        // All options deleted
-        if (array_sum(array_column($data, 'count_variation_options')) === 0) {
+        if ($totalVariationsCount == $totalDeletedVariationsCount) {
             $this->addMessage(
                 'This Product was listed to eBay as Variational Item.
                 Changing of the Item type from Variational to Non-Variational during Revise/Relist
@@ -376,33 +376,8 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 At the moment this Product is considered as Simple without any Variations,
                 that does not allow updating eBay Variational Item.'
             );
+
             return false;
-        }
-
-        $totalOptionsCount = 1;
-        foreach ($data as $item) {
-            $totalOptionsCount *= $item['count_variation_options'];
-            // Maximum 60 options by one attribute:
-            // Color: Red, Blue, Green, ...
-            if ($item['count_variation_options'] > 60) {
-                $this->addMessage(
-                    'Variations of this Magento Product are out of the eBay Variational Item limits.
-                        Its number of Options for some Variational Attribute(s) is more than 60.
-                        That is why, this Product cannot be updated on eBay.
-                        Please, decrease the number of Options to solve this issue.'
-                );
-                return false;
-            }
-
-            // Not more than 250 possible variations
-            if ($totalOptionsCount > 250) {
-                $this->addMessage(
-                    'Variations of this Magento Product are out of the eBay Variational Item limits.
-                    The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.
-                    Please, decrease the number of Variations to solve this issue.'
-                );
-                return false;
-            }
         }
 
         return true;

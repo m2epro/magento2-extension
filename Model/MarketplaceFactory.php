@@ -12,8 +12,8 @@ class MarketplaceFactory
         $this->objectManager = $objectManager;
     }
 
-    public function create(): Marketplace
+    public function create(array $data = []): Marketplace
     {
-        return $this->objectManager->create(Marketplace::class);
+        return $this->objectManager->create(Marketplace::class, $data);
     }
 }

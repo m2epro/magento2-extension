@@ -195,16 +195,34 @@ class Builder extends AbstractModel
         return $data['tax_details'];
     }
 
-    protected function prepareTaxRegistrationId($data)
+    protected function prepareTaxRegistrationId($data): ?string
     {
-        if (empty($data['tax_registration_details'][0])) {
+        $taxRegistrationKey = $this->getTaxRegistrationKey($data['marketplace_id']);
+
+        if (empty($data[$taxRegistrationKey][0])) {
             return null;
         }
 
-        $item = $data['tax_registration_details'][0];
+        $item = $data[$taxRegistrationKey][0];
 
-        return !empty($item['tax_registration_id']) && is_string($item['tax_registration_id']) ?
-            $item['tax_registration_id'] : null;
+        if (isset($item['value']) && is_string($item['value'])) {
+            return $item['value'];
+        }
+
+        if (isset($item['tax_registration_id']) && is_string($item['tax_registration_id'])) {
+            return $item['tax_registration_id'];
+        }
+
+        return null;
+    }
+
+    private function getTaxRegistrationKey(string $marketplaceId): string
+    {
+        if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_BR) {
+            return 'buyer_tax_info';
+        }
+
+        return 'tax_registration_details';
     }
 
     protected function isNeedSkipTax($data)

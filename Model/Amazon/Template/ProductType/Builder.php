@@ -143,11 +143,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
                 $key = implode('/', $path);
                 if (in_array($key, $this->otherImagesSpecifics)) {
-                    return [
-                        'mode' => (int)$field['mode'],
-                        'attribute_code' => 'media_gallery',
-                        'images_limit' => (int)$field['attribute_code']
-                    ];
+                    if (is_numeric($field['attribute_code'])) {
+                        return [
+                            'mode' => (int)$field['mode'],
+                            'attribute_code' => 'media_gallery',
+                            'images_limit' => (int)$field['attribute_code'],
+                        ];
+                    }
                 }
 
                 return [

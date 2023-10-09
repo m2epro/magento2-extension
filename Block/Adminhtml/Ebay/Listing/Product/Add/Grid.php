@@ -77,51 +77,6 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $collection->getSelect()->distinct();
         // ---------------------------------------
 
-        // Set filter store
-        // ---------------------------------------
-        $store = $this->_getStore();
-
-        if ($store->getId()) {
-            $collection->joinAttribute(
-                'price',
-                'catalog_product/price',
-                'entity_id',
-                null,
-                'left',
-                $store->getId()
-            );
-            $collection->joinAttribute(
-                'status',
-                'catalog_product/status',
-                'entity_id',
-                null,
-                'inner',
-                $store->getId()
-            );
-            $collection->joinAttribute(
-                'visibility',
-                'catalog_product/visibility',
-                'entity_id',
-                null,
-                'inner',
-                $store->getId()
-            );
-            $collection->joinAttribute(
-                'thumbnail',
-                'catalog_product/thumbnail',
-                'entity_id',
-                null,
-                'left',
-                $store->getId()
-            );
-        } else {
-            $collection->addAttributeToSelect('price');
-            $collection->addAttributeToSelect('status');
-            $collection->addAttributeToSelect('visibility');
-            $collection->addAttributeToSelect('thumbnail');
-        }
-        // ---------------------------------------
-
         // Hide products others listings
         // ---------------------------------------
         $hideParam = true;
@@ -170,6 +125,85 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->getCollection()->addWebsiteNamesToResult();
 
         return parent::_prepareCollection();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $baseCollection = $this->getCollection();
+        $collection = $this->magentoProductCollectionFactory->create();
+
+        $entityIds = [];
+        foreach ($baseCollection->getItems() as $item) {
+            $entityIds[] = $item->getData('entity_id');
+        }
+
+        $collection->addFieldToFilter('entity_id', ['in' => $entityIds]);
+
+        // Set filter store
+        // ---------------------------------------
+        $store = $this->_getStore();
+
+        if ($store->getId()) {
+            $collection->joinAttribute(
+                'price',
+                'catalog_product/price',
+                'entity_id',
+                null,
+                'left',
+                $store->getId()
+            );
+            $collection->joinAttribute(
+                'status',
+                'catalog_product/status',
+                'entity_id',
+                null,
+                'inner',
+                $store->getId()
+            );
+            $collection->joinAttribute(
+                'visibility',
+                'catalog_product/visibility',
+                'entity_id',
+                null,
+                'inner',
+                $store->getId()
+            );
+            $collection->joinAttribute(
+                'thumbnail',
+                'catalog_product/thumbnail',
+                'entity_id',
+                null,
+                'left',
+                $store->getId()
+            );
+        } else {
+            $collection->addAttributeToSelect('price');
+            $collection->addAttributeToSelect('status');
+            $collection->addAttributeToSelect('visibility');
+            $collection->addAttributeToSelect('thumbnail');
+        }
+        // ---------------------------------------
+
+        $collection->load();
+        $attributeData = [];
+        foreach ($collection->getItems() as $item) {
+            $attributeData[$item->getData('entity_id')] = [
+                'price' => $item->getData('price'),
+                'status' => $item->getData('status'),
+                'visibility' => $item->getData('visibility'),
+                'thumbnail' => $item->getData('thumbnail'),
+            ];
+        }
+
+        foreach ($baseCollection->getItems() as $item) {
+            $entityId = $item->getData('entity_id');
+            $item->setData('price', $attributeData[$entityId]['price']);
+            $item->setData('status', $attributeData[$entityId]['status']);
+            $item->setData('visibility', $attributeData[$entityId]['visibility']);
+            $item->setData('thumbnail', $attributeData[$entityId]['thumbnail']);
+        }
+
+        return parent::_afterLoadCollection();
     }
 
     protected function _prepareColumns()

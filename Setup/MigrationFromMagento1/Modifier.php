@@ -229,6 +229,8 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m09\AddOnlineBestOfferForEbayProduct::class,
             \Ess\M2ePro\Setup\Update\y23_m09\RefactorAmazonOrderColumns::class,
             \Ess\M2ePro\Setup\Update\y23_m09\RemoveLastAccessAndRunFromConfigTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddAmazonProductTypeAttributeMappingTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddPriceRoundingToEbayAmazonWalmartSellingTemplate::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

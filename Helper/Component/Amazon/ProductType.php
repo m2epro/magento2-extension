@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory
@@ -16,11 +10,11 @@ use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory
 
 class ProductType
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
+    /** @var ProductTypeCollectionFactory */
     private $productTypeCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\CollectionFactory */
+    /** @var ProductTypeDictionaryCollectionFactory */
     private $productTypeDictionaryCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory */
+    /** @var MarketplaceDictionaryCollectionFactory */
     private $marketplaceDictionaryCollectionFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
     private $productTypeFactory;
@@ -30,21 +24,13 @@ class ProductType
     private $listingProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Connector\DispatcherFactory */
     private $amazonConnectorDispatcherFactory;
-
     /** @var array */
     private $marketplaceDictionaryCache = [];
     /** @var array */
     private $marketplaceDictionaryProductTypeCache = [];
+    /** @var \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\Suggester */
+    private $attributesSuggester;
 
-    /**
-     * @param ProductTypeCollectionFactory $productTypeCollectionFactory
-     * @param ProductTypeDictionaryCollectionFactory $productTypeDictionaryCollectionFactory
-     * @param MarketplaceDictionaryCollectionFactory $marketplaceDictionaryCollectionFactory
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
-     * @param \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
-     * @param \Ess\M2ePro\Model\Amazon\Connector\DispatcherFactory $amazonConnectorDispatcherFactory
-     */
     public function __construct(
         ProductTypeCollectionFactory $productTypeCollectionFactory,
         ProductTypeDictionaryCollectionFactory $productTypeDictionaryCollectionFactory,
@@ -52,7 +38,8 @@ class ProductType
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
-        \Ess\M2ePro\Model\Amazon\Connector\DispatcherFactory $amazonConnectorDispatcherFactory
+        \Ess\M2ePro\Model\Amazon\Connector\DispatcherFactory $amazonConnectorDispatcherFactory,
+        \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\Suggester $attributesSuggester
     ) {
         $this->productTypeCollectionFactory = $productTypeCollectionFactory;
         $this->productTypeDictionaryCollectionFactory = $productTypeDictionaryCollectionFactory;
@@ -61,6 +48,7 @@ class ProductType
         $this->marketplaceFactory = $marketplaceFactory;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         $this->amazonConnectorDispatcherFactory = $amazonConnectorDispatcherFactory;
+        $this->attributesSuggester = $attributesSuggester;
     }
 
     /**
@@ -70,7 +58,6 @@ class ProductType
      */
     public function getProductTypeDictionaryById(int $id): \Ess\M2ePro\Model\Amazon\Dictionary\ProductType
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\Collection $collection */
         $collection = $this->productTypeDictionaryCollectionFactory->create();
         $collection->getSelect()->where('id = ?', $id);
 
@@ -93,7 +80,6 @@ class ProductType
         string $nick,
         bool $allowReceive = true
     ): \Ess\M2ePro\Model\Amazon\Dictionary\ProductType {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\Collection $collection */
         $collection = $this->productTypeDictionaryCollectionFactory->create()
             ->appendFilterNick($nick)
             ->appendFilterMarketplaceId($marketplaceId);
@@ -137,7 +123,6 @@ class ProductType
             return $this->marketplaceDictionaryCache[$marketplaceId];
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\Collection $collection */
         $collection = $this->marketplaceDictionaryCollectionFactory->create()
             ->appendFilterMarketplaceId($marketplaceId);
 
@@ -231,7 +216,6 @@ class ProductType
      */
     public function getProductTypeSettings(int $marketplaceId, string $nick): array
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\Collection $collection */
         $collection = $this->productTypeCollectionFactory->create()
             ->appendFilterNick($nick)
             ->appendFilterMarketplaceId($marketplaceId);
@@ -258,7 +242,6 @@ class ProductType
         int $marketplaceId,
         string $nick
     ): void {
-        /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcher */
         $dispatcher = $this->amazonConnectorDispatcherFactory->create();
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Marketplace\Get\Specifics $connector */
@@ -293,7 +276,6 @@ class ProductType
      */
     public function getProductTypesInDictionary(int $marketplaceId, bool $onlyValid = false): array
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\Collection $collection */
         $collection = $this->productTypeDictionaryCollectionFactory->create()
             ->appendFilterMarketplaceId($marketplaceId);
 
@@ -327,7 +309,6 @@ class ProductType
      */
     public function getConfiguredProductTypesList(int $marketplaceId): array
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\Collection $collection */
         $collection = $this->productTypeCollectionFactory->create()
             ->appendFilterMarketplaceId($marketplaceId);
 
@@ -347,7 +328,6 @@ class ProductType
      */
     public function isProductTypeUsingInProducts(int $templateProductTypeId): bool
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->listingProductCollectionFactory->create([
             'childMode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
         ]);
@@ -416,32 +396,7 @@ class ProductType
 
     public function getSpecificsDefaultSettings(): array
     {
-        return [
-            'item_name#array/value' => [
-                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
-                'attribute_code' => 'name',
-            ],
-            'brand#array/value' => [
-                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
-                'attribute_code' => 'manufacturer',
-            ],
-            'manufacturer#array/value' => [
-                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
-                'attribute_code' => 'manufacturer',
-            ],
-            'product_description#array/value' => [
-                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
-                'attribute_code' => 'description',
-            ],
-            'country_of_origin#array/value' => [
-                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
-                'attribute_code' => 'country_of_manufacture',
-            ],
-            'item_package_weight#array/value' => [
-                'mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
-                'attribute_code' => 'weight',
-            ],
-        ];
+        return $this->attributesSuggester->getSuggestedAttributes();
     }
 
     public function getMainImageSpecifics(): array

@@ -19,8 +19,11 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public const INSTRUCTION_PRIORITY = 10;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+    /** @var \Ess\M2ePro\Helper\Module\ChangeTracker */
+    private $changeTrackerHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
@@ -45,6 +48,16 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
 
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->changeTrackerHelper = $changeTrackerHelper;
+    }
+
+    public function isPossibleToRun()
+    {
+        if ($this->changeTrackerHelper->isEnabled()) {
+            return false;
+        }
+
+        return parent::isPossibleToRun();
     }
 
     protected function isModeEnabled()
