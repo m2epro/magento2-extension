@@ -115,7 +115,6 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
     {
         $post = $this->getRequest()->getPost();
         $data = $post[$nick] ?? null;
-        unset($post[$nick]);
 
         if ($nick === \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT) {
             foreach ($post as $key => $value) {
