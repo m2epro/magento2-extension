@@ -81,6 +81,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
+            ->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
         $mainQuery->andWhere('calculated_price IS NOT NULL')
@@ -104,9 +105,6 @@ abstract class BasePriceTracker implements TrackerInterface
         return $mainQuery->getQuery();
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
-     */
     protected function productSubQuery(): SelectQueryBuilder
     {
         $query = $this->queryBuilder->makeSubQuery();
@@ -182,11 +180,11 @@ abstract class BasePriceTracker implements TrackerInterface
             )
         ;
 
-        /* We do not include grouped and bundle products in the sample */
+        /* We do not include grouped and bundle products */
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'bundle');
 
-        /* We do not include products marked duplicate in the sample */
+        /* We do not include products marked duplicate */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
         $blockingErrorsRetryHours = $this->blockingErrorConfig->getEbayBlockingErrorRetrySeconds();
@@ -214,14 +212,6 @@ abstract class BasePriceTracker implements TrackerInterface
             ->makeSubQuery()
             ->addSelect('template_synchronization_id', 'ts.template_synchronization_id')
             ->addSelect('revise_update_price', 'ts.revise_update_price')
-            ->addSelect(
-                'revise_threshold',
-                'IF(
-                            ts.revise_update_qty_max_applied_value_mode = 1,
-                            ts.revise_update_qty_max_applied_value,
-                            999999
-                        )'
-            )
             ->from(
                 'ts',
                 $this->setChannelToTableName('m2epro_%s_template_synchronization')
@@ -323,5 +313,26 @@ abstract class BasePriceTracker implements TrackerInterface
             ->from('cr', 'directory_currency_rate')
             ->andWhere('cr.currency_from = ?', $baseCurrencySubquery->getQuery())
             ->andWhere("cr.currency_to = marketplace.{$this->getMarketplaceCurrencyField()}");
+    }
+
+    protected function getAdditionalDataFields(): array
+    {
+        return [
+            'listing_product_id' => 'base.listing_product_id',
+            'product_id' => 'base.product_id',
+            'calculated_price' => 'base.calculated_price',
+            'online_price' => 'base.online_price',
+        ];
+    }
+
+    private function makeAdditionalDataSelectQuery(): \Zend_Db_Expr
+    {
+        $additionalDataSql = '';
+        foreach ($this->getAdditionalDataFields() as $fieldName => $fieldValue) {
+            $additionalDataSql .= "'$fieldName', $fieldValue, ";
+        }
+        $additionalDataSql = rtrim($additionalDataSql, ' ,');
+
+        return new \Zend_Db_Expr("JSON_OBJECT($additionalDataSql)");
     }
 }

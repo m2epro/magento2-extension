@@ -226,11 +226,13 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m08\AddNewColumnsToAmazonOrder::class,
             \Ess\M2ePro\Setup\Update\y23_m08\AddAmazonSellingFormatListPrice::class,
             \Ess\M2ePro\Setup\Update\y23_m08\AddFinalFeesColumnToAmazonOrderTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddProductModeColumnToEbayListing::class,
             \Ess\M2ePro\Setup\Update\y23_m09\AddOnlineBestOfferForEbayProduct::class,
             \Ess\M2ePro\Setup\Update\y23_m09\RefactorAmazonOrderColumns::class,
             \Ess\M2ePro\Setup\Update\y23_m09\RemoveLastAccessAndRunFromConfigTable::class,
             \Ess\M2ePro\Setup\Update\y23_m09\AddAmazonProductTypeAttributeMappingTable::class,
             \Ess\M2ePro\Setup\Update\y23_m09\AddPriceRoundingToEbayAmazonWalmartSellingTemplate::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\AddProductTypeViewModeColumn::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

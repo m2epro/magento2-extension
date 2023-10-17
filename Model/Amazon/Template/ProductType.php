@@ -20,6 +20,9 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public const FIELD_CUSTOM_VALUE = 1;
     public const FIELD_CUSTOM_ATTRIBUTE = 2;
 
+    public const VIEW_MODE_ALL_ATTRIBUTES = 0;
+    public const VIEW_MODE_REQUIRED_ATTRIBUTES = 1;
+
     public const GENERAL_PRODUCT_TYPE_NICK = 'PRODUCT';
 
     /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
@@ -176,5 +179,15 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         };
 
         return array_filter($specifics, $filterCallback);
+    }
+
+    public function getViewMode(): int
+    {
+        $viewMode = $this->getData('view_mode');
+        if ($viewMode === null) {
+            return self::VIEW_MODE_REQUIRED_ATTRIBUTES;
+        }
+
+        return (int)$viewMode;
     }
 }

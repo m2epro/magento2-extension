@@ -265,6 +265,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return $this->getData('title');
     }
 
+    public function setTitle(string $title)
+    {
+        $this->setData('title', $title);
+    }
+
     // ---------------------------------------
 
     /**

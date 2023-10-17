@@ -79,6 +79,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             $data['settings'] = \Ess\M2ePro\Helper\Json::encode($this->specifics);
         }
 
+        $data['view_mode'] = $this->rawData['general']['view_mode'];
+
         return $data;
     }
 
@@ -168,6 +170,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         return [
             'id' => '',
+            'view_mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::VIEW_MODE_ALL_ATTRIBUTES,
             'dictionary_product_type_id' => '',
             'settings' => '[]',
         ];

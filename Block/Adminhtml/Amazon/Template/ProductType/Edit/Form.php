@@ -38,6 +38,15 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ],
         ]);
 
+        $form->addField(
+            'view_mode',
+            'hidden',
+            [
+                'value' => $productType->getViewMode(),
+                'name' => 'general[view_mode]'
+            ]
+        );
+
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Data $dataBlock */
         $dataBlock = $this->getLayout()
             ->createBlock(

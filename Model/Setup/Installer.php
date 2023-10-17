@@ -3718,6 +3718,12 @@ class Installer
                                      null,
                                      ['unsigned' => true, 'default' => null]
                                  )
+                                ->addColumn(
+                                    'add_product_mode',
+                                    Table::TYPE_TEXT,
+                                    10,
+                                    ['default' => null]
+                                )
                                  ->addColumn(
                                      'template_shipping_id',
                                      Table::TYPE_INTEGER,
@@ -10011,6 +10017,12 @@ class Installer
                                                        'auto_increment' => true,
                                                    ]
                                                )
+                                                ->addColumn(
+                                                    'view_mode',
+                                                    Table::TYPE_SMALLINT,
+                                                    null,
+                                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                                )
                                                ->addColumn(
                                                    'dictionary_product_type_id',
                                                    Table::TYPE_INTEGER,

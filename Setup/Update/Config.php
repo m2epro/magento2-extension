@@ -314,10 +314,12 @@ class Config extends AbstractConfig
                 'RefactorAmazonOrderColumns',
                 'RemoveLastAccessAndRunFromConfigTable',
                 'AddAmazonProductTypeAttributeMappingTable',
+                'AddProductModeColumnToEbayListing',
                 'AddPriceRoundingToEbayAmazonWalmartSellingTemplate',
             ],
             'y23_m10' => [
                 'EnableAmazonShippingServiceForSomeMarketplaces',
+                'AddProductTypeViewModeColumn',
             ],
         ];
     }

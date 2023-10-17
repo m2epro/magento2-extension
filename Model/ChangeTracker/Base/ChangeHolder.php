@@ -38,25 +38,76 @@ class ChangeHolder
      * @param \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface $tracker
      *
      * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Zend_Db_Statement_Exception
+     * @throws \Throwable
      */
     public function holdChanges(TrackerInterface $tracker): void
     {
-        $this->logger->info("Hold tracker. Type: {$tracker->getType()}, channel: {$tracker->getChannel()}");
-        $this->profiler->start();
-        $trackerQuery = $tracker->getDataQuery();
-        $this->profiler->stop();
-        $this->logger->info('Build data query: ' . $this->profiler->logString());
+        $this->logger->info(sprintf("%s Start collect changes", $this->logTags($tracker)));
 
+        // Prepare SQL query
         $this->profiler->start();
-        $statement = $this->resource->getConnection()->query($trackerQuery);
-        $statement->execute();
+        try {
+            $trackerQuery = $tracker->getDataQuery();
+        } catch (\Throwable $exception) {
+            $this->processException($exception);
+        }
         $this->profiler->stop();
-        $this->logger->info('Executed data query: ' . $this->profiler->logString());
+        $this->logger->info(
+            sprintf(
+                '%s Prepare SQL query time - <b>%s</b> sec.',
+                $this->logTags($tracker),
+                $this->profiler->getTime()
+            )
+        );
 
+        // Execute SQL query
         $this->profiler->start();
+        try {
+            $statement = $this->resource->getConnection()->query($trackerQuery);
+            $statement->execute();
+        } catch (\Throwable $exception) {
+            $this->processException($exception);
+        }
+        $this->profiler->stop();
+        $this->logger->info(
+            sprintf(
+                '%s Execute SQL query time - <b>%s</b> sec.',
+                $this->logTags($tracker),
+                $this->profiler->getTime()
+            )
+        );
+
+        // Insert instruction
+        $this->profiler->start();
+        try {
+            $instructionCounter = 0;
+            foreach ($this->fetchInstructions($statement, $tracker) as $instructions) {
+                $this->instruction->add($instructions);
+                $instructionCounter += count($instructions);
+            }
+        } catch (\Throwable $exception) {
+            $this->processException($exception);
+        }
+        $this->profiler->stop();
+        $this->logger->info(
+            sprintf(
+                '%s Insert instructions time - <b>%s</b> sec.',
+                $this->logTags($tracker),
+                $this->profiler->getTime()
+            )
+        );
+
+        $this->logger->info(
+            sprintf(
+                '%s Added instructions: <b>%s</b>',
+                $this->logTags($tracker),
+                $instructionCounter
+            )
+        );
+    }
+
+    private function fetchInstructions($statement, $tracker): \Generator
+    {
         $instructions = [];
         $instructionCounter = 0;
         while ($row = $statement->fetch()) {
@@ -67,21 +118,19 @@ class ChangeHolder
                 'type' => $this->getInstructionType($tracker->getType()),
                 'component' => $tracker->getChannel(),
                 'initiator' => $initiator,
+                'additional_data' => $row['additional_data'] ?? null,
                 'priority' => 100,
                 'create_date' => new \Zend_Db_Expr('NOW()'),
             ];
             $instructionCounter++;
 
             if ($instructionCounter % 1000 === 0) {
-                $this->instruction->add($instructions);
+                yield $instructions;
                 $instructions = [];
             }
         }
 
-        $this->instruction->add($instructions);
-        $this->profiler->stop();
-        $this->logger->info('Insert instruction: ' . $this->profiler->logString());
-        $this->logger->info('Added instructions: ' . $instructionCounter);
+        yield $instructions;
     }
 
     /**
@@ -100,5 +149,30 @@ class ChangeHolder
         }
 
         throw new \RuntimeException('Unknown change tracker type ' . $trackerType);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    private function processException(\Throwable $exception): void
+    {
+        $this->logger->error($exception->getMessage(), [
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'trace' => $exception->getTrace()
+        ]);
+        $this->logger->writeLogs();
+
+        throw $exception;
+    }
+
+    private function logTags(\Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface $tracker): string
+    {
+        return sprintf(
+            '<b>%s</b> >> <b>%s</b> >>',
+            strtoupper($tracker->getChannel()),
+            strtoupper($tracker->getType())
+        );
     }
 }

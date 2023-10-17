@@ -31,7 +31,10 @@ class Manually extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
         $this->removeButton('save');
         $this->removeButton('edit');
 
-        $url = $this->getUrl('*/*/', ['step' => 1, '_current' => true]);
+        $url = $this->getUrl('*/*/', [
+            'step' => 1, '_current' => true,
+            'skip_get_suggested' => null, 'back' => true
+        ]);
         $this->addButton('back', [
             'label' => $this->__('Back'),
             'class' => 'back',

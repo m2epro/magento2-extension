@@ -117,6 +117,29 @@ HTML
             ]
         );
 
+        $sectionUrl = $this
+            ->_urlBuilder
+            ->getUrl('adminhtml/system_config/edit/section/'
+                . \Ess\M2ePro\Block\Adminhtml\System\Config\Sections::SECTION_ID_INTERFACE_AND_MAGENTO_INVENTORY);
+
+        $text = __(
+            'You can enable the Product QTY and Price tracker <a target="_blank" href="%url">here</a>.',
+            ['url' => $sectionUrl]
+        );
+
+        $fieldset->addField(
+            'enhanced-inventory-tracker-message',
+            self::MESSAGES,
+            [
+                'messages' => [
+                    [
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                        'content' => $text
+                    ],
+                ]
+            ]
+        );
+
         $form->setUseContainer(true);
         $this->setForm($form);
 

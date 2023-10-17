@@ -79,10 +79,12 @@ TEXT
 
         if ($id) {
             $saveConfirmation = $this->dataHelper->escapeJs(
-                $this->__('<br/>
+                $this->__(
+                    '<br/>
 <b>Note:</b> All changes you have made will be automatically applied to all M2E Pro Listings where this
 Product Type is used.
-                ')
+                '
+                )
             );
         }
 
@@ -108,6 +110,15 @@ Product Type is used.
         // ---------------------------------------
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
+
+        $this->addButton(
+            'view_mode_switch_button',
+            [
+                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\ProductTypeSwitchButton::class,
+                'label' => $this->__('Only Required Attributes'),
+                'value' => $this->productType->getViewMode(),
+            ]
+        );
 
         if (!$isSaveAndClose && $this->isEditMode()) {
             $this->buttonList->add(
@@ -170,9 +181,6 @@ Product Type is used.
         $this->css->addFile('amazon/product_type.css');
     }
 
-    /**
-     * @return bool
-     */
     private function isEditMode(): bool
     {
         return (bool)$this->productType->getId();

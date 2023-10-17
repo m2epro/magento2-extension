@@ -13,6 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\CollectionFactory;
 
 class Index extends Settings
 {
@@ -20,6 +21,8 @@ class Index extends Settings
     protected $listing;
     /** @var \Ess\M2ePro\Helper\Magento\Category */
     protected $magentoCategoryHelper;
+    /** @var \Ess\M2ePro\Model\Ebay\ListingFactory */
+    protected $ebayListingFactory;
 
     /**
      * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
@@ -41,6 +44,7 @@ class Index extends Settings
         eBayCategory $componentEbayCategory,
         eBayCategory\Store $componentEbayCategoryStore,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\Ebay\ListingFactory $ebayListingFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct(
@@ -54,6 +58,7 @@ class Index extends Settings
             $ebayFactory,
             $context
         );
+        $this->ebayListingFactory = $ebayListingFactory;
         $this->magentoCategoryHelper = $magentoCategoryHelper;
     }
 
@@ -147,15 +152,26 @@ class Index extends Settings
             return $this->_redirect('*/*/otherCategories', ['_current' => true]);
         }
 
+        $ebayListing = $this->ebayListingFactory
+            ->create()
+            ->load($this->getRequest()->getParam('id'), 'listing_id');
+        $mode = $ebayListing->getAddProductMode();
+        $back = $this->getRequest()->getParam('back');
+
+        if ($mode && !$back) {
+            $this->setSessionValue('mode', $mode);
+
+            return $this->_redirect('*/*/', [
+                'step' => 2,
+                '_current' => true,
+                'skip_get_suggested' => null,
+            ]);
+        }
         if ($this->getRequest()->isPost()) {
             $mode = $this->getRequest()->getParam('mode');
             $this->setSessionValue('mode', $mode);
-
-            if ($mode == CategoryTemplateBlock::MODE_SAME) {
-                $temp = $this->getSessionValue($this->getSessionDataKey());
-                $temp['remember'] = (bool)$this->getRequest()->getParam('mode_same_remember_checkbox', false);
-                $this->setSessionValue($this->getSessionDataKey(), $temp);
-            }
+            $ebayListing->setAddProductMode($mode);
+            $ebayListing->save();
 
             if ($source) {
                 $this->getListingFromRequest()->setSetting(
@@ -255,7 +271,7 @@ class Index extends Settings
                 $categorySecondaryTpl,
                 $storeTpl,
                 $storeSecondaryTpl,
-                !empty($sessionData['mode_same']['remember'])
+                true
             );
 
             return $this->_redirect(

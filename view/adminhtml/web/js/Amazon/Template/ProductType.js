@@ -14,6 +14,8 @@ define(
 
             originalFormData: null,
             isPageLeavingSafe: false,
+            viewModeSwitcher: jQuery('#view_mode_switch_button'),
+            viewModeInput: jQuery('input#view_mode'),
 
             initialize: function()
             {
@@ -23,12 +25,22 @@ define(
                     this.originalFormData = jQuery('#edit_form').serialize();
                 }
 
+                let self = this;
+                this.viewModeSwitcher.on('change', function () {
+                    self.viewModeInput.val(self.getViewModeSwitcherValue())
+                });
+
                 if (localStorage.get('has_changed_mappings_product_type_id')) {
                     let productTypeId = localStorage.get('has_changed_mappings_product_type_id');
                     localStorage.remove('has_changed_mappings_product_type_id')
 
                     this.showUpdateProductTypeAttributeMappingPopup(productTypeId)
                 }
+            },
+
+            getViewModeSwitcherValue: function ()
+            {
+                return this.viewModeSwitcher.prop('checked') ? 1 : 0
             },
 
             showUpdateProductTypeAttributeMappingPopup: function (productTypeId)
@@ -231,6 +243,7 @@ define(
             setSearchActivatorVisibility: function (visible)
             {
                 $('product_type_edit_activator').style.display = visible ? 'inline' : 'none';
+
             },
 
             updateProductTypeScheme: function ()
@@ -244,12 +257,26 @@ define(
                     return;
                 }
 
+                self.viewModeSwitcher.on('change', function () {
+                    self.resetProductTypeScheme();
+                    self.loadProductTypeForm(marketplaceId, productType);
+                });
+
+                self.loadProductTypeForm(marketplaceId, productType);
+            },
+
+            loadProductTypeForm: function (marketplaceId, productType)
+            {
+                var self = this;
+                var isToggledOn = self.getViewModeSwitcherValue();
+
                 new Ajax.Request(M2ePro.url.get('amazon_template_productType/getProductTypeInfo'), {
                     method: 'post',
                     asynchronous: true,
                     parameters: {
                         marketplace_id: marketplaceId,
-                        product_type: productType
+                        product_type: productType,
+                        only_required_attributes: isToggledOn,
                     },
                     onSuccess: function(transport) {
                         const response = transport.responseText.evalJSON();
@@ -266,7 +293,8 @@ define(
                             response.data['timezone_shift'],
                             response.data['specifics_default_settings'],
                             response.data['main_image_specifics'],
-                            response.data['other_images_specifics']
+                            response.data['other_images_specifics'],
+                            response.data['recommended_browse_node_link']
                         );
 
                         self.originalFormData = jQuery('#edit_form').serialize();

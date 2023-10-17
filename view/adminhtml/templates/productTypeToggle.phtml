@@ -1,0 +1,18 @@
+<?php
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button\ProductTypeSwitchButton $block */
+
+?>
+<div class="admin__actions-switch" data-role="switcher">
+    <span><?= $block->getLabel() ?></span>
+    <input
+        type="checkbox"
+        class="admin__actions-switch-checkbox"
+        id="<?= $block->getId() ?>"
+        name="<?= $block->getId() ?>"
+        <?= $block->getStatus() ?>
+    >
+    <label class="admin__actions-switch-label" for="<?= $block->getId() ?>">
+        <span class="admin__actions-switch-text"></span>
+    </label>
+</div>

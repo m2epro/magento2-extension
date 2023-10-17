@@ -31,17 +31,11 @@ class TrackerLogger implements LoggerInterface
 
     public function __destruct()
     {
-        $values = $this->registry->getValueFromJson(self::REGISTRY_KEY) ?: [];
-        array_unshift($values, $this->tmpLogs);
-        $values = array_slice($values, 0, 5);
-        $this->registry->setValue(self::REGISTRY_KEY, $values);
+        $this->writeLogs();
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function emergency($message, array $context = []): void
     {
@@ -49,10 +43,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function alert($message, array $context = []): void
     {
@@ -60,10 +51,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function critical($message, array $context = []): void
     {
@@ -71,10 +59,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function error($message, array $context = []): void
     {
@@ -82,10 +67,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function warning($message, array $context = []): void
     {
@@ -93,10 +75,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function notice($message, array $context = []): void
     {
@@ -104,10 +83,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function info($message, array $context = []): void
     {
@@ -115,10 +91,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function debug($message, array $context = []): void
     {
@@ -126,11 +99,7 @@ class TrackerLogger implements LoggerInterface
     }
 
     /**
-     * @param int $level
-     * @param string $message
-     * @param array $context
-     *
-     * @return void
+     * @throws \Exception
      */
     public function log($level, $message, array $context = []): void
     {
@@ -146,14 +115,21 @@ class TrackerLogger implements LoggerInterface
         ];
     }
 
-    /**
-     * @param array $context
-     *
-     * @return string
-     */
+    public function writeLogs(): void
+    {
+        $values = $this->registry->getValueFromJson(self::REGISTRY_KEY) ?: [];
+        array_unshift($values, $this->tmpLogs);
+        $values = array_slice($values, 0, 5);
+        $this->registry->setValue(self::REGISTRY_KEY, $values);
+    }
+
     private function formatContext(array $context): string
     {
         array_walk($context, static function (&$item) {
+            if (!is_string($item)) {
+                return;
+            }
+
             $item = preg_replace(['/\n/', '/\s+/'], ' ', $item);
         });
 

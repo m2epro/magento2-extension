@@ -65,32 +65,47 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
+            ->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
-        $isMeetChangeQty = '
-            (base.calculated_qty > online_qty AND online_qty < revise_threshold)
-            OR (base.calculated_qty != online_qty) AND (base.calculated_qty < base.revise_threshold)
-        ';
-
-        $mainQuery->andWhere($isMeetChangeQty);
-
-        $isMeetStop = '
-            base.status = 2 AND (
-                (base.stop_when_product_disabled AND base.product_disabled)
-                OR (base.stop_when_product_out_of_stock AND base.is_in_stock = 0)
-                OR (base.stop_when_qty_less_than >= base.stock_qty)
+        /* List condition */
+        $isMeetList = '
+            status = 0 AND (
+                base.calculated_qty >= base.list_with_qty_greater_or_equal_then
+                AND IF (base.list_only_enabled_products, base.product_disabled = FALSE, TRUE)
+                AND IF (base.list_only_in_stock_products, base.is_in_stock, TRUE)
             )
         ';
-        $mainQuery->orWhere($isMeetStop);
+        $mainQuery->orWhere($isMeetList);
 
+        /* Revise condition */
+        $isMeetRevise = '
+            base.status = 2 AND (
+                (base.calculated_qty > base.online_qty AND base.online_qty < base.revise_threshold)
+                OR (base.calculated_qty != base.online_qty AND base.calculated_qty < base.revise_threshold)
+            )
+        ';
+        $mainQuery->orWhere($isMeetRevise);
+
+        /* Relist condition */
         $isMeetRelist = '
-           base.status IN (1, 3, 4, 5) AND (
+            base.status IN (1, 3, 4, 5) AND (
                 (base.stock_qty >= base.relist_when_qty_more_or_equal)
-                AND (base.relist_when_product_is_in_stock AND base.is_in_stock = 1)
-                AND (base.relist_when_product_status_enabled AND NOT base.product_disabled)
+                AND IF (base.relist_when_product_is_in_stock, base.is_in_stock = TRUE, TRUE)
+                AND IF (base.relist_when_product_status_enabled, base.product_disabled = FALSE, TRUE)
             )
         ';
         $mainQuery->orWhere($isMeetRelist);
+
+        /* Stop condition */
+        $isMeetStop = '
+            base.status = 2 AND (
+                (base.stop_when_qty_less_than >= base.stock_qty)
+                AND IF(base.stop_when_product_out_of_stock, base.is_in_stock = 0, TRUE)
+                AND IF(base.stop_when_product_disabled, base.product_disabled = TRUE, TRUE)
+            )
+        ';
+        $mainQuery->orWhere($isMeetStop);
 
         $message = sprintf(
             'Data query %s %s',
@@ -236,6 +251,18 @@ abstract class BaseInventoryTracker implements TrackerInterface
                         )'
             )
             ->addSelect(
+                'list_only_enabled_products',
+                'IF(ts.list_mode = 1 AND ts.list_status_enabled = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'list_only_in_stock_products',
+                'IF(ts.list_mode = 1 AND ts.list_is_in_stock = 1, TRUE, FALSE)'
+            )
+            ->addSelect(
+                'list_with_qty_greater_or_equal_then',
+                'IF(ts.list_mode = 1 AND ts.list_qty_calculated = 1, ts.list_qty_calculated_value, 999999)'
+            )
+            ->addSelect(
                 'stop_when_product_disabled',
                 'IF(ts.stop_mode = 1 AND ts.stop_status_disabled = 1, TRUE, FALSE)'
             )
@@ -287,9 +314,11 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('selling_template_id', 'product.selling_template_id')
             ->addSelect('is_in_stock', 'stock.is_in_stock')
             ->addSelect('stock_qty', 'FLOOR(stock.qty)')
-            ->addSelect('online_qty', 'product.online_qty')
             ->addSelect('is_variation', 'product.is_variation')
             ->addSelect('revise_threshold', 'sync_policy.revise_threshold')
+            ->addSelect('list_with_qty_greater_or_equal_then', 'sync_policy.list_with_qty_greater_or_equal_then')
+            ->addSelect('list_only_enabled_products', 'sync_policy.list_only_enabled_products')
+            ->addSelect('list_only_in_stock_products', 'sync_policy.list_only_in_stock_products')
             ->addSelect('stop_when_product_disabled', 'sync_policy.stop_when_product_disabled')
             ->addSelect('stop_when_product_out_of_stock', 'sync_policy.stop_when_product_out_of_stock')
             ->addSelect('stop_when_qty_less_than', 'sync_policy.stop_when_qty_less_than')
@@ -299,6 +328,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('relist_when_qty_more_or_equal', 'sync_policy.relist_when_qty_more_or_equal')
         ;
 
+        $query->addSelect('online_qty', 'product.online_qty');
         $query->addSelect('calculated_qty', $this->calculatedQtyExpression());
 
         /* Tables */
@@ -358,17 +388,6 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->andWhere('lpsa.listing_product_id IS NULL')
             ->andWhere('lpi.listing_product_id IS NULL');
 
-        //$query
-        //    ->addGroup('product.listing_product_id')
-        //    ->addGroup('product.product_id')
-        //    ->addGroup('product.store_id')
-        //    ->addGroup('product.sync_template_id')
-        //    ->addGroup('product.selling_template_id')
-        //    ->addGroup('stock.is_in_stock')
-        //    ->addGroup('FLOOR(stock.qty)')
-        //    ->addGroup('product.online_qty')
-        //;
-
         return $query;
     }
 
@@ -408,5 +427,45 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 ELSE $calcQty
             END
         )";
+    }
+
+    protected function getAdditionalDataFields(): array
+    {
+        return [
+            'listing_product_id' => 'base.listing_product_id',
+            'product_id' => 'base.product_id',
+            'status' => 'base.status',
+
+            'calculated_qty' => 'base.calculated_qty',
+            'online_qty' => 'base.online_qty',
+
+            'product_disabled' => 'base.product_disabled',
+            'is_in_stock' => 'base.is_in_stock',
+
+            'revise_threshold' => 'base.revise_threshold',
+
+            'list_with_qty_greater_or_equal_then' => 'base.list_with_qty_greater_or_equal_then',
+            'list_only_enabled_products' => 'base.list_only_enabled_products',
+            'list_only_in_stock_products' => 'base.list_only_in_stock_products',
+
+            'relist_when_qty_more_or_equal' => 'base.relist_when_qty_more_or_equal',
+            'relist_when_product_is_in_stock' => 'base.relist_when_product_is_in_stock',
+            'relist_when_product_status_enabled' => 'base.relist_when_product_status_enabled',
+
+            'stop_when_product_disabled' => 'base.stop_when_product_disabled',
+            'stop_when_product_out_of_stock' => 'base.stop_when_product_out_of_stock',
+            'stop_when_qty_less_than' => 'base.stop_when_qty_less_than',
+        ];
+    }
+
+    private function makeAdditionalDataSelectQuery(): \Zend_Db_Expr
+    {
+        $additionalDataSql = '';
+        foreach ($this->getAdditionalDataFields() as $fieldName => $fieldValue) {
+            $additionalDataSql .= "'$fieldName', $fieldValue, ";
+        }
+        $additionalDataSql = rtrim($additionalDataSql, ' ,');
+
+        return new \Zend_Db_Expr("JSON_OBJECT($additionalDataSql)");
     }
 }

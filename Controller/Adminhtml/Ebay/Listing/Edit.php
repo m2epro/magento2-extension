@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tab\General;
+
 class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     protected function _isAllowed()
@@ -26,7 +28,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return $this->_redirect('*/ebay_listing/index');
         }
 
-        $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit::class));
+        $this->addContent($this->getLayout()->createBlock(General::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
         );

@@ -6,9 +6,11 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
+namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tab;
 
-class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs;
+
+class Policies extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
@@ -36,7 +38,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         parent::_construct();
 
-        $this->setId('ebayListingEdit');
+        $this->setId('ebayListingEditPolicy');
         $this->_controller = 'adminhtml_ebay_listing';
         $this->_mode = 'create_templates';
 
@@ -47,17 +49,15 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
 
-        if ($this->getRequest()->getParam('back')) {
-            $url = $this->dataHelper->getBackUrl();
-            $this->addButton(
-                'back',
-                [
-                    'label' => $this->__('Back'),
-                    'onclick' => 'EbayListingSettingsObj.backClick(\'' . $url . '\')',
-                    'class' => 'back',
-                ]
-            );
-        }
+        $url = $this->dataHelper->getBackUrl();
+        $this->addButton(
+            'back',
+            [
+                'label' => $this->__('Back'),
+                'onclick' => "setLocation('" . $url . "')",
+                'class' => 'back',
+            ]
+        );
 
         $this->addButton(
             'auto_action',
@@ -77,13 +77,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'back' => $backUrl,
             ]
         );
-        $saveButtonsProps = [
-            'save' => [
-                'label' => $this->__('Save And Back'),
-                'onclick' => 'EbayListingSettingsObj.saveClick(\'' . $url . '\')',
-                'class' => 'save primary',
-            ],
-        ];
 
         $editBackUrl = $this->dataHelper->makeBackUrlParam(
             $this->getUrl(
@@ -101,17 +94,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'back' => $editBackUrl,
             ]
         );
-        $saveButtons = [
+        $saveButton = [
             'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
-            'class' => 'add',
-            'button_class' => '',
+            'label' => $this->__('Save'),
             'onclick' => 'EbayListingSettingsObj.saveAndEditClick(\'' . $url . '\', 1)',
-            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
-            'options' => $saveButtonsProps,
+            'class' => 'save primary',
         ];
 
-        $this->addButton('save_buttons', $saveButtons);
+        $this->addButton('save', $saveButton);
     }
 
     //########################################
@@ -161,8 +151,25 @@ JS
 
     //########################################
 
-    public function getFormHtml()
+    protected function getListing()
     {
+        if ($this->listing === null && $this->getRequest()->getParam('id')) {
+            $is = $this->getRequest()->getParam('id');
+            $this->listing = $this->ebayFactory->getCachedObjectLoaded(
+                'Listing',
+                $this->getRequest()->getParam('id')
+            );
+        }
+
+        return $this->listing;
+    }
+    protected function _toHtml()
+    {
+
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tabs $tabsBlock */
+        $tabsBlock = $this->getLayout()->createBlock(Tabs::class);
+        $tabsBlock->activatePoliciesTab();
+        $tabsBlockHtml = $tabsBlock->toHtml();
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',
@@ -171,21 +178,7 @@ JS
             ]
         );
 
-        return $viewHeaderBlock->toHtml() . parent::getFormHtml();
-    }
-
-    //########################################
-
-    protected function getListing()
-    {
-        if ($this->listing === null && $this->getRequest()->getParam('id')) {
-            $this->listing = $this->ebayFactory->getCachedObjectLoaded(
-                'Listing',
-                $this->getRequest()->getParam('id')
-            );
-        }
-
-        return $this->listing;
+        return $viewHeaderBlock->toHtml() . $tabsBlockHtml . parent::_toHtml();
     }
 
     //########################################

@@ -109,3 +109,8 @@ option[data-exist-product-type-id] {
 .product-type-dictionary-warning > div {
     vertical-align: baseline;
 }
+
+.admin__actions-switch {
+    order: -2;
+    margin-top: 12px;
+}

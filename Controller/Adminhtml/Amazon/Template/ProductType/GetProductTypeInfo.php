@@ -35,7 +35,7 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
      */
     public function execute()
     {
-        $marketplaceId = $this->getRequest()->getParam('marketplace_id');
+        $marketplaceId = (int)$this->getRequest()->getParam('marketplace_id');
         if (!$marketplaceId) {
             $this->setJsonContent([
                 'result' => false,
@@ -45,7 +45,7 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
             return $this->getResult();
         }
 
-        $productType = $this->getRequest()->getParam('product_type');
+        $productType = (string)$this->getRequest()->getParam('product_type');
         if (!$productType) {
             $this->setJsonContent([
                 'result' => false,
@@ -55,13 +55,24 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
             return $this->getResult();
         }
 
-        $scheme = $this->productTypeHelper->getProductTypeScheme((int)$marketplaceId, (string)$productType);
-        $settings = $this->productTypeHelper->getProductTypeSettings((int)$marketplaceId, (string)$productType);
-        $groups = $this->productTypeHelper->getProductTypeGroups((int)$marketplaceId, (string)$productType);
+        $onlyRequiredAttributes = (bool)$this->getRequest()->getParam('only_required_attributes');
+        $scheme = $this->productTypeHelper->getProductTypeScheme(
+            $marketplaceId,
+            $productType,
+            $onlyRequiredAttributes
+        );
+        $onlyForAttributes = $onlyRequiredAttributes ? $scheme : [];
+        $settings = $this->productTypeHelper->getProductTypeSettings($marketplaceId, $productType);
+        $groups = $this->productTypeHelper->getProductTypeGroups(
+            $marketplaceId,
+            $productType,
+            $onlyForAttributes
+        );
         $timezoneShift = $this->productTypeHelper->getTimezoneShift();
         $specificsDefaultSettings = $this->productTypeHelper->getSpecificsDefaultSettings();
         $mainImageSpecifics = $this->productTypeHelper->getMainImageSpecifics();
         $otherImagesSpecifics = $this->productTypeHelper->getOtherImagesSpecifics();
+        $recommendedBrowseNodesLink = $this->productTypeHelper->getRecommendedBrowseNodesLink((int)$marketplaceId);
 
         $this->setJsonContent([
             'result' => true,
@@ -73,6 +84,7 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
                 'specifics_default_settings' => $specificsDefaultSettings,
                 'main_image_specifics' => $mainImageSpecifics,
                 'other_images_specifics' => $otherImagesSpecifics,
+                'recommended_browse_node_link' => $recommendedBrowseNodesLink,
             ],
         ]);
 

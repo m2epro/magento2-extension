@@ -314,7 +314,10 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 $qty = $item->getQtyReserved();
                 $item->setData('qty_reserved', 0);
 
-                if ($item->getMagentoProduct()->isBundleType()) {
+                if (
+                    $item->getMagentoProduct() !== null
+                    && $item->getMagentoProduct()->isBundleType()
+                ) {
                     $this->ensureParentStockStatusInStock($item->getMagentoProduct()->getProductId());
                 }
             }

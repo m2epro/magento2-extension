@@ -32,6 +32,7 @@ define(
             htmlIdToScheme: {},
             controlElementInit: {},
             timezoneShift: 0,
+            recommendedBrowseNodeLink: '',
 
             initialize: function()
             {
@@ -73,7 +74,8 @@ define(
                 timezoneShift,
                 specificsDefaultSettings,
                 mainImageSpecifics,
-                otherImagesSpecifics
+                otherImagesSpecifics,
+                recommendedBrowseNodeLink
             ) {
                 this.settings = settings;
                 this.specificsDefaultSettings = specificsDefaultSettings;
@@ -81,6 +83,7 @@ define(
                 this.otherImagesSpecifics = otherImagesSpecifics;
                 this.initGroups(groups);
                 this.timezoneShift = timezoneShift;
+                // this.recommendedBrowseNodeLink = recommendedBrowseNodeLink
 
                 if (!scheme.length) {
                     return;
@@ -96,6 +99,16 @@ define(
                         this.renderFieldset(group, groupFieldsets[group][i]);
                     }
                 }
+
+                this.appendRecommendedBrowseNodeLink(recommendedBrowseNodeLink);
+            },
+
+            appendRecommendedBrowseNodeLink: function (recommendedBrowseNodeLink) {
+                if (recommendedBrowseNodeLink === '') {
+                    return;
+                }
+
+                jQuery('label[for*="field_mode_recommended_browse_nodes"] span').after(recommendedBrowseNodeLink)
             },
 
             initDictionaryHtmlIdToScheme: function (scheme, path = [])

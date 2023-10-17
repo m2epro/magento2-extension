@@ -1,11 +1,5 @@
 <?php
 
-/*
- * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Listing\Product;
 
 class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
@@ -88,10 +82,10 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     /**
-     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Zend_Db_Statement_Exception
+     * @throws \Throwable
      */
     protected function performActions(): void
     {

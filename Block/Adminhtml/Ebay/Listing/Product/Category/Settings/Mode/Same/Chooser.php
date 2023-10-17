@@ -40,7 +40,8 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
         $this->addButton('back', [
             'label' => $this->__('Back'),
             'class' => 'back',
-            'onclick' => 'setLocation(\'' . $this->getUrl('*/*/*', ['_current' => true, 'step' => 1]) . '\');',
+            'onclick' => 'setLocation(\'' . $this->getUrl('*/*/*', [
+                '_current' => true, 'step' => 1, 'back' => true]) . '\');',
         ]);
 
         $url = $this->getUrl(

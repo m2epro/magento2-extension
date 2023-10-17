@@ -16,6 +16,19 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as Ca
  */
 class Form extends AbstractForm
 {
+    private $ebayListingFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Model\Ebay\ListingFactory $ebayListingFactory,
+        array $data = []
+    ) {
+        $this->ebayListingFactory = $ebayListingFactory;
+        parent::__construct($context, $registry, $formFactory, $data);
+    }
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
@@ -26,6 +39,13 @@ class Form extends AbstractForm
                 ],
             ]
         );
+        $id = $this->getRequest()->getParam('id');
+        $ebayListing = $this->ebayListingFactory->create()->load($id);
+        $addProductMode = $ebayListing->getAddProductMode();
+
+        $blockLabel = $addProductMode
+            ? $this->__('To change the eBay category settings mode for this Listing, please click one of the available options below and save:')
+            : $this->__('You need to choose eBay Categories for Products in order to list them on eBay.');
 
         $fieldset = $form->addFieldset('categories_mode', []);
 
@@ -33,7 +53,7 @@ class Form extends AbstractForm
             'block-title',
             'label',
             [
-                'value' => $this->__('You need to choose eBay Categories for Products in order to list them on eBay.'),
+                'value' => $blockLabel,
                 'field_extra_attributes' =>
                     'id="categories_mode_block_title" style="font-weight: bold;font-size:18px;margin-bottom:0px"',
             ]
@@ -69,21 +89,6 @@ CSS
                 ],
                 'note' => '<div style="padding-top: 3px; padding-left: 26px; font-weight: normal">' .
                     $this->__('Products will be Listed using the same eBay Category.') . '</div>',
-            ]
-        );
-
-        $fieldset->addField(
-            'mode_same_remember_checkbox',
-            'checkbox',
-            [
-                'name' => 'mode_same_remember_checkbox',
-                'after_element_html' =>
-                    '&nbsp;&nbsp; <span style="color: #808080; font-size: 1.2rem; vertical-align: top;">' .
-                    $this->__('Remember my choice and skip this step in the future.') . '</span>',
-                'value' => 1,
-                'checked' => false,
-                'disabled' => true,
-                'field_extra_attributes' => 'style="margin-top: 2px; margin-bottom: 0; padding-left: 56px;"',
             ]
         );
 

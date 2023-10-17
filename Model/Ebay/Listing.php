@@ -671,6 +671,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ---------------------------------------
 
+    public function getAddProductMode()
+    {
+        return $this->getData('add_product_mode');
+    }
+
     /**
      * @return bool
      */
@@ -970,6 +975,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getLastPrimaryCategory($key)
     {
         return (array)$this->getParentObject()->getSetting('additional_data', $key);
+    }
+
+    public function setAddProductMode(string $mode)
+    {
+        $this->setData('add_product_mode', $mode);
     }
 
     //########################################

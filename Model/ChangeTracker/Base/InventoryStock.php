@@ -128,10 +128,13 @@ class InventoryStock
             'query' => 'CREATE TEMPORARY TABLE IF NOT EXISTS `tmp_stock` ' . (string)$inventoryQuery->getQuery(),
         ]);
 
+        $start = microtime(true);
         $this->msiTableName = (new TemporaryTable())->createFromSelect(
             $inventoryQuery->getQuery(),
             $this->getDbAdapter()
         );
+        $createdTime = (float)number_format(microtime(true) - $start, 4);
+        $this->logger->debug("Stock temporary table created in $createdTime seconds");
 
         return $this->msiTableName;
     }

@@ -82,21 +82,19 @@ class Mode extends AbstractContainer
             'Listing',
             $this->getRequest()->getParam('id')
         );
-
         $this->js->addOnReadyJs(
             <<<JS
-require([
-    'M2ePro/Ebay/Listing/Product/Category/Settings/Mode'
-], function(){
+    require([
+        'M2ePro/Ebay/Listing/Product/Category/Settings/Mode'
+    ], function(){
 
-    window.EbayListingProductCategorySettingsModeObj = new EbayListingProductCategorySettingsMode(
-        '{$this->getData('mode')}'
-    );
-
-});
-JS
+        window.EbayListingProductCategorySettingsModeObj = new EbayListingProductCategorySettingsMode(
+            '{$this->getData('mode')}'
         );
 
+    });
+JS
+        );
         $viewHeaderBlock = $this->getLayout()->createBlock(
             \Ess\M2ePro\Block\Adminhtml\Listing\View\Header::class,
             '',

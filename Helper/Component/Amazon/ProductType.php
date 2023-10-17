@@ -30,6 +30,8 @@ class ProductType
     private $marketplaceDictionaryProductTypeCache = [];
     /** @var \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\Suggester */
     private $attributesSuggester;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory */
+    private $marketplaceCollectionFactory;
 
     public function __construct(
         ProductTypeCollectionFactory $productTypeCollectionFactory,
@@ -39,7 +41,8 @@ class ProductType
         \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Ess\M2ePro\Model\Amazon\Connector\DispatcherFactory $amazonConnectorDispatcherFactory,
-        \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\Suggester $attributesSuggester
+        \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\Suggester $attributesSuggester,
+        \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory
     ) {
         $this->productTypeCollectionFactory = $productTypeCollectionFactory;
         $this->productTypeDictionaryCollectionFactory = $productTypeDictionaryCollectionFactory;
@@ -49,6 +52,7 @@ class ProductType
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         $this->amazonConnectorDispatcherFactory = $amazonConnectorDispatcherFactory;
         $this->attributesSuggester = $attributesSuggester;
+        $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
     }
 
     /**
@@ -98,18 +102,30 @@ class ProductType
     /**
      * @param int $marketplaceId
      * @param string $nick
+     * @param bool $onlyRequired
      *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getProductTypeScheme(int $marketplaceId, string $nick): array
+    public function getProductTypeScheme(int $marketplaceId, string $nick, bool $onlyRequired = false): array
     {
         $item = $this->getProductTypeDictionary($marketplaceId, $nick);
         if (!$item->getId()) {
             return [];
         }
 
-        return $item->getScheme();
+        if (!$onlyRequired) {
+            return $item->getScheme();
+        }
+
+        $scheme = [];
+        foreach ($item->getScheme() as $attribute) {
+            if ($attribute['validation_rules']['is_required']) {
+                $scheme[] = $attribute;
+            }
+        }
+
+        return $scheme;
     }
 
     /**
@@ -162,19 +178,32 @@ class ProductType
     /**
      * @param int $marketplaceId
      * @param string $nick
+     * @param array|null $onlyForAttributes
      *
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getProductTypeGroups(int $marketplaceId, string $nick): array
+    public function getProductTypeGroups(int $marketplaceId, string $nick, array $onlyForAttributes = []): array
     {
         $data = $this->getMarketplaceDictionaryProductType($marketplaceId, $nick);
         if (empty($data)) {
             return [];
         }
 
-        return !empty($data['groups']) && is_array($data['groups']) ?
-            $data['groups'] : [];
+        $groups = !empty($data['groups']) && is_array($data['groups']) ? $data['groups'] : [];
+        if ($onlyForAttributes === []) {
+            return $groups;
+        }
+
+        $groupNicks = array_unique(array_column($onlyForAttributes, 'group_nick'));
+        $requiredGroups = [];
+        foreach ($groups as $group) {
+            if (in_array($group['nick'], $groupNicks)) {
+                $requiredGroups[] = $group;
+            }
+        }
+
+        return $requiredGroups;
     }
 
     /**
@@ -413,5 +442,30 @@ class ProductType
             'other_product_image_locator_1#array/media_location',
             'other_offer_image_locator_1#array/media_location',
         ];
+    }
+
+    public function getRecommendedBrowseNodesLink(int $marketplaceId): string
+    {
+        $map = [
+            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_UK
+                => 'https://sellercentral.amazon.co.uk/help/hub/reference/G201742570',
+            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_IT
+                => 'https://sellercentral.amazon.it/help/hub/reference/G201742570',
+            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_FR
+                => 'https://sellercentral.amazon.fr/help/hub/reference/G201742570',
+            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_DE
+                => 'https://sellercentral.amazon.de/help/hub/reference/G201742570',
+            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_ES
+                => 'https://sellercentral.amazon.es/help/hub/reference/G201742570',
+        ];
+
+        if (!array_key_exists($marketplaceId, $map)) {
+            return '';
+        }
+
+        return __(
+            '<a style="display: block; margin-top: -10px" href="%url">View latest Browse Node ID List</a>',
+            ['url' => $map[$marketplaceId]]
+        );
     }
 }
