@@ -151,7 +151,7 @@ class GetShippingServices extends Order
             'address_1' => $post['ship_from_address_address_line_1'],
         ];
 
-        if ($post['ship_from_address_region_state']) {
+        if (isset($post['ship_from_address_region_state']) && $post['ship_from_address_region_state']) {
             $preparedShipmentData['physical']['region_state'] = $post['ship_from_address_region_state'];
         }
 

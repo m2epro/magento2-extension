@@ -23,15 +23,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalSt
         // ---------------------------------------
 
         $this->addTab(
-            self::GENERAL_TAB_ID,
-            __('General'),
-            $this->getUrl('*/ebay_listing_edit/general', ['id' => $id, '_current' => true])
-        );
-        $this->registerCssForTab(self::GENERAL_TAB_ID, $cssMb20);
-
-        // ---------------------------------------
-
-        $this->addTab(
             self::POLICIES_TAB_ID,
             $this->__('Policies'),
             $this->getUrl('*/ebay_listing_edit/policies', ['id' => $id, '_current' => true])
@@ -46,6 +37,15 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractHorizontalSt
             $this->getUrl('*/ebay_listing_edit/categories', ['id' => $id, '_current' => true])
         );
         $this->registerCssForTab(self::CATEGORIES_TAB_ID, $cssMb20);
+
+        // ---------------------------------------
+
+        $this->addTab(
+            self::GENERAL_TAB_ID,
+            __('General'),
+            $this->getUrl('*/ebay_listing_edit/general', ['id' => $id, '_current' => true])
+        );
+        $this->registerCssForTab(self::GENERAL_TAB_ID, $cssMb20);
 
         // ---------------------------------------
     }

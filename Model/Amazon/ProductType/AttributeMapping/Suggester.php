@@ -27,12 +27,12 @@ class Suggester
     private function appendDefaultSuggestedAttributes(array $attributes): array
     {
         $map = [
-            'item_name#array/value' => 'name',
-            'brand#array/value' => 'manufacturer',
-            'manufacturer#array/value' => 'manufacturer',
-            'product_description#array/value' => 'description',
-            'country_of_origin#array/value' => 'country_of_manufacture',
-            'item_package_weight#array/value' => 'weight',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_NAME => 'name',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_BRAND => 'manufacturer',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_MANUFACTURER => 'manufacturer',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_DESCRIPTION => 'description',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_COUNTRY_OF_ORIGIN => 'country_of_manufacture',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_ITEM_PACKAGE_WEIGHT => 'weight',
         ];
 
         foreach ($map as $productTypeAttributeCode => $magentoAttributeCode) {

@@ -111,9 +111,22 @@ class Details extends AbstractModel
     private function buildSpecificsData(array $specifics): array
     {
         $result = [];
-
         foreach ($specifics as $name => $values) {
             if (empty($values)) {
+                continue;
+            }
+
+            $specificKeys = [
+                \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_NAME,
+                \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_DESCRIPTION,
+            ];
+
+            if (in_array($name, $specificKeys)) {
+                $fieldData = $this->prepareFieldValue($values);
+
+                if ($fieldData !== null && $fieldData !== '') {
+                    $result[$name] = $fieldData;
+                }
                 continue;
             }
 
@@ -314,5 +327,45 @@ class Details extends AbstractModel
         }
 
         return ['list_price' => $regularListPrice];
+    }
+
+    protected function prepareFieldValue(array $fieldSpecifications)
+    {
+        $magentoProduct = $this->getMagentoProduct();
+        if (!$magentoProduct->exists()) {
+            return null;
+        }
+
+        $resultData = [];
+
+        foreach ($fieldSpecifications as $item) {
+            if ($item['mode'] === \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE) {
+                $resultData[] = $this->replaceAttributesInValue($magentoProduct, $item['value']);
+            } else {
+                $resultData[] = $magentoProduct->getAttributeValue($item['attribute_code'], false);
+            }
+        }
+
+        if (count($resultData) === 1) {
+            return reset($resultData);
+        }
+
+        return $resultData;
+    }
+
+    private function replaceAttributesInValue($magentoProduct, $value)
+    {
+        preg_match_all("/#([a-z_0-9]+?)#/i", $value, $matches);
+
+        if (empty($matches[0])) {
+            return $value;
+        }
+
+        foreach ($matches[1] as $attributeCode) {
+            $attributeValue = $magentoProduct->getAttributeValue($attributeCode);
+            $value = str_replace("#$attributeCode#", $attributeValue, $value);
+        }
+
+        return $value;
     }
 }

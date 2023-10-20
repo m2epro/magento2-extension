@@ -109,8 +109,9 @@ class Configuration extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
             $defaultsCachedData = [
                 'ship_from_address_name' => implode(' ', $customerName),
                 'ship_from_address_email' => isset($userData['email']) ? $userData['email'] : '',
+                'ship_from_address_phone' => isset($userData['phone']) ? $userData['phone'] : '',
                 'ship_from_address_country' => $shippingOriginData['country_id'],
-                'ship_from_address_region_state' => $shippingOriginData['region_id'],
+                'ship_from_address_region_state' => $shippingOriginData['region_id'] ?? '',
                 'ship_from_address_postal_code' => $shippingOriginData['postal_code'],
                 'ship_from_address_city' => $shippingOriginData['city'],
                 'ship_from_address_address_line_1' => $shippingOriginData['street_line1'],
@@ -660,7 +661,6 @@ HTML
                 'data' => [
                     'name' => 'ship_from_address_region_state',
                     'value' => $formData['ship_from_address_region_state'],
-                    'class' => 'M2ePro-required-when-visible ',
                 ],
             ]
         );
@@ -680,7 +680,6 @@ HTML
                         ],
                     ],
                     'value' => $formData['ship_from_address_region_state'],
-                    'class' => 'M2ePro-required-when-visible',
                     'style' => 'width: 70%; display: none;',
                 ],
             ]
@@ -700,7 +699,6 @@ HTML
 {$regionStateSelect->toHtml()}
 HTML
                 ,
-                'required' => true,
             ]
         );
 
@@ -736,7 +734,6 @@ HTML
                 'label' => __('Street Address Line 2'),
                 'title' => __('Street Address Line 2'),
                 'value' => $formData['ship_from_address_address_line_2'],
-                'required' => true,
             ]
         );
 

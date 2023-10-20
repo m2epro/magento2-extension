@@ -111,14 +111,14 @@ Product Type is used.
 
         $isSaveAndClose = (bool)$this->getRequest()->getParam('close_on_save', false);
 
-        $this->addButton(
-            'view_mode_switch_button',
-            [
-                'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\ProductTypeSwitchButton::class,
-                'label' => $this->__('Only Required Attributes'),
-                'value' => $this->productType->getViewMode(),
-            ]
-        );
+        //$this->addButton(
+        //    'view_mode_switch_button',
+        //    [
+        //        'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\ProductTypeSwitchButton::class,
+        //        'label' => $this->__('Only Required Attributes'),
+        //        'value' => $this->productType->getViewMode(),
+        //    ]
+        //);
 
         if (!$isSaveAndClose && $this->isEditMode()) {
             $this->buttonList->add(

@@ -42,7 +42,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'view_mode',
             'hidden',
             [
-                'value' => $productType->getViewMode(),
+                //'value' => $productType->getViewMode(),
+                'value' => 0,
                 'name' => 'general[view_mode]'
             ]
         );

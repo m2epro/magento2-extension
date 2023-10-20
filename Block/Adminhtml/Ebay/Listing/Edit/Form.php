@@ -22,9 +22,12 @@ class Form extends AbstractForm
     protected $ebayFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory */
     protected $listingCollectionFactory;
+    /** @var \Ess\M2ePro\Helper\Magento\Store */
+    protected $storeHelper;
     protected $titles = [];
 
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -32,6 +35,7 @@ class Form extends AbstractForm
         \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingCollectionFactory,
         array $data = []
     ) {
+        $this->storeHelper = $storeHelper;
         $this->listingCollectionFactory = $listingCollectionFactory;
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $registry, $formFactory, $data);
@@ -77,6 +81,27 @@ class Form extends AbstractForm
             [
                 'name' => 'titles',
                 'value' => implode(',', $this->titles),
+            ]
+        );
+
+        $storeViewFieldset = $form->addFieldset(
+            'store_view',
+            [
+                'legend' => __('Store View'),
+                'collapsable' => false,
+                'class' => 'fieldset-wide',
+            ]
+        );
+
+        $storeViewFieldset->addField(
+            'store_view_field',
+            'text',
+            [
+                'name' => 'store_view_field',
+                'label' => __('Store View'),
+                'title' => __('Store View'),
+                'value' => $this->storeHelper->getStorePath($this->getListing()->getStoreId()),
+                'disabled' => true,
             ]
         );
 

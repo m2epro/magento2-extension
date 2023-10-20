@@ -10,6 +10,15 @@ use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory
 
 class ProductType
 {
+    public const SPECIFIC_KEY_NAME = 'item_name#array/value';
+    public const SPECIFIC_KEY_BRAND = 'brand#array/value';
+    public const SPECIFIC_KEY_MANUFACTURER = 'manufacturer#array/value';
+    public const SPECIFIC_KEY_DESCRIPTION = 'product_description#array/value';
+    public const SPECIFIC_KEY_COUNTRY_OF_ORIGIN = 'country_of_origin#array/value';
+    public const SPECIFIC_KEY_ITEM_PACKAGE_WEIGHT = 'item_package_weight#array/value';
+    public const SPECIFIC_KEY_MAIN_PRODUCT_IMAGE_LOCATOR = 'main_product_image_locator#array/media_location';
+    public const SPECIFIC_KEY_MAIN_OFFER_IMAGE_LOCATOR = 'main_offer_image_locator#array/media_location';
+
     /** @var ProductTypeCollectionFactory */
     private $productTypeCollectionFactory;
     /** @var ProductTypeDictionaryCollectionFactory */
@@ -431,8 +440,8 @@ class ProductType
     public function getMainImageSpecifics(): array
     {
         return [
-            'main_product_image_locator#array/media_location',
-            'main_offer_image_locator#array/media_location',
+            self::SPECIFIC_KEY_MAIN_PRODUCT_IMAGE_LOCATOR,
+            self::SPECIFIC_KEY_MAIN_OFFER_IMAGE_LOCATOR,
         ];
     }
 

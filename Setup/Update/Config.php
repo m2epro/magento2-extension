@@ -320,6 +320,7 @@ class Config extends AbstractConfig
             'y23_m10' => [
                 'EnableAmazonShippingServiceForSomeMarketplaces',
                 'AddProductTypeViewModeColumn',
+                'EnableEbayShippingRate',
             ],
         ];
     }

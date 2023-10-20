@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
-use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tab\General;
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\Tab\Policies;
 
 class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
@@ -28,7 +28,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return $this->_redirect('*/ebay_listing/index');
         }
 
-        $this->addContent($this->getLayout()->createBlock(General::class));
+        $this->addContent($this->getLayout()->createBlock(Policies::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
         );
