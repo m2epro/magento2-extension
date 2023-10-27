@@ -1088,7 +1088,7 @@ abstract class PriceCalculator extends AbstractModel
             $value = $this->rounder->round($value);
         } else {
             foreach ($value as $qty => $price) {
-                $value[$qty] = $this->rounder->round($value);
+                $value[$qty] = $this->rounder->round($price);
             }
         }
 
