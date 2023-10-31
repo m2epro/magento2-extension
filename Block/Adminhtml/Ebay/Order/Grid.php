@@ -33,6 +33,10 @@ class Grid extends AbstractGrid
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $ebayHelper;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
+    private $advancedFilterFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\AdvancedFilter\AllOrdersOptions */
+    private $advancedFilterAllOrdersOptions;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -42,6 +46,8 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Ebay $ebayHelper,
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
+        \Ess\M2ePro\Model\Ebay\AdvancedFilter\AllOrdersOptions $advancedFilterAllOrdersOptions,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
@@ -49,7 +55,8 @@ class Grid extends AbstractGrid
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
         $this->ebayHelper = $ebayHelper;
-
+        $this->advancedFilterFactory = $advancedFilterFactory;
+        $this->advancedFilterAllOrdersOptions = $advancedFilterAllOrdersOptions;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -71,6 +78,14 @@ class Grid extends AbstractGrid
         // ---------------------------------------
     }
 
+    public function _prepareAdvancedFilters()
+    {
+        parent::_prepareAdvancedFilters();
+        $this->addMarketplaceAdvancedFilter();
+        $this->addAccountAdvancedFilter();
+        $this->addMagentoOrderCreatedFilter();
+    }
+
     protected function _prepareCollection()
     {
         $collection = $this->ebayFactory->getObject('Order')->getCollection();
@@ -86,27 +101,6 @@ class Grid extends AbstractGrid
                        '(so.entity_id = `main_table`.magento_order_id)',
                        ['magento_order_num' => 'increment_id']
                    );
-
-        // Add Filter By Account
-        // ---------------------------------------
-        if ($accountId = $this->getRequest()->getParam('ebayAccount')) {
-            $collection->addFieldToFilter('main_table.account_id', $accountId);
-        }
-        // ---------------------------------------
-
-        // Add Filter By Marketplace
-        // ---------------------------------------
-        if ($marketplaceId = $this->getRequest()->getParam('ebayMarketplace')) {
-            $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
-        }
-        // ---------------------------------------
-
-        // Add Not Created Magento Orders Filter
-        // ---------------------------------------
-        if ($this->getRequest()->getParam('not_created_only')) {
-            $collection->addFieldToFilter('magento_order_id', ['null' => true]);
-        }
-        // ---------------------------------------
 
         // Add Order Status column
         // ---------------------------------------
@@ -841,5 +835,83 @@ JS
         );
 
         return parent::_toHtml();
+    }
+
+    private function addMarketplaceAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getMarketplaceOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ) {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $orders->addFieldToFilter('marketplace_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'marketplace',
+            __('Marketplace'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addAccountAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getAccountOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $orders->addFieldToFilter('main_table.account_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'account',
+            __('Account'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addMagentoOrderCreatedFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            if ((int)$filterValue === 1) {
+                $orders->addFieldToFilter('magento_order_id', ['neq' => null]);
+            } elseif ((int)$filterValue === 0) {
+                $orders->addFieldToFilter('magento_order_id', ['null' => true]);
+            }
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'magento_order_id',
+            __('Magento Order created'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
     }
 }

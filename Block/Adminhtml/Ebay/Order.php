@@ -80,8 +80,6 @@ HTML
             ),
         ]);
 
-        $this->setPageActionsBlock('Ebay_Order_PageActions');
-
         return parent::_prepareLayout();
     }
 

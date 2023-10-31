@@ -106,111 +106,87 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->categorySpecificSourceModels[$productId];
     }
 
-    //########################################
+    // ----------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getTemplateCategoryId()
+    public function getTemplateCategoryId(): int
     {
         return (int)$this->getData('template_category_id');
     }
 
-    //########################################
-
-    /**
-     * @return int
-     */
-    public function getMode()
+    public function getMode(): int
     {
         return (int)$this->getData('mode');
     }
 
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isItemSpecificsMode()
+    public function getAttributeTitle(): string
     {
-        return $this->getMode() == self::MODE_ITEM_SPECIFICS;
+        return (string)$this->getData('attribute_title');
     }
 
-    /**
-     * @return bool
-     */
-    public function isCustomItemSpecificsMode()
+    public function getValueCustomValue()
     {
-        return $this->getMode() == self::MODE_CUSTOM_ITEM_SPECIFICS;
+        return $this->getData('value_custom_value');
     }
 
-    //########################################
+    public function getValueCustomAttribute()
+    {
+        return $this->getData('value_custom_attribute');
+    }
 
-    /**
-     * @return int
-     */
-    public function getValueMode()
+    public function getValueMode(): int
     {
         return (int)$this->getData('value_mode');
     }
 
     // ---------------------------------------
 
-    /**
-     * @return bool
-     */
-    public function isNoneValueMode()
+    public function isItemSpecificsMode(): bool
+    {
+        return $this->getMode() == self::MODE_ITEM_SPECIFICS;
+    }
+
+    public function isCustomItemSpecificsMode(): bool
+    {
+        return $this->getMode() == self::MODE_CUSTOM_ITEM_SPECIFICS;
+    }
+
+    // ---------------------------------------
+
+    public function isNoneValueMode(): bool
     {
         return $this->getValueMode() == self::VALUE_MODE_NONE;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEbayRecommendedValueMode()
+    public function isEbayRecommendedValueMode(): bool
     {
         return $this->getValueMode() == self::VALUE_MODE_EBAY_RECOMMENDED;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCustomValueValueMode()
+    public function isCustomValueValueMode(): bool
     {
         return $this->getValueMode() == self::VALUE_MODE_CUSTOM_VALUE;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCustomAttributeValueMode()
+    public function isCustomAttributeValueMode(): bool
     {
         return $this->getValueMode() == self::VALUE_MODE_CUSTOM_ATTRIBUTE;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCustomLabelAttributeValueMode()
+    public function isCustomLabelAttributeValueMode(): bool
     {
         return $this->getValueMode() == self::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    /**
-     * @return array
-     */
-    public function getValueAttributes()
+    public function getValueAttributes(): array
     {
         $attributes = [];
 
         if ($this->isCustomAttributeValueMode() || $this->isCustomLabelAttributeValueMode()) {
-            $attributes[] = $this->getData('value_custom_attribute');
+            $attributes[] = $this->getValueCustomAttribute();
         }
 
         return $attributes;
     }
-
-    //########################################
 }

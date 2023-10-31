@@ -1,7 +1,7 @@
 define([
     'jquery',
     'M2ePro/Common'
-], function (jQuery) {
+], function (jQuery, localStorage) {
     window.EbayTemplateCategorySpecifics = Class.create(Common, {
 
         maxSelectedSpecifics: 45,
@@ -61,6 +61,24 @@ define([
 
         createSpecificsSnapshot: function () {
             this.specificsSnapshot = this.collectSpecifics();
+        },
+
+        saveAndEditClick: function (url)
+        {
+            this.validateSpecific();
+            this.submitForm(url);
+        },
+
+        saveAndCloseClick: function (url)
+        {
+            this.validateSpecific();
+            this.submitForm(url);
+        },
+
+        validateSpecific: function ()
+        {
+            let template_id = jQuery('input#template_id').val();
+            EbayCategorySpecificValidationPopup.setTemplateCategoryId(template_id);
         },
 
         isSpecificsChanged: function () {

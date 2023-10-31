@@ -451,16 +451,16 @@ HTML
         );
 
         $shipByDateFieldset->addField(
-            'magento_orders_sold_by_amazon_settings',
+            'magento_orders_import_labels_settings',
             'select',
             [
-                'name' => 'magento_orders_settings[shipping_information][sold_by_amazon]',
-                'label' => __('Import Invoice by Amazon label to Magento order'),
+                'name' => 'magento_orders_settings[shipping_information][import_labels]',
+                'label' => __('Import Invoice by Amazon, B2B, Prime labels to Magento order'),
                 'values' => [
                     1 => __('Yes'),
                     0 => __('No'),
                 ],
-                'value' => $formData['magento_orders_settings']['shipping_information']['sold_by_amazon'] ?? 1,
+                'value' => $formData['magento_orders_settings']['shipping_information']['import_labels'] ?? 1,
             ]
         );
 

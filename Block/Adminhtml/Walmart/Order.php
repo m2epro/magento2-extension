@@ -74,8 +74,6 @@ HTML
             ]
         );
 
-        $this->setPageActionsBlock('Walmart_Order_PageActions');
-
         return parent::_prepareLayout();
     }
 

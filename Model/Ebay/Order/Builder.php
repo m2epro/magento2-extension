@@ -521,6 +521,16 @@ class Builder extends AbstractModel
             }
         }
 
+        /**
+         * Don't create combined order without payment
+         */
+        if (
+            $this->isCombined()
+            && $this->getData('payment_status') === \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_NOT_SELECTED
+        ) {
+            return false;
+        }
+
         if (
             $this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED &&
             $this->order->getId() &&

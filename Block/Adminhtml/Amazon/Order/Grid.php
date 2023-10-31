@@ -34,6 +34,11 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
 
+    /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
+    private $advancedFilterFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\AdvancedFilter\AllOrdersOptions */
+    private $advancedFilterAllOrdersOptions;
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -42,6 +47,8 @@ class Grid extends AbstractGrid
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
+        \Ess\M2ePro\Model\Amazon\AdvancedFilter\AllOrdersOptions $advancedFilterAllOrdersOptions,
+        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
         array $data = []
     ) {
         $this->resourceConnection = $resourceConnection;
@@ -49,6 +56,8 @@ class Grid extends AbstractGrid
         $this->databaseHelper = $databaseHelper;
         $this->dataHelper = $dataHelper;
         $this->amazonHelper = $amazonHelper;
+        $this->advancedFilterAllOrdersOptions = $advancedFilterAllOrdersOptions;
+        $this->advancedFilterFactory = $advancedFilterFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -72,6 +81,19 @@ class Grid extends AbstractGrid
         return \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Massaction::class;
     }
 
+    public function _prepareAdvancedFilters()
+    {
+        parent::_prepareAdvancedFilters();
+        $this->addMarketplaceAdvancedFilter();
+        $this->addAccountAdvancedFilter();
+        $this->addMagentoOrderCreatedFilter();
+        $this->addInvoiceSentFilter();
+        $this->addCreditMemoSentFilter();
+        $this->addPrimeFilter();
+        $this->addB2BFilter();
+        $this->addInvoiceByAmazonFilter();
+    }
+
     protected function _prepareCollection()
     {
         $collection = $this->amazonFactory->getObject('Order')->getCollection();
@@ -82,36 +104,6 @@ class Grid extends AbstractGrid
                        '(so.entity_id = `main_table`.magento_order_id)',
                        ['magento_order_num' => 'increment_id']
                    );
-
-        // Add Filter By Account
-        // ---------------------------------------
-        if ($accountId = $this->getRequest()->getParam('amazonAccount')) {
-            $collection->addFieldToFilter('main_table.account_id', $accountId);
-        }
-        // ---------------------------------------
-
-        // Add Filter By Marketplace
-        // ---------------------------------------
-        if ($marketplaceId = $this->getRequest()->getParam('amazonMarketplace')) {
-            $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
-        }
-        // ---------------------------------------
-
-        // Add Not Created Magento Orders Filter
-        // ---------------------------------------
-        if ($this->getRequest()->getParam('not_created_only')) {
-            $collection->addFieldToFilter('magento_order_id', ['null' => true]);
-        }
-        // ---------------------------------------
-
-        // Add Not sent Invoice or Credit Memo Filter
-        // ---------------------------------------
-        if ($this->getRequest()->getParam('invoice_or_creditmemo_not_sent')) {
-            $collection->addFieldToFilter('is_invoice_sent', 0);
-            $collection->addFieldToFilter('is_credit_memo_sent', 0);
-        }
-
-        // ---------------------------------------
 
         $this->setCollection($collection);
 
@@ -891,5 +883,188 @@ JS
         );
 
         return parent::_prepareLayout();
+    }
+
+    private function addMarketplaceAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getMarketplaceOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ) {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $orders->addFieldToFilter('marketplace_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'marketplace',
+            __('Marketplace'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addAccountAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getAccountOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $orders->addFieldToFilter('account_id', ['eq' => (int)$filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'account',
+            __('Account'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addMagentoOrderCreatedFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            if ((int)$filterValue === 1) {
+                $orders->addFieldToFilter('magento_order_id', ['neq' => null]);
+            } elseif ((int)$filterValue === 0) {
+                $orders->addFieldToFilter('magento_order_id', ['null' => true]);
+            }
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'magento_order_id',
+            __('Magento Order created'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addInvoiceSentFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_invoice_sent', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_invoice_sent',
+            __('Invoice sent'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addCreditMemoSentFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_credit_memo_sent', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_credit_memo_sent',
+            __('Credit memo sent'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addPrimeFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_prime', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_prime',
+            __('Prime'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addB2BFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_business', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_business',
+            __('B2B'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addInvoiceByAmazonFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_sold_by_amazon', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_sold_by_amazon',
+            __('Invoice by Amazon'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
     }
 }

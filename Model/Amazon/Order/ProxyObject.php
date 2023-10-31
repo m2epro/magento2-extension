@@ -72,28 +72,23 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return explode('_', $this->getMagentoShippingCode())[0];
     }
 
-    /**
-     * @return string
-     */
-    public function getOrderNumberPrefix()
+    public function getOrderNumberPrefix(): string
     {
         $amazonAccount = $this->order->getAmazonAccount();
 
-        $prefix = $amazonAccount->getMagentoOrdersNumberRegularPrefix();
-
-        if ($amazonAccount->getMagentoOrdersNumberAfnPrefix() && $this->order->isFulfilledByAmazon()) {
-            $prefix .= $amazonAccount->getMagentoOrdersNumberAfnPrefix();
+        if ($this->order->isFulfilledByAmazon()) {
+            return $amazonAccount->getMagentoOrdersNumberAfnPrefix(); //AFN
         }
 
-        if ($amazonAccount->getMagentoOrdersNumberPrimePrefix() && $this->order->isPrime()) {
-            $prefix .= $amazonAccount->getMagentoOrdersNumberPrimePrefix();
+        if ($this->order->isPrime()) {
+            return $amazonAccount->getMagentoOrdersNumberPrimePrefix(); //Prime
         }
 
-        if ($amazonAccount->getMagentoOrdersNumberB2bPrefix() && $this->order->isBusiness()) {
-            $prefix .= $amazonAccount->getMagentoOrdersNumberB2bPrefix();
+        if ($this->order->isBusiness()) {
+            return $amazonAccount->getMagentoOrdersNumberB2bPrefix(); //B2B
         }
 
-        return $prefix;
+        return $amazonAccount->getMagentoOrdersNumberRegularPrefix(); //General
     }
 
     /**
@@ -192,18 +187,18 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
         $additionalData = '';
 
-        if ($this->order->isPrime()) {
-            $additionalData .= 'Is Prime | ';
-        }
+        if ($amazonAccount->isImportLabelsToMagentoOrder()) {
+            if ($this->order->isPrime()) {
+                $additionalData .= 'Is Prime | ';
+            }
 
-        if ($this->order->isBusiness()) {
-            $additionalData .= 'Is Business | ';
-        }
+            if ($this->order->isBusiness()) {
+                $additionalData .= 'Is Business | ';
+            }
 
-        $isImportSoldByAmazon = $amazonAccount->isImportSoldByAmazonToMagentoOrder();
-
-        if ($isImportSoldByAmazon && $this->order->isSoldByAmazon()) {
-            $additionalData .= 'Invoice by Amazon | ';
+            if ($this->order->isSoldByAmazon()) {
+                $additionalData .= 'Invoice by Amazon | ';
+            }
         }
 
         if ($this->order->isMerchantFulfillmentApplied()) {
@@ -248,7 +243,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return [
-            'carrier_title' => $this->getHelper('Module\Translation')->__('Amazon Shipping'),
+            'carrier_title' => __('Amazon Shipping'),
             'shipping_method' => $this->order->getShippingService() . $additionalData,
             'shipping_price' => $this->getBaseShippingPrice(),
         ];

@@ -8,11 +8,11 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Mode as CategoryTemplateBlock;
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Category\Settings;
 use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
 use Ess\M2ePro\Model\Ebay\Template\Category as TemplateCategory;
-use Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode as SourceModeBlock;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\CollectionFactory;
 
 class Index extends Settings
@@ -77,6 +77,10 @@ class Index extends Settings
 
         $step = (int)$this->getRequest()->getParam('step');
 
+        if ($step === 4) {
+            return $this->stepValidate();
+        }
+
         if ($this->getSessionValue('mode') === null) {
             $step = 1;
         }
@@ -139,10 +143,10 @@ class Index extends Settings
                     false
                 );
 
-                return $this->_redirect(
-                    '*/ebay_listing/review',
-                    ['id' => $this->getRequest()->getParam('id')]
-                );
+                return $this->_redirect('*/*/', [
+                    'step' => 4,
+                    '_current' => true,
+                ]);
             }
         }
 
@@ -274,10 +278,10 @@ class Index extends Settings
                 true
             );
 
-            return $this->_redirect(
-                '*/ebay_listing/review',
-                ['id' => $this->getRequest()->getParam('id')]
-            );
+            return $this->_redirect('*/*/', [
+                'step' => 4,
+                '_current' => true,
+            ]);
         }
 
         $this->setWizardStep('categoryStepTwo');
@@ -637,4 +641,32 @@ class Index extends Settings
     }
 
     //########################################
+
+    private function stepValidate()
+    {
+        if ($this->getRequest()->isPost()) {
+            $grid = $this
+                ->getLayout()
+                ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\Specific\Validation\Grid::class, '', [
+                    'listingProductIds' => $this->listing->getChildObject()->getAddedListingProductsIds(),
+                ]);
+
+            $this->setAjaxContent($grid);
+
+            return $this->getResult();
+        }
+
+        $this->setWizardStep('categoryStepValidation');
+
+        $page = $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Validate::class, '', [
+                'listing' => $this->listing,
+            ]);
+
+        $this->addContent($page);
+        $this->getResultPage()->getConfig()->getTitle()->prepend(__('Validate Category Specific'));
+
+        return $this->getResult();
+    }
 }

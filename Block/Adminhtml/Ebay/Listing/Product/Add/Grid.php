@@ -197,6 +197,11 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         foreach ($baseCollection->getItems() as $item) {
             $entityId = $item->getData('entity_id');
+
+            if (!array_key_exists($entityId, $attributeData)) {
+                continue;
+            }
+
             $item->setData('price', $attributeData[$entityId]['price']);
             $item->setData('status', $attributeData[$entityId]['status']);
             $item->setData('visibility', $attributeData[$entityId]['visibility']);

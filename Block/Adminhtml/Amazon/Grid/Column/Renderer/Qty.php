@@ -66,6 +66,9 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
 
             if ($rowObject->getData('is_afn_channel')) {
                 $qty = $rowObject->getData('online_afn_qty') ?? __('N/A');
+                if ($isExport) {
+                    return $qty;
+                }
 
                 return "AFN ($qty)";
             }

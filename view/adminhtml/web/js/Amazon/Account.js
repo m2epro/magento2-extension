@@ -341,9 +341,9 @@ define([
 
             var regularPrefix = $('magento_orders_number_prefix_prefix').value;
             regular = regularPrefix + regular;
-            afn = regularPrefix + $('magento_orders_number_prefix_afn').value + afn;
-            prime = regularPrefix + $('magento_orders_number_prefix_prime').value + prime;
-            b2b = regularPrefix + $('magento_orders_number_prefix_b2b').value + b2b;
+            afn = $('magento_orders_number_prefix_afn').value + afn;
+            prime =  $('magento_orders_number_prefix_prime').value + prime;
+            b2b =  $('magento_orders_number_prefix_b2b').value + b2b;
 
             $('order_number_example_container_regular').update(regular);
             $('order_number_example_container_afn').update(afn);

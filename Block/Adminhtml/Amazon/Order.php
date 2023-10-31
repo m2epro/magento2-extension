@@ -77,8 +77,6 @@ HTML
             ),
         ]);
 
-        $this->setPageActionsBlock('Amazon_Order_PageActions');
-
         return parent::_prepareLayout();
     }
 

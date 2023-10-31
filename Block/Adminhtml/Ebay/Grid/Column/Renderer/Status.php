@@ -23,8 +23,14 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 
     /** @var \Ess\M2ePro\Helper\View */
     protected $viewHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory */
+    private $tagRelationCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
+    private $tagResource;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $tagRelationCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\View $viewHelper,
@@ -37,6 +43,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->viewHelper = $viewHelper;
+        $this->tagRelationCollectionFactory = $tagRelationCollectionFactory;
+        $this->tagResource = $tagResource;
     }
 
     public function render(\Magento\Framework\DataObject $row): string
@@ -98,7 +106,9 @@ HTML;
 HTML;
         }
 
-        $html .= $this->getScheduledTag($row) . $this->getLockedTag($row);
+        $html .= $this->getItemSpecificValidationWarning($row)
+            . $this->getScheduledTag($row)
+            . $this->getLockedTag($row);
 
         return $html;
     }
@@ -288,5 +298,34 @@ HTML;
     public function renderExport(\Magento\Framework\DataObject $row): string
     {
         return strip_tags($this->getCurrentStatus($row));
+    }
+
+    private function getItemSpecificValidationWarning(\Magento\Framework\DataObject $row): string
+    {
+        $collection = $this->tagRelationCollectionFactory->create();
+        $collection->join(
+            ['tag' => $this->tagResource->getMainTable()],
+            'main_table.tag_id = tag.id',
+            ['error_code' => 'error_code']
+        );
+        $collection->addFieldToFilter(
+            'error_code',
+            ['eq' => \Ess\M2ePro\Model\Ebay\Category\SpecificValidator::ERROR_TAG_CODE]
+        );
+        $collection->addFieldToFilter(
+            'listing_product_id',
+            ['eq' => (int)$row->getData('listing_product_id')]
+        );
+
+        if ($collection->getSize() === 0) {
+            return '';
+        }
+
+        $warningMessage = __('Unable to List Product Due to missing Item Specific(s)');
+
+        return sprintf(
+            '<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">%s</span>',
+            $this->getTooltipHtml($warningMessage)
+        );
     }
 }

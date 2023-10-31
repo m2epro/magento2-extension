@@ -344,11 +344,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (int)$setting;
     }
 
-    public function isImportSoldByAmazonToMagentoOrder(): bool
+    public function isImportLabelsToMagentoOrder(): bool
     {
         return (bool)$this->getSetting(
             'magento_orders_settings',
-            ['shipping_information', 'sold_by_amazon'],
+            ['shipping_information', 'import_labels'],
             true
         );
     }

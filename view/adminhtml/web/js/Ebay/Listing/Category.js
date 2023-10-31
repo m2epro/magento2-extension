@@ -63,7 +63,10 @@ define([
                     template_category_data : Object.toJSON(selectedCategories)
                 },
                 onSuccess: function (transport) {
-                    self.cancelCategorySettings();
+                    EbayCategorySpecificValidationPopup.closePopupCallback = function () {
+                        self.cancelCategorySettings()
+                    }
+                    EbayCategorySpecificValidationPopup.open(self.selectedProductsIds.join(','));
                 }.bind(this)
             });
         },

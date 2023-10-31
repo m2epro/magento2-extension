@@ -29,6 +29,7 @@ class InstallationEbay extends Wizard
         'categoryStepOne',
         'categoryStepTwo',
         'categoryStepThree',
+        'categoryStepValidation',
     ];
 
     /**

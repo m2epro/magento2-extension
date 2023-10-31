@@ -152,7 +152,6 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         $this->js->add(
             <<<JS
-
     require([
         'M2ePro/Ebay/Template/Category/Specifics'
     ], function(){

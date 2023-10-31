@@ -233,6 +233,10 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m09\AddAmazonProductTypeAttributeMappingTable::class,
             \Ess\M2ePro\Setup\Update\y23_m09\AddPriceRoundingToEbayAmazonWalmartSellingTemplate::class,
             \Ess\M2ePro\Setup\Update\y23_m10\AddProductTypeViewModeColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\CreateEbayCategorySpecificValidationResultTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\ImproveAmazonOrderPrefixes::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\RenameSoldByAmazonSetting::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\ReAddIsSoldByAmazonColumnToAmazonOrder::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

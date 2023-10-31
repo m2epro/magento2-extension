@@ -224,12 +224,15 @@ abstract class AbstractGrid extends Extended
         foreach ($this->getAdvancedFilters() as $filter) {
             $filterId = $filter->getId();
 
-            if (empty($data[$filterId])) {
+            if (!array_key_exists($filterId, $data)) {
                 continue;
             }
 
             $filterValue = $data[$filterId];
             $filter->setSelectedValue($filterValue);
+            if (!$filter->isSelected()) {
+                continue;
+            }
 
             $filterCallback = $filter->getFilterCallback();
             $filterCallback($this->getCollection(), $filterValue);

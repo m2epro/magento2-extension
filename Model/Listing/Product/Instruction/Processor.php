@@ -74,7 +74,8 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->deleteInstructionsOlderThenWeek();
         $this->deleteInstructionsWithoutListingProducts();
-        $this->deleteAmazonInstruction();
+        $this->deleteNotValidAmazonProductTypeInstruction();
+        $this->deleteNotValidEbayCategorySpecificInstruction();
 
         $listingsProducts = $this->getNeededListingsProducts();
 
@@ -199,10 +200,17 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             );
     }
 
-    private function deleteAmazonInstruction(): void
+    private function deleteNotValidAmazonProductTypeInstruction(): void
     {
         $this->instructionResource->deleteByTagErrorCodes([
             \Ess\M2ePro\Model\Amazon\ProductType\AttributesValidator::ERROR_TAG_CODE
+        ]);
+    }
+
+    private function deleteNotValidEbayCategorySpecificInstruction(): void
+    {
+        $this->instructionResource->deleteByTagErrorCodes([
+            \Ess\M2ePro\Model\Ebay\Category\SpecificValidator::ERROR_TAG_CODE
         ]);
     }
 }

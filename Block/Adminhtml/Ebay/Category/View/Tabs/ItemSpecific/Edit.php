@@ -39,38 +39,26 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'EbayTemplateCategorySpecificsObj.resetSpecifics()'
         );
 
+        $editUrl = $this->_urlBuilder->getUrl(
+            '*/ebay_category/saveTemplateCategorySpecifics',
+            ['back' => 'edit']
+        );
+
+        $closeUrl = $this->_urlBuilder->getUrl(
+            '*/ebay_category/saveTemplateCategorySpecifics'
+        );
+
         $saveButtons = [
             'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+            'label' => __('Save And Continue Edit'),
             'class' => 'add',
             'button_class' => '',
-            'data_attribute' => [
-                'mage-init' => [
-                    'button' => [
-                        'event' => 'save',
-                        'target' => '#edit_form',
-                        'eventData' => [
-                            'action' => [
-                                'args' => [
-                                    'back' => 'edit',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+            'onclick' => "EbayTemplateCategorySpecificsObj.saveAndEditClick('$editUrl')",
             'options' => [
                 'save' => [
-                    'label' => $this->__('Save And Back'),
-                    'data_attribute' => [
-                        'mage-init' => [
-                            'button' => [
-                                'event' => 'save',
-                                'target' => '#edit_form',
-                            ],
-                        ],
-                    ],
+                    'label' => __('Save And Back'),
+                    'onclick' => "EbayTemplateCategorySpecificsObj.saveAndCloseClick('$closeUrl')",
                 ],
             ],
         ];
@@ -84,10 +72,12 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         );
 
         $isExists = true;
-        $template->isCategoryModeEbay() && $isExists = $this->componentEbayCategoryEbay->exists(
-            $template->getCategoryId(),
-            $template->getMarketplaceId()
-        );
+        if ($template->isCategoryModeEbay()) {
+            $isExists = $this->componentEbayCategoryEbay->exists(
+                $template->getCategoryId(),
+                $template->getMarketplaceId()
+            );
+        }
 
         if (!$isExists) {
             $this->removeButton('reset');

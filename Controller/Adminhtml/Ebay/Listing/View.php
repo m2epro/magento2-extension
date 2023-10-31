@@ -97,6 +97,10 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
         );
 
+        $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\Specific\Validation\Popup::class);
+
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::class));
 
         return $this->getResult();

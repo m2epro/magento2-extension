@@ -17,6 +17,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
     public function execute()
     {
+        $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category\Specific\Validation\Popup::class);
+
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Category::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Categories'));
         $this->setPageHelpLink('category-management');

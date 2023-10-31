@@ -42,8 +42,8 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                 $this->getListingProduct()->isDeleted(true);
             } else {
                 $this->addMessage(
-                    'Stop Action for FBA Items is impossible as their Quantity is unknown. You can run
-                 Revise Action for such Items, but the Quantity value will be ignored.'
+                    'AFN Items cannot be Stopped through M2E Pro as their Quantity is managed by Amazon.
+                    You may run Revise to update the Product detail, but the Quantity update will be ignored.'
                 );
             }
 
