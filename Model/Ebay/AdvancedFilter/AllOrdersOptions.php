@@ -72,7 +72,7 @@ class AllOrdersOptions
         $select = $this->getBaseSelect();
         $select->joinInner(
             ['marketplace' => $this->marketplaceResource->getMainTable()],
-            'marketplace.id = marketplace_id',
+            'marketplace.id = orders.marketplace_id',
             [
                 'value' => 'id',
                 'label' => 'title',
@@ -118,16 +118,7 @@ class AllOrdersOptions
     private function getBaseSelect(): \Magento\Framework\DB\Select
     {
         $select = $this->listingResource->getConnection()->select();
-        $select->from(
-            ['orders' => $this->orderResource->getMainTable()],
-            []
-        );
-        $select->joinInner(
-            ['ebay_order' => $this->ebayOrderResource->getMainTable()],
-            'ebay_order.order_id = orders.id',
-            []
-        );
-
+        $select->from(['orders' => $this->orderResource->getMainTable()], []);
         $select->where('orders.component_mode = ?', \Ess\M2ePro\Helper\Component\Ebay::NICK);
 
         return $select;
