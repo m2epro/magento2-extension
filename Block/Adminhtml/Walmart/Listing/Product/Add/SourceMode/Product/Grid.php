@@ -83,6 +83,70 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $collection->getSelect()->group('e.entity_id');
         // ---------------------------------------
 
+        // Hide products others listings
+        // ---------------------------------------
+        $hideParam = true;
+        if ($this->getRequest()->has('show_products_others_listings')) {
+            $hideParam = false;
+        }
+
+        $excludeProductsExpr = null;
+        if ($hideParam || isset($this->listing['id'])) {
+            $excludeProductsExpr = $this->getExcludedProductsExpression($hideParam);
+
+            $collection->getSelect()
+                       ->joinLeft(
+                           $excludeProductsExpr,
+                           'true',
+                           []
+                       )
+                       ->where('lp.product_id IS NULL');
+        }
+        // ---------------------------------------
+
+        $collection->addFieldToFilter(
+            [
+                [
+                    'attribute' => 'type_id',
+                    'in' => $this->magentoProductHelper->getOriginKnownTypes(),
+                ],
+            ]
+        );
+
+        $collection->addWebsiteNamesToResult();
+        $this->setCollection($collection);
+
+        if ($excludeProductsExpr) {
+            $originalCollection = clone $collection;
+            $this->applyQueryFilters();
+            $countSelect = $collection->getSelectCountSql();
+            $countSelect
+                ->joinLeft(
+                    $excludeProductsExpr,
+                    'true',
+                    []
+                );
+
+            $originalCollection->setLeftJoinsImportant(true)
+                               ->setCustomCountSelect($countSelect);
+            $this->setCollection($originalCollection);
+        }
+
+        return parent::_prepareCollection();
+    }
+
+    protected function _afterLoadCollection()
+    {
+        $baseCollection = $this->getCollection();
+        $collection = $this->magentoProductCollectionFactory->create();
+
+        $entityIds = [];
+        foreach ($baseCollection->getItems() as $item) {
+            $entityIds[] = $item->getData('entity_id');
+        }
+
+        $collection->addFieldToFilter('entity_id', ['in' => $entityIds]);
+
         // Set filter store
         // ---------------------------------------
         $store = $this->_getStore();
@@ -136,56 +200,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         }
         // ---------------------------------------
 
-        // Hide products others listings
-        // ---------------------------------------
-        $hideParam = true;
-        if ($this->getRequest()->has('show_products_others_listings')) {
-            $hideParam = false;
+        $collection->load();
+        $attributeData = [];
+        foreach ($collection->getItems() as $item) {
+            $attributeData[$item->getData('entity_id')] = [
+                'name' => $item->getData('name'),
+                'price' => $item->getData('price'),
+                'status' => $item->getData('status'),
+                'visibility' => $item->getData('visibility'),
+                'thumbnail' => $item->getData('thumbnail'),
+            ];
         }
 
-        $excludeProductsExpr = null;
-        if ($hideParam || isset($this->listing['id'])) {
-            $excludeProductsExpr = $this->getExcludedProductsExpression($hideParam);
+        foreach ($baseCollection->getItems() as $item) {
+            $entityId = $item->getData('entity_id');
 
-            $collection->getSelect()
-                       ->joinLeft(
-                           $excludeProductsExpr,
-                           'true',
-                           []
-                       )
-                       ->where('lp.product_id IS NULL');
-        }
-        // ---------------------------------------
+            if (!array_key_exists($entityId, $attributeData)) {
+                continue;
+            }
 
-        $collection->addFieldToFilter(
-            [
-                [
-                    'attribute' => 'type_id',
-                    'in' => $this->magentoProductHelper->getOriginKnownTypes(),
-                ],
-            ]
-        );
-
-        $collection->addWebsiteNamesToResult();
-        $this->setCollection($collection);
-
-        if ($excludeProductsExpr) {
-            $originalCollection = clone $collection;
-            $this->applyQueryFilters();
-            $countSelect = $collection->getSelectCountSql();
-            $countSelect
-                ->joinLeft(
-                    $excludeProductsExpr,
-                    'true',
-                    []
-                );
-
-            $originalCollection->setLeftJoinsImportant(true)
-                               ->setCustomCountSelect($countSelect);
-            $this->setCollection($originalCollection);
+            $item->setData('name', $attributeData[$entityId]['name']);
+            $item->setData('price', $attributeData[$entityId]['price']);
+            $item->setData('status', $attributeData[$entityId]['status']);
+            $item->setData('visibility', $attributeData[$entityId]['visibility']);
+            $item->setData('thumbnail', $attributeData[$entityId]['thumbnail']);
         }
 
-        return parent::_prepareCollection();
+        return parent::_afterLoadCollection();
     }
 
     /**

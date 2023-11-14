@@ -409,7 +409,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $source = $this->getAccountRepricing()->getDisableSource();
 
         if ($source['mode'] == AccountRepricing::DISABLE_MODE_MANUAL) {
-            return false;
+            return null;
         }
 
         if ($source['mode'] == AccountRepricing::DISABLE_MODE_ATTRIBUTE) {

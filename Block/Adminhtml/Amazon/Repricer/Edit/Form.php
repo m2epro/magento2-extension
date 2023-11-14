@@ -789,7 +789,7 @@ More detailed information on how to work with this option can be found
                         __(
                             '
 This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items.
-<a href="%url1%" target="_blank">Learn more</a> about the Product Disabling feature.
+<a href="%1" target="_blank">Learn more</a> about the Product Disabling feature.
 <br /><br />
 <strong>Manually</strong> - means that the dynamic repricing can be disabled only manually;<br />
 <strong>When Status is Disabled</strong> - means that the dynamic repricing
@@ -801,7 +801,7 @@ Please note, only common (available in all Attribute sets in your Magento)
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
-<a href="%url2%" target="_blank" class="external-link">here</a>.',
+<a href="%2" target="_blank" class="external-link">here</a>.',
                             $repricerDocs,
                             $this->supportHelper->getDocumentationArticleUrl('repricer')
                         )
