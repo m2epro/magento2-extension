@@ -59,7 +59,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
      *
      * @return \Ess\M2ePro\Model\Order[]
      */
-    public function processWalmartOrders(\Ess\M2ePro\Model\Account $account, array $ordersData)
+    public function processWalmartOrders(\Ess\M2ePro\Model\Account $account, array $ordersData, bool $isWfs): array
     {
         $orders = [];
         $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
@@ -73,7 +73,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
                 /** @var \Ess\M2ePro\Model\Walmart\Order\Builder $orderBuilder */
                 $orderBuilder = $this->modelFactory->getObject('Walmart_Order_Builder');
-                $orderBuilder->initialize($account, $orderData);
+                $orderBuilder->initialize($account, $isWfs, $orderData);
 
                 $order = $orderBuilder->process();
                 if ($order) {

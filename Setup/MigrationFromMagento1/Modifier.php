@@ -237,6 +237,8 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m10\ImproveAmazonOrderPrefixes::class,
             \Ess\M2ePro\Setup\Update\y23_m10\RenameSoldByAmazonSetting::class,
             \Ess\M2ePro\Setup\Update\y23_m10\ReAddIsSoldByAmazonColumnToAmazonOrder::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\AddWalmartIsWFS::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\AddWalmartOrdersWfsLastSynchronization::class,
         ];
 
         foreach ($featureClasses as $featureClass) {

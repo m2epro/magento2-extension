@@ -488,7 +488,7 @@ HTML
                     1 => __('Yes'),
                     0 => __('No'),
                 ],
-                'value' => $formData['magento_orders_settings']['shipping_information']['update_without_track'] ?? 1,
+                'value' => $formData['magento_orders_settings']['shipping_information']['update_without_track'] ?? 0,
             ]
         );
 

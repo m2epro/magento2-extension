@@ -129,7 +129,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return $this->activeRecordFactory->getObject('Account')->getCollection()->getSize() <= 1;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isCacheEnabled()
     {

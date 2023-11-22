@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\OrdersProcessor
- */
 class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Log */
@@ -21,19 +12,21 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
     protected $ebayFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
-
-    //####################################
+    /** @var \Ess\M2ePro\Model\Order\SyncStatusManager */
+    private $syncStatusManager;
 
     public function __construct(
+        \Ess\M2ePro\Model\Order\SyncStatusManager $syncStatusManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->syncStatusManager = $syncStatusManager;
     }
 
     //########################################
@@ -59,14 +52,26 @@ class OrdersProcessor extends \Ess\M2ePro\Model\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
         $accountsCollection = $this->ebayFactory->getObject('Account')->getCollection();
 
-        foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account * */
+        $isSuccess = true;
+        try {
+            foreach ($accountsCollection->getItems() as $account) {
+                /** @var \Ess\M2ePro\Model\Account $account * */
 
-            try {
-                $this->processAccount($account);
-            } catch (\Exception $e) {
-                $this->getHelper('Module\Exception')->process($e);
-                $this->synchronizationLog->addMessageFromException($e);
+                try {
+                    $this->processAccount($account);
+                } catch (\Exception $e) {
+                    $isSuccess = false;
+                    $this->getHelper('Module\Exception')->process($e);
+                    $this->synchronizationLog->addMessageFromException($e);
+                }
+            }
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            if (isset($e) || !$isSuccess) {
+                $this->syncStatusManager->setLastRunAsFail(\Ess\M2ePro\Helper\Component\Ebay::NICK);
+            } else {
+                $this->syncStatusManager->setLastRunAsSuccess(\Ess\M2ePro\Helper\Component\Ebay::NICK);
             }
         }
     }

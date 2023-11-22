@@ -27,6 +27,7 @@ class Ebay
     public const MARKETPLACE_IT = 10;
     public const MARKETPLACE_BE_NL = 11;
     public const MARKETPLACE_ES = 13;
+    public const MARKETPLACE_IN = 16;
 
     public const LISTING_DURATION_GTC = 100;
     public const MAX_LENGTH_FOR_OPTION_VALUE = 50;

@@ -31,6 +31,4 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      * @return Result
      */
     abstract public function process();
-
-    //########################################
 }

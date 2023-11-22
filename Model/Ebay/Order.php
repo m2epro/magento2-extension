@@ -1160,10 +1160,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return $buyerInfo;
     }
 
-    /**
-     * @return bool
-     */
-    public function canRefund()
+    public function canRefund(): bool
     {
         if ($this->isCanceled()) {
             return false;
@@ -1173,19 +1170,20 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
-        $supportedMarketplaces = [
-            EbayHelper::MARKETPLACE_US,
-            EbayHelper::MARKETPLACE_CA,
-            EbayHelper::MARKETPLACE_UK,
-            EbayHelper::MARKETPLACE_AU,
-            EbayHelper::MARKETPLACE_DE,
-        ];
-
-        if (!in_array($this->getParentObject()->getMarketplaceId(), $supportedMarketplaces)) {
+        if ($this->isMarketplaceNotSupportedForRefund()) {
             return false;
         }
 
         return true;
+    }
+
+    private function isMarketplaceNotSupportedForRefund(): bool
+    {
+        $notSupportedMarketplacesForRefund = [
+            EbayHelper::MARKETPLACE_IN,
+        ];
+
+        return in_array($this->getParentObject()->getMarketplaceId(), $notSupportedMarketplacesForRefund);
     }
 
     /**

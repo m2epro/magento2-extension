@@ -68,8 +68,10 @@ class GetProductTypeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Templat
             $productType,
             $onlyForAttributes
         );
+
+        $isNewProductType = (bool)$this->getRequest()->getParam('is_new_product_type');
+        $specificsDefaultSettings = $isNewProductType ? $this->productTypeHelper->getSpecificsDefaultSettings() : [];
         $timezoneShift = $this->productTypeHelper->getTimezoneShift();
-        $specificsDefaultSettings = $this->productTypeHelper->getSpecificsDefaultSettings();
         $mainImageSpecifics = $this->productTypeHelper->getMainImageSpecifics();
         $otherImagesSpecifics = $this->productTypeHelper->getOtherImagesSpecifics();
         $recommendedBrowseNodesLink = $this->productTypeHelper->getRecommendedBrowseNodesLink((int)$marketplaceId);

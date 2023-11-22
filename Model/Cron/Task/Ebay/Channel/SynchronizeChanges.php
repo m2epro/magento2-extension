@@ -20,8 +20,6 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected $interval = 300;
 
-    //########################################
-
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
      */
@@ -47,7 +45,6 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         /** @var \Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor $itemsProcessor */
         $itemsProcessor = $this->modelFactory->getObject('Cron_Task_Ebay_Channel_SynchronizeChanges_ItemsProcessor');
-
         $synchronizationLog = $this->getSynchronizationLog();
         $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_OTHER);
 
@@ -78,6 +75,4 @@ class SynchronizeChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $ordersProcessor->process();
     }
-
-    //########################################
 }

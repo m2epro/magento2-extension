@@ -326,6 +326,10 @@ class Config extends AbstractConfig
                 'ReAddIsSoldByAmazonColumnToAmazonOrder',
                 'CreateEbayCategorySpecificValidationResultTable',
             ],
+            'y23_m11' => [
+                'AddWalmartIsWFS',
+                'AddWalmartOrdersWfsLastSynchronization',
+            ]
         ];
     }
 

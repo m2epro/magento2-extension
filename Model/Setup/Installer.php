@@ -11164,6 +11164,12 @@ class Installer
                                         ['default' => null]
                                     )
                                     ->addColumn(
+                                        'orders_wfs_last_synchronization',
+                                        Table::TYPE_DATETIME,
+                                        null,
+                                        ['default' => null]
+                                    )
+                                    ->addColumn(
                                         'info',
                                         Table::TYPE_TEXT,
                                         null,
@@ -12275,6 +12281,12 @@ class Installer
                                       null,
                                       ['default' => null]
                                   )
+                                  ->addColumn(
+                                      'is_wfs',
+                                      Table::TYPE_SMALLINT,
+                                      null,
+                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                  )
                                   ->addIndex('walmart_order_id', 'walmart_order_id')
                                   ->addIndex('customer_order_id', 'customer_order_id')
                                   ->addIndex('buyer_email', 'buyer_email')
@@ -12283,6 +12295,7 @@ class Installer
                                   ->addIndex('is_tried_to_acknowledge', 'is_tried_to_acknowledge')
                                   ->addIndex('purchase_create_date', 'purchase_create_date')
                                   ->addIndex('shipping_date_to', 'shipping_date_to')
+                                  ->addIndex('is_wfs', 'is_wfs')
                                   ->setOption('type', 'INNODB')
                                   ->setOption('charset', 'utf8')
                                   ->setOption('collate', 'utf8_general_ci')

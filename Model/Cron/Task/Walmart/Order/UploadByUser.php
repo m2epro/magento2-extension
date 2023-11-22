@@ -71,7 +71,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     continue;
                 }
 
-                $processedWalmartOrders = $ordersCreator->processWalmartOrders($account, $responseData['items']);
+                $processedWalmartOrders = $ordersCreator->processWalmartOrders($account, $responseData['items'], false);
                 $ordersCreator->processMagentoOrders($processedWalmartOrders);
 
                 $manager->setCurrentFromDate($responseData['to_create_date']);

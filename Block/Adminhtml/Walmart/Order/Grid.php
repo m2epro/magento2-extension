@@ -83,6 +83,7 @@ class Grid extends AbstractGrid
         $this->addMarketplaceAdvancedFilter();
         $this->addAccountAdvancedFilter();
         $this->addMagentoOrderCreatedFilter();
+        $this->addIsWfsFilter();
     }
     protected function _prepareCollection()
     {
@@ -196,6 +197,23 @@ class Grid extends AbstractGrid
                 'width' => '120px',
                 'frame_callback' => [$this, 'callbackColumnBuyer'],
                 'filter_condition_callback' => [$this, 'callbackFilterBuyer'],
+            ]
+        );
+
+        $this->addColumn(
+            'is_wfs',
+            [
+                'header' => __('Fulfillment'),
+                'width' => '120px',
+                'index' => 'is_wfs',
+                'filter_index' => 'second_table.is_wfs',
+                'type' => 'options',
+                'sortable' => false,
+                'options' => [
+                    0 => __('Merchant'),
+                    1 => __('WALMART'),
+                ],
+                'frame_callback' => [$this, 'callbackColumnIsWFS'],
             ]
         );
 
@@ -507,6 +525,17 @@ HTML;
         return $this->dataHelper->escapeHtml($row->getChildObject()->getData('buyer_name'));
     }
 
+    public function callbackColumnIsWFS($value, $row, $column, $isExport)
+    {
+        if (
+            (int)$row->getChildObject()->getData('is_wfs') === 1
+        ) {
+            return '<span style="font-weight: bold;">' . __('Walmart') . '</span>';
+        }
+
+        return __('Merchant');
+    }
+
     public function callbackColumnTotal($value, $row, $column, $isExport)
     {
         $currency = $row->getChildObject()->getData('currency');
@@ -732,6 +761,27 @@ JS
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'magento_order_id',
             __('Magento Order created'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addIsWfsFilter(): void
+    {
+        $options = $this->advancedFilterAllOrdersOptions->getYesNoOptions();
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Order\Collection $orders,
+            string $filterValue
+        ): void {
+            $orders->addFieldToFilter('is_wfs', ['eq' => $filterValue]);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'is_wfs',
+            __('WFS'),
             $options,
             $filterCallback
         );

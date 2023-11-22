@@ -16,8 +16,34 @@ use Ess\M2ePro\Helper\Component\Walmart;
 class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'walmart/order/receive';
+    /** @var \Ess\M2ePro\Model\Order\SyncStatusManager */
+    private $syncStatusManager;
 
-    //####################################
+    public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\Order\SyncStatusManager $syncStatusManager
+    ) {
+        parent::__construct(
+            $cronManager,
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+        $this->syncStatusManager = $syncStatusManager;
+    }
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -32,8 +58,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
-
     public function isPossibleToRun()
     {
         if ($this->getHelper('Server\Maintenance')->isNow()) {
@@ -42,8 +66,6 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return parent::isPossibleToRun();
     }
-
-    //########################################
 
     protected function performActions()
     {
@@ -54,40 +76,54 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $ordersCreator = $this->modelFactory->getObject('Cron_Task_Walmart_Order_Creator');
         $ordersCreator->setSynchronizationLog($this->getSynchronizationLog());
 
-        foreach ($accountsCollection->getItems() as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account * */
+        $isSuccess = true;
+        try {
+            foreach ($accountsCollection->getItems() as $account) {
+                /** @var \Ess\M2ePro\Model\Account $account * */
 
-            try {
-                if ($this->isCanada($account)) {
-                    $responseData = $this->receiveWalmartOrdersDataByCreateDate($account);
-                    $lastSynchronizationDate = $responseData['to_create_date'];
-                } else {
-                    $responseData = $this->receiveWalmartOrdersDataByUpdateDate($account);
-                    $lastSynchronizationDate = $responseData['to_update_date'];
+                try {
+                    if ($this->isCanada($account)) {
+                        $responseData = $this->receiveWalmartOrdersDataByCreateDate($account);
+                        $lastSynchronizationDate = $responseData['to_create_date'];
+                    } else {
+                        $responseData = $this->receiveWalmartOrdersDataByUpdateDate($account);
+                        $lastSynchronizationDate = $responseData['to_update_date'];
+                    }
+
+                    if (empty($responseData)) {
+                        continue;
+                    }
+
+                    $processedWalmartOrders = $ordersCreator->processWalmartOrders(
+                        $account,
+                        $responseData['items'],
+                        false
+                    );
+                    $ordersCreator->processMagentoOrders($processedWalmartOrders);
+
+                    $account->getChildObject()->setData('orders_last_synchronization', $lastSynchronizationDate);
+                    $account->getChildObject()->save();
+                } catch (\Exception $exception) {
+                    $isSuccess = false;
+                    $message = $this->getHelper('Module_Translation')->__(
+                        'The "Receive" Action for Walmart Account "%title%" was completed with error.',
+                        $account->getTitle()
+                    );
+
+                    $this->processTaskAccountException($message, __FILE__, __LINE__);
+                    $this->processTaskException($exception);
                 }
-
-                if (empty($responseData)) {
-                    continue;
-                }
-
-                $processedWalmartOrders = $ordersCreator->processWalmartOrders($account, $responseData['items']);
-                $ordersCreator->processMagentoOrders($processedWalmartOrders);
-
-                $account->getChildObject()->setData('orders_last_synchronization', $lastSynchronizationDate);
-                $account->getChildObject()->save();
-            } catch (\Exception $exception) {
-                $message = $this->getHelper('Module_Translation')->__(
-                    'The "Receive" Action for Walmart Account "%title%" was completed with error.',
-                    $account->getTitle()
-                );
-
-                $this->processTaskAccountException($message, __FILE__, __LINE__);
-                $this->processTaskException($exception);
+            }
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            if (isset($e) || !$isSuccess) {
+                $this->syncStatusManager->setLastRunAsFail(\Ess\M2ePro\Helper\Component\Walmart::NICK);
+            } else {
+                $this->syncStatusManager->setLastRunAsSuccess(\Ess\M2ePro\Helper\Component\Walmart::NICK);
             }
         }
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Account $account

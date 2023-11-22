@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Walmart\Connector;
 
 class Protocol implements \Ess\M2ePro\Model\Connector\ProtocolInterface
 {
-    public const COMPONENT_VERSION = 4;
+    public const COMPONENT_VERSION = 5;
 
     /**
      * @return string

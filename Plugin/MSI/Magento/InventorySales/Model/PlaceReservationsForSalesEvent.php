@@ -188,6 +188,8 @@ class PlaceReservationsForSalesEvent extends \Ess\M2ePro\Plugin\AbstractPlugin
         $compensatingReservationTypes = [
             Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED,
             Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED,
+            Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_WFS_CREATED,
+            Reserve::EVENT_TYPE_COMPENSATING_RESERVATION_WFS_SHIPPED,
         ];
 
         return in_array($salesEvent->getType(), $compensatingReservationTypes, true);

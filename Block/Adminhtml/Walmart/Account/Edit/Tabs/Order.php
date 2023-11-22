@@ -195,7 +195,7 @@ HTML
             'magento_block_walmart_accounts_magento_orders_listings_other',
             [
                 'legend' => __('Product Is Listed By Any Other Software'),
-                'collapsable' => false,
+                'collapsable' => true,
             ]
         );
 
@@ -292,6 +292,84 @@ HTML
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['listing_other']['product_tax_class_id'],
                 'tooltip' => __('Select the Tax Class which will be used for Products created by M2E Pro.'),
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
+            'magento_block_walmart_accounts_magento_orders_wfs',
+            [
+                'legend' => __('WFS Orders Settings'),
+                'collapsable' => true,
+                'tooltip' => __(
+                    'In this Block you can manage Stock Inventory of Products fulfilled by Walmart  (WFS Orders).<br/>
+                <b>Yes</b> - after Magento Order Creation of WFS Order, Quantity of Product reduces in Magento.<br/>
+                <b>No</b> - Magento Order Creation of WFS Order does not affect Quantity of Magento Product.'
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_wfs_mode',
+            'select',
+            [
+                'name' => 'magento_orders_settings[wfs][mode]',
+                'label' => __('Create Order in Magento'),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['wfs']['mode'] ?? 0,
+                'tooltip' => __(
+                    'Whether an Order has to be created in Magento if a sold Product is fulfilled by Walmart.'
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_wfs_store_mode',
+            'select',
+            [
+                'container_id' => 'magento_orders_wfs_store_mode_container',
+                'name' => 'magento_orders_settings[wfs][store_mode]',
+                'label' => __('Create in separate Store View'),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['wfs']['store_mode'] ?? 0,
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_wfs_store_id',
+            self::STORE_SWITCHER,
+            [
+                'container_id' => 'magento_orders_wfs_store_id_container',
+                'name' => 'magento_orders_settings[wfs][store_id]',
+                'label' => __('Magento Store View'),
+                'value' => !empty($formData['magento_orders_settings']['wfs']['store_id'])
+                    ? $formData['magento_orders_settings']['wfs']['store_id'] : '',
+                //'required' => true,
+                'has_empty_option' => true,
+                'has_default_option' => false,
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_wfs_stock_mode',
+            'select',
+            [
+                'container_id' => 'magento_orders_wfs_stock_mode_container',
+                'name' => 'magento_orders_settings[wfs][stock_mode]',
+                'label' => __('Manage Stock'),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['wfs']['stock_mode'] ?? 0,
+                'tooltip' => __(
+                    'If <i>Yes</i>, after Magento Order Creation QTY of Magento Product reduces.'
+                ),
             ]
         );
 

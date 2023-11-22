@@ -214,6 +214,24 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        // wfs
+        // ---------------------------------------
+        $tempKey = 'wfs';
+        $tempSettings = !empty($this->rawData['magento_orders_settings'][$tempKey])
+            ? $this->rawData['magento_orders_settings'][$tempKey] : [];
+
+        $keys = [
+            'mode',
+            'store_mode',
+            'store_id',
+            'stock_mode',
+        ];
+        foreach ($keys as $key) {
+            if (isset($tempSettings[$key])) {
+                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            }
+        }
+
         // tax settings
         // ---------------------------------------
         $tempKey = 'tax';

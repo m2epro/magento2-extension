@@ -40,6 +40,7 @@ class HealthStatus extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $healthManager = $this->modelFactory->getObject('HealthStatus\Manager');
         $resultSet = $healthManager->doCheck(IssueType::TYPE);
 
+        /** @var \Ess\M2ePro\Model\HealthStatus\CurrentStatus $currentStatus */
         $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
         $currentStatus->set($resultSet);
     }

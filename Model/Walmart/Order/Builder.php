@@ -43,6 +43,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
+    /** @var bool */
+    private $isWfs;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -63,9 +65,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function initialize(\Ess\M2ePro\Model\Account $account, array $data = [])
+    public function initialize(\Ess\M2ePro\Model\Account $account, bool $isWfs, array $data = [])
     {
         $this->account = $account;
+        $this->isWfs = $isWfs;
 
         $this->initializeData($data);
         $this->initializeOrder();
@@ -120,6 +123,8 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
 
         $this->items = $data['items'];
+
+        $this->setData('is_wfs', (int)$this->isWfs);
     }
 
     //########################################

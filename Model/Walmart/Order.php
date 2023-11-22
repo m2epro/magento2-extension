@@ -335,6 +335,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
             }
         }
 
+        if ($this->isWalmartFulfillment() && $this->getWalmartAccount()->isMagentoOrdersWfsStoreModeEnabled()) {
+            $storeId = $this->getWalmartAccount()->getMagentoOrdersWfsStoreId();
+        }
+
         if ($storeId == 0) {
             $storeId = $this->getHelper('Magento\Store')->getDefaultStoreId();
         }
@@ -342,12 +346,22 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return $storeId;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReservable()
+    public function isReservable(): bool
     {
+        if (
+            $this->isWalmartFulfillment() &&
+            (!$this->getWalmartAccount()->isMagentoOrdersWfsModeEnabled() ||
+                !$this->getWalmartAccount()->isMagentoOrdersWfsStockEnabled())
+        ) {
+            return false;
+        }
+
         return true;
+    }
+
+    public function isWalmartFulfillment(): bool
+    {
+        return (bool)$this->getData('is_wfs');
     }
 
     /**
@@ -357,6 +371,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     public function canCreateMagentoOrder()
     {
         if ($this->isCanceled()) {
+            return false;
+        }
+
+        if (
+            $this->isWalmartFulfillment()
+            && !$this->getWalmartAccount()->isMagentoOrdersWfsModeEnabled()
+        ) {
             return false;
         }
 
@@ -388,6 +409,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     {
         if ($this->getWalmartAccount()->isMagentoOrdersCustomerNewNotifyWhenOrderCreated()) {
             $this->orderSender->send($this->getParentObject()->getMagentoOrder());
+        }
+
+        if ($this->isWalmartFulfillment() && !$this->getWalmartAccount()->isMagentoOrdersWfsStockEnabled()) {
+            $this->_eventManager->dispatch('ess_walmart_wfs_magento_order_place_after', [
+                'magento_order' => $this->getParentObject()->getMagentoOrder(),
+            ]);
         }
     }
 

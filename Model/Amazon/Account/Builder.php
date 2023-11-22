@@ -481,7 +481,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 'shipping_information' => [
                     'import_labels' => 1,
                     'ship_by_date' => 1,
-                    'update_without_track' => 1,
+                    'update_without_track' => 0,
                     'shipping_address_region_override' => 1,
                 ],
             ],

@@ -48,6 +48,15 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
+        $form->addField(
+            'is_new_product_type',
+            'hidden',
+            [
+                'value' => !$productType->getId() ? '1' : '0',
+                'name' => 'is_new_product_type'
+            ]
+        );
+
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Data $dataBlock */
         $dataBlock = $this->getLayout()
             ->createBlock(

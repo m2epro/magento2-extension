@@ -169,6 +169,25 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     // ---------------------------------------
 
+    public function setOrdersWfsLastSynchronization(\DateTime $value): self
+    {
+        $this->setData('orders_wfs_last_synchronization', $value->format('Y-m-d H:i:s'));
+
+        return $this;
+    }
+
+    public function getOrdersWfsLastSynchronization(): ?\DateTime
+    {
+        $value = $this->getData('orders_wfs_last_synchronization');
+        if (empty($value)) {
+            return null;
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($value);
+    }
+
+    // ---------------------------------------
+
     public function getInfo()
     {
         return $this->getData('info');
@@ -919,5 +938,27 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             ['shipping_information', 'shipping_address_region_override'],
             1
         );
+    }
+
+    public function isMagentoOrdersWfsModeEnabled(): bool
+    {
+        return $this->getSetting('magento_orders_settings', ['wfs', 'mode'], 0) === 1;
+    }
+
+    public function isMagentoOrdersWfsStoreModeEnabled(): bool
+    {
+        return $this->getSetting('magento_orders_settings', ['wfs', 'store_mode'], 0) === 1;
+    }
+
+    public function getMagentoOrdersWfsStoreId(): int
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['wfs', 'store_id'], 0);
+
+        return (int)$setting;
+    }
+
+    public function isMagentoOrdersWfsStockEnabled(): bool
+    {
+        return $this->getSetting('magento_orders_settings', ['wfs', 'stock_mode'], 0) === 1;
     }
 }

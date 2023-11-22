@@ -22,6 +22,9 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     public const EVENT_TYPE_COMPENSATING_RESERVATION_FBA_CREATED = 'm2epro_compensating_after_fba_order_created';
     public const EVENT_TYPE_COMPENSATING_RESERVATION_FBA_SHIPPED = 'm2epro_compensating_after_fba_order_shipped';
 
+    public const EVENT_TYPE_COMPENSATING_RESERVATION_WFS_CREATED = 'm2epro_compensating_after_wfs_order_created';
+    public const EVENT_TYPE_COMPENSATING_RESERVATION_WFS_SHIPPED = 'm2epro_compensating_after_wfs_order_shipped';
+
     public const EVENT_TYPE_MAGENTO_RESERVATION_PLACED = 'm2epro_reservation_placed';
     public const EVENT_TYPE_MAGENTO_RESERVATION_RELEASED = 'm2epro_reservation_released';
 

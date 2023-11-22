@@ -188,6 +188,11 @@ define([
             $('magento_orders_listings_other_product_mode')
                 .observe('change', WalmartAccountObj.magentoOrdersListingsOtherProductModeChange);
 
+            $('magento_orders_wfs_mode')
+                    .observe('change', WalmartAccountObj.magentoOrdersWfsModeChange).simulate('change');
+            $('magento_orders_wfs_store_mode')
+                    .observe('change', WalmartAccountObj.magentoOrdersWfsStoreModeChange);
+
             $('magento_orders_number_source')
                 .observe('change', WalmartAccountObj.magentoOrdersNumberSourceChange)
                 .simulate('change');
@@ -385,6 +390,31 @@ define([
             }
         },
 
+        magentoOrdersWfsModeChange: function() {
+            var self = WalmartAccountObj;
+
+            if ($('magento_orders_wfs_mode').value == 0) {
+                $('magento_orders_wfs_store_mode').value = 0;
+                $('magento_orders_wfs_store_mode_container').hide();
+                $('magento_orders_wfs_stock_mode').value = 0;
+                $('magento_orders_wfs_stock_mode_container').hide();
+            } else {
+                $('magento_orders_wfs_store_mode_container').show();
+                $('magento_orders_wfs_stock_mode_container').show();
+            }
+
+            self.magentoOrdersWfsStoreModeChange();
+        },
+
+        magentoOrdersWfsStoreModeChange: function() {
+            if ($('magento_orders_wfs_store_mode').value == 0) {
+                $('magento_orders_wfs_store_id').value = '';
+                $('magento_orders_wfs_store_id_container').hide();
+            } else {
+                $('magento_orders_wfs_store_id_container').show();
+            }
+        },
+
         magentoOrdersNumberSourceChange: function() {
             var self = WalmartAccountObj;
             self.renderOrderNumberExample();
@@ -447,6 +477,11 @@ define([
 
                 $('magento_block_walmart_accounts_magento_orders_number-wrapper').hide();
                 $('magento_orders_number_source').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO');
+
+                $('magento_block_walmart_accounts_magento_orders_wfs-wrapper').hide();
+                $('magento_orders_wfs_mode').value = 1;
+                $('magento_orders_wfs_store_mode').value = 0;
+                $('magento_orders_wfs_stock_mode').value = 1;
 
                 $('magento_block_walmart_accounts_magento_orders_customer-wrapper').hide();
                 $('magento_orders_customer_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST');

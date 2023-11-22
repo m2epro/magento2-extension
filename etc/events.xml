@@ -163,6 +163,14 @@
                   shared="false" />
     </event>
 
+    <!-- walmart orders -->
+
+    <event name="ess_walmart_wfs_magento_order_place_after">
+        <observer name="m2epro_observer_walmart_order"
+                  instance="Ess\M2ePro\Observer\Walmart\Order"
+                  shared="false" />
+    </event>
+
     <!-- amazon orders -->
 
     <event name="ess_amazon_fba_magento_order_place_after">

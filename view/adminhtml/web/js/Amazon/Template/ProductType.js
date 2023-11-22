@@ -277,6 +277,7 @@ define(
                         marketplace_id: marketplaceId,
                         product_type: productType,
                         only_required_attributes: isToggledOn,
+                        is_new_product_type: jQuery('input#is_new_product_type').val()
                     },
                     onSuccess: function(transport) {
                         const response = transport.responseText.evalJSON();

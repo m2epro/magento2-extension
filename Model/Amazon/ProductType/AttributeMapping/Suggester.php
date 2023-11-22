@@ -33,6 +33,7 @@ class Suggester
             \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_DESCRIPTION => 'description',
             \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_COUNTRY_OF_ORIGIN => 'country_of_manufacture',
             \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_ITEM_PACKAGE_WEIGHT => 'weight',
+            \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_MAIN_PRODUCT_IMAGE_LOCATOR => 'image',
         ];
 
         foreach ($map as $productTypeAttributeCode => $magentoAttributeCode) {

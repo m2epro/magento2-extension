@@ -14,6 +14,34 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /** @var bool */
     private $isErrorMessageReceived = false;
+    /** @var \Ess\M2ePro\Model\Order\SyncStatusManager */
+    private $syncStatus;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\Order\SyncStatusManager $syncStatusManager
+    ) {
+        parent::__construct(
+            $cronManager,
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+        $this->syncStatusManager = $syncStatusManager;
+    }
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -39,24 +67,36 @@ class Receive extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
-        $permittedAccounts = $this->getPermittedAccounts();
-        if (empty($permittedAccounts)) {
-            return;
-        }
+        $isSuccess = true;
+        try {
+            $permittedAccounts = $this->getPermittedAccounts();
+            if (empty($permittedAccounts)) {
+                return;
+            }
 
-        foreach ($permittedAccounts as $merchantId => $accounts) {
-            /** @var \Ess\M2ePro\Model\Account $account * */
+            foreach ($permittedAccounts as $merchantId => $accounts) {
+                /** @var \Ess\M2ePro\Model\Account $account * */
 
-            try {
-                $this->processAccounts($merchantId, $accounts);
-            } catch (\Exception $exception) {
-                $message = $this->getHelper('Module\Translation')->__(
-                    'The "Receive" Action for Amazon Account Merchant "%merchant%" was completed with error.',
-                    $merchantId
-                );
+                try {
+                    $this->processAccounts($merchantId, $accounts);
+                } catch (\Exception $exception) {
+                    $isSuccess = false;
+                    $message = $this->getHelper('Module\Translation')->__(
+                        'The "Receive" Action for Amazon Account Merchant "%merchant%" was completed with error.',
+                        $merchantId
+                    );
 
-                $this->processTaskAccountException($message, __FILE__, __LINE__);
-                $this->processTaskException($exception);
+                    $this->processTaskAccountException($message, __FILE__, __LINE__);
+                    $this->processTaskException($exception);
+                }
+            }
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            if (isset($e) || !$isSuccess) {
+                $this->syncStatusManager->setLastRunAsFail(\Ess\M2ePro\Helper\Component\Amazon::NICK);
+            } else {
+                $this->syncStatusManager->setLastRunAsSuccess(\Ess\M2ePro\Helper\Component\Amazon::NICK);
             }
         }
     }
