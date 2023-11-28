@@ -6807,6 +6807,8 @@ class Installer
         $moduleConfig->insert('/ebay/configuration/', 'motors_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'uk_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'au_epids_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'au_epids_visible', 0);
         $moduleConfig->insert('/ebay/configuration/', 'it_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'upload_images_mode', 2);
@@ -7210,7 +7212,7 @@ class Installer
                     'is_global_shipping_program' => 0,
                     'is_charity' => 1,
                     'is_return_description' => 0,
-                    'is_epid' => 0,
+                    'is_epid' => 1,
                     'is_ktype' => 1,
                 ],
                 [

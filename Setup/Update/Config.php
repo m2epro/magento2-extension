@@ -329,6 +329,7 @@ class Config extends AbstractConfig
             'y23_m11' => [
                 'AddWalmartIsWFS',
                 'AddWalmartOrdersWfsLastSynchronization',
+                'RestoreEpidsForAustralia',
             ]
         ];
     }

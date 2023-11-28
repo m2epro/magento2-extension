@@ -158,6 +158,17 @@ class Configuration
     /**
      * @return mixed|null
      */
+    public function getAuEpidsAttribute()
+    {
+        return $this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'au_epids_attribute'
+        );
+    }
+
+    /**
+     * @return mixed|null
+     */
     public function getItEpidsAttribute()
     {
         return $this->config->getGroupValue(
@@ -441,6 +452,10 @@ class Configuration
             $motorsAttributes[] = $values['de_epids_attribute'];
         }
 
+        if (isset($values['au_epids_attribute'])) {
+            $motorsAttributes[] = $values['au_epids_attribute'];
+        }
+
         if (isset($values['it_epids_attribute'])) {
             $motorsAttributes[] = $values['it_epids_attribute'];
         }
@@ -470,6 +485,14 @@ class Configuration
                 self::CONFIG_GROUP,
                 'de_epids_attribute',
                 $values['de_epids_attribute']
+            );
+        }
+
+        if (isset($values['au_epids_attribute'])) {
+            $this->config->setGroupValue(
+                self::CONFIG_GROUP,
+                'au_epids_attribute',
+                $values['au_epids_attribute']
             );
         }
 
@@ -511,5 +534,13 @@ class Configuration
                 $this->setProductIdAttribute($idKey, $values[$idKey . '_custom_attribute']);
             }
         }
+    }
+
+    public function isVisibleEpidsAu(): bool
+    {
+        return (bool)$this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'au_epids_visible'
+        );
     }
 }
