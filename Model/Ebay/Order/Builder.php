@@ -54,6 +54,8 @@ class Builder extends AbstractModel
     private $messages = [];
     /** @var bool */
     private $isBuyerCancellationRequested = false;
+    /** @var bool */
+    private $isBuyerReturnRequested = false;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -162,6 +164,8 @@ class Builder extends AbstractModel
 
         $cancellationStatus = $data['statuses']['order'] == OrderHelper::EBAY_ORDER_STATUS_CANCELLED ? 1 : 0;
         $this->setData('cancellation_status', $cancellationStatus);
+
+        $this->isBuyerReturnRequested = !empty($data['buyer_return_requested']);
 
         // ---------------------------------------
         $this->items = $data['items'];
@@ -585,6 +589,11 @@ class Builder extends AbstractModel
             $this->setData('buyer_cancellation_status', EbayOrder::BUYER_CANCELLATION_STATUS_REQUESTED);
         }
 
+        $isInitBuyerReturnRequest = $this->isInitBuyerReturn();
+        if ($isInitBuyerReturnRequest) {
+            $this->setData('buyer_return_requested', EbayOrder::BUYER_RETURN_REQUESTED_STATUS_REQUESTED);
+        }
+
         foreach ($this->getData() as $key => $value) {
             if (!$this->order->getId() || ($this->order->hasData($key) && $this->order->getData($key) != $value)) {
                 $this->order->addData($this->getData());
@@ -622,11 +631,15 @@ class Builder extends AbstractModel
         $this->order->setAccount($this->account);
 
         if ($buyerCancellationStatusIsRequested) {
-            $description = __(
+            $description = (string)__(
                 'The buyer has requested to cancel the order #%order_number.',
                 ['order_number' => $this->order->getChildObject()->getEbayOrderId()]
             );
             $this->order->addWarningLog($description);
+        }
+
+        if ($isInitBuyerReturnRequest) {
+            $this->order->addWarningLog((string)__('Buyer requested return on eBay'));
         }
 
         if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED) {
@@ -1107,5 +1120,13 @@ class Builder extends AbstractModel
         $magentoOrderUpdater->finishUpdate();
     }
 
-    //########################################
+    private function isInitBuyerReturn(): bool
+    {
+        $currentStatus = $this->order->getId() ?
+            $this->order->getChildObject()->getBuyerReturnRequested()
+            : EbayOrder::BUYER_RETURN_REQUESTED_STATUS_NOT_REQUESTED;
+
+        return $currentStatus === EbayOrder::BUYER_RETURN_REQUESTED_STATUS_NOT_REQUESTED
+            && $this->isBuyerReturnRequested;
+    }
 }

@@ -772,8 +772,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         $newTrackingNumber = !empty($trackingDetails['tracking_number']) ? $trackingDetails['tracking_number'] : '';
         $oldTrackingNumber = !empty($existingParams['tracking_number']) ? $existingParams['tracking_number'] : '';
+        $oldCarrierCode = !empty($existingParams['carrier_code']) ? $existingParams['carrier_code'] : '';
+        $oldCarrierTitle = !empty($existingParams['carrier_title']) ? $existingParams['carrier_title'] : '';
+        $newCarrierCode = !empty($trackingDetails['carrier_code']) ? $trackingDetails['carrier_code'] : '';
+        $newCarrierTitle = !empty($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : '';
 
-        if (!$change->getId() || $newTrackingNumber !== $oldTrackingNumber) {
+        if (
+            !$change->getId()
+            || $newTrackingNumber !== $oldTrackingNumber
+            || $newCarrierTitle !== $oldCarrierTitle
+            || $newCarrierCode !== $oldCarrierCode
+        ) {
             $this->activeRecordFactory->getObject('Order_Change')->create(
                 $this->getParentObject()->getId(),
                 \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING,

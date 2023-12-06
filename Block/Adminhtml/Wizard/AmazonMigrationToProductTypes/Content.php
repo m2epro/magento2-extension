@@ -10,23 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Wizard\AmazonMigrationToProductTypes;
 
 class Content extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param array $data
-     */
-    public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-        $this->supportHelper = $supportHelper;
-    }
-
     public function _construct()
     {
         parent::_construct();
@@ -40,7 +23,7 @@ class Content extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
      */
     public function getSupportArticleUrl(): string
     {
-        return $this->supportHelper->getSupportUrl('/support/solutions/articles/9000225982');
+        return 'https://help.m2epro.com/support/solutions/articles/9000225982';
     }
 
     protected function _toHtml()

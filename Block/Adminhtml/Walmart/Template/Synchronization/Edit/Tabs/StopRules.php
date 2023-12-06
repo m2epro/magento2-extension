@@ -14,8 +14,6 @@ use Ess\M2ePro\Model\Walmart\Template\Synchronization;
 
 class StopRules extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Data */
@@ -31,7 +29,6 @@ class StopRules extends AbstractForm
      * @param array $data
      */
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -39,7 +36,6 @@ class StopRules extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->supportHelper = $supportHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
@@ -146,13 +142,13 @@ Rules will not take effect.</p>'
             'stop_qty_calculated_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__(
+                'text' => (string) __(
                     <<<HTML
 Disabling this option might affect actual product data updates.
-Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
+Please read <a href="%1" target="_blank">this article</a> before disabling the option.
 HTML
                     ,
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199813')
+                    'https://help.m2epro.com/support/solutions/articles/9000199813'
                 ),
                 'style' => 'display: none;',
             ]

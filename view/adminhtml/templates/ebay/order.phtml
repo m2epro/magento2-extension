@@ -21,7 +21,6 @@ $acceptButton = $declineButton = '';
 if ($isBuyerCancellationAvailable) {
     $layout = $block->getLayout();
     $urlBuilder = $block->getUrlBuilder();
-
     $approveUrl = $urlBuilder->getUrl(
         'm2epro/ebay_order_processBuyerCancellationRequest/approve',
         [
@@ -59,7 +58,6 @@ if ($isBuyerCancellationAvailable) {
     ]);
     $declineButton = $declineButtonBlock->toHtml();
 }
-
 ?>
 
 <div class="row">
@@ -148,6 +146,9 @@ if ($isBuyerCancellationAvailable) {
                                     <span style="color: <?php echo $status['color']; ?>">
                                         <b><?php echo $status['value']; ?></b>
                                     </span>
+
+                                    <br/>
+                                    <?php echo $block->showBuyerReturnButton(); ?>
 
                                     <br/>
                                     <hr style="border: 1px solid #CCCCCC; border-bottom-width: 0;">

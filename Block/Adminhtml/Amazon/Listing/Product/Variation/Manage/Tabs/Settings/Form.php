@@ -23,8 +23,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType|null */
     private $productType;
 
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     protected $variationHelper;
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -38,7 +36,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     private $amazonHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -47,7 +44,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         array $data = []
     ) {
-        $this->supportHelper = $supportHelper;
         $this->variationHelper = $variationHelper;
         $this->dataHelper = $dataHelper;
         $this->amazonHelper = $amazonHelper;
@@ -663,7 +659,7 @@ CSS
     }
 
     /**
-     * @param array $message
+     * @param string $message
      * @param string $type
      */
     public function addMessage($message, $type = self::MESSAGE_TYPE_ERROR)
@@ -775,12 +771,13 @@ CSS
             $this->warningsCalculated = true;
 
             if ($this->isGeneralIdOwner() && $this->productType === null) {
-                $url = $this->supportHelper->getSupportUrl('/support/solutions/articles/9000226190');
+                $url = 'https://help.m2epro.com/support/solutions/articles/9000226190';
                 $this->addMessage(
-                    $this->__(
+                    (string) __(
                         'Variation Theme is not set. Please assign a Product Type to the Item first and then select the
                             Variation Theme. Follow the steps in
-                            <a href="' . $url . '" target="_blank" class="external-link">this article</a>.'
+                            <a href="%1" target="_blank" class="external-link">this article</a>.',
+                        $url
                     ),
                     self::MESSAGE_TYPE_ERROR
                 );

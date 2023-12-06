@@ -188,13 +188,13 @@ HTML
             'relist_qty_calculated_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__(
+                'text' => (string) __(
                     <<<HTML
 Disabling this option might affect actual product data updates.
-Please read <a href="%url%" target="_blank">this article</a> before disabling the option.
+Please read <a href="%1" target="_blank">this article</a> before disabling the option.
 HTML
                     ,
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199813')
+                    'https://help.m2epro.com/support/solutions/articles/9000199813'
                 ),
                 'style' => 'display: none;',
             ]

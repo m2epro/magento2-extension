@@ -332,7 +332,7 @@ Customers can purchase each option of Variational Product separately.
 HTML
                     ,
                     [
-                        'url' => $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218437')
+                        'url' => 'https://help.m2epro.com/support/solutions/articles/9000218437'
                     ]
                 ),
             ]
@@ -376,8 +376,8 @@ performance of your Magento site and synchronization with Channels.</li>
 HTML
                     ,
                     [
-                        'url_1' => $this->supportHelper->getSupportUrl('/support/solutions/articles/9000228224'),
-                        'url_2' => $this->supportHelper->getSupportUrl('/support/solutions/articles/9000228276'),
+                        'url_1' => 'https://help.m2epro.com/support/solutions/articles/9000228224',
+                        'url_2' => 'https://help.m2epro.com/support/solutions/articles/9000228276',
                     ]
                 ),
             ]

@@ -45,7 +45,7 @@
         <td class="value">
             <span<?php echo $style; ?>><?php echo $block->cronLastRunTime ?></span>
             <?php if ($block->cronIsNotWorking) : ?>
-                &nbsp;<a href="<?php echo $block->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200879'); ?>" target="_blank"><?php echo $block->__('[read more]'); ?></a>
+                &nbsp;<a href="https://help.m2epro.com/support/solutions/articles/9000200879" target="_blank"><?php echo $block->__('[read more]'); ?></a>
             <?php endif; ?>
         </td>
     </tr>
@@ -91,9 +91,9 @@
         </tr>
         <tr>
             <td class="label" colspan="2" style="width: 600px">
-                <?php echo $block->__(
-                    'A background mechanism that provides permanent automatic synchronization. Find more details <a href="%url%" target="_blank">here</a>',
-                    $block->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200886')
+                <?php echo __(
+                    'A background mechanism that provides permanent automatic synchronization. Find more details <a href="%1" target="_blank">here</a>',
+                    'https://help.m2epro.com/support/solutions/articles/9000200886'
                 ); ?>
             </td>
         </tr>

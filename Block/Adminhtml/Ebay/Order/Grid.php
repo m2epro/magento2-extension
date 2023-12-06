@@ -106,30 +106,36 @@ class Grid extends AbstractGrid
         // ---------------------------------------
         $shippingCompleted = \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED;
         $paymentCompleted = \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED;
+        $returnedCompleted = \Ess\M2ePro\Model\Ebay\Order::BUYER_RETURN_REQUESTED_STATUS_APPROVED;
 
         $statusList = [
             'pending' => \Ess\M2ePro\Model\Ebay\Order::STATUS_PENDING,
             'unshipped' => \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED,
             'shipped' => \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED,
             'canceled' => \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED,
+            'returned' => \Ess\M2ePro\Model\Ebay\Order::STATUS_RETURNED,
         ];
 
         $collection->getSelect()->columns(
             [
                 'status' => new \Zend_Db_Expr(
                     "IF (
-                        `cancellation_status` = 1,
-                        {$statusList['canceled']},
+                `cancellation_status` = 1,
+                {$statusList['canceled']},
+                IF (
+                    `buyer_return_requested` = {$returnedCompleted},
+                    {$statusList['returned']},
+                    IF (
+                        `shipping_status` = {$shippingCompleted},
+                        {$statusList['shipped']},
                         IF (
-                            `shipping_status` = {$shippingCompleted},
-                            {$statusList['shipped']},
-                            IF (
-                                `payment_status` = {$paymentCompleted},
-                                {$statusList['unshipped']},
-                                {$statusList['pending']}
-                            )
+                            `payment_status` = {$paymentCompleted},
+                            {$statusList['unshipped']},
+                            {$statusList['pending']}
                         )
-                    )"
+                    )
+                )
+            )"
                 ),
             ]
         );
@@ -267,6 +273,7 @@ class Grid extends AbstractGrid
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_UNSHIPPED => $this->__('Unshipped'),
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_SHIPPED => $this->__('Shipped'),
                     \Ess\M2ePro\Model\Ebay\Order::STATUS_CANCELED => $this->__('Canceled'),
+                    \Ess\M2ePro\Model\Ebay\Order::STATUS_RETURNED => $this->__('Returned'),
                 ],
                 'frame_callback' => [$this, 'callbackColumnStatus'],
                 'filter_condition_callback' => [$this, 'callbackFilterStatus'],
@@ -287,6 +294,7 @@ class Grid extends AbstractGrid
         $groups = [
             'general' => __('General'),
             'order_cancellation' => __('Order Cancellation'),
+            'order_return' => __('Order Return'),
         ];
 
         $this->getMassactionBlock()->setGroups($groups);
@@ -377,6 +385,30 @@ class Grid extends AbstractGrid
             'order_cancellation'
         );
 
+        $this->getMassactionBlock()->addItem(
+            'approve_return_by_buyer',
+            [
+                'label' => $this->__('Approve return request'),
+                'url' => $this->getUrl(
+                    '*/ebay_order_processBuyerReturnRequest/approve'
+                ),
+                'confirm' => $this->__('Are you sure?'),
+            ],
+            'order_return'
+        );
+
+        $this->getMassactionBlock()->addItem(
+            'decline_return_by_buyer',
+            [
+                'label' => $this->__('Decline return request'),
+                'url' => $this->getUrl(
+                    '*/ebay_order_processBuyerReturnRequest/decline'
+                ),
+                'confirm' => $this->__('Are you sure?'),
+            ],
+            'order_return'
+        );
+
         return parent::_prepareMassaction();
     }
 
@@ -427,6 +459,8 @@ class Grid extends AbstractGrid
 
     public function callbackColumnEbayOrder($value, $row, $column, $isExport)
     {
+        /** @var \Ess\M2ePro\Model\Order $row */
+
         $back = $this->dataHelper->makeBackUrlParam('*/ebay_order/index');
         $itemUrl = $this->getUrl('*/ebay_order/view', ['id' => $row->getId(), 'back' => $back]);
 
@@ -436,6 +470,16 @@ HTML;
 
         if ($row->getChildObject()->getData('selling_manager_id')) {
             $returnString .= '<br/> [ <b>SM: </b> # ' . $row->getChildObject()->getData('selling_manager_id') . ' ]';
+        }
+
+        if (
+            $row->getChildObject()->isBuyerReturnRequested()
+            && $row->getChildObject()->isReturnRequestedProcessPossible()
+        ) {
+            $translation = __('Return requested');
+            $returnString .= <<<HTML
+<br/> <span style="color: red;">{$translation}</span><br/>
+HTML;
         }
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
@@ -782,6 +826,12 @@ HTML;
                 $collection->addFieldToFilter(
                     'reservation_state',
                     [\Ess\M2ePro\Model\Order\Reserve::STATE_PLACED]
+                );
+                break;
+            case \Ess\M2ePro\Model\Ebay\Order::STATUS_RETURNED:
+                $collection->addFieldToFilter(
+                    'buyer_return_requested',
+                    \Ess\M2ePro\Model\Ebay\Order::BUYER_RETURN_REQUESTED_STATUS_APPROVED
                 );
                 break;
         }

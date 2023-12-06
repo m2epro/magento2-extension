@@ -175,10 +175,10 @@ HTML
             'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__(
+                'text' => (string) __(
                     '<br/>Disabling this option might affect synchronization performance. Please read
-             <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000200401')
+             <a href="%1" target="_blank">this article</a> before using the option.',
+                    'https://help.m2epro.com/support/solutions/articles/9000200401'
                 ),
                 'style' => 'display: none;',
             ]
@@ -188,10 +188,10 @@ HTML
             'revise_update_details_or_images_confirmation_popup_template',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $this->__(
+                'text' => (string) __(
                     '<br/>Enabling this option might affect synchronization performance. Please read
-             <a href="%url%" target="_blank">this article</a> before using the option.',
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219398')
+             <a href="%1" target="_blank">this article</a> before using the option.',
+                    'https://help.m2epro.com/support/solutions/articles/9000219398'
                 ),
                 'style' => 'display: none;',
             ]

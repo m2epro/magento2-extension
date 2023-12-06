@@ -402,7 +402,7 @@ JS
         bool $isExport
     ): string {
         if ($isExport) {
-            return $this->dataHelper->escapeHtml($row->getData('sku'));
+            return $row->getData('sku');
         }
 
         $title = $row->getName();

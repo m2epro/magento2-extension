@@ -30,8 +30,6 @@ class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
     private $issueFactory;
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $ebayComponentHelper;
 
@@ -44,7 +42,6 @@ class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
         \Ess\M2ePro\Model\Ebay\AccountFactory $accountFactory,
         \Ess\M2ePro\Model\Issue\DataObjectFactory $issueFactory,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Component\Ebay $ebayComponentHelper
     ) {
         $this->urlBuilder = $urlBuilder;
@@ -55,7 +52,6 @@ class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
         $this->accountFactory = $accountFactory;
         $this->issueFactory = $issueFactory;
         $this->translationHelper = $translationHelper;
-        $this->supportHelper = $supportHelper;
         $this->ebayComponentHelper = $ebayComponentHelper;
     }
 
@@ -298,9 +294,7 @@ TEXT
     ): string {
         $editHash = sha1(__CLASS__ . $accountId . $tokenExpirationTimeStamp . $messageType . $method);
 
-        return $this->supportHelper->getSupportUrl(
-            '/support/solutions/articles/9000219023'
-        ) . '/?' . $editHash;
+        return 'https://help.m2epro.com/support/solutions/articles/9000219023/?' . $editHash;
     }
 
     /**

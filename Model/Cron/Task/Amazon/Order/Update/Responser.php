@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update\Responser
- */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsResponser
 {
     /** @var \Ess\M2ePro\Model\Order */
@@ -18,8 +9,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
 
     /** @var \Ess\M2ePro\Model\Order\Change */
     protected $orderChange;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -45,8 +34,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         $this->order = $this->amazonFactory->getObjectLoaded('Order', $params['order']['order_id']);
         $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['order']['change_id']);
     }
-
-    //########################################
 
     /**
      * @param $messageText
@@ -102,8 +89,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         }
     }
 
-    //########################################
-
     /**
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -128,6 +113,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         }
 
         if ($messagesSet->hasErrorEntities()) {
+            if (empty($this->params['order']['tracking_number'])) {
+                $this->orderChange->delete();
+            }
+
             return;
         }
 
@@ -146,6 +135,4 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
             ]
         );
     }
-
-    //########################################
 }

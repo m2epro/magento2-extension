@@ -2735,7 +2735,6 @@ class Installer
         $moduleConfig->insert('/support/', 'documentation_url', 'https://docs-m2.m2epro.com/');
         $moduleConfig->insert('/support/', 'accounts_url', 'https://accounts.m2e.cloud/');
         $moduleConfig->insert('/support/', 'website_url', 'https://m2epro.com/');
-        $moduleConfig->insert('/support/', 'support_url', 'https://help.m2epro.com');
         $moduleConfig->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl);
         $moduleConfig->insert('/support/', 'contact_email', 'support@m2epro.com');
         $moduleConfig->insert('/general/configuration/', 'listing_product_inspector_mode', '0');
@@ -5082,6 +5081,12 @@ class Installer
                                )
                                ->addColumn(
                                    'buyer_cancellation_status',
+                                   Table::TYPE_SMALLINT,
+                                   null,
+                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                               )
+                               ->addColumn(
+                                   'buyer_return_requested',
                                    Table::TYPE_SMALLINT,
                                    null,
                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]

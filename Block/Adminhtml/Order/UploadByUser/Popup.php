@@ -14,22 +14,6 @@ class Popup extends AbstractContainer
 {
     /** @var string */
     protected $_component;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
-     * @param array $data
-     */
-    public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
-        array $data = []
-    ) {
-        $this->supportHelper = $supportHelper;
-        parent::__construct($context, $data);
-    }
 
     public function _construct()
     {
@@ -61,13 +45,13 @@ class Popup extends AbstractContainer
             '',
             [
                 'data' => [
-                    'content' => $this->__(
+                    'content' => (string) __(
                         <<<HTML
 M2E Pro provides an automatic order synchronization as basic functionality.
-Use manual order import as an alternative only in <a href="%url%" target="_blank">these cases</a>.
+Use manual order import as an alternative only in <a href="%1" target="_blank">these cases</a>.
 HTML
                         ,
-                        $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199899')
+                        'https://help.m2epro.com/support/solutions/articles/9000199899'
                     ),
                     'style' => 'margin-top: 15px;',
                     'title' => $this->__('Order Reimport'),

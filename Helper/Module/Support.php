@@ -96,18 +96,6 @@ class Support
     }
 
     /**
-     * @param string $urlPart
-     *
-     * @return string
-     */
-    public function getSupportUrl(string $urlPart): string
-    {
-        $baseSupportUrl = $this->config->getGroupValue('/support/', 'support_url');
-
-        return rtrim($baseSupportUrl, '/') . '/' . ltrim($urlPart, '/');
-    }
-
-    /**
      * @return mixed|null
      */
     public function getMagentoMarketplaceUrl()
@@ -163,11 +151,11 @@ class Support
     {
         switch ($component) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                return $this->getSupportUrl('/support/solutions/folders/9000194666');
+                return 'https://help.m2epro.com/support/solutions/folders/9000194666';
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                return $this->getSupportUrl('/support/solutions/folders/9000194663');
+                return 'https://help.m2epro.com/support/solutions/folders/9000194663';
             case \Ess\M2ePro\Helper\Component\Walmart::NICK:
-                return $this->getSupportUrl('/support/solutions/folders/9000194662');
+                return 'https://help.m2epro.com/support/solutions/folders/9000194662';
             default:
                 throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }

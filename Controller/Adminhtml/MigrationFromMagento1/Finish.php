@@ -93,22 +93,22 @@ class Finish extends Base
 
             $messages['default_values_in_sync_policy'] = [
                 'type' => \Ess\M2ePro\Helper\Module::MESSAGE_TYPE_WARNING,
-                'text' => $this->__(
+                'text' => __(
                     <<<HTML
-<a href="%url_1%" target="_blank">Magento Multi-Source Inventory feature</a>
+<a href="%1" target="_blank">Magento Multi-Source Inventory feature</a>
 enabled by default starting from Magento v2.3.
 If you’re using the feature now or planning to use it in the future,
 it’s highly recommended to reset Relist when Quantity option to Less or Equal to 1 and Stop
 When Quantity option to Is 0.
-Otherwise, it may <a href="%url_2%" target="_blank">affect actual product data updates and lead to overselling</a>.
+Otherwise, it may <a href="%2" target="_blank">affect actual product data updates and lead to overselling</a>.
 <br/>
 <br/>
 <a href="%url_reset%">Confirm</a> the reset of Revise and Stop Rules to default or
 <a href="%url_skip%"><b>skip this message</b></a>.
 HTML
                     ,
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218949'),
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199813')
+                    'https://help.m2epro.com/support/solutions/articles/9000218949',
+                    'https://help.m2epro.com/support/solutions/articles/9000199813'
                 ),
                 'url_reset' => 'm2epro/template/setDefaultValuesInSyncPolicy',
                 'url_skip' => 'm2epro/template/skipDefaultValuesInSyncPolicy',

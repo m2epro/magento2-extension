@@ -38,14 +38,18 @@ class Builder extends AbstractModel
     protected $items = [];
     /** @var array  */
     protected $updates = [];
+    /** @var \Ess\M2ePro\Model\Order\NoteFactory */
+    protected $noteFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Order\NoteFactory $noteFactory,
         array $data = []
     ) {
+        $this->noteFactory = $noteFactory;
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory, $data);
@@ -441,7 +445,10 @@ class Builder extends AbstractModel
             }
         }
 
-        if ($this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED) {
+        if (
+            $this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED &&
+            $this->hasUpdate(self::UPDATE_STATUS)
+        ) {
             if ($reason = $this->getData('buyer_cancel_reason')) {
                 $noteText = 'A buyer requested order cancellation. Reason: ' .
                     $this->getHelper('Data')->escapeHtml($reason);
@@ -449,8 +456,7 @@ class Builder extends AbstractModel
                 $noteText = 'A buyer requested order cancellation. The reason was not specified.';
             }
 
-            /** @var \Ess\M2ePro\Model\Order\Note $noteModel */
-            $noteModel = $this->activeRecordFactory->getObject('Order_Note');
+            $noteModel = $this->noteFactory->create();
             $noteModel->setData('note', $noteText);
             $noteModel->setData('order_id', $this->order->getId());
             $noteModel->save();
@@ -514,6 +520,10 @@ class Builder extends AbstractModel
         /** @var \Ess\M2ePro\Model\Amazon\Order $amazonOrder */
         $amazonOrder = $this->order->getChildObject();
         if (!$amazonOrder->isBusiness()) {
+            return false;
+        }
+
+        if ($this->getData('status') === \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED) {
             return false;
         }
 

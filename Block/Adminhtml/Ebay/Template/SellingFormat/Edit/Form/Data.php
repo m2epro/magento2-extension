@@ -288,18 +288,18 @@ class Data extends AbstractForm
         }
 
         $durationTooltip = '<span class="duration_note duration_auction_note" style="display: none;">'
-            . $this->__('A length of time your auction-style listings will show on eBay.')
+            . __('A length of time your auction-style listings will show on eBay.')
             . '</span><span class="duration_note duration_fixed_note" style="display: none;">' .
-            $this->__(
+            __(
                 'Your fixed-price listings will renew automatically every 30 days until the items
                             sell out or you end the listings.<br><br>
                             <b>Note:</b> By using eBay out-of-stock feature, your item with zero quantity stays active
                             but is hidden from search results until you increase the quantity.
-                            Read more <a href="%url%" target="_blank">here</a>.',
-                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218905')
+                            Read more <a href="%1" target="_blank">here</a>.',
+                'https://help.m2epro.com/support/solutions/articles/9000218905'
             )
             . '</span><span class="duration_note duration_attribute_note" style="display: none;">'
-            . $this->__(
+            . __(
                 'Attribute must contain a whole number. If you choose "Good Till Cancelled"
                             the Attribute must contain 100.'
             )

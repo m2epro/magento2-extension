@@ -36,19 +36,14 @@ class MappingTablesDownloader
     /** @var string */
     private $licenseKey;
 
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         Mapper $mapper
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->mapper             = $mapper;
         $this->helperFactory      = $helperFactory;
-        $this->supportHelper = $supportHelper;
     }
 
     //########################################
@@ -122,13 +117,13 @@ class MappingTablesDownloader
         }
 
         throw new \Ess\M2ePro\Model\Exception\Logic(
-            $this->helperFactory->getObject('Module\Translation')->translate([
+            (string) __(
                 'Failed to upload M2E Pro data because the provided URL address is wrong or not accessible.
                 Please ensure you enter the correct URL, then click Continue to try again.
-                If the issue persists, follow <a href="%url%" target="_blank">these instructions</a> to complete
+                If the issue persists, follow <a href="%1" target="_blank">these instructions</a> to complete
                 the migration process.',
-                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219396')
-            ])
+                'https://help.m2epro.com/support/solutions/articles/9000219396'
+            )
         );
     }
 

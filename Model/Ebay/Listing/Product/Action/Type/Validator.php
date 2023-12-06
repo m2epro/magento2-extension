@@ -16,20 +16,16 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected $messages = [];
     /** @var \Ess\M2ePro\Model\Listing\Product */
     protected $listingProduct = null;
-    /** @var \Ess\M2ePro\Helper\Module\Support  */
-    private $supportHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\CollectionFactory $variationCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option $variationOptionResource,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
-        $this->supportHelper = $supportHelper;
         $this->variationCollectionFactory = $variationCollectionFactory;
         $this->variationOptionResource = $variationOptionResource;
     }
@@ -300,7 +296,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $this->getEbayListingProduct()->isVariationMode() &&
             !$this->getEbayListingProduct()->isVariationsReady()
         ) {
-            $supportLink = $this->supportHelper->getSupportUrl('/support/solutions/articles/9000223366');
+            $supportLink = 'https://help.m2epro.com/support/solutions/articles/9000223366';
             $msg = "Unable to list the product(s) because product variations are assigned incorrectly
                 or missing for the selected Store View. <a href=\"$supportLink\" target=\"_blank\">Learn more...</a>";
             $this->addMessage($msg);

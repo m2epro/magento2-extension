@@ -25,25 +25,15 @@ class Repricing
 
     private const REQUEST_TIMEOUT = 300;
 
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $moduleTranslation;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $moduleSupport;
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
 
     /**
-     * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
-     * @param \Ess\M2ePro\Helper\Module\Support $moduleSupport
      * @param \Ess\M2ePro\Model\Config\Manager $config
      */
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
-        \Ess\M2ePro\Helper\Module\Support $moduleSupport,
         \Ess\M2ePro\Model\Config\Manager $config
     ) {
-        $this->moduleTranslation = $moduleTranslation;
-        $this->moduleSupport = $moduleSupport;
         $this->config = $config;
     }
 
@@ -95,9 +85,9 @@ class Repricing
 
         if ($response === false) {
             throw new Connection(
-                $this->moduleTranslation->__(
-                    'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-                    $this->moduleSupport->getSupportUrl('/support/solutions/articles/9000200887')
+                (string) __(
+                    'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%1">here</a>',
+                    'https://help.m2epro.com/support/solutions/articles/9000200887'
                 ),
                 [
                     'curl_error_number' => $errorNumber,

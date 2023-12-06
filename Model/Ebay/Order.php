@@ -33,11 +33,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public const STATUS_SHIPPED = 2;
     public const STATUS_CANCELED = 3;
     public const STATUS_PENDING_RESERVED = 4;
-
+    public const STATUS_RETURNED = 5;
     public const BUYER_CANCELLATION_STATUS_NOT_REQUESTED = 0;
     public const BUYER_CANCELLATION_STATUS_REQUESTED = 1;
     public const BUYER_CANCELLATION_STATUS_APPROVED = 2;
     public const BUYER_CANCELLATION_STATUS_REJECTED = 3;
+    public const BUYER_RETURN_REQUESTED_STATUS_NOT_REQUESTED = 0;
+    public const BUYER_RETURN_REQUESTED_STATUS_REQUESTED = 1;
+    public const BUYER_RETURN_REQUESTED_STATUS_APPROVED = 2;
+    public const BUYER_RETURN_REQUESTED_STATUS_DECLINED = 3;
 
     /** All reasons: https://developer.ebay.com/Devzone/post-order/types/CancelReasonEnum.html */
     public const CANCEL_REASON_DEFAULT = 'OTHER';
@@ -610,6 +614,31 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     public function getBuyerCancellationStatus(): int
     {
         return (int)$this->getData('buyer_cancellation_status');
+    }
+
+    public function isBuyerReturnRequested(): bool
+    {
+        return $this->getBuyerReturnRequested() === self::BUYER_RETURN_REQUESTED_STATUS_REQUESTED;
+    }
+
+    public function isBuyerReturnApproved(): bool
+    {
+        return $this->getBuyerReturnRequested() === self::BUYER_RETURN_REQUESTED_STATUS_APPROVED;
+    }
+
+    public function isReturnRequestedProcessPossible(): bool
+    {
+        return !$this->isCanceled() && $this->isShippingCompleted();
+    }
+
+    public function setReturnRequestedStatus(int $status): void
+    {
+        $this->setData('buyer_return_requested', $status);
+    }
+
+    public function getBuyerReturnRequested(): int
+    {
+        return (int)$this->getData('buyer_return_requested');
     }
 
     public function isBuyerCancellationStatusNotRequested(): bool

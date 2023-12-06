@@ -12,8 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class InvoicesAndShipments extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
@@ -21,11 +19,9 @@ class InvoicesAndShipments extends AbstractForm
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
-        $this->supportHelper = $supportHelper;
         $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -111,13 +107,13 @@ HTML
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'tooltip' => $this->__(
+                'tooltip' => (string) __(
                     <<<HTML
 Set <b>Yes</b> if you want to exclude
-<a href="%url%" target="_blank">eVTN</a> from your Magento orders.
+<a href="%1" target="_blank">eVTN</a> from your Magento orders.
 HTML
                     ,
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000199785')
+                    'https://help.m2epro.com/support/solutions/articles/9000199785'
                 ),
             ]
         );

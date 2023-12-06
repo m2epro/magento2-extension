@@ -1,22 +1,43 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update
- */
 class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'amazon/order/update';
     public const ORDER_CHANGES_PER_ACCOUNT = 300;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Change\CollectionFactory */
+    private $orderChangeCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Order\Change */
+    private $orderChargeResource;
 
-    //####################################
+    public function __construct(
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource,
+        \Ess\M2ePro\Model\ResourceModel\Order\Change\CollectionFactory $orderChangeCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Order\Change $orderChargeResource
+    ) {
+        parent::__construct(
+            $cronManager,
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+        $this->orderChangeCollectionFactory = $orderChangeCollectionFactory;
+        $this->orderChargeResource = $orderChargeResource;
+    }
 
     public function isPossibleToRun()
     {
@@ -26,8 +47,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return parent::isPossibleToRun();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -42,8 +61,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
-
     protected function performActions()
     {
         $this->deleteNotActualChanges();
@@ -53,11 +70,9 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             return;
         }
 
+        /** @var \Ess\M2ePro\Model\Account $account */
         foreach ($permittedAccounts as $account) {
-            /** @var \Ess\M2ePro\Model\Account $account */
-
             $this->getOperationHistory()->addText('Starting Account "' . $account->getTitle() . '"');
-
             $this->getOperationHistory()->addTimePoint(
                 __METHOD__ . 'process' . $account->getId(),
                 'Process Account ' . $account->getTitle()
@@ -65,10 +80,10 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             try {
                 $this->processAccount($account);
-            } catch (\Exception $exception) {
-                $message = $this->getHelper('Module\Translation')->__(
-                    'The "Update" Action for Amazon Account "%account%" was completed with error.',
-                    $account->getTitle()
+            } catch (\Throwable $exception) {
+                $message = (string)__(
+                    'The "Update" Action for Amazon Account "%account" was completed with error.',
+                    ['account' => $account->getTitle()]
                 );
 
                 $this->processTaskAccountException($message, __FILE__, __LINE__);
@@ -78,8 +93,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->getOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $account->getId());
         }
     }
-
-    //########################################
 
     protected function getPermittedAccounts()
     {
@@ -92,33 +105,31 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $accountsCollection->getItems();
     }
 
-    // ---------------------------------------
-
     protected function processAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $relatedChanges = $this->getRelatedChanges($account);
-        if (empty($relatedChanges)) {
+        $updateShippingChanges = $this->getOrderUpdateShippingChanges($account);
+
+        if (empty($updateShippingChanges)) {
             return;
         }
 
-        $this->activeRecordFactory->getObject('Order\Change')
-                                  ->getResource()->incrementAttemptCount(array_keys($relatedChanges));
+        $this->orderChargeResource->incrementAttemptCount(array_keys($updateShippingChanges));
 
         /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */
         $dispatcherObject = $this->modelFactory->getObject('Amazon_Connector_Dispatcher');
 
-        foreach ($relatedChanges as $change) {
+        foreach ($updateShippingChanges as $change) {
             $changeParams = $change->getParams();
 
             $connectorData = [
                 'order_id' => $change->getOrderId(),
                 'change_id' => $change->getId(),
                 'amazon_order_id' => $changeParams['amazon_order_id'],
-                'tracking_number' => isset($changeParams['tracking_number']) ? $changeParams['tracking_number'] : null,
-                'carrier_name' => isset($changeParams['carrier_title']) ? $changeParams['carrier_title'] : null,
-                'carrier_code' => isset($changeParams['carrier_code']) ? $changeParams['carrier_code'] : null,
+                'tracking_number' => $changeParams['tracking_number'] ?? null,
+                'carrier_name' => $changeParams['carrier_title'] ?? null,
+                'carrier_code' => $changeParams['carrier_code'] ?? null,
                 'fulfillment_date' => $changeParams['fulfillment_date'],
-                'shipping_method' => isset($changeParams['shipping_method']) ? $changeParams['shipping_method'] : null,
+                'shipping_method' => $changeParams['shipping_method'] ?? null,
                 'items' => $changeParams['items'],
             ];
 
@@ -132,11 +143,14 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //########################################
-
-    protected function getRelatedChanges(\Ess\M2ePro\Model\Account $account)
+    /**
+     * @return \Ess\M2ePro\Model\Order\Change[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    protected function getOrderUpdateShippingChanges(\Ess\M2ePro\Model\Account $account): array
     {
-        $changesCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();
+        $changesCollection = $this->orderChangeCollectionFactory->create();
         $changesCollection->addAccountFilter($account->getId());
         $changesCollection->addProcessingAttemptDateFilter();
         $changesCollection->addFieldToFilter('component', \Ess\M2ePro\Helper\Component\Amazon::NICK);
@@ -150,18 +164,17 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $changesCollection->getSelect()->limit(self::ORDER_CHANGES_PER_ACCOUNT);
         $changesCollection->getSelect()->group(['order_id']);
 
-        return $changesCollection->getItems();
+        /** @var \Ess\M2ePro\Model\Order\Change[] $items */
+        $items = $changesCollection->getItems();
+
+        return $items;
     }
 
-    // ---------------------------------------
-
-    protected function deleteNotActualChanges()
+    protected function deleteNotActualChanges(): void
     {
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->deleteByProcessingAttemptCount(
+        $this->orderChargeResource->deleteByProcessingAttemptCount(
             \Ess\M2ePro\Model\Order\Change::MAX_ALLOWED_PROCESSING_ATTEMPTS,
             \Ess\M2ePro\Helper\Component\Amazon::NICK
         );
     }
-
-    //########################################
 }

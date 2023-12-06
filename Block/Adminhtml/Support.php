@@ -32,14 +32,14 @@ class Support extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $this->appendHelpBlock([
             'no_collapse' => true,
             'no_hide' => true,
-            'content' => $this->__(
+            'content' => (string) __(
                 <<<HTML
                 <p>Have any questions regarding the use of M2E Pro, its functionality, technical aspects, or billing?
                 You can always find answers in our
-                <a href="%url_1%" target="_blank" class="external-link">documentation</a> or
-                <a href="%url_2%" target="_blank" class="external-link">Knowledge Base</a>
+                <a href="%1" target="_blank" class="external-link">documentation</a> or
+                <a href="%2" target="_blank" class="external-link">Knowledge Base</a>
                 created specifically for M2E Pro clients. There is also a
-                <a href="%url_3%" target="_blank" class="external-link">YouTube channel</a>
+                <a href="%3" target="_blank" class="external-link">YouTube channel</a>
                 with helpful video guides.</p>
                 <p>In case you cannot find a solution to your problem within the available resources,
                 feel free to reach out to M2E Pro Support Team by clicking Contact Us. If your subscription plan
@@ -48,7 +48,7 @@ class Support extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 HTML
                 ,
                 $this->moduleSupportHelper->getDocumentationArticleUrl('basics'),
-                $this->moduleSupportHelper->getSupportUrl('/support/solutions/9000117126'),
+                'https://help.m2epro.com/support/solutions/9000117126',
                 $this->moduleSupportHelper->getYoutubeChannelUrl()
             ),
         ]);

@@ -327,9 +327,13 @@ class Config extends AbstractConfig
                 'CreateEbayCategorySpecificValidationResultTable',
             ],
             'y23_m11' => [
+                'RemoveSupportUrlFromConfigTable',
                 'AddWalmartIsWFS',
                 'AddWalmartOrdersWfsLastSynchronization',
                 'RestoreEpidsForAustralia',
+            ],
+            'y23_m12' => [
+                'AddEbayBuyerReturnRequested',
             ]
         ];
     }

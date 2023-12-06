@@ -322,18 +322,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
 
     public function getValue()
     {
-        if ($this->getInputType() == 'date' && !$this->getIsValueParsed()) {
-            // date format intentionally hard-coded
-            $this->setValue(
-                $this->_localeDate->formatDate(
-                    $this->getData('value'),
-                    \IntlDateFormatter::MEDIUM,
-                    true
-                )
-            );
-            $this->setIsValueParsed(true);
-        }
-
         return $this->getData('value');
     }
 
@@ -519,11 +507,31 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             $elementParams['time_format'] = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
         }
 
-        return $this->getForm()->addField(
+        /** @var \Magento\Framework\Data\Form $form */
+        $form = $this->getForm();
+        $field = $form->addField(
             $this->getPrefix() . '__' . $this->getId() . '__value',
             $this->getValueElementType(),
             $elementParams
-        )->setRenderer($this->getValueElementRenderer());
+        );
+
+        if ($this->getInputType() == 'date') {
+            $value = $this->getValue();
+            if ($value !== null) {
+                $timestamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
+                    $value,
+                    \IntlDateFormatter::MEDIUM,
+                    \IntlDateFormatter::MEDIUM
+                );
+                $dateTime = \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+                $dateTime->setTimestamp($timestamp);
+                $field->setValue($dateTime);
+            }
+        }
+
+        $field->setRenderer($this->getValueElementRenderer());
+
+        return $field;
     }
 
     public function getValueElementHtml()
@@ -591,22 +599,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel implements 
             return false;
         }
 
-        if ($this->getInputType() == 'date' && !empty($validatedValue) && !is_numeric($validatedValue)) {
-            $validatedValue = (int)$this->helperData
-                ->createGmtDateTime($validatedValue)
-                ->format('U');
-        }
-
         /**
          * Condition attribute value
          */
         $value = $this->getValueParsed();
-
-        if ($this->getInputType() == 'date' && !empty($value) && !is_numeric($value)) {
-            $value = (int)$this->helperData
-                ->createGmtDateTime($value)
-                ->format('U');
-        }
 
         /**
          * Comparison operator

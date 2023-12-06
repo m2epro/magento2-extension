@@ -56,21 +56,20 @@ HTML;
 
     public function getReal()
     {
-        $helper = $this->getHelper('Module\Translation');
         $color = $this->getCheckObject()->isMeet() ? 'green' : 'red';
 
         if ($this->getCheckObject()->getReal() === null) {
-            $url = $this->getHelper('Module_Support')->getSupportUrl('/support/solutions/articles/9000200880');
+            $url = 'https://help.m2epro.com/support/solutions/articles/9000200880';
             $html = <<<HTML
 <span style="color: orange;">
-    <span>{$helper->__('unknown')}</span>&nbsp;
-    <a href="{$url}" target="_blank">{$helper->__('[read more]')}</a>&nbsp;
+    <span>{__('unknown')}</span>&nbsp;
+    <a href="{$url}" target="_blank">{__('[read more]')}</a>&nbsp;
 </span>
 HTML;
         } elseif ($this->getCheckObject()->getReal() <= 0) {
             $html = <<<HTML
 <span style="color: {$color};">
-    <span>{$helper->__('unlimited')}</span>&nbsp;
+    <span>{__('unlimited')}</span>&nbsp;
 </span>
 HTML;
         } else {
@@ -90,7 +89,7 @@ HTML;
         $helper = $this->getHelper('Module\Translation');
         $testUrl = $this->urlBuilder->getUrl('*/support/testExecutionTime');
         $testResultUrl = $this->urlBuilder->getUrl('*/support/testExecutionTimeResult');
-        $knowledgeBaseUrl = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200884');
+        $knowledgeBaseUrl = 'https://help.m2epro.com/support/solutions/articles/9000200884';
 
         $button = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
             'label' => $helper->__('Check'),

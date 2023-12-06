@@ -310,6 +310,13 @@ class Form extends AbstractContainer
             ];
         }
 
+        if ($this->order->getChildObject()->isBuyerReturnApproved()) {
+            $status = [
+                'value' => $this->__('Returned'),
+                'color' => 'black',
+            ];
+        }
+
         return $status;
     }
 
@@ -380,5 +387,62 @@ JS
     public function getUrlBuilder(): \Magento\Backend\Model\UrlInterface
     {
         return $this->urlBuilder;
+    }
+
+    public function showBuyerReturnButton(): string
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
+        $ebayOrder = $this->order->getChildObject();
+        $layout = $this->getLayout();
+        $isBuyerReturnRequestedAvailable = $ebayOrder->isBuyerReturnRequested()
+            && $ebayOrder->isReturnRequestedProcessPossible();
+
+        if (!$isBuyerReturnRequestedAvailable) {
+            return '';
+        }
+
+        $approveUrl = $this->urlBuilder->getUrl(
+            'm2epro/ebay_order_processBuyerReturnRequest/approve',
+            [
+                'ids' => $this->order->getId(),
+            ]
+        );
+        $declineUrl = $this->urlBuilder->getUrl(
+            'm2epro/ebay_order_processBuyerReturnRequest/decline',
+            [
+                'ids' => $this->order->getId(),
+            ]
+        );
+
+        /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $approveButtonBlock */
+        $approveButtonBlock = $layout->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Magento\Button::class
+        );
+        $approveButtonBlock->setData([
+            'label' => $this->__('Approve'),
+            'style' => 'background-color: #008000; color: #ffffff',
+            'class' => 'action-default scalable',
+            'onclick' => "setLocation('$approveUrl');",
+        ]);
+        $approveButton = $approveButtonBlock->toHtml();
+
+        /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $declineButtonBlock */
+        $declineButtonBlock = $layout->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Magento\Button::class
+        );
+        $declineButtonBlock->setData([
+            'label' => $this->__('Decline'),
+            'style' => 'margin-left: 2rem;',
+            'class' => 'action-default scalable primary',
+            'onclick' => "setLocation('$declineUrl');",
+        ]);
+        $declineButton = $declineButtonBlock->toHtml();
+
+        return sprintf(
+            '<div><b style="color: red;">%s</b><b style="padding-left: 20px;">%s</b>%s</div>',
+            __('Order Return Requested'),
+            $approveButton,
+            $declineButton
+        );
     }
 }

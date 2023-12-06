@@ -962,14 +962,14 @@ HTML
             );
 
             $tooltipDiscountPriceMode = $this->getTooltipHtml(
-                '<span id="discount_price_note">' . $this->__(
+                '<span id="discount_price_note">' . __(
                     'Allows enabling the <strong>Quantity Discount</strong> feature. Choose the way of Discount
                     calculation for multiple Items purchased:<br /><br />
 
                     <strong>Product Tier Price</strong> - the discounted Price value will be taken from a Tier
                     Price Attribute of Magento Product.<br />
                     Please, find the details on how the Product Tier Price is calculated for different types of
-                    Magento Products <a target="_blank" href="%url%" class="external-link">here</a>.<br /><br />
+                    Magento Products <a target="_blank" href="%1" class="external-link">here</a>.<br /><br />
 
                     <strong>Custom Value</strong> - the discounted Price value will be calculated as a Price from
                     selected Magento Attribute with a Price Change option applied.<br />
@@ -978,7 +978,7 @@ HTML
                     ‘Request a quantity discount’: QTY >= 5, price 4,75 £, where: QTY <= 5 is the number of
                     purchased Products to which the Discount will be applied, price 4,75 £ is the final Price
                     per Product with the Discount applied (7£ - 2,25).',
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000228205')
+                    'https://help.m2epro.com/support/solutions/articles/9000228205'
                 )
                 . '</span>'
             );

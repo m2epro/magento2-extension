@@ -16,8 +16,6 @@ use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
  */
 class InvoicesAndShipments extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
 
@@ -30,14 +28,12 @@ class InvoicesAndShipments extends AbstractForm
      * @param array $data
      */
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->supportHelper = $supportHelper;
         $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -59,13 +55,13 @@ HTML
         );
 
         if ($account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
-            $helpText .= $this->__(
+            $helpText .= __(
                 <<<HTML
-    <p>Also, you can set up an <i>Automatic Invoice Uploading</i> to Amazon. Read the <a href="%url%"
+    <p>Also, you can set up an <i>Automatic Invoice Uploading</i> to Amazon. Read the <a href="%1"
     target="_blank">article</a> for more details.</p>
 HTML
                 ,
-                $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219394')
+                'https://help.m2epro.com/support/solutions/articles/9000219394'
             );
         }
 
@@ -125,7 +121,7 @@ HTML
                     'tooltip' => __(
                         'Learn how to set up automatic invoice uploading in this
                                <a href="%1"  target="_blank">article</a>.',
-                        $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219394')
+                        'https://help.m2epro.com/support/solutions/articles/9000219394'
                     ),
                 ]
             );

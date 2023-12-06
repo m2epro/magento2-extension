@@ -118,7 +118,7 @@ class Content extends AbstractBlock
                     '<br><br>Your current version of M2E Pro does not support the migration to Magento v2.x.
                     Please follow <a href="%s" target="_blank">these instructions</a> to get the required Module
                     version and complete the migration process.',
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000219396')
+                    'https://help.m2epro.com/support/solutions/articles/9000219396'
                 );
 
                 return true;

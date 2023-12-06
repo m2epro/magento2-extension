@@ -308,7 +308,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
         if ($isExport) {
-            return $this->dataHelper->escapeHtml($row->getData('sku'));
+            return $row->getData('sku');
         }
 
         $title = $row->getData('name');

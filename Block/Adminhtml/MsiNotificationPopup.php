@@ -12,23 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 class MsiNotificationPopup extends AbstractBlock
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param array $data
-     */
-    public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-        $this->supportHelper = $supportHelper;
-    }
-
     protected function _toHtml()
     {
         $this->js->addOnReadyJs(
@@ -38,11 +21,11 @@ class MsiNotificationPopup extends AbstractBlock
     ],function(modal) {
         var modalDialogMessage = new Element('div');
         modalDialogMessage.innerHTML = "{$this->escapeJs(
-                $this->__(
+                (string) __(
                     "Magento Inventory (MSI) is enabled.
                 M2E Pro will update your product quantity based on Product Salable QTY. Read more
-                <a target='_blank' href='%url%'>here</a>.",
-                    $this->supportHelper->getSupportUrl('/support/solutions/articles/9000218949')
+                <a target='_blank' href='%1'>here</a>.",
+                    'https://help.m2epro.com/support/solutions/articles/9000218949'
                 )
             )}"
 

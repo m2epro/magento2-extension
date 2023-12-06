@@ -378,7 +378,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         if ($isExport) {
-            return $this->dataHelper->escapeHtml($sku);
+            return $sku;
         }
 
         $value .= '<br/><strong>' . __('SKU') .

@@ -78,20 +78,21 @@ class Product extends AbstractModel
             }
             $attr = $object->getResource()->getAttribute($attrCode);
 
-            if ($attr && $attr->getBackendType() == 'datetime' && !is_int($this->getValue())) {
-                $oldValue = $this->getValue();
-                $this->setValue(
-                    (int)$this->helperData
-                        ->createGmtDateTime($this->getValue())
-                        ->format('U')
-                );
-                $value = (int)$this->helperData
-                    ->createGmtDateTime($object->getData($attrCode))
-                    ->format('U');
-                $result = $this->validateAttribute($value);
-                $this->setValue($oldValue);
+            if (
+                $attr
+                && $attr->getBackendType() == 'datetime'
+                && !is_int($this->getValue())
+            ) {
+                $objectValue = $object->getData($attrCode);
+                if ($objectValue !== null) {
+                    $objectValue = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
+                        $objectValue,
+                        \IntlDateFormatter::MEDIUM,
+                        \IntlDateFormatter::MEDIUM
+                    );
+                }
 
-                return $result;
+                return $this->validateAttribute($objectValue);
             }
 
             if ($attr && $attr->getFrontendInput() == 'multiselect') {
@@ -119,16 +120,19 @@ class Product extends AbstractModel
 
             $attr = $object->getResource()->getAttribute($attrCode);
             if ($attr && $attr->getBackendType() == 'datetime') {
-                $attributeValue = (int)$this->helperData
-                    ->createGmtDateTime($attributeValue)
-                    ->format('U');
+                $attributeValue = \Ess\M2ePro\Helper\Date::createDateInCurrentZone($attributeValue)
+                                                         ->getTimestamp();
 
                 if (!is_int($this->getValueParsed())) {
-                    $this->setValueParsed(
-                        (int)$this->helperData
-                            ->createGmtDateTime($this->getValue())
-                            ->format('U')
-                    );
+                    $valueParsed = $this->getValueParsed();
+                    if ($valueParsed !== null) {
+                        $timestamp = \Ess\M2ePro\Helper\Date::parseDateFromLocalFormat(
+                            $valueParsed,
+                            \IntlDateFormatter::MEDIUM,
+                            \IntlDateFormatter::MEDIUM
+                        );
+                        $this->setValueParsed($timestamp);
+                    }
                 }
             } elseif ($attr && $attr->getFrontendInput() == 'multiselect') {
                 $attributeValue = strlen((string)$attributeValue) ? explode(',', $attributeValue) : [];

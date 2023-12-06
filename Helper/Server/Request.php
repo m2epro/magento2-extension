@@ -16,10 +16,6 @@ class Request
     private $helperServer;
     /** @var \Ess\M2ePro\Helper\Module\Logger */
     private $helperModuleLogger;
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $helperModuleTranslation;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $helperModuleSupport;
 
     /**
      * @param \Ess\M2ePro\Helper\Server\Maintenance $helperServerMaintenance
@@ -31,15 +27,11 @@ class Request
     public function __construct(
         \Ess\M2ePro\Helper\Server\Maintenance $helperServerMaintenance,
         \Ess\M2ePro\Helper\Server $helperServer,
-        \Ess\M2ePro\Helper\Module\Logger $helperModuleLogger,
-        \Ess\M2ePro\Helper\Module\Translation $helperModuleTranslation,
-        \Ess\M2ePro\Helper\Module\Support $helperModuleSupport
+        \Ess\M2ePro\Helper\Module\Logger $helperModuleLogger
     ) {
         $this->helperServerMaintenance = $helperServerMaintenance;
         $this->helperServer = $helperServer;
         $this->helperModuleLogger = $helperModuleLogger;
-        $this->helperModuleTranslation = $helperModuleTranslation;
-        $this->helperModuleSupport = $helperModuleSupport;
     }
 
     public function single(
@@ -107,9 +99,9 @@ class Request
             }
 
             throw new \Ess\M2ePro\Model\Exception\Connection(
-                $this->helperModuleTranslation->__(
-                    'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%url%">here</a>',
-                    $this->helperModuleSupport->getSupportUrl('/support/solutions/articles/9000200887')
+                (string) __(
+                    'M2E Pro Server connection failed. Find the solution <a target="_blank" href="%1">here</a>',
+                    'https://help.m2epro.com/support/solutions/articles/9000200887'
                 ),
                 [
                     'curl_error_number'  => $response['curl_error_number'],

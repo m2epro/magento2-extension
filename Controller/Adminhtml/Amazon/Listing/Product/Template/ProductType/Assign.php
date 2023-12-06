@@ -12,14 +12,11 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
 {
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
     private $productTypeFactory;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     private $variationHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -46,7 +43,6 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
         );
 
         $this->productTypeFactory = $productTypeFactory;
-        $this->supportHelper = $supportHelper;
         $this->variationHelper = $variationHelper;
     }
 
@@ -101,8 +97,8 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
                 $this->variationHelper->filterProductsByAvailableWorldwideIdentifiers($filteredProductsIdsByType);
 
             if (count($filteredProductsIdsByType) !== count($productIdsWithAvailableWorldwideIds)) {
-                $url = $this->supportHelper->getSupportUrl('/support/solutions/articles/9000226680');
-                $text = __(
+                $url = 'https://help.m2epro.com/support/solutions/articles/9000226680';
+                $text = (string) __(
                     <<<HTML
 UPC/EAN is missing for %count product(s).
 Please configure Product Identifiers settings before adding or updating your Amazon Items.

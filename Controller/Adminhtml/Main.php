@@ -369,13 +369,13 @@ abstract class Main extends Base
             $this->getHelper('Module')->isReadyToWork() &&
             $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true)
         ) {
-            $url = $this->getHelper('Module\Support')->getSupportUrl('/support/solutions/articles/9000200402');
+            $url = 'https://help.m2epro.com/support/solutions/articles/9000200402';
 
             $message = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
             $message .= ' It does not allow M2E Pro to work correctly.';
-            $message .= '<br/>Please check this <a href="%url%" target="_blank" class="external-link">article</a>';
+            $message .= '<br/>Please check this <a href="%1" target="_blank" class="external-link">article</a>';
             $message .= ' for the details on how to resolve the problem.';
-            $message = $this->getHelper('Module\Translation')->__($message, $url);
+            $message = (string) __($message, $url);
 
             $this->getMessageManager()->addError(
                 $message,

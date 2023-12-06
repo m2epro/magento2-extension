@@ -237,9 +237,11 @@ class Modifier
             \Ess\M2ePro\Setup\Update\y23_m10\ImproveAmazonOrderPrefixes::class,
             \Ess\M2ePro\Setup\Update\y23_m10\RenameSoldByAmazonSetting::class,
             \Ess\M2ePro\Setup\Update\y23_m10\ReAddIsSoldByAmazonColumnToAmazonOrder::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\RemoveSupportUrlFromConfigTable::class,
             \Ess\M2ePro\Setup\Update\y23_m11\AddWalmartIsWFS::class,
             \Ess\M2ePro\Setup\Update\y23_m11\AddWalmartOrdersWfsLastSynchronization::class,
             \Ess\M2ePro\Setup\Update\y23_m11\RestoreEpidsForAustralia::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\AddEbayBuyerReturnRequested::class,
         ];
 
         foreach ($featureClasses as $featureClass) {
