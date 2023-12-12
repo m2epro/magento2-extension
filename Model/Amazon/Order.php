@@ -1100,4 +1100,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         return $currentFees !== $newFees;
     }
+
+    public function getReplacedAmazonOrderId(): ?string
+    {
+        return $this->getData('replaced_amazon_order_id');
+    }
+
+    public function setReplacedAmazonOrderId(?string $value): void
+    {
+        $this->setData('replaced_amazon_order_id', $value);
+    }
 }

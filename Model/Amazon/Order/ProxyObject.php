@@ -273,7 +273,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $this->getDiscountComments(),
             $this->getGiftWrappedComments(),
             $this->getRemovedOrderItemsComments(),
-            $this->getAFNWarehouseComments()
+            $this->getAFNWarehouseComments(),
+            $this->getCustomizationComments()
         );
     }
 
@@ -418,6 +419,30 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return empty($comment) ? [] : [$comment];
+    }
+
+    /**
+     * @return string[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function getCustomizationComments(): array
+    {
+        $comments = '';
+        foreach ($this->order->getParentObject()->getItemsCollection() as $orderItem) {
+            /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem */
+            $amazonOrderItem = $orderItem->getChildObject();
+            if ($amazonOrderItem->hasCustomizedInfo()) {
+                $comments .= __(
+                    "Customization for SKU %sku: <a href='%customized_link'>Link</a><br>",
+                    [
+                        'sku' => $amazonOrderItem->getSku(),
+                        'customized_link' => $amazonOrderItem->getCustomizedInfo()
+                    ]
+                );
+            }
+        }
+
+        return [$comments];
     }
 
     /**

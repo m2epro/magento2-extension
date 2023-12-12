@@ -21,6 +21,7 @@ class Builder extends AbstractModel
     public const UPDATE_STATUS = 'status';
     public const UPDATE_EMAIL = 'email';
     public const UPDATE_B2B_VAT_REVERSE_CHARGE = 'b2b_vat_reverse_charge';
+    public const UPDATE_REPLACEMENT_ORDER_ID = 'replacement_order_id';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
     protected $activeRecordFactory;
@@ -38,21 +39,22 @@ class Builder extends AbstractModel
     protected $items = [];
     /** @var array  */
     protected $updates = [];
-    /** @var \Ess\M2ePro\Model\Order\NoteFactory */
-    protected $noteFactory;
+    /** @var \Ess\M2ePro\Model\Order\Note\Repository */
+    private $noteRepository;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Order\NoteFactory $noteFactory,
+        \Ess\M2ePro\Model\Order\Note\Repository $noteRepository,
         array $data = []
     ) {
-        $this->noteFactory = $noteFactory;
+        parent::__construct($helperFactory, $modelFactory, $data);
+
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->noteRepository = $noteRepository;
     }
 
     //########################################
@@ -82,6 +84,7 @@ class Builder extends AbstractModel
         $this->setData('is_sold_by_amazon', $data['is_sold_by_amazon']);
         $this->setData('is_business', $data['is_business']);
         $this->setData('is_replacement', $data['is_replacement']);
+        $this->setData('replaced_amazon_order_id', $data['replaced_amazon_order_id']);
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
@@ -445,6 +448,17 @@ class Builder extends AbstractModel
             }
         }
 
+        $replacedAmazonOrderId = $this->getData('replaced_amazon_order_id');
+        if (
+            $this->getData('is_replacement') &&
+            $replacedAmazonOrderId &&
+            ($this->isNew() || $this->hasUpdate(self::UPDATE_REPLACEMENT_ORDER_ID)) &&
+            ($originalOrder = $this->findOriginalOrder($replacedAmazonOrderId))
+        ) {
+            $this->createReplacementOrderNote($replacedAmazonOrderId);
+            $this->createOriginalOrderLog($originalOrder);
+        }
+
         if (
             $this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED &&
             $this->hasUpdate(self::UPDATE_STATUS)
@@ -456,10 +470,11 @@ class Builder extends AbstractModel
                 $noteText = 'A buyer requested order cancellation. The reason was not specified.';
             }
 
-            $noteModel = $this->noteFactory->create();
-            $noteModel->setData('note', $noteText);
-            $noteModel->setData('order_id', $this->order->getId());
-            $noteModel->save();
+            $this->noteRepository->create($this->order->getId(), $noteText);
+        }
+
+        if ($this->isNew()) {
+            $this->createNoteBuyerCustomizedItem($this->items);
         }
 
         $this->order->setAccount($this->account);
@@ -469,7 +484,74 @@ class Builder extends AbstractModel
         }
     }
 
+    private function createNoteBuyerCustomizedItem(array $orderItemsData): void
+    {
+        foreach ($orderItemsData as $item) {
+            if (empty($item['buyer_customized_info'])) {
+                continue;
+            }
+            $note = (string)__(
+                "Customization for SKU %sku: <a href='%customized_link'>Link</a><br>",
+                [
+                    'sku' => $item['sku'],
+                    'customized_link' => $item['buyer_customized_info'],
+                ]
+            );
+
+            $this->noteRepository->create($this->order->getId(), $note);
+        }
+    }
+
     //########################################
+
+    /**
+     * @return \Ess\M2ePro\Model\Order|null
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    private function findOriginalOrder(string $replacedAmazonOrderId): ?\Ess\M2ePro\Model\Order
+    {
+        $existOrders = $this->amazonFactory->getObject('Order')->getCollection()
+                                           ->addFieldToFilter('account_id', $this->account->getId())
+                                           ->addFieldToFilter('amazon_order_id', $replacedAmazonOrderId)
+                                           ->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_ASC)
+                                           ->getItems();
+
+        if (!empty($existOrders)) {
+            return reset($existOrders);
+        }
+
+        return null;
+    }
+
+    private function createReplacementOrderNote(string $replacedAmazonOrderId)
+    {
+        $noteText = (string) __('Original order ID %1', $replacedAmazonOrderId);
+        $this->noteRepository->create($this->order->getData('id'), $noteText);
+    }
+
+    private function createOriginalOrderLog(\Ess\M2ePro\Model\Order $originalOrder): void
+    {
+        $message = (string)__(
+            "Replacement order ID %1 was requested",
+            $this->getData('amazon_order_id')
+        );
+        $originalOrder->addInfoLog(
+            $message,
+            [],
+            [],
+            false
+        );
+    }
+
+    private function hasReplacementOrderIdUpdate(): bool
+    {
+        if (!$this->isUpdated()) {
+            return false;
+        }
+
+        return $this->order->getChildObject()
+                           ->getReplacedAmazonOrderId() !== $this->getData('replaced_amazon_order_id');
+    }
 
     protected function checkUpdates(): void
     {
@@ -483,6 +565,10 @@ class Builder extends AbstractModel
 
         if ($this->hasUpdatedVat()) {
             $this->updates[] = self::UPDATE_B2B_VAT_REVERSE_CHARGE;
+        }
+
+        if ($this->hasReplacementOrderIdUpdate()) {
+            $this->updates[] = self::UPDATE_REPLACEMENT_ORDER_ID;
         }
     }
 

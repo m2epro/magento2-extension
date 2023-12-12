@@ -9472,6 +9472,12 @@ class Installer
                                     null,
                                     ['default' => null]
                                 )
+                                ->addColumn(
+                                    'replaced_amazon_order_id',
+                                    Table::TYPE_TEXT,
+                                    255,
+                                    ['default' => null]
+                                )
                                  ->addIndex('amazon_order_id', 'amazon_order_id')
                                  ->addIndex('seller_order_id', 'seller_order_id')
                                  ->addIndex('is_prime', 'is_prime')
@@ -9483,6 +9489,7 @@ class Installer
                                  ->addIndex('paid_amount', 'paid_amount')
                                  ->addIndex('purchase_create_date', 'purchase_create_date')
                                  ->addIndex('shipping_date_to', 'shipping_date_to')
+                                 ->addIndex('replaced_amazon_order_id', 'replaced_amazon_order_id')
                                  ->setOption('type', 'INNODB')
                                  ->setOption('charset', 'utf8')
                                  ->setOption('collate', 'utf8_general_ci')
@@ -9584,6 +9591,12 @@ class Installer
                                          'fulfillment_center_id',
                                          Table::TYPE_TEXT,
                                          10,
+                                         ['default' => null]
+                                     )
+                                     ->addColumn(
+                                         'buyer_customized_info',
+                                         Table::TYPE_TEXT,
+                                         null,
                                          ['default' => null]
                                      )
                                      ->addIndex('general_id', 'general_id')

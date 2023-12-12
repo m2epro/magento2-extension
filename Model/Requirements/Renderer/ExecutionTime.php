@@ -59,19 +59,18 @@ HTML;
         $color = $this->getCheckObject()->isMeet() ? 'green' : 'red';
 
         if ($this->getCheckObject()->getReal() === null) {
-            $url = 'https://help.m2epro.com/support/solutions/articles/9000200880';
-            $html = <<<HTML
-<span style="color: orange;">
-    <span>{__('unknown')}</span>&nbsp;
-    <a href="{$url}" target="_blank">{__('[read more]')}</a>&nbsp;
-</span>
-HTML;
+            $html = sprintf(
+                '<span style="color: orange;"><span>%s</span>&nbsp;<a href="%s" target="_blank">%s</a>&nbsp;</span>',
+                __('unknown'),
+                'https://help.m2epro.com/support/solutions/articles/9000200880',
+                __('read more')
+            );
         } elseif ($this->getCheckObject()->getReal() <= 0) {
-            $html = <<<HTML
-<span style="color: {$color};">
-    <span>{__('unlimited')}</span>&nbsp;
-</span>
-HTML;
+            $html = sprintf(
+                '<span style="color: %s;"><span>%s</span>&nbsp;</span>',
+                $color,
+                __('unlimited')
+            );
         } else {
             $html = <<<HTML
 <span style="color: {$color};">

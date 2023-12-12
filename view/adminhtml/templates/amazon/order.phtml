@@ -54,6 +54,10 @@ if (empty($currency)) {
                             style="margin-left: 5px; vertical-align: middle;"/>
                     <?php endif; ?>
                 </span>
+                    <?php if ($block->order->getChildObject()->getReplacedAmazonOrderId()) : ?>
+                        &nbsp;<div class="label-replacement-order">Replacement</div>
+                    <?php endif; ?>
+
                 </strong>
                 <div style="float: right;">
                     <?php $url = $block->getHelper('Component\Amazon')->getOrderUrl(

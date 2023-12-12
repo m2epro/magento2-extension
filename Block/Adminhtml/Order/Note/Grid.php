@@ -15,8 +15,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
  */
 class Grid extends AbstractGrid
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -28,8 +26,6 @@ class Grid extends AbstractGrid
         $this->setFilterVisibility(false);
         $this->setUseAjax(true);
     }
-
-    //########################################
 
     protected function _prepareCollection()
     {
@@ -51,6 +47,7 @@ class Grid extends AbstractGrid
             'sortable' => false,
             'filter_index' => 'id',
             'index' => 'note',
+            'frame_callback' => [$this, 'callbackColumnDescription'],
         ]);
 
         $this->addColumn('create_date', [
@@ -89,6 +86,13 @@ class Grid extends AbstractGrid
     }
 
     //########################################
+
+    public function callbackColumnDescription($value, $row, $column, $isExport)
+    {
+        $note = $row->getData('note');
+
+        return $note;
+    }
 
     public function getRowUrl($item)
     {

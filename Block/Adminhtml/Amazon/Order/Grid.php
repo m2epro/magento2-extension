@@ -431,6 +431,11 @@ HTML;
 HTML;
         }
 
+        $isReplacementOrder = '';
+        if ($row->getChildObject()->getReplacedAmazonOrderId()) {
+            $isReplacementOrder = '<div class="label-replacement-order">Replacement</div>';
+        }
+
         $returnString .= <<<HTML
 <a title="{$this->__('View on Amazon')}" target="_blank" href="{$url}">
 <img style="margin-top: 6px; float: right"
@@ -439,6 +444,7 @@ HTML;
         $returnString .= $primeImageHtml;
         $returnString .= $businessImageHtml;
         $returnString .= $isSoldByAmazonImageHtml;
+        $returnString .= $isReplacementOrder;
 
         /** @var \Ess\M2ePro\Model\Order\Note[] $notes */
         $notes = $this->notesCollection->getItemsByColumnValue('order_id', $row->getData('id'));

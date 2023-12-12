@@ -44,6 +44,7 @@ class Builder extends AbstractModel
         $this->setData('title', trim($data['title']));
         $this->setData('gift_type', trim($data['gift_type']));
         $this->setData('gift_message', trim($data['gift_message']));
+        $this->setData('buyer_customized_info', $data['buyer_customized_info']);
         // ---------------------------------------
 
         // Init sale data

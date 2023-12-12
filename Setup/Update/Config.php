@@ -330,10 +330,12 @@ class Config extends AbstractConfig
                 'RemoveSupportUrlFromConfigTable',
                 'AddWalmartIsWFS',
                 'AddWalmartOrdersWfsLastSynchronization',
+                'AddAmazonOriginalOrderIdColumn',
                 'RestoreEpidsForAustralia',
             ],
             'y23_m12' => [
                 'AddEbayBuyerReturnRequested',
+                'AddCustomizedInfoToAmazonItems',
             ]
         ];
     }

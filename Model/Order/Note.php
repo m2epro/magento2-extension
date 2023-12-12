@@ -1,22 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Order\Note
- */
 class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Order */
-    protected $order = null;
-
-    //########################################
+    private $order = null;
 
     public function _construct()
     {
@@ -24,11 +13,14 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Order\Note::class);
     }
 
-    //########################################
-
     public function getNote()
     {
         return $this->getData('note');
+    }
+
+    public function setNote(string $note)
+    {
+        $this->setData('note', $note);
     }
 
     public function getOrderId()
@@ -36,7 +28,10 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getData('order_id');
     }
 
-    //########################################
+    public function setOrderId(int $orderId)
+    {
+        $this->setData('order_id', $orderId);
+    }
 
     public function afterDelete()
     {
@@ -57,8 +52,6 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         return parent::afterDelete();
     }
-
-    //########################################
 
     public function afterSave()
     {
@@ -89,8 +82,6 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return parent::afterSave();
     }
 
-    //########################################
-
     protected function updateMagentoOrderComments($comment)
     {
         $magentoOrderModel = $this->getOrder()->getMagentoOrder();
@@ -105,8 +96,6 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
     }
 
-    //########################################
-
     public function getOrder()
     {
         if ($this->order === null) {
@@ -115,6 +104,4 @@ class Note extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         return $this->order;
     }
-
-    //########################################
 }

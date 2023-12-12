@@ -190,6 +190,16 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $this->getData('gift_message');
     }
 
+    public function hasCustomizedInfo(): bool
+    {
+        return $this->getCustomizedInfo() !== null;
+    }
+
+    public function getCustomizedInfo(): ?string
+    {
+        return $this->getData('buyer_customized_info');
+    }
+
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic

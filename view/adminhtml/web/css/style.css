@@ -647,3 +647,12 @@ button.action * {
     width: auto !important;
     margin-left: -2.6rem !important;
 }
+
+.label-replacement-order {
+    display: inline;
+    color: white;
+    background: grey;
+    border-radius: 2px;
+    padding: 2px;
+    text-align: center;
+}
