@@ -287,7 +287,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ) ?? '';
 
         $title .= '<br/><strong>' . __('SKU') . ':</strong> '
-            . $this->dataHelper->escapeHtml($tempSku)
+            . '<span class="white-space-pre-wrap">' . $this->dataHelper->escapeHtml($tempSku) . '</span>'
             . $additionalInfo;
 
         return $title;

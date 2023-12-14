@@ -436,7 +436,7 @@ HTML;
 
         $value .= <<<HTML
 <br/><strong>{$skuWord}:</strong>&nbsp;
-{$sku}
+<span class="white-space-pre-wrap">{$sku}</span>
 HTML;
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */

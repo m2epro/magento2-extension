@@ -36,6 +36,10 @@ class EbayCategories extends AbstractFeature
             ->query();
 
         while ($row = $stmt->fetch()) {
+            if (empty($row['additional_data'])) {
+                continue;
+            }
+
             $additionalData = (array)json_decode($row['additional_data'], true);
             unset($additionalData['mode_same_category_data']);
             unset($additionalData['ebay_primary_category']);

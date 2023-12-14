@@ -10,15 +10,19 @@ class Repository
     private $dictionaryProductTypeCollectionFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
     private $templateProductTypeCollectionFactory;
+    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
+    private $productTypeHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\CollectionFactory $productTypeCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory $templateTypeCollectionFactory
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory $templateTypeCollectionFactory,
+        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper
     ) {
         $this->marketplaceDictionaryCollectionFactory = $marketplaceCollectionFactory;
         $this->dictionaryProductTypeCollectionFactory = $productTypeCollectionFactory;
         $this->templateProductTypeCollectionFactory = $templateTypeCollectionFactory;
+        $this->productTypeHelper = $productTypeHelper;
     }
 
     /**
@@ -31,7 +35,7 @@ class Repository
     public function getAvailableProductTypes(int $marketplaceId, array $nicks): array
     {
         $productTypes = $this->getProductTypesFromMarketplaceDictionary($marketplaceId);
-        $templateIds = $this->getTemplateIdsOfProductTypes(array_column($productTypes, 'nick'));
+        $alreadyUsedProductTypes = $this->productTypeHelper->getConfiguredProductTypesList($marketplaceId);
 
         $availableProductTypes = [];
         foreach ($nicks as $nick) {
@@ -40,7 +44,7 @@ class Repository
                     $availableProductTypes[$nick] = [
                         'nick' => $productType['nick'],
                         'title' => $productType['title'],
-                        'templateId' => $templateIds[$productType['nick']] ?? null,
+                        'templateId' => $alreadyUsedProductTypes[$productType['nick']] ?? null,
                     ];
                 }
             }
@@ -78,40 +82,5 @@ class Repository
         }
 
         return $result;
-    }
-
-    /**
-     * @param string[] $nicksOfExistedProductTypes
-     *
-     * @return array<string, string|null>
-     */
-    private function getTemplateIdsOfProductTypes(array $nicksOfExistedProductTypes): array
-    {
-        $dictionaryProductTypeCollection = $this->dictionaryProductTypeCollectionFactory->create();
-        $templateProductTypeCollection = $this->templateProductTypeCollectionFactory->create();
-
-        $select = $dictionaryProductTypeCollection->getSelect();
-        $select->reset();
-        $select->from(['dpt' => $dictionaryProductTypeCollection->getMainTable()], ['nick']);
-
-        $nicks = $dictionaryProductTypeCollection->getConnection()->quote($nicksOfExistedProductTypes);
-        $select->joinLeft(
-            ['tpt' => $templateProductTypeCollection->getMainTable()],
-            new \Zend_Db_Expr(
-                sprintf('tpt.dictionary_product_type_id = dpt.id AND dpt.nick IN (%s)', $nicks)
-            ),
-            ['id' => 'tpt.id']
-        );
-
-        $templateIds = [];
-        $allItems = $dictionaryProductTypeCollection->getConnection()->fetchAll(
-            $dictionaryProductTypeCollection->getSelect()
-        );
-
-        foreach ($allItems as $item) {
-            $templateIds[$item['nick']] = $item['id'];
-        }
-
-        return $templateIds;
     }
 }

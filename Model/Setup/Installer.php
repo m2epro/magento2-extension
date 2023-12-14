@@ -10889,6 +10889,19 @@ class Installer
                     'update_date' => '2022-09-01 00:00:00',
                     'create_date' => '2022-09-01 00:00:00',
                 ],
+                [
+                    'id' => 49,
+                    'native_id' => 21,
+                    'title' => 'South Africa',
+                    'code' => 'ZA',
+                    'url' => 'amazon.co.za',
+                    'status' => 0,
+                    'sorder' => 23,
+                    'group_title' => 'Europe',
+                    'component_mode' => 'amazon',
+                    'update_date' => '2023-12-14 00:00:00',
+                    'create_date' => '2023-12-14 00:00:00',
+                ],
             ]
         );
 
@@ -11065,6 +11078,15 @@ class Installer
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 0,
+                ],
+                [
+                    'marketplace_id' => 49,
+                    'default_currency' => 'ZAR',
+                    'is_new_asin_available' => 1,
+                    'is_merchant_fulfillment_available' => 1,
+                    'is_business_available' => 1,
+                    'is_vat_calculation_service_available' => 1,
+                    'is_product_tax_code_policy_available' => 1,
                 ],
             ]
         );

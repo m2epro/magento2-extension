@@ -348,7 +348,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $valueHtml .= '<br/>' .
             '<strong>' . $this->__('SKU') . ':</strong>&nbsp;' .
-            $this->dataHelper->escapeHtml($sku);
+            '<span class="white-space-pre-wrap">' . $this->dataHelper->escapeHtml($sku) . '</span>';
 
         if ($category = $row->getData('online_main_category')) {
             $valueHtml .= '<br/><br/>' .

@@ -382,7 +382,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $value .= '<br/><strong>' . __('SKU') .
-            ':</strong> ' . $this->dataHelper->escapeHtml($sku) . '<br/>';
+            ':</strong><span class="white-space-pre-wrap"> ' . $this->dataHelper->escapeHtml($sku) . '</span><br/>';
 
         $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */

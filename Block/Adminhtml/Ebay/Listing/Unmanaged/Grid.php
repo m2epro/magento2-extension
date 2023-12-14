@@ -348,7 +348,7 @@ HTML;
 
         return <<<HTML
 <span>{$this->dataHelper->escapeHtml($title)}</span><br/>
-<strong>{$titleSku}:</strong>&nbsp;{$tempSku}<br/>
+<strong>{$titleSku}:</strong>&nbsp;<span class="white-space-pre-wrap">{$tempSku}</span><br/>
 {$categoryHtml}
 {$additionalInfo}
 HTML;

@@ -336,6 +336,7 @@ class Config extends AbstractConfig
             'y23_m12' => [
                 'AddEbayBuyerReturnRequested',
                 'AddCustomizedInfoToAmazonItems',
+                'AddAmazonMarketplaceSouthAfrica',
             ]
         ];
     }

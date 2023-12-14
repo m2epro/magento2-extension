@@ -58,8 +58,10 @@ $searchTooltip = __('Enter keywords in marketplace-specific language. Use plural
             <div class="chooser_browser">
                 <select id="product_type_browse_results" size="8"
                         class="multiselect admin__control-multiselect"></select>
-                <div class="product_type_browse_error_content"></div>
+                <div></div>
             </div>
+
+            <div id="product_type_browse_error_content" class="product_type_error_content"></div>
         </div>
 
         <div id="productTypeChooserTabs_search_content" aria-labelledby="productTypeChooserTabs_search"
@@ -75,7 +77,7 @@ $searchTooltip = __('Enter keywords in marketplace-specific language. Use plural
             <div class="chooser_browser">
                 <select id="product_type_search_results" size="8"
                         class="multiselect admin__control-multiselect"></select>
-                <div class="product_type_error_content"></div>
+                <div id="product_type_search_error_content" class="product_type_error_content"></div>
             </div>
         </div>
     </div>

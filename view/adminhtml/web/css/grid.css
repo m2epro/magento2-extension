@@ -194,3 +194,12 @@ button.action-default.scalable.task[title="Export"]:before {
 }
 
 /* ================================================ */
+
+table tbody .col-amazon_sku,
+table tbody .col-sku,
+table tbody .col-online_sku,
+.white-space-pre-wrap{
+    white-space: pre-wrap;
+}
+
+/* ================================================ */

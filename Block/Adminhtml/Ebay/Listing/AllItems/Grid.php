@@ -447,7 +447,7 @@ HTML;
 
         $skuWord = __('SKU');
         $html .= <<<HTML
-<br/><strong>{$skuWord}:</strong>&nbsp;{$sku}
+<br/><strong>{$skuWord}:</strong>&nbsp;<span class="white-space-pre-wrap">{$sku}</span>
 HTML;
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */

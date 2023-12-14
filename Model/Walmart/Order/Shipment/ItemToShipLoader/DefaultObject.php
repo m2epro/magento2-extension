@@ -89,6 +89,10 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
          * - Walmart Order Item QTY is always equals 1.
          */
 
+        if ($itemQtyPurchased === 0 || count($orderItemIds) === 0) {
+            return [];
+        }
+
         $itemQty = $itemQtyPurchased / count($orderItemIds);
 
         $items = [];

@@ -460,7 +460,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $value .= '<br/><strong>' . $this->__('SKU') . ':</strong>&nbsp;';
-        $value .= $this->dataHelper->escapeHtml($sku);
+        $value .= '<span class="white-space-pre-wrap">' . $this->dataHelper->escapeHtml($sku) . '</span>';
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $row->getData('listing_product_id'));

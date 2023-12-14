@@ -78,6 +78,10 @@ class PretendedToBeSimple extends DefaultObject implements ItemToShipLoaderInter
         );
 
         $qtyPurchased = $orderItem->getChildObject()->getQtyPurchased();
+        if ($qtyPurchased === 0 || count($orderItemIds) === 0) {
+            return [];
+        }
+
         $itemQty = $qtyPurchased / count($orderItemIds);
 
         $items = [];

@@ -18,6 +18,8 @@ define(
 
                 $('product_type_reset_link').observe('click', this.resetCurrentProductType.bind(this));
                 $('product_type_search_results').observe('change', this.updateProductTypeByResult.bind(this));
+
+                jQuery('.product-type-confirm').prop('disabled', true);
             },
 
             getProductTypeTitle: function (productType)
@@ -96,6 +98,21 @@ define(
 
                 jQuery('#chooser_tabs_container > *').hide()
                 $(item.id + '_content').style.display = 'block';
+
+                this.resetTabsChanges();
+            },
+
+            resetTabsChanges: function ()
+            {
+                jQuery('.product-type-confirm').prop('disabled', true);
+                this.resetCurrentProductType();
+
+                const rootContainer = $('product_type_browse_results');
+                AmazonTemplateProductTypeFinderObj.clearChildCategories(rootContainer);
+                AmazonTemplateProductTypeFinderObj.clearFollowingContainers(rootContainer);
+
+                jQuery('#product_type_browse_error_content').empty();
+                jQuery('#product_type_search_error_content').empty();
             },
 
             updateProductTypeByResult: function (event)
@@ -104,12 +121,11 @@ define(
                 const selectElement = event.target;
                 const options = Array.from(selectElement.options)
                 const selectOption = options.find(option => option.value === selectValue);
-                const errorContentWrapper = jQuery(selectElement).siblings('.product_type_error_content');
+                const errorContentWrapper = jQuery('#product_type_search_error_content');
+                const confirmButton = jQuery('.product-type-confirm');
 
                 if (selectOption.dataset.existProductTypeId) {
-                    jQuery(selectElement).closest('.modal-inner-wrap')
-                            .find('.product-type-confirm')
-                            .prop('disabled', true);
+                    confirmButton.prop('disabled', true);
 
                     if (errorContentWrapper.length > 0) {
                         const url = M2ePro.url.get(
@@ -124,9 +140,7 @@ define(
                         jQuery(errorContentWrapper).html(errorContent);
                     }
                 } else {
-                    jQuery(selectElement).closest('.modal-inner-wrap')
-                            .find('.product-type-confirm')
-                            .prop('disabled', false);
+                    confirmButton.prop('disabled', false);
 
                     if (errorContentWrapper.length > 0 && !errorContentWrapper.is(':empty')) {
                         errorContentWrapper.empty();
@@ -139,6 +153,7 @@ define(
             {
                 this.setCurrentProductType('');
                 $('product_type_search_results').value = '';
+                jQuery('.product-type-confirm').prop('disabled', true);
             },
 
             insertOption: function (container, value, title, typeId)

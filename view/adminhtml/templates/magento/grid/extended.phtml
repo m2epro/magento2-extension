@@ -274,9 +274,7 @@ $numColumns = sizeof($block->getColumns());
                                     ?>
                                 <td <?php echo($_rowspan ? 'rowspan="' . $_rowspan . '" ' : '') ?>
                                     class="<?php /* @escapeNotVerified */ echo $_column->getCssProperty() ?>
-                                        <?php /* @escapeNotVerified */ echo $_column->getId() == 'massaction' ? 'data-grid-checkbox-cell': ''?>">
-                                    <?php echo(($_html = $_column->getRowField($_item)) != '' ? $_html : '&nbsp;') ?>
-                                    </td><?php
+                                        <?php /* @escapeNotVerified */ echo $_column->getId() == 'massaction' ? 'data-grid-checkbox-cell': ''?>"><?php echo(($_html = $_column->getRowField($_item)) != '' ? $_html : '&nbsp;') ?></td><?php
                                     if ($block->shouldRenderEmptyCell($_item, $_column)):
                                         ?>
                                         <td colspan="<?php /* @escapeNotVerified */ echo $block->getEmptyCellColspan($_item) ?>"

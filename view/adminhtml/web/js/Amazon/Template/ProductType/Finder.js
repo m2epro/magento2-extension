@@ -88,7 +88,6 @@ define([
                     var items = parsedResponse.items;
 
                     var select = document.createElement('select');
-                    select.id = 'select-id';
                     select.className = 'multiselect admin__control-multiselect';
                     select.style.minWidth = '200px';
                     select.style.maxHeight = 'none';
@@ -139,7 +138,6 @@ define([
             childContainer.style.marginLeft = '10px';
 
             var select = document.createElement('select');
-            select.id = 'select-id';
             select.className = 'multiselect admin__control-multiselect';
             select.style.minWidth = '200px';
             select.style.maxHeight = 'none';
@@ -150,13 +148,18 @@ define([
                 option.value = productType.nick;
                 option.setAttribute('path', productType.path);
                 option.setAttribute('template-id', productType.templateId);
+
+                if (productType.templateId) {
+                    option.setAttribute('data-exist-product-type-id', productType.templateId);
+                }
+
                 option.textContent = productType.title;
 
                 select.appendChild(option);
 
                 option.addEventListener('click', function () {
                     self.clearChildCategories(childContainer);
-                    self.setCurrentProductType(productType);
+                    self.setCurrentProductType(option, productType);
                 });
             });
 
@@ -214,12 +217,14 @@ define([
             });
         },
 
-        setCurrentProductType: function (productType) {
+        setCurrentProductType: function (option, productType) {
             this.currentProductType = productType.nick;
             const productTypePath = this.getProductTypePath(productType);
             const selectedProductType = jQuery('#search_popup_selected_product_type_title');
             const productTypeNotSelected = jQuery('#search_popup_product_type_not_selected');
             const productTypeResetLink = jQuery('#product_type_reset_link');
+            const confirmButton = jQuery('.product-type-confirm');
+            const errorContentWrapper = jQuery('#product_type_browse_error_content');
 
             if (productTypePath) {
                 productTypeNotSelected.hide();
@@ -229,6 +234,29 @@ define([
                 productTypeNotSelected.show();
                 selectedProductType.hide();
                 productTypeResetLink.hide();
+            }
+
+            if (productType.templateId) {
+                confirmButton.prop('disabled', true);
+
+                if (errorContentWrapper.length > 0) {
+                    const url = M2ePro.url.get(
+                            'amazon_template_productType/edit',
+                            {id: option.dataset.existProductTypeId}
+                    );
+                    const errorContent = str_replace(
+                            'exist_product_type_url',
+                            url,
+                            M2ePro.translator.translate('product_type_configured')
+                    );
+                    jQuery(errorContentWrapper).html(errorContent);
+                }
+            } else {
+                confirmButton.prop('disabled', false);
+
+                if (errorContentWrapper.length > 0 && !errorContentWrapper.is(':empty')) {
+                    errorContentWrapper.empty();
+                }
             }
         },
 
