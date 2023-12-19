@@ -120,6 +120,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     private function getMessagesFromResponseData(): array
     {
         $responseData = $this->getPreparedResponseData();
+        if (empty($responseData['messages'])) {
+            return [];
+        }
 
         $messages = [];
 

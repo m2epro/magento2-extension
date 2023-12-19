@@ -541,7 +541,6 @@ define([
                 self.magentoOrdersStatusMappingModeChange();
 
                 $('magento_block_ebay_accounts_magento_orders_refund_and_cancellation').hide();
-                $('magento_orders_refund').value = 1;
 
                 $('magento_block_ebay_accounts_magento_orders_rules-wrapper').hide();
                 $('magento_orders_creation_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::MAGENTO_ORDERS_CREATE_CHECKOUT_AND_PAID');

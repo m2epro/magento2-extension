@@ -69,6 +69,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                 continue;
             }
 
+            $this->setShippedQtyIntoEbayOrderItem($item, (int)$shipmentItem->getQty());
             $items += $item;
         }
 
@@ -86,5 +87,33 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             : self::HANDLE_RESULT_FAILED;
     }
 
-    //########################################
+    public function handleItem(
+        \Ess\M2ePro\Model\Order $order,
+        \Magento\Sales\Model\Order\Shipment\Item $shipmentItem
+    ): int {
+        $trackingDetails = $this->getTrackingDetails($order, $shipmentItem->getShipment());
+        if (!$this->isNeedToHandle($order, $trackingDetails)) {
+            return self::HANDLE_RESULT_SKIPPED;
+        }
+
+        $items = $this->getItemToShipLoader($order, $shipmentItem)->loadItem();
+        $this->setShippedQtyIntoEbayOrderItem($items, (int)$shipmentItem->getQty());
+
+        return $this->processStatusUpdates($order, $trackingDetails, $items)
+            ? self::HANDLE_RESULT_SUCCEEDED
+            : self::HANDLE_RESULT_FAILED;
+    }
+
+    private function setShippedQtyIntoEbayOrderItem(array $loadedItem, int $shippedQty): void
+    {
+        /** @var \Ess\M2ePro\Model\Order\Item|null $orderItem */
+        $orderItem = array_values($loadedItem)[0] ?? null;
+        if ($orderItem === null) {
+            return;
+        }
+
+        /** @var \Ess\M2ePro\Model\Ebay\Order\Item $ebayOrderItem */
+        $ebayOrderItem = $orderItem->getChildObject();
+        $ebayOrderItem->setShippedQtyTmpValue($shippedQty);
+    }
 }

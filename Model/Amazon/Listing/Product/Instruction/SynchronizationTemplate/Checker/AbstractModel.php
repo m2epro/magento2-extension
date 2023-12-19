@@ -73,6 +73,7 @@ abstract class AbstractModel extends BaseAbstractModel
             ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
             \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE,
+            \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General::INSTRUCTION_TYPE_DISABLED_MANAGE,
         ];
     }
 
@@ -93,6 +94,7 @@ abstract class AbstractModel extends BaseAbstractModel
             ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
             \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_PRICE,
+            \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General::INSTRUCTION_TYPE_DISABLED_MANAGE,
         ];
     }
 

@@ -331,7 +331,8 @@ class Details extends AbstractModel
 
     protected function prepareFieldValue(array $fieldSpecifications)
     {
-        $magentoProduct = $this->getMagentoProduct();
+        $magentoProduct = $this->getAmazonListingProduct()
+                               ->getActualMagentoProduct();
         if (!$magentoProduct->exists()) {
             return null;
         }

@@ -438,7 +438,9 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $this->addInstruction(
             $listingProduct,
             \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
-            80
+            80,
+            \Ess\M2ePro\Helper\Date::createCurrentGmt()
+                                   ->modify('+30 minutes')
         );
 
         return $data;
@@ -470,18 +472,12 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $ebayListingProduct->getOnlineQty() != $data['online_qty'] ||
             $ebayListingProduct->getOnlineQtySold() != $data['online_qty_sold']
         ) {
-            $isNeedSkipQTYChange = $this->isNeedSkipQTYChange(
+            $isNeedDelayInstruction = $this->isNeedDelayInstructionAboutQtyChanged(
                 $data['online_qty'],
                 $data['online_qty_sold'],
                 $ebayListingProduct->getOnlineQty(),
                 $ebayListingProduct->getOnlineQtySold()
             );
-
-            if ($isNeedSkipQTYChange && !$isAuction) {
-                unset($data['online_qty'], $data['online_qty_sold']);
-
-                return $data;
-            }
 
             $this->logReportChange(
                 $listingProduct,
@@ -495,7 +491,11 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->addInstruction(
                 $listingProduct,
                 \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                80
+                80,
+                $isNeedDelayInstruction
+                    ? \Ess\M2ePro\Helper\Date::createCurrentGmt()
+                    ->modify('+30 minutes')
+                    : null
             );
         }
 
@@ -616,19 +616,15 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                     $ebayVariation->getOnlineQty() != $updateData['online_qty'] ||
                     $ebayVariation->getOnlineQtySold() != $updateData['online_qty_sold']
                 ) {
-                    $isNeedSkipQTYChange = $this->isNeedSkipQTYChange(
+                    $hasVariationQtyChanges = true;
+                    $isVariationChanged = true;
+
+                    $isNeedDelayInstruction = $this->isNeedDelayInstructionAboutQtyChanged(
                         $updateData['online_qty'],
                         $updateData['online_qty_sold'],
                         $ebayVariation->getOnlineQty(),
                         $ebayVariation->getOnlineQtySold()
                     );
-
-                    if ($isNeedSkipQTYChange) {
-                        unset($updateData['online_qty'], $updateData['online_qty_sold']);
-                    } else {
-                        $hasVariationQtyChanges = true;
-                        $isVariationChanged = true;
-                    }
                 }
 
                 if ($isVariationChanged) {
@@ -667,7 +663,11 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
             $this->addInstruction(
                 $listingProduct,
                 \Ess\M2ePro\Model\Ebay\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
-                80
+                80,
+                $isNeedDelayInstruction
+                    ? \Ess\M2ePro\Helper\Date::createCurrentGmt()
+                    ->modify('+30 minutes')
+                    : null
             );
         }
     }
@@ -810,8 +810,12 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         return $result;
     }
 
-    protected function addInstruction(\Ess\M2ePro\Model\Listing\Product $listingProduct, $type, $priority)
-    {
+    protected function addInstruction(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $type,
+        $priority,
+        ?\DateTime $skipUntil = null
+    ) {
         /** @var \Ess\M2ePro\Model\Listing\Product\Instruction $instruction */
         $instruction = $this->activeRecordFactory->getObject('Listing_Product_Instruction');
         $instruction->setData(
@@ -821,6 +825,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
                 'type' => $type,
                 'initiator' => self::INSTRUCTION_INITIATOR,
                 'priority' => $priority,
+                'skip_until' => $skipUntil ? $skipUntil->format('Y-m-d H:i:s') : null
             ]
         );
         $instruction->save();
@@ -848,17 +853,7 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    /**
-     * Skip channel change to prevent oversell when we have got report before an order
-     *
-     * @param int $updateOnlineQty
-     * @param int $updateSoldQty
-     * @param int $existOnlineQty
-     * @param int $existSoldQty
-     *
-     * @return bool
-     */
-    private function isNeedSkipQTYChange(
+    private function isNeedDelayInstructionAboutQtyChanged(
         int $updateOnlineQty,
         int $updateSoldQty,
         int $existOnlineQty,
@@ -867,6 +862,6 @@ class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
         $updateQty = $updateOnlineQty - $updateSoldQty;
         $existQty = $existOnlineQty - $existSoldQty;
 
-        return $updateQty < 5 && $updateQty < $existQty;
+        return $updateQty < $existQty;
     }
 }

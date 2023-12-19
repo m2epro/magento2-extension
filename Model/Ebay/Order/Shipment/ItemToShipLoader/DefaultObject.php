@@ -44,7 +44,7 @@ class DefaultObject extends AbstractModel implements ItemToShipLoaderInterface
     //########################################
 
     /**
-     * @return array
+     * @return array<string, \Ess\M2ePro\Model\Order\Item>
      * @throws \Exception
      */
     public function loadItem()

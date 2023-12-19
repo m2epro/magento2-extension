@@ -8,12 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Repricing\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General
- */
 class General extends AbstractModel
 {
-    public const INSTRUCTION_TYPE_STATUS_CHANGED = 'repricing_status_changed';
+    public const INSTRUCTION_TYPE_DISABLED_MANAGE = 'disabled_manage_on_repricer';
     public const INSTRUCTION_INITIATOR = 'repricing_general_synchronization';
 
     /** @var array  */
@@ -452,7 +449,7 @@ class General extends AbstractModel
             foreach ($notManagedListingsProductsIds as $notManagedListingProductId) {
                 $instructionsData[] = [
                     'listing_product_id' => $notManagedListingProductId,
-                    'type' => self::INSTRUCTION_TYPE_STATUS_CHANGED,
+                    'type' => self::INSTRUCTION_TYPE_DISABLED_MANAGE,
                     'initiator' => self::INSTRUCTION_INITIATOR,
                     'priority' => 50,
                 ];

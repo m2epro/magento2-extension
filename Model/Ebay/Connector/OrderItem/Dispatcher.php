@@ -66,8 +66,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        /** @var \Ess\M2ePro\Model\Order\Item[] $items */
+        $result = true;
 
+        /** @var \Ess\M2ePro\Model\Order\Item[] $items */
         foreach ($items as $item) {
             try {
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
@@ -78,6 +79,13 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 $connector->setOrderItem($item);
 
                 $connector->process();
+
+                if (
+                    $connector instanceof OrderItem\Update\Status
+                    && !$connector->isSuccessfulUpdateStatus()
+                ) {
+                    $result = false;
+                }
             } catch (\Exception $e) {
                 $item->getOrder()->addErrorLog(
                     'Action was not completed (Item: %item_id%, Transaction: %trn_id%). Reason: %msg%',
@@ -92,7 +100,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        return true;
+        return $result;
     }
 
     //########################################

@@ -492,7 +492,6 @@ define([
                 self.magentoOrdersStatusMappingModeChange();
 
                 $('magento_block_walmart_accounts_magento_orders_refund_and_cancellation').hide();
-                $('magento_orders_refund').value = 1;
 
                 $('magento_block_walmart_accounts_magento_orders_tax-wrapper').hide();
                 $('magento_orders_tax_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_TAX_MODE_MIXED');

@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Ebay\Connector;
 
 class Protocol implements \Ess\M2ePro\Model\Connector\ProtocolInterface
 {
-    public const COMPONENT_VERSION = 21;
+    public const COMPONENT_VERSION = 22;
 
     public function getComponent(): string
     {

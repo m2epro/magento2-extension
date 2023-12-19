@@ -594,7 +594,6 @@ define([
                 $('magento_orders_fba_stock_mode').value = 1;
 
                 $('magento_block_amazon_accounts_magento_orders_refund_and_cancellation-wrapper').hide();
-                $('magento_orders_refund').value = 1;
 
                 $('magento_block_amazon_accounts_magento_orders_customer-wrapper').hide();
                 $('magento_orders_customer_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST');

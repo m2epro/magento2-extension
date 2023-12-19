@@ -25,7 +25,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel implements
             ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Amazon\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_REPRICING_DATA_CHANGED,
             \Ess\M2ePro\Model\Amazon\Account\Repricing\ChangeProcessor::INSTRUCTION_TYPE_ACCOUNT_REPRICING_DATA_CHANGED,
-            \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General::INSTRUCTION_TYPE_STATUS_CHANGED,
+            \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General::INSTRUCTION_TYPE_DISABLED_MANAGE,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_INITIATOR_MOVING_PRODUCT_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,

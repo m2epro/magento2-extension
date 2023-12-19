@@ -1,25 +1,44 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Order;
 
 use Ess\M2ePro\Model\Order\Change;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Order\Update
- */
 class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'ebay/order/update';
 
     public const MAX_UPDATES_PER_TIME = 200;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher */
+    private $orderItemConnectorDispatcher;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher $orderItemConnectorDispatcher,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource
+    ) {
+        parent::__construct(
+            $cronManager,
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+
+        $this->orderItemConnectorDispatcher = $orderItemConnectorDispatcher;
+    }
 
     public function isPossibleToRun()
     {
@@ -29,8 +48,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return parent::isPossibleToRun();
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -44,8 +61,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         return $synchronizationLog;
     }
-
-    //########################################
 
     protected function performActions()
     {
@@ -76,8 +91,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //########################################
-
     protected function getPermittedAccounts()
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountsCollection */
@@ -102,8 +115,6 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->processChange($change);
         }
     }
-
-    //########################################
 
     protected function getRelatedChanges(\Ess\M2ePro\Model\Account $account)
     {
@@ -167,35 +178,136 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 $connectorData['carrier_code'] = $changeParams['carrier_title'];
             }
 
-            if (!empty($changeParams['item_id'])) {
-                /** @var \Ess\M2ePro\Model\Order\Item $item */
-                $item = $this->parentFactory->getObjectLoaded(
-                    \Ess\M2ePro\Helper\Component\Ebay::NICK,
-                    'Order\Item',
-                    $changeParams['item_id']
-                );
+            if ($shippingItemDataChanges = $this->getPreparedShippingItemDataChanges($change)) {
+                $result = empty($connectorData['carrier_code']) || empty($connectorData['tracking_number'])
+                    ? $this->updateShippingStatusForEachItems($shippingItemDataChanges)
+                    : $this->updateShippingStatusForPackOfItems(
+                        $shippingItemDataChanges,
+                        $connectorData['tracking_number'],
+                        $connectorData['carrier_code']
+                    );
 
-                if ($item->getId()) {
-                    $dispatcher = $this->modelFactory->getObject('Ebay_Connector_OrderItem_Dispatcher');
-                    $dispatcher->process($action, [$item], $connectorData);
+                if ($result) {
+                    $change->delete();
                 }
-            } else {
-                /** @var \Ess\M2ePro\Model\Order $order */
-                $order = $this->parentFactory->getObjectLoaded(
-                    \Ess\M2ePro\Helper\Component\Ebay::NICK,
-                    'Order',
-                    $change->getOrderId()
-                );
 
-                if ($order->getId()) {
-                    $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
-                    $dispatcher->process($action, [$order], $connectorData);
-                }
+                return;
+            }
+
+            /** @var \Ess\M2ePro\Model\Order $order */
+            $order = $this->parentFactory->getObjectLoaded(
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Order',
+                $change->getOrderId()
+            );
+
+            if ($order->getId()) {
+                $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Order_Dispatcher');
+                $dispatcher->process($action, [$order], $connectorData);
             }
         }
     }
 
-    //########################################
+    /**
+     * @param \Ess\M2ePro\Model\Order\Change $change
+     *
+     * @return list<array{order_item: \Ess\M2ePro\Model\Order\Item, shipped_qty: int}>
+     */
+    private function getPreparedShippingItemDataChanges(\Ess\M2ePro\Model\Order\Change $change): array
+    {
+        $changeParams = $change->getParams();
+        if (empty($changeParams['items'])) {
+            return [];
+        }
+
+        $shippingData = [];
+        foreach ($changeParams['items'] as $itemData) {
+            if (empty($itemData['item_id']) || empty($itemData['shipped_qty'])) {
+                continue;
+            }
+
+            /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+            $orderItem = $this->parentFactory->getObjectLoaded(
+                \Ess\M2ePro\Helper\Component\Ebay::NICK,
+                'Order\Item',
+                $itemData['item_id']
+            );
+
+            if (
+                $orderItem->getId() === null
+                || $orderItem->getOrderId() != $change->getOrderId()
+            ) {
+                continue;
+            }
+
+            /** @see \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Status */
+            $orderItem->getOrder()->getLog()->setInitiator(
+                $change->getCreatorType()
+            );
+
+            $shippingData[] = [
+                'order_item' => $orderItem,
+                'shipped_qty' => $itemData['shipped_qty'],
+            ];
+        }
+
+        return $shippingData;
+    }
+
+    private function updateShippingStatusForEachItems(array $orderItemsShippingParams): bool
+    {
+        $isSuccessful = true;
+        foreach ($orderItemsShippingParams as $shippingParam) {
+            /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+            $orderItem = $shippingParam['order_item'];
+
+            $request = new \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Request();
+            $request->setItemId($orderItem->getChildObject()->getItemId());
+            $request->setTransactionId($orderItem->getChildObject()->getTransactionId());
+
+            $result = $this->orderItemConnectorDispatcher->process(
+                \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher::ACTION_UPDATE_STATUS,
+                [$orderItem],
+                [\Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Status::REQUEST_PARAM_KEY => $request]
+            );
+
+            if (!$result) {
+                $isSuccessful = false;
+            }
+        }
+
+        return $isSuccessful;
+    }
+
+    private function updateShippingStatusForPackOfItems(
+        array $orderItemsShippingParams,
+        string $trackingNumber,
+        string $carrierCode
+    ): bool {
+        $request = new \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Request();
+        $firstOrderItem = $orderItemsShippingParams[0]['order_item'];
+        $request->setOrderId($firstOrderItem->getOrder()->getChildObject()->getEbayOrderId());
+
+        foreach ($orderItemsShippingParams as $shippingParam) {
+            /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+            $orderItem = $shippingParam['order_item'];
+            $request->addItem(
+                new \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Request\Item(
+                    $orderItem->getChildObject()->getItemId(),
+                    $orderItem->getChildObject()->getTransactionId(),
+                    $trackingNumber,
+                    $carrierCode,
+                    $shippingParam['shipped_qty']
+                )
+            );
+        }
+
+        return $this->orderItemConnectorDispatcher->process(
+            \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher::ACTION_UPDATE_TRACK,
+            [$firstOrderItem],
+            [\Ess\M2ePro\Model\Ebay\Connector\OrderItem\Update\Status::REQUEST_PARAM_KEY => $request]
+        );
+    }
 
     protected function deleteNotActualChanges()
     {
@@ -204,6 +316,4 @@ class Update extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             \Ess\M2ePro\Helper\Component\Ebay::NICK
         );
     }
-
-    //########################################
 }

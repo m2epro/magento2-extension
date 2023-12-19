@@ -94,13 +94,13 @@ class Form extends AbstractForm
             'amazon_accounts_repricing',
             self::HELP_BLOCK,
             [
-                'content' => $this->__(
+                'content' => __(
                     <<<HTML
 <p>If necessary, you can manage additional settings of your Amazon items managed by Repricer.</p>
-<p>Head over to <a href="%url%" target="_blank" class="external-link">docs</a> for detailed information.</p>
+<p>Head over to <a href="%repricer" target="_blank" class="external-link">docs</a> for detailed information.</p>
 HTML
                     ,
-                    $this->supportHelper->getDocumentationArticleUrl('repricer')
+                    ['repricer' => $this->supportHelper->getDocumentationArticleUrl('repricer')]
                 ),
             ]
         );
@@ -198,7 +198,7 @@ HTML
     <strong>Regular Price</strong> is a common Price without any changes.
     This value is used for Repricing Rules configuration and plays the role of the roll-back Price in case
     the Rules cannot be applied or the Goals provided in the Repricing Rules cannot be achieved.
-    <a href="%url1%" target="_blank">Learn more</a> about using the Regular Price in Repricing Service.
+    <a href="%amazonRepricer" target="_blank">Learn more</a> about using the Regular Price in Repricing Service.
     <br /><br />
     Specify the settings for automatic update of the Regular Price:
     <br /><br />
@@ -216,9 +216,11 @@ HTML
     are available for the selection.
     <br /><br />
     More detailed information on how to work with this option can be found
-    <a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $repricerDocs,
-                    $this->supportHelper->getDocumentationArticleUrl('repricer')
+    <a href="%repricer" target="_blank" class="external-link">here</a>.',
+                    [
+                        'amazonRepricer' => $repricerDocs,
+                        'repricer' => $this->supportHelper->getDocumentationArticleUrl('repricer'),
+                    ]
                 )
             ) .
             '</div>';
@@ -349,7 +351,7 @@ HTML
                 __(
                     '
 <strong>Min Price</strong> is the lowest Price which you could sell your Item at.
-<a href="%url1%" target="_blank">Learn more</a> about using the Max Price in Repricing Service.
+<a href="%amazonRepricer" target="_blank">Learn more</a> about using the Max Price in Repricing Service.
 <br /><br />
 Specify the settings for automatic update of the Min Price:
 <br /><br />
@@ -366,9 +368,11 @@ Please note, only common (available in all Attribute sets in your Magento)
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
-<a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $repricerDocs,
-                    $this->supportHelper->getDocumentationArticleUrl('repricer')
+<a href="%repricer" target="_blank" class="external-link">here</a>.',
+                    [
+                        'amazonRepricer' => $repricerDocs,
+                        'repricer' => $this->supportHelper->getDocumentationArticleUrl('repricer'),
+                    ]
                 )
             ) .
             '</div>';
@@ -560,10 +564,10 @@ More detailed information on how to work with this option can be found
 
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
-                $this->__(
+                __(
                     '
 <strong>Max Price</strong> is the highest Price which you could sell your Item at.
-<a href="%url%" target="_blank">Learn more</a> about using the Min Price in Repricing Service.
+<a href="%amazonRepricer" target="_blank">Learn more</a> about using the Min Price in Repricing Service.
 <br /><br />
 Specify the settings for automatic update of the Max Price:
 <br /><br />
@@ -580,9 +584,11 @@ Please note, only common (available in all Attribute sets in your Magento)
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
-<a href="%url2%" target="_blank" class="external-link">here</a>.',
-                    $repricerDocs,
-                    $this->supportHelper->getDocumentationArticleUrl('repricer')
+<a href="%repricer" target="_blank" class="external-link">here</a>.',
+                    [
+                        'amazonRepricer' => $repricerDocs,
+                        'repricer' => $this->supportHelper->getDocumentationArticleUrl('repricer'),
+                    ]
                 )
             ) .
             '</div>';
@@ -789,7 +795,7 @@ More detailed information on how to work with this option can be found
                         __(
                             '
 This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items.
-<a href="%1" target="_blank">Learn more</a> about the Product Disabling feature.
+<a href="%amazonRepricer" target="_blank">Learn more</a> about the Product Disabling feature.
 <br /><br />
 <strong>Manually</strong> - means that the dynamic repricing can be disabled only manually;<br />
 <strong>When Status is Disabled</strong> - means that the dynamic repricing
@@ -801,9 +807,11 @@ Please note, only common (available in all Attribute sets in your Magento)
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
-<a href="%2" target="_blank" class="external-link">here</a>.',
-                            $repricerDocs,
-                            $this->supportHelper->getDocumentationArticleUrl('repricer')
+<a href="%repricer" target="_blank" class="external-link">here</a>.',
+                            [
+                                'amazonRepricer' => $repricerDocs,
+                                'repricer' => $this->supportHelper->getDocumentationArticleUrl('repricer'),
+                            ]
                         )
                     ) . '</div>',
             ]

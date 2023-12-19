@@ -19,7 +19,7 @@ class PretendedToBeSimple extends DefaultObject implements ItemToShipLoaderInter
     //########################################
 
     /**
-     * @return array
+     * @return array<string, \Ess\M2ePro\Model\Order\Item>
      * @throws \Exception
      */
     public function loadItem()

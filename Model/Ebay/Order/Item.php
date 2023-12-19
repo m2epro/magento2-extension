@@ -29,6 +29,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     protected $productBuilderFactory;
     /** @var \Magento\Catalog\Model\ProductFactory */
     protected $productFactory;
+    /** @var int|null */
+    private $shippedQtyTmpValue = null;
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Product\BuilderFactory $productBuilderFactory,
@@ -503,5 +505,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
                 'order_item' => $this->getParentObject(),
             ]);
         }
+    }
+
+    public function getShippedQtyTmpValue(): ?int
+    {
+        return $this->shippedQtyTmpValue;
+    }
+
+    public function setShippedQtyTmpValue(int $shippedQtyTmpValue): void
+    {
+        $this->shippedQtyTmpValue = $shippedQtyTmpValue;
     }
 }
