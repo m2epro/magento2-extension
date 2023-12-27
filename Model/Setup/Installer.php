@@ -10102,6 +10102,12 @@ class Installer
                                                        'auto_increment' => true,
                                                    ]
                                                )
+                                               ->addColumn(
+                                                   'title',
+                                                   Table::TYPE_TEXT,
+                                                   255,
+                                                   ['default' => null]
+                                               )
                                                 ->addColumn(
                                                     'view_mode',
                                                     Table::TYPE_SMALLINT,
@@ -10137,6 +10143,7 @@ class Installer
                                                    ['dictionary_product_type_id'],
                                                    ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
                                                )
+                                               ->addIndex('title', 'title')
                                                ->setOption('type', 'INNODB')
                                                ->setOption('charset', 'utf8')
                                                ->setOption('collate', 'utf8_general_ci')

@@ -206,6 +206,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $prefixKeys = [
             'prefix',
+            'wfs-prefix',
         ];
         $tempSettings = !empty($tempSettings['prefix']) ? $tempSettings['prefix'] : [];
         foreach ($prefixKeys as $key) {
@@ -390,6 +391,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,
                     'prefix' => [
                         'prefix' => '',
+                        'wfs-prefix' => '',
                     ],
                 ],
                 'tax' => [

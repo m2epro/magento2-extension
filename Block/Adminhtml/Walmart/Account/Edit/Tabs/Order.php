@@ -441,22 +441,17 @@ HTML
         );
 
         $fieldset->addField(
-            'magento_orders_number_prefix_prefix',
-            'text',
+            'magento_orders_number_prefix_container',
+            self::CUSTOM_CONTAINER,
             [
-                'container_id' => 'magento_orders_number_prefix_container',
-                'name' => 'magento_orders_settings[number][prefix][prefix]',
-                'label' => __('Prefix'),
-                'value' => $formData['magento_orders_settings']['number']['prefix']['prefix'],
-                'maxlength' => 5,
-            ]
-        );
-
-        $fieldset->addField(
-            'sample_magento_order_id',
-            'hidden',
-            [
-                'value' => $this->magentoHelper->getNextMagentoOrderId(),
+                'text' => $this->getLayout()
+                               ->createBlock(
+                                   \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order\PrefixesTable::class
+                               )
+                               ->setFormData($formData)
+                               ->toHtml(),
+                'css_class' => 'm2epro-fieldset-table',
+                'style' => 'padding: 0 !important;',
             ]
         );
 
@@ -465,15 +460,6 @@ HTML
             'hidden',
             [
                 'value' => '141-4423723-6495633',
-            ]
-        );
-
-        $fieldset->addField(
-            'order_number_example',
-            'label',
-            [
-                'label' => '',
-                'note' => __('e.g.') . ' <span id="order_number_example_container"></span>',
             ]
         );
 

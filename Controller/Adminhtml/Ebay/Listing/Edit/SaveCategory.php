@@ -49,7 +49,7 @@ class SaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Edit
             $this->ebayListingResource->save($ebayListing);
             $this->messageManager->addSuccessMessage(__('Category updated successfully.'));
 
-            return $this->_redirect('*/*/categories', ['id' => $listingId]);
+            return $this->_redirect('*/*/categories', ['id' => $listingId, '_current' => true]);
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(__('An error occurred while saving Category'));
         }

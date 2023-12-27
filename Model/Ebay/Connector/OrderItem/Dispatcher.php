@@ -12,7 +12,6 @@ use Ess\M2ePro\Model\Ebay\Connector\OrderItem;
 
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    public const ACTION_ADD_DISPUTE = 1;
     public const ACTION_UPDATE_STATUS = 2;
     public const ACTION_UPDATE_TRACK = 3;
 
@@ -42,9 +41,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $connector = null;
 
         switch ($action) {
-            case self::ACTION_ADD_DISPUTE:
-                $connector = 'Ebay_Connector_OrderItem_Add_Dispute';
-                break;
             case self::ACTION_UPDATE_STATUS:
             case self::ACTION_UPDATE_TRACK:
                 $connector = 'Ebay_Connector_OrderItem_Update_Status';

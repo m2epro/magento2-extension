@@ -335,9 +335,69 @@ class Config extends AbstractConfig
             ],
             'y23_m12' => [
                 'AddEbayBuyerReturnRequested',
+                'AddProductTypeTitleColumn',
                 'AddCustomizedInfoToAmazonItems',
                 'AddAmazonMarketplaceSouthAfrica',
+                'UpdateProductTypeTitleColumn',
             ]
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getFeaturesForRepeatAfterMigrationFromMagento1(): array
+    {
+        return [
+            \Ess\M2ePro\Setup\Update\y22_m05\AddFeeColumnForEbayOrder::class,
+            \Ess\M2ePro\Setup\Update\y22_m06\EbayFixedPriceModifier::class,
+            \Ess\M2ePro\Setup\Update\y22_m07\AddEpidsForItaly::class,
+            \Ess\M2ePro\Setup\Update\y22_m07\MoveEbayProductIdentifiers::class,
+            \Ess\M2ePro\Setup\Update\y22_m08\MoveAmazonProductIdentifiers::class,
+            \Ess\M2ePro\Setup\Update\y22_m10\AmazonWalmartSellingPolicyPriceModifier::class,
+            \Ess\M2ePro\Setup\Update\y23_m01\EbayListingProductScheduledStopAction::class,
+            \Ess\M2ePro\Setup\Update\y23_m01\AmazonProductTypes::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AddTags::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AddErrorCodeColumnForTags::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AmazonShippingTemplates::class,
+            \Ess\M2ePro\Setup\Update\y23_m02\AddImmediatePaymentColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m03\UpgradeTags::class,
+            \Ess\M2ePro\Setup\Update\y23_m03\AddWizardVersionDowngrade::class,
+            \Ess\M2ePro\Setup\Update\y23_m04\RemoveUnavailableDataType::class,
+            \Ess\M2ePro\Setup\Update\y23_m04\EbayBuyerInitiatedOrderCancellation::class,
+            \Ess\M2ePro\Setup\Update\y23_m06\AddEbayBlockingErrorSetting::class,
+            \Ess\M2ePro\Setup\Update\y23_m06\CreateProductTypeValidationTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m07\ChangeProductTypeValidationTableErrorMessageField::class,
+            \Ess\M2ePro\Setup\Update\y23_m07\DropTemplateDescriptionIdIndex::class,
+            \Ess\M2ePro\Setup\Update\y23_m07\RemoveScaleFromWatermarkSetting::class,
+            \Ess\M2ePro\Setup\Update\y23_m07\ChangeDocumentationUrl::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddShippingIrregularForEbay::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddIsGetDeliveryPreferencesColumnToAmazonOrderTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\RemoveAmazonDescriptionPolicyRelatedData::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\CreateAmazonShippingMapTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddNewColumnsToAmazonOrder::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddAmazonSellingFormatListPrice::class,
+            \Ess\M2ePro\Setup\Update\y23_m08\AddFinalFeesColumnToAmazonOrderTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddProductModeColumnToEbayListing::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddOnlineBestOfferForEbayProduct::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\RefactorAmazonOrderColumns::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\RemoveLastAccessAndRunFromConfigTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddAmazonProductTypeAttributeMappingTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m09\AddPriceRoundingToEbayAmazonWalmartSellingTemplate::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\AddProductTypeViewModeColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\CreateEbayCategorySpecificValidationResultTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\ImproveAmazonOrderPrefixes::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\RenameSoldByAmazonSetting::class,
+            \Ess\M2ePro\Setup\Update\y23_m10\ReAddIsSoldByAmazonColumnToAmazonOrder::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\RemoveSupportUrlFromConfigTable::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\AddWalmartIsWFS::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\AddWalmartOrdersWfsLastSynchronization::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\AddAmazonOriginalOrderIdColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m11\RestoreEpidsForAustralia::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\AddEbayBuyerReturnRequested::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\AddProductTypeTitleColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\AddCustomizedInfoToAmazonItems::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\UpdateProductTypeTitleColumn::class,
         ];
     }
 

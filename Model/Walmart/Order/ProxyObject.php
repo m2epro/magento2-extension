@@ -172,5 +172,14 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $this->order->getShippingPriceTaxRate();
     }
 
-    //########################################
+    public function getOrderNumberPrefix(): string
+    {
+        $walmartAccount = $this->order->getWalmartAccount();
+
+        if ($this->order->isWalmartFulfillment()) {
+            return $walmartAccount->getMagentoOrdersNumberWFSPrefix(); //WFS
+        }
+
+        return $walmartAccount->getMagentoOrdersNumberRegularPrefix(); //General
+    }
 }

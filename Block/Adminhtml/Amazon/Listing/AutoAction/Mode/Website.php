@@ -166,7 +166,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstra
         $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($productTypesTemplates as $template) {
             $options[] = [
-                'label' => $this->_escaper->escapeHtml($template['product_type_title']),
+                'label' => $this->_escaper->escapeHtml($template['title']),
                 'value' => $template['id']
             ];
         }

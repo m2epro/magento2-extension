@@ -199,6 +199,9 @@ define([
             $('magento_orders_number_prefix_prefix')
                 .observe('keyup', WalmartAccountObj.magentoOrdersNumberPrefixPrefixChange)
                 .simulate('change');
+            $('magento_orders_number_prefix_wfs')
+                    .observe('keyup', WalmartAccountObj.magentoOrdersNumberPrefixPrefixChange)
+                    .simulate('change');
             WalmartAccountObj.renderOrderNumberExample();
 
             $('magento_orders_customer_mode')
@@ -431,9 +434,13 @@ define([
                 orderNumber = $('sample_walmart_order_id').value;
             }
 
-            orderNumber = $('magento_orders_number_prefix_prefix').value + orderNumber;
+            var wfsOrderNumber = orderNumber;
 
-            $('order_number_example_container').update(orderNumber);
+            orderNumber = $('magento_orders_number_prefix_prefix').value + orderNumber;
+            wfsOrderNumber = $('magento_orders_number_prefix_wfs').value + wfsOrderNumber;
+
+            $('order_number_example_container_prefix').update(orderNumber);
+            $('order_number_example_container_wfs').update(wfsOrderNumber);
         },
 
         magentoOrdersCustomerModeChange: function() {

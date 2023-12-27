@@ -72,6 +72,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             $data['dictionary_product_type_id'] = $dictionary->getId();
         }
 
+        if (isset($this->rawData['general']['product_type_title'])) {
+            $data['title'] = $this->rawData['general']['product_type_title'];
+        }
+
         if (!empty($this->rawData['field_data']) && is_array($this->rawData['field_data'])) {
             $this->specifics = [];
             $this->collectSpecifics($this->rawData['field_data']);
@@ -170,6 +174,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     {
         return [
             'id' => '',
+            'title' => '',
             'view_mode' => \Ess\M2ePro\Model\Amazon\Template\ProductType::VIEW_MODE_ALL_ATTRIBUTES,
             'dictionary_product_type_id' => '',
             'settings' => '[]',

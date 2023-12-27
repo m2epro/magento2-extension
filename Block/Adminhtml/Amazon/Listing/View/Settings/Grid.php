@@ -139,18 +139,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'id=template_product_type_id',
             [
                 'dictionary_product_type_id' => 'dictionary_product_type_id',
-            ],
-            null,
-            'left'
-        );
-
-        $dicTable = $this->activeRecordFactory
-            ->getObject('Amazon_Dictionary_ProductType')
-            ->getResource()->getMainTable();
-        $collection->joinTable(
-            ['dic' => $dicTable],
-            'id=dictionary_product_type_id',
-            [
                 'product_type_title' => 'title',
             ],
             null,

@@ -698,6 +698,13 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return isset($settings['prefix']) ? $settings['prefix'] : '';
     }
 
+    public function getMagentoOrdersNumberWFSPrefix(): string
+    {
+        $settings = $this->getSetting('magento_orders_settings', ['number', 'prefix']);
+
+        return isset($settings['wfs-prefix']) ? $settings['wfs-prefix'] : '';
+    }
+
     // ---------------------------------------
 
     /**

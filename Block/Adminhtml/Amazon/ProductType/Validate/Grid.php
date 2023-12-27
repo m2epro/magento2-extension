@@ -91,15 +91,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $collection->getSelect()->joinLeft(
             ['tpt' => $this->productTypeResource->getMainTable()],
             'tpt.id = alp.template_product_type_id',
-            []
+            [
+                'product_type_title' => 'title',
+            ]
         );
 
         $collection->getSelect()->joinLeft(
             ['pt' => $this->productTypeDictionaryResource->getMainTable()],
             'pt.id = tpt.dictionary_product_type_id',
-            [
-                'product_type_title' => 'title',
-            ]
+            []
         );
 
         $collection->getSelect()->joinLeft(

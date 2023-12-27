@@ -99,12 +99,9 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getDictionary()->getNick();
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
-        return $this->getDictionary()->getTitle();
+        return $this->getData('title');
     }
 
     /**

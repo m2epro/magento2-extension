@@ -882,6 +882,8 @@ HTML
      */
     protected function _prepareLayout()
     {
+        $formData = $this->getListingData();
+
         $this->jsPhp->addConstants(
             $this->dataHelper
                 ->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class)
@@ -968,6 +970,7 @@ HTML
                     '*/general/modelGetAll',
                     [
                         'model' => 'Amazon_Template_Shipping',
+                        'marketplace_id' => $formData['marketplace_id'],
                         'id_field' => 'id',
                         'data_field' => 'title',
                         'sort_field' => 'title',

@@ -51,19 +51,4 @@ use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
     </tr>
     <?php endif; ?>
 
-    <?php if (!$block->getData('is_support_mode')) : ?>
-    <tr>
-        <td class="label">
-            <label><?php echo $block->__('Setup Management Tool'); ?>: </label>
-        </td>
-        <td class="value">
-            <?php $url = $block->getUrl(
-                '*/setupManagement/index',
-                [Index::AUTHORIZATION_COOKIE_NAME => Index::AUTHORIZATION_COOKIE_VALUE]
-            ); ?>
-            <a target="_blank" href="<?php echo $url; ?>"><?php echo $block->__('manage'); ?></a>
-        </td>
-    </tr>
-    <?php endif; ?>
-
 </table>

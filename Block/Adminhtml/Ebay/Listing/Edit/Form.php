@@ -43,12 +43,21 @@ class Form extends AbstractForm
 
     protected function _prepareForm()
     {
+        $url = $this->getUrl(
+            '*/ebay_listing_edit/saveTitle',
+            [
+                'id' => $this->getRequest()->getParam('id'),
+                '_current' => true,
+                'titles' => $this->titles
+            ]
+        );
+
         $form = $this->_formFactory->create(
             [
                 'data' => [
                     'id' => 'edit_form',
                     'method' => 'post',
-                    'action' => $this->getUrl('*/ebay_listing_edit/saveTitle', ['id' => $this->getRequest()->getParam('id'), 'titles' => $this->titles]),
+                    'action' => $url,
                     'enctype' => 'multipart/form-data',
                 ],
             ]

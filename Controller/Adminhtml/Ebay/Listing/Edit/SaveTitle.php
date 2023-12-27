@@ -35,7 +35,7 @@ class SaveTitle extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Edit
 
         if (in_array($listingTitle, $existingTitles)) {
             $this->messageManager->addErrorMessage(__('This title is already in use.'));
-            return $this->_redirect('*/*/general', ['id' => $listingId]);
+            return $this->_redirect('*/*/general', ['id' => $listingId, '_current' => true]);
         }
         try {
             $listing = $this->listingFactory->create();
@@ -44,7 +44,7 @@ class SaveTitle extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Edit
             $this->listingResource->save($listing);
 
             $this->messageManager->addSuccessMessage(__('Title updated successfully.'));
-            return $this->_redirect('*/*/general', ['id' => $listingId]);
+            return $this->_redirect('*/*/general', ['id' => $listingId, '_current' => true]);
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(__('An error occurred while saving the title.'));
         }

@@ -163,7 +163,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
         $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($productTypeTemplates as $template) {
             $options[] = [
-                'label' => $this->_escaper->escapeHtml($template['product_type_title']),
+                'label' => $this->_escaper->escapeHtml($template['title']),
                 'value' => $template['id'],
             ];
         }

@@ -274,8 +274,9 @@ define([
             var noteEl = $('template_shipping_note');
 
             AmazonListingSettingsObj.reload(M2ePro.url.get('getShippingTemplates'), 'template_shipping_id', true);
-            if ($('template_shipping_id').children.length > 0) {
+            if ($('template_shipping_id').children.length > 1) {
                 $('template_shipping_id').show();
+                jQuery('#template_shipping_id').find('option').show();
                 noteEl && $('template_shipping_note').show();
                 $('template_shipping_label').hide();
             } else {

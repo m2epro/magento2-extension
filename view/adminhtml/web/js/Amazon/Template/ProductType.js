@@ -36,6 +36,14 @@ define(
 
                     this.showUpdateProductTypeAttributeMappingPopup(productTypeId)
                 }
+
+                this.setValidationCheckRepetitionValue('M2ePro-general-product-type-title',
+                        M2ePro.translator.translate('The specified Product Title is already used for other Product Type. Product Type Title must be unique.'),
+                        'Amazon\\Template\\ProductType', 'title', 'id',
+                        document.getElementById('general_id').value,
+                        null);
+
+                jQuery(document).on('change', '#general_product_type_title', this.clearValidationMessage.bind(this));
             },
 
             getViewModeSwitcherValue: function ()
@@ -270,6 +278,11 @@ define(
                 var self = this;
                 var isToggledOn = self.getViewModeSwitcherValue();
 
+                var generalProductTypeTitle = $('general_product_type_title');
+                if (generalProductTypeTitle.value === '') {
+                    generalProductTypeTitle.value = jQuery('#general_selected_product_type_title').text();
+                }
+
                 new Ajax.Request(M2ePro.url.get('amazon_template_productType/getProductTypeInfo'), {
                     method: 'post',
                     asynchronous: true,
@@ -456,6 +469,10 @@ define(
                         }
                     }
                 });
+            },
+
+            clearValidationMessage: function () {
+                jQuery('label[for="general_product_type_title"].mage-error').remove();
             }
         });
     }

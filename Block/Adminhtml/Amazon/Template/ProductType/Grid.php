@@ -83,9 +83,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'header' => $this->__('Title'),
                 'align' => 'left',
                 'type' => 'text',
-                'index' => 'product_type_title',
+                'index' => 'title',
                 'escape' => true,
-                'filter_index' => 'adpt.title',
+                'filter_index' => 'main_table.title',
                 'frame_callback' => [$this, 'callbackColumnTitle'],
             ]
         );
@@ -242,6 +242,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $value = $this->dataHelper->escapeHtml($value);
         $dictionary = $row->getDictionary();
         $isInvalid = $dictionary->isInvalid();
+
+        if (!$value) {
+            $value = $dictionary->getTitle();
+        }
 
         if ($isInvalid) {
             $message = $this->__(

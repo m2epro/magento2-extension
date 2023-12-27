@@ -98,6 +98,19 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $fieldSet->addField(
+            'general_product_type_title',
+            'text',
+            [
+                'label' => __('Title'),
+                'name' => 'general[product_type_title]',
+                'value' =>  $this->productType->getTitle(),
+                'style' => 'min-width: 240px',
+                'required' => true,
+                'class' => 'M2ePro-general-product-type-title',
+            ]
+        );
+
+        $fieldSet->addField(
             'general_marketplace_id',
             self::SELECT,
             [
@@ -122,6 +135,13 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'after_element_html' => $this->getProductTypeEditHtml($isEdit)
             ]
         );
+
+        $this->jsPhp->addConstants($this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Amazon::class));
+        $this->jsTranslator->addTranslations([
+            'The specified Product Title is already used for other Product Type. Product Type Title must be unique.' => __(
+                'The specified Product Title is already used for other Product Type. Product Type Title must be unique.'
+            ),
+        ]);
 
         // ---------------------------------------
 
@@ -213,7 +233,7 @@ CSS
         $textNotSelected = $this->__('Not Selected');
         $textEdit = $this->__('Edit');
 
-        $title = $isEdit ? $this->productType->getTitle() : '';
+        $title = $isEdit ? $this->getDictionaryTitle() : '';
         $quotedTitle = $this->dataHelper->escapeHtml($title);
         $displayModeNotSelected = $isEdit ? 'none' : 'inline-block';
         $displayModeTitle = $isEdit ? 'inline-block' : 'none';
@@ -249,5 +269,10 @@ HTML;
     private function getSuggestedMarketplaceId(): int
     {
         return (int)$this->getRequest()->getParam('marketplace_id', 0);
+    }
+
+    private function getDictionaryTitle(): string
+    {
+        return $this->productType->getDictionary()->getTitle();
     }
 }
