@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings;
 
@@ -33,16 +29,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             'label' => __('Synchronization'),
             'title' => __('Synchronization'),
             'content' => $tabSynchronizationContent,
-        ]);
-
-        $tabAttributeMappingContent = $this
-            ->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\AttributeMapping::class)
-            ->toHtml();
-        $this->addTab(self::TAB_ID_ATTRIBUTE_MAPPING, [
-            'label' => __('Attribute Mapping'),
-            'title' => __('Attribute Mapping'),
-            'content' => $tabAttributeMappingContent,
         ]);
 
         return parent::_prepareLayout();

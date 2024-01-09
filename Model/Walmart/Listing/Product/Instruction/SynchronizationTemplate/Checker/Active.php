@@ -312,6 +312,7 @@ class Active extends AbstractModel
         }
 
         if ($walmartSynchronizationTemplate->isStopAdvancedRulesEnabled()) {
+            /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
             $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
                 [
                     'store_id' => $listingProduct->getListing()->getStoreId(),
@@ -319,6 +320,10 @@ class Active extends AbstractModel
                 ]
             );
             $ruleModel->loadFromSerialized($walmartSynchronizationTemplate->getStopAdvancedRulesFilters());
+
+            if (empty($ruleModel->getConditions()->getConditions())) {
+                return false;
+            }
 
             if ($ruleModel->validate($listingProduct->getMagentoProduct()->getProduct())) {
                 return true;

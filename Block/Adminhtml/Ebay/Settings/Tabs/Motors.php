@@ -58,33 +58,38 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ],
         ]);
 
-        $preparedAttributes = $this->getPreparedAttributes();
+        $preparedAttributesTextarea = $this->getPreparedAttributes('textarea');
+        $preparedAttributesText = $this->getPreparedAttributes('text');
 
         if ($this->getMarketplace(EbayHelper::MARKETPLACE_MOTORS)->isStatusEnabled()) {
-            $this->addFieldsetForMotorsMarketplace($form, $preparedAttributes);
+            $this->addFieldsetForMotorsMarketplace($form, $preparedAttributesTextarea);
         }
 
         if ($this->getMarketplace(EbayHelper::MARKETPLACE_UK)->isStatusEnabled()) {
-            $this->addFieldsetForUKMarketplace($form, $preparedAttributes);
+            $this->addFieldsetForUKMarketplace($form, $preparedAttributesTextarea);
         }
 
         if ($this->getMarketplace(EbayHelper::MARKETPLACE_DE)->isStatusEnabled()) {
-            $this->addFieldsetForDEMarketplace($form, $preparedAttributes);
+            $this->addFieldsetForDEMarketplace($form, $preparedAttributesTextarea);
         }
 
         if ($this->getMarketplace(EbayHelper::MARKETPLACE_IT)->isStatusEnabled()) {
-            $this->addFieldsetForITMarketplace($form, $preparedAttributes);
+            $this->addFieldsetForITMarketplace($form, $preparedAttributesTextarea);
         }
 
         if (
             $this->getMarketplace(EbayHelper::MARKETPLACE_AU)->isStatusEnabled()
             && $this->componentEbayConfiguration->isVisibleEpidsAu()
         ) {
-            $this->addFieldsetForAUMarketplace($form, $preparedAttributes);
+            $this->addFieldsetForAUMarketplace($form, $preparedAttributesTextarea);
         }
 
         if ($this->componentEbayMotors->isKTypeMarketplacesEnabled()) {
-            $this->addFieldsetForKTypesMarketplace($form, $preparedAttributes);
+            $this->addFieldsetForKTypesMarketplace($form, $preparedAttributesTextarea);
+
+            if ($this->getMarketplace(EbayHelper::MARKETPLACE_IT)->isStatusEnabled()) {
+                $this->addFieldsetForKTypesItalyMarketplace($form, $preparedAttributesText);
+            }
         }
 
         $form->setUseContainer(true);
@@ -96,13 +101,12 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     /**
      * @return string[]
      */
-    private function getPreparedAttributes(): array
+    private function getPreparedAttributes(string $inputType): array
     {
         $preparedAttributes = ['' => '-- ' . $this->__('Select Attribute') . ' --'];
 
         $attributes = $this->magentoAttributeHelper->filterAllAttrByInputTypes(
-            ['textarea'],
-            ['text']
+            [$inputType]
         );
 
         foreach ($attributes as $attribute) {
@@ -583,6 +587,52 @@ HTML
 </span>
 HTML
             ,
+            ]
+        );
+    }
+
+    private function addFieldsetForKTypesItalyMarketplace(
+        \Magento\Framework\Data\Form $form,
+        array $preparedAttributes
+    ): void {
+        $fieldset = $form->addFieldset(
+            'it_motors_ktypes',
+            [
+                'legend' => __('Parts Compatibility [kTypes IT] (Using TecDoc database)'),
+                'collapsable' => false,
+                'tooltip' => __(
+                    'The tool allows automatically retrieving relevant k-Type numbers from the TecDoc database for
+                     your eBay auto part listings. Based on the OE codes of the parts (original code), the
+                      corresponding k-Types will be fetched from the TecDoc part list and assigned to the products.'
+                ),
+            ]
+        );
+
+        $fieldset->addField(
+            'tecdoc_ktypes_product_mpn_attribute',
+            self::SELECT,
+            [
+                'name' => 'tecdoc_ktypes_product_mpn_attribute',
+                'label' => __('MPN'),
+                'values' => $preparedAttributes,
+                'value' => $this->componentEbayConfiguration->getTecDocKTypesProductMpnAttribute(),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
+                'tooltip' => __(
+                    'Enter an Attribute containing the original spare part number (OE code) that will be used as a
+                     reference to retrieve relevant k-Types'
+                ),
+            ]
+        )
+                 ->addCustomAttribute('allowed_attribute_types', 'text')
+                 ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
+
+        $fieldset->addField(
+            'tecdoc_ktypes_it_vat_id',
+            'text',
+            [
+                'label' => __('VAT ID'),
+                'name' => 'tecdoc_ktypes_it_vat_id',
+                'value' => $this->componentEbayConfiguration->getTecDocVatIdForIT(),
             ]
         );
     }

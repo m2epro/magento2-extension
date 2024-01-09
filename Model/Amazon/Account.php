@@ -1125,6 +1125,14 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     /**
      * @return bool
      */
+    public function isMagentoOrdersShipmentEnabledForFBA(): bool
+    {
+        return (bool)$this->getData('create_magento_shipment_fba_orders');
+    }
+
+    /**
+     * @return bool
+     */
     public function isRemoteFulfillmentProgramEnabled(): bool
     {
         return (bool)$this->getData('remote_fulfillment_program_mode');

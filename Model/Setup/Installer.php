@@ -4278,6 +4278,16 @@ class Installer
                                             Table::TYPE_INTEGER,
                                             null,
                                             ['unsigned' => true, 'default' => null]
+                                        )->addColumn(
+                                            'ktypes_resolve_status',
+                                            Table::TYPE_SMALLINT,
+                                            null,
+                                            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                        )->addColumn(
+                                            'ktypes_resolve_last_try_date',
+                                            Table::TYPE_DATETIME,
+                                            null,
+                                            ['default' => null]
                                         )
                                         ->addIndex('ebay_item_id', 'ebay_item_id')
                                         ->addIndex('item_uuid', 'item_uuid')
@@ -6816,6 +6826,8 @@ class Installer
         $moduleConfig->insert('/ebay/configuration/', 'au_epids_visible', 0);
         $moduleConfig->insert('/ebay/configuration/', 'it_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'tecdoc_ktypes_product_mpn_attribute');
+        $moduleConfig->insert('/ebay/configuration/', 'tecdoc_ktypes_it_vat_id');
         $moduleConfig->insert('/ebay/configuration/', 'upload_images_mode', 2);
         $moduleConfig->insert('/ebay/configuration/', 'view_template_selling_format_show_tax_category', '0');
         $moduleConfig->insert('/ebay/configuration/', 'feedback_notification_mode', '0');
@@ -7744,6 +7756,12 @@ class Installer
                                    )
                                    ->addColumn(
                                        'create_magento_shipment',
+                                       Table::TYPE_SMALLINT,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false, 'default' => 1]
+                                   )
+                                   ->addColumn(
+                                       'create_magento_shipment_fba_orders',
                                        Table::TYPE_SMALLINT,
                                        null,
                                        ['unsigned' => true, 'nullable' => false, 'default' => 1]

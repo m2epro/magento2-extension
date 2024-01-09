@@ -1,8 +1,8 @@
 <?php
 
-namespace Ess\M2ePro\Controller\Adminhtml\Amazon\ShippingMap;
+namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Mapping\ShippingMap;
 
-class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\ShippingMap
+class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Mapping
 {
     /** @var \Ess\M2ePro\Model\Amazon\ShippingMapFactory */
     protected $amazonShippingMapFactory;
@@ -28,13 +28,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\ShippingMap
     {
         $post = $this->getRequest()->getPostValue();
         if (!$post) {
-            $this->messageManager->addErrorMessage(__('Post data is empty.'));
-            return $this->_redirect('*/*/index');
+            $this->setJsonContent(['success' => false]);
+
+            return $this->getResult();
         }
         $this->saveShippingMappingData($post);
-        $this->messageManager->addSuccessMessage(__('Shipping mapping data has been saved.'));
+        $this->setJsonContent(['success' => true]);
 
-        return $this->_redirect('*/*/index');
+        return $this->getResult();
     }
 
     /**

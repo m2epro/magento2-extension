@@ -176,6 +176,21 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'create_magento_shipment_fba_orders',
+            'select',
+            [
+                'container_id' => 'create_magento_shipment_fba_orders_container',
+                'label' => __('Magento Shipment Creation for FBA Orders'),
+                'title' => __('Magento Shipment Creation for FBA Orders'),
+                'name' => 'create_magento_shipment_fba_orders',
+                'options' => [
+                    0 => __('Disabled'),
+                    1 => __('Enabled'),
+                ],
+            ]
+        );
+
         $form->setValues($formData);
 
         $form->setUseContainer(false);
@@ -196,6 +211,17 @@ HTML
         'M2ePro/Amazon/Account',
     ], function(){
         $('create_magento_invoice').value = {$formData['create_magento_invoice']};
+    });
+JS
+        );
+
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Amazon/Account/Edit/Tabs/InvoicesAndShipments',
+    ], function(){
+        window.InvoicesAndShipmentsObj = new InvoicesAndShipments();
+        InvoicesAndShipmentsObj.initObservers();
     });
 JS
         );

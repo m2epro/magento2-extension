@@ -339,6 +339,8 @@ class Config extends AbstractConfig
                 'AddCustomizedInfoToAmazonItems',
                 'AddAmazonMarketplaceSouthAfrica',
                 'UpdateProductTypeTitleColumn',
+                'AddCreateShipmentFbaOrdersColumn',
+                'AddTecdocKtypesIt',
             ]
         ];
     }
@@ -398,6 +400,8 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y23_m12\AddProductTypeTitleColumn::class,
             \Ess\M2ePro\Setup\Update\y23_m12\AddCustomizedInfoToAmazonItems::class,
             \Ess\M2ePro\Setup\Update\y23_m12\UpdateProductTypeTitleColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\AddCreateShipmentFbaOrdersColumn::class,
+            \Ess\M2ePro\Setup\Update\y23_m12\AddTecdocKtypesIt::class,
         ];
     }
 

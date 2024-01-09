@@ -18,6 +18,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public const INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED = 'channel_qty_changed';
     public const INSTRUCTION_TYPE_CHANNEL_PRICE_CHANGED = 'channel_price_changed';
 
+    public const RESOLVE_KTYPE_STATUS_UNPROCESSED = 0;
+    public const RESOLVE_KTYPE_STATUS_IN_PROGRESS = 1;
+    public const RESOLVE_KTYPE_STATUS_FINISHED = 2;
+
     /** @var \Ess\M2ePro\Model\Ebay\Item */
     protected $ebayItemModel = null;
 
@@ -876,6 +880,22 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getEndDate()
     {
         return $this->getData('end_date');
+    }
+
+    // ---------------------------------------
+
+    public function setResolveKTypeStatus(int $value): self
+    {
+        $this->setData('ktypes_resolve_status', $value);
+
+        return $this;
+    }
+
+    public function setResolveKTypeLastUpdateDate(\DateTime $value): self
+    {
+        $this->setData('ktypes_resolve_last_try_date', $value->format('Y-m-d H:i:s'));
+
+        return $this;
     }
 
     //########################################

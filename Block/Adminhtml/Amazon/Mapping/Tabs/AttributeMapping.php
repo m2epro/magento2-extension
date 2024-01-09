@@ -1,6 +1,6 @@
 <?php
 
-namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Mapping\Tabs;
 
 class AttributeMapping extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
@@ -25,7 +25,7 @@ class AttributeMapping extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     protected function _beforeToHtml()
     {
         $this->jsUrl->add(
-            $this->getUrl('*/amazon_settings_attributeMapping/save'),
+            $this->getUrl('*/amazon_mapping_attributeMapping/save'),
             \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::TAB_ID_ATTRIBUTE_MAPPING
         );
 

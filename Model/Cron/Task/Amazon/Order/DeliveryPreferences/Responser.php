@@ -9,8 +9,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\DeliveryPr
 
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
+    /** @var \Ess\M2ePro\Model\Order\Note\Repository */
+    private $noteRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Order\Note\Repository $noteRepository,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -21,6 +24,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\DeliveryPr
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
     ) {
         $this->translationHelper = $translationHelper;
+        $this->noteRepository = $noteRepository;
 
         parent::__construct(
             $response,
@@ -109,11 +113,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\DeliveryPr
             }
 
             foreach ($uniqueDeliveryInstructions as $instruction) {
-                /** @var \Ess\M2ePro\Model\Order\Note $noteModel */
-                $noteModel = $this->activeRecordFactory->getObject('Order_Note');
-                $noteModel->setData('note', $instruction);
-                $noteModel->setData('order_id', $orderEntity->getId());
-                $noteModel->save();
+                $this->noteRepository->create($orderEntity->getId(), $instruction);
             }
 
             $amazonOrder->setIsGetDeliveryPreferences();

@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Amazon;
 
 use Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory;
+use Magento\Sales\Model\Order\Creditmemo;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -640,6 +641,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return false;
         }
 
+        if ($this->isFulfilledByAmazon() && !$this->getAmazonAccount()->isMagentoOrdersShipmentEnabledForFBA()) {
+            return false;
+        }
+
         if (!$this->isShipped()) {
             return false;
         }
@@ -847,16 +852,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function refund(array $items = [])
+    public function refund(array $items = [], Creditmemo $creditMemo = null)
     {
         if (!$this->canRefund()) {
             return false;
         }
 
+        $adjustmentFee = $creditMemo !== null ? $creditMemo->getAdjustmentNegative() : null;
+
         $params = [
             'order_id' => $this->getAmazonOrderId(),
             'currency' => $this->getCurrency(),
-            'items' => $items,
+            'adjustment_fee' => $adjustmentFee,
+            'items' => $items
         ];
 
         $orderId = $this->getParentObject()->getId();

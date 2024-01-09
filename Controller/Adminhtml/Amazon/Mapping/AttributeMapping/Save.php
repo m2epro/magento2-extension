@@ -1,8 +1,8 @@
 <?php
 
-namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Settings\AttributeMapping;
+namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Mapping\AttributeMapping;
 
-class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
+class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Mapping
 {
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\ProductType\AttributeMapping */
     private $attributeMappingResource;

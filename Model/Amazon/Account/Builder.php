@@ -376,6 +376,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'invoice_generation',
             'create_magento_invoice',
             'create_magento_shipment',
+            'create_magento_shipment_fba_orders'
         ];
         foreach ($keys as $key) {
             if (isset($this->rawData[$key])) {
@@ -491,6 +492,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'invoice_generation' => 0,
             'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,
+            'create_magento_shipment_fba_orders' => 1,
         ];
     }
 

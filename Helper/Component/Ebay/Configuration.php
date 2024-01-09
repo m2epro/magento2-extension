@@ -199,6 +199,29 @@ class Configuration
         );
     }
 
+    public function isKTypeTecDocConfigured(): bool
+    {
+        return !empty($this->getKTypesAttribute())
+            && !empty($this->getTecDocKTypesProductMpnAttribute())
+            && !empty($this->getTecDocVatIdForIT());
+    }
+
+    public function getTecDocKTypesProductMpnAttribute(): ?string
+    {
+        return $this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'tecdoc_ktypes_product_mpn_attribute'
+        );
+    }
+
+    public function getTecDocVatIdForIT(): ?string
+    {
+        return $this->config->getGroupValue(
+            self::CONFIG_GROUP,
+            'tecdoc_ktypes_it_vat_id'
+        );
+    }
+
     //----------------------------------------
 
     public function isUpcModeNone()
@@ -517,6 +540,22 @@ class Configuration
                 self::CONFIG_GROUP,
                 'ktypes_attribute',
                 $values['ktypes_attribute']
+            );
+        }
+
+        if (isset($values['tecdoc_ktypes_product_mpn_attribute'])) {
+            $this->config->setGroupValue(
+                self::CONFIG_GROUP,
+                'tecdoc_ktypes_product_mpn_attribute',
+                $values['tecdoc_ktypes_product_mpn_attribute']
+            );
+        }
+
+        if (isset($values['tecdoc_ktypes_it_vat_id'])) {
+            $this->config->setGroupValue(
+                self::CONFIG_GROUP,
+                'tecdoc_ktypes_it_vat_id',
+                $values['tecdoc_ktypes_it_vat_id']
             );
         }
     }

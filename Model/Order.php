@@ -50,8 +50,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     private $helperModuleException;
     private $helperModuleLog;
 
-    //########################################
-
     /** @var \Ess\M2ePro\Model\Order\Log */
     private $logModel = null;
 
@@ -59,10 +57,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /** @var Magento\Quote\Manager|null */
     private $quoteManager = null;
-
-    //########################################
+    /** @var \Ess\M2ePro\Model\Order\Note\Repository */
+    private $noteRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Order\Note\Repository $noteRepository,
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -80,6 +79,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
+        $this->noteRepository = $noteRepository;
         $this->storeManager = $storeManager;
         $this->orderFactory = $orderFactory;
         $this->resourceConnection = $resourceConnection;
@@ -117,9 +117,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             return false;
         }
 
-        $this->activeRecordFactory->getObject('Order\Note')->getCollection()
-                                  ->addFieldToFilter('order_id', $this->getId())
-                                  ->walk('delete');
+        $this->noteRepository->deleteByOrderId($this->getId());
 
         foreach ($this->getItemsCollection()->getItems() as $item) {
             /** @var \Ess\M2ePro\Model\Order\Item $item */

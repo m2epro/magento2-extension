@@ -138,6 +138,7 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 'amazon_order_id' => $changeParams['order_id'],
                 'currency' => $changeParams['currency'],
                 'items' => $changeParams['items'],
+                'adjustment_fee' => $changeParams['adjustment_fee'] ?? null
             ];
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Refund\Requester $connectorObj */

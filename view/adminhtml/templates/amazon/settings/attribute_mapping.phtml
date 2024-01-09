@@ -1,10 +1,15 @@
 <?php
 
-/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\AttributeMapping $block */
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Mapping\Tabs\AttributeMapping $block */
+    echo $block->createBlock('HelpBlock')->setData([
+        'content' => __('On this page, the attribute mapping demonstrates the connection between your
+         Product Type specifics and the corresponding Magento Product attributes. This mapping guarantees that the
+         correct attributes are consistently associated with each Product Type specific. You can edit the saved mapping
+         if a different Magento attribute value is more appropriate for a certain Amazon Product Type specific.'),
+    ])->toHtml();
 
 ?>
 
-<h1><?= __('Attribute Mapping') ?></h1>
 <form method="post" novalidate="novalidate" enctype="multipart/form-data">
 <?php if (count($block->getMappedAttributes()) > 0) : ?>
 <table class="data-grid">

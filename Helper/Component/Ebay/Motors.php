@@ -192,20 +192,23 @@ class Motors
         return implode(',', $strs);
     }
 
-    public function buildItemsAttributeValue(array $items)
+    public function buildItemsAttributeValue(array $items): string
     {
         if (empty($items)) {
             return '';
         }
 
         $values = [];
+
         foreach ($items as $item) {
             $value = '"ITEM"|"' . $item['id'] . '"';
 
-            $note = trim($item['note']);
+            if (isset($item['note'])) {
+                $note = trim($item['note']);
 
-            if (!empty($note)) {
-                $value .= '|"' . $note . '"';
+                if (!empty($note)) {
+                    $value .= '|"' . $note . '"';
+                }
             }
 
             $values[] = $value;

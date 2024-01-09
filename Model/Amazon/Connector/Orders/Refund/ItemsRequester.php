@@ -77,6 +77,7 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
             'currency' => $this->params['order']['currency'],
             'type' => 'Refund',
             'items' => $this->params['order']['items'],
+            'adjustment_fee' => $this->params['order']['adjustment_fee'] ?? null,
         ];
     }
 

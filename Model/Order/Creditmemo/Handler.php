@@ -40,7 +40,9 @@ abstract class Handler extends \Ess\M2ePro\Model\AbstractModel
 
         $items = $this->getItemsToRefund($order, $creditmemo);
 
-        return $order->getChildObject()->refund($items) ? self::HANDLE_RESULT_SUCCEEDED : self::HANDLE_RESULT_FAILED;
+        return $order->getChildObject()->refund($items, $creditmemo)
+            ? self::HANDLE_RESULT_SUCCEEDED
+            : self::HANDLE_RESULT_FAILED;
     }
 
     abstract protected function getItemsToRefund(\Ess\M2ePro\Model\Order $order, Creditmemo $creditmemo);

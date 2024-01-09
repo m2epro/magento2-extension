@@ -12,6 +12,18 @@ use Ess\M2ePro\Controller\Adminhtml\Order;
 
 class DeleteNote extends Order
 {
+    /** @var \Ess\M2ePro\Model\Order\Note\Repository */
+    private $noteRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Order\Note\Repository $noteRepository,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->noteRepository = $noteRepository;
+    }
+
     public function execute()
     {
         $noteId = $this->getRequest()->getParam('note_id');
@@ -22,8 +34,8 @@ class DeleteNote extends Order
         }
 
         /** @var \Ess\M2ePro\Model\Order\Note $noteModel */
-        $noteModel = $this->activeRecordFactory->getObjectLoaded('Order_Note', $noteId);
-        $noteModel->delete();
+        $noteModel = $this->noteRepository->get($noteId);
+        $this->noteRepository->delete($noteModel);
 
         $this->setJsonContent(['result' => true]);
 

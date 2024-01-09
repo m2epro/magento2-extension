@@ -17,8 +17,6 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
     public const AMAZON_REFUND_REASON_NO_INVENTORY = 'NoInventory';
     public const AMAZON_REFUND_REASON_BUYER_CANCELED = 'BuyerCanceled';
 
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Order $order
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
@@ -49,6 +47,12 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
             $order->getChildObject()->getShippingPriceTaxAmount() === $creditmemo->getShippingTaxAmount() :
             false;
 
+        $orderItemsCollection = $order->getItemsCollection();
+        $ordersItemsByAmazonId = [];
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+        foreach ($orderItemsCollection as $orderItem) {
+            $ordersItemsByAmazonId[$orderItem->getChildObject()->getAmazonOrderItemId()] = $orderItem;
+        }
         foreach ($creditmemo->getAllItems() as $creditmemoItem) {
             /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
 
@@ -78,14 +82,11 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                     continue;
                 }
 
-                /** @var \Ess\M2ePro\Model\Order\Item $item */
-                $item = $order->getItemsCollection()
-                              ->addFieldToFilter('amazon_order_item_id', $orderItemId)
-                              ->getFirstItem();
-                if (!$item->getId()) {
+                if (!isset($ordersItemsByAmazonId[$orderItemId])) {
                     continue;
                 }
 
+                $item = $ordersItemsByAmazonId[$orderItemId];
                 /*
                  * Extension stores Refunded QTY for each item starting from v1.5.1
                  */

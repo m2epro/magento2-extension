@@ -1,6 +1,6 @@
 <?php
 
-namespace Ess\M2ePro\Block\Adminhtml\Amazon\ShippingMap\Edit;
+namespace Ess\M2ePro\Block\Adminhtml\Amazon\Mapping\Tabs\ShippingMap\Edit;
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
@@ -50,6 +50,18 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         ];
         $shippingMethodsOptions = $this->getShippingMethodsOptions();
 
+        $form->addField(
+            'shipping_mapping_help',
+            self::HELP_BLOCK,
+            [
+                'content' => __(
+                    '<p>This is where you can link your Amazon delivery options with the shipping services available in your Magento. If your Magento system, is where your marketplace orders and shipments are eventually managed, by configuring the Shipping Mapping settings, you ensure that the correct Magento shipping service is used for your Amazon orders.</p><br>
+                            <p>Depending on the Amazon marketplace, there is a comprehensive list of Amazon\'s both Domestic and International delivery options. For each delivery type, simply select the corresponding Magento service from a dropdown menu.</p><br>
+                            <p>If no specific shipping mapping is set up, the default M2E Pro Shipping Method will be used.</p>'
+                ),
+            ]
+        );
+
         foreach ($this->amazonHelper->getMarketplacesListByActiveAccounts() as $marketplaceId => $marketplaceTitle) {
             $fieldsetMarketplace = $form->addFieldset(
                 'marketplace_' . $marketplaceId,
@@ -91,6 +103,16 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    protected function _beforeToHtml()
+    {
+        $this->jsUrl->add(
+            $this->getUrl('*/amazon_mapping_shippingMap/save'),
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Mapping\Tabs::TAB_ID_SHIPPING_MAPPING
+        );
+
+        return parent::_beforeToHtml();
     }
 
     public function _toHtml()

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Walmart;
 
+use Magento\Sales\Model\Order\Creditmemo;
+
 /**
  * Class \Ess\M2ePro\Model\Walmart\Order
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -778,7 +780,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function refund(array $items = [])
+    public function refund(array $items = [], Creditmemo $creditMemo = null)
     {
         if (!$this->canRefund()) {
             return false;

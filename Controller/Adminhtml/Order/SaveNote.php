@@ -10,6 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 class SaveNote extends \Ess\M2ePro\Controller\Adminhtml\Order
 {
+    /** @var \Ess\M2ePro\Model\Order\Note\Repository */
+    private $noteRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Order\Note\Repository $noteRepository,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($context);
+
+        $this->noteRepository = $noteRepository;
+    }
+
     public function execute()
     {
         $noteText = $this->getRequest()->getParam('note');
@@ -19,17 +31,13 @@ class SaveNote extends \Ess\M2ePro\Controller\Adminhtml\Order
             return $this->getResult();
         }
 
-        /** @var \Ess\M2ePro\Model\Order\Note $noteModel */
-        $noteModel = $this->activeRecordFactory->getObject('Order_Note');
         if ($noteId = $this->getRequest()->getParam('note_id')) {
-            $noteModel->load($noteId);
-            $noteModel->setData('note', $noteText);
+            $noteModel = $this->noteRepository->get($noteId);
+            $noteModel->setNote($noteText);
+            $this->noteRepository->save($noteModel);
         } else {
-            $noteModel->setData('note', $noteText);
-            $noteModel->setData('order_id', $this->getRequest()->getParam('order_id'));
+            $this->noteRepository->create($this->getRequest()->getParam('order_id'), $noteText);
         }
-
-        $noteModel->save();
 
         $this->setJsonContent(['result' => true]);
 

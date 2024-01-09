@@ -294,6 +294,10 @@ class Active extends AbstractModel
             );
             $ruleModel->loadFromSerialized($amazonSynchronizationTemplate->getStopAdvancedRulesFilters());
 
+            if (empty($ruleModel->getConditions()->getConditions())) {
+                return false;
+            }
+
             if ($ruleModel->validate($listingProduct->getMagentoProduct()->getProduct())) {
                 return true;
             }
