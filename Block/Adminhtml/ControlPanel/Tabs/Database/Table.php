@@ -98,16 +98,6 @@ class Table extends AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
-        $url = $this->getUrl('*/*/truncateTables', ['tables' => $tableName]);
-        $this->addButton('delete_all', [
-            'label' => $this->__('Truncate Table'),
-            'onclick' => 'deleteConfirm(\'Are you sure?\', \'' . $url . '\')',
-            'class' => 'action-error',
-            'sort_order' => 80,
-        ]);
-        // ---------------------------------------
-
-        // ---------------------------------------
         $this->addButton('add_row', [
             'label' => $this->__('Append Row'),
             'onclick' => 'ControlPanelDatabaseGridObj.openTableCellsPopup(\'add\')',

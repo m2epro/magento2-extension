@@ -56,6 +56,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
 
     /**
      * @return \Magento\Framework\DB\Select
+     * @throws \Exception
      */
     public function getDataQuery(): \Magento\Framework\DB\Select
     {
@@ -68,44 +69,72 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
-        /* List condition */
-        $isMeetList = '
+        /**
+         * List condition
+         * @see \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed::isMeetListRequirements
+         * @see \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed::isMeetListRequirements
+         * @see \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed::isMeetListRequirements
+         */
+        $notListedIsMeetList = '
             status = 0 AND (
-                base.calculated_qty >= base.list_with_qty_greater_or_equal_then
-                AND IF (base.list_only_enabled_products, base.product_disabled = FALSE, TRUE)
-                AND IF (base.list_only_in_stock_products, base.is_in_stock, TRUE)
+                IF (list_only_enabled_products AND base.product_disabled = 1, FALSE,
+                    IF (base.list_only_in_stock_products AND base.is_in_stock = 0, FALSE,
+                        base.calculated_qty >= base.list_with_qty_greater_or_equal_then
+                    )
+                )
             )
         ';
-        $mainQuery->orWhere($isMeetList);
+        $mainQuery->orWhere($notListedIsMeetList);
 
-        /* Revise condition */
-        $isMeetRevise = '
+        /**
+         * Revise condition
+         * @see \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetReviseQtyRequirements
+         * @see \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetReviseQtyRequirements
+         * @see \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetReviseQtyRequirements
+         */
+        $activeIsMeetRevise = '
             base.status = 2 AND (
                 (base.calculated_qty > base.online_qty AND base.online_qty < base.revise_threshold)
                 OR (base.calculated_qty != base.online_qty AND base.calculated_qty < base.revise_threshold)
             )
         ';
-        $mainQuery->orWhere($isMeetRevise);
+        $mainQuery->orWhere($activeIsMeetRevise);
 
-        /* Relist condition */
-        $isMeetRelist = '
+        /**
+         * Relist condition
+         * @see \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive::isMeetRelistRequirements
+         * @see \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive::isMeetRelistRequirements
+         * @see \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive::isMeetRelistRequirements
+         */
+        $inactiveIsMeetRelist = '
             base.status IN (1, 3, 4, 5) AND (
-                (base.stock_qty >= base.relist_when_qty_more_or_equal)
-                AND IF (base.relist_when_product_is_in_stock, base.is_in_stock = TRUE, TRUE)
-                AND IF (base.relist_when_product_status_enabled, base.product_disabled = FALSE, TRUE)
+                IF(base.relist_when_stopped_manually AND base.status_changer <> 2, FALSE,
+                   IF(base.relist_when_product_is_in_stock AND base.is_in_stock = 0, FALSE,
+                      IF(base.relist_when_product_status_enabled AND base.product_disabled = 1, FALSE,
+                         base.calculated_qty >= base.relist_when_qty_more_or_equal
+                      )
+                   )
+                )
             )
         ';
-        $mainQuery->orWhere($isMeetRelist);
+        $mainQuery->orWhere($inactiveIsMeetRelist);
 
-        /* Stop condition */
-        $isMeetStop = '
+        /**
+         * Stop condition
+         * @see \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetStopRequirements
+         * @see \Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetStopRequirements
+         * @see \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Checker\Active::isMeetStopRequirements
+        */
+        $activeIsMeetStop = '
             base.status = 2 AND (
-                (base.stop_when_qty_less_than >= base.stock_qty)
-                AND IF(base.stop_when_product_out_of_stock, base.is_in_stock = 0, TRUE)
-                AND IF(base.stop_when_product_disabled, base.product_disabled = TRUE, TRUE)
+                IF (base.stop_when_product_disabled AND base.product_disabled = 1, TRUE,
+                    IF (base.stop_when_product_out_of_stock AND base.is_in_stock = 0, TRUE,
+                        IF (base.stop_when_qty_less_than >= base.calculated_qty, TRUE, FALSE)
+                    )
+                )
             )
         ';
-        $mainQuery->orWhere($isMeetStop);
+        $mainQuery->orWhere($activeIsMeetStop);
 
         $message = sprintf(
             'Data query %s %s',
@@ -125,6 +154,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
      * Base product sub query.
      * Includes all necessary information regarding the listing product
      * @return SelectQueryBuilder
+     * @throws \Exception
      */
     protected function productSubQuery(): SelectQueryBuilder
     {
@@ -139,6 +169,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
 
         $query
             ->addSelect('status', 'lp.status')
+            ->addSelect('status_changer', 'lp.status_changer')
             ->addSelect('store_id', 'l.store_id')
             ->addSelect('sync_template_id', 'c_l.template_synchronization_id')
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id')
@@ -276,7 +307,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             )
             ->addSelect(
                 'relist_when_stopped_manually',
-                'IF(ts.relist_mode = 1 AND ts.relist_filter_user_lock = 1, TRUE, FALSE)'
+                'IF(ts.relist_mode = 1 AND ts.relist_filter_user_lock = 0, TRUE, FALSE)'
             )
             ->addSelect(
                 'relist_when_product_status_enabled',
@@ -308,6 +339,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->addSelect('listing_product_id', 'product.listing_product_id')
             ->addSelect('product_id', 'product.product_id')
             ->addSelect('status', 'product.status')
+            ->addSelect('status_changer', 'product.status_changer')
             ->addSelect('product_disabled', new \Zend_Db_Expr('product.product_enabled = 2'))
             ->addSelect('store_id', 'product.store_id')
             ->addSelect('sync_template_id', 'product.sync_template_id')

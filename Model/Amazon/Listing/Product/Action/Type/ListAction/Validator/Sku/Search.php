@@ -1,28 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\Search
- */
 class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
     /** @var null  */
     private $skusInProcessing = null;
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
      */
-    public function validate()
+    public function validate(): bool
     {
         $sku = $this->getSku();
 
@@ -73,7 +64,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         return false;
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getSku()
     {
@@ -84,24 +75,26 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         return $this->getData('sku');
     }
 
-    private function getUnifiedSku($prefix = 'SKU')
+    private function getUnifiedSku($prefix = 'SKU'): string
     {
         return $prefix . '_' . $this->getListingProduct()->getProductId() . '_' . $this->getListingProduct()->getId();
     }
 
-    private function getRandomSku()
+    private function getRandomSku(): string
     {
         $hash = sha1(rand(0, 10000) . microtime(1));
 
         return $this->getUnifiedSku() . '_' . substr($hash, 0, 10);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function checkSkuRequirements($sku)
+    private function checkSkuRequirements(string $sku): bool
     {
         if (
-            $sku > \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH
+            mb_strlen(
+                $sku
+            ) > \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General::SKU_MAX_LENGTH
         ) {
             return false;
         }
@@ -113,9 +106,9 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         return true;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    private function isExistInM2ePro($sku, $addMessages = false)
+    private function isExistInM2ePro($sku, $addMessages = false): bool
     {
         if ($this->isAlreadyInProcessing($sku)) {
             $addMessages && $this->addMessage(
@@ -149,12 +142,12 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     // ---------------------------------------
 
-    private function isAlreadyInProcessing($sku)
+    private function isAlreadyInProcessing($sku): bool
     {
         return in_array($sku, $this->getSkusInProcessing());
     }
 
-    private function isExistInM2eProListings($sku)
+    private function isExistInM2eProListings($sku): bool
     {
         $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
 
@@ -172,7 +165,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         return $collection->getSize() > 0;
     }
 
-    private function isExistInOtherListings($sku)
+    private function isExistInOtherListings($sku): bool
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Other\Collection $collection */
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
@@ -183,7 +176,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         return $collection->getSize() > 0;
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getSkusInProcessing()
     {
@@ -198,6 +191,4 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
         return $this->skusInProcessing = $processingActionListSkuCollection->getColumnValues('sku');
     }
-
-    //########################################
 }
