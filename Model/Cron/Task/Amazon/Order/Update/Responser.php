@@ -4,6 +4,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Update;
 
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsResponser
 {
+    private const INVALID_CARRIER_CODE = 5004;
     /** @var \Ess\M2ePro\Model\Order */
     protected $order;
 
@@ -107,6 +108,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
                     'Amazon Order status was not updated. Reason: %msg%',
                     ['msg' => $message->getText()]
                 );
+                if ($message->getCode() === self::INVALID_CARRIER_CODE) {
+                    $this->orderChange->delete();
+
+                    return;
+                }
             } else {
                 $this->order->addWarningLog($message->getText());
             }

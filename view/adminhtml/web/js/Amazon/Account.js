@@ -140,6 +140,11 @@ define([
             $('magento_orders_tax_amazon_round_of_rate_value')
                     .observe('change', AmazonAccountObj.magentoOrderTaxRoundOfRateValueChange)
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
+
+            // tab fbaInventory
+            $('fba_inventory_mode')
+                    .observe('change', AmazonAccountObj.fbaInventoryModeChange)
+                    .simulate('change')
         },
 
         // ---------------------------------------
@@ -630,6 +635,14 @@ define([
             if ($('auto_invoicing').value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::AUTO_INVOICING_VAT_CALCULATION_SERVICE')) {
                 invoiceGenerationContainer.show();
                 createMagentoInvoice.value = 0;
+            }
+        },
+
+        fbaInventoryModeChange: function() {
+            if ($('fba_inventory_mode').value == 1) {
+                $('fba_inventory_source_tr').show();
+            } else {
+                $('fba_inventory_source_tr').hide();
             }
         },
 

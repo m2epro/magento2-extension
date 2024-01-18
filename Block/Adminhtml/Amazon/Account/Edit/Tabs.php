@@ -17,6 +17,7 @@ class Tabs extends AbstractTabs
     public const TAB_ID_LISTING_OTHER = 'listingOther';
     public const TAB_ID_ORDERS = 'orders';
     public const TAB_ID_INVOICES_AND_SHIPMENTS = 'invoices_and_shipments';
+    public const TAB_ID_FBA_INVENTORY = 'fba_inventory';
 
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
@@ -87,6 +88,14 @@ class Tabs extends AbstractTabs
                                   ->toHtml(),
             ]);
         }
+
+        $this->addTab(self::TAB_ID_FBA_INVENTORY, [
+            'label' => __('FBA Inventory'),
+            'title' => __('FBA Inventory'),
+            'content' => $this->getLayout()
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\FbaInventory::class)
+                              ->toHtml(),
+        ]);
 
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 

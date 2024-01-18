@@ -7778,6 +7778,18 @@ class Installer
                                        null,
                                        ['default' => null]
                                    )
+                                   ->addColumn(
+                                       'fba_inventory_mode',
+                                       Table::TYPE_SMALLINT,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                   )
+                                   ->addColumn(
+                                       'fba_inventory_source',
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['default' => null]
+                                   )
                                    ->setOption('type', 'INNODB')
                                    ->setOption('charset', 'utf8')
                                    ->setOption('collate', 'utf8_general_ci')

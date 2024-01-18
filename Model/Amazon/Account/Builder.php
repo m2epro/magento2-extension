@@ -384,6 +384,18 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        // tab: FBA Inventory
+        // ---------------------------------------
+        $keys = [
+            'fba_inventory_mode',
+            'fba_inventory_source',
+        ];
+        foreach ($keys as $key) {
+            if (isset($this->rawData[$key])) {
+                $data[$key] = $this->rawData[$key];
+            }
+        }
+
         // region server data
         if (isset($this->rawData['server_hash'])) {
             $data['server_hash'] = $this->rawData['server_hash'];
@@ -493,6 +505,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,
             'create_magento_shipment_fba_orders' => 1,
+
+            // fba_inventory
+            'fba_inventory_mode' => 0,
+            'fba_inventory_source' => null,
         ];
     }
 

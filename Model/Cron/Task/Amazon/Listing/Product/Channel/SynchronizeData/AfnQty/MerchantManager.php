@@ -96,6 +96,23 @@ class MerchantManager
     /**
      * @param string $merchantId
      *
+     * @return \Ess\M2ePro\Model\Account[]
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getMerchantAccounts(string $merchantId): array
+    {
+        if (empty($this->merchantAccounts[$merchantId])) {
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'Incorrect MerchantManager usage: you need to do init() first!'
+            );
+        }
+
+        return $this->merchantAccounts[$merchantId];
+    }
+
+    /**
+     * @param string $merchantId
+     *
      * @return \Ess\M2ePro\Model\Account
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

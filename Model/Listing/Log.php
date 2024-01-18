@@ -100,6 +100,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const ACTION_REPRICER = 36;
     public const _ACTION_REPRICER = 'Repricer';
 
+    public const ACTION_CHANGE_PRODUCT_QTY_IN_MAGENTO_SOURCE = 37;
+    public const _ACTION_CHANGE_PRODUCT_QTY_IN_MAGENTO_SOURCE = 'Update of FBA Product QTY in Magento Store';
+
     protected function _construct(): void
     {
         parent::_construct();

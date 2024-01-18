@@ -689,6 +689,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (int)$this->getData('online_qty');
     }
 
+    public function getOnlineAfnQty(): ?int
+    {
+        return $this->getData('online_afn_qty');
+    }
+
     // ---------------------------------------
 
     /**

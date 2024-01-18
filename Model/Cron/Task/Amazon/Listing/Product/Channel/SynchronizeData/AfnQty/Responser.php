@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeD
 
 use Ess\M2ePro\Model\Cron\Task\Amazon\Listing\Product\Channel\SynchronizeData\AfnQty\MerchantManager as MerchantManager;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstractModel;
+use Ess\M2ePro\Model\Amazon\Account\FbaInventory\MagentoSourceUpdater;
 
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\ItemsResponser
 {
@@ -32,8 +33,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
     private $instructionResource;
     /** @var array */
     private $instructionForCheckingProductData = [];
+    /** @var \Ess\M2ePro\Model\Amazon\Account\FbaInventory\MagentoSourceUpdater */
+    private $magentoSourceUpdater;
 
     public function __construct(
+        MagentoSourceUpdater $magentoSourceUpdater,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Module\Logger $logger,
@@ -66,6 +70,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $this->listingResource = $listingResource;
         $this->amazonAccountResource = $amazonAccountResource;
         $this->instructionResource = $instructionResource;
+        $this->magentoSourceUpdater = $magentoSourceUpdater;
     }
 
     /**
@@ -154,7 +159,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
             return;
         }
 
-        $merchantId = $this->merchantManager->getMerchantIdByAccountId((int)$this->params['account_id']);
+        $accountId = (int)$this->params['account_id'];
+        $merchantId = $this->merchantManager->getMerchantIdByAccountId($accountId);
         // $this->params['account_id'] is always available
         // next lines is for possible situation with deleted account
         if (!$merchantId) {
@@ -210,6 +216,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
             ->where('aa.merchant_id = ? AND is_afn_channel = 1', $merchantId);
 
         $normalizedReceivedItems = array_change_key_case($receivedItems, CASE_LOWER);
+
+        $this->magentoSourceUpdater->updateQty(
+            $merchantId,
+            $m2eproListingProductCollection->getItems(),
+            $normalizedReceivedItems
+        );
 
         $this->updateItemsFromCollection($m2eproListingProductCollection, $normalizedReceivedItems);
         $this->updateItemsFromCollection($unmanagedListingProductCollection, $normalizedReceivedItems);

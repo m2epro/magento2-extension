@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
 use Ess\M2ePro\Model\ResourceModel\Listing\Product as ListingProductResource;
 
+/**
+ * @method \Ess\M2ePro\Model\Listing\Product[] getItems()
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
     public function _construct()

@@ -164,30 +164,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     //########################################
 
-    protected function _prepareMassaction()
-    {
-        // Set massaction identifiers
-        // ---------------------------------------
-        $this->setMassactionIdField('table_name');
-        $this->getMassactionBlock()->setFormFieldName('tables');
-        $this->getMassactionBlock()->setUseSelectAll(false);
-        // ---------------------------------------
-
-        // Set truncate action
-        // ---------------------------------------
-        $this->getMassactionBlock()->addItem('truncate', [
-            'label' => $this->__('Truncate Table(s)'),
-            'url' => $this->getUrl('*/controlPanel_database/truncateTables'),
-            'confirm' => $this->__('Are you sure?'),
-        ]);
-
-        // ---------------------------------------
-
-        return parent::_prepareMassaction();
-    }
-
-    //########################################
-
     public function getGridUrl()
     {
         return $this->getUrl('*/controlPanel/databaseTab', ['_current' => true]);

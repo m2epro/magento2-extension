@@ -1138,6 +1138,21 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (bool)$this->getData('remote_fulfillment_program_mode');
     }
 
+    public function getFbaInventoryMode(): int
+    {
+        return (int)$this->getData('fba_inventory_mode');
+    }
+
+    public function isEnabledFbaInventoryMode(): bool
+    {
+        return $this->getFbaInventoryMode() == 1;
+    }
+
+    public function getFbaInventorySource(): ?string
+    {
+        return $this->getData('fba_inventory_source');
+    }
+
     /**
      * @return bool
      */
