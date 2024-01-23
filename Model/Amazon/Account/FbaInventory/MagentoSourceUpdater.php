@@ -12,9 +12,9 @@ class MagentoSourceUpdater
     private $merchantManager;
     /** @var \Magento\Framework\Api\SearchCriteriaBuilder */
     private $searchCriteriaBuilder;
-    /** @var \Magento\InventoryApi\Api\SourceItemRepositoryInterface */
-    private $sourceItemRepositoryInterface;
-    /** @var \Magento\InventoryApi\Api\SourceItemsSaveInterface */
+    /** @var \Magento\InventoryApi\Api\SourceItemRepositoryInterface|null */
+    private $sourceItemRepository;
+    /** @var \Magento\InventoryApi\Api\SourceItemsSaveInterface|null */
     private $sourceItemsSave;
     /** @var \Ess\M2ePro\Helper\Magento */
     private $magentoHelper;
@@ -24,10 +24,9 @@ class MagentoSourceUpdater
     private $logHelper;
 
     public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         MerchantManager $merchantManager,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
-        \Magento\InventoryApi\Api\SourceItemRepositoryInterface $sourceItemRepositoryInterface,
-        \Magento\InventoryApi\Api\SourceItemsSaveInterface $sourceItemsSave,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\Amazon\Listing\LogFactory $listingLogFactory,
         \Ess\M2ePro\Helper\Module\Log $logHelper
@@ -35,11 +34,20 @@ class MagentoSourceUpdater
         $this->merchantManager = $merchantManager;
         $this->merchantManager->init();
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->sourceItemRepositoryInterface = $sourceItemRepositoryInterface;
-        $this->sourceItemsSave = $sourceItemsSave;
         $this->magentoHelper = $magentoHelper;
         $this->listingLogFactory = $listingLogFactory;
         $this->logHelper = $logHelper;
+        $this->sourceItemRepository = null;
+        $this->sourceItemsSave = null;
+
+        if ($this->magentoHelper->isMSISupportingVersion()) {
+            $this->sourceItemRepository = $objectManager->get(
+                \Magento\InventoryApi\Api\SourceItemRepositoryInterface::class
+            );
+            $this->sourceItemsSave = $objectManager->get(
+                \Magento\InventoryApi\Api\SourceItemsSaveInterface::class
+            );
+        }
     }
 
     /**
@@ -58,7 +66,11 @@ class MagentoSourceUpdater
         array $listingProductItems,
         array $changedData
     ): void {
-        if (!$this->magentoHelper->isMSISupportingVersion()) {
+        if (
+            !$this->magentoHelper->isMSISupportingVersion()
+            || $this->sourceItemRepository === null
+            || $this->sourceItemsSave === null
+        ) {
             return;
         }
 
@@ -78,8 +90,8 @@ class MagentoSourceUpdater
 
         /** @var \Magento\Inventory\Model\SourceItem $sourceItem */
         foreach (
-            $this->sourceItemRepositoryInterface->getList($this->buildSearchCriteria($account, $changedItems))
-                                                ->getItems() as $sourceItem
+            $this->sourceItemRepository->getList($this->buildSearchCriteria($account, $changedItems))
+                                       ->getItems() as $sourceItem
         ) {
             $magentoSku = $sourceItem->getSku();
             $magentoLowerSku = strtolower($magentoSku);

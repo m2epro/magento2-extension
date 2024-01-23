@@ -6,25 +6,32 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 class FbaInventory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    /** @var \Magento\Inventory\Model\SourceRepository */
-    private $sourceRepository;
     /** @var \Ess\M2ePro\Helper\Magento */
     private $magentoHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+    /** @var \Magento\InventoryApi\Api\SourceRepositoryInterface|null */
+    private $sourceRepository;
 
     public function __construct(
-        \Magento\Inventory\Model\SourceRepository $sourceRepository,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     ) {
-        $this->sourceRepository = $sourceRepository;
         $this->magentoHelper = $magentoHelper;
         $this->globalDataHelper = $globalDataHelper;
+        $this->sourceRepository = null;
+
+        if ($this->magentoHelper->isMSISupportingVersion()) {
+            $this->sourceRepository = $objectManager->get(
+                \Magento\InventoryApi\Api\SourceRepositoryInterface::class
+            );
+        }
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -132,10 +139,14 @@ class FbaInventory extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     private function getSourceOptions(): array
     {
+        if ($this->sourceRepository === null) {
+            return [];
+        }
+
         $sources = $this->sourceRepository->getList()->getItems();
         $sourceOptions = [];
 
-        /** @var \Magento\Inventory\Model\SourceRepository $source */
+        /** @var \Magento\Inventory\Model\Source $source */
         foreach ($sources as $source) {
             $sourceOptions[$source->getSourceCode()] = $source->getName();
         }
