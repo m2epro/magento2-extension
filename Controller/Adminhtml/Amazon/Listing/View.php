@@ -1,34 +1,51 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\View
- */
 class View extends Main
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $viewStateManager;
+    /** @var \Ess\M2ePro\Model\Magento\Product\RuleFactory */
+    private $magentoRuleFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Magento\Product\RuleFactory */
+    private $amazonRuleFactory;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
+        \Ess\M2ePro\Model\Magento\Product\RuleFactory $magentoRuleFactory,
+        \Ess\M2ePro\Model\Amazon\Magento\Product\RuleFactory $amazonRuleFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($amazonFactory, $context);
+
+        $this->viewStateFactory = $viewStateFactory;
+        $this->viewStateManager = $viewStateManager;
+        $this->magentoRuleFactory = $magentoRuleFactory;
+        $this->amazonRuleFactory = $amazonRuleFactory;
+        $this->globalData = $globalData;
+    }
+
     public function execute()
     {
         if ($this->getRequest()->getQuery('ajax')) {
             $id = $this->getRequest()->getParam('id');
             $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $id);
 
-            $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
+            $this->globalData->setValue('view_listing', $listing);
 
             $listingView = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::class);
 
-            // Set rule model
-            // ---------------------------------------
-            $this->setRuleData('amazon_rule_listing_view');
-            // ---------------------------------------
+            $this->setRuleModel();
 
             $this->setAjaxContent($listingView->getGridHtml());
 
@@ -77,7 +94,7 @@ class View extends Main
         }
         // ---------------------------------------
 
-        $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
+        $this->globalData->setValue('view_listing', $listing);
 
         $this->setPageHelpLink('m2e-pro-listings');
 
@@ -93,44 +110,45 @@ class View extends Main
             ->getLayout()
             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\ProductType\Validate\Popup::class));
 
-        // Set rule model
-        // ---------------------------------------
-        $this->setRuleData('amazon_rule_listing_view');
-
-        // ---------------------------------------
+        $this->setRuleModel();
 
         return $this->getResult();
     }
 
-    protected function setRuleData($prefix)
+    private function setRuleModel(): void
     {
-        $listingData = $this->getHelper('Data\GlobalData')->getValue('view_listing')->getData();
-
-        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
-        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
-
-        // ---------------------------------------
-        $useCustomOptions = true;
-        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Switcher::VIEW_MODE_MAGENTO;
-        $sessionParamName = 'amazonListingView' . $listingData['id'] . 'view_mode';
-
-        if (
-            ($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||
-            $magentoViewMode == $this->getHelper('Data\Session')->getValue($sessionParamName)
-        ) {
-            $useCustomOptions = false;
+        if ($this->isViewModeMagento()) {
+            $ruleModelNick = \Ess\M2ePro\Model\Magento\Product\Rule::NICK;
+            $viewKey = $this->buildPrefix($ruleModelNick) . '_amazon_view_magento';
+        } else {
+            $ruleModelNick = \Ess\M2ePro\Model\Amazon\Magento\Product\Rule::NICK;
+            $viewKey = $this->buildPrefix($ruleModelNick);
         }
-        // ---------------------------------------
 
-        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
-        $ruleModel = $this->activeRecordFactory->getObject('Amazon_Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-                'store_id' => $storeId,
-                'use_custom_options' => $useCustomOptions,
-            ]
+        $getRuleBySessionData = function () {
+            return $this->createRuleBySessionData();
+        };
+        $ruleModel = $this->viewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($viewKey),
+            $ruleModelNick,
+            $this->getStoreId(),
+            $getRuleBySessionData
         );
+
+        $this->globalData->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(): \Ess\M2ePro\Model\Magento\Product\Rule
+    {
+        $prefix = $this->buildPrefix('amazon_rule_listing_view');
+        $this->globalData->setValue('rule_prefix', $prefix);
+
+        if ($this->isViewModeMagento()) {
+            $prefix = $prefix . '_amazon_view_magento';
+            $ruleModel = $this->magentoRuleFactory->create($prefix, $this->getStoreId());
+        } else {
+            $ruleModel = $this->amazonRuleFactory->create($prefix, $this->getStoreId());
+        }
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
@@ -147,6 +165,45 @@ class View extends Main
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+        return $ruleModel;
+    }
+
+    private function buildPrefix(string $root): string
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        return $root . '_listing' . (isset($listing['id']) ? '_' . $listing['id'] : '');
+    }
+
+    private function getStoreId(): int
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        if (empty($listing['store_id'])) {
+            return 0;
+        }
+
+        return (int)$listing['store_id'];
+    }
+
+    private function isViewModeMagento(): bool
+    {
+        $isViewModeMagento = false;
+        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Switcher::VIEW_MODE_MAGENTO;
+        $sessionParamName = 'amazonListingView' . $this->getListingDataFromGlobalData()['id'] . 'view_mode';
+
+        if (
+            $this->getRequest()->getParam('view_mode') == $magentoViewMode
+            || $magentoViewMode == $this->getHelper('Data\Session')->getValue($sessionParamName)
+        ) {
+            $isViewModeMagento = true;
+        }
+
+        return $isViewModeMagento;
+    }
+
+    private function getListingDataFromGlobalData(): array
+    {
+        return $this->globalData->getValue('view_listing')->getData();
     }
 }

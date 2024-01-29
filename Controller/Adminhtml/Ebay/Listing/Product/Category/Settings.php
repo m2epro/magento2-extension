@@ -111,6 +111,9 @@ abstract class Settings extends Listing
         $sessionData = $this->convertCategoriesIdstoProductIds($sessionData);
         $sessionData = $this->prepareUniqueTemplatesData($sessionData);
 
+        $sessionKeyOfAssignedTemplates = 'assigned_templates_to_products';
+        $assignedTemplatesSessionVal = $this->getSessionValue($sessionKeyOfAssignedTemplates) ?? [];
+
         foreach ($sessionData as $hash => $templatesData) {
             /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter */
             $converter = $this->modelFactory->getObject('Ebay_Template_Category_Chooser_Converter');
@@ -118,6 +121,10 @@ abstract class Settings extends Listing
             $converter->setMarketplaceId($listing->getMarketplaceId());
 
             foreach ($templatesData as $categoryType => $templateData) {
+                if (isset($assignedTemplatesSessionVal[$hash][$categoryType])) {
+                    continue;
+                }
+
                 $listingProductsIds = $templateData['listing_products_ids'];
                 $listingProductsIds = array_unique($listingProductsIds);
                 unset($templateData['listing_products_ids']);
@@ -146,6 +153,9 @@ abstract class Settings extends Listing
                     $categoryType == eBayCategory::TYPE_STORE_MAIN ? $categoryTpl->getId() : null,
                     $categoryType == eBayCategory::TYPE_STORE_SECONDARY ? $categoryTpl->getId() : null
                 );
+
+                $assignedTemplatesSessionVal[$hash][$categoryType] = true;
+                $this->setSessionValue($sessionKeyOfAssignedTemplates, $assignedTemplatesSessionVal);
             }
         }
 

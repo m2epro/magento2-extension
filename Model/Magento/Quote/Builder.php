@@ -165,6 +165,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 ->setCustomerId(null)
                 ->setCustomerEmail($this->proxyOrder->getBuyerEmail())
                 ->setCustomerFirstname($this->proxyOrder->getCustomerFirstName())
+                ->setCustomerMiddlename($this->proxyOrder->getCustomerMiddleName())
                 ->setCustomerLastname($this->proxyOrder->getCustomerLastName())
                 ->setCustomerIsGuest(true)
                 ->setCustomerGroupId(\Magento\Customer\Model\Group::NOT_LOGGED_IN_ID);

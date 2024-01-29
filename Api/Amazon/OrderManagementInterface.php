@@ -9,7 +9,7 @@ interface OrderManagementInterface
      *
      * @param string $amazonOrderId
      *
-     * @return array
+     * @return mixed
      * @throws \Ess\M2ePro\Api\Exception\NotFoundException
      */
     public function getOrderFees(string $amazonOrderId): array;

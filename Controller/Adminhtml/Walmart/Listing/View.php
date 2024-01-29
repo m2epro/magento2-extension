@@ -1,24 +1,29 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
 
 class View extends Main
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $viewStateManager;
+    /** @var \Ess\M2ePro\Model\Magento\Product\RuleFactory */
+    private $magentoRuleFactory;
+    /** @var \Ess\M2ePro\Model\Walmart\Magento\Product\RuleFactory */
+    private $walmartRuleFactory;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
-
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
 
     public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
+        \Ess\M2ePro\Model\Magento\Product\RuleFactory $magentoRuleFactory,
+        \Ess\M2ePro\Model\Walmart\Magento\Product\RuleFactory $walmartRuleFactory,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -26,6 +31,10 @@ class View extends Main
     ) {
         parent::__construct($walmartFactory, $context);
 
+        $this->viewStateFactory = $viewStateFactory;
+        $this->viewStateManager = $viewStateManager;
+        $this->magentoRuleFactory = $magentoRuleFactory;
+        $this->walmartRuleFactory = $walmartRuleFactory;
         $this->globalData = $globalData;
         $this->sessionHelper = $sessionHelper;
     }
@@ -40,10 +49,7 @@ class View extends Main
 
             $listingView = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View::class);
 
-            // Set rule model
-            // ---------------------------------------
-            $this->setRuleData('walmart_rule_listing_view');
-            // ---------------------------------------
+            $this->setRuleModel();
 
             $this->setAjaxContent($listingView->getGridHtml());
 
@@ -101,44 +107,45 @@ class View extends Main
 
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View::class));
 
-        // Set rule model
-        // ---------------------------------------
-        $this->setRuleData('walmart_rule_listing_view');
-
-        // ---------------------------------------
+        $this->setRuleModel();
 
         return $this->getResult();
     }
 
-    protected function setRuleData($prefix)
+    private function setRuleModel(): void
     {
-        $listingData = $this->globalData->getValue('view_listing')->getData();
+        if ($this->isViewModeMagento()) {
+            $ruleModelNick = \Ess\M2ePro\Model\Magento\Product\Rule::NICK;
+            $viewKey = $this->buildPrefix($ruleModelNick) . '_walmart_view_magento';
+        } else {
+            $ruleModelNick = \Ess\M2ePro\Model\Walmart\Magento\Product\Rule::NICK;
+            $viewKey = $this->buildPrefix($ruleModelNick);
+        }
 
-        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
+        $getRuleBySessionData = function () {
+            return $this->createRuleBySessionData();
+        };
+        $ruleModel = $this->viewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($viewKey),
+            $ruleModelNick,
+            $this->getStoreId(),
+            $getRuleBySessionData
+        );
+
+        $this->globalData->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(): \Ess\M2ePro\Model\Magento\Product\Rule
+    {
+        $prefix = $this->buildPrefix('walmart_rule_listing_view');
         $this->globalData->setValue('rule_prefix', $prefix);
 
-        // ---------------------------------------
-        $useCustomOptions = true;
-        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher::VIEW_MODE_MAGENTO;
-        $sessionParamName = 'walmartListingView' . $listingData['id'] . 'view_mode';
-
-        if (
-            ($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||
-            $magentoViewMode == $this->sessionHelper->getValue($sessionParamName)
-        ) {
-            $useCustomOptions = false;
+        if ($this->isViewModeMagento()) {
+            $prefix = $prefix . '_view_magento';
+            $ruleModel = $this->magentoRuleFactory->create($prefix, $this->getStoreId());
+        } else {
+            $ruleModel = $this->walmartRuleFactory->create($prefix, $this->getStoreId());
         }
-        // ---------------------------------------
-
-        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $ruleModel */
-        $ruleModel = $this->activeRecordFactory->getObject('Walmart_Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-                'store_id' => $storeId,
-                'use_custom_options' => $useCustomOptions,
-            ]
-        );
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
@@ -155,6 +162,45 @@ class View extends Main
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->globalData->setValue('rule_model', $ruleModel);
+        return $ruleModel;
+    }
+
+    private function buildPrefix(string $root): string
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        return $root . '_listing' . (isset($listing['id']) ? '_' . $listing['id'] : '');
+    }
+
+    private function getStoreId(): int
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        if (empty($listing['store_id'])) {
+            return 0;
+        }
+
+        return (int)$listing['store_id'];
+    }
+
+    private function isViewModeMagento(): bool
+    {
+        $isViewModeMagento = false;
+        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher::VIEW_MODE_MAGENTO;
+        $sessionParamName = 'walmartListingView' . $this->getListingDataFromGlobalData()['id'] . 'view_mode';
+
+        if (
+            $this->getRequest()->getParam('view_mode') == $magentoViewMode
+            || $magentoViewMode == $this->sessionHelper->getValue($sessionParamName)
+        ) {
+            $isViewModeMagento = true;
+        }
+
+        return $isViewModeMagento;
+    }
+
+    private function getListingDataFromGlobalData(): array
+    {
+        return $this->globalData->getValue('view_listing')->getData();
     }
 }

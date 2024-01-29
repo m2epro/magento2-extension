@@ -654,6 +654,21 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'magento_orders_refund_credit_memo',
+            'select',
+            [
+                'container_id' => 'magento_orders_refund_container_credit_memo',
+                'name' => 'magento_orders_settings[refund_and_cancellation][credit_memo]',
+                'label' => __('Create Credit Memo after Order is Cancelled on Ebay'),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['refund_and_cancellation']['credit_memo'],
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_magento_orders_tax',
             [

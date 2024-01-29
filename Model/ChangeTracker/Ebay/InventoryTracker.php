@@ -14,6 +14,8 @@ class InventoryTracker extends BaseInventoryTracker
     {
         $query = parent::productSubQuery();
 
+        $query->addSelect('status', new \Zend_Db_Expr('IFNULL(c_lpv.status, lp.status)'));
+
         $query->leftJoin(
             'c_lpv',
             $this->setChannelToTableName('m2epro_%s_listing_product_variation'),

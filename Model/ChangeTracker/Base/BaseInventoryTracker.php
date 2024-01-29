@@ -66,7 +66,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
-            ->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
+            //->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
         /**

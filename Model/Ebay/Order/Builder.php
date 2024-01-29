@@ -53,7 +53,7 @@ class Builder extends AbstractModel
     /** @var array<array{type:string, text:string}> */
     private $messages = [];
     /** @var bool */
-    private $isBuyerCancellationRequested = false;
+    private $isBuyerCancellationRequestedStatusFromChannel = false;
     /** @var bool */
     private $isBuyerReturnRequested = false;
 
@@ -102,7 +102,7 @@ class Builder extends AbstractModel
 
         $this->setData('order_status', $data['statuses']['order']);
         $this->setData('checkout_status', $this->helper->getCheckoutStatus($data['statuses']['checkout']));
-        $this->isBuyerCancellationRequested = !empty($data['buyer_cancellation_requested']);
+        $this->isBuyerCancellationRequestedStatusFromChannel = !empty($data['buyer_cancellation_requested']);
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
@@ -578,15 +578,18 @@ class Builder extends AbstractModel
         $this->setData('shipping_details', \Ess\M2ePro\Helper\Json::encode($this->getData('shipping_details')));
         $this->setData('payment_details', \Ess\M2ePro\Helper\Json::encode($this->getData('payment_details')));
 
-        $buyerCancellationStatus = $this->order->getId() ?
+        $buyerCancellationRequestedStatusCurrent = $this->order->getId() ?
             $this->order->getChildObject()->getBuyerCancellationStatus()
             : EbayOrder::BUYER_CANCELLATION_STATUS_NOT_REQUESTED;
-        $buyerCancellationStatusIsRequested =
-            $buyerCancellationStatus === EbayOrder::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
-            && $this->isBuyerCancellationRequested;
 
-        if ($buyerCancellationStatusIsRequested) {
+        $isBuyerCancellationStatusNeedChangeToIsRequested =
+            $buyerCancellationRequestedStatusCurrent === EbayOrder::BUYER_CANCELLATION_STATUS_NOT_REQUESTED
+            && $this->isBuyerCancellationRequestedStatusFromChannel;
+
+        if ($isBuyerCancellationStatusNeedChangeToIsRequested) {
             $this->setData('buyer_cancellation_status', EbayOrder::BUYER_CANCELLATION_STATUS_REQUESTED);
+        } elseif (!$this->isBuyerCancellationRequestedStatusFromChannel) {
+            $this->setData('buyer_cancellation_status', EbayOrder::BUYER_CANCELLATION_STATUS_NOT_REQUESTED);
         }
 
         $isInitBuyerReturnRequest = $this->isInitBuyerReturn();
@@ -630,12 +633,19 @@ class Builder extends AbstractModel
 
         $this->order->setAccount($this->account);
 
-        if ($buyerCancellationStatusIsRequested) {
+        if ($isBuyerCancellationStatusNeedChangeToIsRequested) {
             $description = (string)__(
                 'The buyer has requested to cancel the order #%order_number.',
                 ['order_number' => $this->order->getChildObject()->getEbayOrderId()]
             );
             $this->order->addWarningLog($description);
+        }
+
+        if (
+            $buyerCancellationRequestedStatusCurrent === EbayOrder::BUYER_CANCELLATION_STATUS_REQUESTED
+            && !$this->isBuyerCancellationRequestedStatusFromChannel
+        ) {
+            $this->order->addInfoLog((string)__('Cancellation request was processed'));
         }
 
         if ($isInitBuyerReturnRequest) {

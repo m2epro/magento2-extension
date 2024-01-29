@@ -79,27 +79,26 @@ abstract class AbstractPriceCondition
      * @param string $modeAttribute
      *
      * @return string
+     * @throws \Exception
      */
     protected function getPriceColumnCondition(int $mode, string $modeAttribute): string
     {
         if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT) {
-            return 'product.price';
+            return 'product.price * product.currency_rate';
         }
 
         if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL) {
+            $now = \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+            $nowDate = (clone $now)->format('Y-m-d H:i:s');
+            $startYear = (clone $now)->format('Y-01-01 00:00:00');
+            $endYear = (clone $now)->modify('+1 year')->format('Y-01-01 00:00:00');
+
             return "
-                (CASE
-                    WHEN product.special_price IS NOT NULL
-                        AND product.special_from_date IS NOT NULL
-                        AND product.special_to_date IS NOT NULL
-                        AND NOW() BETWEEN product.special_from_date AND product.special_to_date
-                    THEN product.special_price
-                    WHEN product.special_price IS NOT NULL
-                        AND product.special_from_date IS NOT NULL
-                        AND product.special_from_date + INTERVAL 1 YEAR > NOW()
-                    THEN product.special_price
-                    ELSE product.price
-                END)
+                ( IF((product.special_price IS NOT NULL
+                    AND '$nowDate' >= IFNULL(product.special_from_date, '$startYear')
+                    AND '$nowDate' < IFNULL(product.special_to_date, '$endYear')
+                  ), product.special_price, product.price) * product.currency_rate
+                )
             ";
         }
 
@@ -111,7 +110,7 @@ abstract class AbstractPriceCondition
                     'product.product_id'
                 );
 
-            return "($attributeQuery)";
+            return "($attributeQuery) * product.currency_rate";
         }
 
         throw new \RuntimeException(
@@ -165,6 +164,6 @@ abstract class AbstractPriceCondition
             }
         }
 
-        return "ROUND( $sql * (1+$vat/100) * product.currency_rate, 2)";
+        return "ROUND( $sql * (1+$vat/100), 2)";
     }
 }

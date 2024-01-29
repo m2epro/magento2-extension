@@ -1176,7 +1176,14 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $inventory = $this->inventoryFactory->getObject($childProduct);
             $stockItem = $inventory->getStockItem();
 
-            if ($lifeMode && (!$inventory->isInStock() || $childProduct->getStatus() != Status::STATUS_ENABLED)) {
+            if (
+                $lifeMode
+                && (
+                    $inventory->getQty() <= 0
+                    || !$inventory->isInStock()
+                    || $childProduct->getStatus() != Status::STATUS_ENABLED
+                )
+            ) {
                 if (\Ess\M2ePro\Model\Listing\Product::GROUPED_PRODUCT_MODE_SET == $this->isGroupedProductMode) {
                     return 0; // not sellable product if any child "Out Of Stock" or Disable
                 }

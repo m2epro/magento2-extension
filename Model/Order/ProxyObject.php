@@ -290,6 +290,13 @@ abstract class ProxyObject extends \Ess\M2ePro\Model\AbstractModel
         return $addressData['lastname'];
     }
 
+    public function getCustomerMiddleName()
+    {
+        $addressData = $this->getAddressData();
+
+        return $addressData['middlename'];
+    }
+
     public function getBuyerEmail()
     {
         $addressData = $this->getAddressData();

@@ -860,7 +860,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 break;
             }
         }
-        if ($allInvoiced) {
+        if ($allInvoiced && !$this->getChildObject()->canCreateCreditMemo()) {
             $errorMessage = 'Cancel is not allowed for Orders with Invoiced Items.';
             $messageAddedSuccessfully = $this->addErrorLog(
                 'Magento Order #%order_id% was not canceled. Reason: %msg%',
@@ -982,5 +982,24 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $additionalData[self::ADDITIONAL_DATA_KEY_VAT_REVERSE_CHARGE] = $now;
         $this->setSettings('additional_data', $additionalData);
         $this->save();
+    }
+    public function createCreditMemo(): ?\Magento\Sales\Model\Order\Creditmemo
+    {
+        $creditMemo = null;
+
+        try {
+            $creditMemo = $this->getChildObject()->createCreditMemo();
+        } catch (\Exception $e) {
+            $this->helperModuleException->process($e);
+            $this->addErrorLog('CreditMemo was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
+        }
+
+        if ($creditMemo !== null) {
+            $this->addSuccessLog('Credit Memo #%creditMemo_id% was created.', [
+                '!creditMemo_id' => $creditMemo->getIncrementId(),
+            ]);
+        }
+
+        return $creditMemo;
     }
 }

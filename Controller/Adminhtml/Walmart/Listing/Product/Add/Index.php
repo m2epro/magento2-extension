@@ -1,17 +1,17 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $viewStateManager;
+    /** @var \Ess\M2ePro\Model\Magento\Product\RuleFactory */
+    private $ruleFactory;
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
@@ -19,14 +19,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory */
     private $listingProductCollectionFactory;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data\Session $sessionHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalData
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
+        \Ess\M2ePro\Model\Magento\Product\RuleFactory $ruleFactory,
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection\Factory $listingProductCollectionFactory,
@@ -38,6 +34,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $this->sessionHelper = $sessionHelper;
         $this->globalData = $globalData;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
+        $this->viewStateFactory = $viewStateFactory;
+        $this->viewStateManager = $viewStateManager;
+        $this->ruleFactory = $ruleFactory;
     }
 
     public function execute()
@@ -133,7 +132,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             SourceModeBlock::MODE_PRODUCT
         );
 
-        $this->setRuleData('walmart_rule_add_listing_product');
+        $this->setRuleModel();
 
         $prefix = $this->getHideProductsInOtherListingsPrefix();
 
@@ -182,7 +181,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             SourceModeBlock::MODE_CATEGORY
         );
 
-        $this->setRuleData('walmart_rule_add_listing_product');
+        $this->setRuleModel();
 
         $prefix = $this->getHideProductsInOtherListingsPrefix();
 
@@ -406,22 +405,30 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         return $prefix;
     }
 
-    protected function setRuleData($prefix)
+    private function setRuleModel(): void
     {
-        $listingData = $this->globalData
-            ->getValue('listing_for_products_add')
-            ->getData();
+        $viewKey = $this->buildPrefix(
+            'walmart_rule_add_listing_product_' . \Ess\M2ePro\Model\Magento\Product\Rule::NICK
+        );
+        $getRuleBySessionData = function () {
+            return $this->createRuleBySessionData();
+        };
+        $ruleModel = $this->viewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($viewKey),
+            \Ess\M2ePro\Model\Magento\Product\Rule::NICK,
+            $this->getStoreId(),
+            $getRuleBySessionData
+        );
 
-        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
+        $this->globalData->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(): \Ess\M2ePro\Model\Magento\Product\Rule
+    {
+        $prefix = $this->buildPrefix('walmart_rule_add_listing_product');
         $this->globalData->setValue('rule_prefix', $prefix);
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-                'store_id' => $storeId,
-            ]
-        );
+        $ruleModel = $this->ruleFactory->create($prefix, $this->getStoreId());
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
@@ -438,7 +445,32 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->globalData->setValue('rule_model', $ruleModel);
+        return $ruleModel;
+    }
+
+    private function buildPrefix(string $root): string
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        return $root . (isset($listing['id']) ? '_' . $listing['id'] : '');
+    }
+
+    private function getStoreId(): int
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        if (empty($listing['store_id'])) {
+            return 0;
+        }
+
+        return (int)$listing['store_id'];
+    }
+
+    private function getListingDataFromGlobalData(): array
+    {
+        return $this->globalData
+            ->getValue('listing_for_products_add')
+            ->getData();
     }
 
     /**

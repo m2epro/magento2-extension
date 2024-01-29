@@ -1,30 +1,35 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Listing\Product;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class Rule extends AbstractForm
 {
-    protected $_isShowHideProductsOption = false;
-
+    /** @var bool */
+    private $isShowHideProductsOption = false;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
+    /** @var string */
+    private $searchBtnHtml;
+    /** @var string */
+    private $resetBtnHtml;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilter\AbstractRenderer */
+    private $advancedFilterRenderer;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilter\RendererFactory */
+    private $rendererFactory;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        AdvancedFilter\RendererFactory $rendererFactory,
         array $data = []
     ) {
         $this->globalDataHelper = $globalDataHelper;
+        $this->rendererFactory = $rendererFactory;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -36,18 +41,32 @@ class Rule extends AbstractForm
         // ---------------------------------------
         $this->setId('listingProductRule');
         // ---------------------------------------
+
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule  $ruleModel */
+        $ruleModel = $this->globalDataHelper->getValue('rule_model');
+        $this->advancedFilterRenderer = $this->getRenderer($ruleModel);
     }
 
     public function setShowHideProductsOption($isShow = true)
     {
-        $this->_isShowHideProductsOption = $isShow;
+        $this->isShowHideProductsOption = $isShow;
 
         return $this;
     }
 
     public function isShowHideProductsOption()
     {
-        return $this->_isShowHideProductsOption;
+        return $this->isShowHideProductsOption;
+    }
+
+    public function setSearchBtnHtml(string $searchBtnHtml): void
+    {
+        $this->searchBtnHtml = $searchBtnHtml;
+    }
+
+    public function setResetBtnHtml(string $resetBtnHtml): void
+    {
+        $this->resetBtnHtml = $resetBtnHtml;
     }
 
     protected function _prepareLayout()
@@ -106,7 +125,30 @@ class Rule extends AbstractForm
 CSS
         );
 
+        $this->advancedFilterRenderer->addCss($this->css);
+
         return parent::_prepareLayout();
+    }
+
+    protected function _beforeToHtml()
+    {
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Plugin/Messages'
+    ], function(MessageObj) {
+       MessageObj.clear();
+    });
+JS
+        );
+
+        $this->advancedFilterRenderer->renderJs(
+            $this->js,
+            $this->jsUrl,
+            $this->jsTranslator
+        );
+
+        return parent::_beforeToHtml();
     }
 
     protected function _prepareForm()
@@ -130,15 +172,14 @@ CSS
             ]
         );
 
-        $ruleModel = $this->globalDataHelper->getValue('rule_model');
-        $ruleBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule::class)
-                          ->setData(['rule_model' => $ruleModel]);
-
         $fieldset->addField(
             'advanced_filter',
             self::CUSTOM_CONTAINER,
             [
-                'text' => $ruleBlock->toHtml(),
+                'text' => $this->advancedFilterRenderer->renderHtml(
+                    $this->searchBtnHtml,
+                    $this->resetBtnHtml
+                ),
             ]
         );
 
@@ -146,5 +187,48 @@ CSS
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    private function getRenderer(\Ess\M2ePro\Model\Magento\Product\Rule $ruleModel): AdvancedFilter\AbstractRenderer
+    {
+        if (!$ruleModel->isExistsViewSate()) {
+            throw new \LogicException('View state must be set');
+        }
+
+        $viewState = $ruleModel->getViewState();
+
+        if ($viewState->isStateCreation()) {
+            return $this->rendererFactory->createCreatingRenderer(
+                $viewState->getViewKey(),
+                $ruleModel,
+                $this->getLayout()
+            );
+        }
+
+        if ($viewState->isStateUpdating()) {
+            return $this->rendererFactory->createUpdatingRenderer(
+                $viewState->getUpdatedEntityId(),
+                $viewState->getViewKey(),
+                $ruleModel,
+                $this->getLayout()
+            );
+        }
+
+        if ($viewState->isStateSelected()) {
+            return $this->rendererFactory->createSelectedRenderer(
+                $viewState->getSelectedEntityId(),
+                $viewState->getIsEntityRecentlyCreated(true),
+                $this->getLayout()
+            );
+        }
+
+        if ($viewState->isStateUnselected()) {
+            return $this->rendererFactory->createUnselectedRenderer(
+                $ruleModel->getNick(),
+                $this->getLayout()
+            );
+        }
+
+        throw new \LogicException('Unresolved View State');
     }
 }

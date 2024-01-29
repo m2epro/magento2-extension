@@ -1,18 +1,34 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add\Index
- */
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $viewStateManager;
+    /** @var \Ess\M2ePro\Model\Magento\Product\RuleFactory */
+    private $ruleFactory;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalData;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
+        \Ess\M2ePro\Model\Magento\Product\RuleFactory $ruleFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->viewStateFactory = $viewStateFactory;
+        $this->viewStateManager = $viewStateManager;
+        $this->globalData = $globalData;
+        $this->ruleFactory = $ruleFactory;
+    }
+
     public function execute()
     {
         if (!$listingId = $this->getRequest()->getParam('id')) {
@@ -28,7 +44,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         $listing = $this->getListing();
 
-        $this->getHelper('Data\GlobalData')->setValue('listing_for_products_add', $listing);
+        $this->globalData->setValue('listing_for_products_add', $listing);
 
         $step = (int)$this->getRequest()->getParam('step');
 
@@ -39,8 +55,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
     }
-
-    //########################################
 
     private function stepOne()
     {
@@ -58,7 +72,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
     private function stepOneSourceProducts()
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+        $listing = $this->globalData->getValue('listing_for_products_add');
         $ids = $listing->getChildObject()->getAddedListingProductsIds();
 
         if (!empty($ids)) {
@@ -77,10 +91,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             }
         }
 
-        // Set rule model
-        // ---------------------------------------
-        $this->setRuleData('ebay_product_add_step_one');
-        // ---------------------------------------
+        $this->setRuleModel();
 
         // Set Hide Products In Other Listings
         // ---------------------------------------
@@ -91,7 +102,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+        $this->globalData->setValue('hide_products_others_listings_prefix', $prefix);
         // ---------------------------------------
 
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -116,10 +127,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
     {
         $this->setWizardStep('productSelection');
 
-        // Set rule model
-        // ---------------------------------------
-        $this->setRuleData('ebay_product_add_step_one');
-        // ---------------------------------------
+        $this->setRuleModel();
 
         // Set Hide Products In Other Listings
         // ---------------------------------------
@@ -130,7 +138,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+        $this->globalData->setValue('hide_products_others_listings_prefix', $prefix);
         // ---------------------------------------
 
         $tempSession = $this->getSessionValue('source_categories');
@@ -183,7 +191,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         return $this->getResult();
     }
 
-    //########################################
+    // ---------------------------------------
 
     protected function getHideProductsInOtherListingsPrefix()
     {
@@ -212,22 +220,30 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         )->save();
     }
 
-    //########################################
+    // ---------------------------------------
 
-    protected function setRuleData($prefix)
+    private function setRuleModel(): void
     {
-        $listingData = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
-
-        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
-        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
-
-        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-                'store_id' => $storeId,
-            ]
+        $viewKey = $this->buildPrefix('ebay_product_add_step_one_' . \Ess\M2ePro\Model\Magento\Product\Rule::NICK);
+        $getRuleBySessionData = function () {
+            return $this->createRuleBySessionData();
+        };
+        $ruleModel = $this->viewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($viewKey),
+            \Ess\M2ePro\Model\Magento\Product\Rule::NICK,
+            $this->getStoreId(),
+            $getRuleBySessionData
         );
+
+        $this->globalData->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(): \Ess\M2ePro\Model\Magento\Product\Rule
+    {
+        $prefix = $this->buildPrefix('ebay_product_add_step_one');
+        $this->globalData->setValue('rule_prefix', $prefix);
+
+        $ruleModel = $this->ruleFactory->create($prefix, $this->getStoreId());
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
@@ -244,8 +260,29 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+        return $ruleModel;
     }
 
-    //########################################
+    private function buildPrefix(string $root): string
+    {
+        $listing = $this->getListingFromGlobalData();
+
+        return $root . (isset($listing['id']) ? '_' . $listing['id'] : '');
+    }
+
+    private function getStoreId(): int
+    {
+        $listing = $this->getListingFromGlobalData();
+
+        if (empty($listing['store_id'])) {
+            return 0;
+        }
+
+        return (int)$listing['store_id'];
+    }
+
+    private function getListingFromGlobalData(): ?\Ess\M2ePro\Model\Listing
+    {
+        return $this->globalData->getValue('listing_for_products_add');
+    }
 }

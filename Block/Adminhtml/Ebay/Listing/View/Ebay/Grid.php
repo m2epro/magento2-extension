@@ -701,7 +701,7 @@ JS
             'Moving eBay Item' => $this->__('Moving eBay Item'),
             'Moving eBay Items' => $this->__('Moving eBay Items'),
             'Specifics' => $this->__('Specifics'),
-            'Ebay Item Duplicate' => $this->__('eBay Item Duplicate'),
+            'eBay Duplicate Item Alert' => $this->__('eBay Duplicate Item Alert'),
         ]);
 
         $showAutoAction = \Ess\M2ePro\Helper\Json::encode(

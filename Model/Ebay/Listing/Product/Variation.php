@@ -6,12 +6,11 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Ebay\Listing\Product;
+
 /**
  * @method \Ess\M2ePro\Model\Listing\Product\Variation getParentObject()
  */
-
-namespace Ess\M2ePro\Model\Ebay\Listing\Product;
-
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory */
@@ -636,5 +635,15 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         return $findOrderItem;
     }
 
-    //########################################
+    public function getVariationProductId(): ?int
+    {
+        foreach ($this->getOptions(true) as $option) {
+            if (!$option->getProductId()) {
+                continue;
+            }
+            return $option->getProductId();
+        }
+
+        return null;
+    }
 }

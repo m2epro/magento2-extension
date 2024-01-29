@@ -142,6 +142,10 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
         if ($order->getStatusUpdateRequired()) {
             $order->updateMagentoOrderStatus();
         }
+
+        if ($order->getChildObject()->isCanceled()) {
+            $order->createCreditMemo();
+        }
     }
 
     /**

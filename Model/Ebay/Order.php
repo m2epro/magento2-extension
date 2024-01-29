@@ -63,6 +63,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     private $componentEbay;
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other */
     private $listingOtherResourceModel;
+    /** @var \Magento\Sales\Model\Order\CreditmemoFactory */
+    private $creditmemoFactory;
+    /** @var \Magento\Sales\Model\Service\CreditmemoService */
+    private $creditmemoService;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay $componentEbay,
@@ -77,6 +81,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other $listingOtherResourceModel,
+        \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory,
+        \Magento\Sales\Model\Service\CreditmemoService $creditmemoService,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -99,6 +105,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $this->invoiceSender = $invoiceSender;
         $this->componentEbay = $componentEbay;
         $this->listingOtherResourceModel = $listingOtherResourceModel;
+        $this->creditmemoFactory = $creditmemoFactory;
+        $this->creditmemoService = $creditmemoService;
     }
 
     public function _construct()
@@ -1244,5 +1252,39 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         );
 
         return parent::delete();
+    }
+
+    public function canCreateCreditMemo(): bool
+    {
+        if (!$this->getEbayAccount()->isCreateCreditMemoEnabled()) {
+            return false;
+        }
+
+        $magentoOrder = $this->getParentObject()->getMagentoOrder();
+        if ($magentoOrder === null) {
+            return false;
+        }
+
+        if ($magentoOrder->hasCreditmemos() || !$magentoOrder->canCreditmemo()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function createCreditMemo(): ?\Magento\Sales\Model\Order\Creditmemo
+    {
+        if (!$this->canCreateCreditMemo()) {
+            return null;
+        }
+
+        $creditMemo = $this->creditmemoFactory->createByOrder($this->getParentObject()->getMagentoOrder());
+
+        foreach ($creditMemo->getAllItems() as $creditMemoItem) {
+            $creditMemoItem->setBackToStock(true);
+        }
+
+        $this->creditmemoService->refund($creditMemo);
+        return $creditMemo;
     }
 }

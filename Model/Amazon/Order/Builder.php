@@ -686,17 +686,18 @@ class Builder extends AbstractModel
         $magentoOrderComments = [];
         $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Amazon.';
         $result = $this->order->canCancelMagentoOrder();
-        if ($result === true) {
-            try {
-                $this->order->cancelMagentoOrder();
-            } catch (\Exception $e) {
-                $this->getHelper('Module_Exception')->process($e);
+
+        if (is_bool($result)) {
+            if ($result === true) {
+                try {
+                    $this->order->cancelMagentoOrder();
+                } catch (\Exception $e) {
+                    $this->getHelper('Module_Exception')->process($e);
+                }
+
+                $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
             }
 
-            $this->addCommentsToMagentoOrder($this->order, $magentoOrderComments);
-        }
-
-        if ($result === false) {
             return;
         }
 

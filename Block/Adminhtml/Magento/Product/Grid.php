@@ -134,9 +134,12 @@ CSS
             return $this->hideMassactionColumn ? '' : parent::getMassactionBlockHtml();
         }
 
+        /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Product\Rule $advancedFilterBlock */
         $advancedFilterBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\Rule::class);
         $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
         $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
+        $advancedFilterBlock->setSearchBtnHtml($this->getSearchButtonHtml());
+        $advancedFilterBlock->setResetBtnHtml($this->getResetFilterButtonHtml());
 
         return $advancedFilterBlock->toHtml() . (($this->hideMassactionColumn)
                 ? '' : parent::getMassactionBlockHtml());
@@ -359,6 +362,10 @@ JS
             return false;
         }
 
+        if ($this->isShowRuleBlockByViewState()) {
+            return true;
+        }
+
         $ruleData = $this->getHelper('Data\Session')->getValue(
             $this->getHelper('Data\GlobalData')->getValue('rule_prefix')
         );
@@ -370,6 +377,21 @@ JS
         $showHideProductsOption === null && $showHideProductsOption = 1;
 
         return !empty($ruleData) || ($this->showAdvancedFilterProductsOption && $showHideProductsOption);
+    }
+
+    private function isShowRuleBlockByViewState(): bool
+    {
+        /** @var \Ess\M2ePro\Model\Magento\Product\Rule $rule */
+        $rule = $this->getHelper('Data\GlobalData')->getValue('rule_model');
+        if ($rule === null) {
+            return false;
+        }
+
+        if (!$rule->isExistsViewSate()) {
+            return false;
+        }
+
+        return $rule->getViewState()->isShowRuleBlock();
     }
 
     //########################################

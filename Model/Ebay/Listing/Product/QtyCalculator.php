@@ -24,7 +24,30 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
      */
     private $isMagentoMode = false;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Magento\Product\RuleFactory */
+    private $ruleFactory;
+    /** @var \Ess\M2ePro\Model\Magento\ProductFactory */
+    private $productFactory;
+
+    /**
+     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\Magento\Product\RuleFactory $ruleFactory
+     * @param array $data
+     */
+    public function __construct(
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Magento\Product\RuleFactory $ruleFactory,
+        \Ess\M2ePro\Model\Magento\ProductFactory $productFactory,
+        array $data = []
+    ) {
+        parent::__construct($moduleConfiguration, $helperFactory, $modelFactory, $data);
+        $this->ruleFactory = $ruleFactory;
+        $this->productFactory = $productFactory;
+    }
 
     /**
      * @param $value
@@ -73,7 +96,7 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
         if ($ebaySynchronizationTemplate->isStopWhenQtyCalculatedHasValue()) {
             $minQty = (int)$ebaySynchronizationTemplate->getStopWhenQtyCalculatedHasValueMin();
 
-            if ($qty <= $minQty) {
+            if ($qty <= $minQty || $this->isVariationHasStopAdvancedRules($variation)) {
                 return 0;
             }
         }
@@ -122,5 +145,35 @@ class QtyCalculator extends \Ess\M2ePro\Model\Listing\Product\QtyCalculator
         return parent::applySellingFormatTemplateModifications($value);
     }
 
-    //########################################
+    private function isVariationHasStopAdvancedRules(\Ess\M2ePro\Model\Listing\Product\Variation $variation): bool
+    {
+        $ebaySynchronizationTemplate = $variation->getListingProduct()
+                                                 ->getChildObject()
+                                                 ->getEbaySynchronizationTemplate();
+
+        if (!$ebaySynchronizationTemplate->isStopAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        $ruleModel = $this->ruleFactory->create(
+            \Ess\M2ePro\Model\Ebay\Template\Synchronization::STOP_ADVANCED_RULES_PREFIX,
+            $variation->getListingProduct()->getListing()->getStoreId()
+        );
+
+        $ruleModel->loadFromSerialized($ebaySynchronizationTemplate->getStopAdvancedRulesFilters());
+
+        if (empty($ruleModel->getConditions()->getConditions())) {
+            return false;
+        }
+
+        $productIdVariation = $variation->getChildObject()->getVariationProductId();
+        $productVariation = $this->productFactory->create();
+        $productVariation->setProductId($productIdVariation);
+
+        if ($ruleModel->validate($productVariation->getProduct())) {
+            return true;
+        }
+
+        return false;
+    }
 }

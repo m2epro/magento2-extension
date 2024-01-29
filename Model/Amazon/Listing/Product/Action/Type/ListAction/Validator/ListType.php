@@ -293,10 +293,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         }
 
         $changingListTypeMessage = $this->log->encodeDescription(
-            'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings
-            for UPC/EAN Search were specified in Main Settings and a value
-            %worldwide_id% were set in Magento Attribute for that Product.',
-            ['!worldwide_id' => $worldwideId->getIdentifier()]
+            'New ASIN/ISBN was not created because UPC/EAN of the Product is already present in Amazon catalog'
         );
 
         if ($worldwideId->hasUnresolvedType()) {

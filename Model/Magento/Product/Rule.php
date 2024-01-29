@@ -1,29 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Magento\Product\Rule
- */
 class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
+    public const NICK = 'magento_product_rule';
+
+    /** @var string */
+    protected $nick = self::NICK;
     protected $_form;
     protected $productFactory;
     protected $resourceIterator;
-
     protected $_conditions = null;
-
     protected $_productIds = [];
-
     protected $_collectedAttributes = [];
-
-    //########################################
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState|null */
+    private $viewState = null;
 
     public function __construct(
         \Magento\Framework\Data\Form $form,
@@ -52,8 +44,6 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $data
         );
     }
-
-    //########################################
 
     /**
      * Create rule instance from serialized array
@@ -96,7 +86,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $this->loadFromSerialized($this->getSerializedFromPost($post, $prefix));
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * Get serialized array from post array
@@ -118,7 +108,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->getHelper('Data')->serialize($conditionsArray[$prefix][1]);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getTitle()
     {
@@ -212,7 +202,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->_conditions->setJsFormObject($prefix)->setStoreId($this->getStoreId());
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return bool
@@ -278,7 +268,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $collection->addFieldToFilter($idFieldName, ['in' => $this->_productIds]);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function callbackValidateProduct($args)
     {
@@ -335,7 +325,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $arr;
     }
 
-    //########################################
+    // ---------------------------------------
 
     protected function _beforeSave()
     {
@@ -345,15 +335,35 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return parent::_beforeSave();
     }
 
-    //########################################
+    // ---------------------------------------
+
+    public function getNick(): string
+    {
+        return $this->nick;
+    }
+
+    // ---------------------------------------
+
+    public function setViewSate(\Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState $viewState): void
+    {
+        $this->viewState = $viewState;
+    }
+
+    public function isExistsViewSate(): bool
+    {
+        return isset($this->viewState);
+    }
+
+    public function getViewState(): \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState
+    {
+        return $this->viewState;
+    }
+
+    // ---------------------------------------
 
     /**
-     *  $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
-     *      [
-     *          'store_id' => 0,
-     *          'prefix'   => 'your_prefix'
-     *      ]
-     * );
+     *   $storeId = 0;
+     *   $ruleModel = $this->ruleFactory->create('your_prefix', $storeId);
      *   get serialized data for saving to database ($serializedData):
      *   $serializedData = $ruleModel->getSerializedFromPost($post);
      *  set model to block for view rules from database ($serializedData):

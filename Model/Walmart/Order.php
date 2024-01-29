@@ -826,4 +826,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
 
         return true;
     }
+
+    public function canCreateCreditMemo(): bool
+    {
+        return false;
+    }
 }

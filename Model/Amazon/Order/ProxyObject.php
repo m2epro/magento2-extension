@@ -163,6 +163,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $this->addressData;
     }
 
+    public function getCustomerMiddleName()
+    {
+        $addressData = $this->getAddressData();
+
+        return !empty($addressData['customer_middlename'])
+            ? $addressData['customer_middlename']
+            : $addressData['middlename'];
+    }
+
     /**
      * @return array
      */

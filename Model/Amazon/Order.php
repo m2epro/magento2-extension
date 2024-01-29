@@ -45,6 +45,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     private $subTotalPrice = null;
     /** @var null|float  */
     private $grandTotalPrice = null;
+    /** @var mixed */
+    private $creditmemoFactor;
+    /** @var \Magento\Sales\Model\Service\CreditmemoService */
+    private $creditmemoService;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
@@ -61,6 +65,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Other $listingOtherResourceModel,
+        \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory,
+        \Magento\Sales\Model\Service\CreditmemoService $creditmemoService,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -85,6 +91,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
         $this->listingOtherResourceModel = $listingOtherResourceModel;
+        $this->creditmemoFactory = $creditmemoFactory;
+        $this->creditmemoService = $creditmemoService;
     }
 
     public function _construct()
@@ -1107,6 +1115,41 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $currentFees = $this->getFinalFees();
 
         return $currentFees !== $newFees;
+    }
+
+    public function canCreateCreditMemo(): bool
+    {
+        if (!$this->getAmazonAccount()->isCreateCreditMemoEnabled()) {
+            return false;
+        }
+
+        $magentoOrder = $this->getParentObject()->getMagentoOrder();
+        if ($magentoOrder === null) {
+            return false;
+        }
+
+        if ($magentoOrder->hasCreditmemos() || !$magentoOrder->canCreditmemo()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function createCreditMemo(): ?\Magento\Sales\Model\Order\Creditmemo
+    {
+        if (!$this->canCreateCreditMemo()) {
+            return null;
+        }
+
+        $creditMemo = $this->creditmemoFactory->createByOrder($this->getParentObject()->getMagentoOrder());
+
+        foreach ($creditMemo->getAllItems() as $creditMemoItem) {
+            $creditMemoItem->setBackToStock(true);
+        }
+
+        $this->creditmemoService->refund($creditMemo);
+
+        return $creditMemo;
     }
 
     public function getReplacedAmazonOrderId(): ?string

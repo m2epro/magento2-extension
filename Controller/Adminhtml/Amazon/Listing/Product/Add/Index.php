@@ -6,12 +6,21 @@ use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tr
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $viewStateManager;
+    /** @var \Ess\M2ePro\Model\Magento\Product\RuleFactory */
+    private $ruleFactory;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
 
     public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
+        \Ess\M2ePro\Model\Magento\Product\RuleFactory $ruleFactory,
         \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product $amazonListingProductResource,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
@@ -27,6 +36,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         );
         $this->globalDataHelper = $globalDataHelper;
         $this->sessionHelper = $sessionHelper;
+        $this->viewStateFactory = $viewStateFactory;
+        $this->viewStateManager = $viewStateManager;
+        $this->ruleFactory = $ruleFactory;
     }
 
     public function execute()
@@ -141,7 +153,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
         );
 
-        $this->setRuleData('amazon_rule_add_listing_product');
+        $this->setRuleModel();
 
         $prefix = $this->getHideProductsInOtherListingsPrefix();
 
@@ -192,7 +204,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
         );
 
-        $this->setRuleData('amazon_rule_add_listing_product');
+        $this->setRuleModel();
 
         $prefix = $this->getHideProductsInOtherListingsPrefix();
 
@@ -418,22 +430,30 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         return $prefix;
     }
 
-    protected function setRuleData($prefix)
+    private function setRuleModel(): void
     {
-        $listingData = $this->globalDataHelper
-            ->getValue('listing_for_products_add')
-            ->getData();
+        $viewKey = $this->buildPrefix(
+            'amazon_rule_add_listing_product_' . \Ess\M2ePro\Model\Magento\Product\Rule::NICK
+        );
+        $getRuleBySessionData = function () {
+            return $this->createRuleBySessionData();
+        };
+        $ruleModel = $this->viewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($viewKey),
+            \Ess\M2ePro\Model\Magento\Product\Rule::NICK,
+            $this->getStoreId(),
+            $getRuleBySessionData
+        );
 
-        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
+        $this->globalDataHelper->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(): \Ess\M2ePro\Model\Magento\Product\Rule
+    {
+        $prefix = $this->buildPrefix('amazon_rule_add_listing_product');
         $this->globalDataHelper->setValue('rule_prefix', $prefix);
 
-        $ruleModel = $this->activeRecordFactory->getObject('Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-                'store_id' => $storeId,
-            ]
-        );
+        $ruleModel = $this->ruleFactory->create($prefix, $this->getStoreId());
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
@@ -450,7 +470,32 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->globalDataHelper->setValue('rule_model', $ruleModel);
+        return $ruleModel;
+    }
+
+    private function buildPrefix(string $root): string
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        return $root . (isset($listing['id']) ? '_' . $listing['id'] : '');
+    }
+
+    private function getStoreId(): int
+    {
+        $listing = $this->getListingDataFromGlobalData();
+
+        if (empty($listing['store_id'])) {
+            return 0;
+        }
+
+        return (int)$listing['store_id'];
+    }
+
+    private function getListingDataFromGlobalData(): array
+    {
+        return $this->globalDataHelper
+            ->getValue('listing_for_products_add')
+            ->getData();
     }
 
     /**

@@ -40,8 +40,14 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory */
+    private $tagRelationCollectionFactory;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
+    private $tagResource;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation\CollectionFactory $tagRelationCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Tag $tagResource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -54,6 +60,8 @@ class Status extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options
     ) {
         parent::__construct($context, $data);
 
+        $this->tagResource = $tagResource;
+        $this->tagRelationCollectionFactory = $tagRelationCollectionFactory;
         $this->helperFactory = $helperFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
@@ -105,7 +113,8 @@ HTML;
             return $html
                 . $this->getProductStatus($row->getData('amazon_status'))
                 . $this->getScheduledTag($row)
-                . $this->getLockedTag($row);
+                . $this->getLockedTag($row)
+                . $this->getItemAttributeValidationWarning($row);
         } else {
             $statusUnknown = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
             $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
@@ -119,7 +128,8 @@ HTML;
                 return $html
                     . $this->getProductStatus($statusNotListed)
                     . $this->getScheduledTag($row)
-                    . $this->getLockedTag($row);
+                    . $this->getLockedTag($row)
+                    . $this->getItemAttributeValidationWarning($row);
             }
 
             $variationChildStatuses = \Ess\M2ePro\Helper\Json::decode($variationChildStatuses);
@@ -177,7 +187,7 @@ HTML;
                 $html .= $this->getProductStatus($status) . '&nbsp;' . $productsCount . '<br/>';
             }
 
-            $html .= $this->getScheduledTag($row) . $this->getLockedTag($row);
+            $html .= $this->getScheduledTag($row) . $this->getLockedTag($row) . $this->getItemAttributeValidationWarning($row);
         }
 
         return $html;
@@ -377,12 +387,37 @@ HTML;
 HTML;
     }
 
-    //########################################
-
     public function setParentAndChildReviseScheduledCache(array $data)
     {
         $this->parentAndChildReviseScheduledCache = $data;
     }
 
-    //########################################
+    private function getItemAttributeValidationWarning(\Magento\Framework\DataObject $row): string
+    {
+        $collection = $this->tagRelationCollectionFactory->create();
+        $collection->join(
+            ['tag' => $this->tagResource->getMainTable()],
+            'main_table.tag_id = tag.id',
+            ['error_code' => 'error_code']
+        );
+        $collection->addFieldToFilter(
+            'error_code',
+            ['eq' => \Ess\M2ePro\Model\Amazon\ProductType\AttributesValidator::ERROR_TAG_CODE]
+        );
+        $collection->addFieldToFilter(
+            'listing_product_id',
+            ['eq' => (int)$row->getData('id')]
+        );
+
+        if ($collection->getSize() === 0) {
+            return '';
+        }
+
+        $warningMessage = __('Unable to List Product Due to Invalid Attribute Value(s)');
+
+        return sprintf(
+            '<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">%s</span>',
+            $this->getTooltipHtml($warningMessage)
+        );
+    }
 }

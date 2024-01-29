@@ -61,7 +61,7 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
         $phone = $this->getData('phone');
 
         if (stripos($phone, 'Invalid Request') !== false || $phone == '') {
-            $phone = '0000000000';
+            $phone = '+0 000-000-0000';
         }
 
         return $phone;

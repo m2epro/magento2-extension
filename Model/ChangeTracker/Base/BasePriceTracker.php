@@ -57,7 +57,6 @@ abstract class BasePriceTracker implements TrackerInterface
 
     /**
      * Condition for select, in which we calculate the online price of the product.
-     *
      * @return string
      */
     abstract protected function getOnlinePriceCondition(): string;
@@ -65,7 +64,6 @@ abstract class BasePriceTracker implements TrackerInterface
     /**
      * The field in which the currency for the marketplace. `m2epro_<chanel>_marketplace` tables.
      * For Amazon and Walmart this is `default_currency`, for eBay it is `currency`
-     *
      * @return string
      */
     abstract protected function getMarketplaceCurrencyField(): string;
@@ -81,12 +79,12 @@ abstract class BasePriceTracker implements TrackerInterface
             ->makeSubQuery()
             ->distinct()
             ->addSelect('listing_product_id', 'base.listing_product_id')
-            ->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
+            //->addSelect('additional_data', $this->makeAdditionalDataSelectQuery())
             ->from('base', $query);
 
         $mainQuery->andWhere('calculated_price IS NOT NULL')
-                  // The condition `calculated_price != online_price` is not suitable,
-                  // since rounding may not work correctly https://stackoverflow.com/a/41484519
+            // The condition `calculated_price != online_price` is not suitable,
+            // since rounding may not work correctly https://stackoverflow.com/a/41484519
                   ->andWhere('ABS(calculated_price - online_price) > 0.01')
                   ->andWhere('base.status = ?', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
                   ->andWhere('base.revise_update_price = 1');
@@ -105,6 +103,9 @@ abstract class BasePriceTracker implements TrackerInterface
         return $mainQuery->getQuery();
     }
 
+    /**
+     * @throws \Zend_Db_Statement_Exception
+     */
     protected function productSubQuery(): SelectQueryBuilder
     {
         $query = $this->queryBuilder->makeSubQuery();
@@ -122,7 +123,7 @@ abstract class BasePriceTracker implements TrackerInterface
             ->addSelect('selling_template_id', 'c_l.template_selling_format_id');
 
         $query->addSelect('online_price', $this->getOnlinePriceCondition());
-        $query->addSelect('currency_rate', $this->getCurrencyRateSubQuery()->getQuery());
+        $query->addSelect('currency_rate', $this->getCurrencyRateSubQuery());
 
         /* Select base attributes */
         $attributes = [
@@ -177,8 +178,7 @@ abstract class BasePriceTracker implements TrackerInterface
                 'marketplace',
                 $this->setChannelToTableName('m2epro_%s_marketplace'),
                 'marketplace.marketplace_id = l.marketplace_id'
-            )
-        ;
+            );
 
         /* We do not include grouped and bundle products */
         $query->andWhere("IFNULL(lpvo.product_type, 'simple') != ?", 'grouped');
@@ -296,23 +296,83 @@ abstract class BasePriceTracker implements TrackerInterface
     }
 
     /**
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
+     * @return \Zend_Db_Expr
+     * @throws \Zend_Db_Statement_Exception
      */
-    protected function getCurrencyRateSubQuery(): SelectQueryBuilder
+    protected function getCurrencyRateSubQuery(): \Zend_Db_Expr
     {
-        $baseCurrencySubquery = $this->queryBuilder
-            ->makeSubQuery()
-            ->addSelect('base_currency', 'value')
-            ->from('core_config', 'core_config_data')
-            ->andWhere('core_config.path = ?', \Magento\Directory\Model\Currency::XML_PATH_CURRENCY_BASE)
-        ;
+        $select = $this->queryBuilder->makeSubQuery();
+        $select->addSelect('store', 'listing.store_id');
+        $select->addSelect('marketplace', 'marketplace.marketplace_id');
+        $select->addSelect('rate', 'rate.rate');
+        $select->from('listing', 'm2epro_listing');
+        $select->innerJoin(
+            'marketplace',
+            $this->setChannelToTableName('m2epro_%s_marketplace'),
+            'listing.marketplace_id = marketplace.marketplace_id'
+        );
+        $select->leftJoin(
+            'store',
+            'store',
+            'store.store_id = listing.store_id'
+        );
+        $select->leftJoin(
+            'website_currency',
+            'core_config_data',
+            sprintf(
+                "website_currency.scope_id = store.website_id
+                AND website_currency.scope = '%s'
+                AND website_currency.path = '%s'",
+                'websites',
+                \Magento\Directory\Model\Currency::XML_PATH_CURRENCY_BASE
+            )
+        );
+        $select->leftJoin(
+            'default_currency',
+            'core_config_data',
+            sprintf(
+                "default_currency.scope_id = %s
+                AND default_currency.scope = '%s'
+                AND default_currency.path = '%s'",
+                \Magento\Store\Model\Store::DEFAULT_STORE_ID,
+                'default',
+                \Magento\Directory\Model\Currency::XML_PATH_CURRENCY_BASE
+            )
+        );
+        $select->innerJoin(
+            'rate',
+            'directory_currency_rate',
+            sprintf(
+                'rate.currency_from = IFNULL(website_currency.value, default_currency.value)
+                AND rate.currency_to = marketplace.%s',
+                $this->getMarketplaceCurrencyField()
+            )
+        );
+        $select->andWhere('listing.component_mode = ?', $this->getChannel());
 
-        return $this->queryBuilder
-            ->makeSubQuery()
-            ->addSelect('rate', 'cr.rate')
-            ->from('cr', 'directory_currency_rate')
-            ->andWhere('cr.currency_from = ?', $baseCurrencySubquery->getQuery())
-            ->andWhere("cr.currency_to = marketplace.{$this->getMarketplaceCurrencyField()}");
+        $ratesByStores = $select->fetchAll();
+
+        $this->logger->info('Get Currency Rates', [
+            'sql' => $select->getQuery()->__tostring(),
+            'result' => $ratesByStores,
+        ]);
+
+        if ($ratesByStores === []) {
+            return new \Zend_Db_Expr('1');
+        }
+
+        $sql = 'CASE';
+        foreach ($ratesByStores as $data) {
+            $sql .= sprintf(
+                ' WHEN l.store_id = %s AND l.marketplace_id = %s THEN %s',
+                $data['store'],
+                $data['marketplace'],
+                $data['rate']
+            );
+        }
+        $sql .= ' END';
+
+        return new \Zend_Db_Expr($sql);
     }
 
     protected function getAdditionalDataFields(): array

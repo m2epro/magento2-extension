@@ -45,9 +45,14 @@ class UserInfoFactory
 
     /** @var \Magento\Customer\Model\Options */
     private $options;
+    /** @var \Magento\Customer\Helper\Address */
+    private $addressHelper;
 
-    public function __construct(\Magento\Customer\Model\Options $options)
-    {
+    public function __construct(
+        \Magento\Customer\Model\Options $options,
+        \Magento\Customer\Helper\Address $addressHelper
+    ) {
+        $this->addressHelper = $addressHelper;
         $this->options = $options;
     }
 
@@ -79,10 +84,16 @@ class UserInfoFactory
         }
 
         $partsCount = count($parts);
-        if ($partsCount > 2) {
+        $showMiddlename = (bool)$this->addressHelper->getConfig('middlename_show', $store);
+
+        if ($partsCount > 2 && $showMiddlename) {
             $middleName = array_slice($parts, 1, $partsCount - 2);
             $middleName = implode(' ', $middleName);
             $parts = [$parts[0], $parts[$partsCount - 1]];
+        } elseif ($partsCount > 2) {
+            $firstName = array_shift($parts);
+            $lastName = implode(' ', $parts);
+            $parts = [$firstName, $lastName];
         }
 
         $firstName =  empty($parts[0]) ? 'NA' : $parts[0];

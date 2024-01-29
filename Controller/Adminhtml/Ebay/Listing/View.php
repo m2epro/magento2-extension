@@ -1,22 +1,24 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalData;
-
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;
+    /** @var \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory */
+    private $ruleFactory;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $viewStateManager;
 
     public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
+        \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory $ruleFactory,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -24,8 +26,11 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     ) {
         parent::__construct($ebayFactory, $context);
 
+        $this->viewStateFactory = $viewStateFactory;
         $this->globalData = $globalData;
         $this->sessionHelper = $sessionHelper;
+        $this->ruleFactory = $ruleFactory;
+        $this->viewStateManager = $viewStateManager;
     }
 
     public function execute()
@@ -36,10 +41,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
             $this->globalData->setValue('view_listing', $listing);
 
-            // Set rule model
-            // ---------------------------------------
-            $this->setRuleData('ebay_rule_view_listing');
-            // ---------------------------------------
+            $this->setRuleModel();
 
             $this->setAjaxContent(
                 $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::class)->getGridHtml()
@@ -86,10 +88,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $this->globalData->setValue('view_listing', $listing);
 
-        // Set rule model
-        // ---------------------------------------
-        $this->setRuleData('ebay_rule_view_listing');
-        // ---------------------------------------
+        $this->setRuleModel();
 
         $this->setPageHelpLink('listings');
 
@@ -106,20 +105,28 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         return $this->getResult();
     }
 
-    protected function setRuleData($prefix)
+    private function setRuleModel(): void
     {
-        $listingData = $this->globalData->getValue('view_listing');
+        $viewKey = $this->buildPrefix(\Ess\M2ePro\Model\Ebay\Magento\Product\Rule::NICK);
+        $getRuleBySessionData = function () {
+            return $this->createRuleBySessionData();
+        };
+        $ruleModel = $this->viewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($viewKey),
+            \Ess\M2ePro\Model\Ebay\Magento\Product\Rule::NICK,
+            $this->getStoreId(),
+            $getRuleBySessionData
+        );
 
-        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
-        $prefix .= isset($listingData['id']) ? '_' . $listingData['id'] : '';
+        $this->globalData->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(): \Ess\M2ePro\Model\Ebay\Magento\Product\Rule
+    {
+        $prefix = $this->buildPrefix('ebay_rule_view');
         $this->globalData->setValue('rule_prefix', $prefix);
 
-        $ruleModel = $this->activeRecordFactory->getObject('Ebay_Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-                'store_id' => $storeId,
-            ]
-        );
+        $ruleModel = $this->ruleFactory->create($prefix, $this->getStoreId());
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
@@ -136,6 +143,29 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->globalData->setValue('rule_model', $ruleModel);
+        return $ruleModel;
+    }
+
+    private function buildPrefix(string $root): string
+    {
+        $listing = $this->getListingFromGlobalData();
+
+        return $root . '_listing' . (isset($listing['id']) ? '_' . $listing['id'] : '');
+    }
+
+    private function getStoreId(): int
+    {
+        $listing = $this->getListingFromGlobalData();
+
+        if (empty($listing['store_id'])) {
+            return 0;
+        }
+
+        return (int)$listing['store_id'];
+    }
+
+    private function getListingFromGlobalData(): ?\Ess\M2ePro\Model\Listing
+    {
+        return $this->globalData->getValue('view_listing');
     }
 }

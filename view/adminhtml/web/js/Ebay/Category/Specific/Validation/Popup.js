@@ -15,18 +15,14 @@ define([
         },
 
         setTemplateCategoryId: function (templateCategoryId) {
-            console.log('set: ' + templateCategoryId)
             localStorage.set(this.templateCategoryIdLocalStorageKey, templateCategoryId)
         },
 
-
         hasTemplateCategoryId: function () {
-            console.log('has: ' + !!localStorage.get(this.templateCategoryIdLocalStorageKey))
             return !!localStorage.get(this.templateCategoryIdLocalStorageKey)
         },
 
         getAndRemoveTemplateCategoryId: function () {
-            console.log('get and remove: ' + localStorage.get(this.templateCategoryIdLocalStorageKey))
             let value = localStorage.get(this.templateCategoryIdLocalStorageKey);
             localStorage.remove(this.templateCategoryIdLocalStorageKey)
 

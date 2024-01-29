@@ -133,7 +133,7 @@ define([
                     var popup = jQuery('#duplicate_popup');
 
                     modal({
-                        title: M2ePro.translator.translate('Ebay Item Duplicate'),
+                        title: M2ePro.translator.translate('eBay Duplicate Item Alert'),
                         type: 'popup',
                         buttons: [{
                             text: M2ePro.translator.translate('Close'),

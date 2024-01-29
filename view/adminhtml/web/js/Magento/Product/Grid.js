@@ -1,7 +1,8 @@
 define([
     'jquery',
     'M2ePro/Common',
-    'M2ePro/General/PhpFunctions'
+    'M2ePro/General/PhpFunctions',
+    'M2ePro/Listing/Product/AdvancedFilter',
 ], function (jQuery) {
 
     window.MagentoProductGrid = Class.create(Common, {
@@ -35,6 +36,8 @@ define([
             if (event != undefined) {
                 Event.stop(event);
             }
+
+            var advancedFilter = new ListingProductAdvancedFilterObj();
 
             var filters = $$('#' + this.containerId + ' .data-grid-filters input',
                              '#' + this.containerId + ' .data-grid-filters select');
@@ -70,12 +73,18 @@ define([
                         this.reloadParams.hide_products_others_listings = 0;
                     }
 
+                    advancedFilter.fillGridReloadParams(this.reloadParams, ruleParams);
                     this.reloadParams.rule = "";
                 }
 
                 ProductGridObj.clearUrlFromFilter();
 
+                if (advancedFilter.isNeedClearRuleForm(this.reloadParams)) {
+                    advancedFilter.clearRuleForm(this.reloadParams)
+                }
+
                 this.reload(this.addVarToUrl(this.filterVar, base64_encode(Form.serializeElements(elements))));
+                advancedFilter.clearGridReloadParams(this.reloadParams);
             }
         },
 
@@ -88,10 +97,13 @@ define([
                 reloadParam.match('^rule|^hide') && delete this.reloadParams[reloadParam];
             }
             this.reloadParams.rule = "";
+            this.reloadParams.is_reset = 'true';
 
             ProductGridObj.clearUrlFromFilter();
 
             this.reload(this.addVarToUrl(this.filterVar, ''));
+
+            delete this.reloadParams['is_reset']
         },
 
         advancedFilterToggle: function () {
@@ -115,7 +127,6 @@ define([
                     $$('#advanced_filter_button span')[0].innerHTML = M2ePro.translator.translate('Show Advanced Filter');
                 }
             } else {
-
                 jQuery('#listing_product_rules').show();
                 $('advanced_filter_button').addClassName('advanced-filter-button-active');
 
