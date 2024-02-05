@@ -48,35 +48,42 @@ $attributesByInputTypes = $block->getAttributesByInputTypes();
             <option
                 value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE; ?>">
                 <?php echo $block->__('Percentage decrease'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE; ?>">
+                <?php echo $block->__('Increase by Attribute Value'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE; ?>">
+                <?php echo $block->__('Decrease by Attribute Value'); ?></option>
+        </select>
 
-            <optgroup class="M2ePro-custom-attribute-optgroup"
-                      label="Magento Attribute">
+        <div style="width: 250px; display: inline-block">
+            <input name="<?=$type?>_modifier_value[%index%]"
+                   id="<?=$type?>_modifier_value_%index%"
+                   type="text"
+                   class="admin__control-text input-text coef price_change_additional_element M2ePro-required-when-visible"
+                   style="width: 100%"/>
+
+            <select id="<?=$type?>_modifier_attribute_%index%"
+                    name="<?=$type?>_modifier_attribute[%index%]"
+                    class="select admin__control-select M2ePro-validate-price-modifier price_modifier_mode M2ePro-required-when-visible"
+                    data-<?=$typeForDataset?>-change-index="%index%"
+                    style="width: 100%">
+
                 <?php foreach ($priceModifierAttributes as $attributeCode): ?>
                     <?php if(!$block->magentoAttributeHelper->isExistInAttributesArray($attributeCode, $attributes)): ?>
-                        <option attribute_code="<?php echo $attributeCode; ?>"
-                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE; ?>">
+                        <option value="<?php echo $attributeCode; ?>">
                             <?php echo $block->escapeHtml($block->magentoAttributeHelper->getAttributeLabel($attributeCode)); ?>
                         </option>
                     <?php endif; ?>
                 <?php endforeach; ?>
 
                 <?php foreach ($attributesByInputTypes['text_price'] as $attribute) : ?>
-                    <option attribute_code="<?php echo $attribute['code']; ?>"
-                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE; ?>">
+                    <option value="<?php echo $attribute['code']; ?>">
                         <?php echo $block->escapeHtml($attribute['label']); ?>
                     </option>
                 <?php endforeach; ?>
-            </optgroup>
-        </select>
-
-        <input name="<?=$type?>_modifier_value[%index%]"
-               id="<?=$type?>_modifier_value_%index%"
-               type="text"
-               class="admin__control-text input-text coef price_change_additional_element"/>
-
-        <input type="hidden"
-               name="<?=$type?>_modifier_attribute[%index%]"
-               id="<?=$type?>_modifier_attribute_%index%"/>
+            </select>
+        </div>
 
         <button title="<?php echo $block->__('Remove'); ?>"
                 id="<?=$type?>_modifier_row_remove_button_%index%"

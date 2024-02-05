@@ -87,7 +87,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addMessageFromException(\Exception $exception)
+    public function addMessageFromException(\Throwable $exception)
     {
         return $this->addMessage(
             $exception->getMessage(),

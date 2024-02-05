@@ -116,10 +116,12 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['fixed_price_mode'] = (int)$this->rawData['fixed_price_mode'];
         }
 
-        $fixedPriceModifierData = $this->getFixedPriceModifierData();
-        if ($fixedPriceModifierData !== null) {
-            $data['fixed_price_modifier'] = \Ess\M2ePro\Helper\Json::encode($fixedPriceModifierData);
-        }
+        $data['fixed_price_modifier'] = \Ess\M2ePro\Helper\Json::encode(
+            \Ess\M2ePro\Model\Template\SellingFormat\BuilderHelper::getPriceModifierData(
+                'fixed_price',
+                $this->rawData
+            )
+        );
 
         if (isset($this->rawData['fixed_price_custom_attribute'])) {
             $data['fixed_price_custom_attribute'] = $this->rawData['fixed_price_custom_attribute'];
@@ -396,44 +398,5 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
             'paypal_immediate_payment' => 0,
         ];
-    }
-
-    /**
-     * @return array|null
-     */
-    private function getFixedPriceModifierData(): ?array
-    {
-        if (
-            !empty($this->rawData['fixed_price_modifier_mode'])
-            && is_array($this->rawData['fixed_price_modifier_mode'])
-        ) {
-            $fixedPriceModifierData = [];
-            foreach ($this->rawData['fixed_price_modifier_mode'] as $key => $fixedPriceModifierMode) {
-                if (
-                    !isset($this->rawData['fixed_price_modifier_value'][$key])
-                    || !is_string($this->rawData['fixed_price_modifier_value'][$key])
-                    || !isset($this->rawData['fixed_price_modifier_attribute'][$key])
-                    || !is_string($this->rawData['fixed_price_modifier_attribute'][$key])
-                ) {
-                    continue;
-                }
-
-                if ($fixedPriceModifierMode == SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE) {
-                    $fixedPriceModifierData[] = [
-                        'mode' => $fixedPriceModifierMode,
-                        'attribute_code' => $this->rawData['fixed_price_modifier_attribute'][$key],
-                    ];
-                } else {
-                    $fixedPriceModifierData[] = [
-                        'mode' => $fixedPriceModifierMode,
-                        'value' => $this->rawData['fixed_price_modifier_value'][$key],
-                    ];
-                }
-            }
-
-            return $fixedPriceModifierData;
-        }
-
-        return null;
     }
 }

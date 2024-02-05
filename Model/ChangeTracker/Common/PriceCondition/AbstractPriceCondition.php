@@ -138,21 +138,20 @@ abstract class AbstractPriceCondition
             $value = $modifier['value'] ?? '';
             $attributeCode = $modifier['attribute_code'] ?? '';
 
-            // TODO use constants
             switch ($mode) {
-                case 1:
+                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE:
                     $sql = "( $sql + $value )";
                     break;
-                case 2:
+                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE:
                     $sql = "( $sql - $value )";
                     break;
-                case 3:
+                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE:
                     $sql = "( $sql * (1+$value/100) )";
                     break;
-                case 4:
+                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE:
                     $sql = "( $sql * (1-$value/100) )";
                     break;
-                case 5:
+                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE:
                     $attrQuery = $this->attributesQueryBuilder
                         ->getQueryForAttribute(
                             $attributeCode,
@@ -161,6 +160,14 @@ abstract class AbstractPriceCondition
                         );
                     $sql = "( $sql + ({$attrQuery}) )";
                     break;
+                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE:
+                    $attrQuery = $this->attributesQueryBuilder
+                        ->getQueryForAttribute(
+                            $attributeCode,
+                            'product.store_id',
+                            'product.product_id'
+                        );
+                    $sql = "( $sql - ({$attrQuery}) )";
             }
         }
 

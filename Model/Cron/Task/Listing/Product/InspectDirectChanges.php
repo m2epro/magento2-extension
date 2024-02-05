@@ -53,20 +53,14 @@ class InspectDirectChanges extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     public function isPossibleToRun()
     {
-        if ($this->changeTrackerHelper->isEnabled()) {
+        if (
+            !$this->moduleConfiguration->isEnableListingProductInspectorMode()
+            || $this->changeTrackerHelper->isEnabled()
+        ) {
             return false;
         }
 
         return parent::isPossibleToRun();
-    }
-
-    protected function isModeEnabled()
-    {
-        if (!parent::isModeEnabled()) {
-            return false;
-        }
-
-        return $this->moduleConfiguration->isEnableListingProductInspectorMode();
     }
 
     //########################################

@@ -44,7 +44,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     public const PRICE_COEFFICIENT_ABSOLUTE_DECREASE = 2;
     public const PRICE_COEFFICIENT_PERCENTAGE_INCREASE = 3;
     public const PRICE_COEFFICIENT_PERCENTAGE_DECREASE = 4;
-    public const PRICE_COEFFICIENT_ATTRIBUTE = 5;
 
     public const PRICE_VARIATION_MODE_PARENT = 1;
     public const PRICE_VARIATION_MODE_CHILDREN = 2;

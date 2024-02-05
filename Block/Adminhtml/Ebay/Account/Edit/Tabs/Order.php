@@ -102,6 +102,8 @@ class Order extends AbstractForm
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
             ? \Ess\M2ePro\Helper\Json::decode($formData['magento_orders_settings']) : [];
 
+        $isEdit = (bool)$this->getRequest()->getParam('id');
+
         $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
 
         $formData = array_replace_recursive($defaults, $formData);
@@ -699,6 +701,61 @@ HTML
                 ),
             ]
         );
+
+        if ($isEdit) {
+            $fieldset = $form->addFieldset(
+                'magento_block_ebay_accounts_magento_orders_fee_settings',
+                [
+                    'legend' => __('Fee Settings'),
+                    'collapsable' => true,
+                ]
+            );
+
+            $existSellApiTokenSession = $account->getChildObject()->getSellApiTokenSession();
+
+            if (!$existSellApiTokenSession) {
+                $fieldset->addField(
+                    'magento_orders_actualize_final_fee_automatically_message',
+                    self::MESSAGES,
+                    [
+                        'messages' => [
+                            [
+                                'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                                'content' => __(
+                                    <<<HTML
+<p>To ensure that your eBay final fee is updated automatically, you need to grant M2E Pro access to your eBay data.
+Simply follow these steps:</p>
+<ul style="padding-left: 20px;">
+<li>Go to your <strong><a href="%1" target="_blank">eBay Account page</a></strong></li>
+<li>Look for the <strong>Sell API Details</strong> section</li>
+<li>Click on the <strong>Get Token</strong> option</li>
+<li>Once you have obtained the eBay token, remember to <strong>Save</strong> the changes</li>
+</ul>
+HTML
+                                    ,
+                                    $this->getUrl('*/ebay_account/edit', ['id' => $account->getId(), 'sell_api' => true])
+                                ),
+                            ],
+                        ],
+                    ]
+                );
+            }
+
+            $fieldset->addField(
+                'magento_orders_actualize_final_fee_automatically',
+                'select',
+                [
+                    'name' => 'magento_orders_settings[final_fee][auto_retrieve_enabled]',
+                    'label' => __('Actualize Final Fee Automatically'),
+                    'values' => [
+                        0 => __('No'),
+                        1 => __('Yes'),
+                    ],
+                    'value' => $formData['magento_orders_settings']['final_fee']['auto_retrieve_enabled'],
+                    'disabled' => !$existSellApiTokenSession,
+                ]
+            );
+        }
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_magento_orders_status_mapping',

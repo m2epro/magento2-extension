@@ -117,11 +117,12 @@ JS
             [
                 'name' => 'filter_name',
                 'label' => __('Filter Name'),
+                'class' => 'advanced-filter-name',
                 'value' => $entity->getTitle(),
             ]
         );
 
-        return '<div id="update_filter_popup_content" class="hidden">'
+        return '<div id="update_filter_popup_content" class="hidden advanced-filter-popup">'
             . $nameInput->toHtml()
             . '</div>';
     }

@@ -128,11 +128,13 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            // ---------------------------------------
-
+            $changeParams = $change->getParams();
             $cancelParams = [
                 'order_id' => $change->getOrderId(),
                 'change_id' => $change->getId(),
+                'adjustment_fee' => $changeParams['adjustment_fee'] ?? null,
+                'channel_order_id' => $changeParams['channel_order_id'],
+                'cancel_reason' => $changeParams['cancelReason'],
             ];
 
             /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Cancellation\BySeller $connectorObj */
@@ -153,7 +155,10 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 continue;
             }
 
-            // ---------------------------------------
+            if (isset($cancelResponseData['is_return']) && $cancelResponseData['is_return']) {
+                $change->delete();
+                continue;
+            }
 
             $refundParams = [
                 'order_id' => $change->getOrderId(),

@@ -42,19 +42,7 @@ JS
 
     public function renderHtml(string $searchBtnHtml, string $resetBtnHtml): string
     {
-        /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Button $saveFilterBtn */
-        $saveFilterBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class);
-        $saveFilterBtn->setData([
-            'label' => __('Create New Filter'),
-            'class' => 'action-default scalable action-primary',
-            'onclick' => 'ListingProductAdvancedFilterSelectObj.createNewFilter()',
-        ]);
-
-        $buttons = $this->wrapFilterHtmlBtn(
-            $searchBtnHtml
-            . $resetBtnHtml
-            . $saveFilterBtn->toHtml()
-        );
+        $buttons = $this->wrapFilterHtmlBtn($searchBtnHtml . $resetBtnHtml);
 
         return $this->getFilterSelectHtml() . $buttons;
     }
@@ -68,18 +56,27 @@ JS
             $values[$entity->getId()] = $entity->getTitle();
         }
 
+        $addNew = __('Add New');
+
         $element = $this->_formFactory->create()->addField(
             'advanced_filter_list',
             self::SELECT,
             [
                 'name' => 'rule_entity_id',
-                'label' => __('Apply Saved Filter'),
+                'label' => __('Saved Filter'),
                 'class' => 'advanced-filter-select',
                 'values' => $values,
                 'value' => null,
+                'after_element_html' => <<<HTML
+&nbsp;
+<span style="line-height: 30px;">
+    <a href="javascript: void(0);" onclick="ListingProductAdvancedFilterSelectObj.createNewFilter()">{$addNew}</a>
+</span>
+HTML
+                ,
             ]
         );
 
-        return $element->toHtml();
+        return sprintf('<div class="advanced-filter-select-container">%s</div>', $element->toHtml());
     }
 }

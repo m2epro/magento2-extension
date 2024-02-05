@@ -16,8 +16,11 @@ define([
         constPercentageDecrease: M2ePro.php.constant(
             '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE'
         ),
-        constAttribute: M2ePro.php.constant(
-            '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_ATTRIBUTE'
+        constAttributeIncrease: M2ePro.php.constant(
+            '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE'
+        ),
+        constAttributeDecrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE'
         ),
 
         initialize: function() {
@@ -31,7 +34,7 @@ define([
                 var modifier = el.up().down('input');
                 modifier.removeClassName('price_unvalidated');
 
-                if (modifier.style.visibility !== 'visible') {
+                if (modifier.style.display === 'none') {
                     return true;
                 }
 
@@ -39,7 +42,7 @@ define([
                     return false;
                 }
 
-                var modifierValue = parseFloat(modifier.value);
+                var modifierValue = +modifier.value;
                 if (isNaN(modifierValue) || modifierValue <= 0) {
                     modifier.addClassName('price_unvalidated');
                     return false;
@@ -90,32 +93,25 @@ define([
 
             var modeElement = $(type + '_modifier_mode_' + rowIndex),
                 valueElement = $(type + '_modifier_value_' + rowIndex),
+                attributeCodeElement = $(type + '_modifier_attribute_' + rowIndex),
                 removeButtonElement = $(type + '_modifier_row_remove_button_' + rowIndex);
 
-            var handlerObj = new AttributeCreator(type + '_modifier_mode_' + rowIndex);
-            handlerObj.setSelectObj(modeElement);
+            var handlerObj = new AttributeCreator(type + '_modifier_attribute_' + rowIndex);
+            handlerObj.setSelectObj(attributeCodeElement);
             handlerObj.injectAddOption();
 
-            if (rowData.mode) {
-                var elementAttributeCode;
-                for (var i = 0; i < modeElement.options.length; i++) {
-                    if (modeElement.options[i].value != rowData.mode) {
-                        continue;
-                    }
+            let mode = rowData.hasOwnProperty('mode') ? +rowData.mode : +this.constAbsoluteIncrease;
+            let value = rowData.hasOwnProperty('value') ? rowData.value.toString() : '';
+            let attributeCode = rowData.hasOwnProperty('attribute_code')
+                    ? rowData.attribute_code.toString()
+                    : attributeCodeElement.options[1].value;
 
-                    if (modeElement.options[i].value < this.constAttribute) {
-                        modeElement.selectedIndex = i;
-                        valueElement.value = rowData['value'];
-                        break;
-                    } else {
-                        elementAttributeCode = modeElement.options[i].getAttribute('attribute_code');
-                        if (elementAttributeCode == rowData['attribute_code']) {
-                            modeElement.selectedIndex = i;
-                            valueElement.style.visibility = 'hidden';
-                            break;
-                        }
-                    }
-                }
+            modeElement.value = mode;
+
+            if (mode === this.constAttributeIncrease || mode === this.constAttributeDecrease) {
+                attributeCodeElement.value = attributeCode;
+            } else {
+                valueElement.value = value
             }
 
             var selectOnChangeHandler = function () {
@@ -146,12 +142,25 @@ define([
             var valueElement = $(type + '_modifier_value_' + element.dataset[datasetKey]),
                 attributeElement = $(type + '_modifier_attribute_' + element.dataset[datasetKey]);
 
-            if (element.options[element.selectedIndex].value == this.constAttribute) {
-                valueElement.style.visibility = 'hidden';
-                this.selectMagentoAttribute(element, attributeElement);
+            const hide = function (el) {
+                el.style.display = 'none';
+                el.disabled = true;
+            };
+
+            const show = function (el) {
+                el.style.display = 'inline-block';
+                el.disabled = false;
+            };
+
+            if (
+                    +element.value === this.constAttributeIncrease
+                    || +element.value === this.constAttributeDecrease
+            ) {
+                hide(valueElement);
+                show(attributeElement)
             } else {
-                valueElement.style.visibility = 'visible';
-                attributeElement.value = '';
+                show(valueElement);
+                hide(attributeElement);
             }
 
             this.priceChangeCalculationUpdate(type);
@@ -178,9 +187,15 @@ define([
                 }
 
                 selectedOption = select.options[select.selectedIndex];
-                if (selectedOption.value == this.constAttribute) {
+                if (+selectedOption.value === this.constAttributeIncrease) {
                     result += 7.5;
                     operations.push('+ $7.5');
+                    return;
+                }
+
+                if (+selectedOption.value === this.constAttributeDecrease) {
+                    result -= 7.5;
+                    operations.push('- $7.5');
                     return;
                 }
 
@@ -240,12 +255,6 @@ define([
             } else {
                 return '-' + currency + -price;
             }
-        },
-
-        selectMagentoAttribute: function (elementSelect, elementAttribute) {
-            var attributeCode = elementSelect.options[elementSelect.selectedIndex]
-                .getAttribute('attribute_code');
-            elementAttribute.value = attributeCode;
         },
     });
 });

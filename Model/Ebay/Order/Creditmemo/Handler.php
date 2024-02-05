@@ -49,7 +49,9 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
             return self::HANDLE_RESULT_SKIPPED;
         }
 
-        return $order->getChildObject()->refund() ? self::HANDLE_RESULT_SUCCEEDED : self::HANDLE_RESULT_FAILED;
+        return $order->getChildObject()->refund([], $creditmemo)
+            ? self::HANDLE_RESULT_SUCCEEDED
+            : self::HANDLE_RESULT_FAILED;
     }
 
     //########################################

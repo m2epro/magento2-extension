@@ -1270,4 +1270,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             1
         );
     }
+
+    public function isFinalFeeUpdateEnabled(): bool
+    {
+        $setting = $this->getSetting('magento_orders_settings', ['final_fee', 'auto_retrieve_enabled']);
+
+        return (bool)$setting;
+    }
 }

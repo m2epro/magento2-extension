@@ -69,16 +69,13 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $this->changeTrackerHelper->getInterval();
     }
 
-    /**
-     * @return bool
-     */
-    protected function isModeEnabled(): bool
+    public function isPossibleToRun()
     {
-        if (!parent::isModeEnabled()) {
+        if (!$this->changeTrackerHelper->isEnabled()) {
             return false;
         }
 
-        return (bool)$this->changeTrackerHelper->getStatus();
+        return parent::isPossibleToRun();
     }
 
     /**

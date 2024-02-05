@@ -1227,9 +1227,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             return false;
         }
 
+        $adjustmentFee = $creditMemo !== null ? $creditMemo->getAdjustmentNegative() : null;
+
         $params = [
             'channel_order_id' => $this->getEbayOrderId(),
             'cancelReason' => self::CANCEL_REASON_BUYER_ASK,
+            'adjustment_fee' => $adjustmentFee,
         ];
 
         $this->activeRecordFactory->getObject('Order\Change')->create(

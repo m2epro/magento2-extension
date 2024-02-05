@@ -170,12 +170,19 @@ table#price_table:after {
 }
 .coef {
     text-align: right;
-    width: 70px !important;
-    margin: 0 5px;
 }
 .price_unvalidated {
     border-color: #D40707 !important;
 }
+
+.price_change_row {
+    margin-bottom: 20px;
+}
+
+.price_modifier_mode {
+    margin-right: 10px;
+}
+
 #price_table td.value,
 #best_offer_respond_table td.value {
     border-width: 0 1px 1px 1px !important;

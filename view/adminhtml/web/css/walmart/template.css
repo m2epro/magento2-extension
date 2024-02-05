@@ -473,15 +473,10 @@ td.specifics-grid {
 
 .coef {
     text-align: right;
-    width: 70px !important;
 }
 
 .price_modifier_mode {
     margin-right: 10px;
-}
-
-.price_change_additional_element {
-    margin: 0 10px;
 }
 
 /* ================================================ */

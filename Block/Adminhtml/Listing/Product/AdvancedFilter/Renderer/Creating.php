@@ -102,11 +102,12 @@ JS
             'text',
             [
                 'name' => 'filter_name',
+                'class' => 'advanced-filter-name',
                 'label' => __('Filter Name'),
             ]
         );
 
-        return '<div id="new_filter_popup_content" class="hidden">'
+        return '<div id="new_filter_popup_content" class="hidden advanced-filter-popup">'
             . $nameInput->toHtml()
             . '</div>';
     }

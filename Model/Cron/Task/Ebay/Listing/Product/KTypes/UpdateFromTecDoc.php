@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\KTypes;
 
-use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstractModel;
+use Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor as ChangeProcessor;
 use Ess\M2ePro\Model\Ebay\Listing\Product as EbayListingProduct;
 
 class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
@@ -240,7 +240,7 @@ class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                     [
                         'listing_product_id' => $listingProduct->getId(),
                         'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-                        'type' => ChangeProcessorAbstractModel::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
+                        'type' => ChangeProcessor::INSTRUCTION_TYPE_PARTS_DATA_CHANGED,
                         'initiator' => 'ebay_listing_product_ktypes_update',
                         'priority' => 100,
                     ],

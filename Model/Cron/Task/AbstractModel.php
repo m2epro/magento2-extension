@@ -307,7 +307,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    protected function processTaskException(\Exception $exception)
+    protected function processTaskException(\Throwable $exception)
     {
         $this->getOperationHistory()->addContentData(
             'exceptions',

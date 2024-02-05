@@ -1156,19 +1156,19 @@ abstract class PriceCalculator extends AbstractModel
         $magentoProduct = $this->getAttributeSourceProduct();
         foreach ($modifier as $modification) {
             switch ($modification['mode']) {
-                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE:
+                case SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE:
                     $result += (float)$modification['value'];
                     break;
-                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE:
+                case SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE:
                     $result -= (float)$modification['value'];
                     break;
-                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE:
+                case SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE:
                     $result *= 1 + (float)$modification['value'] / 100;
                     break;
-                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE:
+                case SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE:
                     $result *= 1 - (float)$modification['value'] / 100;
                     break;
-                case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE:
+                case SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE:
                     if (!$magentoProduct) {
                         break;
                     }
@@ -1178,6 +1178,18 @@ abstract class PriceCalculator extends AbstractModel
                     if (is_numeric($attributeValue)) {
                         $result += (float)$attributeValue;
                     }
+                    break;
+                case SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE:
+                    if (!$magentoProduct) {
+                        break;
+                    }
+
+                    $attributeValue = $magentoProduct
+                        ->getAttributeValue($modification['attribute_code']);
+                    if (is_numeric($attributeValue)) {
+                        $result -= (float)$attributeValue;
+                    }
+                    break;
             }
         }
 

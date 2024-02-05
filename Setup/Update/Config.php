@@ -345,6 +345,7 @@ class Config extends AbstractConfig
             ],
             'y24_m01' => [
                 'AddListingProductAdvancedFilterTable',
+                'ImproveAutoUpdateEbayFinalFees',
             ],
         ];
     }
@@ -408,6 +409,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y23_m12\AddTecdocKtypesIt::class,
             \Ess\M2ePro\Setup\Update\y23_m12\AddAmazonInventoryFbaFieldsInAmazonAccountTable::class,
             \Ess\M2ePro\Setup\Update\y24_m01\AddListingProductAdvancedFilterTable::class,
+            \Ess\M2ePro\Setup\Update\y24_m01\ImproveAutoUpdateEbayFinalFees::class,
         ];
     }
 

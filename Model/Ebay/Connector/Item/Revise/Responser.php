@@ -100,7 +100,8 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
 
         if ($this->getConfigurator()->isOtherAllowed()) {
-            $sequenceStrings[] = 'Condition, Condition Note, Lot Size, Tax, Best Offer, Donation';
+            $sequenceStrings[] = 'Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size, Tax,
+             Donation, Best Offer, Immediate Payment';
             $isPlural = true;
         }
 

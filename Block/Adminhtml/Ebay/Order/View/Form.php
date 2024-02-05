@@ -348,7 +348,7 @@ class Form extends AbstractContainer
 
     protected function _toHtml()
     {
-        $url = 'help/m2/ebay-integration/sales-and-orders/viewing-order-detailsviewing-ebay-order-details';
+        $url = 'help/m2/ebay-integration/sales-and-orders/viewing-order-details';
 
         $orderNoteGridId = $this->getChildBlock('order_note_grid')->getId();
         $this->jsTranslator->add('Custom Note', $this->__('Custom Note'))

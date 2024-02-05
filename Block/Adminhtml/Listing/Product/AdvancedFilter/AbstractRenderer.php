@@ -19,11 +19,29 @@ abstract class AbstractRenderer extends \Ess\M2ePro\Block\Adminhtml\Magento\Form
         $css->add(
             <<<CSS
         .advanced-filter-btn-wrap > button {
-            font-size: 11px;
+            font-size: 13px;
+            margin-top: 10px;
         }
 
         .advanced-filter-select {
+            width: 30%;
             margin-bottom: 15px;
+        }
+
+        .advanced-filter-select-container .admin__field-label {
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        .advanced-filter-popup > span {
+            font-weight: 600;
+            margin-right: 15px;
+        }
+
+        .advanced-filter-name {
+            width: 50%;
+            margin-top: 22px;
+            margin-left: 8px;
         }
 CSS
         );

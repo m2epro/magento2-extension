@@ -36,7 +36,8 @@ class Other extends AbstractModel
             $this->getVatTaxData(),
             $this->getCharityData(),
             $this->getLotSizeData(),
-            $this->getPaymentData()
+            $this->getPaymentData(),
+            $this->getPriceDiscountMapData()
         );
 
         return $data;
@@ -154,5 +155,25 @@ class Other extends AbstractModel
                 ],
             ],
         ];
+    }
+
+    private function getPriceDiscountMapData(): array
+    {
+        if (
+            !$this->getEbayListingProduct()->isListingTypeFixed() ||
+            !$this->getEbayListingProduct()->isPriceDiscountMap()
+        ) {
+            return [];
+        }
+
+        $data = [
+            'minimum_advertised_price' => $this->getEbayListingProduct()->getPriceDiscountMap(),
+        ];
+
+        $exposure = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getPriceDiscountMapExposureType();
+        $data['minimum_advertised_price_exposure'] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price::
+        getPriceDiscountMapExposureType($exposure);
+
+        return ['price_discount_map' => $data];
     }
 }

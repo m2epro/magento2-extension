@@ -19,53 +19,11 @@ define([
         },
         priceChangeHelper: null,
 
-        constAbsoluteIncrease: M2ePro.php.constant(
-                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE'
-        ),
-        constAbsoluteDecrease: M2ePro.php.constant(
-                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE'
-        ),
-        constPercentageIncrease: M2ePro.php.constant(
-                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE'
-        ),
-        constPercentageDecrease: M2ePro.php.constant(
-                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE'
-        ),
-        constAttribute: M2ePro.php.constant(
-                '\\Ess\\M2ePro\\Model\\Ebay\\Template\\SellingFormat::PRICE_COEFFICIENT_ATTRIBUTE'
-        ),
-
         // ---------------------------------------
 
         initialize: function ()
         {
             var self = this;
-
-            jQuery.validator.addMethod('M2ePro-validate-price-modifier', function (value, el) {
-                if (self.isElementHiddenFromPage(el)) {
-                    return true;
-                }
-
-                var coefficient = el.up().next().down('input');
-
-                coefficient.removeClassName('price_unvalidated');
-
-                if (!coefficient.visible()) {
-                    return true;
-                }
-
-                if (coefficient.value == '') {
-                    return false;
-                }
-
-                var floatValidator = Validation.get('M2ePro-validation-float');
-                if (floatValidator.test($F(coefficient), coefficient) && parseFloat(coefficient.value) <= 0) {
-                    coefficient.addClassName('price_unvalidated');
-                    return false;
-                }
-
-                return true;
-            }, M2ePro.translator.translate('Price Change is not valid.'));
 
             jQuery.validator.addMethod('M2ePro-validate-qty', function (value, el) {
 

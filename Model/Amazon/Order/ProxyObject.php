@@ -163,6 +163,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $this->addressData;
     }
 
+    public function getCustomerFirstName()
+    {
+        $addressData = $this->getAddressData();
+
+        return !empty($addressData['customer_firstname'])
+            ? $addressData['customer_firstname']
+            : $addressData['firstname'];
+    }
+
     public function getCustomerMiddleName()
     {
         $addressData = $this->getAddressData();
@@ -170,6 +179,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return !empty($addressData['customer_middlename'])
             ? $addressData['customer_middlename']
             : $addressData['middlename'];
+    }
+
+    public function getCustomerLastName()
+    {
+        $addressData = $this->getAddressData();
+
+        return !empty($addressData['customer_lastname'])
+            ? $addressData['customer_lastname']
+            : $addressData['lastname'];
     }
 
     /**

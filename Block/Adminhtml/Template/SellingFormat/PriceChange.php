@@ -55,7 +55,7 @@ class PriceChange extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $result = [];
         foreach ($priceModifier as $modification) {
             if (
-                $modification['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE
+                $modification['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE
                 && $modification['attribute_code']
             ) {
                 $result[] = $modification['attribute_code'];

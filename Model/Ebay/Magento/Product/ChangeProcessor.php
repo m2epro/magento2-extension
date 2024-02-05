@@ -238,7 +238,8 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $ebaySellingFormatTemplate->getBestOfferAcceptAttributes(),
             $ebaySellingFormatTemplate->getBestOfferRejectAttributes(),
             $ebaySellingFormatTemplate->getTaxCategoryAttributes(),
-            $ebaySellingFormatTemplate->getLotSizeAttributes()
+            $ebaySellingFormatTemplate->getLotSizeAttributes(),
+            $ebaySellingFormatTemplate->getPriceDiscountMapAttributes()
         );
 
         $ebayDescriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
