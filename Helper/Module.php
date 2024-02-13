@@ -213,14 +213,6 @@ class Module
     }
 
     /**
-     * @return mixed|null
-     */
-    public function getInstallationKey()
-    {
-        return $this->config->getGroupValue('/', 'installation_key');
-    }
-
-    /**
      * @return mixed
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */

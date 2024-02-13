@@ -15,7 +15,7 @@ class Repository
     private $entitiesByErrorCode = [];
     private $entitiesById = [];
     /** @var \Ess\M2ePro\Model\Tag[] */
-    private $tags;
+    private $tags = [];
 
     public function __construct(
         \Ess\M2ePro\Model\TagFactory $tagFactory,

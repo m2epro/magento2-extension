@@ -2749,7 +2749,6 @@ class Installer
 
         $moduleConfig->insert('/', 'is_disabled', '0');
         $moduleConfig->insert('/', 'environment', 'production');
-        $moduleConfig->insert('/', 'installation_key', sha1((string)microtime(true)));
         $moduleConfig->insert('/license/', 'key');
         $moduleConfig->insert('/license/domain/', 'real');
         $moduleConfig->insert('/license/domain/', 'valid');

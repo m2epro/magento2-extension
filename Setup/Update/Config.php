@@ -347,6 +347,9 @@ class Config extends AbstractConfig
                 'AddListingProductAdvancedFilterTable',
                 'ImproveAutoUpdateEbayFinalFees',
             ],
+            'y24_m02' => [
+                'RemoveInstallationKeyFromConfigTable',
+            ],
         ];
     }
 

@@ -744,7 +744,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
             $configurableOption = [
                 'option_id' => $attribute->getAttributeId(),
                 'labels' => array_filter([
-                    trim($attribute->getData('label')),
+                    trim((string)$attribute->getData('label')),
                     trim($productAttribute->getFrontendLabel()),
                     trim($productAttribute->getStoreLabel($this->getMagentoProduct()->getStoreId())),
                 ]),

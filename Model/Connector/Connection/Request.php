@@ -1,25 +1,46 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Connector\Connection;
 
 class Request extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var null  */
-    protected $component = null;
-    /** @var null  */
-    protected $componentVersion = null;
-    /** @var null  */
-    protected $command = null;
-    /** @var array  */
-    protected $infoRewrites = [];
-    /** @var null  */
-    protected $rawData = null;
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
+    /** @var \Ess\M2ePro\Helper\Module */
+    private $moduleHelper;
+    /** @var \Ess\M2ePro\Helper\Module\License */
+    private $moduleLicenseHelper;
+    /** @var \Ess\M2ePro\Helper\Client */
+    private $clientHelper;
+    /** @var \Ess\M2ePro\Helper\Server */
+    private $serverHelper;
+    /** @var string  */
+    private $component;
+    /** @var int  */
+    private $componentVersion;
+    /** @var array */
+    private $command;
+    /** @var string|null  */
+    private $rawData = null;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
+        \Ess\M2ePro\Helper\Module $moduleHelper,
+        \Ess\M2ePro\Helper\Module\License $moduleLicenseHelper,
+        \Ess\M2ePro\Helper\Client $clientHelper,
+        \Ess\M2ePro\Helper\Server $serverHelper,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->magentoHelper = $magentoHelper;
+        $this->moduleHelper = $moduleHelper;
+        $this->moduleLicenseHelper = $moduleLicenseHelper;
+        $this->clientHelper = $clientHelper;
+        $this->serverHelper = $serverHelper;
+    }
 
     public function setComponent($value)
     {
@@ -67,29 +88,29 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         return $this->command;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function getInfo()
+    public function getInfo(): array
     {
         $data = [
             'client' => [
                 'platform' => [
-                    'name' => $this->getHelper('Magento')->getName() .
-                        ' (' . $this->getHelper('Magento')->getEditionName() . ')',
-                    'version' => $this->getHelper('Magento')->getVersion(),
+                    'name' => $this->magentoHelper->getName() .
+                        ' (' . $this->magentoHelper->getEditionName() . ')',
+                    'version' => $this->magentoHelper->getVersion(),
                 ],
                 'module' => [
-                    'name' => $this->getHelper('Module')->getName(),
-                    'version' => $this->getHelper('Module')->getPublicVersion(),
+                    'name' => $this->moduleHelper->getName(),
+                    'version' => $this->moduleHelper->getPublicVersion(),
                 ],
                 'location' => [
-                    'domain' => $this->getHelper('Client')->getDomain(),
-                    'ip' => $this->getHelper('Client')->getIp(),
-                    'directory' => $this->getHelper('Client')->getBaseDirectory(),
+                    'domain' => $this->clientHelper->getDomain(),
+                    'ip' => $this->clientHelper->getIp(),
                 ],
-                'locale' => $this->getHelper('Magento')->getLocaleCode(),
             ],
-            'auth' => [],
+            'auth' => [
+                'application_key' => $this->serverHelper->getApplicationKey(),
+            ],
             'component' => [
                 'name' => $this->component,
                 'version' => $this->componentVersion,
@@ -101,23 +122,12 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
             ],
         ];
 
-        $applicationKey = $this->getHelper('Server')->getApplicationKey();
-        $applicationKey !== null && $applicationKey != '' && $data['auth']['application_key'] = $applicationKey;
+        $licenseKey = $this->moduleLicenseHelper->getKey();
+        if (!empty($licenseKey)) {
+            $data['auth']['license_key'] = $licenseKey;
+        }
 
-        $licenseKey = $this->getHelper('Module\License')->getKey();
-        $licenseKey !== null && $licenseKey != '' && $data['auth']['license_key'] = $licenseKey;
-
-        $installationKey = $this->getHelper('Module')->getInstallationKey();
-        $installationKey !== null && $installationKey != '' && $data['auth']['installation_key'] = $installationKey;
-
-        return array_merge_recursive($data, $this->infoRewrites);
-    }
-
-    public function setInfoRewrites(array $value = [])
-    {
-        $this->infoRewrites = $value;
-
-        return $this;
+        return $data;
     }
 
     // ---------------------------------------
@@ -134,7 +144,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         return $this->rawData;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getPackage()
     {
@@ -144,5 +154,5 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
-    //########################################
+    // ----------------------------------------
 }
