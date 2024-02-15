@@ -738,6 +738,16 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (bool)$setting;
     }
 
+    public function isCreateCreditMemoBuyerRequestedCancelEnabled(): bool
+    {
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['refund_and_cancellation', 'credit_memo_buyer_requested_cancel']
+        );
+
+        return (bool)$setting;
+    }
+
     /**
      * @return bool
      */

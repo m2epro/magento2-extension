@@ -5489,7 +5489,7 @@ class Installer
                                                   ->addColumn(
                                                       'value_custom_value',
                                                       Table::TYPE_TEXT,
-                                                      255,
+                                                      null,
                                                       ['default' => null]
                                                   )
                                                   ->addColumn(

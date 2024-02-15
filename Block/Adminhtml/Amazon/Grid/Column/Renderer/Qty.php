@@ -70,7 +70,9 @@ class Qty extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Number
                     return $qty;
                 }
 
-                return "AFN ($qty)";
+                $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/amazon-afn-icon.svg');
+
+                return "<span class='fba-qty-column'><img src='$imageURL' alt='fba'> $qty</span>";
             }
 
             $showReceiving = ($this->getColumn()->getData('show_receiving') !== null)

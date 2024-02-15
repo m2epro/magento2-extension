@@ -32,11 +32,10 @@ class Manager
 
         // State - Creation
         //  ---------------------------------------------
-
-        if (
-            $viewState->isWithoutState()
-            || !$this->repository->isExistItemsWithModelNick($ruleModelNick)
-        ) {
+        if ($viewState->isWithoutState()) {
+            if ($this->repository->isExistItemsWithModelNick($ruleModelNick)) {
+                return $this->getRuleWithUnselectedState($viewState, $ruleModelNick, $storeId);
+            }
             $viewState->setStateCreation();
         }
 

@@ -648,12 +648,28 @@ HTML
             [
                 'container_id' => 'magento_orders_refund_container_credit_memo',
                 'name' => 'magento_orders_settings[refund_and_cancellation][credit_memo]',
-                'label' => __('Create Credit Memo after Order is Cancelled on Amazon'),
+                'label' => __('Automatically create Credit Memo when Order is cancelled'),
                 'values' => [
                     0 => __('No'),
                     1 => __('Yes'),
                 ],
                 'value' => $formData['magento_orders_settings']['refund_and_cancellation']['credit_memo'],
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_refund_credit_memo_buyer_requested_cancel',
+            'select',
+            [
+                'container_id' => 'magento_orders_refund_container_credit_memo_buyer_requested_cancel',
+                'name' => 'magento_orders_settings[refund_and_cancellation][credit_memo_buyer_requested_cancel]',
+                'label' => __('Automatically create Credit Memo when Buyer requests Cancellation'),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['refund_and_cancellation']
+                ['credit_memo_buyer_requested_cancel'],
             ]
         );
 

@@ -146,6 +146,10 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
         if ($order->getChildObject()->isCanceled()) {
             $order->createCreditMemo();
         }
+
+        if ($order->getChildObject()->isBuyerRequestedCancel()) {
+            $order->createCreditMemo();
+        }
     }
 
     /**

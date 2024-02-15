@@ -98,6 +98,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
+        $collection->distinct(true);
         $collection->setListingProductModeOn();
         $collection->setStoreId($this->listing->getStoreId());
         $collection->setListing($this->listing->getId());

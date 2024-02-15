@@ -171,6 +171,27 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'revise_update_details_info_message',
+            self::MESSAGES,
+            [
+                'messages' => [
+                    [
+                        'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
+                        'content' => __('
+                            With Details option enabled, all of the following details will be automatically synchronized:
+                            <br/>
+                            <b>
+                                Condition Note, List Price, Product Type data, Product Tax Code,
+                                Gift Message, Gift Wrap, Shipping Template
+                            </b>
+                        '),
+                    ],
+                ],
+                'style' => 'width: 70%; margin-left: 70px; margin-top: -20px;',
+            ]
+        );
+
         $form->addField(
             'revise_qty_max_applied_value_confirmation_popup_template',
             self::CUSTOM_CONTAINER,

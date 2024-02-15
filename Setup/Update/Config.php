@@ -349,6 +349,7 @@ class Config extends AbstractConfig
             ],
             'y24_m02' => [
                 'RemoveInstallationKeyFromConfigTable',
+                'ChangeTypeCustomValueFieldOnCategorySpecificTable',
             ],
         ];
     }

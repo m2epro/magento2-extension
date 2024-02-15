@@ -338,7 +338,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($row->getChildObject()->getData('is_afn_channel')) {
             $qty = $row->getChildObject()->getData('online_afn_qty') ?? __('N/A');
 
-            return "AFN ($qty)";
+            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/amazon-afn-icon.svg');
+
+            return "<span class='fba-qty-column'><img src='$imageURL' alt='fba'> $qty</span>";
         }
 
         $value = $row->getChildObject()->getData('online_qty');

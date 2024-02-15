@@ -1155,7 +1155,9 @@ HTML;
             if ($row->getData('is_afn_channel')) {
                 $qty = $row->getData('online_afn_qty') ?? __('N/A');
 
-                return "AFN ($qty)";
+                $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/amazon-afn-icon.svg');
+
+                return "<span class='fba-qty-column'><img src='$imageURL' alt='fba'> $qty</span>";
             }
 
             if ($value === null || $value === '') {

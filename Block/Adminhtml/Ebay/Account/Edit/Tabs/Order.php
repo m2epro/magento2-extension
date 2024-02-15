@@ -662,12 +662,28 @@ HTML
             [
                 'container_id' => 'magento_orders_refund_container_credit_memo',
                 'name' => 'magento_orders_settings[refund_and_cancellation][credit_memo]',
-                'label' => __('Create Credit Memo after Order is Cancelled on Ebay'),
+                'label' => __('Automatically create Credit Memo when Order is cancelled'),
                 'values' => [
                     0 => __('No'),
                     1 => __('Yes'),
                 ],
                 'value' => $formData['magento_orders_settings']['refund_and_cancellation']['credit_memo'],
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_refund_approve_buyer_cancellation_requested',
+            'select',
+            [
+                'container_id' => 'magento_orders_refund_container_approve_buyer_cancellation_requested',
+                'name' => 'magento_orders_settings[refund_and_cancellation][approve_buyer_cancellation_requested]',
+                'label' => __("Automatically approve buyer's Cancellation Request"),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['refund_and_cancellation']
+                ['approve_buyer_cancellation_requested'],
             ]
         );
 

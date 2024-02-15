@@ -978,6 +978,16 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return (bool)$setting;
     }
 
+    public function isAutomaticallyApproveBuyerCancellationRequestedEnabled(): bool
+    {
+        $setting = $this->getSetting(
+            'magento_orders_settings',
+            ['refund_and_cancellation', 'approve_buyer_cancellation_requested']
+        );
+
+        return (bool)$setting;
+    }
+
     /**
      * @return bool
      */

@@ -335,6 +335,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $keys = [
             'refund_mode',
             'credit_memo',
+            'approve_buyer_cancellation_requested',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -472,6 +473,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 'refund_and_cancellation' => [
                     'refund_mode' => 0,
                     'credit_memo' => 0,
+                    'approve_buyer_cancellation_requested' => 0,
                 ],
                 'shipping_information' => [
                     'ship_by_date' => 1,

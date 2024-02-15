@@ -25,17 +25,20 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
     /** @var bool */
     protected $_validateAccountCreateDate = true;
 
-    //########################################
+    /** @var \Ess\M2ePro\Model\Ebay\Order\Cancellation\ByBuyer\Manager */
+    private $cancellationManager;
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\Ebay\Order\Cancellation\ByBuyer\Manager $cancellationManager,
         array $data = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->helperData = $helperData;
+        $this->cancellationManager = $cancellationManager;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
@@ -154,6 +157,14 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
         if ($order->getStatusUpdateRequired()) {
             $order->updateMagentoOrderStatus();
+        }
+
+        if (
+            $order->getChildObject()->isBuyerCancellationStatusRequested()
+            && $order->getAccount()->getChildObject()->isAutomaticallyApproveBuyerCancellationRequestedEnabled()
+            && $order->getChildObject()->isBuyerCancellationPossible()
+        ) {
+            $this->cancellationManager->approve($order, \Ess\M2ePro\Helper\Data::INITIATOR_USER);
         }
 
         if ($order->getChildObject()->isCanceled()) {

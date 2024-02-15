@@ -182,7 +182,7 @@ class RetrieveFinalFee extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
         }
 
-        return $totalFees;
+        return abs($totalFees);
     }
 
     private function updateFinalFees(array $feesByOrder): void

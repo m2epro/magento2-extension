@@ -1119,7 +1119,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public function canCreateCreditMemo(): bool
     {
-        if (!$this->getAmazonAccount()->isCreateCreditMemoEnabled()) {
+        if (
+            !$this->getAmazonAccount()->isCreateCreditMemoEnabled()
+            && $this->isCanceled()
+        ) {
+            return false;
+        }
+
+        if (
+            !$this->getAmazonAccount()->isCreateCreditMemoBuyerRequestedCancelEnabled()
+            && $this->isBuyerRequestedCancel()
+        ) {
             return false;
         }
 

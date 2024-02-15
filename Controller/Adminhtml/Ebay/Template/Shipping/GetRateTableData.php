@@ -57,6 +57,19 @@ class GetRateTableData extends Template
 
         $rateTables = $ebayAccount->getRateTables();
 
+        if (empty($rateTables)) {
+            return $this->getResponse()->setBody(
+                \Ess\M2ePro\Helper\Json::encode(
+                    [
+                        'error' => __(
+                            'No available rate tables found for this seller account.
+                             Ensure at least one rate table is created for this account on eBay.'
+                        ),
+                    ]
+                )
+            );
+        }
+
         $marketplace = $this->ebayFactory->getObjectLoaded('Marketplace', $marketplaceId);
         $countryCode = $marketplace->getChildObject()->getOriginCountry();
         $type = $type == 'local' ? 'domestic' : 'international';
