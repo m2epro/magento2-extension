@@ -167,6 +167,11 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $isMarketplaceSuggested = $this->getSuggestedMarketplaceId() ? 'true' : 'false';
 
+        $this->jsUrl->add(
+            $this->getUrl('*/amazon_template_productType/isUniqueTitle'),
+            'amazon_template_productType/isUniqueTitle'
+        );
+
         $this->js->addRequireJs([
             'jQuery' => 'jquery',
             'amazon_template_product_type' => 'M2ePro/Amazon/Template/ProductType',

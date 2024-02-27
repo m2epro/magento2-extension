@@ -37,11 +37,28 @@ define(
                     this.showUpdateProductTypeAttributeMappingPopup(productTypeId)
                 }
 
-                this.setValidationCheckRepetitionValue('M2ePro-general-product-type-title',
-                        M2ePro.translator.translate('The specified Product Title is already used for other Product Type. Product Type Title must be unique.'),
-                        'Amazon\\Template\\ProductType', 'title', 'id',
-                        document.getElementById('general_id').value,
-                        null);
+                jQuery.validator.addMethod(
+                    'M2ePro-general-product-type-title',
+                    function (productTypeTitle) {
+                        let marketplaceId = document.getElementById('general_marketplace_id').value;
+                        let isValid = false;
+
+                        new Ajax.Request(M2ePro.url.get('amazon_template_productType/isUniqueTitle'), {
+                            method: 'post',
+                            asynchronous: false,
+                            parameters: {
+                                title: productTypeTitle,
+                                marketplace_id: marketplaceId,
+                            },
+                            onSuccess: function(transport) {
+                                isValid = transport.responseText.evalJSON()['result'];
+                            }
+                        });
+
+                        return isValid;
+                    },
+                    M2ePro.translator.translate('The specified Product Title is already used for other Product Type. Product Type Title must be unique.')
+                );
 
                 jQuery(document).on('change', '#general_product_type_title', this.clearValidationMessage.bind(this));
             },

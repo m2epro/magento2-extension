@@ -205,19 +205,6 @@ HTML
             ]
         );
 
-        $form->addField(
-            'revise_update_details_or_images_confirmation_popup_template',
-            self::CUSTOM_CONTAINER,
-            [
-                'text' => (string) __(
-                    '<br/>Enabling this option might affect synchronization performance. Please read
-             <a href="%1" target="_blank">this article</a> before using the option.',
-                    'https://help.m2epro.com/support/solutions/articles/9000219398'
-                ),
-                'style' => 'display: none;',
-            ]
-        );
-
         $this->jsTranslator->add('Wrong value. Only integer numbers.', $this->__('Wrong value. Only integer numbers.'));
 
         $jsFormData = [

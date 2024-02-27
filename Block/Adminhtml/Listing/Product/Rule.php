@@ -132,16 +132,6 @@ CSS
 
     protected function _beforeToHtml()
     {
-        $this->js->add(
-            <<<JS
-    require([
-        'M2ePro/Plugin/Messages'
-    ], function(MessageObj) {
-       MessageObj.clear();
-    });
-JS
-        );
-
         $this->advancedFilterRenderer->renderJs(
             $this->js,
             $this->jsUrl,

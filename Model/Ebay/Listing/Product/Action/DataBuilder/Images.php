@@ -30,7 +30,7 @@ class Images extends AbstractModel
                 continue;
             }
 
-            $links[] = $image->getUrl();
+            $links[] = $image->getUrlWithHashQueryParam();
         }
 
         $data = [
@@ -208,7 +208,7 @@ class Images extends AbstractModel
                     }
 
                     if (!isset($images[$image->getHash()])) {
-                        $imagesLinks[$optionValue][] = $image->getUrl();
+                        $imagesLinks[$optionValue][] = $image->getUrlWithHashQueryParam();
                         $images[$image->getHash()] = $image;
                     }
                 }

@@ -71,6 +71,16 @@ class Image extends AbstractModel
         return $this;
     }
 
+    public function getUrlWithHashQueryParam(): string
+    {
+        $url = $this->getUrl();
+
+        $queryParamDelimiter = (strpos($url, '?') === false) ? '?' : '&';
+        $queryParamHash = http_build_query(['v' => $this->getHash()]);
+
+        return $url . $queryParamDelimiter . $queryParamHash;
+    }
+
     //----------------------------------------
 
     /**

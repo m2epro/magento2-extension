@@ -162,6 +162,14 @@ class Index extends Settings
         $mode = $ebayListing->getAddProductMode();
         $back = $this->getRequest()->getParam('back');
 
+        if ($mode && $back && !$this->getRequest()->getParam('listing_creation')) {
+            return $this->_redirect('*/ebay_listing_product_add/exitToListing', [
+                'id' => $ebayListing->getId(),
+                '_current' => true,
+                'step' => 1
+            ]);
+        }
+
         if ($mode && !$back) {
             $this->setSessionValue('mode', $mode);
 

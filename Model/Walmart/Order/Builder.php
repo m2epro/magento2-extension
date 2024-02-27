@@ -367,7 +367,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function cancelMagentoOrder()
     {
         $magentoOrderComments = [];
-        $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Amazon.';
+        $magentoOrderComments[] = '<b>Attention!</b> Order was canceled on Walmart.';
         $result = $this->order->canCancelMagentoOrder();
         if ($result === true) {
             try {

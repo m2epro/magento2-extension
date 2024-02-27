@@ -200,7 +200,7 @@ HTML
             self::SELECT,
             [
                 'name' => 'mapping_sku_mode',
-                'label' => $this->__('Custom Label (SKU)'),
+                'label' => __('SKU'),
                 'class' => 'attribute-mode-select',
                 'style' => 'float:left; margin-right: 15px;',
                 'values' => [

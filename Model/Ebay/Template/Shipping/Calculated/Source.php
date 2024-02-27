@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated;
 
+use Ess\M2ePro\Model\Magento\Product\Type\Configurable;
+
 /**
  * Class \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated\Source
  */
@@ -126,6 +128,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE) {
             $weightValue = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+            if (!$weightValue) {
+                $weightValue = $this->getMagentoProduct()->getVariationMaxWeight($src['attribute']);
+            }
+
             $weightValue = str_replace(',', '.', $weightValue);
             $weightArray = explode('.', $weightValue);
 

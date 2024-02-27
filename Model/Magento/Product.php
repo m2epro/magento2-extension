@@ -106,6 +106,12 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
+    /** @var \Ess\M2ePro\Model\Magento\ProductFactory */
+    private $m2eProductFactory;
+
+    /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
+    private $productRepository;
+
     public function __construct(
         Factory $inventoryFactory,
         \Magento\Framework\Filesystem\DriverPool $driverPool,
@@ -125,7 +131,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Magento\ProductFactory $m2eProductFactory,
+        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
     ) {
         $this->inventoryFactory = $inventoryFactory;
         $this->driverPool = $driverPool;
@@ -144,6 +152,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->resourceProduct = $resourceProduct;
         $this->helperData = $helperData;
         $this->moduleConfiguration = $moduleConfiguration;
+        $this->m2eProductFactory = $m2eProductFactory;
+        $this->productRepository = $productRepository;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -1736,6 +1746,37 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $groupedProductWeight;
+    }
+
+    public function getVariationMaxWeight(string $attributeName): string
+    {
+        $products = $this->getProductsBasedOnType();
+
+        if (empty($products)) {
+            return '0';
+        }
+
+        $weights = array_map(function ($product) use ($attributeName) {
+            $product = $this->productRepository->getById($product->getId());
+            $tmpProduct = $this->m2eProductFactory->create();
+            $tmpProduct->setProduct($product);
+
+            return $tmpProduct->getAttributeValue($attributeName);
+        }, $products);
+
+        return max($weights);
+    }
+
+    private function getProductsBasedOnType(): array
+    {
+        $products = [];
+        if ($this->isConfigurableType()) {
+            $products = $this->getTypeInstance()->getUsedProducts($this->getProduct());
+        } elseif ($this->isGroupedType()) {
+            $products = $this->getTypeInstance()->getAssociatedProducts($this->getProduct());
+        }
+
+        return $products;
     }
 
     //########################################

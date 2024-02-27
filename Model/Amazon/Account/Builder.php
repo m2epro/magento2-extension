@@ -427,8 +427,10 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'related_store_id' => 0,
 
             'other_listings_synchronization' => 1, // yes
-            'other_listings_mapping_mode' => 0, // no
+            'other_listings_mapping_mode' => 1, // yes
             'other_listings_mapping_settings' => [],
+            'mapping_sku_mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
+            'mapping_sku_priority' => 1,
 
             // order
             'magento_orders_settings' => [

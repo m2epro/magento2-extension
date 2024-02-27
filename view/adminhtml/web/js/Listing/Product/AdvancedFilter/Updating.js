@@ -42,6 +42,7 @@ define([
                                 content.remove();
                             };
                             const validationFail = function (message) {
+                                MessageObj.clear();
                                 MessageObj.addError(message);
                             };
                             self.sendForm(success, validationFail);

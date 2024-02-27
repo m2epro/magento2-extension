@@ -21,6 +21,8 @@ abstract class BaseInventoryTracker implements TrackerInterface
     private $attributesQueryBuilder;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
     private $blockingErrorConfig;
+    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker */
+    private $enterpriseChecker;
 
     public function __construct(
         string $channel,
@@ -28,7 +30,8 @@ abstract class BaseInventoryTracker implements TrackerInterface
         InventoryStock $inventoryStock,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         TrackerLogger $logger,
-        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig
+        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig,
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker
     ) {
         $this->channel = $channel;
         $this->inventoryStock = $inventoryStock;
@@ -36,6 +39,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
         $this->logger = $logger;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
         $this->blockingErrorConfig = $blockingErrorConfig;
+        $this->enterpriseChecker = $enterpriseChecker;
     }
 
     /**
@@ -387,11 +391,13 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'ea.attribute_code = selling_policy.custom_attribute'
             );
 
-        $entityVarcharCondition = '
-            cpev.attribute_id = ea.attribute_id
-            AND cpev.entity_id = product.product_id
-            AND cpev.store_id = product.store_id
-        ';
+        $entityVarcharCondition = 'cpev.attribute_id = ea.attribute_id';
+        $entityVarcharCondition .= ' AND cpev.store_id = product.store_id';
+        $entityVarcharCondition .= sprintf(
+            ' AND cpev.%s = product.product_id',
+            $this->enterpriseChecker->isEnterpriseEdition() ? 'row_id' : 'entity_id'
+        );
+
         $query->leftJoin(
             'cpev',
             'catalog_product_entity_varchar',

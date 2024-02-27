@@ -97,22 +97,17 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
                 $this->variationHelper->filterProductsByAvailableWorldwideIdentifiers($filteredProductsIdsByType);
 
             if (count($filteredProductsIdsByType) !== count($productIdsWithAvailableWorldwideIds)) {
-                $url = 'https://help.m2epro.com/support/solutions/articles/9000226680';
                 $text = (string) __(
-                    <<<HTML
-UPC/EAN is missing for %count product(s).
-Please configure Product Identifiers settings before adding or updating your Amazon Items.
-For more information, please see <a href="%url" target="_blank" class="external-link">this article</a>.
-HTML
-                    ,
+                    'UPC/EAN information could not be located for %count product(s).
+                    Before proceeding with adding or updating your Amazon Items,
+                    please ensure that either the Product Identifiers settings or Amazon GTIN exemption is configured.',
                     [
-                        'url' => $url,
                         'count' => count($filteredProductsIdsByType) - count($productIdsWithAvailableWorldwideIds),
                     ]
                 );
 
                 $messages[] = [
-                    'type' => 'error',
+                    'type' => 'warning',
                     'text' => $text,
                 ];
             }

@@ -174,9 +174,6 @@ define([
                 .observe('change', AmazonTemplateSynchronizationObj.reviseQtyMaxAppliedValueMode_change)
                 .simulate('change');
 
-            $('revise_update_details')
-                .observe('change', AmazonTemplateSynchronizationObj.reviseDetailsMode_change);
-
             //stop
             $('stop_mode')
                 .observe('change', AmazonTemplateSynchronizationObj.stopMode_change)
@@ -383,48 +380,6 @@ define([
         },
 
         // ---------------------------------------
-
-        reviseDetailsMode_change: function()
-        {
-            var self = AmazonTemplateSynchronizationObj;
-
-            if (this.value == 1) {
-                self.openReviseDetailsOrImagesEnableConfirmationPopUp(this);
-            }
-        },
-
-        openReviseDetailsOrImagesEnableConfirmationPopUp: function(elem)
-        {
-            var popupTemplate = jQuery('#revise_update_details_or_images_confirmation_popup_template').clone();
-
-            popupTemplate.confirm({
-                title: M2ePro.translator.translate('Are you sure?'),
-                actions: {
-                    confirm: function () {
-                        return true;
-                    },
-                    cancel: function()
-                    {
-                        elem.selectedIndex = 0;
-                    }
-                },
-                buttons: [{
-                    text: M2ePro.translator.translate('Cancel'),
-                    class: 'action-secondary action-dismiss',
-                    click: function (event) {
-                        this.closeModal(event);
-                    }
-                }, {
-                    text: M2ePro.translator.translate('Confirm'),
-                    class: 'action-primary action-accept',
-                    click: function (event) {
-                        this.closeModal(event, true);
-                    }
-                }]
-            });
-        },
-
-        //----------------------------------------
 
         stopMode_change: function ()
         {

@@ -421,8 +421,15 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'sell_api_token_expired_date' => '',
 
             'other_listings_synchronization' => 1,
-            'other_listings_mapping_mode' => 0,
-            'other_listings_mapping_settings' => [],
+            'other_listings_mapping_mode' => 1,
+            'other_listings_mapping_settings' => [
+                'sku' => [
+                    'mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
+                    'priority' => 1
+                ],
+            ],
+            'mapping_sku_mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
+            'mapping_sku_priority' => 1,
 
             'magento_orders_settings' => [
                 'listing' => [

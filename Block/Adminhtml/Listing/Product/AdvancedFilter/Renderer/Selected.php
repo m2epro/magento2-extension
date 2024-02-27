@@ -44,6 +44,7 @@ class Selected extends \Ess\M2ePro\Block\Adminhtml\Listing\Product\AdvancedFilte
     require([
         'M2ePro/Plugin/Messages'
     ], function(MessageObj) {
+       MessageObj.clear();
        MessageObj.addSuccess(M2ePro.translator.translate('New filter have been saved'));
     });
 JS

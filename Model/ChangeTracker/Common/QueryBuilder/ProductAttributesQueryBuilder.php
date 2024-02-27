@@ -11,22 +11,17 @@ class ProductAttributesQueryBuilder
     private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $dbHelper;
-    /** @var \Ess\M2ePro\Helper\Magento */
-    private $magentoHelper;
+    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker */
+    private $enterpriseChecker;
 
-    /**
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper
-     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
-     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Module\Database\Structure $dbHelper,
-        \Ess\M2ePro\Helper\Magento $magentoHelper
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->dbHelper = $dbHelper;
-        $this->magentoHelper = $magentoHelper;
+        $this->enterpriseChecker = $enterpriseChecker;
     }
 
     /**
@@ -137,24 +132,10 @@ class ProductAttributesQueryBuilder
      */
     private function getEntityIdColumnName(): string
     {
-        if ($this->isEnterpriseEdition()) {
+        if ($this->enterpriseChecker->isEnterpriseEdition()) {
             return 'attr.row_id';
         }
 
         return 'attr.entity_id';
-    }
-
-    /**
-     * https://magento.stackexchange.com/questions/352414/code-to-get-row-id-or-entity-id-for-catalog-product-entity-varchar-table-for-joi
-     * @return bool
-     */
-    private function isEnterpriseEdition(): bool
-    {
-        $tableName = $this->resourceConnection
-            ->getTableName('catalog_product_entity_varchar');
-
-        return $this->resourceConnection
-            ->getConnection()
-            ->tableColumnExists($tableName, 'row_id');
     }
 }

@@ -24,6 +24,15 @@ class ExitToListing extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Produc
 
         $this->cancelProductsAdding();
 
+        if ((int)$this->getRequest()->getParam('step') === 1) {
+            return $this->_redirect('*/ebay_listing_product_add/', [
+                'id' => $listingId,
+                '_current' => true,
+                'step' => 1,
+                'back' => null
+            ]);
+        }
+
         return $this->_redirect(
             '*/ebay_listing/view',
             ['id' => $listingId]

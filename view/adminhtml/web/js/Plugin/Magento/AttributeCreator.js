@@ -242,7 +242,13 @@ define([
             }
 
             newOption.update(attributeParams['store_label']);
-            newOption.setAttribute('value', self.getNewlyCreatedAttributeValue(attributeParams));
+
+            if (self.selectObj.classList.contains('product_type_setting_element')) {
+                newOption.setAttribute('value', attributeParams['code']);
+            } else {
+                newOption.setAttribute('value', self.getNewlyCreatedAttributeValue(attributeParams));
+            }
+
             newOption.setAttribute('selected', 'selected');
 
             $$('select[id="' + self.selectObj.id + '"] option').each(function (el) {
