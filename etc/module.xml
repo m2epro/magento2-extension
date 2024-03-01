@@ -3,7 +3,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
 
-    <module name="Ess_M2ePro" setup_version="1.58.4">
+    <module name="Ess_M2ePro" setup_version="1.58.5">
         <sequence>
             <module name="Magento_Backend" />
             <module name="Magento_Catalog" />

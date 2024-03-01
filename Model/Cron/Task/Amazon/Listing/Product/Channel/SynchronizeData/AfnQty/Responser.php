@@ -269,7 +269,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $listingProduct = $item->getChildObject();
         $oldAfnQty = (int)$listingProduct->getOnlineAfnQty();
 
-        if ($afnQty != $oldAfnQty) {
+        if (
+            $item instanceof \Ess\M2ePro\Model\Listing\Product
+            && $afnQty != $oldAfnQty
+        ) {
             $logMessage = __(
                 'AFN Product QTY was changed from %1 to %2.',
                 $oldAfnQty,
