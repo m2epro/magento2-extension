@@ -138,36 +138,50 @@ abstract class AbstractPriceCondition
             $value = $modifier['value'] ?? '';
             $attributeCode = $modifier['attribute_code'] ?? '';
 
-            switch ($mode) {
-                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE:
-                    $sql = "( $sql + $value )";
-                    break;
-                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE:
-                    $sql = "( $sql - $value )";
-                    break;
-                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE:
-                    $sql = "( $sql * (1+$value/100) )";
-                    break;
-                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE:
-                    $sql = "( $sql * (1-$value/100) )";
-                    break;
-                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE:
-                    $attrQuery = $this->attributesQueryBuilder
-                        ->getQueryForAttribute(
-                            $attributeCode,
-                            'product.store_id',
-                            'product.product_id'
-                        );
-                    $sql = "( $sql + ({$attrQuery}) )";
-                    break;
-                case \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE:
-                    $attrQuery = $this->attributesQueryBuilder
-                        ->getQueryForAttribute(
-                            $attributeCode,
-                            'product.store_id',
-                            'product.product_id'
-                        );
-                    $sql = "( $sql - ({$attrQuery}) )";
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE) {
+                $sql = "( $sql + $value )";
+                continue;
+            }
+
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE) {
+                $sql = "( $sql - $value )";
+                continue;
+            }
+
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE) {
+                $sql = "( $sql * (1+$value/100) )";
+                continue;
+            }
+
+            if ($mode ===  \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE) {
+                $sql = "( $sql * (1-$value/100) )";
+                continue;
+            }
+
+            $attrQuery = $this->attributesQueryBuilder
+                ->getQueryForAttribute(
+                    $attributeCode,
+                    'product.store_id',
+                    'product.product_id'
+                );
+
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE) {
+                $sql = "( $sql + ({$attrQuery}) )";
+                continue;
+            }
+
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE) {
+                $sql = "( $sql - ({$attrQuery}) )";
+                continue;
+            }
+
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_INCREASE) {
+                $sql = "$sql + ($sql * ($attrQuery) / 100)";
+                continue;
+            }
+
+            if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_DECREASE) {
+                $sql = "$sql - ($sql * ($attrQuery) / 100)";
             }
         }
 

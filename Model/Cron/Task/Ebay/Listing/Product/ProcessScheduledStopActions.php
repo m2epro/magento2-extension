@@ -112,13 +112,13 @@ class ProcessScheduledStopActions extends \Ess\M2ePro\Model\Cron\Task\AbstractMo
         }
 
         $statusChangedTo = $this->ebayHelper
-            ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
+            ->getHumanTitleByListingProductStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE);
 
         $listingProductCollection = $this->listingProductCollectionFactory->create();
         $listingProductCollection->addFieldToFilter('id', ['in' => $listingProductIds]);
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         foreach ($listingProductCollection->getItems() as $listingProduct) {
-            if ($listingProduct->isStopped()) {
+            if ($listingProduct->isInactive()) {
                 $this->scheduledStopActionHelper->removeScheduledStopAction((int)$listingProduct->getId());
                 continue;
             }
@@ -127,7 +127,7 @@ class ProcessScheduledStopActions extends \Ess\M2ePro\Model\Cron\Task\AbstractMo
                 ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
 
             $listingProduct->addData([
-                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
                 'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
             ])->save();
 

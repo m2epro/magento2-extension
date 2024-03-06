@@ -92,7 +92,7 @@ class Ebay extends Command
                         ((isset($iResp['already_stop']) && $iResp['already_stop']) ||
                             isset($iResp['ebay_end_date_raw']))
                     ) {
-                        $item->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+                        $item->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
                     }
                 }
             }

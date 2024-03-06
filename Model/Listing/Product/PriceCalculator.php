@@ -1,22 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Listing\Product;
 
 use Ess\M2ePro\Helper\Magento\Attribute;
 use Ess\M2ePro\Model\AbstractModel;
-use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Listing;
 use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 use Ess\M2ePro\Model\Magento\Product;
 use Ess\M2ePro\Model\Magento\Product\Cache;
-use Ess\M2ePro\Model\Listing\Product\Variation;
 use Ess\M2ePro\Model\Template\SellingFormat;
 
 abstract class PriceCalculator extends AbstractModel
@@ -1155,41 +1147,54 @@ abstract class PriceCalculator extends AbstractModel
         $modifier = $this->getModifier();
         $magentoProduct = $this->getAttributeSourceProduct();
         foreach ($modifier as $modification) {
-            switch ($modification['mode']) {
-                case SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE:
-                    $result += (float)$modification['value'];
-                    break;
-                case SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE:
-                    $result -= (float)$modification['value'];
-                    break;
-                case SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE:
-                    $result *= 1 + (float)$modification['value'] / 100;
-                    break;
-                case SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE:
-                    $result *= 1 - (float)$modification['value'] / 100;
-                    break;
-                case SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE:
-                    if (!$magentoProduct) {
-                        break;
-                    }
+            $mode = (int)$modification['mode'];
+            if ($mode === SellingFormat::PRICE_MODIFIER_ABSOLUTE_INCREASE) {
+                $result += (float)$modification['value'];
+                continue;
+            }
 
-                    $attributeValue = $magentoProduct
-                        ->getAttributeValue($modification['attribute_code']);
-                    if (is_numeric($attributeValue)) {
-                        $result += (float)$attributeValue;
-                    }
-                    break;
-                case SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE:
-                    if (!$magentoProduct) {
-                        break;
-                    }
+            if ($mode === SellingFormat::PRICE_MODIFIER_ABSOLUTE_DECREASE) {
+                $result -= (float)$modification['value'];
+                continue;
+            }
 
-                    $attributeValue = $magentoProduct
-                        ->getAttributeValue($modification['attribute_code']);
-                    if (is_numeric($attributeValue)) {
-                        $result -= (float)$attributeValue;
-                    }
-                    break;
+            if ($mode === SellingFormat::PRICE_MODIFIER_PERCENTAGE_INCREASE) {
+                $result *= 1 + (float)$modification['value'] / 100;
+                continue;
+            }
+
+            if ($mode === SellingFormat::PRICE_MODIFIER_PERCENTAGE_DECREASE) {
+                $result *= 1 - (float)$modification['value'] / 100;
+                continue;
+            }
+
+            if ($magentoProduct === null) {
+                continue;
+            }
+
+            $attributeValue = $magentoProduct->getAttributeValue($modification['attribute_code']);
+            if (!is_numeric($attributeValue)) {
+                continue;
+            }
+            $floatAttributeValue = (float)$attributeValue;
+
+            if ($mode === SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE) {
+                $result += $floatAttributeValue;
+                continue;
+            }
+
+            if ($mode === SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE) {
+                $result -= $floatAttributeValue;
+                continue;
+            }
+
+            if ($mode === SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_INCREASE) {
+                $result += $result * $floatAttributeValue / 100;
+                continue;
+            }
+
+            if ($mode === SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_DECREASE) {
+                $result -= $result * $floatAttributeValue / 100;
             }
         }
 

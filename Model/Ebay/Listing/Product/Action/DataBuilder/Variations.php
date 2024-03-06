@@ -98,7 +98,7 @@ class Variations extends AbstractModel
             if ($ebayVariation->isDelete()) {
                 if (
                     $ebayVariation->getOnlineQtySold() === 0 &&
-                    ($ebayVariation->isStopped() || $ebayVariation->isHidden())
+                    ($ebayVariation->isInactive() || $ebayVariation->isHidden())
                 ) {
                     $ebayVariation->getParentObject()->delete();
                     continue;

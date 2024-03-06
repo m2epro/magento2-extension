@@ -536,7 +536,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
                             'online_qty' => $channelVariation['quantity'],
                             'online_qty_sold' => $channelVariation['quantity_sold'],
                             'status' => $availableQty > 0 ? \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED
-                                : \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
+                                : \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
                             'add' => 0,
                             'detele' => 0,
                         ]

@@ -168,7 +168,7 @@ HTML;
             $bidsTitle = __('Show bids list');
             $bidsText = __('Bid(s)');
 
-            if ($listingProduct->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED) {
+            if ($listingProduct->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE) {
                 $resultHtml .= '<br/><br/><span style="font-size: 10px; color: gray;">' .
                     $onlineBids . ' ' . $bidsText . '</span>';
             } else {

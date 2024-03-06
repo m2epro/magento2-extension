@@ -40,6 +40,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public const STATUS_UNKNOWN = 5;
     public const STATUS_BLOCKED = 6;
     public const STATUS_HIDDEN = 7;
+    public const STATUS_INACTIVE = 8;
 
     public const STATUS_CHANGER_UNKNOWN = 0;
     public const STATUS_CHANGER_SYNCH = 1;
@@ -457,45 +458,57 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return $this->getStatus() == self::STATUS_FINISHED;
     }
 
+    public function isInactive(): bool
+    {
+        return $this->getStatus() == self::STATUS_INACTIVE;
+    }
+
     // ---------------------------------------
 
-    /**
-     * @return bool
-     */
-    public function isListable()
+    public function isListable(): bool
     {
-        return ($this->isNotListed() || $this->isSold() ||
-                $this->isStopped() || $this->isFinished() ||
-                $this->isHidden() || $this->isUnknown()) &&
-            !$this->isBlocked();
+        return !$this->isBlocked()
+            && (
+                $this->isNotListed()
+                || $this->isSold()
+                || $this->isStopped()
+                || $this->isFinished()
+                || $this->isHidden()
+                || $this->isUnknown()
+                || $this->isInactive()
+            );
     }
 
-    /**
-     * @return bool
-     */
-    public function isRelistable()
+    public function isRelistable(): bool
     {
-        return ($this->isSold() || $this->isStopped() ||
-                $this->isFinished() || $this->isUnknown()) &&
-            !$this->isBlocked();
+        return !$this->isBlocked()
+            && (
+                $this->isSold()
+                || $this->isStopped()
+                || $this->isFinished()
+                || $this->isUnknown()
+                || $this->isInactive()
+            );
     }
 
-    /**
-     * @return bool
-     */
-    public function isRevisable()
+    public function isRevisable(): bool
     {
-        return ($this->isListed() || $this->isHidden() || $this->isUnknown()) &&
-            !$this->isBlocked();
+        return !$this->isBlocked()
+            && (
+                $this->isListed()
+                || $this->isHidden()
+                || $this->isUnknown()
+            );
     }
 
-    /**
-     * @return bool
-     */
-    public function isStoppable()
+    public function isStoppable(): bool
     {
-        return ($this->isListed() || $this->isHidden() || $this->isUnknown()) &&
-            !$this->isBlocked();
+        return !$this->isBlocked()
+            && (
+                $this->isListed()
+                || $this->isHidden()
+                || $this->isUnknown()
+            );
     }
 
     //########################################

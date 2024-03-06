@@ -41,8 +41,11 @@ class Builder extends AbstractModel
     protected $updates = [];
     /** @var \Ess\M2ePro\Model\Order\Note\Repository */
     private $noteRepository;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\UkTaxService */
+    private $ukTaxService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Order\UkTaxService $ukTaxService,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -52,6 +55,7 @@ class Builder extends AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
+        $this->ukTaxService = $ukTaxService;
         $this->amazonFactory = $amazonFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->noteRepository = $noteRepository;
@@ -277,7 +281,7 @@ class Builder extends AbstractModel
     protected function isSkipTaxForUkShipment(array $data)
     {
         $countryCode = strtoupper($data['shipping_address']['country_code']);
-        if (!in_array($countryCode, ['GB', 'UK'])) {
+        if (!$this->ukTaxService->isSkipTaxForUkShipmentCountryCode($countryCode)) {
             return false;
         }
 
@@ -330,20 +334,17 @@ class Builder extends AbstractModel
         $result = 0.0;
 
         foreach ($items as $item) {
-            $result += $this->convertPricetoGBP($item['price'], trim($item['currency']));
+            $result += $this->ukTaxService->convertPricetoGBP($item['price'], trim($item['currency']));
         }
 
         return $result;
     }
 
-    protected function convertPriceToGBP($price, $currency)
+    protected function isSumOfItemPriceLessThan135GBP($items): bool
     {
-        return $this->modelFactory->getObject('Currency')->convertPriceToCurrency($price, $currency, 'GBP');
-    }
-
-    protected function isSumOfItemPriceLessThan135GBP($items)
-    {
-        return $this->calculateItemPrice($items) < 135;
+        return $this->ukTaxService->isSumOfItemPriceLessThan135GBP(
+            $this->calculateItemPrice($items)
+        );
     }
 
     //########################################

@@ -132,16 +132,8 @@ HTML;
                 $html .= '<span style="color: red;">' . __('Listed (Hidden)') . '</span>';
                 break;
 
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD:
-                $html .= '<span style="color: brown;">' . __('Inactive (Sold)') . '</span>';
-
-                break;
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html .= '<span style="color: red;">' . __('Inactive (Stopped)') . '</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED:
-                $html .= '<span style="color: blue;">' . __('Inactive (Finished)') . '</span>';
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
+                $html .= '<span style="color: red;">' . __('Inactive') . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:

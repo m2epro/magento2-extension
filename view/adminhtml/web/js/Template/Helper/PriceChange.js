@@ -22,6 +22,12 @@ define([
         constAttributeDecrease: M2ePro.php.constant(
                 '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE'
         ),
+        constAttributePercentageIncrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_INCREASE'
+        ),
+        constAttributePercentageDecrease: M2ePro.php.constant(
+                '\\Ess\\M2ePro\\Model\\Template\\SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_DECREASE'
+        ),
 
         initialize: function() {
             var self = this;
@@ -108,7 +114,12 @@ define([
 
             modeElement.value = mode;
 
-            if (mode === this.constAttributeIncrease || mode === this.constAttributeDecrease) {
+            if (
+                    mode === this.constAttributeIncrease
+                    || mode === this.constAttributeDecrease
+                    || mode === this.constAttributePercentageIncrease
+                    || mode === this.constAttributePercentageDecrease
+            ) {
                 attributeCodeElement.value = attributeCode;
             } else {
                 valueElement.value = value
@@ -155,6 +166,8 @@ define([
             if (
                     +element.value === this.constAttributeIncrease
                     || +element.value === this.constAttributeDecrease
+                    || +element.value === this.constAttributePercentageIncrease
+                    || +element.value === this.constAttributePercentageDecrease
             ) {
                 hide(valueElement);
                 show(attributeElement)
@@ -196,6 +209,18 @@ define([
                 if (+selectedOption.value === this.constAttributeDecrease) {
                     result -= 7.5;
                     operations.push('- $7.5');
+                    return;
+                }
+
+                if (+selectedOption.value === this.constAttributePercentageIncrease) {
+                    result += result * 7.5 / 100;
+                    operations.push('+ 7,5%');
+                    return;
+                }
+
+                if (+selectedOption.value === this.constAttributePercentageDecrease) {
+                    result -= result * 7.5 / 100;
+                    operations.push('- 7,5%')
                     return;
                 }
 

@@ -107,10 +107,8 @@ class Ebay
             ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
             ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Listed'),
             ListingProduct::STATUS_HIDDEN     => $this->moduleTranslation->__('Listed (Hidden)'),
-            ListingProduct::STATUS_SOLD       => $this->moduleTranslation->__('Sold'),
-            ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Stopped'),
-            ListingProduct::STATUS_FINISHED   => $this->moduleTranslation->__('Finished'),
             ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Pending'),
+            ListingProduct::STATUS_INACTIVE   => $this->moduleTranslation->__('Inactive'),
         ];
 
         return $statuses[$status] ?? null;

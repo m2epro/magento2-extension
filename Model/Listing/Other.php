@@ -215,14 +215,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     /**
      * @return bool
      */
-    public function isUnknown()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
-    }
-
-    /**
-     * @return bool
-     */
     public function isBlocked()
     {
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
@@ -249,14 +241,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     /**
      * @return bool
      */
-    public function isSold()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
-    }
-
-    /**
-     * @return bool
-     */
     public function isStopped()
     {
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
@@ -268,6 +252,11 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     public function isFinished()
     {
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
+    }
+
+    public function isInactive(): bool
+    {
+        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
     }
 
     //########################################

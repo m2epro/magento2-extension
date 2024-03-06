@@ -87,7 +87,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             if (
                 $status == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD ||
                 $status == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP ||
-                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED ||
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE
             ) {
                 $priority = 50;
             }
@@ -111,7 +112,8 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
             if (
                 $status == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD ||
                 $status == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP ||
-                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED ||
+                $status == \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE
             ) {
                 $priority = 40;
             }

@@ -10,6 +10,7 @@ class SaveTitle extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Edit
     protected $listingFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing */
     protected $listingResource;
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context,

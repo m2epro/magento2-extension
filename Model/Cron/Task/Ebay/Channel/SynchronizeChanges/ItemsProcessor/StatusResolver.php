@@ -52,7 +52,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 
         $isBehaviorOfGtc = $ebayStatus == self::EBAY_STATUS_ACTIVE &&
             $this->channelQty - $this->channelQtySold > 0 &&
-            $this->listingProduct->isStopped();
+            $this->listingProduct->isInactive();
 
         // Listing product isn't listed and it child must have another item_id
         $isAllowedProductStatus = $this->listingProduct->isListed() || $this->listingProduct->isHidden();
@@ -104,7 +104,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
 
     protected function handleCompletedStatus()
     {
-        if ($this->setProductStatusSold()) {
+        if ($this->setProductStatusInactive()) {
             return;
         }
 
@@ -115,7 +115,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
             $listingProductId = (int)$this->listingProduct->getId();
             if ($this->scheduledStopActionHelper->isStopActionScheduled($listingProductId)) {
                 $this->scheduledStopActionHelper->removeScheduledStopAction($listingProductId);
-                $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+                $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
             } else {
                 $this->scheduledStopActionHelper->scheduleStopAction($listingProductId);
                 $this->productStatus = $this->listingProduct->getStatus();
@@ -124,7 +124,7 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+        $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
     }
 
     protected function handleEndedStatus()
@@ -137,15 +137,15 @@ class StatusResolver extends \Ess\M2ePro\Model\AbstractModel
             $this->scheduledStopActionHelper->removeScheduledStopAction($listingProductId);
         }
 
-        if (!$this->setProductStatusSold()) {
-            $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
+        if (!$this->setProductStatusInactive()) {
+            $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
         }
     }
 
-    protected function setProductStatusSold()
+    protected function setProductStatusInactive(): bool
     {
         if (!$this->listingProduct->isHidden() && $this->channelQty == $this->channelQtySold) {
-            $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
+            $this->productStatus = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
 
             return true;
         }

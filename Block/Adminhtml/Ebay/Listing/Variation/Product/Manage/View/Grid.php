@@ -245,11 +245,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Inactive'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => $this->__('Sold'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Stopped'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Hidden'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => $this->__('Inactive'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
@@ -431,20 +429,9 @@ HTML;
                 $html = '<span style="color: green;">' . $value . '</span>';
                 break;
 
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
             case \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN:
                 $html = '<span style="color: red;">' . $value . '</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD:
-                $html = '<span style="color: brown;">' . $value . '</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $html = '<span style="color: red;">' . $value . '</span>';
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED:
-                $html = '<span style="color: blue;">' . $value . '</span>';
                 break;
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:

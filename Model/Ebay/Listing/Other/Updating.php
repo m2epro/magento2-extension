@@ -162,15 +162,10 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             }
 
             if (
-                ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
-                    $receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) &&
-                $newData['online_qty'] == $newData['online_qty_sold']
+                $receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED
+                || $receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED
             ) {
-                $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
-            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_COMPLETED) {
-                $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-            } elseif ($receivedItem['listingStatus'] == self::EBAY_STATUS_ENDED) {
-                $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
+                $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
             } elseif (
                 $receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
                 $receivedItem['quantity'] - $receivedItem['quantitySold'] <= 0

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Template;
 
 use Ess\M2ePro\Model\Amazon\Template\SellingFormat as AmazonTemplateSellingFormat;
@@ -34,6 +28,8 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
     public const PRICE_MODIFIER_PERCENTAGE_DECREASE = 4;
     public const PRICE_MODIFIER_ATTRIBUTE_INCREASE = 5;
     public const PRICE_MODIFIER_ATTRIBUTE_DECREASE = 6;
+    public const PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_INCREASE = 7;
+    public const PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_DECREASE = 8;
 
     public const LIST_PRICE_MODE_NONE = 0;
     public const LIST_PRICE_MODE_ATTRIBUTE = 3;
@@ -44,7 +40,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Template\SellingFormat::class);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function save($reloadOnCreate = false)
     {
@@ -53,7 +49,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
         return parent::save($reloadOnCreate);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function delete()
     {
@@ -66,7 +62,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
         return parent::delete();
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getTitle()
     {
@@ -85,19 +81,19 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
         return $this->getData('update_date');
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    // ---------------------------------------
 }

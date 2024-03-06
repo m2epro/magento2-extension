@@ -30,9 +30,11 @@ class BuilderHelper
             if (
                 $priceModifierMode == SellingFormat::PRICE_MODIFIER_ATTRIBUTE_INCREASE
                 || $priceModifierMode == SellingFormat::PRICE_MODIFIER_ATTRIBUTE_DECREASE
+                || $priceModifierMode == SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_INCREASE
+                || $priceModifierMode == SellingFormat::PRICE_MODIFIER_ATTRIBUTE_PERCENTAGE_DECREASE
             ) {
                 if (
-                     !isset($input[$keyPriceModifierAttribute][$key])
+                    !isset($input[$keyPriceModifierAttribute][$key])
                     || !is_string($input[$keyPriceModifierAttribute][$key])
                 ) {
                     continue;
@@ -42,19 +44,21 @@ class BuilderHelper
                     'mode' => $priceModifierMode,
                     'attribute_code' => $input[$keyPriceModifierAttribute][$key],
                 ];
-            } else {
-                if (
-                    !isset($input[$keyPriceModifierValue][$key])
-                    || !is_string($input[$keyPriceModifierValue][$key])
-                ) {
-                    continue;
-                }
 
-                $priceModifierData[] = [
-                    'mode' => $priceModifierMode,
-                    'value' => $input[$keyPriceModifierValue][$key],
-                ];
+                continue;
             }
+
+            if (
+                !isset($input[$keyPriceModifierValue][$key])
+                || !is_string($input[$keyPriceModifierValue][$key])
+            ) {
+                continue;
+            }
+
+            $priceModifierData[] = [
+                'mode' => $priceModifierMode,
+                'value' => $input[$keyPriceModifierValue][$key],
+            ];
         }
 
         return $priceModifierData;

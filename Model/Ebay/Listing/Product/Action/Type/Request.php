@@ -203,7 +203,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
                 if (
                     !$ebayVariation->getOnlineQtySold() &&
-                    ($ebayVariation->isStopped() || $ebayVariation->isHidden())
+                    ($ebayVariation->isInactive() || $ebayVariation->isHidden())
                 ) {
                     continue;
                 }

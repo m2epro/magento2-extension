@@ -73,20 +73,12 @@ class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractM
                 'label' => $helper->__('Listed (Hidden)'),
             ],
             [
-                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
-                'label' => $helper->__('Sold'),
-            ],
-            [
-                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-                'label' => $helper->__('Stopped'),
-            ],
-            [
-                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED,
-                'label' => $helper->__('Finished'),
-            ],
-            [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                 'label' => $helper->__('Pending'),
+            ],
+            [
+                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
+                'label' => $helper->__('Inactive'),
             ],
         ];
     }

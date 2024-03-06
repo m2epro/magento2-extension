@@ -1,46 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ControlPanel\Inspection\Inspector;
 
-use Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface;
-use Ess\M2ePro\Model\Factory as ModelFactory;
-use Magento\Framework\Component\ComponentRegistrar;
-use Ess\M2ePro\Helper\Module;
-use Magento\Framework\Component\ComponentRegistrarInterface;
-use Magento\Framework\Filesystem\Driver\File;
-use Magento\Framework\Filesystem\File\ReadFactory;
-use Magento\Backend\Model\UrlInterface;
-use Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory as IssueFactory;
-
-class FilesValidity implements InspectorInterface
+class FilesValidity implements \Ess\M2ePro\Model\ControlPanel\Inspection\InspectorInterface
 {
-    /** @var ModelFactory */
-    private $modelFactory;
-
-    /** @var UrlInterface */
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $helperData;
+    /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher */
+    private $connectorDispatcher;
+    /** @var \Magento\Backend\Model\UrlInterface */
     private $urlBuilder;
-
-    /** @var ComponentRegistrarInterface */
+    /** @var \Magento\Framework\Component\ComponentRegistrarInterface */
     private $componentRegistrar;
-
-    /** @var File */
+    /** @var \Magento\Framework\Filesystem\Driver\File */
     private $fileDriver;
-
-    /** @var ReadFactory */
+    /** @var \Magento\Framework\Filesystem\File\ReadFactory */
     private $readFactory;
-
-    /** @var IssueFactory */
+    /** @var \Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory */
     private $issueFactory;
 
     public function __construct(
-        ModelFactory $modelFactory,
-        UrlInterface $urlBuilder,
-        ReadFactory $readFactory,
-        File $fileDriver,
-        ComponentRegistrarInterface $componentRegistrar,
-        IssueFactory $issueFactory
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $connectorDispatcher,
+        \Magento\Backend\Model\UrlInterface $urlBuilder,
+        \Magento\Framework\Filesystem\File\ReadFactory $readFactory,
+        \Magento\Framework\Filesystem\Driver\File $fileDriver,
+        \Magento\Framework\Component\ComponentRegistrarInterface $componentRegistrar,
+        \Ess\M2ePro\Model\ControlPanel\Inspection\Issue\Factory $issueFactory
     ) {
-        $this->modelFactory = $modelFactory;
+        $this->helperData = $helperData;
+        $this->connectorDispatcher = $connectorDispatcher;
         $this->urlBuilder = $urlBuilder;
         $this->readFactory = $readFactory;
         $this->fileDriver = $fileDriver;
@@ -48,52 +39,59 @@ class FilesValidity implements InspectorInterface
         $this->issueFactory = $issueFactory;
     }
 
-    //########################################
-
-    public function process()
+    /**
+     * @return array|\Ess\M2ePro\Model\ControlPanel\Inspection\Issue[]
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
+    public function process(): array
     {
         $issues = [];
 
         try {
-            $diff = $this->getDiff();
-        } catch (\Exception $exception) {
+            $serverFiles = $this->receiveFilesFromServer();
+        } catch (\Throwable $exception) {
             $issues[] = $this->issueFactory->create($exception->getMessage());
 
             return $issues;
         }
 
-        if (empty($diff)) {
+        if (empty($serverFiles)) {
             $issues[] = $this->issueFactory->create('No info for this M2e Pro version');
 
             return $issues;
         }
 
         $problems = [];
-        $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
+        $basePath = $this->componentRegistrar->getPath(
+            \Magento\Framework\Component\ComponentRegistrar::MODULE,
+            \Ess\M2ePro\Helper\Module::IDENTIFIER
+        );
 
-        foreach ($diff['files_info'] as $info) {
-            $filePath = $basePath . DIRECTORY_SEPARATOR . $info['path'];
+        $clientFiles = $this->getClientFiles($basePath);
 
-            if (!$this->fileDriver->isExists($filePath)) {
+        foreach ($clientFiles as $path => $hash) {
+            if (!isset($serverFiles[$path])) {
                 $problems[] = [
-                    'path' => $info['path'],
+                    'path' => $path,
+                    'reason' => 'New file detected',
+                ];
+            }
+        }
+
+        foreach ($serverFiles as $path => $hash) {
+            if (!isset($clientFiles[$path])) {
+                $problems[] = [
+                    'path' => $path,
                     'reason' => 'File is missing',
                 ];
                 continue;
             }
 
-            /** @var \Magento\Framework\Filesystem\File\Read $fileReader */
-            $fileReader = $this->readFactory->create($filePath, $this->fileDriver);
-
-            $fileContent = trim($fileReader->readAll());
-            $fileContent = str_replace(["\r\n", "\n\r", PHP_EOL], chr(10), $fileContent);
-
-            if (call_user_func('md5', $fileContent) != $info['hash']) {
+            if ($clientFiles[$path] != $hash) {
                 $problems[] = [
-                    'path' => $info['path'],
+                    'path' => $path,
                     'reason' => 'Hash mismatch',
                 ];
-                continue;
             }
         }
 
@@ -107,17 +105,43 @@ class FilesValidity implements InspectorInterface
         return $issues;
     }
 
-    private function getDiff()
+    private function receiveFilesFromServer(): array
     {
-        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
-        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('files', 'get', 'info');
-        $dispatcherObject->process($connectorObj);
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Files\Get\Info $connectorObj */
+        $connectorObj = $this->connectorDispatcher->getConnector(
+            'files',
+            'get',
+            'info'
+        );
+
+        $this->connectorDispatcher->process($connectorObj);
 
         return $connectorObj->getResponseData();
     }
 
-    private function renderMetadata($data)
+    private function getClientFiles(string $basePath): array
+    {
+        $clientFiles = [];
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($basePath));
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $path = str_replace($basePath, '', $file->getPathname());
+
+                /** @var \Magento\Framework\Filesystem\File\Read $fileReader */
+                $fileReader = $this->readFactory->create($basePath . $path, $this->fileDriver);
+
+                $fileContent = trim($fileReader->readAll());
+                $fileContent = str_replace(["\r\n", "\n\r", PHP_EOL], chr(10), $fileContent);
+
+                $clientFiles[$path] = $this->helperData->md5String($fileContent);
+            }
+        }
+
+        return $clientFiles;
+    }
+
+    private function renderMetadata(array $data): string
     {
         $html = <<<HTML
 <table>
@@ -132,6 +156,9 @@ HTML;
                 'm2epro/controlPanel_tools_m2ePro/install',
                 ['action' => 'filesDiff', 'filePath' => base64_encode($item['path'])]
             );
+
+            $link = ($item['reason'] === 'New file detected') ? '' : "<a href='$url' target='_blank'>Diff</a>";
+
             $html .= <<<HTML
 <tr>
     <td>
@@ -141,7 +168,7 @@ HTML;
         {$item['reason']}
     </td>
     <td style="text-align: center;">
-        <a href="{$url}" target="_blank">Diff</a>
+        {$link}
     </td>
 </tr>
 
@@ -151,6 +178,4 @@ HTML;
 
         return $html;
     }
-
-    //########################################
 }

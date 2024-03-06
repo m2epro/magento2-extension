@@ -20,7 +20,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     public function processSuccess(array $response, array $responseParams = [])
     {
         $data = [
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
         ];
 
         $data = $this->appendStatusChangerValue($data, $responseParams);
@@ -72,7 +72,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
             ];
 
             if ($variation->getChildObject()->isListed() || $variation->getChildObject()->isHidden()) {
-                $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+                $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
             }
 
             $variation->addData($data);

@@ -200,10 +200,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => $this->__('Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => $this->__('Listed (Hidden)'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => $this->__('Sold'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => $this->__('Stopped'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Pending'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => __('Inactive'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
         ]);
@@ -434,10 +432,8 @@ HTML;
         $coloredStstuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 'green',
             \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => 'red',
-            \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD => 'brown',
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => 'red',
-            \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED => 'blue',
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 'orange',
+            \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => 'red',
         ];
 
         $status = $row->getData('status');

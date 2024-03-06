@@ -1,19 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
-
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Form
- */
-class Form extends AbstractForm
+class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
@@ -102,16 +91,43 @@ class Form extends AbstractForm
             ]
         );
 
+        $changeButton = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->addData([
+            'label' => __('Change'),
+            'class' => 'action-primary',
+            'onclick' => 'EditListingStoreViewObj.openPopup()',
+            'style' => 'margin-left: 15px;',
+        ]);
+
         $storeViewFieldset->addField(
-            'store_view_field',
+            'store_id',
             'text',
             [
-                'name' => 'store_view_field',
+                'name' => 'store_view',
                 'label' => __('Store View'),
                 'title' => __('Store View'),
                 'value' => $this->storeHelper->getStorePath($this->getListing()->getStoreId()),
                 'disabled' => true,
+                'after_element_html' => $changeButton->toHtml(),
             ]
+        );
+
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_edit/selectStoreView'), 'listing/selectStoreView');
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_edit/saveStoreView'), 'listing/saveStoreView');
+
+        $this->jsTranslator->addTranslations([
+            'Edit Listing Store View' => __('Edit Listing Store View'),
+        ]);
+
+        $this->js->add(
+            <<<JS
+    require([
+         'M2ePro/Listing/EditStoreView'
+    ], function(){
+
+        window.EditListingStoreViewObj = new ListingEditListingStoreView('{$this->getListing()->getId()}');
+
+    });
+JS
         );
 
         $form->setUseContainer(true);
@@ -133,6 +149,9 @@ class Form extends AbstractForm
         $collection = $this->listingCollectionFactory->create();
         $data = $collection->getData();
         foreach ($data as $row) {
+            if ($row['title'] === $this->getListing()->getData('title')) {
+                continue;
+            }
             $this->titles[] = $row['title'];
         }
     }

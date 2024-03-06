@@ -72,6 +72,7 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
             \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
             \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED,
             \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
         ];
 
         if (

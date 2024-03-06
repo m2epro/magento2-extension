@@ -309,31 +309,11 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
                 $status = $this->calculateStatusByQty();
                 break;
 
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
             case \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN:
                 $status = $this->calculateStatusByQty();
                 if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                    $status = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-                }
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD:
-                $status = $this->calculateStatusByQty();
-                if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                    $status = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-                }
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
-                $status = $this->calculateStatusByQty();
-                if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                    $status = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-                }
-                break;
-
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED:
-                $status = $this->calculateStatusByQty();
-                if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                    $status = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
+                    $status = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
                 }
                 break;
         }
@@ -356,7 +336,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         if ($this->getOnlineQty() == 0) {
             return \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
         } elseif ($this->getOnlineQty() <= $this->getOnlineQtySold()) {
-            return \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
+            return \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
         }
 
         return \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
@@ -375,20 +355,10 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     /**
      * @return bool
      */
-    public function isUnknown()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
-    }
-
-    /**
-     * @return bool
-     */
     public function isBlocked()
     {
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
     }
-
-    // ---------------------------------------
 
     /**
      * @return bool
@@ -406,28 +376,9 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSold()
+    public function isInactive(): bool
     {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isStopped()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFinished()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
+        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
     }
 
     //########################################

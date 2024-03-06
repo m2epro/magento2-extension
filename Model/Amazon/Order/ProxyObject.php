@@ -13,8 +13,11 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     private $priceTaxRateFactory;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     protected $helper;
+    /** @var \Ess\M2ePro\Model\Amazon\Order\UkTaxService */
+    private $ukTaxService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Order\UkTaxService $ukTaxService,
         \Ess\M2ePro\Model\Amazon\Order\Tax\PriceTaxRateFactory $priceTaxRateFactory,
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\Magento\Payment $payment,
@@ -38,6 +41,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         );
         $this->helper = $helper;
         $this->priceTaxRateFactory = $priceTaxRateFactory;
+        $this->ukTaxService = $ukTaxService;
     }
 
     /**
@@ -523,5 +527,46 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function getShippingPriceTaxRateObject(): ?\Ess\M2ePro\Model\Order\Tax\PriceTaxRateInterface
     {
         return $this->priceTaxRateFactory->createShippingPriceTaxRateByOrder($this->order);
+    }
+
+    // ---------------------------------------
+
+    public function isTaxModeNone(): bool
+    {
+        $isNeedToSkipTax = $this->order->getAmazonAccount()->isAmazonCollectsTaxForUKShipmentWithCertainPrice();
+        $isSumOfItemPriceLessThan135GBP = $this->ukTaxService->isSumOfItemPriceLessThan135GBP(
+            $this->calculateItemsPrice()
+        );
+        $isSkipTaxForUkShipmentCountryCode = $this->ukTaxService->isSkipTaxForUkShipmentCountryCode(
+            $this->order->getShippingAddress()->getData('country_code')
+        );
+        $marketplaceId = $this->order->getAmazonAccount()->getMarketplaceId();
+
+        if (
+            $isNeedToSkipTax
+            && $isSumOfItemPriceLessThan135GBP
+            && $marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_UK
+            && $isSkipTaxForUkShipmentCountryCode
+        ) {
+            return true;
+        }
+
+        return $this->order->getAmazonAccount()->isMagentoOrdersTaxModeNone();
+    }
+
+    private function calculateItemsPrice(): float
+    {
+        $result = 0.0;
+
+        foreach ($this->order->getParentObject()->getItemsCollection() as $orderItem) {
+            /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem */
+            $amazonOrderItem = $orderItem->getChildObject();
+            $result += $this->ukTaxService->convertPricetoGBP(
+                $amazonOrderItem->getPrice(),
+                trim($amazonOrderItem->getCurrency())
+            );
+        }
+
+        return $result;
     }
 }

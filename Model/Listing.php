@@ -28,6 +28,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     public const INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING = 'listing_product_remap_from_listing';
     public const INSTRUCTION_INITIATOR_REMAPING_PRODUCT_FROM_LISTING = 'remaping_product_from_listing_to_listing';
+    public const INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW = 'change_listing_store_view';
+    public const INSTRUCTION_INITIATOR_CHANGED_LISTING_STORE_VIEW = 'changed_listing_store_view';
 
     public const SOURCE_PRODUCTS_CUSTOM = 1;
     public const SOURCE_PRODUCTS_CATEGORIES = 2;
@@ -296,7 +298,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return (int)$this->getData('store_id');
     }
 
-    // ---------------------------------------
+    public function setStoreId(int $storeId): void
+    {
+        $this->setData('store_id', $storeId);
+    }
 
     public function getCreateDate()
     {
@@ -774,7 +779,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     $listingProduct->isStoppable() && $this->activeRecordFactory->getObject('StopQueue')->add(
                         $listingProduct
                     );
-                    $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+
+                    if ($listingProduct->isComponentModeEbay()) {
+                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
+                    } else {
+                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+                    }
                 }
 
                 if ($listingProduct->isComponentModeAmazon() || $listingProduct->isComponentModeWalmart()) {
@@ -896,7 +906,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
                 if ($listingProduct->isStoppable()) {
                     $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
-                    $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+
+                    if ($listingProduct->isComponentModeEbay()) {
+                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
+                    } else {
+                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+                    }
                 }
 
                 $listingsProductsForRemove[$listingProduct->getId()] = $listingProduct;
