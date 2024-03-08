@@ -289,13 +289,16 @@ class Builder extends AbstractModel
             return true;
         }
 
-        if (
-            $this->account->getChildObject()->isAmazonCollectsTaxForUKShipmentWithCertainPrice()
-            && $this->isSumOfItemPriceLessThan135GBP(
-                $data['items']
-            )
-        ) {
-            return true;
+        try {
+            if (
+                $this->account->getChildObject()->isAmazonCollectsTaxForUKShipmentWithCertainPrice()
+                && $this->isSumOfItemPriceLessThan135GBP(
+                    $data['items']
+                )
+            ) {
+                return true;
+            }
+        } catch (\Throwable $exception) {
         }
 
         return false;

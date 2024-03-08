@@ -534,24 +534,28 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     public function isTaxModeNone(): bool
     {
         $isNeedToSkipTax = $this->order->getAmazonAccount()->isAmazonCollectsTaxForUKShipmentWithCertainPrice();
-        $isSumOfItemPriceLessThan135GBP = $this->ukTaxService->isSumOfItemPriceLessThan135GBP(
-            $this->calculateItemsPrice()
-        );
         $isSkipTaxForUkShipmentCountryCode = $this->ukTaxService->isSkipTaxForUkShipmentCountryCode(
             $this->order->getShippingAddress()->getData('country_code')
         );
-        $marketplaceId = $this->order->getAmazonAccount()->getMarketplaceId();
 
-        if (
-            $isNeedToSkipTax
-            && $isSumOfItemPriceLessThan135GBP
-            && $marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_UK
-            && $isSkipTaxForUkShipmentCountryCode
-        ) {
-            return true;
+        if ($isNeedToSkipTax && $isSkipTaxForUkShipmentCountryCode) {
+            $marketplaceId = $this->order->getAmazonAccount()->getMarketplaceId();
+
+            if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_UK) {
+                try {
+                    if (
+                        $this->ukTaxService->isSumOfItemPriceLessThan135GBP(
+                            $this->calculateItemsPrice()
+                        )
+                    ) {
+                        return true;
+                    }
+                } catch (\Throwable $exception) {
+                }
+            }
         }
 
-        return $this->order->getAmazonAccount()->isMagentoOrdersTaxModeNone();
+        return parent::isTaxModeNone();
     }
 
     private function calculateItemsPrice(): float
