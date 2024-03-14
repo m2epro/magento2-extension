@@ -539,19 +539,15 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         );
 
         if ($isNeedToSkipTax && $isSkipTaxForUkShipmentCountryCode) {
-            $marketplaceId = $this->order->getAmazonAccount()->getMarketplaceId();
-
-            if ($marketplaceId == \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_UK) {
-                try {
-                    if (
-                        $this->ukTaxService->isSumOfItemPriceLessThan135GBP(
-                            $this->calculateItemsPrice()
-                        )
-                    ) {
-                        return true;
-                    }
-                } catch (\Throwable $exception) {
+            try {
+                if (
+                    $this->ukTaxService->isSumOfItemPriceLessThan135GBP(
+                        $this->calculateItemsPrice()
+                    )
+                ) {
+                    return true;
                 }
+            } catch (\Throwable $exception) {
             }
         }
 

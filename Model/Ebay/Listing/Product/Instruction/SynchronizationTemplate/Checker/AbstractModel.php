@@ -1,24 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 use Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor as SynchronizationChangeProcessor;
 use Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as CheckerAbstractModel;
+use Ess\M2ePro\Model\Ebay\Listing\Product\ChangeIdentifierTracker;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel
- */
 abstract class AbstractModel extends CheckerAbstractModel
 {
-    //########################################
-
     protected function getReviseInstructionTypes()
     {
         return array_unique(
@@ -29,6 +19,7 @@ abstract class AbstractModel extends CheckerAbstractModel
                 $this->getReviseSubtitleInstructionTypes(),
                 $this->getReviseDescriptionInstructionTypes(),
                 $this->getReviseImagesInstructionTypes(),
+                $this->getReviseProductIdentifiersInstructionsTypes(),
                 $this->getReviseCategoriesInstructionTypes(),
                 $this->getRevisePartsInstructionTypes(),
                 $this->getReviseShippingInstructionTypes(),
@@ -40,7 +31,7 @@ abstract class AbstractModel extends CheckerAbstractModel
 
     // ---------------------------------------
 
-    protected function getReviseQtyInstructionTypes()
+    protected function getReviseQtyInstructionTypes(): array
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
@@ -65,7 +56,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getRevisePriceInstructionTypes()
+    protected function getRevisePriceInstructionTypes(): array
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
@@ -89,7 +80,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseTitleInstructionTypes()
+    protected function getReviseTitleInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_TITLE_DATA_CHANGED,
@@ -109,7 +100,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseSubtitleInstructionTypes()
+    protected function getReviseSubtitleInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_SUBTITLE_DATA_CHANGED,
@@ -129,7 +120,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseDescriptionInstructionTypes()
+    protected function getReviseDescriptionInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_DESCRIPTION_DATA_CHANGED,
@@ -151,7 +142,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseImagesInstructionTypes()
+    protected function getReviseImagesInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
@@ -173,7 +164,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseVariationImagesInstructionTypes()
+    protected function getReviseVariationImagesInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_IMAGES_DATA_CHANGED,
@@ -195,7 +186,16 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseCategoriesInstructionTypes()
+    protected function getReviseProductIdentifiersInstructionsTypes(): array
+    {
+        return [
+            \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_PRODUCT_IDENTIFIERS_DATA_CHANGED,
+            ChangeIdentifierTracker::INSTRUCTION_TYPE_PRODUCT_IDENTIFIER_CONFIG_CHANGED,
+            SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRODUCT_IDENTIFIERS_ENABLED,
+        ];
+    }
+
+    protected function getReviseCategoriesInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_CATEGORIES_DATA_CHANGED,
@@ -216,7 +216,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getRevisePartsInstructionTypes()
+    protected function getRevisePartsInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_PARTS_DATA_CHANGED,
@@ -239,7 +239,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseShippingInstructionTypes()
+    protected function getReviseShippingInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED,
@@ -259,7 +259,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseReturnInstructionTypes()
+    protected function getReviseReturnInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract::
@@ -278,7 +278,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    protected function getReviseOtherInstructionTypes()
+    protected function getReviseOtherInstructionTypes(): array
     {
         return [
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
@@ -298,9 +298,9 @@ abstract class AbstractModel extends CheckerAbstractModel
         ];
     }
 
-    //########################################
+    // ---------------------------------------
 
-    protected function getPropertiesDataFromInputInstructions()
+    protected function getPropertiesDataFromInputInstructions(): array
     {
         if (!$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())) {
             return [];
@@ -355,7 +355,7 @@ abstract class AbstractModel extends CheckerAbstractModel
         return $propertiesData;
     }
 
-    protected function getPropertiesDataFromInputScheduledAction()
+    protected function getPropertiesDataFromInputScheduledAction(): array
     {
         if (!$this->input->getScheduledAction() || !$this->input->getScheduledAction()->isActionTypeRevise()) {
             return [];
@@ -414,5 +414,5 @@ abstract class AbstractModel extends CheckerAbstractModel
         return $propertiesData;
     }
 
-    //########################################
+    // ---------------------------------------
 }

@@ -6,18 +6,18 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings;
 
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
-    public const TAB_ID_MAIN = 'main';
+    public const TAB_ID_GENERAL = 'general';
     public const TAB_ID_ATTRIBUTE_MAPPING = 'attributemapping';
 
     protected function _prepareLayout()
     {
         $tabMainContent = $this
             ->getLayout()
-            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main::class)
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\General::class)
             ->toHtml();
-        $this->addTab(self::TAB_ID_MAIN, [
-            'label' => __('Main'),
-            'title' => __('Main'),
+        $this->addTab(self::TAB_ID_GENERAL, [
+            'label' => __('General'),
+            'title' => __('General'),
             'content' => $tabMainContent,
         ]);
 

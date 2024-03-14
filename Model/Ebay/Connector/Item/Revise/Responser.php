@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Revise;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
@@ -137,9 +131,26 @@ class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
         parent::processCompleted($data, $params);
 
+        $this->processSuccessReviseGeneral();
         $this->processSuccessRevisePrice();
         $this->processSuccessReviseQty();
         $this->processSuccessReviseVariations();
+    }
+
+    private function processSuccessReviseGeneral(): void
+    {
+        if (!$this->getConfigurator()->isGeneralAllowed()) {
+            return;
+        }
+
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+        $message = $this->modelFactory->getObject('Connector_Connection_Response_Message');
+        $message->initFromPreparedData(
+            'Product details was revised',
+            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+        );
+
+        $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
     }
 
     protected function processSuccessRevisePrice()

@@ -1,22 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
-/**
- * @method \Ess\M2ePro\Model\Template\Synchronization getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Synchronization getResource()
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 use Ess\M2ePro\Model\Template\Synchronization as TemplateSynchronization;
 
 /**
- * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization
+ * @method \Ess\M2ePro\Model\Template\Synchronization getParentObject()
+ * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Synchronization getResource()
  */
 class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -24,12 +14,26 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public const RELIST_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_relist_advanced_rules';
     public const STOP_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_stop_advanced_rules';
 
-    //########################################
+    public const REVISE_UPDATE_PRODUCT_IDENTIFIERS_ENABLED = 1;
+    public const REVISE_UPDATE_PRODUCT_IDENTIFIERS_DISABLED = 0;
 
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Synchronization::class);
+    }
+
+    public function getTemplateSynchronizationId(): int
+    {
+        $templateId = $this->getDataByKey(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Synchronization::COLUMN_TEMPLATE_SYNCHRONIZATION_ID
+        );
+
+        if (empty($templateId)) {
+            throw new \Exception('Invalid value of property');
+        }
+
+        return (int)$templateId;
     }
 
     /**
@@ -40,7 +44,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return bool
@@ -66,7 +70,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
                                             ->getSize();
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function save()
     {
@@ -82,7 +86,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return parent::delete();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return bool
@@ -213,6 +217,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public function isReviseUpdateImages()
     {
         return $this->getData('revise_update_images') != 0;
+    }
+
+    public function isReviseProductIdentifiersEnabled(): bool
+    {
+        $reviseUpdateProductIdentifiers = $this->getData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Synchronization::COLUMN_REVISE_UPDATE_PRODUCT_IDENTIFIERS
+        );
+
+        return $reviseUpdateProductIdentifiers == self::REVISE_UPDATE_PRODUCT_IDENTIFIERS_ENABLED;
     }
 
     /**
@@ -357,7 +370,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('stop_advanced_rules_filters');
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getListWhenQtyCalculatedHasValue()
     {
@@ -374,12 +387,12 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('stop_qty_calculated_value');
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    // ---------------------------------------
 }

@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization\ChangeProcessor
- */
 class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeProcessorAbstract
 {
     public const INSTRUCTION_TYPE_REVISE_QTY_ENABLED = 'template_synchronization_revise_qty_enabled';
@@ -32,6 +23,9 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
     public const INSTRUCTION_TYPE_REVISE_IMAGES_ENABLED = 'template_synchronization_revise_images_enabled';
     public const INSTRUCTION_TYPE_REVISE_IMAGES_DISABLED = 'template_synchronization_revise_images_disabled';
 
+    public const INSTRUCTION_TYPE_REVISE_PRODUCT_IDENTIFIERS_ENABLED
+        = 'template_synchronization_revise_product_identifiers_enabled';
+
     public const INSTRUCTION_TYPE_REVISE_CATEGORIES_ENABLED = 'template_synchronization_revise_categories_enabled';
     public const INSTRUCTION_TYPE_REVISE_CATEGORIES_DISABLED = 'template_synchronization_revise_categories_disabled';
 
@@ -46,8 +40,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
 
     public const INSTRUCTION_TYPE_REVISE_OTHER_ENABLED = 'template_synchronization_revise_other_enabled';
     public const INSTRUCTION_TYPE_REVISE_OTHER_DISABLED = 'template_synchronization_revise_other_disabled';
-
-    //########################################
 
     protected function getInstructionsData(\Ess\M2ePro\Model\ActiveRecord\Diff $diff, $status)
     {
@@ -144,6 +136,15 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
 
         //----------------------------------------
 
+        if ($diff->isReviseProductIdentifiersEnabled()) {
+            $data[] = [
+                'type' => self::INSTRUCTION_TYPE_REVISE_PRODUCT_IDENTIFIERS_ENABLED,
+                'priority' => $status === \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ? 30 : 5,
+            ];
+        }
+
+        //----------------------------------------
+
         if ($diff->isReviseCategoriesEnabled()) {
             $data[] = [
                 'type' => self::INSTRUCTION_TYPE_REVISE_CATEGORIES_ENABLED,
@@ -214,6 +215,4 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Template\Synchronization\ChangeP
 
         return $data;
     }
-
-    //########################################
 }

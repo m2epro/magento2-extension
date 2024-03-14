@@ -1,17 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
 use Magento\Framework\DB\Select;
 
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_LISTING_ID = 'listing_id';
+    public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
+
     /** @var \Magento\Catalog\Model\Product\Action  */
     protected $catalogProductAction;
     /** @var \Magento\Catalog\Model\ProductFactory  */
@@ -21,10 +18,11 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     public function _construct()
     {
-        $this->_init('m2epro_ebay_listing', 'listing_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING,
+            self::COLUMN_LISTING_ID
+        );
     }
-
-    //########################################
 
     public function __construct(
         \Magento\Catalog\Model\Product\Action $catalogProductAction,
@@ -39,8 +37,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $this->productFactory = $productFactory;
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
-
-    //########################################
 
     public function getProductCollection($listingId)
     {
@@ -64,8 +60,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
         return $collection;
     }
-
-    //########################################
 
     public function updateMotorsAttributesData(
         $listingId,
@@ -122,8 +116,6 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             );
         }
     }
-
-    //########################################
 
     public function getUsedProductsIds($listingId)
     {

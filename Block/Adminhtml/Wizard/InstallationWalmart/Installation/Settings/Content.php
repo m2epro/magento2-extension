@@ -56,8 +56,8 @@ HTML
 
     protected function _prepareForm()
     {
-        /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main $settings */
-        $settings = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\Main::class);
+        /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\General $settings */
+        $settings = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\General::class);
 
         $settings->toHtml();
         $form = $settings->getForm();

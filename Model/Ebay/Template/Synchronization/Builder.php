@@ -1,37 +1,29 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
 use Ess\M2ePro\Model\Template\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization\Builder
- */
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
     /** @var \Magento\Framework\App\RequestInterface */
-    protected $request;
-
-    //########################################
+    private $request;
+    /** @var \Ess\M2ePro\Helper\Data */
+    private $dataHelper;
 
     public function __construct(
         \Magento\Framework\App\RequestInterface $request,
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
-        $this->request = $request;
-    }
 
-    //########################################
+        $this->request = $request;
+        $this->dataHelper = $dataHelper;
+    }
 
     protected function prepareData()
     {
@@ -39,7 +31,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         $data = parent::prepareData();
 
-        $this->rawData = $this->getHelper('Data')->arrayReplaceRecursive($this->getDefaultData(), $this->rawData);
+        $this->rawData = $this->dataHelper->arrayReplaceRecursive($this->getDefaultData(), $this->rawData);
 
         $data = array_merge(
             $data,
@@ -54,7 +46,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
     // ---------------------------------------
 
-    protected function prepareListData()
+    private function prepareListData(): array
     {
         $data = [];
 
@@ -89,7 +81,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    protected function prepareReviseData()
+    private function prepareReviseData(): array
     {
         $data = [
             'revise_update_qty' => 1,
@@ -124,6 +116,10 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['revise_update_images'] = (int)$this->rawData['revise_update_images'];
         }
 
+        if (isset($this->rawData['revise_update_product_identifiers'])) {
+            $data['revise_update_product_identifiers'] = (int)$this->rawData['revise_update_product_identifiers'];
+        }
+
         if (isset($this->rawData['revise_update_categories'])) {
             $data['revise_update_categories'] = (int)$this->rawData['revise_update_categories'];
         }
@@ -147,7 +143,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    protected function prepareRelistData()
+    private function prepareRelistData(): array
     {
         $data = [];
 
@@ -186,7 +182,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    protected function prepareStopData()
+    private function prepareStopData(): array
     {
         $data = [];
 
@@ -221,8 +217,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    //########################################
-
     protected function getRuleData($rulePrefix)
     {
         $post = $this->request->getPost()->toArray();
@@ -237,8 +231,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 
         return $ruleModel->getSerializedFromPost($post);
     }
-
-    //########################################
 
     public function getDefaultData()
     {
@@ -275,6 +267,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'revise_update_sub_title' => 0,
             'revise_update_description' => 0,
             'revise_update_images' => 0,
+            'revise_update_product_identifiers' => 0,
             'revise_update_categories' => 0,
             'revise_update_parts' => 0,
             'revise_update_shipping' => 0,
@@ -294,6 +287,4 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'stop_advanced_rules_filters' => null,
         ];
     }
-
-    //########################################
 }

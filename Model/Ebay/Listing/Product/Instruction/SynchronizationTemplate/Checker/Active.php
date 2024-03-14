@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
@@ -267,6 +261,16 @@ class Active extends AbstractModel
             }
         }
 
+        if ($this->input->hasInstructionWithTypes($this->getReviseProductIdentifiersInstructionsTypes())) {
+            if ($this->isMeetReviseGeneralRequirements()) {
+                $configurator->allowGeneral();
+                $tags[\Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_GENERAL] = true;
+            } else {
+                $configurator->disallowGeneral();
+                unset($tags[\Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_GENERAL]);
+            }
+        }
+
         if ($this->input->hasInstructionWithTypes($this->getReviseCategoriesInstructionTypes())) {
             if ($this->isMeetReviseCategoriesRequirements()) {
                 $configurator->allowCategories();
@@ -506,6 +510,13 @@ class Active extends AbstractModel
     public function isMeetReviseImagesRequirements(): bool
     {
         return $this->ebayReviseChecker->isNeedReviseForImages(
+            $this->input->getListingProduct()->getChildObject()
+        );
+    }
+
+    public function isMeetReviseGeneralRequirements(): bool
+    {
+        return $this->ebayReviseChecker->isNeedReviseForProductIdentifiers(
             $this->input->getListingProduct()->getChildObject()
         );
     }

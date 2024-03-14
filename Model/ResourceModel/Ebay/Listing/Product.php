@@ -1,21 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing;
 
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
+    public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
+    public const COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH = 'online_product_identifiers_hash';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
     public function _construct()
     {
-        $this->_init('m2epro_ebay_listing_product', 'listing_product_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING_PRODUCT,
+            self::COLUMN_LISTING_PRODUCT_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
 
@@ -42,8 +43,6 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         return array_values($ids);
     }
 
-    //########################################
-
     public function assignTemplatesToProducts(
         $productsIds,
         $categoryTemplateId = null,
@@ -69,8 +68,6 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             ['listing_product_id IN (?)' => $productsIds]
         );
     }
-
-    //########################################
 
     public function mapChannelItemProduct(\Ess\M2ePro\Model\Ebay\Listing\Product $listingProduct)
     {
@@ -101,6 +98,4 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
             ['id = ?' => $listingProduct->getEbayItemId()]
         );
     }
-
-    //########################################
 }

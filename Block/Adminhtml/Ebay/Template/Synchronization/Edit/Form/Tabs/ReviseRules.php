@@ -212,6 +212,28 @@ HTML
         );
 
         $fieldset->addField(
+            'revise_update_product_identifiers',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_product_identifiers]',
+                'label' => __('Product Identifiers'),
+                'value' => $formData['revise_update_product_identifiers'],
+                'values' => [
+                    \Ess\M2ePro\Model\Ebay\Template\Synchronization::REVISE_UPDATE_PRODUCT_IDENTIFIERS_DISABLED => __(
+                        'No'
+                    ),
+                    \Ess\M2ePro\Model\Ebay\Template\Synchronization::REVISE_UPDATE_PRODUCT_IDENTIFIERS_ENABLED => __(
+                        'Yes'
+                    ),
+                ],
+                'tooltip' => __(
+                    'Enables automatic update of Product Identifier data on '
+                    . 'eBay after any related information is modified'
+                ),
+            ]
+        );
+
+        $fieldset->addField(
             'revise_update_categories',
             self::SELECT,
             [

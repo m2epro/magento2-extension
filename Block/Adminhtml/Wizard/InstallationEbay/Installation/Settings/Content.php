@@ -34,7 +34,7 @@ class Content extends AbstractForm
 
     protected function _prepareForm()
     {
-        $settings = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Main::class);
+        $settings = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\General::class);
 
         $settings->toHtml();
         $form = $settings->getForm();

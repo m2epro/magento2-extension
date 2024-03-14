@@ -45,7 +45,7 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
         );
 
         if ($lockItemManager->isExist()) {
-            $label = 'Products import is in progress';
+            $label = 'Products Import Is in Progress';
             $disabled = true;
         }
 

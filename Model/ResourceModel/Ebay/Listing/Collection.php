@@ -1,20 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -23,6 +14,4 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
             \Ess\M2ePro\Model\ResourceModel\Ebay\Listing::class
         );
     }
-
-    //########################################
 }

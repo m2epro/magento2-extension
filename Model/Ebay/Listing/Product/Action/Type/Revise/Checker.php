@@ -1,15 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
 class Checker
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher */
+    private $dataHasher;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\TitleFactory */
     private $titleDataBuilderFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\SubtitleFactory */
@@ -18,6 +14,8 @@ class Checker
     private $descriptionDataBuilderFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ImagesFactory */
     private $imagesDataBuilderFactory;
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\GeneralFactory */
+    private $generalDataBuilderFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\CategoriesFactory */
     private $categoriesDataBuilderFactory;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PartsFactory */
@@ -36,11 +34,13 @@ class Checker
     private $configuratorFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory $configuratorFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\TitleFactory $titleDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\SubtitleFactory $subtitleDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\DescriptionFactory $descriptionDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ImagesFactory $imagesDataBuilderFactory,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\GeneralFactory $generalDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\CategoriesFactory $categoriesDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\PartsFactory $partsDataBuilderFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\ShippingFactory $shippingDataBuilderFactory,
@@ -54,6 +54,7 @@ class Checker
         $this->subtitleDataBuilderFactory = $subtitleDataBuilderFactory;
         $this->descriptionDataBuilderFactory = $descriptionDataBuilderFactory;
         $this->imagesDataBuilderFactory = $imagesDataBuilderFactory;
+        $this->generalDataBuilderFactory = $generalDataBuilderFactory;
         $this->categoriesDataBuilderFactory = $categoriesDataBuilderFactory;
         $this->partsDataBuilderFactory = $partsDataBuilderFactory;
         $this->shippingDataBuilderFactory = $shippingDataBuilderFactory;
@@ -61,6 +62,7 @@ class Checker
         $this->otherDataBuilderFactory = $otherDataBuilderFactory;
         $this->helperData = $helperData;
         $this->configuratorFactory = $configuratorFactory;
+        $this->dataHasher = $dataHasher;
     }
 
     public function calculateForManualAction(\Ess\M2ePro\Model\Listing\Product $listingProduct): Checker\Result
@@ -71,6 +73,11 @@ class Checker
         $ebayListingProduct = $listingProduct->getChildObject();
 
         $tags = [];
+
+        if ($this->isProductIdentifierReviseEnabled($ebayListingProduct)) {
+            $configurator->allowGeneral();
+            $tags[] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_GENERAL;
+        }
 
         if ($this->isQtyReviseEnabled($ebayListingProduct)) {
             $configurator->allowQty()->allowVariations();
@@ -347,6 +354,33 @@ class Checker
         return $hashImagesData !== $ebayListingProduct->getOnlineImages();
     }
 
+    public function isNeedReviseForProductIdentifiers(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        if (!$this->isProductIdentifierReviseEnabled($ebayListingProduct)) {
+            return false;
+        }
+
+        $generalDataBuilder = $this->generalDataBuilderFactory->create(
+            $ebayListingProduct->getParentObject()
+        );
+
+        $builderData = $generalDataBuilder->getBuilderData();
+
+        $productDetails = $builderData['product_details'] ?? [];
+        if (empty($builderData['product_details'])) {
+            return false;
+        }
+
+        $hash = $this->dataHasher->hashProductIdentifiers(
+            $productDetails['upc'] ?? null,
+            $productDetails['ean'] ?? null,
+            $productDetails['isbn'] ?? null,
+            $productDetails['epid'] ?? null
+        );
+
+        return $hash !== $ebayListingProduct->getOnlineProductIdentifiersHash();
+    }
+
     /**
      * @param \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct
      *
@@ -460,6 +494,13 @@ class Checker
         );
 
         return $hashOtherData !== $ebayListingProduct->getOnlineOtherData();
+    }
+
+    public function isProductIdentifierReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool
+    {
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+        return $ebaySynchronizationTemplate->isReviseProductIdentifiersEnabled();
     }
 
     private function isQtyReviseEnabled(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct): bool

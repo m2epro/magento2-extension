@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action;
 
-use Ess\M2ePro\Model\Exception\Logic;
-
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
     public const DATA_TYPE_GENERAL = 'general';

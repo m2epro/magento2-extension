@@ -33,7 +33,7 @@ class SelectValidator implements ValidatorInterface
             return false;
         }
 
-        if (!array_key_exists($value, $this->allowedOptions)) {
+        if (!(in_array($value, $this->allowedOptions) || array_key_exists($value, $this->allowedOptions))) {
             $message = sprintf(
                 '[%s] The value of "%s" is invalid.',
                 $this->fieldGroup,

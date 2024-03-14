@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Module\Database;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
@@ -14,20 +8,20 @@ class Tables
 {
     public const PREFIX = 'm2epro_';
 
+    public const TABLE_LISTING_PRODUCT = self::PREFIX . 'listing_product';
+    public const TABLE_LISTING_PRODUCT_INSTRUCTION = self::PREFIX . 'listing_product_instruction';
+
+    public const TABLE_EBAY_LISTING = self::PREFIX . 'ebay_listing';
+    public const TABLE_EBAY_LISTING_PRODUCT = self::PREFIX . 'ebay_listing_product';
+    public const TABLE_EBAY_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'ebay_template_synchronization';
+
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
-
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
-
     /** @var \Ess\M2ePro\Helper\Magento\Staging */
     private $stagingHelper;
 
-    /**
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper
-     * @param \Ess\M2ePro\Helper\Magento\Staging $stagingHelper
-     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,

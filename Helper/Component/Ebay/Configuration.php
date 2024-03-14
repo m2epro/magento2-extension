@@ -239,7 +239,7 @@ class Configuration
         return $this->isProductIdModeCustomAttribute('upc');
     }
 
-    public function getUpcCustomAttribute()
+    public function getUpcCustomAttribute(): ?string
     {
         return $this->getProductIdAttribute('upc');
     }
@@ -261,7 +261,7 @@ class Configuration
         return $this->isProductIdModeCustomAttribute('ean');
     }
 
-    public function getEanCustomAttribute()
+    public function getEanCustomAttribute(): ?string
     {
         return $this->getProductIdAttribute('ean');
     }
@@ -283,7 +283,7 @@ class Configuration
         return $this->isProductIdModeCustomAttribute('isbn');
     }
 
-    public function getIsbnCustomAttribute()
+    public function getIsbnCustomAttribute(): ?string
     {
         return $this->getProductIdAttribute('isbn');
     }
@@ -305,7 +305,7 @@ class Configuration
         return $this->isProductIdModeCustomAttribute('epid');
     }
 
-    public function getEpidCustomAttribute()
+    public function getEpidCustomAttribute(): ?string
     {
         return $this->getProductIdAttribute('epid');
     }
@@ -364,10 +364,7 @@ class Configuration
         $this->config->setGroupValue(self::CONFIG_GROUP, $identifier . '_custom_attribute', $attribute);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getProductIdAttribute($identifier)
+    public function getProductIdAttribute($identifier): ?string
     {
         $this->validateProductId($identifier);
         if (!$this->isProductIdModeCustomAttribute($identifier)) {

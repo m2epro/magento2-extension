@@ -4073,7 +4073,11 @@ class Installer
                                       ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayListingOtherTable);
 
-        $ebayListingProductTable = $this->getConnection()->newTable($this->getFullTableName('ebay_listing_product'))
+        #reigon ebay_listing_product
+        $ebayListingProductTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING_PRODUCT
+        );
+        $ebayListingProductTable = $this->getConnection()->newTable($ebayListingProductTableName)
                                         ->addColumn(
                                             'listing_product_id',
                                             Table::TYPE_INTEGER,
@@ -4162,6 +4166,12 @@ class Installer
                                             'online_images',
                                             Table::TYPE_TEXT,
                                             40,
+                                            ['default' => null]
+                                        )
+                                        ->addColumn(
+                                            'online_product_identifiers_hash',
+                                            Table::TYPE_TEXT,
+                                            255,
                                             ['default' => null]
                                         )
                                         ->addColumn(
@@ -4375,6 +4385,7 @@ class Installer
                                         ->setOption('collate', 'utf8_general_ci')
                                         ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayListingProductTable);
+        #endregion
 
         $ebayListingProductVariationTable = $this->getConnection()->newTable(
             $this->getFullTableName('ebay_listing_product_variation')
@@ -6611,9 +6622,12 @@ class Installer
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayTemplateShippingServiceTable);
 
-        $ebayTemplateSynchronizationTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_template_synchronization')
-        )
+        #region ebay_template_synchronization
+        $ebayTemplateSynchronizationTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_TEMPLATE_SYNCHRONIZATION
+        );
+        $ebayTemplateSynchronizationTable = $this->getConnection()
+                                                 ->newTable($ebayTemplateSynchronizationTableName)
                                                  ->addColumn(
                                                      'template_synchronization_id',
                                                      Table::TYPE_INTEGER,
@@ -6716,6 +6730,12 @@ class Installer
                                                      null,
                                                      ['unsigned' => true, 'nullable' => false]
                                                  )
+                                                ->addColumn(
+                                                    'revise_update_product_identifiers',
+                                                    Table::TYPE_SMALLINT,
+                                                    null,
+                                                    ['unsigned' => true, 'default' => 0]
+                                                )
                                                  ->addColumn(
                                                      'revise_update_categories',
                                                      Table::TYPE_SMALLINT,
@@ -6848,6 +6868,7 @@ class Installer
                                                  ->setOption('collate', 'utf8_general_ci')
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayTemplateSynchronizationTable);
+        #endregion
     }
 
     /**

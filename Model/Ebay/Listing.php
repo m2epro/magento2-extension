@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay;
 
 /**
@@ -95,7 +89,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
 
-    //########################################
+    // ---------------------------------------
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -124,7 +118,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function _construct()
     {
@@ -132,7 +126,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing::class);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function save()
     {
@@ -141,7 +135,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return parent::save();
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function delete()
     {
@@ -172,7 +166,22 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return parent::delete();
     }
 
-    //########################################
+    // ---------------------------------------
+
+    public function getListingId(): int
+    {
+        $listingId = $this->getDataByKey(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing::COLUMN_LISTING_ID
+        );
+
+        if (empty($listingId)) {
+            throw new \Exception('Invalid value of property');
+        }
+
+        return (int)$listingId;
+    }
+
+    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Template\Category
@@ -416,7 +425,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->autoWebsiteAddingStoreCategorySecondaryTemplateModel = $instance;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -452,7 +461,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getMarketplace()->getChildObject();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @param $template
@@ -611,14 +620,14 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getDescriptionTemplate()->getChildObject();
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getProducts($asObjects = false, array $filters = [])
     {
         return $this->getParentObject()->getProducts($asObjects, $filters);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getAutoGlobalAddingTemplateCategoryId()
     {
@@ -647,7 +656,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getParentObject()->getAutoGlobalAddingMode() == self::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY;
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getAutoWebsiteAddingTemplateCategoryId()
     {
@@ -684,7 +693,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getParentObject()->getAutoWebsiteAddingMode() == self::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY;
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function gePartsCompatibilityMode()
     {
@@ -710,7 +719,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getEbayMarketplace()->isEpidEnabled();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
@@ -935,7 +944,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return true;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return array
@@ -948,7 +957,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return array_values(array_unique($ids));
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function updateLastPrimaryCategory($path, $data)
     {
@@ -982,12 +991,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->setData('add_product_mode', $mode);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    // ---------------------------------------
 }

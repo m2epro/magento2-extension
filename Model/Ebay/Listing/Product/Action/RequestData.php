@@ -1,19 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\RequestData
- */
 class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 {
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return bool
@@ -165,7 +156,7 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return $this->isVariationItem() && isset($this->getData()['variation_image']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getQty()
     {
@@ -239,6 +230,36 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 
     // ---------------------------------------
 
+    /**
+     * @see \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\General::getBuilderData()
+     */
+    public function getProductDetails(): array
+    {
+        return $this->getData()['product_details'] ?? [];
+    }
+
+    public function getProductDetailsUpc(): ?string
+    {
+        return $this->getProductDetails()['upc'] ?? null;
+    }
+
+    public function getProductDetailsEpid(): ?string
+    {
+        return $this->getProductDetails()['epid'] ?? null;
+    }
+
+    public function getProductDetailsEan(): ?string
+    {
+        return $this->getProductDetails()['ean'] ?? null;
+    }
+
+    public function getProductDetailsIsbn(): ?string
+    {
+        return $this->getProductDetails()['isbn'] ?? null;
+    }
+
+    // ---------------------------------------
+
     public function getVariations()
     {
         return $this->hasVariations() ? $this->getData()['variation'] : null;
@@ -249,7 +270,7 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return $this->hasVariationsImages() ? $this->getData()['variation_image'] : null;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return int
@@ -274,7 +295,7 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return $this->getImagesCount() + $this->getVariationsImagesCount();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return int|null
@@ -382,5 +403,5 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return count($images);
     }
 
-    //########################################
+    // ---------------------------------------
 }

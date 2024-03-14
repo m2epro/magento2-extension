@@ -225,6 +225,10 @@ HTML;
                     $configurator->setUnserializedData($additionalData['configurator']);
 
                     if ($configurator->isIncludingMode()) {
+                        if ($configurator->isGeneralAllowed()) {
+                            $reviseParts[] = 'Product details';
+                        }
+
                         if ($configurator->isQtyAllowed()) {
                             $reviseParts[] = 'QTY';
                         }

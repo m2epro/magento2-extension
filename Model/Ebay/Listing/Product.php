@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
 /**
@@ -757,6 +751,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getOnlineImages()
     {
         return $this->getData('online_images');
+    }
+
+    public function getOnlineProductIdentifiersHash(): ?string
+    {
+        return $this->getData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH
+        );
     }
 
     public function getOnlineDuration()

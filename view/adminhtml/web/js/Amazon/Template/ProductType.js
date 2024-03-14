@@ -41,6 +41,7 @@ define(
                     'M2ePro-general-product-type-title',
                     function (productTypeTitle) {
                         let marketplaceId = document.getElementById('general_marketplace_id').value;
+                        let productTypeId = document.getElementById('general_id').value;
                         let isValid = false;
 
                         new Ajax.Request(M2ePro.url.get('amazon_template_productType/isUniqueTitle'), {
@@ -49,6 +50,7 @@ define(
                             parameters: {
                                 title: productTypeTitle,
                                 marketplace_id: marketplaceId,
+                                product_type_id: productTypeId,
                             },
                             onSuccess: function(transport) {
                                 isValid = transport.responseText.evalJSON()['result'];

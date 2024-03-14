@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs;
 
 use Ess\M2ePro\Helper\Component\Walmart\Configuration as ConfigurationHelper;
 
-class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
+class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Magento\Attribute */
     protected $magentoAttributeHelper;
@@ -364,7 +364,7 @@ HTML
 
         $this->jsUrl->add(
             $this->getUrl('*/walmart_settings/save'),
-            \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs::TAB_ID_MAIN
+            \Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs::TAB_ID_GENERAL
         );
 
         $this->jsPhp->addConstants(

@@ -1,20 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Synchronization\Diff
- */
 class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
 {
-    //########################################
-
     public function isReviseSettingsChanged()
     {
         return $this->isReviseQtyEnabled() ||
@@ -29,6 +18,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             $this->isReviseDescriptionEnabled() ||
             $this->isReviseDescriptionDisabled() ||
             $this->isReviseImagesEnabled() ||
+            $this->isReviseProductIdentifiersEnabled() ||
             $this->isReviseImagesDisabled() ||
             $this->isReviseCategoriesEnabled() ||
             $this->isReviseCategoriesDisabled() ||
@@ -42,7 +32,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             $this->isReviseOtherDisabled();
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseQtyEnabled()
     {
@@ -72,7 +62,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return $this->isSettingsDifferent($keys);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isRevisePriceEnabled()
     {
@@ -90,7 +80,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_price']) && empty($newSnapshotData['revise_update_price']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseTitleEnabled()
     {
@@ -108,7 +98,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_title']) && empty($newSnapshotData['revise_update_title']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseSubtitleEnabled()
     {
@@ -128,7 +118,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             && empty($newSnapshotData['revise_update_sub_title']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseDescriptionEnabled()
     {
@@ -148,7 +138,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             && empty($newSnapshotData['revise_update_description']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseImagesEnabled()
     {
@@ -166,7 +156,19 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_images']) && empty($newSnapshotData['revise_update_images']);
     }
 
-    //########################################
+    // ---------------------------------------
+
+    public function isReviseProductIdentifiersEnabled(): bool
+    {
+        $wasDisabled = $this->oldSnapshot['revise_update_product_identifiers']
+            == \Ess\M2ePro\Model\Ebay\Template\Synchronization::REVISE_UPDATE_PRODUCT_IDENTIFIERS_DISABLED;
+        $nowEnabled = $this->newSnapshot['revise_update_product_identifiers']
+            == \Ess\M2ePro\Model\Ebay\Template\Synchronization::REVISE_UPDATE_PRODUCT_IDENTIFIERS_ENABLED;
+
+        return $wasDisabled && $nowEnabled;
+    }
+
+    // ---------------------------------------
 
     public function isReviseCategoriesEnabled()
     {
@@ -186,7 +188,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             && empty($newSnapshotData['revise_update_categories']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isRevisePartsEnabled()
     {
@@ -206,7 +208,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
             && empty($newSnapshotData['revise_update_parts']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseShippingEnabled()
     {
@@ -224,7 +226,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_shipping']) && empty($newSnapshotData['revise_update_shipping']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseReturnEnabled()
     {
@@ -242,7 +244,7 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_return']) && empty($newSnapshotData['revise_update_return']);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isReviseOtherEnabled()
     {
@@ -260,5 +262,5 @@ class Diff extends \Ess\M2ePro\Model\Template\Synchronization\DiffAbstract
         return !empty($oldSnapshotData['revise_update_other']) && empty($newSnapshotData['revise_update_other']);
     }
 
-    //########################################
+    // ---------------------------------------
 }

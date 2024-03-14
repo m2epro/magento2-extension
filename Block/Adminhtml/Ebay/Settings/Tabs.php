@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Settings;
 
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
-    public const TAB_ID_MAIN = 'main';
+    public const TAB_ID_GENERAL = 'general';
     public const TAB_ID_MOTORS = 'motors';
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
@@ -38,14 +32,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         // ---------------------------------------
 
         $tab = [
-            'label' => __('Main'),
-            'title' => __('Main'),
+            'label' => __('General'),
+            'title' => __('General'),
             'content' => $this->getLayout()
-                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Main::class)
+                              ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\General::class)
                               ->toHtml(),
         ];
 
-        $this->addTab(self::TAB_ID_MAIN, $tab);
+        $this->addTab(self::TAB_ID_GENERAL, $tab);
 
         // ---------------------------------------
 

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
@@ -23,6 +17,8 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     protected $requestMetaData = [];
     protected $activeRecordFactory;
 
+    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher */
+    private $dataHasher;
     /** @var \Ess\M2ePro\Model\Listing\Product */
     private $listingProduct = null;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
@@ -31,6 +27,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -38,15 +35,16 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
+        $this->dataHasher = $dataHasher;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
     }
 
-    //########################################
+    // ---------------------------------------
 
     abstract public function processSuccess(array $response, array $responseParams = []);
 
-    //########################################
+    // ---------------------------------------
 
     protected function prepareMetadata()
     {
@@ -58,7 +56,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @param array $params
@@ -144,7 +142,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Listing\Product
@@ -218,7 +216,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $this->getListingProduct()->getMagentoProduct();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @param $itemId
@@ -342,7 +340,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
+    // ---------------------------------------
 
     protected function appendStatusHiddenValue($data)
     {
@@ -597,6 +595,21 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
+    protected function appendProductIdentifiersValues(array $data): array
+    {
+        $requestData = $this->getRequestData();
+        $hash = $this->dataHasher->hashProductIdentifiers(
+            $requestData->getProductDetailsUpc(),
+            $requestData->getProductDetailsEan(),
+            $requestData->getProductDetailsIsbn(),
+            $requestData->getProductDetailsEpid()
+        );
+
+        $data[\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH] = $hash;
+
+        return $data;
+    }
+
     protected function appendCategoriesValues($data)
     {
         $requestMetadata = $this->getRequestMetaData();
@@ -785,6 +798,4 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
         $this->activeRecordFactory->getObject('Listing_Product_Instruction')->getResource()->add($instructions);
     }
-
-    //########################################
 }

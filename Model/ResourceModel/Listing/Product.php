@@ -8,6 +8,7 @@ use Magento\GroupedProduct\Model\ResourceModel\Product\Link;
 
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
+    public const COLUMN_ID = 'id';
     public const LISTING_ID_FIELD = 'listing_id';
     public const PRODUCT_ID_FIELD = 'product_id';
     public const COMPONENT_MODE_FIELD = 'component_mode';
@@ -15,8 +16,6 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
 
     /** @var \Magento\Framework\EntityManager\MetadataPool */
     protected $metadataPool;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -31,14 +30,15 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
 
-    //########################################
-
     public function _construct()
     {
-        $this->_init('m2epro_listing_product', 'id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_LISTING_PRODUCT,
+            self::COLUMN_ID
+        );
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getProductIds(array $listingProductIds)
     {
@@ -187,7 +187,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         return array_values($result);
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getParentEntityIdsByChild($childId)
     {
@@ -248,5 +248,5 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         );
     }
 
-    //########################################
+    // ---------------------------------------
 }

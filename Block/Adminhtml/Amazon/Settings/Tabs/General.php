@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Any usage is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
 use Ess\M2ePro\Helper\Component\Amazon\Configuration;
 
-class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
+class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
     private $config;
@@ -36,7 +30,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     }
 
     /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\General
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -56,34 +50,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 Business Price and QTY Discounts to your offers on the selected marketplaces.
                 ',
                     $this->support->getDocumentationArticleUrl('help/m2/amazon-integration/amazon-business')
-                ),
-            ]
-        );
-
-        $fieldset = $form->addFieldset(
-            'amazon_main',
-            [
-                'legend' => $this->__('Business (B2B)'),
-                'collapsable' => false,
-            ]
-        );
-
-        $fieldset->addField(
-            'business_mode',
-            self::SELECT,
-            [
-                'name' => 'business_mode',
-                'label' => $this->__('Price, QTY Discounts'),
-                'values' => [
-                    0 => $this->__('Disabled'),
-                    1 => $this->__('Enabled'),
-                ],
-                'value' => $this->config->isEnabledBusinessMode(),
-                'tooltip' => $this->__(
-                    'After you <strong>Enable</strong> this option, you can provide the settings for
-                    <strong>Business Price</strong> and <strong >Quantity Discounts</strong>
-                    within M2E Pro Selling Policy.<br />
-                    <strong>Note:</strong> your Business Account must be approved by Amazon.'
                 ),
             ]
         );
@@ -223,6 +189,34 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
+        $fieldset = $form->addFieldset(
+            'amazon_main',
+            [
+                'legend' => $this->__('Amazon Business (B2B)'),
+                'collapsable' => false,
+            ]
+        );
+
+        $fieldset->addField(
+            'business_mode',
+            self::SELECT,
+            [
+                'name' => 'business_mode',
+                'label' => $this->__('Price, QTY Discounts'),
+                'values' => [
+                    0 => $this->__('Disabled'),
+                    1 => $this->__('Enabled'),
+                ],
+                'value' => $this->config->isEnabledBusinessMode(),
+                'tooltip' => $this->__(
+                    'After you <strong>Enable</strong> this option, you can provide the settings for
+                    <strong>Business Price</strong> and <strong >Quantity Discounts</strong>
+                    within M2E Pro Selling Policy.<br />
+                    <strong>Note:</strong> your Business Account must be approved by Amazon.'
+                ),
+            ]
+        );
+
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -253,13 +247,13 @@ HTML
     }
 
     /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\Main
+     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs\General
      */
     protected function _beforeToHtml()
     {
         $this->jsUrl->add(
             $this->getUrl('*/amazon_settings/save'),
-            \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::TAB_ID_MAIN
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs::TAB_ID_GENERAL
         );
 
         $this->js->add(

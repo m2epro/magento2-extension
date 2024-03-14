@@ -74,7 +74,7 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
         }
 
         $label = $importIsInProgress
-            ? __('Products import is in progress')
+            ? __('Products Import Is in Progress')
             : __('Reset Unmanaged Listings');
         $url = $this->getUrl('*/ebay_listing_unmanaged/reset');
 

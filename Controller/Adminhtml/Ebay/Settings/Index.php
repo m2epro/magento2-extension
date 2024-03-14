@@ -20,7 +20,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
         $activeTab = $this->getRequest()->getParam('active_tab', null);
 
         if ($activeTab === null) {
-            $activeTab = \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_MAIN;
+            $activeTab = \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_GENERAL;
         }
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs $tabsBlock */

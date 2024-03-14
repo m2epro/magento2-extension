@@ -26,19 +26,20 @@ class IsUniqueTitle extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Pro
     {
         $title = $this->getRequest()->getParam('title');
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
+        $productTypeId = $this->getRequest()->getParam('product_type_id');
 
         if (empty($title) || empty($marketplaceId)) {
             throw new \Ess\M2ePro\Model\Exception\Logic('You should provide correct parameters.');
         }
 
         $this->setJsonContent([
-            'result' => $this->isUniqueTitle($title, (int)$marketplaceId)
+            'result' => $this->isUniqueTitle($title, (int)$marketplaceId, (int)$productTypeId)
         ]);
 
         return $this->getResult();
     }
 
-    private function isUniqueTitle(string $title, int $marketplaceId): bool
+    private function isUniqueTitle(string $title, int $marketplaceId, int $productTypeId): bool
     {
         $collection = $this->productTypeCollectionFactory->create();
         $collection->joinInner(
@@ -49,6 +50,9 @@ class IsUniqueTitle extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Pro
 
         $collection->addFieldToFilter('main_table.title', ['eq' => $title]);
         $collection->addFieldToFilter('dictionary.marketplace_id', ['eq' => $marketplaceId]);
+        if ($productTypeId > 0) {
+            $collection->addFieldToFilter('main_table.id', ['neq' => $productTypeId]);
+        }
 
         return $collection->getSize() === 0;
     }

@@ -1,12 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product;
+
+use Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection as ScheduledActionCollection;
+use Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\CollectionFactory
+    as ScheduledActionCollectionFactory;
 
 class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
@@ -21,12 +19,43 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public const REVISE_SUBTITLE_PRIORITY = 50;
     public const REVISE_DESCRIPTION_PRIORITY = 50;
     public const REVISE_IMAGES_PRIORITY = 50;
+    public const REVISE_GENERAL_PRIORITY = 50;
     public const REVISE_CATEGORIES_PRIORITY = 50;
     public const REVISE_PARTS_PRIORITY = 50;
     public const REVISE_PAYMENT_PRIORITY = 50;
     public const REVISE_SHIPPING_PRIORITY = 50;
     public const REVISE_RETURN_PRIORITY = 50;
     public const REVISE_OTHER_PRIORITY = 50;
+
+    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\CollectionFactory */
+    private $scheduledActionCollectionFactory;
+
+    public function __construct(
+        ScheduledActionCollectionFactory $scheduledActionCollectionFactory,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource
+    ) {
+        parent::__construct(
+            $cronManager,
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+
+        $this->scheduledActionCollectionFactory = $scheduledActionCollectionFactory;
+    }
 
     /**
      * @return bool
@@ -110,7 +139,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //####################################
+    // ---------------------------------------
 
     /**
      * @return int
@@ -159,6 +188,7 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $this->getReviseSubtitleScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseDescriptionScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseImagesScheduledActionsPreparedCollection()->getSelect(),
+            $this->getReviseGeneralScheduledActionsPreparedCollection()->getSelect(),
             $this->getReviseCategoriesScheduledActionsPreparedCollection()->getSelect(),
             $this->getRevisePartsScheduledActionsPreparedCollection()->getSelect(),
             $this->getRevisePaymentScheduledActionsPreparedCollection()->getSelect(),
@@ -335,6 +365,20 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                           ->addTagFilter('images');
     }
 
+    private function getReviseGeneralScheduledActionsPreparedCollection(): ScheduledActionCollection
+    {
+        $collection = $this->scheduledActionCollectionFactory->create();
+
+        $collection->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
+        $collection->getScheduledActionsPreparedCollection(
+            self::REVISE_GENERAL_PRIORITY,
+            \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE
+        );
+        $collection->addTagFilter('general');
+
+        return $collection;
+    }
+
     /**
      * @return \Ess\M2ePro\Model\ResourceModel\Listing\Product\ScheduledAction\Collection
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -460,6 +504,4 @@ class ProcessScheduledActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                               \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
                           );
     }
-
-    //####################################
 }

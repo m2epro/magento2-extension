@@ -4,8 +4,6 @@ namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
 class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    //########################################
-
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag */
     private $tagResource;
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Relation */
@@ -33,20 +31,19 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
 
     public function _construct()
     {
-        $this->_init('m2epro_listing_product_instruction', 'id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_LISTING_PRODUCT_INSTRUCTION,
+            'id'
+        );
     }
 
-    //########################################
-
     /**
-     * @param array $instructionsData array of arrays
-     * {listing_product_id:int, type:string, initiator:string, priority:int}
+     * @param array<int, array{listing_product_id:int, type:string, initiator:string, priority:int}> $instructionsData
      *
-     * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function add(array $instructionsData)
+    public function add(array $instructionsData): void
     {
         if (empty($instructionsData)) {
             return;
@@ -160,6 +157,4 @@ class Instruction extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
             ->getConnection()
             ->query($deleteSql);
     }
-
-    //########################################
 }
