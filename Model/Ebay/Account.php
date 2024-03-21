@@ -1078,7 +1078,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function updateRateTables()
     {
-        if (empty($this->getSellApiTokenSession())) {
+        if (!$this->isTokenExist()) {
             return;
         }
 
@@ -1110,36 +1110,26 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return !empty($this->getRateTables());
     }
 
-    public function getTokenSession()
-    {
-        return $this->getData('token_session');
-    }
-
-    public function getTokenExpiredDate()
-    {
-        return $this->getData('token_expired_date');
-    }
-
-    // ---------------------------------------
-
-    public function getSellApiTokenSession()
-    {
-        return $this->getData('sell_api_token_session');
-    }
-
     public function getSellApiTokenExpiredDate()
     {
         return $this->getData('sell_api_token_expired_date');
     }
 
-    // ---------------------------------------
+    //The is_token_exist flag is needed for migration from Trading Api token to Sell Api token
+    public function isTokenExist(): bool
+    {
+        return (bool)$this->getData('is_token_exist');
+    }
+
+    public function setIsTokenExist(bool $isTokenExist)
+    {
+        $this->setData('is_token_exist', $isTokenExist);
+    }
 
     public function getFeedbacksLastUsedId()
     {
         return $this->getData('feedbacks_last_used_id');
     }
-
-    // ---------------------------------------
 
     public function getEbayStoreTitle()
     {

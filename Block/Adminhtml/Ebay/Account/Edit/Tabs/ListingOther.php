@@ -22,12 +22,15 @@ class ListingOther extends AbstractForm
     private $supportHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\BuilderFactory */
+    private $ebayAccountBuilderFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory,
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -36,11 +39,12 @@ class ListingOther extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
+        $this->ebayAccountBuilderFactory = $ebayAccountBuilderFactory;
+        $this->account = $account;
         $this->ebayFactory = $ebayFactory;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
-        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -57,12 +61,7 @@ class ListingOther extends AbstractForm
             ]
         );
 
-        // ---------------------------------------
-
-        // ---------------------------------------
-        $account = $this->globalDataHelper->getValue('edit_account')
-            ? $this->globalDataHelper->getValue('edit_account') : null;
-        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = array_merge($this->account->getData(), $this->account->getChildObject()->getData());
 
         $marketplacesData = [];
         if (isset($formData['marketplaces_data'])) {
@@ -91,7 +90,7 @@ class ListingOther extends AbstractForm
             $formData[$key] = (array)\Ess\M2ePro\Helper\Json::decode($formData[$key]);
         }
 
-        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
+        $defaults = $this->ebayAccountBuilderFactory->create()->getDefaultData();
         $formData = array_merge($defaults, $formData);
 
         $form = $this->_formFactory->create();

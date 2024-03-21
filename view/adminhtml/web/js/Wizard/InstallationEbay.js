@@ -25,7 +25,7 @@ define([
                 return false;
             }
 
-            new Ajax.Request(M2ePro.url.get('wizard_installationEbay/beforeToken'), {
+            new Ajax.Request(M2ePro.url.get('wizard_installationEbay/beforeGetSellApiToken'), {
                 method       : 'post',
                 asynchronous : true,
                 parameters   : $('edit_form').serialize(),

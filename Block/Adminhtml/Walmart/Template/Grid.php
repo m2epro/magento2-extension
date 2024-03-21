@@ -25,6 +25,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $walmartFactory;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\MarketplaceFactory */
+    private $marketplaceFactory;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
@@ -43,6 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -52,6 +55,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->marketplaceFactory = $marketplaceFactory;
         $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -76,16 +80,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
+        $marketPlaceMainTable = $this->marketplaceFactory->create()->getResource()->getMainTable();
+
         // Prepare category collection
         // ---------------------------------------
         $collectionCategory = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getCollection();
         $collectionCategory->getSelect()->reset(Select::COLUMNS);
+        $collectionCategory->getSelect()->join(
+            ['mm' => $marketPlaceMainTable],
+            'main_table.marketplace_id=mm.id',
+            []
+        );
         $collectionCategory->getSelect()->columns(
             [
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_CATEGORY . '\' as `type`'),
-                'marketplace_id',
+                new \Zend_Db_Expr('mm.title as `marketplace_title`'),
+                new \Zend_Db_Expr('mm.id as `marketplace_id`'),
                 'create_date',
                 'update_date',
                 'category_path',
@@ -98,12 +110,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         $collectionSellingFormat = $this->walmartFactory->getObject('Template\SellingFormat')->getCollection();
         $collectionSellingFormat->getSelect()->reset(Select::COLUMNS);
+        $collectionSellingFormat->getSelect()->join(
+            ['mm2' => $marketPlaceMainTable],
+            'second_table.marketplace_id=mm2.id',
+            []
+        );
         $collectionSellingFormat->getSelect()->columns(
             [
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_SELLING_FORMAT . '\' as `type`'),
-                'second_table.marketplace_id',
+                new \Zend_Db_Expr('mm2.title as `marketplace_title`'),
+                new \Zend_Db_Expr('mm2.id as `marketplace_id`'),
                 'create_date',
                 'update_date',
                 new \Zend_Db_Expr('NULL as `category_path`'),
@@ -111,7 +129,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ]
         );
         $collectionSellingFormat->getSelect()
-                                ->where('component_mode = (?)', \Ess\M2ePro\Helper\Component\Walmart::NICK);
+                                ->where('main_table.component_mode = (?)', \Ess\M2ePro\Helper\Component\Walmart::NICK);
         // ---------------------------------------
 
         // Prepare synchronization collection
@@ -123,6 +141,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_SYNCHRONIZATION . '\' as `type`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
@@ -146,6 +165,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_DESCRIPTION . '\' as `type`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
@@ -180,6 +200,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'title',
                 'type',
                 'marketplace_id',
+                'marketplace_title',
                 'create_date',
                 'update_date',
                 'category_path',
@@ -231,8 +252,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align' => 'left',
             'type' => 'options',
             'width' => '100px',
-            'index' => 'marketplace_id',
-            'filter_index' => 'marketplace_id',
+            'index' => 'marketplace_title',
+            'filter_index' => 'marketplace_title',
             'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
             'frame_callback' => [$this, 'callbackColumnMarketplace'],
             'options' => $this->getEnabledMarketplaceTitles(),

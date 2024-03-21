@@ -17,10 +17,6 @@ define([
                 M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay::NICK')
             );
 
-            jQuery.validator.addMethod('M2ePro-account-token-session', function(value) {
-                return value != '';
-            }, M2ePro.translator.translate('You must get token.'));
-
             jQuery.validator.addMethod('M2ePro-account-customer-id', function(value) {
 
                 var checkResult = false;
@@ -195,39 +191,6 @@ define([
                 }
             });
         },
-
-        // ---------------------------------------
-
-        get_token: function() {
-            if ($('token_session').value == '') {
-                $('token_session').value = '0';
-            }
-            if ($('token_expired_date').value == '') {
-                $('token_expired_date').value = '0';
-            }
-
-            if (!jQuery('#edit_form').valid()) {
-                return;
-            }
-
-            this.submitForm(M2ePro.url.get('ebay_account/beforeGetToken', {'id': M2ePro.formData.id}));
-        },
-
-        get_sell_api_token: function() {
-            if ($('sell_api_token_session').value == '') {
-                $('sell_api_token_session').value = '0';
-            }
-            if ($('sell_api_token_expired_date').value == '') {
-                $('sell_api_token_expired_date').value = '0';
-            }
-
-            if (!jQuery('#edit_form').valid()) {
-                return;
-            }
-            this.submitForm(M2ePro.url.get('ebay_account/beforeGetSellApiToken', {'id': M2ePro.formData.id}));
-        },
-
-        // ---------------------------------------
 
         feedbacksReceiveChange: function() {
             var self = EbayAccountObj;

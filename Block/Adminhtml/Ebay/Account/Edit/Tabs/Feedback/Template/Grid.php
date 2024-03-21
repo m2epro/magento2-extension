@@ -10,16 +10,16 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     ) {
-        $this->globalDataHelper = $globalDataHelper;
+        $this->account = $account;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -44,11 +44,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $accountData = $this->globalDataHelper->getValue('edit_account');
-
-        // Get collection of synchronizations
         $collection = $this->activeRecordFactory->getObject('Ebay_Feedback_Template')->getCollection()
-                                                ->addFieldToFilter('main_table.account_id', $accountData->getId());
+                                                ->addFieldToFilter('main_table.account_id', $this->account->getId());
 
         $this->setCollection($collection);
 

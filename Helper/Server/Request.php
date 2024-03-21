@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Server;
 
 class Request
@@ -36,10 +30,6 @@ class Request
 
     public function single(
         array $package,
-        $serverBaseUrl = null,
-        $serverHostName = null,
-        $tryToResendOnError = true,
-        $tryToSwitchEndpointOnError = true,
         $canIgnoreMaintenance = false
     ): array {
         if (!$canIgnoreMaintenance && $this->helperServerMaintenance->isNow()) {
@@ -48,10 +38,7 @@ class Request
             );
         }
 
-        !$serverBaseUrl && $serverBaseUrl = $this->helperServer->getEndpoint();
-        !$serverHostName && $serverHostName = $this->helperServer->getCurrentHostName();
-
-        $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
+        $curlObject = $this->buildCurlObject($package, $this->helperServer->getEndpoint());
         // @codingStandardsIgnoreLine
         $responseBody = curl_exec($curlObject);
 
@@ -68,9 +55,6 @@ class Request
         curl_close($curlObject);
 
         if ($response['body'] === false) {
-            $switchingResult = false;
-            $tryToSwitchEndpointOnError && $switchingResult = $this->helperServer->switchEndpoint();
-
             $this->helperModuleLogger->process(
                 [
                     'curl_error_number'  => $response['curl_error_number'],
@@ -79,24 +63,6 @@ class Request
                 ],
                 'Curl Empty Response'
             );
-
-            if (
-                $this->canRepeatRequest(
-                    $response['curl_error_number'],
-                    $tryToResendOnError,
-                    $tryToSwitchEndpointOnError,
-                    $switchingResult
-                )
-            ) {
-                return $this->single(
-                    $package,
-                    $tryToSwitchEndpointOnError ? $this->helperServer->getEndpoint() : $serverBaseUrl,
-                    $tryToSwitchEndpointOnError ? $this->helperServer->getCurrentHostName() : $serverHostName,
-                    false,
-                    $tryToSwitchEndpointOnError,
-                    $canIgnoreMaintenance
-                );
-            }
 
             throw new \Ess\M2ePro\Model\Exception\Connection(
                 (string) __(
@@ -116,10 +82,6 @@ class Request
 
     public function multiple(
         array $packages,
-        $serverBaseUrl = null,
-        $serverHostName = null,
-        $tryToResendOnError = true,
-        $tryToSwitchEndpointOnError = true,
         $asynchronous = false,
         $canIgnoreMaintenance = false
     ): array {
@@ -133,14 +95,13 @@ class Request
             throw new \Ess\M2ePro\Model\Exception\Logic('Packages is empty.');
         }
 
-        !$serverBaseUrl && $serverBaseUrl = $this->helperServer->getEndpoint();
-        !$serverHostName && $serverHostName = $this->helperServer->getCurrentHostName();
+        $serverHost = $this->helperServer->getEndpoint();
 
         $responses = [];
 
         if (count($packages) === 1 || !$asynchronous) {
             foreach ($packages as $key => $package) {
-                $curlObject = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
+                $curlObject = $this->buildCurlObject($package, $serverHost);
                 // @codingStandardsIgnoreLine
                 $responseBody = curl_exec($curlObject);
 
@@ -162,7 +123,7 @@ class Request
             $multiCurlObject = curl_multi_init();
 
             foreach ($packages as $key => $package) {
-                $curlObjectsPool[$key] = $this->buildCurlObject($package, $serverBaseUrl, $serverHostName);
+                $curlObjectsPool[$key] = $this->buildCurlObject($package, $serverHost);
                 // @codingStandardsIgnoreLine
                 curl_multi_add_handle($multiCurlObject, $curlObjectsPool[$key]);
             }
@@ -195,14 +156,8 @@ class Request
         }
         // @codingStandardsIgnoreEnd
 
-        $isResponseFailed = false;
-        $switchingResult = false;
-
-        foreach ($responses as $key => $response) {
+        foreach ($responses as $response) {
             if ($response['body'] === false) {
-                $isResponseFailed = true;
-                $tryToSwitchEndpointOnError && $switchingResult = $this->helperServer->switchEndpoint();
-
                 $this->helperModuleLogger->process(
                     [
                         'curl_error_number'  => $response['curl_error_number'],
@@ -215,53 +170,17 @@ class Request
             }
         }
 
-        if ($tryToResendOnError && $isResponseFailed) {
-            $failedRequests = [];
-
-            foreach ($responses as $key => $response) {
-                if ($response['body'] === false) {
-                    if (
-                        $this->canRepeatRequest(
-                            $response['curl_error_number'],
-                            $tryToResendOnError,
-                            $tryToSwitchEndpointOnError,
-                            $switchingResult
-                        )
-                    ) {
-                        $failedRequests[$key] = $packages[$key];
-                    }
-                }
-            }
-
-            if (!empty($failedRequests)) {
-                $secondAttemptResponses = $this->multiple(
-                    $failedRequests,
-                    $tryToSwitchEndpointOnError ? $this->helperServer->getEndpoint() : $serverBaseUrl,
-                    $tryToSwitchEndpointOnError ? $this->helperServer->getCurrentHostName() : $serverHostName,
-                    false,
-                    $tryToSwitchEndpointOnError,
-                    $asynchronous,
-                    $canIgnoreMaintenance
-                );
-
-                $responses = array_merge($responses, $secondAttemptResponses);
-            }
-        }
-
         return $responses;
     }
 
     private function buildCurlObject(
         $package,
-        $serverBaseUrl,
-        $serverHostName
+        $serverHost
     ) {
         // @codingStandardsIgnoreLine
         $curlObject = curl_init();
 
         $preparedHeaders = [];
-        $serverHostName && $preparedHeaders[] = 'Host:' . $serverHostName;
-
         if (!empty($package['headers'])) {
             foreach ($package['headers'] as $headerName => $headerValue) {
                 $preparedHeaders[] = $headerName . ':' . $headerValue;
@@ -278,24 +197,16 @@ class Request
             $timeout = (int)$package['timeout'];
         }
 
-        $sslVerifyPeer = true;
-        $sslVerifyHost = 2;
-
-        if (preg_match('/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/', $serverBaseUrl)) {
-            $sslVerifyPeer = false;
-            $sslVerifyHost = false;
-        }
-
         // @codingStandardsIgnoreLine
         curl_setopt_array(
             $curlObject,
             [
                 // set the server we are using
-                CURLOPT_URL            => $serverBaseUrl,
+                CURLOPT_URL            => $serverHost,
 
                 // stop CURL from verifying the peer's certificate
-                CURLOPT_SSL_VERIFYPEER => $sslVerifyPeer,
-                CURLOPT_SSL_VERIFYHOST => $sslVerifyHost,
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
 
                 // disable http headers
                 CURLOPT_HEADER         => false,
@@ -315,15 +226,5 @@ class Request
         );
 
         return $curlObject;
-    }
-
-    private function canRepeatRequest(
-        $curlErrorNumber,
-        $tryToResendOnError,
-        $tryToSwitchEndpointOnError,
-        $switchingResult
-    ): bool {
-        return $curlErrorNumber !== CURLE_OPERATION_TIMEOUTED && $tryToResendOnError &&
-            (!$tryToSwitchEndpointOnError || ($tryToSwitchEndpointOnError && $switchingResult));
     }
 }

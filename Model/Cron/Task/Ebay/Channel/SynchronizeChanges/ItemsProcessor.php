@@ -1,24 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges;
 
 use Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor\StatusResolver;
 
 class ItemsProcessor extends \Ess\M2ePro\Model\AbstractModel
 {
+    public const MESSAGE_CODE_RESULT_SET_TOO_LARGE = 21917062;
+
     private const INSTRUCTION_INITIATOR = 'channel_changes_synchronization';
 
     private const INCREASE_SINCE_TIME_MAX_ATTEMPTS = 10;
     private const INCREASE_SINCE_TIME_BY = 2;
     private const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
 
-    private const MESSAGE_CODE_RESULT_SET_TOO_LARGE = 21917062;
     /** @var null|int */
     protected $logsActionId = null;
 

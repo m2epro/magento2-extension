@@ -1,28 +1,20 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\Channel;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Other\Channel\SynchronizeData
- */
+use Ess\M2ePro\Model\Cron\Task\Ebay\Channel\SynchronizeChanges\ItemsProcessor;
+
 class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'ebay/listing/other/channel/synchronize_data';
+    public const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
 
     /**
      * @var int (in seconds)
      */
     protected $interval = 86400;
 
-    public const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
-
-    //####################################
+    //----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Synchronization\Log
@@ -37,7 +29,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return $synchronizationLog;
     }
 
-    //########################################
+    //----------------------------------------
 
     public function isPossibleToRun()
     {
@@ -48,7 +40,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return parent::isPossibleToRun();
     }
 
-    //########################################
+    //----------------------------------------
 
     protected function performActions()
     {
@@ -93,7 +85,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //########################################
+    //----------------------------------------
 
     protected function executeUpdateInventoryDataAccount(\Ess\M2ePro\Model\Account $account)
     {
@@ -134,7 +126,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $updatingModel->processResponseData($changes);
     }
 
-    //########################################
+    //----------------------------------------
 
     protected function getChangesByAccount(\Ess\M2ePro\Model\Account $account, $sinceTime)
     {
@@ -231,7 +223,10 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $messagesSet->init($messages);
 
         foreach ($messagesSet->getEntities() as $message) {
-            if (!$message->isError() && !$message->isWarning()) {
+            if (
+                (!$message->isError() && !$message->isWarning())
+                || (int)$message->getCode() === ItemsProcessor::MESSAGE_CODE_RESULT_SET_TOO_LARGE
+            ) {
                 continue;
             }
 
@@ -245,7 +240,7 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //########################################
+    //----------------------------------------
 
     protected function prepareSinceTime($sinceTime)
     {
@@ -283,5 +278,5 @@ class SynchronizeData extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         return true;
     }
 
-    //########################################
+    //----------------------------------------
 }

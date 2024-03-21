@@ -351,7 +351,9 @@ class Config extends AbstractConfig
                 'RemoveInstallationKeyFromConfigTable',
                 'ChangeTypeCustomValueFieldOnCategorySpecificTable',
                 'CombineInactiveEbayProductStatuses',
+                'RemoveEbayTradingToken',
                 'AddReviseProductIdentifiersToEbaySyncTemplate',
+                'CleanSettingsInConfigTable',
             ],
         ];
     }

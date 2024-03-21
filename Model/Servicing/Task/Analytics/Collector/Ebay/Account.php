@@ -61,7 +61,6 @@ class Account implements \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorInt
                 'create_date' => $item->getData('create_date'),
                 'mode' => $childItem->getData('mode'),
                 'user_id' => $childItem->getData('user_id'),
-                'token_expired_date' => $childItem->getData('token_expired_date'),
                 'sell_api_token_expired_date' => $childItem->getData('sell_api_token_expired_date'),
                 'marketplaces_data' => $childItem->getData('marketplaces_data'),
                 'inventory_last_synchronization' => $childItem->getData('inventory_last_synchronization'),

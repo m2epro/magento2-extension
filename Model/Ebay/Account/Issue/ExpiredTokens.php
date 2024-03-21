@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Account\Issue;
 
 use Ess\M2ePro\Helper\Date as DateHelper;
@@ -14,8 +8,6 @@ use Ess\M2ePro\Model\Issue\DataObject as Issue;
 
 class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
 {
-    /** @var \Magento\Backend\Model\UrlInterface */
-    private $urlBuilder;
     /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface */
     private $_localeDate;
     /** @var \Ess\M2ePro\Helper\View\Ebay */
@@ -24,32 +16,30 @@ class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
     private $helperData;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $permanentCacheHelper;
-    /** @var \Ess\M2ePro\Model\Ebay\AccountFactory */
-    private $accountFactory;
     /** @var \Ess\M2ePro\Model\Issue\DataObjectFactory */
     private $issueFactory;
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     private $translationHelper;
     /** @var \Ess\M2ePro\Helper\Component\Ebay */
     private $ebayComponentHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
+    private $collectionFactory;
 
     public function __construct(
-        \Magento\Backend\Model\UrlInterface $urlBuilder,
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $collectionFactory,
         \Magento\Rule\Model\Condition\Context $context,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $permanentCacheHelper,
-        \Ess\M2ePro\Model\Ebay\AccountFactory $accountFactory,
         \Ess\M2ePro\Model\Issue\DataObjectFactory $issueFactory,
         \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         \Ess\M2ePro\Helper\Component\Ebay $ebayComponentHelper
     ) {
-        $this->urlBuilder = $urlBuilder;
+        $this->collectionFactory = $collectionFactory;
         $this->_localeDate = $context->getLocaleDate();
         $this->ebayViewHelper = $ebayViewHelper;
         $this->helperData = $helperData;
         $this->permanentCacheHelper = $permanentCacheHelper;
-        $this->accountFactory = $accountFactory;
         $this->issueFactory = $issueFactory;
         $this->translationHelper = $translationHelper;
         $this->ebayComponentHelper = $ebayComponentHelper;
@@ -68,11 +58,7 @@ class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
         }
 
         $issues = [];
-        /** @var \Ess\M2ePro\Model\Ebay\Account $account */
-        foreach ($this->getAccountsWithActiveSession() as $account) {
-            if ($issue = $this->getTradingApiTokenMessages($account)) {
-                $issues[] = $issue;
-            }
+        foreach ($this->getAccounts() as $account) {
             if ($issue = $this->getSellApiTokenMessages($account)) {
                 $issues[] = $issue;
             }
@@ -82,101 +68,29 @@ class ExpiredTokens implements \Ess\M2ePro\Model\Issue\LocatorInterface
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Ebay\Account $account
+     * @param \Ess\M2ePro\Model\Account $account
      *
      * @return null|Issue
      * @throws \Exception
      */
-    private function getTradingApiTokenMessages(Account $account): ?Issue
+    private function getSellApiTokenMessages(\Ess\M2ePro\Model\Account $account): ?Issue
     {
-        $issue = $this->getCachedIssue('trading_', $account);
+        $issue = $this->getCachedIssue($account);
         if ($issue !== null) {
             return $issue;
         }
 
-        $currentTimeStamp = DateHelper::createCurrentGmt()->getTimestamp();
-        $dateInFutureOn10days = DateHelper::createCurrentGmt()->modify('+ 10 days');
-
-        $tokenExpirationTimeStamp = DateHelper::createDateGmt($account->getTokenExpiredDate())->getTimestamp();
-        if ($tokenExpirationTimeStamp > $dateInFutureOn10days->getTimestamp()) {
-            return null;
-        } else {
-            $tempMessage = $this->translationHelper->__(
-                <<<TEXT
-Attention! The Trading API token for <a href="%url%" target="_blank">"%name%"</a> eBay Account expires on %date%.
-You need to generate a new access token to reauthorize M2E Pro.
-TEXT
-                ,
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle()),
-                $this->_localeDate->formatDate(
-                    $account->getTokenExpiredDate(),
-                    \IntlDateFormatter::MEDIUM,
-                    true
-                )
-            );
-            $title = $this->translationHelper->__(
-                'Attention! The Trading API token for "%name%" eBay account is to expire.
-                    You need to generate a new access token to reauthorize M2E Pro.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
-            );
-            $url = $this->getSupportUrl(
-                (int)$account->getId(),
-                $tokenExpirationTimeStamp,
-                \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
-                __METHOD__
-            );
-            $issue = $this->issueFactory->createNoticeDataObject($title, $tempMessage, $url);
-        }
-
-        if ($tokenExpirationTimeStamp < $currentTimeStamp) {
-            $tempMessage = $this->translationHelper->__(
-                <<<TEXT
-Attention! The Trading API token for <a href="%url%" target="_blank">"%name%"</a> eBay account has expired.
-You need to generate a new access token to reauthorize M2E Pro.
-TEXT
-                ,
-                $this->urlBuilder->getUrl('m2epro/ebay_account/edit', ['id' => $account->getId()]),
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
-            );
-            $title = $this->translationHelper->__(
-                'Attention! The Trading API token for "%name%" eBay account has expired.
-                    You need to generate a new access token to reauthorize M2E Pro.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
-            );
-            $url = $this->getSupportUrl(
-                (int)$account->getId(),
-                $tokenExpirationTimeStamp,
-                \Magento\Framework\Message\MessageInterface::TYPE_ERROR,
-                __METHOD__
-            );
-            $issue = $this->issueFactory->createErrorDataObject($title, $tempMessage, $url);
-        }
-
-        $this->setIssueToCache('trading_', $account, $issue);
-
-        return $issue;
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\Ebay\Account $account
-     *
-     * @return null|Issue
-     * @throws \Exception
-     */
-    private function getSellApiTokenMessages(Account $account): ?Issue
-    {
-        $issue = $this->getCachedIssue('sell_', $account);
-        if ($issue !== null) {
-            return $issue;
-        }
-
-        if (empty($account->getSellApiTokenExpiredDate())) {
+        if (
+            empty($account->getChildObject()->getSellApiTokenExpiredDate())
+            || !$account->getChildObject()->isTokenExist()
+        ) {
             return null;
         }
         $currentTimeStamp = DateHelper::createCurrentGmt()->getTimestamp();
         $dateInFutureOn10days = DateHelper::createCurrentGmt()->modify('+ 10 days');
-        $tokenExpirationTimeStamp = DateHelper::createDateGmt($account->getSellApiTokenExpiredDate())->getTimestamp();
+        $tokenExpirationTimeStamp = DateHelper::createDateGmt(
+            $account->getChildObject()->getSellApiTokenExpiredDate()
+        )->getTimestamp();
 
         if ($tokenExpirationTimeStamp <= 0 || $tokenExpirationTimeStamp > $dateInFutureOn10days->getTimestamp()) {
             return null;
@@ -184,13 +98,13 @@ TEXT
             $tempMessage = __(
                 'Please go to eBay > Configuration > Accounts > "%1" eBay Account >
  General and click Get Token to generate a new one.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
+                $this->helperData->escapeHtml($account->getTitle())
             );
             $title = __(
                 'Attention! The Sell API token for "%1" eBay Account expires on %2.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle()),
+                $this->helperData->escapeHtml($account->getTitle()),
                 $this->_localeDate->formatDate(
-                    $account->getSellApiTokenExpiredDate(),
+                    $account->getChildObject()->getSellApiTokenExpiredDate(),
                     \IntlDateFormatter::MEDIUM,
                     true
                 )
@@ -208,11 +122,11 @@ TEXT
             $tempMessage = __(
                 'Please go to eBay > Configuration > Accounts > "%1" eBay Account >
  General and click Get Token to generate a new one.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
+                $this->helperData->escapeHtml($account->getTitle())
             );
             $title = __(
                 'Attention! The Sell API token for "%1" eBay Account has expired.',
-                $this->helperData->escapeHtml($account->getParentObject()->getTitle())
+                $this->helperData->escapeHtml($account->getTitle())
             );
             $url = $this->getSupportUrl(
                 (int)$account->getId(),
@@ -223,7 +137,7 @@ TEXT
             $issue = $this->issueFactory->createErrorDataObject($title, $tempMessage, $url);
         }
 
-        $this->setIssueToCache('sell_', $account, $issue);
+        $this->setIssueToCache($account, $issue);
 
         return $issue;
     }
@@ -238,14 +152,13 @@ TEXT
     }
 
     /**
-     * @param string $cacheKeyPrefix
-     * @param \Ess\M2ePro\Model\Ebay\Account $account
+     * @param \Ess\M2ePro\Model\Account $account
      * @param \Ess\M2ePro\Model\Issue\DataObject $issue
      *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception
      */
-    private function setIssueToCache(string $cacheKeyPrefix, Account $account, Issue $issue): void
+    private function setIssueToCache(\Ess\M2ePro\Model\Account $account, Issue $issue): void
     {
         $data = [
             'type' => $issue->getType(),
@@ -255,7 +168,7 @@ TEXT
         ];
 
         $this->permanentCacheHelper->setValue(
-            $cacheKeyPrefix . $account->getId(),
+            $account->getId(),
             $data,
             ['account', 'ebay'],
             60 * 60 * 24
@@ -263,14 +176,13 @@ TEXT
     }
 
     /**
-     * @param string $cacheKeyPrefix
-     * @param \Ess\M2ePro\Model\Ebay\Account $account
+     * @param \Ess\M2ePro\Model\Account $account
      *
      * @return \Ess\M2ePro\Model\Issue\DataObject|null
      */
-    private function getCachedIssue(string $cacheKeyPrefix, Account $account): ?Issue
+    private function getCachedIssue(\Ess\M2ePro\Model\Account $account): ?Issue
     {
-        $data = $this->permanentCacheHelper->getValue($cacheKeyPrefix . $account->getId());
+        $data = $this->permanentCacheHelper->getValue($account->getId());
         if ($data === null) {
             return null;
         }
@@ -297,14 +209,9 @@ TEXT
         return 'https://help.m2epro.com/support/solutions/articles/9000219023/?' . $editHash;
     }
 
-    /**
-     * @return null|array
-     */
-    private function getAccountsWithActiveSession(): ?array
+    private function getAccounts(): array
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection $accounts */
-        $accounts = $this->accountFactory->create()->getCollection();
-        $accounts->addFieldToFilter('token_session', ['notnull' => true]);
+        $accounts = $this->collectionFactory->createWithEbayChildMode();
 
         return $accounts->getItems();
     }

@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Connector\Account\Get;
 
-class AuthInfo extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
+class AuthInfo extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
 {
     /** @var string[] */
     private $accountsServerHashes;
@@ -16,10 +10,11 @@ class AuthInfo extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        $account,
-        array $params
+        \Ess\M2ePro\Model\Marketplace $marketplace = null,
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     ) {
-        parent::__construct($helperFactory, $modelFactory, $account, $params);
+        parent::__construct($helperFactory, $modelFactory, $marketplace, $account, $params);
 
         $this->accountsServerHashes = $params['accounts'];
     }

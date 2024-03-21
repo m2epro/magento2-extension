@@ -32,7 +32,7 @@ class GetRateTableData extends Template
         /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
         $ebayAccount = $account->getChildObject();
 
-        if (!$ebayAccount->getSellApiTokenSession()) {
+        if (!$ebayAccount->isTokenExist()) {
             return $this->getResponse()->setBody(
                 \Ess\M2ePro\Helper\Json::encode(
                     [

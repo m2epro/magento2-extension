@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Save
- */
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     /** @var \Ess\M2ePro\Helper\Module\Exception */
@@ -18,8 +9,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $helperData;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\Update */
+    private $accountUpdate;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\Update $accountUpdate,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\Ebay\Account\Store\Category\Update $storeCategoryUpdate,
@@ -29,6 +23,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
     ) {
         parent::__construct($storeCategoryUpdate, $componentEbayCategoryStore, $ebayFactory, $context);
 
+        $this->accountUpdate = $accountUpdate;
         $this->helperException = $helperException;
         $this->helperData = $helperData;
     }
@@ -41,16 +36,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             $this->_forward('index');
         }
 
-        $id = $this->getRequest()->getParam('id');
+        $id = (int)$this->getRequest()->getParam('id');
         $data = $post->toArray();
 
+        $account = $this->ebayFactory->getObjectLoaded('Account', $id);
+
         try {
-            $account = $id ? $this->updateAccount($id, $data) : $this->addAccount($data);
-        } catch (\Exception $exception) {
+            $account = $this->accountUpdate->updateSettings($account, $data);
+        } catch (\Throwable $exception) {
             $this->helperException->process($exception);
 
-            $message = $this->__(
-                'The Ebay access obtaining is currently unavailable.<br/>Reason: %error_message%',
+            $message = __(
+                'The Ebay access obtaining is currently unavailable.<br/>Reason: %1',
                 $exception->getMessage()
             );
 
@@ -91,6 +88,4 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             )
         );
     }
-
-    //########################################
 }

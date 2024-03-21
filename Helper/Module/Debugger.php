@@ -153,4 +153,61 @@ class Debugger
 
         return self::$logger;
     }
+
+    // ----------------------------------------
+
+    public static function writeInFile( // @codingStandardsIgnoreLine
+        array $data,
+        string $label = 'debug',
+        bool $isAddTrace = false
+    ): void {
+        if (!self::$isEnables) {
+            return;
+        }
+
+        $fileName = 'debug_m2e/debug.log';
+
+        $log = '###################################################' . "\n";
+        $log .= 'Date : ' . \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s') . "\n";
+        $log .= sprintf("Label : %s\n", $label);
+        $log .= 'Data JSON : ' . json_encode($data, JSON_FORCE_OBJECT) . "\n";
+        if ($isAddTrace) {
+            $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            $log .= '--------------------------- STACK TRACE INFO ---------------------------' . "\n";
+            $log .= self::getBacktraceLog($debugBacktrace);
+        }
+        $log .= '###################################################' . "\n";
+
+        /** @var \Magento\Framework\Filesystem $fs */
+        $fs = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\Filesystem::class);
+        $dir = $fs->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
+
+        try {
+            $stream = $dir->openFile($fileName, 'a');
+            $stream->lock();
+            $stream->write($log);
+            $stream->unlock();
+            $stream->close();
+        } catch (\Throwable $e) {
+        }
+    }
+
+    private static function getBacktraceLog(array $debugBacktrace): string
+    {
+        $backtraceLog = '';
+        foreach ($debugBacktrace as $backtrace) {
+            $arrTrace = [
+                'class' => $backtrace['class'] ?? '',
+                'func' => $backtrace['function'] ?? '',
+                'file' => $backtrace['file'] ?? '',
+                'line' => $backtrace['line'] ?? '',
+            ];
+            foreach ($arrTrace as $key => $val) {
+                $backtraceLog .= $key . ' => ' . $val . "\n";
+            }
+            $backtraceLog .= '---------------------------------------------' . "\n";
+        }
+
+        return $backtraceLog;
+    }
 }

@@ -71,6 +71,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_SELLING_FORMAT . '\' as `type`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
@@ -91,6 +92,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_SYNCHRONIZATION . '\' as `type`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
@@ -111,7 +113,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                                                         ->getCollection();
         $collectionShipping->getSelect()->join(
             ['mm' => $this->marketplaceFactory->create()->getResource()->getMainTable()],
-            'mm.id=main_table.marketplace_id',
+            'main_table.marketplace_id=mm.id',
             []
         );
         $collectionShipping->addFieldToFilter('mm.status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
@@ -121,7 +123,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_SHIPPING . '\' as `type`'),
-                'marketplace_id',
+                new \Zend_Db_Expr('mm.title as `marketplace_title`'),
+                new \Zend_Db_Expr('mm.id as `marketplace_id`'),
                 'create_date',
                 'update_date',
                 new \Zend_Db_Expr('NULL as `category_path`'),
@@ -129,6 +132,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 new \Zend_Db_Expr('NULL as `is_new_asin_accepted`'),
             ]
         );
+        $collectionShipping->addFieldToFilter('mm.status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
         // ---------------------------------------
 
         // Prepare Product Tax Code collection
@@ -142,6 +146,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'id as template_id',
                 'title',
                 new \Zend_Db_Expr('\'' . self::TEMPLATE_PRODUCT_TAX_CODE . '\' as `type`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
                 new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 'create_date',
                 'update_date',
@@ -176,6 +181,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'template_id',
                 'title',
                 'type',
+                'marketplace_title',
                 'marketplace_id',
                 'create_date',
                 'update_date',
@@ -222,8 +228,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align' => 'left',
             'type' => 'options',
             'width' => '100px',
-            'index' => 'marketplace_id',
-            'filter_index' => 'marketplace_id',
+            'index' => 'marketplace_title',
+            'filter_index' => 'marketplace_title',
             'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
             'frame_callback' => [$this, 'callbackColumnMarketplace'],
             'options' => $this->getEnabledMarketplaceTitles(),

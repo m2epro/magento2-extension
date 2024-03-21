@@ -1,18 +1,9 @@
 <?php
 
-/*
- * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Magento;
 
 use Ess\M2ePro\Model\Issue\LocatorInterface;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Magento\GlobalNotifications
- */
 class GlobalNotifications extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'magento/global_notifications';
@@ -21,8 +12,6 @@ class GlobalNotifications extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      * @var int (in seconds)
      */
     protected $interval = 86400;
-
-    //########################################
 
     protected function performActions()
     {
@@ -41,6 +30,4 @@ class GlobalNotifications extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
         }
     }
-
-    //########################################
 }

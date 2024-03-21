@@ -48,6 +48,6 @@ class DateTime extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Dateti
             return __('N/A');
         }
 
-        return $value;
+        return (string)$value;
     }
 }

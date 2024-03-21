@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
@@ -18,29 +12,20 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
     private $statisticManager;
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registryManager;
-    /** @var \Ess\M2ePro\Model\Config\Manager */
-    private $configManager;
-    /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher */
-    private $connectorDispatcher;
 
     /**
      * @param \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry
      * @param \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager
      * @param \Ess\M2ePro\Model\Registry\Manager $registryManager
-     * @param \Ess\M2ePro\Model\Config\Manager $configManager
      */
     public function __construct(
         \Ess\M2ePro\Model\Servicing\Task\Analytics\Registry $registry,
         \Ess\M2ePro\Model\Servicing\Task\Statistic\Manager $statisticManager,
-        \Ess\M2ePro\Model\Registry\Manager $registryManager,
-        \Ess\M2ePro\Model\Config\Manager $configManager,
-        \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $connectorDispatcher
+        \Ess\M2ePro\Model\Registry\Manager $registryManager
     ) {
         $this->registry = $registry;
         $this->statisticManager = $statisticManager;
         $this->registryManager = $registryManager;
-        $this->configManager = $configManager;
-        $this->connectorDispatcher = $connectorDispatcher;
     }
 
     // ----------------------------------------
@@ -70,19 +55,7 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
      */
     public function getRequestData(): array
     {
-        $requestData = [];
-
-        $tempValue = $this->registryManager->getValue(
-            '/server/location/default_index_given_by_server_at/'
-        );
-        if ($tempValue) {
-            $requestData['current_default_server_baseurl_index'] = $this->configManager->getGroupValue(
-                '/server/location/',
-                'default_index'
-            );
-        }
-
-        return $requestData;
+        return [];
     }
 
     // ----------------------------------------
@@ -94,113 +67,12 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
      */
     public function processResponseData(array $data): void
     {
-        $this->updateServersBaseUrls($data);
-        $this->updateDefaultServerBaseUrlIndex($data);
         $this->updateLastVersion($data);
         $this->updateAnalytics($data);
         $this->updateStatistic($data);
     }
 
     // ----------------------------------------
-
-    /**
-     * @param array $data
-     *
-     * @return void
-     */
-    private function updateServersBaseUrls(array $data): void
-    {
-        if (!is_array($data['servers_baseurls']) || empty($data['servers_baseurls'])) {
-            return;
-        }
-
-        $index = 1;
-        $configUpdates = [];
-
-        foreach ($data['servers_baseurls'] as $newHostName => $newBaseUrl) {
-            $oldHostName = $this->configManager->getGroupValue('/server/location/' . $index . '/', 'hostname');
-            $oldBaseUrl = $this->configManager->getGroupValue('/server/location/' . $index . '/', 'baseurl');
-
-            if ($oldHostName != $newHostName || $oldBaseUrl != $newBaseUrl) {
-                $configUpdates[$index] = [
-                    'hostname' => $newHostName,
-                    'baseurl' => $newBaseUrl,
-                ];
-            }
-
-            $index++;
-        }
-
-        for ($deletedIndex = $index; $deletedIndex < 100; $deletedIndex++) {
-            $deletedHostName = $this->configManager->getGroupValue(
-                '/server/location/' . $deletedIndex . '/',
-                'hostname'
-            );
-            $deletedBaseUrl = $this->configManager->getGroupValue('/server/location/' . $deletedIndex . '/', 'baseurl');
-
-            if ($deletedHostName === null && $deletedBaseUrl === null) {
-                break;
-            }
-
-            $this->configManager->deleteGroupValue('/server/location/' . $deletedIndex . '/', 'hostname');
-            $this->configManager->deleteGroupValue('/server/location/' . $deletedIndex . '/', 'baseurl');
-        }
-
-        if (empty($configUpdates)) {
-            return;
-        }
-
-        try {
-            foreach ($configUpdates as $index => $change) {
-                $connectorObj = $this->connectorDispatcher->getConnector(
-                    'server',
-                    'check',
-                    'state',
-                    [
-                        'base_url' => $this->cleaningBaseUrl($change['baseurl']) . '/index.php',
-                        'hostname' => $change['hostname'],
-                    ]
-                );
-                $this->connectorDispatcher->process($connectorObj);
-                $response = $connectorObj->getResponseData();
-
-                if (empty($response['state'])) {
-                    return;
-                }
-            }
-        } catch (\Throwable $e) {
-            return;
-        }
-
-        foreach ($configUpdates as $index => $change) {
-            $this->configManager->setGroupValue('/server/location/' . $index . '/', 'hostname', $change['hostname']);
-            $this->configManager->setGroupValue('/server/location/' . $index . '/', 'baseurl', $change['baseurl']);
-        }
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return void
-     * @throws \Exception
-     */
-    private function updateDefaultServerBaseUrlIndex(array $data): void
-    {
-        if (!isset($data['default_server_baseurl_index']) || (int)$data['default_server_baseurl_index'] <= 0) {
-            return;
-        }
-
-        $this->configManager->setGroupValue(
-            '/server/location/',
-            'default_index',
-            (int)$data['default_server_baseurl_index']
-        );
-
-        $this->registryManager->setValue(
-            '/server/location/default_index_given_by_server_at/',
-            \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
-        );
-    }
 
     /**
      * @param array $data
@@ -259,19 +131,5 @@ class Settings implements \Ess\M2ePro\Model\Servicing\TaskInterface
         }
 
         $this->statisticManager->setTasksStates($tasks);
-    }
-
-    // ----------------------------------------
-
-    /**
-     * @param string $baseUrl
-     *
-     * @return string
-     */
-    private function cleaningBaseUrl(string $baseUrl): string
-    {
-        $baseUrl = str_replace('index.php', '', $baseUrl);
-
-        return rtrim($baseUrl, '/');
     }
 }

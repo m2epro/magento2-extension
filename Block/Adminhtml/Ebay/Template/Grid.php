@@ -19,22 +19,17 @@ class Grid extends AbstractGrid
     private $wrapperCollectionFactory;
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\MarketplaceFactory */
+    private $marketplaceFactory;
 
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection|null */
     private $enabledMarketplacesCollection = null;
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Backend\Helper\Data $backendHelper
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -42,6 +37,7 @@ class Grid extends AbstractGrid
         $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
         $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->marketplaceFactory = $marketplaceFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -65,6 +61,8 @@ class Grid extends AbstractGrid
 
     protected function _prepareCollection()
     {
+        $marketPlaceMainTable = $this->marketplaceFactory->create()->getResource()->getMainTable();
+
         // Prepare selling format collection
         // ---------------------------------------
         $collectionSellingFormat = $this->activeRecordFactory->getObject('Template\SellingFormat')
@@ -82,7 +80,8 @@ class Grid extends AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\'0\' as `marketplace`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
+                new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 new \Zend_Db_Expr(
                     '\'' . \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT . '\' as `nick`'
                 ),
@@ -110,7 +109,8 @@ class Grid extends AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\'0\' as `marketplace`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
+                new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 new \Zend_Db_Expr(
                     '\'' . \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION . '\' as `nick`'
                 ),
@@ -138,7 +138,8 @@ class Grid extends AbstractGrid
             [
                 'id as template_id',
                 'title',
-                new \Zend_Db_Expr('\'0\' as `marketplace`'),
+                new \Zend_Db_Expr('NULL as `marketplace_title`'),
+                new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
                 new \Zend_Db_Expr(
                     '\'' . \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION . '\' as `nick`'
                 ),
@@ -154,11 +155,17 @@ class Grid extends AbstractGrid
         // ---------------------------------------
         $collectionShipping = $this->activeRecordFactory->getObject('Ebay_Template_Shipping')->getCollection();
         $collectionShipping->getSelect()->reset(Select::COLUMNS);
+        $collectionShipping->getSelect()->join(
+            ['mm' => $marketPlaceMainTable],
+            'main_table.marketplace_id=mm.id',
+            []
+        );
         $collectionShipping->getSelect()->columns(
             [
                 'id as template_id',
                 'title',
-                'marketplace_id as marketplace',
+                new \Zend_Db_Expr('mm.title as `marketplace_title`'),
+                new \Zend_Db_Expr('mm.id as `marketplace_id`'),
                 new \Zend_Db_Expr('\'' . \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING . '\' as `nick`'),
                 'create_date',
                 'update_date',
@@ -172,11 +179,17 @@ class Grid extends AbstractGrid
         // ---------------------------------------
         $collectionReturn = $this->activeRecordFactory->getObject('Ebay_Template_ReturnPolicy')->getCollection();
         $collectionReturn->getSelect()->reset(Select::COLUMNS);
+        $collectionReturn->getSelect()->join(
+            ['mm2' => $marketPlaceMainTable],
+            'main_table.marketplace_id=mm2.id',
+            []
+        );
         $collectionReturn->getSelect()->columns(
             [
                 'id as template_id',
                 'title',
-                'marketplace_id as marketplace',
+                new \Zend_Db_Expr('mm2.title as `marketplace_title`'),
+                new \Zend_Db_Expr('mm2.id as `marketplace_id`'),
                 new \Zend_Db_Expr(
                     '\'' . \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY . '\' as `nick`'
                 ),
@@ -207,7 +220,7 @@ class Grid extends AbstractGrid
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
             ['main_table' => $unionSelect],
-            ['template_id', 'title', 'nick', 'marketplace', 'create_date', 'update_date']
+            ['template_id', 'title', 'nick', 'marketplace_id', 'marketplace_title', 'create_date', 'update_date']
         );
         // ---------------------------------------
 
@@ -250,8 +263,8 @@ class Grid extends AbstractGrid
             'align' => 'left',
             'type' => 'options',
             'width' => '100px',
-            'index' => 'marketplace',
-            'filter_index' => 'main_table.marketplace',
+            'index' => 'marketplace_title',
+            'filter_index' => 'marketplace_title',
             'filter_condition_callback' => [$this, 'callbackFilterMarketplace'],
             'frame_callback' => [$this, 'callbackColumnMarketplace'],
             'options' => $this->getEnabledMarketplaceTitles(),
@@ -337,7 +350,7 @@ class Grid extends AbstractGrid
             return;
         }
 
-        $collection->getSelect()->where('main_table.marketplace = 0 OR main_table.marketplace = ?', (int)$value);
+        $collection->getSelect()->where('marketplace_id = 0 OR marketplace_id = ?', (int)$value);
     }
 
     public function getGridUrl()
@@ -363,7 +376,7 @@ class Grid extends AbstractGrid
             /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $collection */
             $collection = $this->marketplaceCollectionFactory->create();
             $collection->appendFilterEnabledMarketplaces(\Ess\M2ePro\Helper\Component\Ebay::NICK)
-                ->setOrder('title', 'ASC');
+                       ->setOrder('title', 'ASC');
 
             $this->enabledMarketplacesCollection = $collection;
         }

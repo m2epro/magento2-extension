@@ -14,13 +14,16 @@ class Store extends AbstractForm
 {
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\BuilderFactory */
+    private $ebayAccountBuilderFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory,
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -28,19 +31,18 @@ class Store extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         array $data = []
     ) {
+        $this->ebayAccountBuilderFactory = $ebayAccountBuilderFactory;
+        $this->account = $account;
         $this->supportHelper = $supportHelper;
-        $this->globalDataHelper = $globalDataHelper;
         $this->dataHelper = $dataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        $account = $this->globalDataHelper->getValue('edit_account')
-            ? $this->globalDataHelper->getValue('edit_account') : [];
-        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = array_merge($this->account->getData(), $this->account->getChildObject()->getData());
 
-        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
+        $defaults = $this->ebayAccountBuilderFactory->create()->getDefaultData();
 
         $formData = array_merge($defaults, $formData);
 
@@ -50,11 +52,7 @@ class Store extends AbstractForm
         );
         $formData['ebay_store_description'] = $this->dataHelper->escapeHtml($formData['ebay_store_description']);
 
-        $isEdit = !!$this->getRequest()->getParam('id');
-
-        if ($isEdit) {
-            $categoriesTreeArray = $account->getChildObject()->buildEbayStoreCategoriesTree();
-        }
+        $categoriesTreeArray = $this->account->getChildObject()->buildEbayStoreCategoriesTree();
 
         $form = $this->_formFactory->create();
 

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Connector\Connection;
 
 class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
@@ -30,10 +24,6 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
 
         return $this->getHelper('Server\Request')->single(
             $package,
-            $this->getServerBaseUrl(),
-            $this->getServerHostName(),
-            $this->isTryToResendOnError(),
-            $this->isTryToSwitchEndpointOnError(),
             $this->isCanIgnoreMaintenance()
         );
     }
@@ -45,8 +35,6 @@ class Single extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
             $this->response->initFromRawResponse($result['body']);
             $this->response->setRequestTime($this->requestTime);
         } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
-            $this->isTryToSwitchEndpointOnError() && $this->helperFactory->getObject('Server')->switchEndpoint();
-
             $this->getHelper('Module\Logger')->process($result, 'Invalid Response Format');
             throw new \Ess\M2ePro\Model\Exception\Connection($this->getConnectionErrorMessage(), $result);
         }

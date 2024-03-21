@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form;
 
 use Ess\M2ePro\Model\Ebay\Template\Shipping;
@@ -409,7 +403,8 @@ HTML
                 }
 
                 $rateTableValue = $this->formData['local_shipping_rate_table'][$this->getAccountId()]['value'];
-                $isSellApiEnabled = (bool)$this->getAccount()->getChildObject()->getSellApiTokenSession();
+
+                $isSellApiEnabled = $this->getAccount()->getChildObject()->isTokenExist();
                 $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
                 $fieldSet->addField(
                     'local_shipping_rate_table_value_' . $this->getAccountId(),
@@ -469,7 +464,7 @@ HTML
 
                         $rateTableValue = $this->formData['local_shipping_rate_table'][$account->getId()]['value'];
                         $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
-                        $isSellApiEnabled = (bool)$account->getChildObject()->getSellApiTokenSession();
+                        $isSellApiEnabled = $account->getChildObject()->isTokenExist();
                         $toolTip = $this->getTooltipHtml(
                             <<<HTML
     <span class="shipping_rate_table_note_accepted" style="{$shippingRateTableModeToolTipStyleAccept}">
@@ -829,7 +824,8 @@ HTML
                 }
 
                 $rateTableValue = $this->formData['international_shipping_rate_table'][$this->getAccountId()]['value'];
-                $isSellApiEnabled = (bool)$this->getAccount()->getChildObject()->getSellApiTokenSession();
+
+                $isSellApiEnabled = $this->getAccount()->getChildObject()->isTokenExist();
                 $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
 
                 $fieldSet->addField(
@@ -891,7 +887,7 @@ HTML
                         $rateTableValue =
                             $this->formData['international_shipping_rate_table'][$account->getId()]['value'];
                         $rateTableValueJson = \Ess\M2ePro\Helper\Json::encode($rateTableValue);
-                        $isSellApiEnabled = (bool)$account->getChildObject()->getSellApiTokenSession();
+                        $isSellApiEnabled = $account->getChildObject()->isTokenExist();
 
                         $toolTip = $this->getTooltipHtml(
                             <<<HTML

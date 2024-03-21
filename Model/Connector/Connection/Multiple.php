@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Connector\Connection;
 
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
@@ -37,10 +31,6 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
 
         return $this->getHelper('Server\Request')->multiple(
             $packages,
-            $this->getServerBaseUrl(),
-            $this->getServerHostName(),
-            $this->isTryToResendOnError(),
-            $this->isTryToSwitchEndpointOnError(),
             $this->isAsynchronous(),
             $this->isCanIgnoreMaintenance()
         );
@@ -48,7 +38,6 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
 
     protected function processRequestResult(array $result)
     {
-        $responseError = false;
         $successResponses = [];
 
         foreach ($result as $key => $response) {
@@ -71,18 +60,12 @@ class Multiple extends \Ess\M2ePro\Model\Connector\Connection\AbstractModel
                 $this->responses[$key] = $responseObj;
                 $successResponses[] = $responseObj;
             } catch (\Ess\M2ePro\Model\Exception\Connection\InvalidResponse $exception) {
-                $responseError = true;
                 $this->responses[$key] = $this->createFailedResponse($this->getConnectionErrorMessage());
                 $this->getHelper('Module\Logger')->process($response, 'Invalid Response Format');
             } catch (\Exception $exception) {
-                $responseError = true;
                 $this->responses[$key] = $this->createFailedResponse($this->getConnectionErrorMessage());
                 $this->getHelper('Module\Exception')->process($exception);
             }
-        }
-
-        if ($responseError) {
-            $this->isTryToSwitchEndpointOnError() && $this->getHelper('Server')->switchEndpoint();
         }
 
         foreach ($successResponses as $response) {

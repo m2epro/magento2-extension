@@ -2758,9 +2758,7 @@ class Installer
         $moduleConfig->insert('/license/ip/', 'is_valid');
         $moduleConfig->insert('/license/info/', 'email');
         $moduleConfig->insert('/server/', 'application_key', '02edcc129b6128f5fa52d4ad1202b427996122b6');
-        $moduleConfig->insert('/server/location/1/', 'baseurl', 'https://s1.m2epro.com/');
-        $moduleConfig->insert('/server/location/', 'default_index', 1);
-        $moduleConfig->insert('/server/location/', 'current_index', 1);
+        $moduleConfig->insert('/server/', 'host', 'https://api.m2epro.com/');
         $moduleConfig->insert('/cron/', 'mode', '1');
         $moduleConfig->insert('/cron/', 'runner', 'magento');
         $moduleConfig->insert('/cron/', 'last_runner_change');
@@ -2931,22 +2929,10 @@ class Installer
                                      ['nullable' => false]
                                  )
                                  ->addColumn(
-                                     'token_session',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'token_expired_date',
-                                     Table::TYPE_DATETIME,
+                                     'is_token_exist',
+                                     Table::TYPE_SMALLINT,
                                      null,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'sell_api_token_session',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['default' => null]
+                                     ['nullable' => false, 'default' => 0]
                                  )
                                  ->addColumn(
                                      'sell_api_token_expired_date',

@@ -1,16 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs;
-
-class Tabs extends AbstractTabs
+class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     public const TAB_ID_GENERAL = 'general';
     public const TAB_ID_LISTING_OTHER = 'listingOther';
@@ -22,26 +14,24 @@ class Tabs extends AbstractTabs
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
 
     public function __construct(
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
         parent::__construct($context, $jsonEncoder, $authSession, $data);
 
+        $this->account = $account;
         $this->dataHelper = $dataHelper;
-        $this->globalDataHelper = $globalDataHelper;
         $this->supportHelper = $supportHelper;
     }
 
@@ -61,83 +51,101 @@ class Tabs extends AbstractTabs
                 'label' => __('General'),
                 'title' => __('General'),
                 'content' => $this->getLayout()
-                                  ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\General::class)
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\General::class,
+                                      '',
+                                      [
+                                          'account' => $this->account
+                                      ]
+                                  )
                                   ->toHtml(),
             ]
         );
 
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->globalDataHelper->getValue('edit_account');
-        $isShowTables = $this->getRequest()->getParam('is_show_tables', false);
+        $this->addTab(
+            self::TAB_ID_LISTING_OTHER,
+            [
+                'label' => $this->__('Unmanaged Listings'),
+                'title' => $this->__('Unmanaged Listings'),
+                'content' => $this->getLayout()
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther::class,
+                                      '',
+                                      [
+                                          'account' => $this->account
+                                      ]
+                                  )
+                                  ->toHtml(),
+            ]
+        );
 
-        if ($isShowTables || $account && $account->getId()) {
-            $this->addTab(
-                self::TAB_ID_LISTING_OTHER,
-                [
-                    'label' => $this->__('Unmanaged Listings'),
-                    'title' => $this->__('Unmanaged Listings'),
-                    'content' => $this->getLayout()
-                                      ->createBlock(
-                                          \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\ListingOther::class
-                                      )
-                                      ->toHtml(),
-                ]
-            );
-        }
+        $this->addTab(
+            self::TAB_ID_STORE,
+            [
+                'label' => $this->__('eBay Store'),
+                'title' => $this->__('eBay Store'),
+                'content' => $this->getLayout()
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store::class,
+                                      '',
+                                      [
+                                          'account' => $this->account
+                                      ]
+                                  )
+                                  ->toHtml(),
+            ]
+        );
 
-        if ($account && $account->getId()) {
-            $this->addTab(
-                self::TAB_ID_STORE,
-                [
-                    'label' => $this->__('eBay Store'),
-                    'title' => $this->__('eBay Store'),
-                    'content' => $this->getLayout()
-                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Store::class)
-                                      ->toHtml(),
-                ]
-            );
-        }
+        $this->addTab(
+            self::TAB_ID_ORDER,
+            [
+                'label' => $this->__('Orders'),
+                'title' => $this->__('Orders'),
+                'content' => $this->getLayout()
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order::class,
+                                      '',
+                                      [
+                                          'account' => $this->account
+                                      ]
+                                  )
+                                  ->toHtml(),
+            ]
+        );
 
-        if ($isShowTables || $account && $account->getId()) {
-            $this->addTab(
-                self::TAB_ID_ORDER,
-                [
-                    'label' => $this->__('Orders'),
-                    'title' => $this->__('Orders'),
-                    'content' => $this->getLayout()
-                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order::class)
-                                      ->toHtml(),
-                ]
-            );
-        }
+        $this->addTab(
+            self::TAB_ID_INVOICES_AND_SHIPMENTS,
+            [
+                'label' => $this->__('Invoices & Shipments'),
+                'title' => $this->__('Invoices & Shipments'),
+                'content' => $this->getLayout()
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\InvoicesAndShipments::class,
+                                      '',
+                                      [
+                                          'account' => $this->account
+                                      ]
+                                  )
+                                  ->toHtml(),
+            ]
+        );
 
-        if ($account && $account->getId()) {
-            $this->addTab(
-                self::TAB_ID_INVOICES_AND_SHIPMENTS,
-                [
-                    'label' => $this->__('Invoices & Shipments'),
-                    'title' => $this->__('Invoices & Shipments'),
-                    'content' => $this->getLayout()
-                                      ->createBlock(
-                                          \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\InvoicesAndShipments::class
-                                      )
-                                      ->toHtml(),
-                ]
-            );
-        }
-
-        if ($account && $account->getId()) {
-            $this->addTab(
-                self::TAB_ID_FEEDBACK,
-                [
-                    'label' => $this->__('Feedback'),
-                    'title' => $this->__('Feedback'),
-                    'content' => $this->getLayout()
-                                      ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback::class)
-                                      ->toHtml(),
-                ]
-            );
-        }
+        $this->addTab(
+            self::TAB_ID_FEEDBACK,
+            [
+                'label' => $this->__('Feedback'),
+                'title' => $this->__('Feedback'),
+                'content' => $this->getLayout()
+                                  ->createBlock(
+                                      \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback::class,
+                                      '',
+                                      [
+                                          'account' => $this->account
+                                      ]
+                                  )
+                                  ->toHtml(),
+            ]
+        );
 
         $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_GENERAL));
 
@@ -150,10 +158,6 @@ class Tabs extends AbstractTabs
                     'account_id' => $this->getRequest()->getParam('id'),
                 ]
             )
-        );
-        $this->jsUrl->add(
-            $this->getUrl('*/ebay_account/beforeGetToken', ['_current' => true]),
-            'ebay_account/beforeGetToken'
         );
         $this->jsUrl->add(
             $this->getUrl('*/ebay_account/beforeGetSellApiToken', ['_current' => true]),

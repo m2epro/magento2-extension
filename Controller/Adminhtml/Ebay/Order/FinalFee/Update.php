@@ -61,7 +61,8 @@ class Update extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Order
 
         /** @var \Ess\M2ePro\Model\Ebay\Account $account */
         $account = $order->getAccount()->getChildObject();
-        if (!$account->getSellApiTokenSession()) {
+
+        if (!$account->isTokenExist()) {
             return $this->resultJsonFactory->create()->setData(
                 [
                     'sell_api_disabled' => true,

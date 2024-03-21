@@ -1,16 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
-
-class Account extends AbstractContainer
+class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
@@ -29,8 +21,41 @@ class Account extends AbstractContainer
         parent::_construct();
         $this->_controller = 'adminhtml_ebay_account';
 
-        $this->buttonList->update('add', 'label', $this->__('Add Account'));
-        $this->buttonList->update('add', 'onclick', 'setLocation(\'' . $this->getUrl('*/ebay_account/new') . '\');');
+        $this->removeButton('add');
+
+        $saveButtons = [
+            'id' => 'add-ebay-account',
+            'label' => __('Add Account'),
+            'class' => 'add-ebay-account',
+            'style' => 'pointer-events: none',
+            'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class,
+            'options' => [
+                'production' => [
+                    'label' => __('Live Account'),
+                    'id' => 'production',
+                    'onclick' => 'setLocation(this.getAttribute("data-url"))',
+                    'data_attribute' => [
+                        'url' => $this->getUrl(
+                            '*/ebay_account/beforeGetSellApiToken',
+                            ['mode' => \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION]
+                        ),
+                    ],
+                ],
+                'sandbox' => [
+                    'label' => __('Sandbox Account'),
+                    'id' => 'sandbox',
+                    'onclick' => 'setLocation(this.getAttribute("data-url"))',
+                    'data_attribute' => [
+                        'url' => $this->getUrl(
+                            '*/ebay_account/beforeGetSellApiToken',
+                            ['mode' => \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX]
+                        ),
+                    ],
+                ],
+            ],
+        ];
+
+        $this->addButton('add', $saveButtons);
     }
 
     protected function _prepareLayout()
@@ -48,9 +73,19 @@ HTML
         ]);
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Account_Feedback'));
+        $this->js->add(
+            <<<JS
+    require([
+        'M2ePro/Ebay/Account'
+    ], function(){
+        window.EbayAccountObj = new EbayAccount();
+    });
+JS
+        );
 
         $this->jsTranslator->addTranslations([
             'Should be between 2 and 80 characters long.' => $this->__('Should be between 2 and 80 characters long.'),
+            'Select Account Mode' => __('Select Account Mode')
         ]);
 
         $this->css->addFile('ebay/account/feedback.css');

@@ -18,31 +18,33 @@ class Feedback extends AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\BuilderFactory */
+    private $ebayAccountBuilderFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory,
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
+        $this->ebayAccountBuilderFactory = $ebayAccountBuilderFactory;
+        $this->account = $account;
         $this->supportHelper = $supportHelper;
         $this->dataHelper = $dataHelper;
-        $this->globalDataHelper = $globalDataHelper;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     protected function _prepareForm()
     {
-        $account = $this->globalDataHelper->getValue('edit_account');
-        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = array_merge($this->account->getData(), $this->account->getChildObject()->getData());
 
-        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
+        $defaults = $this->ebayAccountBuilderFactory->create()->getDefaultData();
         $formData = array_merge($defaults, $formData);
         $this->setData('form_data', $formData);
 
@@ -221,7 +223,13 @@ CSS
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid $grid */
         $grid = $this->getLayout()
-                     ->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid::class);
+                     ->createBlock(
+                         \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid::class,
+                         '',
+                         [
+                             'account' => $this->account
+                         ]
+                     );
         $gridHtml = $grid->toHtml();
 
         $showTemplates = (

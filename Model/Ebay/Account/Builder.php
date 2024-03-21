@@ -43,11 +43,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'title',
             'mode',
             'user_id',
+            'is_token_exist',
             'info',
             'server_hash',
-            'token_session',
-            'token_expired_date',
-            'sell_api_token_session',
             'sell_api_token_expired_date',
         ];
         foreach ($keys as $key) {
@@ -415,9 +413,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'user_id' => '',
             'mode' => Account::MODE_PRODUCTION,
             'server_hash' => '',
-            'token_session' => '',
-            'token_expired_date' => '',
-            'sell_api_token_session' => '',
             'sell_api_token_expired_date' => '',
 
             'other_listings_synchronization' => 1,

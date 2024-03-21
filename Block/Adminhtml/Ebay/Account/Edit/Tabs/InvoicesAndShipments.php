@@ -12,17 +12,21 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class InvoicesAndShipments extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\BuilderFactory */
+    private $ebayAccountBuilderFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory,
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
-        $this->globalDataHelper = $globalDataHelper;
+        $this->ebayAccountBuilderFactory = $ebayAccountBuilderFactory;
+        $this->account = $account;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -128,11 +132,8 @@ HTML
 
     protected function getFormData()
     {
-        /** @var \Ess\M2ePro\Model\Account $account */
-        $account = $this->globalDataHelper->getValue('edit_account');
-
-        $formData = $account ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
-        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
+        $formData = array_merge($this->account->getData(), $this->account->getChildObject()->getData());
+        $defaults = $this->ebayAccountBuilderFactory->create()->getDefaultData();
 
         return array_merge($defaults, $formData);
     }

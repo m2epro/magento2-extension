@@ -1,31 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
 
-use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay;
-
-class BeforeToken extends InstallationEbay
+class BeforeGetSellApiToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationEbay
 {
     /** @var \Ess\M2ePro\Helper\View\Configuration */
     private $configurationHelper;
-
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $sessionHelper;
 
     /** @var \Ess\M2ePro\Helper\Module\Exception */
     private $exceptionHelper;
 
     /** @var \Ess\M2ePro\Helper\Module\License */
     private $licenseHelper;
+    /** @var \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory */
+    private $dispatcherFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\Ebay\Connector\DispatcherFactory $dispatcherFactory,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Helper\Module\License $licenseHelper,
         \Ess\M2ePro\Helper\View\Configuration $configurationHelper,
@@ -36,8 +27,8 @@ class BeforeToken extends InstallationEbay
     ) {
         parent::__construct($ebayFactory, $ebayViewHelper, $nameBuilder, $context);
 
+        $this->dispatcherFactory = $dispatcherFactory;
         $this->configurationHelper = $configurationHelper;
-        $this->sessionHelper = $sessionHelper;
         $this->exceptionHelper = $exceptionHelper;
         $this->licenseHelper = $licenseHelper;
     }
@@ -45,6 +36,9 @@ class BeforeToken extends InstallationEbay
     public function execute()
     {
         $accountMode = $this->getRequest()->getParam('mode');
+        $mode = ($accountMode == 'production')
+            ? \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION
+            : \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX;
 
         if ($accountMode === null) {
             $this->setJsonContent([
@@ -55,21 +49,22 @@ class BeforeToken extends InstallationEbay
         }
 
         try {
-            $backUrl = $this->getUrl('*/*/afterToken', ['mode' => $accountMode]);
+            $backUrl = $this->getUrl('*/*/afterGetSellApiToken', ['mode' => $mode]);
 
-            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
-                'account',
-                'get',
-                'grandAccessUrl',
-                ['back_url' => $backUrl, 'mode' => $accountMode],
-                null,
-                null,
-                null
-            );
+            /** @var \Ess\M2ePro\Model\Ebay\Connector\Account\Get\GrantAccessUrl $connectorObj */
+            $connectorObj = $this->dispatcherFactory
+                ->create()
+                ->getConnector(
+                    'account',
+                    'get',
+                    'grantAccessUrl',
+                    [
+                        'mode' => $accountMode,
+                        'back_url' => $backUrl,
+                    ]
+                );
 
-            $dispatcherObject->process($connectorObj);
+            $connectorObj->process();
             $response = $connectorObj->getResponseData();
         } catch (\Exception $exception) {
             $this->exceptionHelper->process($exception);
@@ -102,7 +97,7 @@ class BeforeToken extends InstallationEbay
             return $this->getResult();
         }
 
-        if (!$response || !isset($response['url'], $response['session_id'])) {
+        if (!$response || !isset($response['url'])) {
             $this->setJsonContent([
                 'url' => null,
             ]);
@@ -110,13 +105,10 @@ class BeforeToken extends InstallationEbay
             return $this->getResult();
         }
 
-        $this->sessionHelper->setValue('token_session_id', $response['session_id']);
-
         $this->setJsonContent([
             'url' => $response['url'],
         ]);
 
         return $this->getResult();
-        // ---------------------------------------
     }
 }

@@ -1,19 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
-
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Ebay\Account\Edit
- */
-class Edit extends Account
+class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $helperData;
@@ -57,25 +46,22 @@ class Edit extends Account
             $this->addLicenseMessage($account);
         }
 
-        $this->helperDataGlobalData->setValue('edit_account', $account);
-
-        $headerTextEdit = $this->__('Edit Account');
-        $headerTextAdd = $this->__('Add Account');
-
-        if (
-            $account &&
-            $account->getId()
-        ) {
-            $headerText = $headerTextEdit;
-            $headerText .= ' "' . $this->helperData->escapeHtml($account->getTitle()) . '"';
-        } else {
-            $headerText = $headerTextAdd;
-        }
+        $headerText = $this->__('Edit Account');
+        $headerText .= ' "' . $this->helperData->escapeHtml($account->getTitle()) . '"';
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->addLeft($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs::class));
+        $this->addLeft(
+            $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs::class,
+                '',
+                [
+                    'account' => $account
+                ]
+            )
+        );
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit::class));
+
         $this->setPageHelpLink('display/eBayMagentoV6X/Accounts');
 
         return $this->getResultPage();

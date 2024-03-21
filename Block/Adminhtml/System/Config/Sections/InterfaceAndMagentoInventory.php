@@ -288,15 +288,12 @@ HELPTEXT
                 'value' => $this->moduleConfigurationHelper
                     ->getMagentoAttributePriceTypeConvertingMode(),
                 'tooltip' => __(
-                    '<p>Choose whether Magento Price Attribute values should be converted automatically.
-                    With this option enabled, M2E Pro will provide currency conversion based on Magento
-                    Currency Settings.</p>
-                    <p><strong>For example</strong>, the Item Price is set to be taken from Magento Price
-                    Attribute (e.g. 5 USD).<br>
-                    If this Item is listed on Marketplace with a different Base Currency (e.g. GBP),
-                    the currency conversion is performed automatically based on the set exchange rate
-                    (e.g. 1 USD = 0.82 GBP).<br>
-                    The Item will be available on Channel at the Price of 4.1 GBP.</p>'
+                    '<p>Set this option to "Yes" to activate currency conversion for price values
+                    from custom Magento Attributes (conversion for standard Magento Price attributes is automatic).</p>
+                    <p>Once enabled, M2E will convert prices according to your Magento Currency Settings.
+                    <strong>For example</strong>, M2E handles the conversion using the established exchange rate
+                    (e.g., 1 USD = 0.82 GBP). If a product\'s price is set to 5 USD in a Magento Attribute,
+                    it will be listed at 4.1 GBP on eBay UK, where GBP is the base currency.</p>'
                 ),
             ]
         );

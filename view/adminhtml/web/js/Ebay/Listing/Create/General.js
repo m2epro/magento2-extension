@@ -35,8 +35,10 @@ define([
         initAccount: function() {
             var self = this;
 
-            $('add_account_button').observe('click', function() {
-                var win = window.open(M2ePro.url.get('ebay_account/newAction'));
+            jQuery('[data-add-account-btn]').on('click', function (e) {
+                let target = e.currentTarget
+
+                var win = window.open(target.getAttribute('data-url'));
 
                 var intervalId = setInterval(function() {
 

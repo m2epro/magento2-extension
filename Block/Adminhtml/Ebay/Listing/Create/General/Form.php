@@ -153,6 +153,52 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $isAddAccountButtonHidden = $this->getRequest()->getParam('wizard', false) || $accountSelectionDisabled;
 
+        $addAnotherAccountButton = $this->getLayout()
+                                        ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton::class)
+                                        ->setData(
+                                            [
+                                                'id' => 'add_account_button',
+                                                'label' => $this->__('Add Another'),
+                                                'onclick' => '',
+                                                'style' => 'pointer-events: none',
+                                                'class' => 'primary',
+                                                'options' => [
+                                                    'production' => [
+                                                        'label' => __('Live Account'),
+                                                        'id' => 'production',
+                                                        'data_attribute' => [
+                                                            'add-account-btn' => true,
+                                                            'url' =>
+                                                                $this->getUrl(
+                                                                    '*/ebay_account/beforeGetSellApiToken',
+                                                                    [
+                                                                        'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
+                                                                        'mode' => \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION,
+                                                                        'close_on_save' => true
+                                                                    ]
+                                                                ),
+                                                        ],
+                                                    ],
+                                                    'sandbox' => [
+                                                        'label' => __('Sandbox Account'),
+                                                        'id' => 'sandbox',
+                                                        'data_attribute' => [
+                                                            'add-account-btn' => true,
+                                                            'url' =>
+                                                                $this->getUrl(
+                                                                    '*/ebay_account/beforeGetSellApiToken',
+                                                                    [
+                                                                        'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
+                                                                        'mode' => \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX,
+                                                                        'close_on_save' => true
+                                                                    ]
+                                                                ),
+                                                        ],
+                                                    ],
+                                                ],
+                                            ]
+                                        );
+
         $fieldset->addField(
             'account_container',
             self::CUSTOM_CONTAINER,
@@ -165,19 +211,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {$accountSelect->toHtml()}
 HTML
                 ,
-
-                'after_element_html' => $this->getLayout()
-                                             ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
-                                             ->setData(
-                                                 [
-                                                     'id' => 'add_account_button',
-                                                     'label' => $this->__('Add Another'),
-                                                     'style' => 'margin-left: 5px;' .
-                                                         ($isAddAccountButtonHidden ? 'display: none;' : ''),
-                                                     'onclick' => '',
-                                                     'class' => 'primary',
-                                                 ]
-                                             )->toHtml(),
+                'after_element_html' => sprintf(
+                    '<div style="margin-left:5px; display: inline-block; position:absolute;%s">%s</div>',
+                    $isAddAccountButtonHidden ? 'display: none;' : '',
+                    $addAnotherAccountButton->toHtml()
+                ),
             ]
         );
 
@@ -271,13 +309,13 @@ HTML
 
         $this->jsUrl->add(
             $this->getUrl(
-                '*/ebay_account/newAction',
+                '*/ebay_account/beforeGetSellApiToken',
                 [
                     'close_on_save' => true,
                     'wizard' => (bool)$this->getRequest()->getParam('wizard', false),
                 ]
             ),
-            'ebay_account/newAction'
+            'ebay_account/beforeGetSellApiToken'
         );
 
         $this->jsUrl->add(

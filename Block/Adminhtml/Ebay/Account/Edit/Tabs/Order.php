@@ -23,14 +23,18 @@ class Order extends AbstractForm
     private $storeWebsite;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Magento */
     private $magentoHelper;
     /** @var \Ess\M2ePro\Helper\Magento\Store */
     private $storeHelper;
+    /** @var \Ess\M2ePro\Model\Account */
+    private $account;
+    /** @var \Ess\M2ePro\Model\Ebay\Account\BuilderFactory */
+    private $ebayAccountBuilderFactory;
 
     /**
+     * @param \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory
+     * @param \Ess\M2ePro\Model\Account $account
      * @param \Ess\M2ePro\Helper\Magento\Store $storeHelper
      * @param \Magento\Tax\Model\ClassModel $taxClass
      * @param \Magento\Customer\Model\Group $customerGroup
@@ -41,11 +45,12 @@ class Order extends AbstractForm
      * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
      * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite
      * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
      * @param \Ess\M2ePro\Helper\Magento $magentoHelper
      * @param array $data
      */
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory,
+        \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Magento\Tax\Model\ClassModel $taxClass,
         \Magento\Customer\Model\Group $customerGroup,
@@ -56,17 +61,17 @@ class Order extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
+        $this->ebayAccountBuilderFactory = $ebayAccountBuilderFactory;
+        $this->account = $account;
         $this->orderConfig = $orderConfig;
         $this->customerGroup = $customerGroup;
         $this->taxClass = $taxClass;
         $this->supportHelper = $supportHelper;
         $this->storeWebsite = $storeWebsite;
         $this->dataHelper = $dataHelper;
-        $this->globalDataHelper = $globalDataHelper;
         $this->magentoHelper = $magentoHelper;
         $this->storeHelper = $storeHelper;
 
@@ -75,7 +80,7 @@ class Order extends AbstractForm
 
     protected function _prepareForm()
     {
-        $account = $this->globalDataHelper->getValue('edit_account');
+        $account = $this->account;
 
         $websites = $this->storeWebsite->getWebsites(true);
 
@@ -96,15 +101,13 @@ class Order extends AbstractForm
         $none = ['value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None')];
         array_unshift($productTaxClasses, $none);
 
-        // ---------------------------------------
-
-        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = array_merge($account->getData(), $account->getChildObject()->getData());
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
             ? \Ess\M2ePro\Helper\Json::decode($formData['magento_orders_settings']) : [];
 
         $isEdit = (bool)$this->getRequest()->getParam('id');
 
-        $defaults = $this->modelFactory->getObject('Ebay_Account_Builder')->getDefaultData();
+        $defaults = $this->ebayAccountBuilderFactory->create()->getDefaultData();
 
         $formData = array_replace_recursive($defaults, $formData);
 
@@ -727,35 +730,7 @@ HTML
                 ]
             );
 
-            $existSellApiTokenSession = $account->getChildObject()->getSellApiTokenSession();
-
-            if (!$existSellApiTokenSession) {
-                $fieldset->addField(
-                    'magento_orders_actualize_final_fee_automatically_message',
-                    self::MESSAGES,
-                    [
-                        'messages' => [
-                            [
-                                'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
-                                'content' => __(
-                                    <<<HTML
-<p>To ensure that your eBay final fee is updated automatically, you need to grant M2E Pro access to your eBay data.
-Simply follow these steps:</p>
-<ul style="padding-left: 20px;">
-<li>Go to your <strong><a href="%1" target="_blank">eBay Account page</a></strong></li>
-<li>Look for the <strong>Sell API Details</strong> section</li>
-<li>Click on the <strong>Get Token</strong> option</li>
-<li>Once you have obtained the eBay token, remember to <strong>Save</strong> the changes</li>
-</ul>
-HTML
-                                    ,
-                                    $this->getUrl('*/ebay_account/edit', ['id' => $account->getId(), 'sell_api' => true])
-                                ),
-                            ],
-                        ],
-                    ]
-                );
-            }
+            $isTokenExist = $account->getChildObject()->isTokenExist();
 
             $fieldset->addField(
                 'magento_orders_actualize_final_fee_automatically',
@@ -768,7 +743,7 @@ HTML
                         1 => __('Yes'),
                     ],
                     'value' => $formData['magento_orders_settings']['final_fee']['auto_retrieve_enabled'],
-                    'disabled' => !$existSellApiTokenSession,
+                    'disabled' => !$isTokenExist,
                 ]
             );
         }

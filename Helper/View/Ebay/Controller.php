@@ -31,6 +31,7 @@ class Controller
             'Ebay_Feedback_Issue_NegativeReceived',
             'Ebay_Account_Issue_ExpiredTokens',
             'Ebay_Account_Issue_ValidTokens',
+            'Ebay_Account_Issue_ExistTokens',
         ];
 
         foreach ($issueLocators as $locator) {
