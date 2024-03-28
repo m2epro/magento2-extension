@@ -4331,6 +4331,11 @@ class Installer
                                             Table::TYPE_DATETIME,
                                             null,
                                             ['default' => null]
+                                        )->addColumn(
+                                            'ktypes_resolve_attempt',
+                                            Table::TYPE_SMALLINT,
+                                            null,
+                                            ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                         )
                                         ->addIndex('ebay_item_id', 'ebay_item_id')
                                         ->addIndex('item_uuid', 'item_uuid')
@@ -8829,9 +8834,10 @@ class Installer
         $this->getConnection()->createTable($amazonListingOtherTable);
 
         #region amazon_listing_product
-        $amazonListingProductTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_listing_product')
+        $amazonListingProductTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_LISTING_PRODUCT
         );
+        $amazonListingProductTable = $this->getConnection()->newTable($amazonListingProductTableName);
         $amazonListingProductTable->addColumn(
             'listing_product_id',
             Table::TYPE_INTEGER,
@@ -8936,6 +8942,12 @@ class Installer
         );
         $amazonListingProductTable->addColumn(
             'online_regular_price',
+            Table::TYPE_DECIMAL,
+            [12, 4],
+            ['unsigned' => true, 'default' => null]
+        );
+        $amazonListingProductTable->addColumn(
+            'online_regular_map_price',
             Table::TYPE_DECIMAL,
             [12, 4],
             ['unsigned' => true, 'default' => null]

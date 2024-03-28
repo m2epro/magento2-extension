@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento;
 
 use Ess\M2ePro\Model\Magento\Product\Image;
@@ -13,9 +7,6 @@ use Ess\M2ePro\Model\Magento\Product\Inventory\Factory;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\ProductVideo\Model\Product\Attribute\Media\ExternalVideoEntryConverter;
 
-/**
- * Class \Ess\M2ePro\Model\Magento\Product
- */
 class Product extends \Ess\M2ePro\Model\AbstractModel
 {
     public const TYPE_SIMPLE_ORIGIN = 'simple';
@@ -1750,33 +1741,22 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     public function getVariationMaxWeight(string $attributeName): string
     {
-        $products = $this->getProductsBasedOnType();
+        $productsIds = $this->getTypeInstance()->getChildrenIds($this->getProduct()->getId());
+        $productsIds = reset($productsIds);
 
-        if (empty($products)) {
+        if (empty($productsIds)) {
             return '0';
         }
 
-        $weights = array_map(function ($product) use ($attributeName) {
-            $product = $this->productRepository->getById($product->getId());
+        $weights = array_map(function ($productId) use ($attributeName) {
+            $product = $this->productRepository->getById($productId);
             $tmpProduct = $this->m2eProductFactory->create();
             $tmpProduct->setProduct($product);
 
             return $tmpProduct->getAttributeValue($attributeName);
-        }, $products);
+        }, $productsIds);
 
         return max($weights);
-    }
-
-    private function getProductsBasedOnType(): array
-    {
-        $products = [];
-        if ($this->isConfigurableType()) {
-            $products = $this->getTypeInstance()->getUsedProducts($this->getProduct());
-        } elseif ($this->isGroupedType()) {
-            $products = $this->getTypeInstance()->getAssociatedProducts($this->getProduct());
-        }
-
-        return $products;
     }
 
     //########################################

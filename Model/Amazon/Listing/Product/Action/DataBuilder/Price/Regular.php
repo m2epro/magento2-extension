@@ -1,25 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Price;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\Price\Regular
- */
 class Regular extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder\AbstractModel
 {
-    //########################################
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function getBuilderData()
     {
         $data = [];
@@ -40,9 +24,11 @@ class Regular extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilde
         $data['price'] = $this->cachedData['regular_price'];
 
         if ((float)$this->cachedData['regular_map_price'] <= 0) {
-            $data['map_price'] = 0;
+            $data[\Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData::MAP_PRICE] = 0;
         } else {
-            $data['map_price'] = $this->cachedData['regular_map_price'];
+            $data[
+                \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData::MAP_PRICE
+            ] = $this->cachedData['regular_map_price'];
         }
 
         if ($this->cachedData['regular_sale_price_info'] === false) {
@@ -55,6 +41,4 @@ class Regular extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilde
 
         return $data;
     }
-
-    //########################################
 }

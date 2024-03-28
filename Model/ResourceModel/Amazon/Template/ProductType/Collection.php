@@ -101,7 +101,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
 
         $this->getSelect()->join(
             ['m' => $this->marketplaceResource->getMainTable()],
-            'm.id=adpt.marketplace_id',
+            'm.id=adpt.marketplace_id AND m.status = 1',
             ['marketplace_title' => 'm.title']
         );
 

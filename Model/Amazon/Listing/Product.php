@@ -980,7 +980,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     }
 
     /**
-     * @return float|int
+     * @return null|float|int
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
@@ -1015,6 +1015,19 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $calculator->setSource($src)->setProduct($this->getParentObject());
 
         return $calculator->getProductValue();
+    }
+
+    public function getOnlineRegularMapPrice(): float
+    {
+        $onlineRegularMapPrice = $this->getDataByKey(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_REGULAR_MAP_PRICE
+        );
+
+        if (empty($onlineRegularMapPrice)) {
+            return 0.0;
+        }
+
+        return (float)$onlineRegularMapPrice;
     }
 
     // ---------------------------------------

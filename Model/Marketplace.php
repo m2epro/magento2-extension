@@ -68,6 +68,13 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         $this->setData('status', self::STATUS_ENABLE);
     }
 
+    public function disable(): Marketplace
+    {
+        $this->setData('status', self::STATUS_DISABLE);
+
+        return $this;
+    }
+
     //########################################
 
     public function getTitle()

@@ -1,19 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
- */
 class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
 {
-    //########################################
+    public const MAP_PRICE = 'map_price';
 
     /**
      * @return bool
@@ -341,6 +332,16 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     public function getRegularSalePriceEndDate()
     {
         return $this->hasRegularSalePrice() ? $this->getData('sale_price_end_date') : null;
+    }
+
+    public function getMapPrice(): float
+    {
+        $mapPrice = $this->getData()[self::MAP_PRICE] ?? null;
+        if (empty($mapPrice)) {
+            return 0.0;
+        }
+
+        return (float)$mapPrice;
     }
 
     // ---------------------------------------

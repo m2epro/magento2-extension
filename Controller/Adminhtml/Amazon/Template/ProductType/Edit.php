@@ -50,8 +50,9 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
 
         $marketplaces = $this->amazonComponentHelper->getMarketplacesAvailableForAsinCreation();
         if ($marketplaces->getSize() <= 0) {
-            $message = 'You should select and update at least one Amazon Marketplace.';
-            $this->messageManager->addErrorMessage($this->__($message));
+            $this->messageManager->addErrorMessage(
+                __('Unable to create Product Type.')
+            );
             return $this->_redirect('*/*/index');
         }
 

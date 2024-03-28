@@ -115,8 +115,25 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
             $this->listingProduct->getMarketplace()->getChildObject()->getCurrency()
         );
 
-        $from = $this->listingProduct->getChildObject()->getOrigData('online_regular_price');
-        $to = $this->listingProduct->getChildObject()->getOnlineRegularPrice();
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->listingProduct->getChildObject();
+
+        $mapPriceFrom = (float)($amazonListingProduct->getOrigData(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_REGULAR_MAP_PRICE
+        ) ?? 0.0);
+        $mapPriceTo = $amazonListingProduct->getOnlineRegularMapPrice();
+        if ($mapPriceFrom !== $mapPriceTo) {
+            $this->logSuccessMessage(
+                sprintf(
+                    'MAP Price was revised from %s to %s',
+                    $currency->toCurrency($mapPriceFrom),
+                    $currency->toCurrency($mapPriceTo)
+                )
+            );
+        }
+
+        $from = $amazonListingProduct->getOrigData('online_regular_price');
+        $to = $amazonListingProduct->getOnlineRegularPrice();
         if ($from != $to) {
             $this->logSuccessMessage(
                 sprintf(

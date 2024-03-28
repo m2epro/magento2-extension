@@ -6,6 +6,7 @@ namespace Ess\M2ePro\Model\Cron\Task\Ebay\Listing\Product\KTypes;
 
 use Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor as ChangeProcessor;
 use Ess\M2ePro\Model\Ebay\Listing\Product as EbayListingProduct;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product;
 
 class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
@@ -13,6 +14,7 @@ class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     private const MAX_LISTING_PRODUCTS_COUNT_PER_ONE_TIME = 300;
     private const MAX_MPNS_COUNT_PER_ONE_TIME = 100;
+    private const MAX_ATTEMPTS = 3;
 
     /** @var int (in seconds) */
     protected $interval = 120;
@@ -163,6 +165,8 @@ class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $resolveKTypeStatusUnprocessed = EbayListingProduct::RESOLVE_KTYPE_STATUS_UNPROCESSED;
         $resolveKTypeStatusWithoutResponse = EbayListingProduct::RESOLVE_KTYPE_STATUS_IN_PROGRESS;
+        $columnKtypesResolveStatus = Product::COLUMN_KTYPES_RESOLVE_STATUS;
+        $columnKtypesResolveLastTryDate = Product::COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE;
 
         $tempDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         $tempDate->modify('-1 day');
@@ -170,9 +174,9 @@ class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
         $listingsProductsCollection->getSelect()->where(
             new \Zend_Db_Expr(
-                "(`elp`.`ktypes_resolve_status` = $resolveKTypeStatusUnprocessed) OR " .
-                "(`elp`.`ktypes_resolve_status` = $resolveKTypeStatusWithoutResponse AND " .
-                "`elp`.`ktypes_resolve_last_try_date` < '$date')"
+                "(`elp`.`$columnKtypesResolveStatus` = $resolveKTypeStatusUnprocessed) OR " .
+                "(`elp`.`$columnKtypesResolveStatus` = $resolveKTypeStatusWithoutResponse AND " .
+                "`elp`.`$columnKtypesResolveLastTryDate` < '$date')"
             )
         );
 
@@ -218,10 +222,16 @@ class UpdateFromTecDoc extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             );
 
             if (empty($kTypes[$productMpn])) {
+                $attempt = $listingProduct->getChildObject()->getResolveKTypeAttempt() + 1;
+
                 $listingProduct->getChildObject()
-                               ->setResolveKTypeStatus(EbayListingProduct::RESOLVE_KTYPE_STATUS_IN_PROGRESS)
                                ->setResolveKTypeLastUpdateDate(\Ess\M2ePro\Helper\Date::createCurrentGmt())
-                               ->save();
+                               ->setResolveKTypeAttempt($attempt)
+                               ->setResolveKTypeStatus(
+                                   $attempt === self::MAX_ATTEMPTS
+                                       ? EbayListingProduct::RESOLVE_KTYPE_NOT_RESOLVED
+                                       : EbayListingProduct::RESOLVE_KTYPE_STATUS_IN_PROGRESS
+                               )->save();
 
                 continue;
             }

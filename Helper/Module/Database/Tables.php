@@ -15,6 +15,8 @@ class Tables
     public const TABLE_EBAY_LISTING_PRODUCT = self::PREFIX . 'ebay_listing_product';
     public const TABLE_EBAY_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'ebay_template_synchronization';
 
+    public const TABLE_AMAZON_LISTING_PRODUCT = self::PREFIX . 'amazon_listing_product';
+
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */

@@ -382,6 +382,10 @@ class Active extends AbstractModel
             return false;
         }
 
+        if ((float)$amazonListingProduct->getRegularMapPrice() !== $amazonListingProduct->getOnlineRegularMapPrice()) {
+            return true;
+        }
+
         $currentPrice = $amazonListingProduct->getRegularPrice();
         $onlinePrice = $amazonListingProduct->getOnlineRegularPrice();
 

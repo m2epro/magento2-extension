@@ -15,6 +15,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public const RESOLVE_KTYPE_STATUS_UNPROCESSED = 0;
     public const RESOLVE_KTYPE_STATUS_IN_PROGRESS = 1;
     public const RESOLVE_KTYPE_STATUS_FINISHED = 2;
+    public const RESOLVE_KTYPE_NOT_RESOLVED = 3;
 
     /** @var \Ess\M2ePro\Model\Ebay\Item */
     protected $ebayItemModel = null;
@@ -887,14 +888,32 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function setResolveKTypeStatus(int $value): self
     {
-        $this->setData('ktypes_resolve_status', $value);
+        $this->setData(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_STATUS, $value);
 
         return $this;
     }
 
     public function setResolveKTypeLastUpdateDate(\DateTime $value): self
     {
-        $this->setData('ktypes_resolve_last_try_date', $value->format('Y-m-d H:i:s'));
+        $this->setData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE,
+            $value->format('Y-m-d H:i:s')
+        );
+
+        return $this;
+    }
+
+    public function getResolveKTypeAttempt(): int
+    {
+        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_ATTEMPT);
+    }
+
+    public function setResolveKTypeAttempt(int $value): self
+    {
+        $this->setData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_ATTEMPT,
+            $value
+        );
 
         return $this;
     }

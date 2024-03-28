@@ -350,10 +350,15 @@ class Config extends AbstractConfig
             'y24_m02' => [
                 'RemoveInstallationKeyFromConfigTable',
                 'ChangeTypeCustomValueFieldOnCategorySpecificTable',
+                'DisableAmazonMarketplaceWithoutAccounts',
                 'CombineInactiveEbayProductStatuses',
                 'RemoveEbayTradingToken',
                 'AddReviseProductIdentifiersToEbaySyncTemplate',
                 'CleanSettingsInConfigTable',
+            ],
+            'y24_m03' => [
+                'AddOnlineRegularMapPriceToAmazonListingProduct',
+                'AddKtypesResolveAttemptColumn',
             ],
         ];
     }
@@ -419,6 +424,9 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m01\AddListingProductAdvancedFilterTable::class,
             \Ess\M2ePro\Setup\Update\y24_m01\ImproveAutoUpdateEbayFinalFees::class,
             \Ess\M2ePro\Setup\Update\y24_m02\AddReviseProductIdentifiersToEbaySyncTemplate::class,
+            \Ess\M2ePro\Setup\Update\y24_m02\DisableAmazonMarketplaceWithoutAccounts::class,
+            \Ess\M2ePro\Setup\Update\y24_m03\AddOnlineRegularMapPriceToAmazonListingProduct::class,
+            \Ess\M2ePro\Setup\Update\y24_m03\AddKtypesResolveAttemptColumn::class,
         ];
     }
 

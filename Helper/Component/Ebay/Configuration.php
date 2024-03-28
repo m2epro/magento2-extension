@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Component\Ebay;
+
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product;
 
 class Configuration
 {
@@ -22,13 +18,15 @@ class Configuration
 
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
+    /** @var \Magento\Framework\App\ResourceConnection */
+    private $resourceConnection;
 
-    /**
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     */
-    public function __construct(\Ess\M2ePro\Model\Config\Manager $config)
-    {
+    public function __construct(
+        \Ess\M2ePro\Model\Config\Manager $config,
+        \Magento\Framework\App\ResourceConnection $resourceConnection
+    ) {
         $this->config = $config;
+        $this->resourceConnection = $resourceConnection;
     }
 
     // ----------------------------------------
@@ -541,6 +539,10 @@ class Configuration
         }
 
         if (isset($values['tecdoc_ktypes_product_mpn_attribute'])) {
+            if ($this->getTecDocKTypesProductMpnAttribute() !== $values['tecdoc_ktypes_product_mpn_attribute']) {
+                $this->resetNotResolvedKtypesStatuses();
+            }
+
             $this->config->setGroupValue(
                 self::CONFIG_GROUP,
                 'tecdoc_ktypes_product_mpn_attribute',
@@ -555,6 +557,25 @@ class Configuration
                 $values['tecdoc_ktypes_it_vat_id']
             );
         }
+    }
+
+    private function resetNotResolvedKtypesStatuses(): void
+    {
+        $columnKtypesResolveStatus = Product::COLUMN_KTYPES_RESOLVE_STATUS;
+        $columnKtypesResolveLastTryDate = Product::COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE;
+        $columnKtypesResolveAttempt = Product::COLUMN_KTYPES_RESOLVE_ATTEMPT;
+
+        $this->resourceConnection->getConnection()->update(
+            $this->resourceConnection->getTableName(
+                \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING_PRODUCT
+            ),
+            [
+                $columnKtypesResolveStatus => \Ess\M2ePro\Model\Ebay\Listing\Product::RESOLVE_KTYPE_STATUS_UNPROCESSED,
+                $columnKtypesResolveLastTryDate => null,
+                $columnKtypesResolveAttempt => 0,
+            ],
+            ["$columnKtypesResolveStatus = ?" => \Ess\M2ePro\Model\Ebay\Listing\Product::RESOLVE_KTYPE_NOT_RESOLVED]
+        );
     }
 
     public function setProductIdsConfigValues(array $values): void

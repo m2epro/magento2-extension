@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
@@ -260,6 +254,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 $data['online_regular_sale_price'] = 0;
             }
         }
+
+        $data[
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_REGULAR_MAP_PRICE
+        ] = $this->requestData->getMapPrice();
 
         return $data;
     }

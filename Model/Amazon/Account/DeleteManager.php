@@ -1,22 +1,20 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Account;
 
 class DeleteManager
 {
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $cachePermanent;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
+    private $accountCollectionFactory;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
+        \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory
     ) {
         $this->cachePermanent = $cachePermanent;
+        $this->accountCollectionFactory = $accountCollectionFactory;
     }
 
     /**
@@ -88,7 +86,14 @@ class DeleteManager
         $account->deleteProcessings();
         $account->deleteProcessingLocks();
 
+        $marketplace = $amazonAccount->getMarketplace();
+
         $this->assertSuccess($account->delete(), 'Account');
+
+        if ($this->isLastAccountForCurrentMarketplace($marketplace->getId())) {
+            $marketplace->disable()
+                        ->save();
+        }
     }
 
     /**
@@ -103,5 +108,13 @@ class DeleteManager
         if ($value === false) {
             throw new \Ess\M2ePro\Model\Exception('Unable to delete ' . $label);
         }
+    }
+
+    private function isLastAccountForCurrentMarketplace(int $marketplaceId): bool
+    {
+        $accountsCollection = $this->accountCollectionFactory->createWithAmazonChildMode();
+        $accountsCollection->addFieldToFilter('marketplace_id', $marketplaceId);
+
+        return $accountsCollection->getSize() === 0;
     }
 }
