@@ -27,7 +27,7 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
     {
         // list action include 2 steps (list details and relist with qty)
         $data = [
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
             'sku' => $this->getRequestData()->getSku(),
             'wpid' => $params['wpid'],
             'item_id' => $params['item_id'],

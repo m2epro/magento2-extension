@@ -22,10 +22,13 @@ class MagentoSourceUpdater
     private $listingLogFactory;
     /** @var \Ess\M2ePro\Helper\Module\Log */
     private $logHelper;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository  */
+    private $merchantSettingsRepository;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         MerchantManager $merchantManager,
+        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository $merchantSettingsRepository,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\Amazon\Listing\LogFactory $listingLogFactory,
@@ -48,6 +51,7 @@ class MagentoSourceUpdater
                 \Magento\InventoryApi\Api\SourceItemsSaveInterface::class
             );
         }
+        $this->merchantSettingsRepository = $merchantSettingsRepository;
     }
 
     /**
@@ -75,22 +79,25 @@ class MagentoSourceUpdater
         }
 
         $account = $this->findAccountWithEnabledFbaInventoryMode($merchantId);
-
         if ($account === null) {
             return;
         }
 
         $changedItems = $this->getChangedItems($listingProductItems, $changedData);
-
         if (empty($changedItems)) {
             return;
         }
+
+        $searchCriteria = $this->buildSearchCriteria(
+            $account->getMerchantSetting()->getManageFbaInventorySourceName(),
+            $changedItems
+        );
 
         $sourceItems = [];
 
         /** @var \Magento\Inventory\Model\SourceItem $sourceItem */
         foreach (
-            $this->sourceItemRepository->getList($this->buildSearchCriteria($account, $changedItems))
+            $this->sourceItemRepository->getList($searchCriteria)
                                        ->getItems() as $sourceItem
         ) {
             $magentoSku = $sourceItem->getSku();
@@ -125,14 +132,14 @@ class MagentoSourceUpdater
     private function findAccountWithEnabledFbaInventoryMode(
         string $merchantId
     ): ?\Ess\M2ePro\Model\Amazon\Account {
-        $accounts = $this->merchantManager->getMerchantAccounts($merchantId);
-        foreach ($accounts as $account) {
-            if ($account->getChildObject()->isEnabledFbaInventoryMode()) {
-                return $account->getChildObject();
-            }
+        $settings = $this->merchantSettingsRepository->get($merchantId);
+        if (!$settings->isManageFbaInventory()) {
+            return null;
         }
 
-        return null;
+        $accounts = $this->merchantManager->getMerchantAccounts($merchantId);
+
+        return reset($accounts)->getChildObject();
     }
 
     /**
@@ -172,14 +179,10 @@ class MagentoSourceUpdater
         return $changedProductsInfo;
     }
 
-    private function buildSearchCriteria(
-        \Ess\M2ePro\Model\Amazon\Account $account,
-        array $changedItems
-    ): \Magento\Framework\Api\SearchCriteria {
-        $source = $account->getFbaInventorySource();
-
+    private function buildSearchCriteria(string $sourceCode, array $changedItems): \Magento\Framework\Api\SearchCriteria
+    {
         return $this->searchCriteriaBuilder
-            ->addFilter(\Magento\InventoryApi\Api\Data\SourceItemInterface::SOURCE_CODE, $source)
+            ->addFilter(\Magento\InventoryApi\Api\Data\SourceItemInterface::SOURCE_CODE, $sourceCode)
             ->addFilter(\Magento\InventoryApi\Api\Data\SourceItemInterface::SKU, array_keys($changedItems), 'in')
             ->create();
     }

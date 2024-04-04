@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Order\Builder
- */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     public const INSTRUCTION_INITIATOR = 'order_builder';
@@ -125,6 +116,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->items = $data['items'];
 
         $this->setData('is_wfs', (int)$this->isWfs);
+
+        if ($this->isWfs) {
+            $this->setData(\Ess\M2ePro\Model\ResourceModel\Walmart\Order::COLUMN_IS_TRIED_TO_ACKNOWLEDGE, 1);
+        }
     }
 
     //########################################
@@ -426,7 +421,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             }
 
             foreach ($listingsProducts as $listingProduct) {
-                if (!$listingProduct->isListed() && !$listingProduct->isStopped()) {
+                if (!$listingProduct->isListed() && !$listingProduct->isInactive()) {
                     continue;
                 }
 
@@ -436,7 +431,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 $currentOnlineQty = $walmartListingProduct->getOnlineQty();
 
                 // if product was linked by sku during list action
-                if ($listingProduct->isStopped() && $currentOnlineQty === null) {
+                if ($listingProduct->isInactive() && $currentOnlineQty === null) {
                     continue;
                 }
 
@@ -495,12 +490,12 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                     ),
                 ];
 
-                if (!$listingProduct->isStopped()) {
+                if (!$listingProduct->isInactive()) {
                     $statusChangedFrom = $this->getHelper('Component\Walmart')
                                               ->getHumanTitleByListingProductStatus($listingProduct->getStatus());
                     $statusChangedTo = $this->getHelper('Component\Walmart')
                                             ->getHumanTitleByListingProductStatus(
-                                                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+                                                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE
                                             );
 
                     if (!empty($statusChangedFrom) && !empty($statusChangedTo)) {
@@ -515,7 +510,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                         'status_changer',
                         \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
                     );
-                    $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
+                    $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE);
                 }
 
                 foreach ($tempLogMessages as $tempLogMessage) {
@@ -559,7 +554,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             }
 
             foreach ($otherListings as $otherListing) {
-                if (!$otherListing->isListed() && !$otherListing->isStopped()) {
+                if (!$otherListing->isListed() && !$otherListing->isInactive()) {
                     continue;
                 }
 
@@ -576,12 +571,12 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 $walmartOtherListing->setData('online_qty', 0);
-                if (!$otherListing->isStopped()) {
+                if (!$otherListing->isInactive()) {
                     $otherListing->setData(
                         'status_changer',
                         \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
                     );
-                    $otherListing->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
+                    $otherListing->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE);
                 }
 
                 $walmartOtherListing->save();

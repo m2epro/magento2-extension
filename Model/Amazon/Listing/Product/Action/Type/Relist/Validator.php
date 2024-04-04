@@ -49,7 +49,7 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             return false;
         }
 
-        if (!$this->getListingProduct()->isStopped() || !$this->getListingProduct()->isRelistable()) {
+        if (!$this->getListingProduct()->isInactive() || !$this->getListingProduct()->isRelistable()) {
             $this->addMessage(
                 'The Item either is Listed, or not Listed yet or not available'
             );

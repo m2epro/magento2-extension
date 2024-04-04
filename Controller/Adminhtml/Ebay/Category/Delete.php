@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
@@ -15,10 +9,23 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $ruleViewStateManager,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory $ebayProductRuleFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
-        parent::__construct($ebayFactory, $context);
+        parent::__construct(
+            $ruleViewStateManager,
+            $viewStateFactory,
+            $ebayProductRuleFactory,
+            $globalDataHelper,
+            $sessionHelper,
+            $ebayFactory,
+            $context
+        );
 
         $this->componentEbayCategory = $componentEbayCategory;
     }

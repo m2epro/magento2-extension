@@ -20,6 +20,8 @@ class SpecificValidator
     private $tagBuffer;
     /** @var \Ess\M2ePro\Model\TagFactory */
     private $baseTagFactory;
+    /** @var \Ess\M2ePro\Model\Magento\ProductFactory */
+    private $m2eProductFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\TagFactory $ebayTagFactory,
@@ -27,7 +29,8 @@ class SpecificValidator
         \Ess\M2ePro\Model\TagFactory $baseTagFactory,
         \Ess\M2ePro\Model\Ebay\Category\Specific\Validation\ResultFactory $resultFactory,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Category\Specific\Validation\Result $validationResultResource,
-        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $ebayCategoryHelper
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $ebayCategoryHelper,
+        \Ess\M2ePro\Model\Magento\ProductFactory $m2eProductFactory
     ) {
         $this->ebayCategoryHelper = $ebayCategoryHelper;
         $this->validationResultResource = $validationResultResource;
@@ -35,6 +38,7 @@ class SpecificValidator
         $this->ebayTagFactory = $ebayTagFactory;
         $this->tagBuffer = $tagBuffer;
         $this->baseTagFactory = $baseTagFactory;
+        $this->m2eProductFactory = $m2eProductFactory;
     }
 
     public function validate(\Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct)
@@ -63,19 +67,49 @@ class SpecificValidator
             $attributeValue = trim($attributeValue);
 
             if (empty($attributeValue)) {
-                $validatorResult->setInvalidStatus();
-                $validatorResult->addErrorMessage(
-                    __(
-                        'Specific "%specific_name" empty',
-                        ['specific_name' => $specificName]
-                    )
-                );
-                $this->addErrorTags($listingProduct);
+                $attributeValue = $this->checkForAttributeInChildren($magentoProduct, $attributeCode);
+
+                if (empty($attributeValue)) {
+                    $validatorResult->setInvalidStatus();
+                    $validatorResult->addErrorMessage(
+                        __(
+                            'Specific "%specific_name" empty',
+                            ['specific_name' => $specificName]
+                        )
+                    );
+                    $this->addErrorTags($listingProduct);
+                }
             }
         }
 
         $this->flushErrorTags();
         $this->validationResultResource->save($validatorResult);
+    }
+
+    public function checkForAttributeInChildren(
+        \Ess\M2ePro\Model\Magento\Product $product,
+        string $attributeCode
+    ): string {
+        $childProducts = [];
+
+        if ($product->isConfigurableType()) {
+            $childProducts = $product->getTypeInstance()->getUsedProducts($product->getProduct());
+        } elseif ($product->isGroupedType()) {
+            $childProducts = $product->getTypeInstance()->getAssociatedProducts($product->getProduct());
+        }
+
+        $attributeValues = [];
+
+        foreach ($childProducts as $childProduct) {
+            $tmpProduct = $this->m2eProductFactory->create();
+            $tmpProduct->loadProduct($childProduct->getId(), $childProduct->getStoreId());
+            $attributeValue = $tmpProduct->getAttributeValue($attributeCode);
+            if ($attributeValue && !in_array($attributeValue, $attributeValues)) {
+                $attributeValues = array_merge($attributeValues, explode(',', $attributeValue));
+            }
+        }
+
+        return implode(', ', $attributeValues);
     }
 
     /**

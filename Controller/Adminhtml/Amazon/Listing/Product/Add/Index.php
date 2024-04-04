@@ -441,8 +441,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         $ruleModel = $this->viewStateManager->getRuleWithViewState(
             $this->viewStateFactory->create($viewKey),
             \Ess\M2ePro\Model\Magento\Product\Rule::NICK,
-            $this->getStoreId(),
-            $getRuleBySessionData
+            $getRuleBySessionData,
+            $this->getStoreId()
         );
 
         $this->globalDataHelper->setValue('rule_model', $ruleModel);

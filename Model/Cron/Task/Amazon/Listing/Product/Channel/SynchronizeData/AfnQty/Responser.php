@@ -264,7 +264,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
         $oldStatus = (int)$item->getData('status');
         $newStatus = $afnQty
             ? \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED :
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+            \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
 
         $listingProduct = $item->getChildObject();
         $oldAfnQty = (int)$listingProduct->getOnlineAfnQty();
@@ -304,7 +304,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\AfnQty\
 
     private function isStatusChangedFromInactiveToActive(int $oldStatus, int $newStatus): bool
     {
-        return $oldStatus === \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
+        return $oldStatus === \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE
             && $newStatus === \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
     }
 

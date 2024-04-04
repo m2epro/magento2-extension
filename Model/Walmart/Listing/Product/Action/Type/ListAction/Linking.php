@@ -173,7 +173,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
     private function linkSimpleOrIndividualProduct(): void
     {
         $this->getListingProduct()->addData([
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
         ]);
 
         $productIdentifiers = $this->getProductIdentifiers();

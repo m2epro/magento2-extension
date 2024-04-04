@@ -259,7 +259,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => __('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => __('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
@@ -442,7 +442,7 @@ HTML;
 
         $sNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
         $sListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-        $sStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+        $sInactive = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
         $sBlocked = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
         $variationsStatuses = $row->getData('variation_child_statuses');
@@ -458,7 +458,7 @@ HTML;
 
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
         isset($variationsStatuses[$sListed]) && $sortedStatuses[$sListed] = $variationsStatuses[$sListed];
-        isset($variationsStatuses[$sStopped]) && $sortedStatuses[$sStopped] = $variationsStatuses[$sStopped];
+        isset($variationsStatuses[$sInactive]) && $sortedStatuses[$sInactive] = $variationsStatuses[$sInactive];
         isset($variationsStatuses[$sBlocked]) && $sortedStatuses[$sBlocked] = $variationsStatuses[$sBlocked];
 
         foreach ($sortedStatuses as $status => $productsCount) {
@@ -1065,7 +1065,7 @@ SQL;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
                 return '<span style="color: green;">' . __('Active') . '</span>';
 
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
                 return '<span style="color: red;">' . __('Inactive') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:

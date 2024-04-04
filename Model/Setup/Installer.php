@@ -7837,23 +7837,55 @@ class Installer
                                        null,
                                        ['default' => null]
                                    )
-                                   ->addColumn(
-                                       'fba_inventory_mode',
-                                       Table::TYPE_SMALLINT,
-                                       null,
-                                       ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                   )
-                                   ->addColumn(
-                                       'fba_inventory_source',
-                                       Table::TYPE_TEXT,
-                                       255,
-                                       ['default' => null]
-                                   )
                                    ->setOption('type', 'INNODB')
                                    ->setOption('charset', 'utf8')
                                    ->setOption('collate', 'utf8_general_ci')
                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonAccountTable);
+
+        #region amazon_account_merchant_setting
+        $amazonAccountMerchantSettingTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING
+        );
+        $amazonAccountMerchantSettingTable = $this->getConnection()->newTable($amazonAccountMerchantSettingTableName);
+        $amazonAccountMerchantSettingTable->addColumn(
+            'merchant_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['primary' => true, 'nullable' => false,]
+        );
+        $amazonAccountMerchantSettingTable->addColumn(
+            'fba_inventory_mode',
+            \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $amazonAccountMerchantSettingTable->addColumn(
+            'fba_inventory_source_name',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $amazonAccountMerchantSettingTable->addColumn(
+            'update_date',
+            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $amazonAccountMerchantSettingTable->addColumn(
+            'create_date',
+            \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+
+        $amazonAccountMerchantSettingTable->setOption('type', 'INNODB');
+        $amazonAccountMerchantSettingTable->setOption('charset', 'utf8');
+        $amazonAccountMerchantSettingTable->setOption('collate', 'utf8_general_ci');
+        $amazonAccountMerchantSettingTable->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($amazonAccountMerchantSettingTable);
+        #endregion
 
         $amazonAccountRepricingTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_account_repricing')

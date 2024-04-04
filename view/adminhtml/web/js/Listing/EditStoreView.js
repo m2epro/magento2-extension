@@ -8,27 +8,26 @@ define([
 
         // ---------------------------------------
 
-        initialize: function(listingId) {
+        initialize: function (listingId) {
             this.listingId = listingId;
         },
 
-        openPopup: function()
-        {
-            var self = this;
+        openPopup: function (id = null) {
+            const listingId = id === null ? this.listingId : id;
 
             new Ajax.Request(M2ePro.url.get('listing/selectStoreView'), {
                 method: 'GET',
                 parameters: {
-                    id: self.listingId,
+                    id: listingId,
                 },
-                onSuccess: (function(transport) {
+                onSuccess: (function (transport) {
                     if ($('edit_store_view_form')) {
                         $('edit_store_view_form').remove();
                     }
 
                     $('html-body').insert({bottom: transport.responseText});
-                    var form = jQuery('#edit_store_view_form');
-                    var initialStoreValue = form.find('#store_id').val();
+                    const form = jQuery('#edit_store_view_form');
+                    const initialStoreValue = form.find('#store_id').val();
 
                     modal({
                         title: M2ePro.translator.translate('Edit Listing Store View'),
@@ -40,11 +39,11 @@ define([
                             click: function () {
                                 form.modal('closeModal');
                             }
-                        },{
+                        }, {
                             text: M2ePro.translator.translate('Save'),
                             class: 'action-primary action-accept',
                             click: function () {
-                                var currentStoreValue = form.find('#store_id').val();
+                                const currentStoreValue = form.find('#store_id').val();
 
                                 if (currentStoreValue === initialStoreValue) {
                                     form.modal('closeModal');
@@ -61,8 +60,7 @@ define([
             });
         },
 
-        saveListingStoreView: function()
-        {
+        saveListingStoreView: function () {
             if (!jQuery('#edit_store_view_form').valid()) {
                 return false;
             }
@@ -74,7 +72,7 @@ define([
                         new Ajax.Request(M2ePro.url.get('listing/saveStoreView'), {
                             method: 'post',
                             parameters: $('edit_store_view_form').serialize(),
-                            onSuccess: (function(transport) {
+                            onSuccess: (function (transport) {
                                 jQuery('#edit_store_view_form').modal('closeModal');
                                 location.reload();
                             })

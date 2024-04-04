@@ -601,6 +601,10 @@ JS
             $tempAttributeValues = $specific->getSource($this->ebayListingProduct->getMagentoProduct())
                                             ->getValues();
 
+            if (is_array($tempAttributeValues) && !empty($tempAttributeValues['found_in_children'])) {
+                $tempAttributeValues = [$tempAttributeValues['value']];
+            }
+
             $values = [];
             foreach ($tempAttributeValues as $tempAttributeValue) {
                 if ($tempAttributeValue == '--') {

@@ -1,52 +1,34 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction;
 
 use Ess\M2ePro\Model\Listing as Listing;
 use Ess\M2ePro\Model\Ebay\Listing as eBayListing;
 use Ess\M2ePro\Helper\Component\Ebay\Category as eBayCategory;
-use Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
 {
     /** @var \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\ConverterFactory */
     private $converterFactory;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\CategoryFactory */
     private $categoryFactory;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\Category\BuilderFactory */
     private $categoryBuilderFactory;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategoryFactory */
     private $storeCategoryFactory;
-
     /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory\BuilderFactory */
     private $storeCategoryBuilderFactory;
-
-    /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
-    private $tmpltCategory;
-
-    /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
-    private $secTmpltCategory;
-
-    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory */
-    private $storeTmpltCategory;
-
-    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory */
-    private $secStoreTmpltCategory;
-
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Auto\Category\GroupFactory */
     private $autoCategoryGroupFactory;
-
     /** @var \Ess\M2ePro\Model\Listing\Auto\CategoryFactory */
     private $autoCategoryFactory;
+
+    private static $idsCategoryTemplates = [
+        'idMainTemplateCategory' => null,
+        'idSecondaryTemplateCategory' => null,
+        'idMainStoreTemplateCategory' => null,
+        'idSecondaryStoreTemplateCategory' => null,
+    ];
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\ConverterFactory $converterFactory,
@@ -60,6 +42,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($ebayFactory, $context);
+
         $this->converterFactory = $converterFactory;
         $this->categoryFactory = $categoryFactory;
         $this->storeCategoryFactory = $storeCategoryFactory;
@@ -87,8 +70,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
             $this->getRequest()->getParam('listing_id')
         );
 
-        $converter = $this->getConverter($requestData['template_category_data'], $listing);
-        $this->buildTemplatesOfCategories($converter);
+        if (!empty($requestData['template_category_data'])) {
+            $converter = $this->getConverter($requestData['template_category_data'], $listing);
+            $this->fillCategoryTemplateIds($converter);
+        }
+
         $this->saveListing($requestData, $listing);
 
         $this->setJsonContent(['success' => true]);
@@ -96,8 +82,10 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         return $this->getResult();
     }
 
-    private function getConverter($templateCategoryData, \Ess\M2ePro\Model\Listing $listing)
-    {
+    private function getConverter(
+        $templateCategoryData,
+        \Ess\M2ePro\Model\Listing $listing
+    ): \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter {
         $converter = $this->converterFactory->create();
         $converter->setAccountId($listing->getAccountId());
         $converter->setMarketplaceId($listing->getMarketplaceId());
@@ -109,23 +97,29 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         return $converter;
     }
 
-    private function buildTemplatesOfCategories(Converter $converter)
-    {
-        $this->tmpltCategory = $this->buildTemplateCategory(
+    private function fillCategoryTemplateIds(
+        \Ess\M2ePro\Model\Ebay\Template\Category\Chooser\Converter $converter
+    ): void {
+        $tmpltCategory = $this->buildTemplateCategory(
             $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_MAIN)
         );
 
-        $this->secTmpltCategory = $this->buildTemplateCategory(
+        $secTmpltCategory = $this->buildTemplateCategory(
             $converter->getCategoryDataForTemplate(eBayCategory::TYPE_EBAY_SECONDARY)
         );
 
-        $this->storeTmpltCategory = $this->buildStoreTemplateCategory(
+        $storeTmpltCategory = $this->buildStoreTemplateCategory(
             $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_MAIN)
         );
 
-        $this->secStoreTmpltCategory = $this->buildStoreTemplateCategory(
+        $secStoreTmpltCategory = $this->buildStoreTemplateCategory(
             $converter->getCategoryDataForTemplate(eBayCategory::TYPE_STORE_SECONDARY)
         );
+
+        self::$idsCategoryTemplates['idMainTemplateCategory'] = $tmpltCategory->getId();
+        self::$idsCategoryTemplates['idSecondaryTemplateCategory'] = $secTmpltCategory->getId();
+        self::$idsCategoryTemplates['idMainStoreTemplateCategory'] = $storeTmpltCategory->getId();
+        self::$idsCategoryTemplates['idSecondaryStoreTemplateCategory'] = $secStoreTmpltCategory->getId();
     }
 
     private function buildTemplateCategory(array $rawData)
@@ -168,11 +162,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
             $listingData['auto_global_adding_mode'] = $requestData['auto_global_adding_mode'];
 
             if ($requestData['auto_global_adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
-                $listingData['auto_global_adding_template_category_id'] = $this->tmpltCategory->getId();
-                $listingData['auto_global_adding_template_category_secondary_id'] = $this->secTmpltCategory->getId();
-                $listingData['auto_global_adding_template_store_category_id'] = $this->storeTmpltCategory->getId();
+                $listingData['auto_global_adding_template_category_id']
+                    = self::$idsCategoryTemplates['idMainTemplateCategory'];
+                $listingData['auto_global_adding_template_category_secondary_id']
+                    = self::$idsCategoryTemplates['idSecondaryTemplateCategory'];
+                $listingData['auto_global_adding_template_store_category_id']
+                    = self::$idsCategoryTemplates['idMainStoreTemplateCategory'];
                 $listingData['auto_global_adding_template_store_category_secondary_id']
-                    = $this->secStoreTmpltCategory->getId();
+                    = self::$idsCategoryTemplates['idSecondaryStoreTemplateCategory'];
             }
 
             if ($requestData['auto_global_adding_mode'] != Listing::ADDING_MODE_NONE) {
@@ -186,11 +183,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
             $listingData['auto_website_deleting_mode'] = $requestData['auto_website_deleting_mode'];
 
             if ($requestData['auto_website_adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
-                $listingData['auto_website_adding_template_category_id'] = $this->tmpltCategory->getId();
-                $listingData['auto_website_adding_template_category_secondary_id'] = $this->secTmpltCategory->getId();
-                $listingData['auto_website_adding_template_store_category_id'] = $this->storeTmpltCategory->getId();
+                $listingData['auto_website_adding_template_category_id']
+                    = self::$idsCategoryTemplates['idMainTemplateCategory'];
+                $listingData['auto_website_adding_template_category_secondary_id']
+                    = self::$idsCategoryTemplates['idSecondaryTemplateCategory'];
+                $listingData['auto_website_adding_template_store_category_id']
+                    = self::$idsCategoryTemplates['idMainStoreTemplateCategory'];
                 $listingData['auto_website_adding_template_store_category_secondary_id']
-                    = $this->secStoreTmpltCategory->getId();
+                    = self::$idsCategoryTemplates['idSecondaryStoreTemplateCategory'];
             }
 
             if ($requestData['auto_website_adding_mode'] != Listing::ADDING_MODE_NONE) {
@@ -230,10 +230,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         ];
 
         if ($requestData['adding_mode'] == eBayListing::ADDING_MODE_ADD_AND_ASSIGN_CATEGORY) {
-            $ebayGroupData['adding_template_category_id'] = $this->tmpltCategory->getId();
-            $ebayGroupData['adding_template_category_secondary_id'] = $this->secTmpltCategory->getId();
-            $ebayGroupData['adding_template_store_category_id'] = $this->storeTmpltCategory->getId();
-            $ebayGroupData['adding_template_store_category_secondary_id'] = $this->secStoreTmpltCategory->getId();
+            $ebayGroupData['adding_template_category_id']
+                = self::$idsCategoryTemplates['idMainTemplateCategory'];
+            $ebayGroupData['adding_template_category_secondary_id']
+                = self::$idsCategoryTemplates['idSecondaryTemplateCategory'];
+            $ebayGroupData['adding_template_store_category_id']
+                = self::$idsCategoryTemplates['idMainStoreTemplateCategory'];
+            $ebayGroupData['adding_template_store_category_secondary_id']
+                = self::$idsCategoryTemplates['idSecondaryStoreTemplateCategory'];
         }
 
         /** @var $group \Ess\M2ePro\Model\Listing\Auto\Category\Group */

@@ -28,7 +28,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $isStatusChangerUser = $this->getListingProduct()->getStatusChanger()
             === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
-        $isStoppedManually = $this->getListingProduct()->isStopped() && $isStatusChangerUser;
+        $isStoppedManually = $this->getListingProduct()->isInactive() && $isStatusChangerUser;
         $this->getAmazonListingProduct()->setIsStoppedManually($isStoppedManually);
 
         $this->setLastSynchronizationDates();

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart;
 
 use Magento\Sales\Model\Order\Creditmemo;
@@ -386,8 +380,12 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         return true;
     }
 
-    public function canAcknowledgeOrder()
+    public function canAcknowledgeOrder(): bool
     {
+        if ($this->isWalmartFulfillment()) {
+            return false;
+        }
+
         foreach ($this->getParentObject()->getItemsCollection()->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Walmart\Order\Item $item */
             if (!$item->canCreateMagentoOrder()) {

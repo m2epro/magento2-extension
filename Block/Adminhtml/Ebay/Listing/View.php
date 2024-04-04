@@ -215,17 +215,20 @@ class View extends AbstractContainer
 
         $this->jsTranslator->addTranslations(
             [
-                'Remove Category' => $this->__('Remove Category'),
-                'Add New Rule' => $this->__('Add New Rule'),
-                'Add/Edit Categories Rule' => $this->__('Add/Edit Categories Rule'),
-                'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-                'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-                'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
-                'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
-                'Compatibility Attribute' => $this->__('Compatibility Attribute'),
-                'Sell on Another Marketplace' => $this->__('Sell on Another Marketplace'),
-                'Create new' => $this->__('Create new'),
-                'Linking Product' => $this->__('Linking Product'),
+                'Remove Category' => __('Remove Category'),
+                'Add New Rule' => __('Add New Rule'),
+                'Add/Edit Categories Rule' => __('Add/Edit Categories Rule'),
+                'Auto Add/Remove Rules' => __('Auto Add/Remove Rules'),
+                'Based on Magento Categories' => __('Based on Magento Categories'),
+                'You must select at least 1 Category.' => __('You must select at least 1 Category.'),
+                'Rule with the same Title already exists.' => __('Rule with the same Title already exists.'),
+                'Compatibility Attribute' => __('Compatibility Attribute'),
+                'Sell on Another Marketplace' => __('Sell on Another Marketplace'),
+                'Create new' => __('Create new'),
+                'Linking Product' => __('Linking Product'),
+                'Rule not created' => __('Rule not created'),
+                'Please select at least one action from the available options' =>
+                    __('Please select at least one action from the available options'),
             ]
         );
 

@@ -133,7 +133,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
             foreach ($childListingsProducts as $childListingProduct) {
                 if (
                     $childListingProduct->isNotListed() ||
-                    $childListingProduct->isStopped() ||
+                    $childListingProduct->isInactive() ||
                     $childListingProduct->isBlocked()
                 ) {
                     $childListingProduct->delete();

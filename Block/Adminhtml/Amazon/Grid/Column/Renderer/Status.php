@@ -119,7 +119,7 @@ HTML;
             $statusUnknown = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
             $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
             $statusListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-            $statusStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+            $statusInactive = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
             $statusBlocked = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
             $generalId = $row->getData('general_id');
@@ -147,8 +147,8 @@ HTML;
                 $sortedStatuses[$statusListed] = $variationChildStatuses[$statusListed];
             }
 
-            if (isset($variationChildStatuses[$statusStopped])) {
-                $sortedStatuses[$statusStopped] = $variationChildStatuses[$statusStopped];
+            if (isset($variationChildStatuses[$statusInactive])) {
+                $sortedStatuses[$statusInactive] = $variationChildStatuses[$statusInactive];
             }
 
             if (isset($variationChildStatuses[$statusBlocked])) {
@@ -193,9 +193,8 @@ HTML;
         return $html;
     }
 
-    protected function getProductStatus($status)
+    protected function getProductStatus($status): string
     {
-        $translator = $this->translationHelper;
         switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN:
                 return '<span style="color: gray;">' . __('Unknown') . '</span>';
@@ -206,12 +205,11 @@ HTML;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
                 return '<span style="color: green;">' . __('Active') . '</span>';
 
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
                 return '<span style="color: red;">' . __('Inactive') . '</span>';
 
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
-                return '<span style="color: orange; font-weight: bold;">' .
-                    __('Incomplete') . '</span>';
+                return '<span style="color: orange; font-weight: bold;">' . __('Incomplete') . '</span>';
         }
 
         return '';

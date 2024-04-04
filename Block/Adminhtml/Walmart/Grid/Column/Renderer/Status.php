@@ -135,7 +135,7 @@ HTML;
         } else {
             $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
             $statusListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-            $statusStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+            $statusInactive = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
             $statusBlocked = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
             $variationChildStatuses = $row->getData('variation_child_statuses');
@@ -158,8 +158,8 @@ HTML;
                 $sortedStatuses[$statusListed] = $variationChildStatuses[$statusListed];
             }
 
-            if (isset($variationChildStatuses[$statusStopped])) {
-                $sortedStatuses[$statusStopped] = $variationChildStatuses[$statusStopped];
+            if (isset($variationChildStatuses[$statusInactive])) {
+                $sortedStatuses[$statusInactive] = $variationChildStatuses[$statusInactive];
             }
 
             if (isset($variationChildStatuses[$statusBlocked])) {
@@ -203,9 +203,8 @@ HTML;
         return $html;
     }
 
-    protected function getProductStatus($status, $statusChangeReasons = [])
+    protected function getProductStatus($status, $statusChangeReasons = []): string
     {
-        $translator = $this->translationHelper;
         $html = '';
         switch ($status) {
             case \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED:
@@ -214,7 +213,7 @@ HTML;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED:
                 $html = '<span style="color: green;">' . __('Active') . '</span>';
                 break;
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
                 $html = '<span style="color: red;">' . __('Inactive') . '</span>';
                 break;
             case \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED:
@@ -223,8 +222,7 @@ HTML;
                 break;
         }
 
-        return $html .
-            $this->getStatusChangeReasons($statusChangeReasons);
+        return $html . $this->getStatusChangeReasons($statusChangeReasons);
     }
 
     protected function getStatusChangeReasons($statusChangeReasons)

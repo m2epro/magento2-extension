@@ -1,30 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
-
     /** @var \Ess\M2ePro\Helper\Magento\Product */
     protected $magentoProductHelper;
-
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
-
     /** @var \Magento\Catalog\Model\Product\Type */
     protected $type;
-
     /** @var \Ess\M2ePro\Helper\Data\GlobalData */
     private $globalDataHelper;
-
     /** @var \Ess\M2ePro\Helper\Module */
     private $moduleHelper;
 
@@ -389,15 +378,16 @@ JS
 
         // ---------------------------------------
         $this->jsTranslator->addTranslations([
-            'Category Settings' => $this->__('Category Settings'),
-            'Specifics' => $this->__('Specifics'),
-            'Auto Add/Remove Rules' => $this->__('Auto Add/Remove Rules'),
-            'Based on Magento Categories' => $this->__('Based on Magento Categories'),
-            'You must select at least 1 Category.' =>
-                $this->__('You must select at least 1 Category.'),
-            'Rule with the same Title already exists.' =>
-                $this->__('Rule with the same Title already exists.'),
-            'Listing Settings Customization' => $this->__('Listing Settings Customization'),
+            'Category Settings' => __('Category Settings'),
+            'Specifics' => __('Specifics'),
+            'Auto Add/Remove Rules' => __('Auto Add/Remove Rules'),
+            'Based on Magento Categories' => __('Based on Magento Categories'),
+            'You must select at least 1 Category.' => __('You must select at least 1 Category.'),
+            'Rule with the same Title already exists.' => __('Rule with the same Title already exists.'),
+            'Listing Settings Customization' => __('Listing Settings Customization'),
+            'Rule not created' => __('Rule not created'),
+            'Please select at least one action from the available options' =>
+                __('Please select at least one action from the available options'),
         ]);
         // ---------------------------------------
 

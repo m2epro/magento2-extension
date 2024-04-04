@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
 use Ess\M2ePro\Model\Listing\Product\Instruction\SynchronizationTemplate\Checker\AbstractModel as BaseAbstractModel;
@@ -15,9 +9,7 @@ use Ess\M2ePro\Model\Amazon\Template\ChangeProcessor\ChangeProcessorAbstract as 
 
 abstract class AbstractModel extends BaseAbstractModel
 {
-    //########################################
-
-    protected function getReviseInstructionTypes()
+    protected function getReviseInstructionTypes(): array
     {
         return array_unique(
             array_merge(
@@ -31,7 +23,7 @@ abstract class AbstractModel extends BaseAbstractModel
 
     // ---------------------------------------
 
-    protected function getReviseQtyInstructionTypes()
+    protected function getReviseQtyInstructionTypes(): array
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
@@ -45,6 +37,7 @@ abstract class AbstractModel extends BaseAbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_QTY,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
@@ -55,7 +48,7 @@ abstract class AbstractModel extends BaseAbstractModel
         ];
     }
 
-    protected function getRevisePriceRegularInstructionTypes()
+    protected function getRevisePriceRegularInstructionTypes(): array
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
@@ -67,6 +60,7 @@ abstract class AbstractModel extends BaseAbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_PRICE_REGULAR,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRICE_CHANGED,
@@ -77,7 +71,7 @@ abstract class AbstractModel extends BaseAbstractModel
         ];
     }
 
-    protected function getRevisePriceBusinessInstructionTypes()
+    protected function getRevisePriceBusinessInstructionTypes(): array
     {
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
@@ -88,6 +82,7 @@ abstract class AbstractModel extends BaseAbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_PRICE_BUSINESS,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRICE_CHANGED,
@@ -98,7 +93,7 @@ abstract class AbstractModel extends BaseAbstractModel
         ];
     }
 
-    protected function getReviseDetailsInstructionTypes()
+    protected function getReviseDetailsInstructionTypes(): array
     {
         return [
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_DETAILS_ENABLED,
@@ -109,6 +104,7 @@ abstract class AbstractModel extends BaseAbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Relist\Response::INSTRUCTION_TYPE_CHECK_DETAILS,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
@@ -116,9 +112,9 @@ abstract class AbstractModel extends BaseAbstractModel
         ];
     }
 
-    //########################################
+    // ---------------------------------------
 
-    protected function getPropertiesDataFromInputInstructions()
+    protected function getPropertiesDataFromInputInstructions(): array
     {
         if (!$this->input->hasInstructionWithTypes($this->getReviseInstructionTypes())) {
             return [];
@@ -145,7 +141,7 @@ abstract class AbstractModel extends BaseAbstractModel
         return $propertiesData;
     }
 
-    protected function getPropertiesDataFromInputScheduledAction()
+    protected function getPropertiesDataFromInputScheduledAction(): array
     {
         if (!$this->input->getScheduledAction() || !$this->input->getScheduledAction()->isActionTypeRevise()) {
             return [];
@@ -180,6 +176,4 @@ abstract class AbstractModel extends BaseAbstractModel
 
         return $propertiesData;
     }
-
-    //########################################
 }

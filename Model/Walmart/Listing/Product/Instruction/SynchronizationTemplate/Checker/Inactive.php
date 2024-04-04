@@ -29,6 +29,7 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
             \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_REMAP_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_QTY_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product::INSTRUCTION_TYPE_CHANNEL_STATUS_CHANGED,
             \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\ListAction\Response::INSTRUCTION_TYPE_CHECK_QTY,
@@ -36,7 +37,6 @@ class Inactive extends AbstractModel
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_PRODUCT_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_STATUS_CHANGED,
             \Ess\M2ePro\PublicServices\Product\SqlChange::INSTRUCTION_TYPE_QTY_CHANGED,
-
             ChangeProcessorAbstract::INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
             \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolder::INSTRUCTION_TYPE_CHANGE_TRACKER_QTY,
@@ -79,7 +79,7 @@ class Inactive extends AbstractModel
             return true;
         }
 
-        if (!$listingProduct->isRelistable() || !$listingProduct->isStopped()) {
+        if (!$listingProduct->isRelistable() || !$listingProduct->isInactive()) {
             return false;
         }
 

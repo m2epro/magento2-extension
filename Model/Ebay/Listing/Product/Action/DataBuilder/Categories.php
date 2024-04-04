@@ -1,40 +1,28 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Categories
- */
 class Categories extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
     private $categoryTemplate;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Category
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Category */
     protected $categorySecondaryTemplate = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory */
     protected $storeCategoryTemplate = null;
 
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory
-     */
+    /** @var \Ess\M2ePro\Model\Ebay\Template\StoreCategory */
     protected $storeCategorySecondaryTemplate = null;
 
+    /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
-    //########################################
+    //---------------------------------------
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -48,13 +36,12 @@ class Categories extends AbstractModel
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
-    //########################################
+    //---------------------------------------
 
     /**
-     * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getBuilderData()
+    public function getBuilderData(): array
     {
         $data = $this->getCategoriesData();
         $data['item_specifics'] = $this->getItemSpecificsData();
@@ -62,12 +49,9 @@ class Categories extends AbstractModel
         return $data;
     }
 
-    //########################################
+    //---------------------------------------
 
-    /**
-     * @return array
-     */
-    public function getCategoriesData()
+    public function getCategoriesData(): array
     {
         $data = [
             'category_main_id' => $this->getCategorySource()->getCategoryId(),
@@ -91,9 +75,6 @@ class Categories extends AbstractModel
         return $data;
     }
 
-    /**
-     * @return array
-     */
     public function getItemSpecificsData(): array
     {
         $data = [];
@@ -108,7 +89,10 @@ class Categories extends AbstractModel
             $tempAttributeValues = $specific->getSource($this->getMagentoProduct())
                                             ->getValues();
 
-            if (empty($tempAttributeValues) || !$this->processNotFoundAttributes('Specifics')) {
+            if (is_array($tempAttributeValues) && !empty($tempAttributeValues['found_in_children'])) {
+                $this->addFoundAttributesInChildrenMessages([$tempAttributeValues['code']]);
+                $tempAttributeValues = [$tempAttributeValues['value']];
+            } elseif (empty($tempAttributeValues) || !$this->processNotFoundAttributes('Specifics')) {
                 continue;
             }
 
@@ -130,7 +114,7 @@ class Categories extends AbstractModel
         return $data;
     }
 
-    //########################################
+    //---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Template\Category
@@ -185,7 +169,7 @@ class Categories extends AbstractModel
         return $this->storeCategorySecondaryTemplate;
     }
 
-    //########################################
+    //---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Template\Category\Source
@@ -219,5 +203,5 @@ class Categories extends AbstractModel
         return $this->getEbayListingProduct()->getStoreCategorySecondaryTemplateSource();
     }
 
-    //########################################
+    //---------------------------------------
 }

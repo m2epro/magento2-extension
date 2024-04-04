@@ -44,7 +44,7 @@ class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Product\Requester
         $resultListingProducts = [];
 
         foreach ($listingProducts as $childListingProduct) {
-            if (!$childListingProduct->isStopped() || !$childListingProduct->isRelistable()) {
+            if (!$childListingProduct->isInactive() || !$childListingProduct->isRelistable()) {
                 continue;
             }
 

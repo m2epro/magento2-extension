@@ -85,7 +85,7 @@ class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstrac
                 'label' => $helper->__('Active'),
             ],
             [
-                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
                 'label' => $helper->__('Inactive'),
             ],
             [

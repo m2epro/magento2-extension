@@ -115,13 +115,13 @@ class UpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $listingProductCollection->addFieldToFilter('l.account_id', $account->getId());
 
         $statusListed = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
-        $statusStopped = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+        $statusInactive = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
         $statusUnknown = \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN;
         $listingProductCollection
             ->getSelect()
             ->where(
                 "((is_afn_channel = 0 AND status = $statusListed)"
-                . " OR (is_afn_channel = 1 AND status IN ($statusListed, $statusStopped, $statusUnknown)))"
+                . " OR (is_afn_channel = 1 AND status IN ($statusListed, $statusInactive, $statusUnknown)))"
             );
 
         $listingProductCollection->getSelect()->joinInner(

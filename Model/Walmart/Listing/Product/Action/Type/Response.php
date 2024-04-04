@@ -226,7 +226,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             if ((int)$data['online_qty'] > 0) {
                 $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
             } else {
-                $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+                $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
             }
         }
 

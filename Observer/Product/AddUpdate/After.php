@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
@@ -523,7 +517,10 @@ class After extends AbstractAddUpdate
             return true;
         }
 
-        $key = $this->getEvent()->getProduct()->getData('before_event_key');
+        $key = $this
+            ->getEvent()
+            ->getProduct()
+            ->getData(\Ess\M2ePro\Observer\Product\AddUpdate\Before::BEFORE_EVENT_KEY);
 
         return isset(\Ess\M2ePro\Observer\Product\AddUpdate\Before::$proxyStorage[$key]);
     }
@@ -545,7 +542,10 @@ class After extends AbstractAddUpdate
             return \Ess\M2ePro\Observer\Product\AddUpdate\Before::$proxyStorage[$key];
         }
 
-        $key = $this->getEvent()->getProduct()->getData('before_event_key');
+        $key = $this
+            ->getEvent()
+            ->getProduct()
+            ->getData(\Ess\M2ePro\Observer\Product\AddUpdate\Before::BEFORE_EVENT_KEY);
 
         return \Ess\M2ePro\Observer\Product\AddUpdate\Before::$proxyStorage[$key];
     }

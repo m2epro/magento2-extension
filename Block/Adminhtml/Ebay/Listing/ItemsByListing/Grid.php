@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\ItemsByListing;
 
 use Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite;
@@ -222,6 +216,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 'onclick_action' => 'EditListingTitleObj.openPopup',
             ],
 
+            'editStoreView' => [
+                'caption' => __('Store View'),
+                'group' => 'edit_actions',
+                'field' => 'id',
+                'onclick_action' => 'EditListingStoreViewObj.openPopup',
+            ],
+
             'editConfiguration' => [
                 'caption' => __('Configuration'),
                 'group' => 'edit_actions',
@@ -382,7 +383,11 @@ HTML;
 
         $this->jsUrl->add($this->getUrl('*/listing/edit'), 'listing/edit');
 
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_edit/selectStoreView'), 'listing/selectStoreView');
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_edit/saveStoreView'), 'listing/saveStoreView');
+
         $this->jsTranslator->add('Edit Listing Title', __('Edit Listing Title'));
+        $this->jsTranslator->add('Edit Listing Store View', __('Edit Listing Store View'));
         $this->jsTranslator->add('Edit Parts Compatibility Mode', __('Edit Parts Compatibility Mode'));
         $this->jsTranslator->add('Listing Title', __('Listing Title'));
         $this->jsTranslator->add(
@@ -403,10 +408,12 @@ HTML;
     require([
         'M2ePro/Ebay/Listing/Grid',
         'M2ePro/Listing/EditTitle',
+        'M2ePro/Listing/EditStoreView',
         'M2ePro/Ebay/Listing/EditCompatibilityMode'
     ], function(){
         window.EbayListingGridObj = new EbayListingGrid('{$this->getId()}');
         window.EditListingTitleObj = new ListingEditListingTitle('{$this->getId()}', '{$component}');
+        window.EditListingStoreViewObj = new ListingEditListingStoreView();
         window.EditCompatibilityModeObj = new EditCompatibilityMode('{$this->getId()}');
     });
 JS

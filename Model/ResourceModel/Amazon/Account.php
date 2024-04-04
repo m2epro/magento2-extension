@@ -1,25 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Amazon;
 
 class Account extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_ACCOUNT_ID = 'account_id';
+    public const COLUMN_MERCHANT_ID = 'merchant_id';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
-    //########################################
-
-    public function _construct()
+    public function _construct(): void
     {
-        $this->_init('m2epro_amazon_account', 'account_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ACCOUNT,
+            self::COLUMN_ACCOUNT_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
-
-    //########################################
 }

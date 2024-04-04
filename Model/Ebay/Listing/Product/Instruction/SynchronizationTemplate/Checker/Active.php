@@ -216,7 +216,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseTitleInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseTitleInstructionTypes())
+        ) {
             if ($this->isMeetReviseTitleRequirements()) {
                 $configurator->allowTitle();
                 $tags['title'] = true;
@@ -226,7 +229,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseSubtitleInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseSubtitleInstructionTypes())
+        ) {
             if ($this->isMeetReviseSubtitleRequirements()) {
                 $configurator->allowSubtitle();
                 $tags['subtitle'] = true;
@@ -236,7 +242,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseDescriptionInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseDescriptionInstructionTypes())
+        ) {
             if ($this->isMeetReviseDescriptionRequirements()) {
                 $configurator->allowDescription();
                 $tags['description'] = true;
@@ -246,7 +255,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseImagesInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseImagesInstructionTypes())
+        ) {
             if ($this->isMeetReviseImagesRequirements()) {
                 $configurator->allowImages();
 
@@ -261,7 +273,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseProductIdentifiersInstructionsTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseProductIdentifiersInstructionsTypes())
+        ) {
             if ($this->isMeetReviseGeneralRequirements()) {
                 $configurator->allowGeneral();
                 $tags[\Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::DATA_TYPE_GENERAL] = true;
@@ -271,7 +286,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseCategoriesInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseCategoriesInstructionTypes())
+        ) {
             if ($this->isMeetReviseCategoriesRequirements()) {
                 $configurator->allowCategories();
                 $tags['categories'] = true;
@@ -281,7 +299,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getRevisePartsInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getRevisePartsInstructionTypes())
+        ) {
             if ($this->isMeetRevisePartsRequirements()) {
                 $configurator->allowParts();
                 $tags['parts'] = true;
@@ -291,7 +312,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseShippingInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseShippingInstructionTypes())
+        ) {
             if ($this->isMeetReviseShippingRequirements()) {
                 $configurator->allowShipping();
                 $tags['shipping'] = true;
@@ -301,7 +325,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseReturnInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseReturnInstructionTypes())
+        ) {
             if ($this->isMeetReviseReturnRequirements()) {
                 $configurator->allowReturn();
                 $tags['return'] = true;
@@ -311,7 +338,10 @@ class Active extends AbstractModel
             }
         }
 
-        if ($this->input->hasInstructionWithTypes($this->getReviseOtherInstructionTypes())) {
+        if (
+            !$this->input->getListingProduct()->isBlockingByError()
+            && $this->input->hasInstructionWithTypes($this->getReviseOtherInstructionTypes())
+        ) {
             if ($this->isMeetReviseOtherRequirements()) {
                 $configurator->allowOther();
                 $tags['other'] = true;

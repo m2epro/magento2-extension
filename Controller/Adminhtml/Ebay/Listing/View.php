@@ -114,8 +114,8 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $ruleModel = $this->viewStateManager->getRuleWithViewState(
             $this->viewStateFactory->create($viewKey),
             \Ess\M2ePro\Model\Ebay\Magento\Product\Rule::NICK,
-            $this->getStoreId(),
-            $getRuleBySessionData
+            $getRuleBySessionData,
+            $this->getStoreId()
         );
 
         $this->globalData->setValue('rule_model', $ruleModel);

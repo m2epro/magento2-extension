@@ -37,7 +37,7 @@ class Acknowledge extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Walmart\Order $walmartOrder */
             $walmartOrder = $order->getChildObject();
-            $walmartOrder->setData('is_tried_to_acknowledge', 1);
+            $walmartOrder->setData(\Ess\M2ePro\Model\ResourceModel\Walmart\Order::COLUMN_IS_TRIED_TO_ACKNOWLEDGE, 1);
             $walmartOrder->save();
         }
     }
@@ -54,7 +54,7 @@ class Acknowledge extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             'Order'
         )->getCollection();
         $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Walmart\Order::STATUS_CREATED);
-        $collection->addFieldToFilter('is_tried_to_acknowledge', 0);
+        $collection->addFieldToFilter(\Ess\M2ePro\Model\ResourceModel\Walmart\Order::COLUMN_IS_TRIED_TO_ACKNOWLEDGE, 0);
         $collection->getSelect()->order('purchase_create_date ASC');
         $collection->getSelect()->limit(self::MAX_ORDERS_COUNT);
 

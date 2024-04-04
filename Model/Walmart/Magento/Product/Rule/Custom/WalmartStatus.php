@@ -83,7 +83,7 @@ class WalmartStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstra
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Active'),
             ],
             [
-                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
                 'label' => $this->helperFactory->getObject('Module\Translation')->__('Inactive'),
             ],
             [

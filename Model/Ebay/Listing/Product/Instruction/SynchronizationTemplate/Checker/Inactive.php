@@ -1,18 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\Inactive
- */
 class Inactive extends AbstractModel
 {
     protected $parentFactory;
@@ -76,6 +67,10 @@ class Inactive extends AbstractModel
         $listingProduct = $this->input->getListingProduct();
 
         if (!$listingProduct->isRelistable() && !$listingProduct->isHidden()) {
+            return false;
+        }
+
+        if ($listingProduct->isBlockingByError()) {
             return false;
         }
 

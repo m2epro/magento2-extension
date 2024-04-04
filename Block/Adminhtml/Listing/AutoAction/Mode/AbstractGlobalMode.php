@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode;
 
-class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
+abstract class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var mixed */
     protected $listing;
@@ -38,93 +32,6 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
         $this->formData = $this->getFormData();
     }
 
-    //########################################
-
-    protected function _prepareForm()
-    {
-        $form = $this->_formFactory->create();
-        $selectElementType = \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select::class;
-
-        $form->addField(
-            'auto_mode',
-            'hidden',
-            [
-                'name' => 'auto_mode',
-                'value' => \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL,
-            ]
-        );
-
-        $fieldSet = $form->addFieldset('auto_global_fieldset_container', []);
-
-        $fieldSet->addField(
-            'auto_global_adding_mode',
-            $selectElementType,
-            [
-                'name' => 'auto_global_adding_mode',
-                'label' => $this->__('New Product Added to Magento'),
-                'title' => $this->__('New Product Added to Magento'),
-                'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => $this->__('No Action')],
-                ],
-                'value' => $this->formData['auto_global_adding_mode'],
-                'tooltip' => $this->__('Action which will be applied automatically.'),
-                'style' => 'width: 350px;',
-            ]
-        );
-
-        $fieldSet->addField(
-            'auto_global_adding_add_not_visible',
-            $selectElementType,
-            [
-                'name' => 'auto_global_adding_add_not_visible',
-                'label' => $this->__('Add not Visible Individually Products'),
-                'title' => $this->__('Add not Visible Individually Products'),
-                'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_NO, 'label' => $this->__('No')],
-                    [
-                        'value' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-                        'label' => $this->__('Yes'),
-                    ],
-                ],
-                'value' => $this->formData['auto_global_adding_add_not_visible'],
-                'field_extra_attributes' => 'id="auto_global_adding_add_not_visible_field"',
-                'tooltip' => $this->__(
-                    'Set to <strong>Yes</strong> if you want the Magento Products with
-                    Visibility \'Not visible Individually\' to be added to the Listing
-                    Automatically.<br/>
-                    If set to <strong>No</strong>, only Variation (i.e.
-                    Parent) Magento Products will be added to the Listing Automatically,
-                    excluding Child Products.'
-                ),
-            ]
-        );
-
-        $fieldSet->addField(
-            'auto_global_deleting_mode',
-            $selectElementType,
-            [
-                'name' => 'auto_global_deleting_mode',
-                'disabled' => true,
-                'label' => $this->__('Product Deleted from Magento'),
-                'title' => $this->__('Product Deleted from Magento'),
-                'values' => [
-                    [
-                        'value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
-                        'label' => $this->__('Stop on Channel and Delete from Listing'),
-                    ],
-                ],
-                'style' => 'width: 350px;',
-            ]
-        );
-
-        $form->setUseContainer(true);
-        $this->setForm($form);
-
-        return parent::_prepareForm();
-    }
-
-    //########################################
-
     public function hasFormData()
     {
         return $this->getListing()->getData('auto_mode') == \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL;
@@ -142,13 +49,11 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
     public function getDefault()
     {
         return [
-            'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
+            'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_global_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_STOP_REMOVE,
         ];
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Listing
@@ -165,8 +70,6 @@ class AbstractGlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstra
 
         return $this->listing;
     }
-
-    //########################################
 
     protected function _afterToHtml($html)
     {
@@ -203,6 +106,4 @@ JS
     {
         return $this->__('Global all Products');
     }
-
-    //########################################
 }

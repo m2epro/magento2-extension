@@ -29,7 +29,7 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
 
         $isStatusChangerUser = $this->getListingProduct()->getStatusChanger()
             === \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
-        $isStoppedManually = $this->getListingProduct()->isStopped() && $isStatusChangerUser;
+        $isStoppedManually = $this->getListingProduct()->isInactive() && $isStatusChangerUser;
         $this->getWalmartListingProduct()->setIsStoppedManually($isStoppedManually);
 
         $this->setLastSynchronizationDates();

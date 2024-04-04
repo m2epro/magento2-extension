@@ -53,7 +53,7 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         }
 
         if (
-            !$this->getListingProduct()->isStopped() &&
+            !$this->getListingProduct()->isInactive() &&
             (!$this->getListingProduct()->isBlocked() || !$this->getWalmartListingProduct()->isOnlinePriceInvalid())
         ) {
             $this->addMessage(

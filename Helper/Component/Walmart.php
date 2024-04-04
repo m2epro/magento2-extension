@@ -94,7 +94,7 @@ class Walmart
             ListingProduct::STATUS_UNKNOWN    => $this->moduleTranslation->__('Unknown'),
             ListingProduct::STATUS_NOT_LISTED => $this->moduleTranslation->__('Not Listed'),
             ListingProduct::STATUS_LISTED     => $this->moduleTranslation->__('Active'),
-            ListingProduct::STATUS_STOPPED    => $this->moduleTranslation->__('Inactive'),
+            ListingProduct::STATUS_INACTIVE    => $this->moduleTranslation->__('Inactive'),
             ListingProduct::STATUS_BLOCKED    => $this->moduleTranslation->__('Incomplete'),
         ];
 
@@ -272,7 +272,7 @@ class Walmart
 
         return $onlineQty > 0
             ? ListingProduct::STATUS_LISTED
-            : ListingProduct::STATUS_STOPPED;
+            : ListingProduct::STATUS_INACTIVE;
     }
 
     // ----------------------------------------

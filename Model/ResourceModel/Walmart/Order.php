@@ -1,15 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
 class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_IS_TRIED_TO_ACKNOWLEDGE = 'is_tried_to_acknowledge';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 
 class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon
@@ -16,18 +10,12 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
     private $serverAccountCreate;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService */
+    private $accountMerchantSettingsCreateService;
 
-    /**
-     * @param \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder
-     * @param \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate
-     * @param \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Helper\View\Amazon $amazonViewHelper
-     * @param \Magento\Framework\Code\NameBuilder $nameBuilder
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
+        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService,
         \Ess\M2ePro\Model\Amazon\Account\Server\Create $serverAccountCreate,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -40,6 +28,7 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
         $this->exceptionHelper = $exceptionHelper;
         $this->serverAccountCreate = $serverAccountCreate;
         $this->accountBuilder = $accountBuilder;
+        $this->accountMerchantSettingsCreateService = $accountMerchantSettingsCreateService;
     }
 
     public function execute()
@@ -118,11 +107,6 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
     }
 
     /**
-     * @param string $title
-     * @param string $merchantId
-     * @param int $marketplaceId
-     * @param \Ess\M2ePro\Model\Amazon\Account\Server\Create\Result $serverResult
-     *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function createAccount(
@@ -158,5 +142,7 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
             $account,
             $data
         );
+
+        $this->accountMerchantSettingsCreateService->createDefault($merchantId);
     }
 }

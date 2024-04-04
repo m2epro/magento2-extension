@@ -166,7 +166,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => __('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => __('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
@@ -448,17 +448,17 @@ HTML;
             return $value;
         }
 
-        $coloredStstuses = [
+        $coloredStatuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => 'gray',
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 'green',
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => 'red',
+            \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => 'red',
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 'orange',
         ];
 
         $status = $row->getData('status');
 
-        if ($status !== null && isset($coloredStstuses[$status])) {
-            $value = '<span style="color: ' . $coloredStstuses[$status] . ';">' . $value . '</span>';
+        if ($status !== null && isset($coloredStatuses[$status])) {
+            $value = '<span style="color: ' . $coloredStatuses[$status] . ';">' . $value . '</span>';
         }
 
         return $value;

@@ -17,7 +17,7 @@ class Reset extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 
         $data = [
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
-            'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
+            'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_global_adding_category_template_id' => null,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
 use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory as AmazonProductTypeCollectionFactory;
@@ -17,15 +11,6 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
     private $amazonProductTypeCollectionFactory;
 
-    /**
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param AmazonProductTypeCollectionFactory $amazonProductTypeCollectionFactory
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -76,22 +61,47 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
 
         $fieldSet = $form->addFieldset('auto_global_fieldset_container', []);
 
-        $fieldSet->addField(
-            'auto_global_adding_mode',
-            $selectElementType,
-            [
-                'name' => 'auto_global_adding_mode',
-                'label' => $this->__('New Product Added to Magento'),
-                'title' => $this->__('New Product Added to Magento'),
-                'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => $this->__('No Action')],
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => $this->__('Add to the Listing')],
-                ],
-                'value' => $this->formData['auto_global_adding_mode'],
-                'tooltip' => $this->__('Action which will be applied automatically.'),
-                'style' => 'width: 350px;',
-            ]
-        );
+        if ($this->formData['auto_global_adding_mode'] == \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
+            $fieldSet->addField(
+                'auto_global_adding_mode',
+                $selectElementType,
+                [
+                    'name' => 'auto_global_adding_mode',
+                    'label' => __('New Product Added to Magento'),
+                    'title' => __('New Product Added to Magento'),
+                    'values' => [
+                        ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => __('No Action')],
+                        [
+                            'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
+                            'label' => __('Add to the Listing'),
+                        ],
+                    ],
+                    'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
+                    'tooltip' => __('Action which will be applied automatically.'),
+                    'style' => 'width: 350px;',
+                ]
+            );
+        } else {
+            $fieldSet->addField(
+                'auto_global_adding_mode',
+                $selectElementType,
+                [
+                    'name' => 'auto_global_adding_mode',
+                    'label' => __('New Product Added to Magento'),
+                    'title' => __('New Product Added to Magento'),
+                    'disabled' => true,
+                    'values' => [
+                        [
+                            'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
+                            'label' => __('Add to the Listing'),
+                        ],
+                    ],
+                    'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
+                    'tooltip' => __('Action which will be applied automatically.'),
+                    'style' => 'width: 350px;',
+                ]
+            );
+        }
 
         $fieldSet->addField(
             'auto_global_adding_add_not_visible',

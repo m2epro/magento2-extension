@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon;
 
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
@@ -72,17 +66,17 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $marketplaceModel;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing */
     private $repricingModel;
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $moduleDatabaseStructure;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $cachePermanent;
-    /** @var \Magento\Framework\App\ResourceConnection */
-    private $resourceConnection;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository */
+    private $merchantSettingRepository;
+
+    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting|null */
+    private $merchantSetting = null;
 
     public function __construct(
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructure,
+        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository $merchantSettingRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -105,9 +99,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $data
         );
 
-        $this->moduleDatabaseStructure = $moduleDatabaseStructure;
         $this->cachePermanent = $cachePermanent;
-        $this->resourceConnection = $resourceConnection;
+        $this->merchantSettingRepository = $merchantSettingRepository;
     }
 
     public function _construct()
@@ -275,6 +268,20 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMerchantId()
     {
         return $this->getData('merchant_id');
+    }
+
+    public function getMerchantSetting(): Account\MerchantSetting
+    {
+        if ($this->merchantSetting !== null) {
+            return $this->merchantSetting;
+        }
+
+        $merchantId = $this->getMerchantId();
+        if (empty($merchantId)) {
+            throw new \LogicException('Merchant id must be set');
+        }
+
+        return $this->merchantSetting = $this->merchantSettingRepository->get($merchantId);
     }
 
     public function getToken()
@@ -1153,21 +1160,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isRemoteFulfillmentProgramEnabled(): bool
     {
         return (bool)$this->getData('remote_fulfillment_program_mode');
-    }
-
-    public function getFbaInventoryMode(): int
-    {
-        return (int)$this->getData('fba_inventory_mode');
-    }
-
-    public function isEnabledFbaInventoryMode(): bool
-    {
-        return $this->getFbaInventoryMode() == 1;
-    }
-
-    public function getFbaInventorySource(): ?string
-    {
-        return $this->getData('fba_inventory_source');
     }
 
     /**

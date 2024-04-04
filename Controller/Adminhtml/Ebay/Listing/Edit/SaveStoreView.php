@@ -29,6 +29,8 @@ class SaveStoreView extends \Ess\M2ePro\Controller\Adminhtml\Listing
         if (empty($params['id'])) {
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
+
+        /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $params['id']);
         $storeId = (int)$params['store_id'];
 

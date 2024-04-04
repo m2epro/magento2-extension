@@ -146,7 +146,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'sortable' => false,
             'options' => [
                 Product::STATUS_LISTED => __('Active'),
-                Product::STATUS_STOPPED => __('Inactive'),
+                Product::STATUS_INACTIVE => __('Inactive'),
                 Product::STATUS_BLOCKED => __('Incomplete'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
@@ -457,7 +457,7 @@ HTML;
                 $value = '<span style="color: green;">' . $value . '</span>';
                 break;
 
-            case Product::STATUS_STOPPED:
+            case Product::STATUS_INACTIVE:
                 $value = '<span style="color: red;">' . $value . '</span>';
                 break;
 

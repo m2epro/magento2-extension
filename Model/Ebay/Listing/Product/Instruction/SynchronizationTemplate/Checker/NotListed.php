@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker\NotListed
- */
 class NotListed extends AbstractModel
 {
     protected $activeRecordFactory;
@@ -41,6 +32,10 @@ class NotListed extends AbstractModel
         $listingProduct = $this->input->getListingProduct();
 
         if (!$listingProduct->isListable() || !$listingProduct->isNotListed()) {
+            return false;
+        }
+
+        if ($listingProduct->isBlockingByError()) {
             return false;
         }
 

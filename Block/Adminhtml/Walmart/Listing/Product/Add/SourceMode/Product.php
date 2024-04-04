@@ -144,6 +144,9 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Based on Magento Categories' => __('Based on Magento Categories'),
             'You must select at least 1 Category.' => __('You must select at least 1 Category.'),
             'Rule with the same Title already exists.' => __('Rule with the same Title already exists.'),
+            'Rule not created' => __('Rule not created'),
+            'Please select at least one action from the available options' =>
+                __('Please select at least one action from the available options'),
         ]);
 
         $this->js->addOnReadyJs(

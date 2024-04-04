@@ -1,11 +1,12 @@
 define([
     'jquery',
+    'Magento_Ui/js/modal/alert',
     'Magento_Ui/js/modal/modal',
     'underscore',
     'jquery/validate',
     'M2ePro/Common',
     'prototype'
-], function (jQuery, modal, _) {
+], function (jQuery, alert, modal, _) {
     window.ListingAutoAction = Class.create(Common, {
 
         // ---------------------------------------
@@ -485,6 +486,31 @@ define([
 
         validate: function()
         {
+            if ($('auto_mode')) {
+                var autoMode = $('auto_mode').value;
+                if (
+                        autoMode == M2ePro.php.constant('Ess_M2ePro_Model_Listing::AUTO_MODE_WEBSITE')
+                        && $('auto_website_adding_mode').value
+                        == M2ePro.php.constant('Ess_M2ePro_Model_Listing::ADDING_MODE_NONE')
+                        && $('auto_website_deleting_mode').value
+                        == M2ePro.php.constant('Ess_M2ePro_Model_Listing::DELETING_MODE_NONE')
+                ) {
+                    this.alertSelectAvailableOptions();
+
+                    return false;
+                }
+
+                if (
+                        autoMode == M2ePro.php.constant('Ess_M2ePro_Model_Listing::AUTO_MODE_CATEGORY')
+                        && $('adding_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Listing::ADDING_MODE_NONE')
+                        && $('deleting_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Listing::DELETING_MODE_NONE')
+                ) {
+                    this.alertSelectAvailableOptions();
+
+                    return false;
+                }
+            }
+
             var validationResult = true;
 
             this.currentPopup.find('form').each(function () {
@@ -492,6 +518,14 @@ define([
             });
 
             return validationResult;
+        },
+
+        alertSelectAvailableOptions: function ()
+        {
+            alert({
+                title: M2ePro.translator.translate('Rule not created'),
+                content: M2ePro.translator.translate('Please select at least one action from the available options'),
+            });
         },
 
         confirm: function()

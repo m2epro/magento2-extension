@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
@@ -424,6 +418,10 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'switch_to_parent_mode_popup_title' => $switchToParentModePopUpTitle,
 
             'Add New Child Product' => $this->__('Add New Child Product'),
+
+            'Rule not created' => __('Rule not created'),
+            'Please select at least one action from the available options' =>
+                __('Please select at least one action from the available options'),
         ]);
 
         $this->js->addOnReadyJs(

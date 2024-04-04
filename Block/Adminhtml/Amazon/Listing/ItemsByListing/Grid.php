@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\ItemsByListing;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
@@ -203,6 +197,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                 'onclick_action' => 'EditListingTitleObj.openPopup',
             ],
 
+            'editStoreView' => [
+                'caption' => __('Store View'),
+                'group' => 'edit_actions',
+                'field' => 'id',
+                'onclick_action' => 'EditListingStoreViewObj.openPopup',
+            ],
+
             'sellingSetting' => [
                 'caption' => __('Selling'),
                 'group' => 'edit_actions',
@@ -289,12 +290,16 @@ HTML;
 
         $this->jsUrl->add($this->getUrl('*/amazon_listing/saveTitle'), 'amazon_listing/saveTitle');
 
+        $this->jsUrl->add($this->getUrl('*/amazon_listing_edit/selectStoreView'), 'listing/selectStoreView');
+        $this->jsUrl->add($this->getUrl('*/amazon_listing_edit/saveStoreView'), 'listing/saveStoreView');
+
         $uniqueTitleTxt = 'The specified Title is already used for other Listing. Listing Title must be unique.';
 
         $this->jsTranslator->addTranslations([
             'Cancel' => __('Cancel'),
             'Save' => __('Save'),
             'Edit Listing Title' => __('Edit Listing Title'),
+            'Edit Listing Store View' => __('Edit Listing Store View'),
             $uniqueTitleTxt => __($uniqueTitleTxt),
         ]);
 
@@ -303,11 +308,11 @@ HTML;
         $this->js->add(
             <<<JS
     require([
-        'M2ePro/Listing/EditTitle'
+        'M2ePro/Listing/EditTitle',
+        'M2ePro/Listing/EditStoreView'
     ], function(){
-
         window.EditListingTitleObj = new ListingEditListingTitle('{$this->getId()}', '{$component}');
-
+        window.EditListingStoreViewObj = new ListingEditListingStoreView();
     });
 JS
         );

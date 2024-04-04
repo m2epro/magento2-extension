@@ -1,15 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
 class Before extends AbstractAddUpdate
 {
+    public const BEFORE_EVENT_KEY = 'ess_m2epro_before_event_key';
+
     /** @var array */
     public static $proxyStorage = [];
 
@@ -119,7 +115,7 @@ class Before extends AbstractAddUpdate
         $key = $this->getProductId() . '_' . $this->getStoreId();
         if ($this->isAddingProductProcess()) {
             $key = $this->getHelper('Data')->generateUniqueHash();
-            $this->getEvent()->getProduct()->setData('before_event_key', $key);
+            $this->getEvent()->getProduct()->setData(self::BEFORE_EVENT_KEY, $key);
         }
 
         self::$proxyStorage[$key] = $this->getProxy();

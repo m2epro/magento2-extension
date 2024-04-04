@@ -131,8 +131,8 @@ class View extends Main
         $ruleModel = $this->viewStateManager->getRuleWithViewState(
             $this->viewStateFactory->create($viewKey),
             $ruleModelNick,
-            $this->getStoreId(),
-            $getRuleBySessionData
+            $getRuleBySessionData,
+            $this->getStoreId()
         );
 
         $this->globalData->setValue('rule_model', $ruleModel);

@@ -112,7 +112,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'listing_id' => (int)$this->listing['id'],
                 'status' => [
                     \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-                    \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
                     \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
                     \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN,
                 ],
@@ -315,7 +315,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'options' => [
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => __('Unknown'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => __('Active'),
-                \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => __('Inactive'),
+                \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => __('Inactive'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => __('Incomplete'),
             ],
             'frame_callback' => [$this, 'callbackColumnStatus'],
@@ -530,7 +530,7 @@ HTML;
                 $value = '<span style="color: green;">' . $value . '</span>';
                 break;
 
-            case \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED:
+            case \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE:
                 $value = '<span style="color: red;">' . $value . '</span>';
                 break;
 

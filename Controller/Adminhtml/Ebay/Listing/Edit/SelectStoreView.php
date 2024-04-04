@@ -24,7 +24,7 @@ class SelectStoreView extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         $this->setAjaxContent(
             $this->getLayout()->createBlock(
-                \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\EditStoreView::class,
+                \Ess\M2ePro\Block\Adminhtml\Listing\Edit\EditStoreView::class,
                 '',
                 ['listing' => $listing]
             )

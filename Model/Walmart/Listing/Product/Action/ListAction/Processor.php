@@ -668,7 +668,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $listingProduct = $processingAction->getListingProduct();
         $processingParams = $processing->getParams();
 
-        $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
+        $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE);
         $listingProduct->save();
 
         $logger = $this->createLogger(

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Account;
 
 use Magento\Framework\App\ResponseInterface;
@@ -30,8 +24,11 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     protected $marketplaceFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
     protected $marketplaceResource;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService  */
+    private $accountMerchantSettingsCreateService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService,
         \Ess\M2ePro\Model\Amazon\Account\Server\Update $accountServerUpdate,
         \Ess\M2ePro\Helper\Module\Exception $helperException,
         \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
@@ -55,9 +52,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $this->serverAccountCreate = $serverAccountCreate;
         $this->accountBuilder = $accountBuilder;
         $this->accountFactory = $accountFactory;
+        $this->accountMerchantSettingsCreateService = $accountMerchantSettingsCreateService;
     }
-
-    // ----------------------------------------
 
     public function execute()
     {
@@ -151,13 +147,12 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         }
 
         $account = $this->createAccount(
-            [
-                'merchant_id' => $sellingPartnerId,
-                'marketplace_id' => $marketplaceId,
-                'title' => $title,
-            ],
+            $sellingPartnerId,
+            $marketplaceId,
+            $title,
             $result
         );
+
         $accountId = (int)$account->getId();
 
         if ($accountId) {
@@ -227,7 +222,9 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function createAccount(
-        array $data,
+        string $merchantId,
+        int $marketplaceId,
+        string $title,
         \Ess\M2ePro\Model\Amazon\Account\Server\Create\Result $serverResult
     ): \Ess\M2ePro\Model\Account {
         $account = $this->accountFactory->create()
@@ -235,8 +232,13 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
         $accountData = array_merge(
             $this->accountBuilder->getDefaultData(),
-            $data,
-            ['server_hash' => $serverResult->getHash(), 'info' => $serverResult->getInfo()]
+            [
+                'merchant_id' => $merchantId,
+                'marketplace_id' => $marketplaceId,
+                'title' => $title,
+                'server_hash' => $serverResult->getHash(),
+                'info' => $serverResult->getInfo(),
+            ]
         );
         $accountData['magento_orders_settings']['tax']['excluded_states'] = implode(
             ',',
@@ -248,6 +250,8 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         );
 
         $this->accountBuilder->build($account, $accountData);
+
+        $this->accountMerchantSettingsCreateService->createDefault($merchantId);
 
         return $account;
     }

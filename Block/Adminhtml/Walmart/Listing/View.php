@@ -398,6 +398,10 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'The length of SKU must be less than 50 characters.' => __(
                     'The length of SKU must be less than 50 characters.'
                 ),
+
+                'Rule not created' => __('Rule not created'),
+                'Please select at least one action from the available options' =>
+                    __('Please select at least one action from the available options'),
             ]
         );
 

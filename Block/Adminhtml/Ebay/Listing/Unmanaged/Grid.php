@@ -429,7 +429,7 @@ HTML;
             return $value;
         }
 
-        $coloredStstuses = [
+        $coloredStatuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 'green',
             \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN => 'red',
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 'orange',
@@ -438,8 +438,8 @@ HTML;
 
         $status = $row->getData('status');
 
-        if ($status !== null && isset($coloredStstuses[$status])) {
-            $value = '<span style="color: ' . $coloredStstuses[$status] . ';">' . $value . '</span>';
+        if ($status !== null && isset($coloredStatuses[$status])) {
+            $value = '<span style="color: ' . $coloredStatuses[$status] . ';">' . $value . '</span>';
         }
 
         return $value . $this->getLockedTag($row);

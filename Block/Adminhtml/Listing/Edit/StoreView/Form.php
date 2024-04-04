@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\StoreView;
+namespace Ess\M2ePro\Block\Adminhtml\Listing\Edit\StoreView;
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
@@ -39,8 +39,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     <<<HTML
 <div class="attention-container">
             <br>
-            <p class="attention-text"><b>Attention:</b> Store View Switching may update product values on eBay!</p>
-            <p class="attention-text">When you switch a store view for a listing, be aware that it can trigger an automatic update of the products. If the values of the products in the new store view are different from the current ones, those changes will be synchronized to eBay based on the rules of the synchronization policy.</p>
+            <p class="attention-text">Switching the Store View may initiate update of product on the channel!</p>
+            <p class="attention-text">When you switch a Store View for a listing, an automatic update of products parameters may be triggered. If products values in the new Store View are different from the current ones (e.g. Price, Description), these changes will be synchronized to the channel based on the rules set in Synchronization policy.</p>
         </div>
 HTML
                 )

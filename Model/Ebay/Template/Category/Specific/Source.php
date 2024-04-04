@@ -1,94 +1,74 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var \Magento\Store\Model\StoreManagerInterface */
     protected $storeManager;
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     protected $config;
-
     /** @var \Ess\M2ePro\Model\Magento\Product */
     private $magentoProduct = null;
     /** @var  \Ess\M2ePro\Model\Ebay\Template\Category\Specific */
     private $categorySpecificTemplateModel = null;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
+    /** @var \Ess\M2ePro\Model\Ebay\Category\SpecificValidator */
+    private $ebayCategorySpecificValidator;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\Config\ScopeConfigInterface $config,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Ebay\Category\SpecificValidator $ebayCategorySpecificValidator
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
         $this->storeManager = $storeManager;
         $this->config = $config;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->ebayCategorySpecificValidator = $ebayCategorySpecificValidator;
     }
 
-    //########################################
+    //------------------------------
 
-    /**
-     * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
-     *
-     * @return $this
-     */
-    public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    public function setMagentoProduct(\Ess\M2ePro\Model\Magento\Product $magentoProduct): self
     {
         $this->magentoProduct = $magentoProduct;
 
         return $this;
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Magento\Product
-     */
-    public function getMagentoProduct()
+    public function getMagentoProduct(): \Ess\M2ePro\Model\Magento\Product
     {
         return $this->magentoProduct;
     }
 
     // ---------------------------------------
 
-    /**
-     * @param \Ess\M2ePro\Model\Ebay\Template\Category\Specific $instance
-     *
-     * @return $this
-     */
-    public function setCategorySpecificTemplate(\Ess\M2ePro\Model\Ebay\Template\Category\Specific $instance)
+    public function setCategorySpecificTemplate(\Ess\M2ePro\Model\Ebay\Template\Category\Specific $instance): self
     {
         $this->categorySpecificTemplateModel = $instance;
 
         return $this;
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\Category\Specific
-     */
-    public function getCategorySpecificTemplate()
+    public function getCategorySpecificTemplate(): \Ess\M2ePro\Model\Ebay\Template\Category\Specific
     {
         return $this->categorySpecificTemplateModel;
     }
 
     // ---------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Ebay\Template\Category
-     */
-    public function getCategoryTemplate()
+    public function getCategoryTemplate(): \Ess\M2ePro\Model\Ebay\Template\Category
     {
         return $this->getCategorySpecificTemplate()->getCategoryTemplate();
     }
 
-    //########################################
+    //------------------------------
 
     public function getLabel()
     {
@@ -131,6 +111,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         $attributeCode = $this->getCategorySpecificTemplate()->getData('value_custom_attribute');
         $valueTemp = $this->getAttributeValue($attributeCode);
+        if (is_array($valueTemp) && !empty($valueTemp['found_in_children'])) {
+            return $valueTemp;
+        }
 
         $categoryId = $this->getCategoryTemplate()->getCategoryId();
         $marketplaceId = $this->getCategoryTemplate()->getMarketplaceId();
@@ -170,7 +153,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $valueData;
     }
 
-    //########################################
+    //------------------------------
 
     private function getAttributeLabel()
     {
@@ -180,10 +163,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    private function getAttributeValue($attributeCode)
+    private function getAttributeValue(string $attributeCode)
     {
         $attributeValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
-
         if ($attributeCode == 'country_of_manufacture') {
             $locale = $this->config->getValue(
                 \Magento\Directory\Helper\Data::XML_PATH_DEFAULT_LOCALE,
@@ -196,8 +178,22 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
+        if (!$attributeValue) {
+            $attributeValue = $this->ebayCategorySpecificValidator->checkForAttributeInChildren(
+                $this->getMagentoProduct(),
+                $attributeCode
+            );
+
+            if ($attributeValue) {
+                $this->getMagentoProduct()->clearNotFoundAttributes();
+                $attributeValue = [
+                    'found_in_children' => true,
+                    'value' => $attributeValue,
+                    'code' => $attributeCode,
+                ];
+            }
+        }
+
         return $attributeValue;
     }
-
-    //########################################
 }

@@ -238,22 +238,6 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
     }
 
-    /**
-     * @return bool
-     */
-    public function isStopped()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFinished()
-    {
-        return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
-    }
-
     public function isInactive(): bool
     {
         return $this->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;

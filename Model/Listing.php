@@ -780,11 +780,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                         $listingProduct
                     );
 
-                    if ($listingProduct->isComponentModeEbay()) {
-                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
-                    } else {
-                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
-                    }
+                    $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
                 }
 
                 if ($listingProduct->isComponentModeAmazon() || $listingProduct->isComponentModeWalmart()) {
@@ -907,11 +903,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 if ($listingProduct->isStoppable()) {
                     $this->activeRecordFactory->getObject('StopQueue')->add($listingProduct);
 
-                    if ($listingProduct->isComponentModeEbay()) {
-                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
-                    } else {
-                        $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
-                    }
+                    $listingProduct->setStatus(\Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE)->save();
                 }
 
                 $listingsProductsForRemove[$listingProduct->getId()] = $listingProduct;

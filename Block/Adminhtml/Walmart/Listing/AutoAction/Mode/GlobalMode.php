@@ -62,22 +62,41 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
 
         $fieldSet = $form->addFieldset('auto_global_fieldset_container', []);
 
-        $fieldSet->addField(
-            'auto_global_adding_mode',
-            self::SELECT,
-            [
-                'name' => 'auto_global_adding_mode',
-                'label' => __('New Product Added to Magento'),
-                'title' => __('New Product Added to Magento'),
-                'values' => [
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => __('No Action')],
-                    ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => __('Add to the Listing')],
-                ],
-                'value' => $this->formData['auto_global_adding_mode'],
-                'tooltip' => __('Action which will be applied automatically.'),
-                'style' => 'width: 350px',
-            ]
-        );
+        if ($this->formData['auto_global_adding_mode'] == \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
+            $fieldSet->addField(
+                'auto_global_adding_mode',
+                self::SELECT,
+                [
+                    'name' => 'auto_global_adding_mode',
+                    'label' => __('New Product Added to Magento'),
+                    'title' => __('New Product Added to Magento'),
+                    'values' => [
+                        ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE, 'label' => __('No Action')],
+                        ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => __('Add to the Listing')],
+                    ],
+                    'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
+                    'tooltip' => __('Action which will be applied automatically.'),
+                    'style' => 'width: 350px',
+                ]
+            );
+        } else {
+            $fieldSet->addField(
+                'auto_global_adding_mode',
+                self::SELECT,
+                [
+                    'name' => 'auto_global_adding_mode',
+                    'label' => __('New Product Added to Magento'),
+                    'title' => __('New Product Added to Magento'),
+                    'disabled' => true,
+                    'values' => [
+                        ['value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD, 'label' => __('Add to the Listing')],
+                    ],
+                    'value' => \Ess\M2ePro\Model\Listing::ADDING_MODE_ADD,
+                    'tooltip' => __('Action which will be applied automatically.'),
+                    'style' => 'width: 350px',
+                ]
+            );
+        }
 
         $fieldSet->addField(
             'auto_global_adding_add_not_visible',

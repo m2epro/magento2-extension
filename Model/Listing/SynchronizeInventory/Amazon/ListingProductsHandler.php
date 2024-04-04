@@ -94,7 +94,7 @@ class ListingProductsHandler extends AbstractExistingProductsHandler
                     if ($newData['online_qty'] > 0) {
                         $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED;
                     } else {
-                        $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
+                        $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE;
                     }
                 }
 

@@ -11,11 +11,7 @@ class CombineInactiveEbayProductStatuses extends \Ess\M2ePro\Model\Setup\Upgrade
      */
     public function execute()
     {
-        $oldStatuses = [
-            \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED
-        ];
+        $oldStatuses = [1, 3, 4];
         $tables = ['listing_product', 'listing_other', 'ebay_listing_product_variation'];
 
         foreach ($tables as $table) {

@@ -203,7 +203,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
     private function linkSimpleOrIndividualProduct()
     {
         $this->getListingProduct()->addData([
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
         ]);
         $this->getAmazonListingProduct()->addData([
             'general_id' => $this->getGeneralId(),
@@ -221,7 +221,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
     private function linkChildProduct()
     {
         $this->getListingProduct()->addData([
-            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+            'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
         ]);
         $this->getAmazonListingProduct()->addData([
             'general_id' => $this->getGeneralId(),

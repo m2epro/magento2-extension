@@ -9,7 +9,7 @@ use Ess\M2ePro\Model\Ebay\Listing\Product\ChangeIdentifierTracker;
 
 abstract class AbstractModel extends CheckerAbstractModel
 {
-    protected function getReviseInstructionTypes()
+    protected function getReviseInstructionTypes(): array
     {
         return array_unique(
             array_merge(
@@ -413,6 +413,4 @@ abstract class AbstractModel extends CheckerAbstractModel
 
         return $propertiesData;
     }
-
-    // ---------------------------------------
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit;
+namespace Ess\M2ePro\Block\Adminhtml\Listing\Edit;
 
 class EditStoreView extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
@@ -34,7 +34,7 @@ class EditStoreView extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractCon
     {
         $this->addChild(
             'form',
-            \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Edit\StoreView\Form::class,
+            \Ess\M2ePro\Block\Adminhtml\Listing\Edit\StoreView\Form::class,
             ['listing' => $this->listing]
         );
 

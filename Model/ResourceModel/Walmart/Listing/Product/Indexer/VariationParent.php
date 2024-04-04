@@ -103,7 +103,7 @@ class VariationParent extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
                        )
                        ->where('mlp.status IN (?)', [
                            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-                           \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                           \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
                        ])
                        ->where('mlp.listing_id = ?', (int)$listing->getId())
                        ->where('mwlp.variation_parent_id IS NOT NULL')

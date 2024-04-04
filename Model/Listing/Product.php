@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Listing;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
@@ -33,10 +27,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public const ACTION_DELETE = 5;
 
     public const STATUS_NOT_LISTED = 0;
-    public const STATUS_SOLD = 1;
     public const STATUS_LISTED = 2;
-    public const STATUS_STOPPED = 3;
-    public const STATUS_FINISHED = 4;
     public const STATUS_UNKNOWN = 5;
     public const STATUS_BLOCKED = 6;
     public const STATUS_HIDDEN = 7;
@@ -52,6 +43,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     public const GROUPED_PRODUCT_MODE_OPTIONS = 0;
     public const GROUPED_PRODUCT_MODE_SET = 1;
+
+    private const MAX_BLOCKING_ERROR_DURATION_SECONDS = 86400;
 
     /**
      * It allows to delete an object without checking if it is isLocked()
@@ -355,6 +348,37 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     // ---------------------------------------
 
+    public function isBlockingByError(): bool
+    {
+        $blockingErrorDate = $this->getLastBlockingErrorDate();
+
+        if ($blockingErrorDate === null) {
+            return false;
+        }
+
+        if (
+            \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp() - $blockingErrorDate->getTimestamp() >
+            self::MAX_BLOCKING_ERROR_DURATION_SECONDS
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getLastBlockingErrorDate(): ?\DateTime
+    {
+        $lastBlockingErrorDate = $this->getData('last_blocking_error_date');
+
+        if ($lastBlockingErrorDate !== null) {
+            $lastBlockingErrorDate = \Ess\M2ePro\Helper\Date::createDateGmt($lastBlockingErrorDate);
+        }
+
+        return $lastBlockingErrorDate;
+    }
+
+    // ---------------------------------------
+
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -434,30 +458,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return $this->getStatus() == self::STATUS_HIDDEN;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSold()
-    {
-        return $this->getStatus() == self::STATUS_SOLD;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isStopped()
-    {
-        return $this->getStatus() == self::STATUS_STOPPED;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFinished()
-    {
-        return $this->getStatus() == self::STATUS_FINISHED;
-    }
-
     public function isInactive(): bool
     {
         return $this->getStatus() == self::STATUS_INACTIVE;
@@ -470,9 +470,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return !$this->isBlocked()
             && (
                 $this->isNotListed()
-                || $this->isSold()
-                || $this->isStopped()
-                || $this->isFinished()
                 || $this->isHidden()
                 || $this->isUnknown()
                 || $this->isInactive()
@@ -483,10 +480,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     {
         return !$this->isBlocked()
             && (
-                $this->isSold()
-                || $this->isStopped()
-                || $this->isFinished()
-                || $this->isUnknown()
+                $this->isUnknown()
                 || $this->isInactive()
             );
     }

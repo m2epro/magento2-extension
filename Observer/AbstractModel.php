@@ -67,7 +67,7 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
             $this->beforeProcess();
             $this->process();
             $this->afterProcess();
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->helperFactory->getObject('Module\Exception')->process($exception);
         }
     }

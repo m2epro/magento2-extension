@@ -85,7 +85,7 @@ class Manager
     public function getRuleWithSavedConditions(
         int $entityId,
         string $modelNick,
-        int $storeId
+        int $storeId = null
     ): \Ess\M2ePro\Model\Magento\Product\Rule {
         $entity = $this->repository->getAdvancedFilter($entityId);
         if ($entity->getModelNick() !== $modelNick) {

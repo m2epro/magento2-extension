@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -40,149 +31,115 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected $isVariationItem = false;
 
-    //########################################
+    //---------------------------------------
 
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     *
-     * @return $this
-     */
-    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function setListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct): self
     {
         $this->listingProduct = $listingProduct;
 
         return $this;
     }
 
-    // ---------------------------------------
+    //---------------------------------------
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setCachedData(array $data)
+    public function setCachedData(array $data): self
     {
         $this->cachedData = $data;
 
         return $this;
     }
 
-    // ---------------------------------------
+    //---------------------------------------
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
-    public function setParams(array $params = [])
+    public function setParams(array $params = []): self
     {
         $this->params = $params;
 
         return $this;
     }
 
-    //########################################
+    //---------------------------------------
 
-    public function setIsVariationItem($isVariationItem)
+    public function setIsVariationItem($isVariationItem): self
     {
         $this->isVariationItem = $isVariationItem;
 
         return $this;
     }
 
-    //########################################
+    //---------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Marketplace
-     */
-    protected function getMarketplace()
+    protected function getMarketplace(): \Ess\M2ePro\Model\Marketplace
     {
         return $this->getListing()->getMarketplace();
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Marketplace
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getEbayMarketplace()
+    protected function getEbayMarketplace(): \Ess\M2ePro\Model\Ebay\Marketplace
     {
         return $this->getMarketplace()->getChildObject();
     }
 
-    // ---------------------------------------
+    //---------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Account
-     */
-    protected function getAccount()
+    protected function getAccount(): \Ess\M2ePro\Model\Account
     {
         return $this->getListing()->getAccount();
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Account
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getEbayAccount()
+    protected function getEbayAccount(): \Ess\M2ePro\Model\Ebay\Account
     {
         return $this->getAccount()->getChildObject();
     }
 
-    // ---------------------------------------
+    //---------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Listing
-     */
-    protected function getListing()
+    protected function getListing(): \Ess\M2ePro\Model\Listing
     {
         return $this->getListingProduct()->getListing();
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Listing
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getEbayListing()
+    protected function getEbayListing(): \Ess\M2ePro\Model\Ebay\Listing
     {
         return $this->getListing()->getChildObject();
     }
 
-    // ---------------------------------------
+    //---------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Listing\Product
-     */
-    protected function getListingProduct()
+    protected function getListingProduct(): \Ess\M2ePro\Model\Listing\Product
     {
         return $this->listingProduct;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Ebay\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    protected function getEbayListingProduct()
+    protected function getEbayListingProduct(): \Ess\M2ePro\Model\Ebay\Listing\Product
     {
         return $this->getListingProduct()->getChildObject();
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Magento\Product
-     */
-    protected function getMagentoProduct()
+    protected function getMagentoProduct(): \Ess\M2ePro\Model\Magento\Product
     {
         return $this->getListingProduct()->getMagentoProduct();
     }
 
-    //########################################
+    //---------------------------------------
 
-    protected function searchNotFoundAttributes()
+    protected function searchNotFoundAttributes(): void
     {
         $this->getMagentoProduct()->clearNotFoundAttributes();
     }
 
-    protected function processNotFoundAttributes($title)
+    protected function processNotFoundAttributes(string $title): bool
     {
         $attributes = $this->getMagentoProduct()->getNotFoundAttributes();
 
@@ -195,12 +152,38 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         return false;
     }
 
-    // ---------------------------------------
+    //---------------------------------------
 
-    protected function addNotFoundAttributesMessages($title, array $attributes)
+    protected function addNotFoundAttributesMessages(string $title, array $attributes): void
+    {
+        $attributesTitles = $this->getAttributeTitles($attributes);
+
+        $this->addWarningMessage(
+            __(
+                '%1: Attribute(s) %2 were not found' .
+                ' in this Product and its value was not sent.',
+                $this->getHelper('Module\Translation')->__($title),
+                implode(',', $attributesTitles)
+            )
+        );
+    }
+
+    protected function addFoundAttributesInChildrenMessages(array $attributes): void
+    {
+        $attributesTitles = $this->getAttributeTitles($attributes);
+
+        $this->addWarningMessage(
+            __(
+                'The %1: Attribute(s) could not be located in the Parent Product.
+                Therefore, %1 values available in the Child Products were synchronized instead.',
+                implode(',', $attributesTitles)
+            )
+        );
+    }
+
+    private function getAttributeTitles($attributes): array
     {
         $attributesTitles = [];
-
         foreach ($attributes as $attribute) {
             $attributesTitles[] = $this->getHelper('Magento\Attribute')
                                        ->getAttributeLabel(
@@ -209,58 +192,48 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
                                        );
         }
 
-        $this->addWarningMessage(
-            $this->getHelper('Module\Translation')->__(
-                '%attribute_title%: Attribute(s) %attributes% were not found' .
-                ' in this Product and its value was not sent.',
-                $this->getHelper('Module\Translation')->__($title),
-                implode(',', $attributesTitles)
-            )
-        );
+        return $attributesTitles;
     }
 
-    //########################################
+    //---------------------------------------
 
-    protected function addWarningMessage($message)
+    protected function addWarningMessage(string $message): self
     {
         $this->warningMessages[sha1($message)] = $message;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getWarningMessages()
+    public function getWarningMessages(): array
     {
         return $this->warningMessages;
     }
 
-    //########################################
+    //---------------------------------------
 
-    protected function addMetaData($key, $value)
+    protected function addMetaData($key, $value): void
     {
         $this->metaData[$key] = $value;
     }
 
-    public function getMetaData()
+    public function getMetaData(): array
     {
         return $this->metaData;
     }
 
-    public function setMetaData($value)
+    public function setMetaData($value): self
     {
         $this->metaData = $value;
 
         return $this;
     }
 
-    //########################################
+    //---------------------------------------
 
     /**
      * @return array
      */
     abstract public function getBuilderData();
 
-    //########################################
+    //---------------------------------------
 }

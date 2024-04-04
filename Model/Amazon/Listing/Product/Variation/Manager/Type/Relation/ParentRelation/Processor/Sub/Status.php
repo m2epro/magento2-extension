@@ -42,7 +42,7 @@ class Status extends AbstractModel
         $childStatuses = [
             \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => 0,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => 0,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => 0,
             \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => 0,
         ];

@@ -1,15 +1,38 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay;
 
 abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 {
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
+    private $ruleViewStateManager;
+    /** @var \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory */
+    private $ebayProductRuleFactory;
+    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
+    private $globalDataHelper;
+    /** @var \Ess\M2ePro\Helper\Data\Session */
+    private $sessionHelper;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
+    private $viewStateFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $ruleViewStateManager,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
+        \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory $ebayProductRuleFactory,
+        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
+        \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->ruleViewStateManager = $ruleViewStateManager;
+        $this->ebayProductRuleFactory = $ebayProductRuleFactory;
+        $this->globalDataHelper = $globalDataHelper;
+        $this->sessionHelper = $sessionHelper;
+        $this->viewStateFactory = $viewStateFactory;
+    }
+
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_listings_m2epro');
@@ -120,33 +143,46 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         return $itemSpecifics;
     }
 
-    protected function setRuleData($prefix)
+    protected function setRuleModel(): void
     {
+        $prefix = 'ebay_rule_category';
         $prefix .= $this->getRequest()->getParam('active_tab', '');
         $prefix .= $this->getRequest()->getParam('template_id', '');
-        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
 
-        $ruleModel = $this->activeRecordFactory->getObject('Ebay_Magento_Product_Rule')->setData(
-            [
-                'prefix' => $prefix,
-            ]
+        $getRuleBySessionData = function () use ($prefix) {
+            return $this->createRuleBySessionData($prefix);
+        };
+
+        $ruleModel = $this->ruleViewStateManager->getRuleWithViewState(
+            $this->viewStateFactory->create($prefix),
+            \Ess\M2ePro\Model\Ebay\Magento\Product\Rule::NICK,
+            $getRuleBySessionData
         );
+
+        $this->globalDataHelper->setValue('rule_model', $ruleModel);
+    }
+
+    private function createRuleBySessionData(string $prefix): \Ess\M2ePro\Model\Ebay\Magento\Product\Rule
+    {
+        $this->globalDataHelper->setValue('rule_prefix', $prefix);
+
+        $ruleModel = $this->ebayProductRuleFactory->create($prefix);
 
         $ruleParam = $this->getRequest()->getPost('rule');
         if (!empty($ruleParam)) {
-            $this->getHelper('Data\Session')->setValue(
+            $this->sessionHelper->setValue(
                 $prefix,
                 $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
             );
         } elseif ($ruleParam !== null) {
-            $this->getHelper('Data\Session')->setValue($prefix, []);
+            $this->sessionHelper->setValue($prefix, []);
         }
 
-        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        $sessionRuleData = $this->sessionHelper->getValue($prefix);
         if (!empty($sessionRuleData)) {
             $ruleModel->loadFromSerialized($sessionRuleData);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+        return $ruleModel;
     }
 }

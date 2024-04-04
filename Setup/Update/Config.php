@@ -355,10 +355,12 @@ class Config extends AbstractConfig
                 'RemoveEbayTradingToken',
                 'AddReviseProductIdentifiersToEbaySyncTemplate',
                 'CleanSettingsInConfigTable',
+                'CombineInactiveProductStatuses',
             ],
             'y24_m03' => [
                 'AddOnlineRegularMapPriceToAmazonListingProduct',
                 'AddKtypesResolveAttemptColumn',
+                'CreateAndFillAmazonAccountMerchantSettingTable',
             ],
         ];
     }
@@ -427,6 +429,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m02\DisableAmazonMarketplaceWithoutAccounts::class,
             \Ess\M2ePro\Setup\Update\y24_m03\AddOnlineRegularMapPriceToAmazonListingProduct::class,
             \Ess\M2ePro\Setup\Update\y24_m03\AddKtypesResolveAttemptColumn::class,
+            \Ess\M2ePro\Setup\Update\y24_m03\CreateAndFillAmazonAccountMerchantSettingTable::class,
         ];
     }
 
