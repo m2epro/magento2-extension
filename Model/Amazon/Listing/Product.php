@@ -774,10 +774,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     // ---------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getOnlineHandlingTime()
+    public function getOnlineHandlingTime(): int
     {
         return (int)$this->getData('online_handling_time');
     }

@@ -181,7 +181,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $this->listingProduct->getChildObject();
 
-        $handlingTimeFrom = $amazonListingProduct->getOrigData('online_handling_time');
+        $handlingTimeFrom = (int)$amazonListingProduct->getOrigData('online_handling_time');
         $handlingTimeTo = $amazonListingProduct->getOnlineHandlingTime();
 
         if ($handlingTimeFrom != $handlingTimeTo) {

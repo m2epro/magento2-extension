@@ -1,19 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento\Product;
 
 use Ess\M2ePro\Model\AbstractModel;
 use Magento\Framework\App\Area;
 
-/**
- * Class \Ess\M2ePro\Model\Magento\Product\Image
- */
 class Image extends AbstractModel
 {
     protected $driverPool;

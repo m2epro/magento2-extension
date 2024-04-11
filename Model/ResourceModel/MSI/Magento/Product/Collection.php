@@ -1,35 +1,24 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\MSI\Magento\Product;
 
-use Magento\InventoryReservationsApi\Model\ReservationInterface;
 use Magento\InventorySalesApi\Model\StockByWebsiteIdResolverInterface;
 use Magento\InventoryIndexer\Model\StockIndexTableNameResolverInterface;
 use Magento\InventoryCatalogApi\Api\DefaultStockProviderInterface;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\MSI\Magento\Product\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection
 {
+    /** @var \Ess\M2ePro\Helper\Magento\Stock */
+    private $stockHelper;
     /** @var StockIndexTableNameResolverInterface */
-    protected $indexNameResolver;
-
+    private $indexNameResolver;
     /** @var StockByWebsiteIdResolverInterface */
-    protected $stockResolver;
-
+    private $stockResolver;
     /** @var DefaultStockProviderInterface */
-    protected $defaultStockResolver;
-
-    //########################################
+    private $defaultStockResolver;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Magento\Stock $stockHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -82,12 +71,11 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
             $connection
         );
 
+        $this->stockHelper = $stockHelper;
         $this->indexNameResolver = $objectManager->get(StockIndexTableNameResolverInterface::class);
         $this->stockResolver = $objectManager->get(StockByWebsiteIdResolverInterface::class);
         $this->defaultStockResolver = $objectManager->get(DefaultStockProviderInterface::class);
     }
-
-    //########################################
 
     public function joinStockItem()
     {
@@ -114,7 +102,10 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
                 'def_quantity' => 'quantity',
                 'def_is_in_stock' => 'is_salable',
             ],
-            null,
+            [
+                'stock_id' => $this->stockHelper->getStockId($this->getStoreId()),
+                'website_id' => $this->stockHelper->getWebsiteId($this->getStoreId()),
+            ],
             'left'
         );
 
@@ -123,8 +114,6 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
             'is_in_stock' => $this->getCheckSqlForStock(),
         ]);
     }
-
-    //########################################
 
     public function getCheckSqlForQty()
     {
@@ -135,8 +124,6 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
         );
     }
 
-    //########################################
-
     public function getCheckSqlForStock()
     {
         return $this->getConnection()->getCheckSql(
@@ -145,8 +132,6 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
             'IFNULL(it_def.is_salable, 0)'
         );
     }
-
-    //########################################
 
     public function addAttributeToFilter($attribute, $condition = null, $joinType = 'inner')
     {
@@ -171,8 +156,6 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
         return parent::addAttributeToFilter($attribute, $condition, $joinType);
     }
 
-    //########################################
-
     public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
     {
         if ($attribute == 'qty') {
@@ -181,6 +164,4 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
         return parent::addAttributeToSort($attribute, $dir);
     }
-
-    //########################################
 }

@@ -1,19 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
-use Ess\M2ePro\Model\Amazon\Listing;
-use Ess\M2ePro\Model\Magento\Product\Image;
-
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Source
- */
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -132,10 +120,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    /**
-     * @return int|string
-     */
-    public function getHandlingTime()
+    public function getHandlingTime(): int
     {
         $result = 0;
         $src = $this->getAmazonListing()->getHandlingTimeSource();
@@ -149,8 +134,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $result = (int)$result;
-        $result < 0 && $result = 0;
-        $result > 30 && $result = 30;
+
+        if ($result <= 0) {
+            return 0;
+        }
+
+        if ($result >= 30) {
+            return 30;
+        }
 
         return $result;
     }

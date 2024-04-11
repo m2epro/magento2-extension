@@ -51,7 +51,7 @@ class Qty extends AbstractModel
             $this->cachedData['restock_date'] = $restockDate;
         }
 
-        if (!empty($this->cachedData['handling_time'])) {
+        if (isset($this->cachedData['handling_time'])) {
             $data['handling_time'] = $this->cachedData['handling_time'];
         }
 

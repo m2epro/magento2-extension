@@ -44,7 +44,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      *  )
      */
 
-    /** @var array  */
+    /** @var array */
     public static $statistics = [];
 
     protected $inventoryFactory;
@@ -102,8 +102,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
     private $productRepository;
+    /** @var \Ess\M2ePro\Model\Magento\Product\ImageFactory */
+    private $imageFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Magento\Product\ImageFactory $imageFactory,
         Factory $inventoryFactory,
         \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\App\ResourceConnection $resourceModel,
@@ -145,6 +148,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->moduleConfiguration = $moduleConfiguration;
         $this->m2eProductFactory = $m2eProductFactory;
         $this->productRepository = $productRepository;
+        $this->imageFactory = $imageFactory;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -1498,11 +1502,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        $thumbnailTempPath = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
-                                              ->getAbsolutePath() . 'catalog/product/' . ltrim($thumbnailTempPath, '/');
+        $thumbnailTempPath = $this->filesystem
+                ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
+                ->getAbsolutePath() . 'catalog/product/' . ltrim($thumbnailTempPath, '/');
 
-        /** @var Image $image */
-        $image = $this->modelFactory->getObject('Magento_Product_Image');
+        $image = $this->imageFactory->create();
         $image->setPath($thumbnailTempPath);
         $image->setArea(\Magento\Framework\App\Area::AREA_ADMINHTML);
         $image->setStoreId($this->getStoreId());
@@ -1580,8 +1584,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        /** @var Image $image */
-        $image = $this->modelFactory->getObject('Magento_Product_Image');
+        $image = $this->imageFactory->create();
         $image->setUrl($imageUrl);
         $image->setStoreId($this->getStoreId());
 
@@ -1601,50 +1604,39 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return [];
         }
 
-        $galleryImages = $this->getProduct()->getData('media_gallery');
+        $galleryImages = $this->getProduct()->getMediaGalleryEntries();
 
-        if (!isset($galleryImages['images']) || !is_array($galleryImages['images'])) {
+        if (empty($galleryImages)) {
             return [];
         }
 
         $i = 0;
         $images = [];
 
-        foreach ($galleryImages['images'] as $galleryImage) {
+        foreach ($galleryImages as $galleryImage) {
             if ($i >= $limitImages) {
                 break;
             }
 
-            if (isset($galleryImage['disabled']) && (bool)$galleryImage['disabled']) {
+            if ($this->isNeedSkipGalleryImage($galleryImage)) {
                 continue;
             }
 
-            if (!isset($galleryImage['file'])) {
-                continue;
-            }
-
-            if (
-                isset($galleryImage['media_type']) &&
-                $galleryImage['media_type'] === ExternalVideoEntryConverter::MEDIA_TYPE_CODE
-            ) {
-                continue;
-            }
-
-            $imageUrl = $this->storeFactory->create()
-                                           ->load($this->getStoreId())
-                                           ->getBaseUrl(
-                                               \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
-                                               $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
-                                           );
-            $imageUrl .= 'catalog/product/' . ltrim($galleryImage['file'], '/');
+            $imageUrl = $this->storeFactory
+                ->create()
+                ->load($this->getStoreId())
+                ->getBaseUrl(
+                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                    $this->moduleConfiguration->getSecureImageUrlInItemDescriptionMode()
+                );
+            $imageUrl .= 'catalog/product/' . ltrim($galleryImage->getFile(), '/');
             $imageUrl = $this->prepareImageUrl($imageUrl);
 
             if (empty($imageUrl)) {
                 continue;
             }
 
-            /** @var Image $image */
-            $image = $this->modelFactory->getObject('Magento_Product_Image');
+            $image = $this->imageFactory->create();
             $image->setUrl($imageUrl);
             $image->setStoreId($this->getStoreId());
 
@@ -1703,8 +1695,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $imageUrl = $this->prepareImageUrl($imageUrl);
 
-        /** @var Image $image */
-        $image = $this->modelFactory->getObject('Magento_Product_Image');
+        $image = $this->imageFactory->create();
         $image->setUrl($imageUrl);
         $image->setStoreId($this->getStoreId());
 
@@ -1795,5 +1786,35 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->notFoundAttributes = [];
     }
 
-    //########################################
+    // ----------------------------------------
+
+    private function isNeedSkipGalleryImage(
+        \Magento\Catalog\Api\Data\ProductAttributeMediaGalleryEntryInterface $galleryImage
+    ): bool {
+        if ($galleryImage->isDisabled()) {
+            return true;
+        }
+
+        if (empty($galleryImage->getFile())) {
+            return true;
+        }
+
+        if ($galleryImage->getMediaType() === ExternalVideoEntryConverter::MEDIA_TYPE_CODE) {
+            return true;
+        }
+
+        if (in_array('image', $galleryImage->getTypes())) {
+            return false;
+        }
+
+        if (in_array('small_image', $galleryImage->getTypes())) {
+            return true;
+        }
+
+        if (in_array('thumbnail', $galleryImage->getTypes())) {
+            return true;
+        }
+
+        return false;
+    }
 }
