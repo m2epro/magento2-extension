@@ -774,9 +774,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     // ---------------------------------------
 
-    public function getOnlineHandlingTime(): int
+    public function getOnlineHandlingTime(): ?int
     {
-        return (int)$this->getData('online_handling_time');
+        $handlingTime = $this->getData('online_handling_time');
+        if ($handlingTime === null) {
+            return null;
+        }
+
+        return (int)$handlingTime;
     }
 
     public function getOnlineRestockDate()

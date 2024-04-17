@@ -40,9 +40,7 @@ class Qty extends AbstractModel
         $this->checkQtyWarnings();
 
         if (!isset($this->validatorsData['handling_time'])) {
-            $handlingTime = $this->getAmazonListingProduct()
-                                 ->getListingSource()
-                                 ->getHandlingTime();
+            $handlingTime = $this->getAmazonListingProduct()->getListingSource()->getHandlingTime();
             $this->cachedData['handling_time'] = $handlingTime;
         }
 
@@ -51,7 +49,7 @@ class Qty extends AbstractModel
             $this->cachedData['restock_date'] = $restockDate;
         }
 
-        if (isset($this->cachedData['handling_time'])) {
+        if (($this->cachedData['handling_time'] ?? null) !== null) {
             $data['handling_time'] = $this->cachedData['handling_time'];
         }
 

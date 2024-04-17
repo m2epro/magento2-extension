@@ -120,10 +120,15 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function getHandlingTime(): int
+    public function getHandlingTime(): ?int
     {
-        $result = 0;
         $src = $this->getAmazonListing()->getHandlingTimeSource();
+
+        if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_NONE) {
+            return null;
+        }
+
+        $result = 0;
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_RECOMMENDED) {
             $result = $src['value'];
@@ -131,6 +136,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         if ($src['mode'] == \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE) {
             $result = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
+
+            if ($result === '') {
+                return null;
+            }
         }
 
         $result = (int)$result;

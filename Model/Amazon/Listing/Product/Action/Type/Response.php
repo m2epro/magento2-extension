@@ -220,9 +220,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
-        if ($this->getRequestData()->hasHandlingTime()) {
-            $data['online_handling_time'] = $this->getRequestData()->getHandlingTime();
-        }
+        $data['online_handling_time'] = $this->getRequestData()->getHandlingTime();
 
         if ($this->getRequestData()->hasRestockDate()) {
             $data['online_restock_date'] = $this->getRequestData()->getRestockDate();

@@ -328,7 +328,7 @@ class Active extends AbstractModel
         $currentHandlingTime = $amazonListingProduct->getListingSource()->getHandlingTime();
         $onlineHandlingTime = $amazonListingProduct->getOnlineHandlingTime();
 
-        if ($currentHandlingTime != $onlineHandlingTime) {
+        if ($currentHandlingTime !== $onlineHandlingTime) {
             return true;
         }
 

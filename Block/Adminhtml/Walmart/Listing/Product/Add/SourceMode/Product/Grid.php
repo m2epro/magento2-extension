@@ -193,6 +193,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                 0
             );
         } else {
+            $collection->addAttributeToSelect('name');
             $collection->addAttributeToSelect('price');
             $collection->addAttributeToSelect('status');
             $collection->addAttributeToSelect('visibility');
