@@ -18,7 +18,9 @@ class Amazon extends AbstractPriceCondition
             ->addSelect('vat', 'regular_price_vat_percent')
             ->addSelect('modifier', 'regular_price_modifier')
             ->addSelect('mode', 'regular_price_mode')
-            ->addSelect('mode_attribute', 'regular_price_custom_attribute');
+            ->addSelect('mode_attribute', 'regular_price_custom_attribute')
+            ->addSelect('price_rounding', 'price_rounding_option')
+        ;
 
         $sellingPolicyQuery->from('t', 'm2epro_amazon_template_selling_format');
 

@@ -464,6 +464,42 @@ HTML
         );
 
         $fieldset = $form->addFieldset(
+            'magento_orders_reservation_rules',
+            [
+                'legend' => __('Quantity Reservation'),
+                'collapsable' => true,
+                'tooltip' => __(
+                    'Use Reserve Quantity Option to keep Items from being sold before an
+                    Order is created in Magento.<br>
+                    The Reserve Quantity Option ensures that Items are deducted from Magento stock immediately
+                    upon an Order being imported from the channel. Reserved quantity will be used to create an Order
+                    in Magento or will be released once the QTY reservation period expires.'
+                ),
+            ]
+        );
+
+        $values = [];
+        for ($day = 1; $day <= 14; $day++) {
+            if ($day == 1) {
+                $values[$day] = __('For %number day', ['number' => $day]);
+            } else {
+                $values[$day] = __('For %number days', ['number' => $day]);
+            }
+        }
+
+        $fieldset->addField(
+            'magento_orders_qty_reservation_days',
+            'select',
+            [
+                'container_id' => 'magento_orders_qty_reservation_days_container',
+                'name' => 'magento_orders_settings[qty_reservation][days]',
+                'label' => __('Reserve Quantity'),
+                'values' => $values,
+                'value' => $formData['magento_orders_settings']['qty_reservation']['days'],
+            ]
+        );
+
+        $fieldset = $form->addFieldset(
             'magento_block_walmart_accounts_magento_orders_refund_and_cancellation',
             [
                 'legend' => __('Refund & Cancellation'),

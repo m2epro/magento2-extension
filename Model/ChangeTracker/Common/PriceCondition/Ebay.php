@@ -21,7 +21,9 @@ class Ebay extends AbstractPriceCondition
             )
             ->addSelect('modifier', 'fixed_price_modifier')
             ->addSelect('mode', 'fixed_price_mode')
-            ->addSelect('mode_attribute', 'fixed_price_custom_attribute');
+            ->addSelect('mode_attribute', 'fixed_price_custom_attribute')
+            ->addSelect('price_rounding', 'fixed_price_rounding_option')
+        ;
 
         $sellingPolicyQuery->from('t', 'm2epro_ebay_template_selling_format');
 

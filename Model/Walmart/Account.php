@@ -707,14 +707,14 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     // ---------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getQtyReservationDays()
+    public function getQtyReservationDays(): int
     {
-        $setting = $this->getSetting('magento_orders_settings', ['qty_reservation', 'days']);
+        $reservationDays = $this->getSetting('magento_orders_settings', ['qty_reservation', 'days']);
+        if (empty($reservationDays)) {
+            return 1;
+        }
 
-        return (int)$setting;
+        return (int)$reservationDays;
     }
 
     // ---------------------------------------

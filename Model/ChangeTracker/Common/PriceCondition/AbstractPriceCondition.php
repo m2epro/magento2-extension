@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition;
 
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
+use Ess\M2ePro\Model\Listing\Product\PriceRounder;
 
 abstract class AbstractPriceCondition
 {
@@ -52,9 +53,10 @@ abstract class AbstractPriceCondition
             $queryData[] = [
                 'when' => (int)$sellingPolicy['id'],
                 'then' => $this->buildThenCondition(
+                    $priceColumn,
                     $sellingPolicy['modifier'],
-                    $sellingPolicy['vat'],
-                    $priceColumn
+                    (float)$sellingPolicy['vat'],
+                    (int)($sellingPolicy['price_rounding'] ?? PriceRounder::PRICE_ROUNDING_NONE)
                 ),
             ];
         }
@@ -122,15 +124,12 @@ abstract class AbstractPriceCondition
         );
     }
 
-    /**
-     * @param string $modifiers
-     * @param float $vat
-     * @param string $priceColumn
-     *
-     * @return string
-     */
-    protected function buildThenCondition(string $modifiers, float $vat, string $priceColumn): string
-    {
+    protected function buildThenCondition(
+        string $priceColumn,
+        string $modifiers,
+        float $vat,
+        int $priceRounding
+    ): string {
         $modifiers = json_decode($modifiers, true);
         $sql = $priceColumn;
         foreach ($modifiers as $modifier) {
@@ -185,6 +184,22 @@ abstract class AbstractPriceCondition
             }
         }
 
-        return "ROUND( $sql * (1+$vat/100), 2)";
+        if ($priceRounding === PriceRounder::PRICE_ROUNDING_NEAREST_HUNDREDTH) {
+            return "ROUND( $sql * (1+$vat/100), 1 ) - 0.01";
+        }
+
+        if ($priceRounding === PriceRounder::PRICE_ROUNDING_NEAREST_TENTH) {
+            return "ROUND( $sql * (1+$vat/100) ) - 0.01";
+        }
+
+        if ($priceRounding === PriceRounder::PRICE_ROUNDING_NEAREST_INT) {
+            return "ROUND( $sql * (1+$vat/100) )";
+        }
+
+        if ($priceRounding === PriceRounder::PRICE_ROUNDING_NEAREST_HUNDRED) {
+            return "ROUND( $sql * (1+$vat/100), -1 )";
+        }
+
+        return "ROUND( $sql * (1+$vat/100), 2 )";
     }
 }

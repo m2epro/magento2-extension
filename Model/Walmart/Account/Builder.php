@@ -311,6 +311,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             }
         }
 
+        // qty reservation
+        // ---------------------------------------
+        if (isset($this->rawData['magento_orders_settings']['qty_reservation']['days'])) {
+            $data['magento_orders_settings']['qty_reservation']['days']
+                = $this->rawData['magento_orders_settings']['qty_reservation']['days'];
+        }
+
         // Shipping information
         // ---------------------------------------
         $tempKey = 'shipping_information';
@@ -426,6 +433,9 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'ship_by_date' => 1,
                     'shipping_address_region_override' => 1,
                 ],
+                'qty_reservation' => [
+                    'days' => 1
+                ]
             ],
             'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,

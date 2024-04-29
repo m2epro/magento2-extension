@@ -355,6 +355,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
             'group' => self::GROUP_WALMART,
         ],
+        \Ess\M2ePro\Model\Cron\Task\Walmart\Order\ReserveCancel::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Walmart::NICK,
+            'group' => self::GROUP_WALMART,
+        ],
     ];
 
     /** @var array */

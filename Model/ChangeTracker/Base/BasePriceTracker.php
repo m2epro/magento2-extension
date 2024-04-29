@@ -302,6 +302,7 @@ abstract class BasePriceTracker implements TrackerInterface
     protected function getCurrencyRateSubQuery(): \Zend_Db_Expr
     {
         $select = $this->queryBuilder->makeSubQuery();
+        $select->distinct();
         $select->addSelect('store', 'listing.store_id');
         $select->addSelect('marketplace', 'marketplace.marketplace_id');
         $select->addSelect('rate', 'rate.rate');

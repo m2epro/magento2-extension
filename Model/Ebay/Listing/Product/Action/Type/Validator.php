@@ -310,6 +310,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateVariationsOptions(): bool
     {
         $totalVariationsCount = 0;
+        $totalVariationsCountWithoutDeleted = 0;
         $totalDeletedVariationsCount = 0;
         $uniqueAttributesValues = [];
 
@@ -350,10 +351,14 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $totalVariationsCount++;
-            $ebayVariation->isDelete() && $totalDeletedVariationsCount++;
+            if ($ebayVariation->isDelete()) {
+                $totalDeletedVariationsCount++;
+            } else {
+                $totalVariationsCountWithoutDeleted++;
+            }
 
             // Not more than 250 possible variations
-            if ($totalVariationsCount > 250) {
+            if ($totalVariationsCountWithoutDeleted > 250) {
                 $this->addMessage(
                     'Variations of this Magento Product are out of the eBay Variational Item limits.
                     The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.

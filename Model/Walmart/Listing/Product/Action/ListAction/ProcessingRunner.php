@@ -80,7 +80,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $this->getProcessingAction()->save();
 
         $accountId = (int)$params['account_id'];
-        $sku = (string)$params['requester_params']['sku'];
+        $sku = (string)$params['request_data']['sku'];
 
         $processingActionList = $this->activeRecordFactory->getObject('Walmart_Listing_Product_Action_ProcessingList');
         $processingActionList->setData(
