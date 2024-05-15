@@ -103,7 +103,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'sku' => 'second_table.sku',
                 'item_id' => 'second_table.item_id',
                 'available_qty' => new \Zend_Db_Expr(
-                    '(second_table.online_qty - second_table.online_qty_sold)'
+                    '(CAST(second_table.online_qty AS SIGNED) - CAST(second_table.online_qty_sold AS SIGNED))'
                 ),
                 'online_qty_sold' => 'second_table.online_qty_sold',
                 'online_price' => 'second_table.online_price',
@@ -165,7 +165,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width' => '50px',
             'type' => 'number',
             'index' => 'available_qty',
-            'filter_index' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
+            'filter_index' => new \Zend_Db_Expr('(CAST(second_table.online_qty AS SIGNED) - CAST(second_table.online_qty_sold AS SIGNED))'),
             'renderer' => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
         ]);
