@@ -31,7 +31,7 @@ class Message extends \Ess\M2ePro\Model\Response\Message
         parent::initFromResponseData($responseData);
 
         $this->sender = $responseData[self::SENDER_KEY];
-        $this->code = $responseData[self::CODE_KEY];
+        $this->setCode($responseData[self::CODE_KEY]);
     }
 
     public function initFromPreparedData($text, $type, $sender = null, $code = null)
@@ -39,7 +39,7 @@ class Message extends \Ess\M2ePro\Model\Response\Message
         parent::initFromPreparedData($text, $type);
 
         $this->sender = $sender;
-        $this->code = $code;
+        $this->setCode($code);
     }
 
     //########################################
@@ -64,7 +64,18 @@ class Message extends \Ess\M2ePro\Model\Response\Message
         return $this->sender == self::SENDER_COMPONENT;
     }
 
-    //########################################
+    public function setCode($code): void
+    {
+        if (!is_scalar($code)) {
+            if (is_array($code)) {
+                $code = reset($code);
+            }
+
+            $code = (string)$code;
+        }
+
+        $this->code = $code;
+    }
 
     public function getCode()
     {
