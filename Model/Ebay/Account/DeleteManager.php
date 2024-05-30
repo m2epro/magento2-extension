@@ -1,25 +1,16 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Account;
 
 class DeleteManager
 {
-    /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
-    private $cachePermanent;
-
-    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory */
-    private $shippingTemplateCollectionFactory;
-
-    /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
-    private $moduleDatabaseStructureHelper;
+    private \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent;
+    private \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory $shippingTemplateCollectionFactory;
+    private \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructureHelper;
+    private \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository,
         \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructureHelper,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory $shippingTemplateCollectionFactory,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
@@ -27,6 +18,7 @@ class DeleteManager
         $this->cachePermanent = $cachePermanent;
         $this->shippingTemplateCollectionFactory = $shippingTemplateCollectionFactory;
         $this->moduleDatabaseStructureHelper = $moduleDatabaseStructureHelper;
+        $this->promotionRepository = $promotionRepository;
     }
 
     /**
@@ -68,6 +60,8 @@ class DeleteManager
 
         /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
         $ebayAccount = $account->getChildObject();
+
+        $this->promotionRepository->removeAllByAccountId((int)$ebayAccount->getId());
 
         $storeCategoriesTable = $this->moduleDatabaseStructureHelper
                                      ->getTableNameWithPrefix('m2epro_ebay_account_store_category');

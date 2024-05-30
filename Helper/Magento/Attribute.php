@@ -336,7 +336,7 @@ class Attribute extends AbstractHelper
 
     //########################################
 
-    public function getAttributeLabel($attributeCode, $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID)
+    public function getAttributeLabel($attributeCode, $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID): string
     {
         /** @var \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute */
         $attribute = $this->productResource->getAttribute($attributeCode);
@@ -345,10 +345,31 @@ class Attribute extends AbstractHelper
             return $attributeCode;
         }
 
-        $label = $attribute->getStoreLabel($storeId);
-        $label == '' && $label = $attribute->getFrontendLabel();
+        $label = $this->getStoreFrontendLabelOrDefault($attribute, (int)$storeId);
 
-        return $label == '' ? $attributeCode : $label;
+        return empty($label) ? $attributeCode : $label;
+    }
+
+    public function getStoreFrontendLabelOrDefault(
+        \Magento\Eav\Model\Entity\Attribute\AbstractAttribute $attribute,
+        int $storeId
+    ): ?string {
+        foreach ($attribute->getFrontendLabels() as $frontendLabel) {
+            if ($frontendLabel->getStoreId() === $storeId) {
+                $label = $frontendLabel->getLabel();
+
+                if (!empty($label)) {
+                    return $label;
+                }
+            }
+        }
+
+        $label = $attribute->getDefaultFrontendLabel();
+        if (empty($label)) {
+            return null;
+        }
+
+        return $label;
     }
 
     public function getAttributesLabels(array $attributeCodes)

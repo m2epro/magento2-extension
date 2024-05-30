@@ -6860,6 +6860,159 @@ class Installer
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayTemplateSynchronizationTable);
         #endregion
+
+        $ebayPromotionTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_PROMOTION
+        );
+        $ebayPromotionTable = $this->getConnection()
+                                   ->newTable($ebayPromotionTableName)
+                                   ->addColumn(
+                                       'id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       [
+                                           'unsigned' => true,
+                                           'primary' => true,
+                                           'nullable' => false,
+                                           'auto_increment' => true,
+                                       ]
+                                   )
+                                   ->addColumn(
+                                       'account_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'marketplace_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'promotion_id',
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'name',
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'type',
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'status',
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'priority',
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'start_date',
+                                       Table::TYPE_DATETIME,
+                                       null,
+                                       ['default' => null]
+                                   )
+                                   ->addColumn(
+                                       'end_date',
+                                       Table::TYPE_DATETIME,
+                                       null,
+                                       ['default' => null]
+                                   )
+                                   ->addColumn(
+                                       'update_date',
+                                       Table::TYPE_DATETIME,
+                                       null,
+                                       ['default' => null]
+                                   )
+                                   ->addColumn(
+                                       'create_date',
+                                       Table::TYPE_DATETIME,
+                                       null,
+                                       ['default' => null]
+                                   )
+                                   ->setOption('type', 'INNODB')
+                                   ->setOption('charset', 'utf8')
+                                   ->setOption('collate', 'utf8_general_ci')
+                                   ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($ebayPromotionTable);
+
+        $ebayListingProductPromotionTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING_PRODUCT_PROMOTION
+        );
+
+        $ebayListingProductPromotionTable = $this->getConnection()
+                                   ->newTable($ebayListingProductPromotionTableName)
+                                   ->addColumn(
+                                       'id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       [
+                                           'unsigned' => true,
+                                           'primary' => true,
+                                           'nullable' => false,
+                                           'auto_increment' => true,
+                                       ]
+                                   )
+                                   ->addColumn(
+                                       'account_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'marketplace_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'listing_product_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'promotion_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       'discount_id',
+                                       Table::TYPE_INTEGER,
+                                       null,
+                                       ['unsigned' => true, 'nullable' => true]
+                                   )
+                                   ->addColumn(
+                                       'update_date',
+                                       Table::TYPE_DATETIME,
+                                       null,
+                                       ['default' => null]
+                                   )
+                                   ->addColumn(
+                                       'create_date',
+                                       Table::TYPE_DATETIME,
+                                       null,
+                                       ['default' => null]
+                                   )
+                                   ->setOption('type', 'INNODB')
+                                   ->setOption('charset', 'utf8')
+                                   ->setOption('collate', 'utf8_general_ci')
+                                   ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($ebayListingProductPromotionTable);
     }
 
     /**

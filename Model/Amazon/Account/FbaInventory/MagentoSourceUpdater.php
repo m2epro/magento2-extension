@@ -103,6 +103,10 @@ class MagentoSourceUpdater
             $magentoSku = $sourceItem->getSku();
             $magentoLowerSku = strtolower($magentoSku);
 
+            if (!isset($changedItems[$magentoSku]) && !isset($changedItems[$magentoLowerSku])) {
+                continue;
+            }
+
             $newQty = (int)($changedItems[$magentoSku]['new_qty'] ?? $changedItems[$magentoLowerSku]['new_qty']);
 
             $sourceItem->setQuantity((float)$newQty);

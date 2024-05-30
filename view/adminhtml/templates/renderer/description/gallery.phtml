@@ -1,9 +1,4 @@
 <?php
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
 
 // @codingStandardsIgnoreFile
 
@@ -18,19 +13,19 @@ $data = $block->getData();
         #m2e-gallery-<?php echo $block->getGalleryId(); ?> {
             display: block;
             text-align: center;
-        <?php if ($data['width'] != '') :
+        <?php if ($data['width'] != 0) :
             echo "width: {$data['width']}px;";
         endif; ?>
-        <?php if ($data['height'] != '') :
+        <?php if ($data['height'] != 0) :
             echo "height: {$data['height']}px;";
         endif; ?>
         }
 
         #m2e-gallery-<?php echo $block->getGalleryId(); ?> .full-image {
-        <?php if ($data['width'] != '') :
+        <?php if ($data['width'] != 0) :
             echo "width: {$data['width']}px;";
         endif; ?>
-        <?php if ($data['height'] != '') :
+        <?php if ($data['height'] != 0) :
             echo "height: {$data['height']}px;";
         endif; ?>
             display: none;
@@ -126,13 +121,13 @@ $data = $block->getData();
     <style>
 
         #m2e-gallery-list-<?php echo $block->getGalleryId(); ?> img {
-        <?php if ($data['width'] != '') :
+        <?php if ($data['width'] != 0) :
             echo "width: {$data['width']}px;";
         endif; ?>
-        <?php if ($data['height'] != '') :
+        <?php if ($data['height'] != 0) :
             echo "height: {$data['height']}px;";
         endif; ?>
-        <?php if ($data['margin'] != '') :
+        <?php if ($data['margin'] != 0) :
             echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;";
         endif; ?>
         }

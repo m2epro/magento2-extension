@@ -61,7 +61,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
     private $rounder;
 
+    private \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository;
+
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory $priceCalculatorFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -90,6 +93,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->rounder = $rounder;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->priceCalculatorFactory = $priceCalculatorFactory;
+        $this->promotionRepository = $promotionRepository;
     }
 
     public function _construct()
@@ -105,6 +109,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         if ($this->isLocked()) {
             return false;
         }
+
+        $this->promotionRepository->removeListingProductPromotionByListingProductId($this->getId());
 
         $this->ebayItemModel = null;
         $this->categoryTemplateModel = null;

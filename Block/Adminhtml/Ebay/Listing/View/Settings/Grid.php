@@ -431,6 +431,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ], 'other');
         }
 
+        $this->getMassactionBlock()->addItem('managePromotion', [
+            'label' => __('Manage Promotion'),
+            'url' => '',
+        ], 'other');
+
         $this->getMassactionBlock()->addItem('moving', [
             'label' => $this->__('Move Item(s) to Another Listing'),
             'url' => '',
@@ -1023,6 +1028,26 @@ JS
             'ebay_template/saveListingProductsPolicy'
         );
 
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotion/openGridPromotion'),
+            'ebay_promotion/openGridPromotion'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotion/openGridDiscount'),
+            'ebay_promotion/openGridDiscount'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotion/synchronizePromotions'),
+            'ebay_promotion/synchronizePromotions'
+        );
+
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_promotion/updateItemPromotion'),
+            'ebay_promotion/updateItemPromotion'
+        );
+
         $this->jsUrl->addUrls($helper->getControllerActions('Ebay_Listing_Settings_Motors'));
         // ---------------------------------------
 
@@ -1084,6 +1109,12 @@ JS
             'task_completed_warning_message' => $this->__($taskCompletedWarningMessage),
             'task_completed_error_message' => $this->__($taskCompletedErrorMessage),
             'Add New Listing' => $this->__('Add New Listing'),
+            'Manage Promotion' => __('Manage Promotion'),
+            'Assign' => __('Assign'),
+            'Refresh Promotions' => __('Refresh Promotions'),
+            'Select Discount' => __('Select Discount'),
+            'Manage Discount' => __('Manage Discount'),
+            'Create New Promotion' => __('Create New Promotion'),
         ]);
 
         $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
@@ -1114,7 +1145,8 @@ JS
         'M2ePro/Ebay/Listing/View/Settings/Grid',
         'M2ePro/Ebay/Listing/View/Settings/Motors',
         'M2ePro/Ebay/Listing/Category',
-        'M2ePro/Ebay/Listing/Transferring'
+        'M2ePro/Ebay/Listing/Transferring',
+        'M2ePro/Ebay/Promotion'
     ], function(){
 
         window.EbayListingViewSettingsGridObj = new EbayListingViewSettingsGrid(
@@ -1131,6 +1163,11 @@ JS
         window.EbayListingCategoryObj = new EbayListingCategory(EbayListingViewSettingsGridObj);
         window.EbayListingTransferringObj = new EbayListingTransferring(
             {$this->listing->getId()}
+        );
+
+        window.PromotionObj = new Promotion(
+            '{$this->listing->getAccountId()}',
+            '{$this->listing->getMarketplaceId()}'
         );
     });
 JS

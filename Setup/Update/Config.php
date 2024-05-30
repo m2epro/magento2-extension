@@ -362,6 +362,9 @@ class Config extends AbstractConfig
                 'AddKtypesResolveAttemptColumn',
                 'CreateAndFillAmazonAccountMerchantSettingTable',
             ],
+            'y24_m05' => [
+                'AddEbayPromotion',
+            ],
         ];
     }
 
@@ -430,6 +433,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m03\AddOnlineRegularMapPriceToAmazonListingProduct::class,
             \Ess\M2ePro\Setup\Update\y24_m03\AddKtypesResolveAttemptColumn::class,
             \Ess\M2ePro\Setup\Update\y24_m03\CreateAndFillAmazonAccountMerchantSettingTable::class,
+            \Ess\M2ePro\Setup\Update\y24_m05\AddEbayPromotion::class,
         ];
     }
 

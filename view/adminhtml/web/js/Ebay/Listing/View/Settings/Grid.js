@@ -76,6 +76,10 @@ define([
                     this.mappingHandler.openPopUp(id, null, this.listingId);
                 }.bind(this),
 
+                managePromotionAction: (function() {
+                    PromotionObj.openPromotionPopup(this.getSelectedProductsString());
+                }).bind(this),
+
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
 
                 transferringAction: function(id) {
