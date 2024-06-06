@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Connector;
 
 class Protocol implements \Ess\M2ePro\Model\Connector\ProtocolInterface
 {
-    public const COMPONENT_VERSION = 20;
+    public const COMPONENT_VERSION = 21;
 
     /**
      * @return string

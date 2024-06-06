@@ -533,6 +533,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
 
     public function isTaxModeNone(): bool
     {
+        if ($this->order->isReplacement()) {
+            return true;
+        }
+
         $isNeedToSkipTax = $this->order->getAmazonAccount()->isAmazonCollectsTaxForUKShipmentWithCertainPrice();
         $isSkipTaxForUkShipmentCountryCode = $this->ukTaxService->isSkipTaxForUkShipmentCountryCode(
             $this->order->getShippingAddress()->getData('country_code')
@@ -568,5 +572,14 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return $result;
+    }
+
+    public function getGeneralComments(): array
+    {
+        if ($this->order->isReplacement()) {
+            return [];
+        }
+
+        return parent::getGeneralComments();
     }
 }

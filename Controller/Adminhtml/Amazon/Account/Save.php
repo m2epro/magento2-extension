@@ -103,7 +103,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $this->accountBuilder->build($account, $data);
 
         $this->accountMerchantSettingsCreateService->update(
-            $account->getChildObject()->getMerchantId(),
+            $account->getChildObject(),
             (bool)$data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_MODE],
             $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] ?? null
         );

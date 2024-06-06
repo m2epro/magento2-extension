@@ -358,6 +358,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return (bool)$this->getData('is_business');
     }
 
+    public function isReplacement(): bool
+    {
+        return (bool)$this->getData('is_replacement');
+    }
+
     /**
      * @return bool
      */

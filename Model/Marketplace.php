@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model;
 
 use Ess\M2ePro\Model\Ebay\Marketplace as EbayMarketplace;
@@ -21,7 +15,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
     public const STATUS_DISABLE = 0;
     public const STATUS_ENABLE = 1;
 
-    //########################################
+    private const GROUP_TITLE_AMERICA = 'America';
+    private const GROUP_TITLE_EUROPE = 'Europe';
+    private const GROUP_TITLE_ASIA_PACIFIC = 'Asia / Pacific';
 
     public function _construct()
     {
@@ -29,7 +25,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Marketplace::class);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -39,7 +35,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return true;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function save($reloadOnCreate = false)
     {
@@ -48,7 +44,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return parent::save($reloadOnCreate);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getIdByCode($code)
     {
@@ -75,7 +71,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return $this;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getTitle()
     {
@@ -100,7 +96,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return (int)$this->getData('status');
     }
 
-    public function getGroupTitle()
+    public function getGroupTitle(): string
     {
         return $this->getData('group_title');
     }
@@ -113,12 +109,29 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
         return (int)$this->getData('native_id');
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function isAmericanRegion(): bool
+    {
+        return $this->getGroupTitle() === self::GROUP_TITLE_AMERICA;
+    }
+
+    public function isEuropeanRegion(): bool
+    {
+        return $this->getGroupTitle() === self::GROUP_TITLE_EUROPE;
+    }
+
+    public function isAsianPacificRegion(): bool
+    {
+        return $this->getGroupTitle() === self::GROUP_TITLE_ASIA_PACIFIC;
+    }
+
+    // ----------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    // ----------------------------------------
 }

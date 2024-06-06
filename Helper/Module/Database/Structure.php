@@ -482,6 +482,11 @@ class Structure
             $modelName = preg_replace('/\.php$/', '', str_replace('/', '\\', $directoryItem));
             $className = '\Ess\M2ePro\Model\ResourceModel\\' . $modelName;
 
+            // temp fix. remove when create this table
+            if ($modelName === 'Ebay\Promotion\Discount') {
+                continue;
+            }
+
             $reflectionClass = new \ReflectionClass($className);
             if (
                 $reflectionClass->isAbstract() ||

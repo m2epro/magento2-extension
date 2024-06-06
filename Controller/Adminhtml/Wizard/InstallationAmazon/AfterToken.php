@@ -143,6 +143,6 @@ class AfterToken extends \Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAma
             $data
         );
 
-        $this->accountMerchantSettingsCreateService->createDefault($merchantId);
+        $this->accountMerchantSettingsCreateService->createDefault($account->getChildObject());
     }
 }

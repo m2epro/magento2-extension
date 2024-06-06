@@ -12,17 +12,21 @@ class DeleteManager
     private $merchantSettingRepository;
     /** @var \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory */
     private $accountCollectionFactory;
+    /** @var \Ess\M2ePro\Model\Amazon\Account\EventDispatcher */
+    private $eventDispatcher;
 
     public function __construct(
         Repository $amazonAccountRepository,
         MerchantSetting\Repository $merchantSettingRepository,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory
+        \Ess\M2ePro\Model\ResourceModel\Account\CollectionFactory $accountCollectionFactory,
+        EventDispatcher $eventDispatcher
     ) {
         $this->cachePermanent = $cachePermanent;
         $this->amazonAccountRepository = $amazonAccountRepository;
         $this->merchantSettingRepository = $merchantSettingRepository;
         $this->accountCollectionFactory = $accountCollectionFactory;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -98,6 +102,10 @@ class DeleteManager
         if ($this->isLastAccountForCurrentMarketplace($marketplace->getId())) {
             $marketplace->disable()
                         ->save();
+
+            $this->eventDispatcher->dispatchEventAccountDeleted(
+                $amazonAccount->getMerchantId()
+            );
         }
 
         $this->deleteMerchantSetting($amazonAccount->getMerchantId());

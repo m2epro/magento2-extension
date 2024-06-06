@@ -46,7 +46,7 @@ class TemplateSynchronization implements \Ess\M2ePro\Model\Servicing\Task\Analyt
         $collection = $this->createCollection();
         $collection->addFieldToFilter(
             'id',
-            ['gt' => $fromId, 'lte' => $toId]
+            ['from' => $fromId, 'to' => $toId]
         );
         $collection->setOrder('id', \Magento\Framework\DB\Select::SQL_ASC);
         $collection->setPageSize(self::LIMIT);

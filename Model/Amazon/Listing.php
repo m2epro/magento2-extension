@@ -69,6 +69,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+
     /** @var \Ess\M2ePro\Model\Currency */
     protected $currencyModel;
 
@@ -92,9 +93,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->currencyModel = $currencyModel;
-        $this->moduleConfiguration = $moduleConfiguration;
-
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -106,6 +104,9 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $resourceCollection,
             $data
         );
+
+        $this->currencyModel = $currencyModel;
+        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     public function _construct()

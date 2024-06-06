@@ -251,7 +251,7 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
         $this->accountBuilder->build($account, $accountData);
 
-        $this->accountMerchantSettingsCreateService->createDefault($merchantId);
+        $this->accountMerchantSettingsCreateService->createDefault($account->getChildObject());
 
         return $account;
     }

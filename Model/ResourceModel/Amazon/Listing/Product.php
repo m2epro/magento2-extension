@@ -6,6 +6,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 {
     public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
     public const COLUMN_ONLINE_REGULAR_MAP_PRICE = 'online_regular_map_price';
+    public const COLUMN_SKU = 'sku';
+    public const COLUMN_IS_AFN_CHANNEL = 'is_afn_channel';
+    public const COLUMN_ONLINE_AFN_QTY = 'online_afn_qty';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

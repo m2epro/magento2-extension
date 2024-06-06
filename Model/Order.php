@@ -59,8 +59,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     private $quoteManager = null;
     /** @var \Ess\M2ePro\Model\Order\Note\Repository */
     private $noteRepository;
+    /** @var \Ess\M2ePro\Model\Order\EventDispatcher */
+    private $eventDispatcher;
 
     public function __construct(
+        \Ess\M2ePro\Model\Order\EventDispatcher $eventDispatcher,
         \Ess\M2ePro\Model\Order\Note\Repository $noteRepository,
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Sales\Model\OrderFactory $orderFactory,
@@ -99,6 +102,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $resourceCollection,
             $data
         );
+
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     //########################################
@@ -786,7 +791,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $magentoOrderUpdater->finishUpdate();
         // ---------------------------------------
 
-        $this->_eventManager->dispatch('ess_order_place_success', ['order' => $this]);
+        $this->eventDispatcher->dispatchEventsMagentoOrderCreated($this);
 
         $this->addSuccessLog('Magento Order #%order_id% was created.', [
             '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
@@ -915,6 +920,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->addSuccessLog('Invoice #%invoice_id% was created.', [
                 '!invoice_id' => $invoice->getIncrementId(),
             ]);
+
+            $this->eventDispatcher->dispatchEventInvoiceCreated($this);
         }
 
         return $invoice;

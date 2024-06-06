@@ -22,8 +22,10 @@ class MagentoSourceUpdater
     private $listingLogFactory;
     /** @var \Ess\M2ePro\Helper\Module\Log */
     private $logHelper;
-    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository  */
+    /** @var \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\Repository */
     private $merchantSettingsRepository;
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\EventDispatcher */
+    private $listingProductEventDispatcher;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
@@ -32,6 +34,7 @@ class MagentoSourceUpdater
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\Amazon\Listing\LogFactory $listingLogFactory,
+        \Ess\M2ePro\Model\Amazon\Listing\Product\EventDispatcher $listingProductEventDispatcher,
         \Ess\M2ePro\Helper\Module\Log $logHelper
     ) {
         $this->merchantManager = $merchantManager;
@@ -52,6 +55,7 @@ class MagentoSourceUpdater
             );
         }
         $this->merchantSettingsRepository = $merchantSettingsRepository;
+        $this->listingProductEventDispatcher = $listingProductEventDispatcher;
     }
 
     /**
@@ -125,6 +129,10 @@ class MagentoSourceUpdater
         }
 
         $this->sourceItemsSave->execute($sourceItems);
+
+        $this->listingProductEventDispatcher->dispatchEventFbaProductSourceItemsUpdated(
+            $merchantId
+        );
     }
 
     /**
@@ -150,7 +158,7 @@ class MagentoSourceUpdater
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingProductItems
      * @param array $changedData
      *
-     * @return array
+     * @return array<string, array{listing_product: \Ess\M2ePro\Model\Listing\Product, new_qty: int}>
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     private function getChangedItems(

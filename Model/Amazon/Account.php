@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Account as ResourceAccount;
+
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     public const OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE = 0;
@@ -114,6 +116,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $this->cachePermanent->removeTagValues('account');
 
         return parent::save();
+    }
+
+    public function getAccountId(): int
+    {
+        return (int)$this->getDataByKey(ResourceAccount::COLUMN_ACCOUNT_ID);
     }
 
     public function getAmazonItems($asObjects = false, array $filters = [])

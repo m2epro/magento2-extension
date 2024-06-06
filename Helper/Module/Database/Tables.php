@@ -8,6 +8,8 @@ class Tables
 {
     public const PREFIX = 'm2epro_';
 
+    public const TABLE_LISTING = self::PREFIX . 'listing';
+
     public const TABLE_LISTING_PRODUCT = self::PREFIX . 'listing_product';
     public const TABLE_LISTING_PRODUCT_INSTRUCTION = self::PREFIX . 'listing_product_instruction';
     public const TABLE_LISTING_AUTO_CATEGORY = self::PREFIX . 'listing_auto_category';

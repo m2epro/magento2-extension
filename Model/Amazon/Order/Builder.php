@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Order;
 
 use Ess\M2ePro\Model\AbstractModel;
@@ -236,8 +230,12 @@ class Builder extends AbstractModel
         return 'tax_registration_details';
     }
 
-    protected function isNeedSkipTax($data)
+    protected function isNeedSkipTax($data): bool
     {
+        if ($this->isReplacement($data)) {
+            return true;
+        }
+
         if ($this->isSkipTaxForUS($data)) {
             return true;
         }
@@ -923,5 +921,8 @@ class Builder extends AbstractModel
         }
     }
 
-    //########################################
+    private function isReplacement($data): bool
+    {
+        return (bool)$data['is_replacement'];
+    }
 }
