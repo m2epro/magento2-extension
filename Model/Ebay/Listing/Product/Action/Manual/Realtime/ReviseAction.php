@@ -1,19 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Manual\Realtime;
 
 class ReviseAction extends AbstractRealtime
 {
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\LogFactory */
-    private $logFactory;
-    /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Checker */
-    private $reviseChecker;
+    private \Ess\M2ePro\Model\Ebay\Listing\LogFactory $logFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise\Checker $reviseChecker;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Listing\LogFactory $logFactory,
@@ -39,9 +31,26 @@ class ReviseAction extends AbstractRealtime
             $checkerResult = $this->reviseChecker->calculateForManualAction($product);
 
             if (empty($checkerResult->getConfigurator()->getAllowedDataTypes())) {
-                $this->writeLog($product);
+                $this->writeLog(
+                    $product,
+                    'Item(s) were not revised. M2E Pro did not detect any relevant product changes to be updated.',
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO
+                );
 
                 continue;
+            }
+
+            if (
+                $checkerResult->getConfigurator()->isPriceAllowed()
+                && $product->getChildObject()->isProductInPromotion()
+            ) {
+                $checkerResult->getConfigurator()->disallowPrice();
+
+                $this->writeLog(
+                    $product,
+                    'Price was not revised because this Item is currently on promotion.',
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
+                );
             }
 
             $product->setActionConfigurator($checkerResult->getConfigurator());
@@ -52,8 +61,11 @@ class ReviseAction extends AbstractRealtime
         return $result;
     }
 
-    private function writeLog(\Ess\M2ePro\Model\Listing\Product $listingProduct): void
-    {
+    private function writeLog(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        string $messageText,
+        int $type
+    ): void {
         $ebayListingProduct = $listingProduct->getChildObject();
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Log $log */
@@ -66,8 +78,8 @@ class ReviseAction extends AbstractRealtime
             \Ess\M2ePro\Helper\Data::INITIATOR_USER,
             null,
             \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT,
-            'Item(s) were not revised. M2E Pro did not detect any relevant product changes to be updated.',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO,
+            $messageText,
+            $type,
             []
         );
     }

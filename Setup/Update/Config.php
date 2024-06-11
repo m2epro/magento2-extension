@@ -365,6 +365,10 @@ class Config extends AbstractConfig
             'y24_m05' => [
                 'AddEbayPromotion',
             ],
+            'y24_m06' => [
+                'AddAmazonShippingPalletDelivery',
+                'AddPriceLastUpdateDateColumnToEbayListingProductTable',
+            ],
         ];
     }
 
@@ -434,6 +438,8 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m03\AddKtypesResolveAttemptColumn::class,
             \Ess\M2ePro\Setup\Update\y24_m03\CreateAndFillAmazonAccountMerchantSettingTable::class,
             \Ess\M2ePro\Setup\Update\y24_m05\AddEbayPromotion::class,
+            \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonShippingPalletDelivery::class,
+            \Ess\M2ePro\Setup\Update\y24_m06\AddPriceLastUpdateDateColumnToEbayListingProductTable::class,
         ];
     }
 

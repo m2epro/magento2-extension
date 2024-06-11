@@ -37,6 +37,9 @@ class AllItemsOptions
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Repository */
     private $tagRelationRepository;
 
+    private \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion $promotionResource;
+    private \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource;
+
     public function __construct(
         DropDownFilter\OptionCollectionFactory $optionCollectionFactory,
         DropDownFilter\OptionFactory $optionFactory,
@@ -52,7 +55,9 @@ class AllItemsOptions
         \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category $categoryResource,
         \Ess\M2ePro\Model\Tag\ListingProduct\Repository $tagRelationRepository,
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
-        \Ess\M2ePro\Model\ResourceModel\Account $accountResource
+        \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion $promotionResource,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource
     ) {
         $this->ebayListingResource = $ebayListingResource;
         $this->ebayListingProductResource = $ebayListingProductResource;
@@ -69,6 +74,8 @@ class AllItemsOptions
         $this->tagRelationRepository = $tagRelationRepository;
         $this->optionCollectionFactory = $optionCollectionFactory;
         $this->optionFactory = $optionFactory;
+        $this->promotionResource = $promotionResource;
+        $this->listingProductPromotionResource = $listingProductPromotionResource;
     }
 
     public function getAccountOptions(): DropDownFilter\OptionCollection
@@ -359,6 +366,41 @@ class AllItemsOptions
             $option = $this->optionFactory->create(
                 $tag->getErrorCode(),
                 $tag->getId()
+            );
+            $optionCollection->addOption($option);
+        }
+
+        return $optionCollection;
+    }
+
+    public function getPromotionOptions(): DropDownFilter\OptionCollection
+    {
+        $select = $this->getBaseSelect();
+        $select->joinInner(
+            ['ebay_listing_product_promotion' => $this->listingProductPromotionResource->getMainTable()],
+            'ebay_listing_product_promotion.listing_product_id = ebay_listing_product.listing_product_id',
+            [
+                'promotion_id' => 'promotion_id',
+            ]
+        );
+        $select->joinLeft(
+            ['ebay_promotion' => $this->promotionResource->getMainTable()],
+            'ebay_promotion.id = ebay_listing_product_promotion.promotion_id',
+            [
+                'value' => 'id',
+                'label' => 'name',
+            ]
+        );
+        $select->group(['ebay_promotion.id', 'ebay_promotion.name']);
+        $select->order(['ebay_promotion.name']);
+
+        $optionsData = $select->query()->fetchAll();
+
+        $optionCollection = $this->optionCollectionFactory->create();
+        foreach ($optionsData as $optionData) {
+            $option = $this->optionFactory->create(
+                $optionData['label'],
+                $optionData['value'],
             );
             $optionCollection->addOption($option);
         }

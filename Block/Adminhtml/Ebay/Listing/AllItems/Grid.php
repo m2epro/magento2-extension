@@ -3,6 +3,8 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AllItems;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion as EbayListingProductPromotionResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Promotion as EbayPromotionResource;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option as ProductVariationOption;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -44,7 +46,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category */
     private $ebayCategoryResource;
 
+    private \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion $promotionResource;
+    private \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource;
+
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion $promotionResource,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource,
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
         \Ess\M2ePro\Model\Ebay\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category $ebayCategoryResource,
@@ -87,6 +94,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->advancedFilterAllItemsOptions = $advancedFilterAllItemsOptions;
         $this->advancedFilterFactory = $advancedFilterFactory;
         $this->ebayCategoryResource = $ebayCategoryResource;
+        $this->promotionResource = $promotionResource;
+        $this->listingProductPromotionResource = $listingProductPromotionResource;
     }
 
     public function _construct()
@@ -175,6 +184,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ],
             null,
             'left'
+        );
+
+        $select = $this->listingProductPromotionResource->getConnection()->select();
+        $select->from(
+            $this->listingProductPromotionResource->getMainTable(),
+            [
+                'lp_id' => 'listing_product_id',
+                'has_promotion' => new \Zend_Db_Expr('COUNT(*) > 0'),
+            ]
+        );
+        $select->group('listing_product_id');
+
+        $collection->getSelect()->joinLeft(
+            ['promo' => $select],
+            sprintf(
+                '%s = promo.lp_id',
+                EbayListingProductPromotionResource::COLUMN_LISTING_PRODUCT_ID
+            ),
+            ['has_promotion']
         );
 
         $this->setCollection($collection);
@@ -304,6 +332,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addCategoryAdvancedFilter();
 
         $this->addErrorAdvancedFilter();
+
+        $this->addPromotionAdvancedFilter();
 
         parent::_prepareAdvancedFilters();
     }
@@ -832,11 +862,14 @@ HTML;
 
             $collection
                 ->getSelect()
-                ->where('IF (
+                ->where(
+                    'IF (
                     elp.template_selling_format_id IS NOT NULL,
                     elp.template_selling_format_id,
                     el.template_selling_format_id
-                ) = ?', (int)$filterValue);
+                ) = ?',
+                    (int)$filterValue
+                );
         };
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
@@ -866,11 +899,14 @@ HTML;
 
             $collection
                 ->getSelect()
-                ->where('IF (
+                ->where(
+                    'IF (
                     elp.template_synchronization_id IS NOT NULL,
                     elp.template_synchronization_id,
                     el.template_synchronization_id
-                ) = ?', (int)$filterValue);
+                ) = ?',
+                    (int)$filterValue
+                );
         };
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
@@ -900,11 +936,14 @@ HTML;
 
             $collection
                 ->getSelect()
-                ->where('IF (
+                ->where(
+                    'IF (
                     elp.template_description_id IS NOT NULL,
                     elp.template_description_id,
                     el.template_description_id
-                ) = ?', (int)$filterValue);
+                ) = ?',
+                    (int)$filterValue
+                );
         };
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
@@ -934,11 +973,14 @@ HTML;
 
             $collection
                 ->getSelect()
-                ->where('IF (
+                ->where(
+                    'IF (
                     elp.template_shipping_id IS NOT NULL,
                     elp.template_shipping_id,
                     el.template_shipping_id
-                ) = ?', (int)$filterValue);
+                ) = ?',
+                    (int)$filterValue
+                );
         };
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
@@ -968,11 +1010,14 @@ HTML;
 
             $collection
                 ->getSelect()
-                ->where('IF (
+                ->where(
+                    'IF (
                     elp.template_return_policy_id IS NOT NULL,
                     elp.template_return_policy_id,
                     el.template_return_policy_id
-                ) = ?', (int)$filterValue);
+                ) = ?',
+                    (int)$filterValue
+                );
         };
 
         $filter = $this->advancedFilterFactory->createDropDownFilter(
@@ -1046,6 +1091,47 @@ HTML;
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'errors_filter',
             __('eBay Error'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addPromotionAdvancedFilter()
+    {
+        $options = $this->advancedFilterAllItemsOptions->getPromotionOptions();
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $select = $this->listingProductPromotionResource->getConnection()->select();
+            $select->from(
+                ['elpp' => $this->listingProductPromotionResource->getMainTable()],
+                [new \Zend_Db_Expr('1')]
+            )
+                   ->join(
+                       ['ep' => $this->promotionResource->getMainTable()],
+                       'elpp.promotion_id = ep.id',
+                       null
+                   )
+                   ->where('elpp.listing_product_id = elp.listing_product_id')
+                   ->where('ep.id = ?', $filterValue);
+
+            $collection->getSelect()->where('EXISTS (?)', new \Zend_Db_Expr($select));
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'promotion',
+            __('Promotion'),
             $options,
             $filterCallback
         );

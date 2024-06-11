@@ -242,7 +242,8 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                         'qty_shipped' => (int)$item['qty']['shipped'],
                         'buyer_customized_info' => !empty($item['buyer']['customized_info'])
                             ? trim($item['buyer']['customized_info'])
-                            : null
+                            : null,
+                        'is_shipping_pallet_delivery' => (int)($item['shipping_pallet_delivery'] ?? 0),
                     ];
                 }
 

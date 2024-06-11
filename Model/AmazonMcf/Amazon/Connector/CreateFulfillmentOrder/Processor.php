@@ -28,11 +28,10 @@ class Processor
     /**
      * @param \M2E\AmazonMcf\Model\Amazon\Connector\CreateFulfillmentOrder\Request $request
      *
-     * @throws \M2E\AmazonMcf\Model\Amazon\Connector\Exception\AuthorizationException
+     * @return \M2E\AmazonMcf\Model\Amazon\Connector\CreateFulfillmentOrder\Response
      * @throws \M2E\AmazonMcf\Model\Amazon\Connector\Exception\SystemUnavailableException
      * @throws \M2E\AmazonMcf\Model\Amazon\Connector\Exception\ThrottlingException
-     *
-     * @return \M2E\AmazonMcf\Model\Amazon\Connector\CreateFulfillmentOrder\Response
+     * @throws \M2E\AmazonMcf\Model\Amazon\Connector\Exception\AuthorizationException
      */
     public function process(string $merchantId, $request)
     {
@@ -47,7 +46,7 @@ class Processor
             [Command::REQUEST_PARAM_KEY => $request],
             $accountId
         );
-        /** @var \M2E\AmazonMcf\Model\Amazon\Connector\CreateFulfillmentOrder\Response  $response */
+        /** @var \M2E\AmazonMcf\Model\Amazon\Connector\CreateFulfillmentOrder\Response $response */
         $response = $this->commandExecutor->execute($command);
 
         $messages = $this->retrieveMcfMessages($command);

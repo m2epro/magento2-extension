@@ -200,6 +200,13 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $this->getData('buyer_customized_info');
     }
 
+    public function isShippingPalletDelivery(): bool
+    {
+        return (bool)$this->getData(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item::COLUMN_IS_SHIPPING_PALLET_DELIVERY
+        );
+    }
+
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic

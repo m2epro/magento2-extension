@@ -203,4 +203,32 @@ class Repository
             ['listing_product_id = ?' => $listingProductId],
         );
     }
+
+    public function isProductInPromotion(int $listingProductId): bool
+    {
+        $collectionListingProduct = $this->listingProductPromotionCollectionFactory->create();
+        $collectionListingProduct->addFieldToFilter(
+            EbayListingProductPromotionResource::COLUMN_LISTING_PRODUCT_ID,
+            $listingProductId
+        );
+
+        return (bool)$collectionListingProduct->getSize();
+    }
+
+    public function hasProductPromotionByAccountAndMarketplace(
+        int $accountId,
+        int $marketplaceId
+    ): bool {
+        $collectionListingProduct = $this->listingProductPromotionCollectionFactory->create();
+        $collectionListingProduct->addFieldToFilter(
+            EbayListingProductPromotionResource::COLUMN_ACCOUNT_ID,
+            $accountId
+        );
+        $collectionListingProduct->addFieldToFilter(
+            EbayListingProductPromotionResource::COLUMN_MARKETPLACE_ID,
+            $marketplaceId
+        );
+
+        return (bool)$collectionListingProduct->getSize();
+    }
 }

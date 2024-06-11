@@ -47,9 +47,6 @@ class Processor
 
         /** @var \M2E\AmazonMcf\Model\Amazon\Connector\GetPackageDetails\Response $response */
         $response = $this->commandExecutor->execute($command);
-        if (!empty($messages)) {
-            return $response->setMessages($messages);
-        }
 
         $messages = $this->retrieveMcfMessages($command);
         if (!empty($messages)) {

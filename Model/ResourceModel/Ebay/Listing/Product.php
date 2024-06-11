@@ -8,6 +8,8 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
     public const COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH = 'online_product_identifiers_hash';
 
+    public const COLUMN_PRICE_LAST_UPDATE_DATE = 'price_last_update_date';
+
     public const COLUMN_KTYPES_RESOLVE_STATUS = 'ktypes_resolve_status';
     public const COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE = 'ktypes_resolve_last_try_date';
     public const COLUMN_KTYPES_RESOLVE_ATTEMPT = 'ktypes_resolve_attempt';

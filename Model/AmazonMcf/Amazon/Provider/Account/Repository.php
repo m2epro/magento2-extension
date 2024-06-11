@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\AmazonMcf\Amazon\Provider\Account;
 
-use M2E\AmazonMcf\Model\Provider\Amazon\Account\Item;
-
 class Repository
 {
     /** @var \Ess\M2ePro\Model\Amazon\Account\Repository $amazonAccountRepository */
     private $amazonAccountRepository;
     /** @var bool */
     private $isLoaded = false;
-    /** @var array<string, Item> */
+    /** @var array<string, \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item> */
     private $itemsByMerchantId = [];
 
     public function __construct(\Ess\M2ePro\Model\Amazon\Account\Repository $amazonAccountRepository)
@@ -26,24 +24,9 @@ class Repository
     }
 
     /**
-     * @return Item[]
+     * @return \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item|null
      */
-    public function get(string $merchantId)
-    {
-        $item = $this->find($merchantId);
-        if ($item === null) {
-            throw new \LogicException(
-                sprintf('Item with Merchant ID %s not found.', $merchantId)
-            );
-        }
-
-        return $item;
-    }
-
-    /**
-     * @return Item[]|null
-     */
-    public function find(string $merchantId): ?Item
+    public function find(string $merchantId)
     {
         $this->load();
 
@@ -51,7 +34,7 @@ class Repository
     }
 
     /**
-     * @return Item[]
+     * @return \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item[]
      */
     public function getAll(): array
     {
@@ -89,18 +72,30 @@ class Repository
         $this->isLoaded = true;
     }
 
-    private function createItem(string $merchantId, bool $isEnabled, \Ess\M2ePro\Model\Marketplace $marketplace): Item
+    /**
+     * @return \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item
+     */
+    private function createItem(string $merchantId, bool $isEnabled, \Ess\M2ePro\Model\Marketplace $marketplace)
     {
         if ($marketplace->isAmericanRegion()) {
-            return Item::createForAmericaRegion($merchantId, $isEnabled);
+            return \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item::createForAmericaRegion(
+                $merchantId,
+                $isEnabled
+            );
         }
 
         if ($marketplace->isEuropeanRegion()) {
-            return Item::createForEuropeRegion($merchantId, $isEnabled);
+            return \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item::createForEuropeRegion(
+                $merchantId,
+                $isEnabled
+            );
         }
 
         if ($marketplace->isAsianPacificRegion()) {
-            return Item::createForAsiaPacificRegion($merchantId, $isEnabled);
+            return \M2E\AmazonMcf\Model\Provider\Amazon\Account\Item::createForAsiaPacificRegion(
+                $merchantId,
+                $isEnabled
+            );
         }
 
         throw new \LogicException('Unknown Region');

@@ -1,25 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Order;
 
 class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    public const COLUMN_ORDER_ITEM_ID = 'order_item_id';
+    public const COLUMN_IS_SHIPPING_PALLET_DELIVERY = 'is_shipping_pallet_delivery';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
-    //########################################
-
     public function _construct()
     {
-        $this->_init('m2epro_amazon_order_item', 'order_item_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ORDER_ITEM,
+            self::COLUMN_ORDER_ITEM_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
-
-    //########################################
 }

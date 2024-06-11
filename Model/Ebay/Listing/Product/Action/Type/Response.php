@@ -4,6 +4,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type;
 
 use Ess\M2ePro\Model\Ebay\Listing\Product\Variation as EbayVariation;
 use Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract as ChangeProcessor;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayListingProduct;
 
 abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -423,6 +424,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             if ($this->getRequestData()->hasPriceBuyItNow()) {
                 $data['online_buyitnow_price'] = $this->getRequestData()->getPriceBuyItNow();
             }
+        }
+
+        if ($this->getConfigurator()->isPriceAllowed()) {
+            $data[EbayListingProduct::COLUMN_PRICE_LAST_UPDATE_DATE] = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         }
 
         return $data;

@@ -253,6 +253,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             }
         }
 
+        if ($this->isShippingPalletDelivery()) {
+            $additionalData .= 'Pallet Delivery | ';
+        }
+
         $shippingDateTo = $this->order->getShippingDateTo();
         $isImportShipByDate = $amazonAccount->isImportShipByDateToMagentoOrder();
 
@@ -581,5 +585,19 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return parent::getGeneralComments();
+    }
+
+    private function isShippingPalletDelivery(): bool
+    {
+        foreach ($this->order->getParentObject()->getItemsCollection() as $orderItem) {
+            /** @var \Ess\M2ePro\Model\Amazon\Order\Item $amazonOrderItem */
+            $amazonOrderItem = $orderItem->getChildObject();
+
+            if ($amazonOrderItem->isShippingPalletDelivery()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -22,3 +22,14 @@
 }
 
 /* ================================================ */
+
+.on-promotion .admin__field-tooltip a.admin__field-tooltip-action {
+    background: url(../../images/icon_promotion.png) no-repeat;
+    background-size: contain;
+    height: 18px;
+    width: 18px;
+}
+
+.on-promotion .admin__field-tooltip .admin__field-tooltip-action:before {
+    content: '';
+}

@@ -12,6 +12,8 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Setup\SetupInterface;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item as AmazonOrderItem;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayListingProduct;
 
 /**
  * Installer M2E extension
@@ -4248,6 +4250,12 @@ class Installer
                                             'online_other_data',
                                             Table::TYPE_TEXT,
                                             40,
+                                            ['default' => null]
+                                        )
+                                        ->addColumn(
+                                            EbayListingProduct::COLUMN_PRICE_LAST_UPDATE_DATE,
+                                            Table::TYPE_DATETIME,
+                                            null,
                                             ['default' => null]
                                         )
                                         ->addColumn(
@@ -9879,6 +9887,12 @@ class Installer
                                          Table::TYPE_TEXT,
                                          null,
                                          ['default' => null]
+                                     )
+                                     ->addColumn(
+                                         AmazonOrderItem::COLUMN_IS_SHIPPING_PALLET_DELIVERY,
+                                         Table::TYPE_SMALLINT,
+                                         null,
+                                         ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                      )
                                      ->addIndex('general_id', 'general_id')
                                      ->addIndex('sku', 'sku')

@@ -63,12 +63,27 @@ class CurrentPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Nu
             return __('N/A');
         }
 
+        $promotionHtml = '';
+
+        if ($row->getData('has_promotion') !== null) {
+            $promotionHtml = <<<HTML
+<div class="fix-magento-tooltip on-promotion" style="float:right; text-align: left; margin-left: 5px;">
+        <div class="m2epro-field-tooltip admin__field-tooltip">
+        <a class="admin__field-tooltip-action" href="javascript://"></a>
+        <div class="admin__field-tooltip-content">
+            This Product is added to a promotion.
+        </div>
+    </div>
+</div>
+HTML;
+        }
+
         if ((float)$onlineCurrentPrice <= 0) {
             if ($isExport) {
                 return 0;
             }
 
-            return '<span style="color: #f00;">0</span>';
+            return '<span style="color: #f00;">0</span>' . $promotionHtml;
         }
 
         $currency = $row->getCurrency() ?? $row->getChildObject()->getCurrency();
@@ -135,7 +150,7 @@ HTML;
                 $resultHtml = $intervalHtml . '&nbsp;' . '<span class="product-price-value">' . $onlineStartStr . '</span>';
             }
 
-            return $resultHtml;
+            return $resultHtml . $promotionHtml;
         }
 
         if ($isExport) {
@@ -164,6 +179,7 @@ HTML;
             '<span class="product-price-value">' .
             $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice) .
             '</span>' .
-            '</div>';
+            '</div>' .
+            $promotionHtml;
     }
 }

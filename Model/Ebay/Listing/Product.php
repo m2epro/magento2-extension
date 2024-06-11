@@ -1357,5 +1357,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->getResource()->mapChannelItemProduct($this);
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function isProductInPromotion(): bool
+    {
+        return $this->promotionRepository->isProductInPromotion($this->getId());
+    }
 }

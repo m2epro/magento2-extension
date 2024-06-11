@@ -69,12 +69,27 @@ class MinMaxPrice extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Num
             return __('N/A');
         }
 
+        $promotionHtml = '';
+
+        if ($row->getData('has_promotion') !== null) {
+            $promotionHtml = <<<HTML
+<div class="fix-magento-tooltip on-promotion" style="float:right; text-align: left; margin-left: 5px;">
+        <div class="m2epro-field-tooltip admin__field-tooltip">
+        <a class="admin__field-tooltip-action" href="javascript://"></a>
+        <div class="admin__field-tooltip-content">
+            This Product is added to a promotion.
+        </div>
+    </div>
+</div>
+HTML;
+        }
+
         if ((float)$onlineMinPrice <= 0) {
             if ($isExport) {
                 return 0;
             }
 
-            return '<span style="color: #f00;">0</span>';
+            return '<span style="color: #f00;">0</span>' . $promotionHtml;
         }
 
         if (!empty($onlineStartPrice)) {
@@ -185,6 +200,6 @@ HTML;
             }
         }
 
-        return $resultHtml;
+        return $resultHtml . ' ' . $promotionHtml;
     }
 }

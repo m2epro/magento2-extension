@@ -1,14 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion as EbayListingProductPromotionResource;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
@@ -30,6 +25,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionDataHelper;
 
+    private \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource;
+    private \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository;
+
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -37,6 +35,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource,
+        \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -49,6 +49,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->resourceConnection = $resourceConnection;
         $this->ebayViewHelper = $ebayViewHelper;
         $this->sessionDataHelper = $sessionDataHelper;
+        $this->listingProductPromotionResource = $listingProductPromotionResource;
+        $this->promotionRepository = $promotionRepository;
         parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
@@ -137,6 +139,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'left'
         );
 
+        $select = $this->listingProductPromotionResource->getConnection()->select();
+        $select->from(
+            $this->listingProductPromotionResource->getMainTable(),
+            [
+                'lp_id' => 'listing_product_id',
+                'has_promotion' => new \Zend_Db_Expr('COUNT(*) > 0')
+            ]
+        );
+        $select->group('listing_product_id');
+
+        $collection->getSelect()->joinLeft(
+            ['promo' => $select],
+            sprintf(
+                '%s = promo.lp_id',
+                EbayListingProductPromotionResource::COLUMN_LISTING_PRODUCT_ID
+            ),
+            ['has_promotion']
+        );
+
         if ($this->isFilterOrSortByPriceIsUsed('price', 'ebay_online_current_price')) {
             $collection->joinIndexerParent();
         } else {
@@ -214,7 +235,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             $priceSortField = 'min_online_price';
         }
 
-        $this->addColumn('price', [
+        $priceColumn = [
             'header' => $this->__('Price'),
             'align' => 'right',
             'width' => '50px',
@@ -224,7 +245,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_index' => $priceSortField,
             'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\MinMaxPrice::class,
             'filter_condition_callback' => [$this, 'callbackFilterPrice'],
-        ]);
+        ];
+
+        if (
+            $this->promotionRepository->hasProductPromotionByAccountAndMarketplace(
+                $this->listing->getAccountId(),
+                $this->listing->getMarketplaceId()
+            )
+        ) {
+            $priceColumn['filter'] = \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Price::class;
+        }
+
+        $this->addColumn('price', $priceColumn);
 
         $this->addColumn('end_date', [
             'header' => $this->__('End Date'),
@@ -519,29 +551,43 @@ HTML;
                `indexer`.`max_price`
            )';
 
-        if (isset($value['from']) && $value['from'] != '') {
-            $condition = $min_online_price . ' >= \'' . (float)$value['from'] . '\'';
-        }
-        if (isset($value['to']) && $value['to'] != '') {
+        if (isset($value['from']) || isset($value['to'])) {
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= ' AND ';
+                $condition = $min_online_price . ' >= \'' . (float)$value['from'] . '\'';
             }
-            $condition .= $min_online_price . ' <= \'' . (float)$value['to'] . '\'';
-        }
+            if (isset($value['to']) && $value['to'] != '') {
+                if (isset($value['from']) && $value['from'] != '') {
+                    $condition .= ' AND ';
+                }
+                $condition .= $min_online_price . ' <= \'' . (float)$value['to'] . '\'';
+            }
 
-        $condition = '(' . $condition . ') OR (';
+            $condition = '(' . $condition . ') OR (';
 
-        if (isset($value['from']) && $value['from'] != '') {
-            $condition .= $max_online_price . ' >= \'' . (float)$value['from'] . '\'';
-        }
-        if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= ' AND ';
+                $condition .= $max_online_price . ' >= \'' . (float)$value['from'] . '\'';
             }
-            $condition .= $max_online_price . ' <= \'' . (float)$value['to'] . '\'';
+            if (isset($value['to']) && $value['to'] != '') {
+                if (isset($value['from']) && $value['from'] != '') {
+                    $condition .= ' AND ';
+                }
+                $condition .= $max_online_price . ' <= \'' . (float)$value['to'] . '\'';
+            }
+
+            $condition .= ')';
         }
 
-        $condition .= ')';
+        if (isset($value['on_promotion']) && $value['on_promotion'] !== '') {
+            if (!empty($condition)) {
+                $condition = '(' . $condition . ') OR ';
+            }
+
+            if ((int)$value['on_promotion'] == 1) {
+                $condition .= 'has_promotion IS NOT NULL';
+            } else {
+                $condition .= 'has_promotion IS NULL';
+            }
+        }
 
         $collection->getSelect()->where($condition);
     }
