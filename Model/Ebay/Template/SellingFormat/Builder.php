@@ -260,29 +260,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['paypal_immediate_payment'] = $this->rawData['paypal_immediate_payment'];
         }
 
-        $data['charity'] = null;
-
-        if (!empty($this->rawData['charity']) && !empty($this->rawData['charity']['marketplace_id'])) {
-            $charities = [];
-            foreach ($this->rawData['charity']['marketplace_id'] as $key => $marketplaceId) {
-                if (empty($this->rawData['charity']['organization_id'][$key])) {
-                    continue;
-                }
-
-                $charities[$marketplaceId] = [
-                    'marketplace_id' => (int)$marketplaceId,
-                    'organization_id' => (int)$this->rawData['charity']['organization_id'][$key],
-                    'organization_name' => $this->rawData['charity']['organization_name'][$key],
-                    'organization_custom' => (int)$this->rawData['charity']['organization_custom'][$key],
-                    'percentage' => (int)$this->rawData['charity']['percentage'][$key],
-                ];
-            }
-
-            if (!empty($charities)) {
-                $data['charity'] = \Ess\M2ePro\Helper\Json::encode($charities);
-            }
-        }
-
         if (isset($this->rawData['ignore_variations'])) {
             $data['ignore_variations'] = (int)$this->rawData['ignore_variations'];
         }
@@ -389,7 +366,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'best_offer_reject_value' => '',
             'best_offer_reject_attribute' => '',
 
-            'charity' => '',
             'ignore_variations' => 0,
 
             'lot_size_mode' => 0,

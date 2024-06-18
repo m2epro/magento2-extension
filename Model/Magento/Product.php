@@ -1244,6 +1244,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $optionCollection = $productInstance->getOptionsCollection($product);
         $optionsData = $optionCollection->getData();
 
+        /** @var \Magento\Bundle\Model\Option $singleOption */
         foreach ($optionsData as $singleOption) {
             // Save QTY, before calculate = 0
             $bundleOptionsArray[$singleOption['option_id']] = 0;
@@ -1253,6 +1254,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $items = $selectionsCollection->getItems();
 
         $bundleOptionsQtyArray = [];
+        /** @var \Magento\Catalog\Model\Product $item */
         foreach ($items as $item) {
             if (!isset($bundleOptionsArray[$item->getOptionId()])) {
                 continue;
@@ -1268,6 +1270,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $stockItem->getBackorders(),
                 $stockItem->getUseConfigBackorders()
             );
+
+            $bundleDefaultQty = $this->getBundleDefaultQty($item->getId());
+            $qty /= $bundleDefaultQty;
 
             if ($lifeMode && (!$inventory->isInStock() || $item->getStatus() != Status::STATUS_ENABLED)) {
                 continue;

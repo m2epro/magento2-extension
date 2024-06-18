@@ -70,7 +70,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcher */
                 $dispatcher = $this->modelFactory->getObject('Ebay_Connector_Dispatcher');
 
-                /** @var OrderItem\Add\Dispute|OrderItem\Update\Status $connector */
+                /** @var OrderItem\Update\Status $connector */
                 $connector = $dispatcher->getCustomConnector($connectorName, $params);
                 $connector->setOrderItem($item);
 

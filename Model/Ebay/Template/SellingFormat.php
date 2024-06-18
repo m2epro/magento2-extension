@@ -1430,17 +1430,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
     // ---------------------------------------
 
-    public function getCharity()
-    {
-        if (empty($this->getData('charity'))) {
-            return null;
-        }
-
-        return \Ess\M2ePro\Helper\Json::decode($this->getData('charity'));
-    }
-
-    // ---------------------------------------
-
     /**
      * @return int
      */

@@ -152,7 +152,6 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             'shipping_locations' => \Ess\M2ePro\Helper\Json::encode($details['shipping_locations']),
             'shipping_locations_exclude' => \Ess\M2ePro\Helper\Json::encode($details['shipping_locations_exclude']),
             'tax_categories' => \Ess\M2ePro\Helper\Json::encode($details['tax_categories']),
-            'charities' => \Ess\M2ePro\Helper\Json::encode($details['charities']),
         ];
 
         if (isset($details['additional_data'])) {

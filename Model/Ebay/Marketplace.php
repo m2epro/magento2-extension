@@ -180,14 +180,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     /**
      * @return bool
      */
-    public function isCharityEnabled()
-    {
-        return (bool)(int)$this->getData('is_charity');
-    }
-
-    /**
-     * @return bool
-     */
     public function isReturnDescriptionEnabled()
     {
         return (bool)(int)$this->getData('is_return_description');
@@ -333,7 +325,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             'return_policy' => \Ess\M2ePro\Helper\Json::decode($data['return_policy']),
             'listing_features' => \Ess\M2ePro\Helper\Json::decode($data['listing_features']),
             'payments' => \Ess\M2ePro\Helper\Json::decode($data['payments']),
-            'charities' => \Ess\M2ePro\Helper\Json::decode($data['charities']),
             'shipping' => $categoryShippingMethods,
             'shipping_locations' => \Ess\M2ePro\Helper\Json::decode($data['shipping_locations']),
             'shipping_locations_exclude' => \Ess\M2ePro\Helper\Json::decode($data['shipping_locations_exclude']),
@@ -431,16 +422,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         $info = $this->getInfo();
 
         return isset($info['tax_categories']) ? $info['tax_categories'] : [];
-    }
-
-    /**
-     * @return array
-     */
-    public function getCharitiesInfo()
-    {
-        $info = $this->getInfo();
-
-        return isset($info['charities']) ? $info['charities'] : [];
     }
 
     //########################################

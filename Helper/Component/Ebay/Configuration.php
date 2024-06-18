@@ -592,12 +592,4 @@ class Configuration
             }
         }
     }
-
-    public function isVisibleEpidsAu(): bool
-    {
-        return (bool)$this->config->getGroupValue(
-            self::CONFIG_GROUP,
-            'au_epids_visible'
-        );
-    }
 }

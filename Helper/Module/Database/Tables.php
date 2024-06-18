@@ -18,8 +18,11 @@ class Tables
     public const TABLE_EBAY_LISTING_PRODUCT = self::PREFIX . 'ebay_listing_product';
     public const TABLE_EBAY_LISTING_PRODUCT_PROMOTION = self::PREFIX . 'ebay_listing_product_promotion';
     public const TABLE_EBAY_TEMPLATE_SYNCHRONIZATION = self::PREFIX . 'ebay_template_synchronization';
+    public const TABLE_EBAY_TEMPLATE_SELLING_FORMAT = self::PREFIX . 'ebay_template_selling_format';
     public const TABLE_EBAY_PROMOTION = self::PREFIX . 'ebay_promotion';
     public const TABLE_EBAY_PROMOTION_DISCOUNT = self::PREFIX . 'ebay_promotion_discount';
+    public const TABLE_EBAY_MARKETPLACE = self::PREFIX . 'ebay_marketplace';
+    public const TABLE_EBAY_DICTIONARY_MARKETPLACE = self::PREFIX . 'ebay_dictionary_marketplace';
 
     public const TABLE_AMAZON_ACCOUNT = self::PREFIX . 'amazon_account';
     public const TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING = self::PREFIX . 'amazon_account_merchant_setting';

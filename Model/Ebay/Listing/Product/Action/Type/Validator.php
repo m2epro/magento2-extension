@@ -321,7 +321,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             foreach ($variation->getOptions(true) as $option) {
-                $uniqueAttributesValues[$option->getAttribute()][$option->getOption()] = true;
+                if (!$ebayVariation->isDelete()) {
+                    $uniqueAttributesValues[$option->getAttribute()][$option->getOption()] = true;
+                }
 
                 // Max 5 pair attribute-option:
                 // Color: Blue, Size: XL, ...
@@ -338,7 +340,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
                 // Maximum 60 options by one attribute:
                 // Color: Red, Blue, Green, ...
-                if (count($uniqueAttributesValues[$option->getAttribute()]) > 60) {
+                if (
+                    isset($uniqueAttributesValues[$option->getAttribute()])
+                    && count($uniqueAttributesValues[$option->getAttribute()]) > 60
+                ) {
                     $this->addMessage(
                         'Variations of this Magento Product are out of the eBay Variational Item limits.
                         Its number of Options for some Variational Attribute(s) is more than 60.

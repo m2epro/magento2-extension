@@ -15,12 +15,6 @@ use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    public const UNPAID_ITEM_PROCESS_NOT_OPENED = 0;
-    public const UNPAID_ITEM_PROCESS_OPENED = 1;
-
-    public const DISPUTE_EXPLANATION_BUYER_HAS_NOT_PAID = 'BuyerNotPaid';
-    public const DISPUTE_REASON_BUYER_HAS_NOT_PAID = 'BuyerHasNotPaid';
-
     /** @var \Ess\M2ePro\Model\Ebay\Item $channelItem */
     private $channelItem = null;
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other */

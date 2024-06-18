@@ -113,7 +113,6 @@ class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytic
                 'best_offer_reject_mode' => $childItem->getData('best_offer_reject_mode'),
                 'best_offer_reject_value' => $childItem->getData('best_offer_reject_value'),
                 'best_offer_reject_attribute' => $childItem->getData('best_offer_reject_attribute'),
-                'charity' => $childItem->getData('charity'),
                 'ignore_variations' => $childItem->getData('ignore_variations'),
                 'paypal_immediate_payment' => $childItem->getData('paypal_immediate_payment'),
             ];

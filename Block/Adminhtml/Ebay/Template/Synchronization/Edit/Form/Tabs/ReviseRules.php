@@ -314,9 +314,9 @@ HTML
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'tooltip' => $this->__(
-                    'Automatically revises Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size, Taxation,
-                    Charity information, and Immediate Payment on eBay when the related data is modified in Policy Templates.'
+                'tooltip' => __(
+                    'Automatically revises Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size,
+                    Taxation and Immediate Payment on eBay when the related data is modified in Policy Templates.'
                 ),
             ]
         );
@@ -333,7 +333,7 @@ HTML
                             <br/>
                             <b>
                                 Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size,
-                                Taxation, Charity information and Immediate Payment on eBay
+                                Taxation and Immediate Payment on eBay
                             </b>'
                         ),
                     ],

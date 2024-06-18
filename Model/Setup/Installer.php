@@ -3439,12 +3439,6 @@ class Installer
                                               self::LONG_COLUMN_SIZE,
                                               ['nullable' => false]
                                           )
-                                          ->addColumn(
-                                              'charities',
-                                              Table::TYPE_TEXT,
-                                              self::LONG_COLUMN_SIZE,
-                                              ['nullable' => false]
-                                          )
                                           ->addIndex('marketplace_id', 'marketplace_id')
                                           ->setOption('type', 'INNODB')
                                           ->setOption('charset', 'utf8')
@@ -4670,12 +4664,6 @@ class Installer
                                          ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                      )
                                      ->addColumn(
-                                         'is_charity',
-                                         Table::TYPE_SMALLINT,
-                                         null,
-                                         ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                     )
-                                     ->addColumn(
                                          'is_return_description',
                                          Table::TYPE_SMALLINT,
                                          null,
@@ -4695,7 +4683,6 @@ class Installer
                                      )
                                      ->addIndex('is_calculated_shipping', 'is_calculated_shipping')
                                      ->addIndex('is_managed_payments', 'is_managed_payments')
-                                     ->addIndex('is_charity', 'is_charity')
                                      ->addIndex('is_english_measurement_system', 'is_english_measurement_system')
                                      ->addIndex('is_freight_shipping', 'is_freight_shipping')
                                      ->addIndex(
@@ -6215,12 +6202,6 @@ class Installer
                                                    ['nullable' => false]
                                                )
                                                ->addColumn(
-                                                   'charity',
-                                                   Table::TYPE_TEXT,
-                                                   null,
-                                                   ['default' => null]
-                                               )
-                                               ->addColumn(
                                                    'ignore_variations',
                                                    Table::TYPE_SMALLINT,
                                                    null,
@@ -7043,7 +7024,6 @@ class Installer
         $moduleConfig->insert('/ebay/configuration/', 'uk_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'de_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'au_epids_attribute');
-        $moduleConfig->insert('/ebay/configuration/', 'au_epids_visible', 0);
         $moduleConfig->insert('/ebay/configuration/', 'it_epids_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'ktypes_attribute');
         $moduleConfig->insert('/ebay/configuration/', 'tecdoc_ktypes_product_mpn_attribute');
@@ -7375,7 +7355,6 @@ class Installer
                     'is_metric_measurement_system' => 0,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 1,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7399,7 +7378,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7423,7 +7401,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 1,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 1,
                     'is_ktype' => 1,
@@ -7447,7 +7424,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 1,
                     'is_ktype' => 1,
@@ -7471,7 +7447,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 1,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7495,8 +7470,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
-
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7520,7 +7493,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 1,
                     'is_epid' => 0,
                     'is_ktype' => 1,
@@ -7544,7 +7516,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 1,
                     'is_epid' => 1,
                     'is_ktype' => 1,
@@ -7568,7 +7539,6 @@ class Installer
                     'is_metric_measurement_system' => 0,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 1,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 1,
                     'is_ktype' => 0,
@@ -7592,7 +7562,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 1,
                     'is_epid' => 1,
                     'is_ktype' => 1,
@@ -7616,7 +7585,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7640,7 +7608,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7664,7 +7631,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 1,
                     'is_epid' => 0,
                     'is_ktype' => 1,
@@ -7688,7 +7654,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7712,7 +7677,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7736,7 +7700,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7760,7 +7723,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7784,7 +7746,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7808,7 +7769,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7832,7 +7792,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7856,7 +7815,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,
@@ -7880,7 +7838,6 @@ class Installer
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 0,
                     'is_global_shipping_program' => 0,
-                    'is_charity' => 1,
                     'is_return_description' => 0,
                     'is_epid' => 0,
                     'is_ktype' => 0,

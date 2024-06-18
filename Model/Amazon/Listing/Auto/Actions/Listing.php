@@ -132,6 +132,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonListingProduct->searchAsin();
+
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Auto\Category\Group $amazonCategoryGroup */
         $amazonCategoryGroup = $categoryGroup->getChildObject();
 
@@ -168,6 +172,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
         }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonListingProduct->searchAsin();
 
         $this->logAddedToMagentoProduct($listingProduct);
 
@@ -207,6 +215,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
         }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonListingProduct->searchAsin();
 
         /** @var \Ess\M2ePro\Model\Amazon\Listing $amazonListing */
         $amazonListing = $listing->getChildObject();

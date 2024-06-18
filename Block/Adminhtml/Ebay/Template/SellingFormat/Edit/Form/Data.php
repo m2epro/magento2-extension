@@ -95,16 +95,6 @@ class Data extends AbstractForm
             $availableMarketplaces = $collection->getItems();
         }
 
-        $charity = \Ess\M2ePro\Helper\Json::decode($formData['charity']);
-
-        $availableCharity = [];
-        foreach ($availableMarketplaces as $marketplace) {
-            if (isset($charity[$marketplace->getId()])) {
-                $availableCharity[$marketplace->getId()] = $charity[$marketplace->getId()];
-            }
-        }
-        $formData['charity'] = $availableCharity;
-
         $formData['fixed_price_modifier'] =
             \Ess\M2ePro\Helper\Json::decode($formData['fixed_price_modifier']) ?: [];
 
@@ -1248,32 +1238,6 @@ offer discounts.'
         );
 
         $fieldset = $form->addFieldset(
-            'magento_block_ebay_template_selling_format_edit_form_charity',
-            [
-                'legend' => $this->__('Donations'),
-                'collapsable' => true,
-            ]
-        );
-
-        $charityBlock = $this->getLayout()
-                             ->createBlock(
-                                 \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\Charity::class
-                             )
-                             ->addData([
-                                 'form_data' => $formData,
-                                 'marketplace' => $this->getMarketplace(),
-                             ]);
-
-        $fieldset->addField(
-            'charity_table_container',
-            self::CUSTOM_CONTAINER,
-            [
-                'text' => $charityBlock->toHtml(),
-                'css_class' => 'm2epro-fieldset-table',
-            ]
-        );
-
-        $fieldset = $form->addFieldset(
             'magento_block_ebay_template_selling_format_edit_form_best_offer',
             [
                 'legend' => $this->__('Best Offer'),
@@ -1499,10 +1463,7 @@ offer discounts.'
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Helper\Component\Ebay::class)
         );
 
-        $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Ebay_Template_SellingFormat'));
-
         $this->jsTranslator->addTranslations([
-            'Search For Charities' => $this->__('Search For Charities'),
             'Please select a percentage of donation' => $this->__(
                 'Please select a percentage of donation'
             ),
@@ -1540,7 +1501,6 @@ offer discounts.'
 
             '% of Price' => $this->__('% of Price'),
             '% of Fixed Price' => $this->__('% of Fixed Price'),
-            'Search for Charity Organization' => $this->__('Search for Charity Organization'),
             'Wrong value. Lot Size must be from 2 to 100000 Items.' => $this->__(
                 'Wrong value. Lot Size must be from 2 to 100000 Items.'
             ),
@@ -1566,19 +1526,6 @@ offer discounts.'
             $this->js->add("M2ePro.formData.currency = '{$this->currency->getCurrency($currency)->getSymbol()}';");
         }
 
-        $charityDictionary = \Ess\M2ePro\Helper\Json::encode($charityBlock->getCharityDictionary());
-        if (empty($formData['charity'])) {
-            $charityRenderJs = <<<JS
-    EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
-JS;
-        } else {
-            $formDataJson = \Ess\M2ePro\Helper\Json::encode($formData['charity']);
-            $charityRenderJs = <<<JS
-    EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
-    EbayTemplateSellingFormatObj.renderCharities({$formDataJson});
-JS;
-        }
-
         $fixedPriceModifierRenderJs = '';
         $formDataJson = \Ess\M2ePro\Helper\Json::encode($formData['fixed_price_modifier']);
         $fixedPriceModifierRenderJs = <<<JS
@@ -1596,7 +1543,6 @@ JS;
         window.EbayTemplateSellingFormatObj = new EbayTemplateSellingFormat();
         EbayTemplateSellingFormatObj.initObservers();
 
-        {$charityRenderJs}
         {$fixedPriceModifierRenderJs}
     });
 JS
@@ -1789,24 +1735,6 @@ JS
     }
 
     //########################################
-
-    public function getCharityDictionary(): array
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $tableDictMarketplace = $this->dbStructureHelper
-            ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
-
-        $dbSelect = $connection->select()
-                               ->from($tableDictMarketplace, ['marketplace_id', 'charities']);
-
-        $data = $connection->fetchAssoc($dbSelect);
-
-        foreach ($data as $key => $item) {
-            $data[$key]['charities'] = \Ess\M2ePro\Helper\Json::decode($item['charities']);
-        }
-
-        return $data;
-    }
 
     /**
      * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset

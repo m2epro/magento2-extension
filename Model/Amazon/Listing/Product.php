@@ -217,8 +217,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function afterSaveNewEntity()
     {
-        $this->searchDispatcher->runSettings([$this->getParentObject()]);
-
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
         $variationManager = $this->getVariationManager();
         if ($variationManager->isVariationProduct() || !$this->isVariationMode()) {
@@ -230,6 +228,11 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $variationManager->setRelationParentType();
         $variationManager->getTypeModel()->resetProductAttributes(false);
         $variationManager->getTypeModel()->getProcessor()->process();
+    }
+
+    public function searchAsin(): bool
+    {
+        return $this->searchDispatcher->runSettings([$this->getParentObject()]);
     }
 
     /**

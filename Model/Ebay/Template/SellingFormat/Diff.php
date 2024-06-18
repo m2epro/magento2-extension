@@ -85,7 +85,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     public function isOtherDifferent(): bool
     {
         $keys = [
-            'charity',
             'vat_mode',
             'vat_percent',
             'tax_table_mode',

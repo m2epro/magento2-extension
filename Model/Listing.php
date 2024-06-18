@@ -510,8 +510,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN,
         ];
 
-        $listingProductTemp = $this->parentFactory->getObject($this->getComponentMode(), 'Listing\Product')
-                                                  ->setData($data)->save();
+        $listingProductTemp = $this
+            ->parentFactory
+            ->getObject($this->getComponentMode(), 'Listing\Product')
+            ->setData($data)
+            ->save();
 
         $listingProductTemp->getChildObject()->afterSaveNewEntity();
 

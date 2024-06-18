@@ -77,10 +77,7 @@ class Motors extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $this->addFieldsetForITMarketplace($form, $preparedAttributesTextarea);
         }
 
-        if (
-            $this->getMarketplace(EbayHelper::MARKETPLACE_AU)->isStatusEnabled()
-            && $this->componentEbayConfiguration->isVisibleEpidsAu()
-        ) {
+        if ($this->getMarketplace(EbayHelper::MARKETPLACE_AU)->isStatusEnabled()) {
             $this->addFieldsetForAUMarketplace($form, $preparedAttributesTextarea);
         }
 

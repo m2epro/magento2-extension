@@ -34,7 +34,6 @@ class Other extends AbstractModel
             $this->getConditionData(),
             $this->getConditionNoteData(),
             $this->getVatTaxData(),
-            $this->getCharityData(),
             $this->getLotSizeData(),
             $this->getPaymentData(),
             $this->getPriceDiscountMapData()
@@ -98,24 +97,6 @@ class Other extends AbstractModel
         }
 
         return $data;
-    }
-
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function getCharityData(): array
-    {
-        $charity = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getCharity();
-
-        if (empty($charity[$this->getMarketplace()->getId()])) {
-            return [];
-        }
-
-        return [
-            'charity_id' => $charity[$this->getMarketplace()->getId()]['organization_id'],
-            'charity_percent' => $charity[$this->getMarketplace()->getId()]['percentage'],
-        ];
     }
 
     /**
