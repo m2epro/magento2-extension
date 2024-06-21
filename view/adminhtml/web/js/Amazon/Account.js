@@ -142,9 +142,12 @@ define([
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
 
             // tab fbaInventory
-            $('fba_inventory_mode')
-                    .observe('change', AmazonAccountObj.fbaInventoryModeChange)
-                    .simulate('change')
+            const $fbaInventoryMode = $('fba_inventory_mode');
+            if ($fbaInventoryMode) {
+                $fbaInventoryMode
+                        .observe('change', AmazonAccountObj.fbaInventoryModeChange)
+                        .simulate('change')
+            }
         },
 
         // ---------------------------------------

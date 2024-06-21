@@ -6,6 +6,8 @@ use Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\FbaInventory as FbaInven
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 {
+    /** @var \Ess\M2ePro\Helper\Magento */
+    private $magentoHelper;
     /** @var \Ess\M2ePro\Model\Amazon\Account\Builder */
     private $accountBuilder;
     /** @var \Ess\M2ePro\Helper\Module\Wizard */
@@ -20,6 +22,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     private $accountMerchantSettingsCreateService;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Magento $magentoHelper,
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\Amazon\Account\MerchantSetting\CreateService $accountMerchantSettingsCreateService,
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
@@ -31,6 +34,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     ) {
         parent::__construct($amazonFactory, $context);
 
+        $this->magentoHelper = $magentoHelper;
         $this->accountBuilder = $accountBuilder;
         $this->helperWizard = $helperWizard;
         $this->helperData = $helperData;
@@ -102,10 +106,17 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     {
         $this->accountBuilder->build($account, $data);
 
-        $this->accountMerchantSettingsCreateService->update(
-            $account->getChildObject(),
-            (bool)$data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_MODE],
-            $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] ?? null
-        );
+        if ($this->magentoHelper->isMSISupportingVersion()) {
+            $this->accountMerchantSettingsCreateService->update(
+                $account->getChildObject(),
+                (bool)$data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_MODE],
+                $data[FbaInventoryForm::FORM_KEY_FBA_INVENTORY_SOURCE_NAME] ?? null
+            );
+        } else {
+            $this->accountMerchantSettingsCreateService->update(
+                $account->getChildObject(),
+                false
+            );
+        }
     }
 }

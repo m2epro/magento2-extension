@@ -47,11 +47,12 @@ class CreateService
     public function update(
         \Ess\M2ePro\Model\Amazon\Account $amazonAccount,
         bool $isManageFbaInventory,
-        ?string $inventorySourceName
+        string $inventorySourceName = null
     ): \Ess\M2ePro\Model\Amazon\Account\MerchantSetting {
         $settings = $this->createDefault($amazonAccount);
-        if ($isManageFbaInventory) {
-            $settings->enableManageFbaInventory((string)$inventorySourceName);
+
+        if ($isManageFbaInventory && $inventorySourceName !== null) {
+            $settings->enableManageFbaInventory($inventorySourceName);
         } else {
             $settings->disableManageFbaInventorySource();
         }
