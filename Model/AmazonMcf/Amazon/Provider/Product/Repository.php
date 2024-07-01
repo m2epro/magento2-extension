@@ -63,13 +63,15 @@ class Repository
         );
 
         foreach ($items as $item) {
+            $asin = !empty($item->getDataByKey('asin')) ? $item->getDataByKey('asin') : null;
             $itemCollection->add(
-                new \M2E\AmazonMcf\Model\Provider\Amazon\Product\Item(
+                $this->createItem(
                     $merchantId,
                     $item->getDataByKey('channel_sku'),
                     (int)$item->getDataByKey('magento_product_entity_id'),
                     $item->getDataByKey('magento_product_sku'),
-                    (int)$item->getDataByKey('online_afn_qty')
+                    (int)$item->getDataByKey('online_afn_qty'),
+                    $asin
                 )
             );
         }
@@ -111,6 +113,7 @@ class Repository
             [
                 'channel_sku' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_SKU),
                 'online_afn_qty' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_ONLINE_AFN_QTY),
+                'asin' => sprintf('alp.%s', AmazonListingProductResource::COLUMN_GENERAL_ID)
             ]
         );
 
@@ -132,5 +135,31 @@ class Repository
         );
 
         return $collection->getItems();
+    }
+
+    /**
+     * @return \M2E\AmazonMcf\Model\Provider\Amazon\Product\Item
+     */
+    private function createItem(
+        string $merchantId,
+        string $channelSku,
+        int $magentoProductId,
+        string $magentoProductSku,
+        int $qty,
+        ?string $asin
+    ) {
+        $item = new \M2E\AmazonMcf\Model\Provider\Amazon\Product\Item(
+            $merchantId,
+            $channelSku,
+            $magentoProductId,
+            $magentoProductSku,
+            $qty
+        );
+
+        if ($asin !== null && method_exists($item, 'setAsin')) {
+            $item->setAsin($asin);
+        }
+
+        return $item;
     }
 }

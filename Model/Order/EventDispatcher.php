@@ -27,7 +27,19 @@ class EventDispatcher
             'is_american_region' => $marketplace->isAmericanRegion(),
             'is_european_region' => $marketplace->isEuropeanRegion(),
             'is_asian_pacific_region' => $marketplace->isAsianPacificRegion(),
+            'channel_purchase_date' => $this->findPurchaseDate($order),
         ]);
+    }
+
+    private function findPurchaseDate(\Ess\M2ePro\Model\Order $order): ?\DateTime
+    {
+        if ($order->isComponentModeEbay()) {
+            return \Ess\M2ePro\Helper\Date::createDateGmt(
+                $order->getChildObject()->getPurchaseCreateDate()
+            );
+        }
+
+        return null;
     }
 
     public function dispatchEventInvoiceCreated(\Ess\M2ePro\Model\Order $order): void

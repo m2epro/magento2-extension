@@ -138,8 +138,22 @@ CSS
         $advancedFilterBlock = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Listing\Product\Rule::class);
         $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
         $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
-        $advancedFilterBlock->setSearchBtnHtml($this->getSearchButtonHtml());
-        $advancedFilterBlock->setResetBtnHtml($this->getResetFilterButtonHtml());
+
+        $searchFilterBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class);
+        $searchFilterBtn->setData([
+            'label' => __('Search'),
+            'class' => 'action-default scalable action-secondary',
+            'onclick' => $this->getJsObjectName() . '.doFilter()',
+        ]);
+        $advancedFilterBlock->setSearchBtnHtml($searchFilterBtn->toHtml());
+
+        $resetFilterBtn = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class);
+        $resetFilterBtn->setData([
+            'label' => __('Reset Filter'),
+            'class' => 'action-default scalable action-reset action-tertiary',
+            'onclick' => $this->getJsObjectName() . '.resetFilter()',
+        ]);
+        $advancedFilterBlock->setResetBtnHtml($resetFilterBtn->toHtml());
 
         return $advancedFilterBlock->toHtml() . (($this->hideMassactionColumn)
                 ? '' : parent::getMassactionBlockHtml());

@@ -213,7 +213,7 @@ class Index extends Settings
         $temp = $this->getSessionValue('mode');
         $temp && $mode = $temp;
 
-        if ($temp === null) {
+        if ($mode === null) {
             $mode = $ebayListing->getAddProductMode();
         }
 

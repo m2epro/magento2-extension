@@ -119,6 +119,7 @@ class Details extends AbstractModel
             $specificKeys = [
                 \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_NAME,
                 \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_DESCRIPTION,
+                \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_BULLET_POINT,
             ];
 
             if (in_array($name, $specificKeys)) {

@@ -14,6 +14,8 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Setup\SetupInterface;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item as AmazonOrderItem;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayListingProduct;
+use Ess\M2ePro\Model\ResourceModel\Marketplace as MarketplaceResource;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace as AmazonMarketplaceResource;
 
 /**
  * Installer M2E extension
@@ -10899,7 +10901,7 @@ class Installer
         $moduleConfig->insert('/amazon/configuration/', 'general_id_custom_attribute');
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName('marketplace'),
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_MARKETPLACE),
             [
                 [
                     'id' => 24,
@@ -11161,11 +11163,24 @@ class Installer
                     'update_date' => '2023-12-14 00:00:00',
                     'create_date' => '2023-12-14 00:00:00',
                 ],
+                [
+                    MarketplaceResource::COLUMN_ID => 50,
+                    MarketplaceResource::COLUMN_NATIVE_ID => 22,
+                    MarketplaceResource::COLUMN_TITLE => 'Saudi Arabia',
+                    MarketplaceResource::COLUMN_CODE => 'SA',
+                    MarketplaceResource::COLUMN_URL => 'amazon.sa',
+                    MarketplaceResource::COLUMN_STATUS => 0,
+                    MarketplaceResource::COLUMN_SORDER => 23,
+                    MarketplaceResource::COLUMN_GROUP_TITLE => 'Europe',
+                    MarketplaceResource::COLUMN_COMPONENT_MODE => 'amazon',
+                    'update_date' => '2023-06-25 00:00:00',
+                    'create_date' => '2023-06-25 00:00:00',
+                ],
             ]
         );
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName('amazon_marketplace'),
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_MARKETPLACE),
             [
                 [
                     'marketplace_id' => 24,
@@ -11346,6 +11361,15 @@ class Installer
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
+                ],
+                [
+                    AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 50,
+                    AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'SAR',
+                    AmazonMarketplaceResource::COLUMN_IS_NEW_ASIN_AVAILABLE => 1,
+                    AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
+                    AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
+                    AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,
+                    AmazonMarketplaceResource::COLUMN_IS_PRODUCT_TAX_CODE_POLICY_AVAILABLE => 0,
                 ],
             ]
         );

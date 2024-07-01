@@ -1,17 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Component;
 
 use Ess\M2ePro\Model\Listing\Product as ListingProduct;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\TemplateShipping\CollectionFactory
     as TemplateShippingDictionaryCollectionFactory;
-use Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory;
 
 class Amazon
 {
@@ -40,6 +33,9 @@ class Amazon
     public const MARKETPLACE_AE = 47;
     public const MARKETPLACE_BE = 48;
     public const MARKETPLACE_ZA = 49;
+    public const MARKETPLACE_SA = 50;
+
+    public const NATIVE_ID_MARKETPLACE_SA = 22;
 
     public const EEA_COUNTRY_CODES = [
         'AT', 'BE', 'BG', 'HR', 'CY',

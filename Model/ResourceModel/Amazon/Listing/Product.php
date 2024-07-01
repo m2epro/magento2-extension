@@ -9,6 +9,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_SKU = 'sku';
     public const COLUMN_IS_AFN_CHANNEL = 'is_afn_channel';
     public const COLUMN_ONLINE_AFN_QTY = 'online_afn_qty';
+    public const COLUMN_GENERAL_ID = 'general_id';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

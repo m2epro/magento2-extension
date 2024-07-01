@@ -18,6 +18,7 @@ class ProductType
     public const SPECIFIC_KEY_ITEM_PACKAGE_WEIGHT = 'item_package_weight#array/value';
     public const SPECIFIC_KEY_MAIN_PRODUCT_IMAGE_LOCATOR = 'main_product_image_locator#array/media_location';
     public const SPECIFIC_KEY_MAIN_OFFER_IMAGE_LOCATOR = 'main_offer_image_locator#array/media_location';
+    public const SPECIFIC_KEY_BULLET_POINT = 'bullet_point#array/value';
 
     /** @var ProductTypeCollectionFactory */
     private $productTypeCollectionFactory;

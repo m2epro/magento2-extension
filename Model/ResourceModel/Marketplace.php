@@ -1,26 +1,26 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Marketplace
- */
 class Marketplace extends ActiveRecord\Component\Parent\AbstractModel
 {
-    //########################################
+    public const COLUMN_ID = 'id';
+    public const COLUMN_NATIVE_ID = 'native_id';
+    public const COLUMN_TITLE = 'title';
+    public const COLUMN_CODE = 'code';
+    public const COLUMN_URL = 'url';
+    public const COLUMN_STATUS = 'status';
+    public const COLUMN_SORDER = 'sorder';
+    public const COLUMN_GROUP_TITLE = 'group_title';
+    public const COLUMN_COMPONENT_MODE = 'component_mode';
 
     public function _construct()
     {
-        $this->_init('m2epro_marketplace', 'id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_MARKETPLACE,
+            self::COLUMN_ID
+        );
     }
-
-    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Marketplace $marketplace
@@ -51,6 +51,4 @@ class Marketplace extends ActiveRecord\Component\Parent\AbstractModel
 
         return $connection->fetchOne($select) !== false;
     }
-
-    //########################################
 }
