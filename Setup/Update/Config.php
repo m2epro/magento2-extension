@@ -372,6 +372,9 @@ class Config extends AbstractConfig
                 'RemoveEbayCharity',
                 'AddAmazonMarketplaceSaudiArabia'
             ],
+            'y24_m07' => [
+                'AddProductIdentifiersSettingsForAmazonListing',
+            ],
         ];
     }
 
@@ -445,6 +448,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m06\AddPriceLastUpdateDateColumnToEbayListingProductTable::class,
             \Ess\M2ePro\Setup\Update\y24_m06\RemoveAuEpidsVisibleFromConfigTable::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonMarketplaceSaudiArabia::class,
+            \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class
         ];
     }
 

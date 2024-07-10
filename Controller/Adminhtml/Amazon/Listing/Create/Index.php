@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
+
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form as CreateSellingForm;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 {
@@ -17,13 +13,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $helperDataSession;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Wizard $helperWizard
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring
-     * @param \Ess\M2ePro\Helper\Data\Session $helperDataSession
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -38,14 +27,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         parent::__construct($amazonFactory, $context);
     }
 
-    //########################################
-
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::amazon_listings_m2epro');
     }
-
-    //########################################
 
     public function execute()
     {
@@ -130,10 +115,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         if ($this->getRequest()->isPost()) {
             $this->setSessionValue('marketplace_id', $this->getMarketplaceId());
 
-            $dataKeys = array_keys(
-                $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form::class)
-                     ->getDefaultFieldsValues()
+            /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form $createSellingForm */
+            $createSellingForm = $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form::class
             );
+            $dataKeys = array_keys($createSellingForm->getDefaultFieldsValues());
 
             $post = $this->getRequest()->getPost();
             foreach ($dataKeys as $key) {
@@ -184,7 +170,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function createListing()
     {
@@ -198,6 +184,19 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             );
             $data['restock_date_value'] = gmdate('Y-m-d H:i:s', $timestamp);
         }
+
+        // Product identifiers
+        // ---------------------------------------
+        $data[\Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_GENERAL_ID_ATTRIBUTE] =
+            !empty($data[CreateSellingForm::FIELD_NAME_GENERAL_ID_ATTRIBUTE])
+                ? $data[CreateSellingForm::FIELD_NAME_GENERAL_ID_ATTRIBUTE]
+                : null;
+
+        $data[\Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_WORLDWIDE_ID_ATTRIBUTE] =
+            !empty($data[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE])
+                ? $data[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE]
+                : null;
+        // ---------------------------------------
 
         // Add new Listing
         // ---------------------------------------
@@ -222,7 +221,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         return $listing;
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function getMarketplaceId()
     {
@@ -231,7 +230,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         return (int)$accountObj->getChildObject()->getMarketplaceId();
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function setSessionValue($key, $value)
     {
@@ -273,14 +272,14 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function isCreationModeListingOnly()
     {
         return $this->getSessionValue('creation_mode') == \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY;
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function setWizardStep($step)
     {
@@ -290,6 +289,4 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
         $this->helperWizard->setStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK, $step);
     }
-
-    //########################################
 }

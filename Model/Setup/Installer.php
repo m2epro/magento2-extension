@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Setup;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -17,9 +11,6 @@ use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayListingProduct;
 use Ess\M2ePro\Model\ResourceModel\Marketplace as MarketplaceResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace as AmazonMarketplaceResource;
 
-/**
- * Installer M2E extension
- */
 class Installer
 {
     public const LONG_COLUMN_SIZE = 16777217;
@@ -8690,7 +8681,10 @@ class Installer
                                 ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonItemTable);
 
-        $amazonListingTable = $this->getConnection()->newTable($this->getFullTableName('amazon_listing'))
+        #region amazon_listing
+        $amazonListingTable = $this->getConnection()->newTable(
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_LISTING)
+        )
                                    ->addColumn(
                                        'listing_id',
                                        Table::TYPE_INTEGER,
@@ -8842,10 +8836,22 @@ class Installer
                                        ['nullable' => false]
                                    )
                                    ->addColumn(
-                                       'restock_date_custom_attribute',
+                                       \Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_RESTOCK_DATE_CUSTOM_ATTRIBUTE,
                                        Table::TYPE_TEXT,
                                        255,
                                        ['nullable' => false]
+                                   )
+                                   ->addColumn(
+                                       \Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_GENERAL_ID_ATTRIBUTE,
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['default' => null]
+                                   )
+                                   ->addColumn(
+                                       \Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_WORLDWIDE_ID_ATTRIBUTE,
+                                       Table::TYPE_TEXT,
+                                       255,
+                                       ['default' => null]
                                    )
                                    ->addColumn(
                                        'product_add_ids',
@@ -8870,6 +8876,7 @@ class Installer
                                    ->setOption('collate', 'utf8_general_ci')
                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonListingTable);
+        #endregion
 
         $amazonListingAutoCategoryGroupTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_listing_auto_category_group')

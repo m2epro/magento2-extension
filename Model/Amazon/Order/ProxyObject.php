@@ -477,7 +477,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             }
         }
 
-        return [$comments];
+        return !empty($comments) ? [$comments] : [];
     }
 
     /**

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
 /**
@@ -54,43 +48,22 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $productTypeFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory */
     private $amazonPriceCalculatorFactory;
-    /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory */
-    private $identifiersFactory;
+    private Product\RetrieveIdentifiers $retrieveIdentifiers;
     /** @var \Ess\M2ePro\Model\Amazon\Search\Dispatcher */
     private $searchDispatcher;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
     private $configuration;
     /** @var \Ess\M2ePro\Helper\Data */
     private $helperData;
-    /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
-    private $rounder;
-
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager|null */
     private $variationManager = null;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing|null */
     private $repricingModel = null;
 
-    /**
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
-     * @param \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory
-     * @param \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory
-     * @param \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher
-     * @param \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration
-     * @param \Ess\M2ePro\Helper\Data $helperData
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory,
-        \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers\Factory $identifiesFactory,
+        \Ess\M2ePro\Model\Amazon\Listing\Product\RetrieveIdentifiers $retrieveIdentifiers,
         \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher,
         \Ess\M2ePro\Helper\Component\Amazon\Configuration $configuration,
         \Ess\M2ePro\Helper\Data $helperData,
@@ -100,18 +73,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->rounder = $rounder;
-        $this->productTypeFactory = $productTypeFactory;
-        $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
-        $this->identifiersFactory = $identifiesFactory;
-        $this->searchDispatcher = $searchDispatcher;
-        $this->configuration = $configuration;
-        $this->helperData = $helperData;
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -123,6 +88,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $resourceCollection,
             $data
         );
+
+        $this->productTypeFactory = $productTypeFactory;
+        $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
+        $this->retrieveIdentifiers = $retrieveIdentifiers;
+        $this->searchDispatcher = $searchDispatcher;
+        $this->configuration = $configuration;
+        $this->helperData = $helperData;
     }
 
     public function _construct()
@@ -297,13 +269,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getAmazonListing()->getSource($this->getActualMagentoProduct());
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    public function getIdentifiers(): \Ess\M2ePro\Model\Amazon\Listing\Product\Identifiers
+    public function getIdentifiers(): Product\RetrieveIdentifiers\Identifiers
     {
-        return $this->identifiersFactory->create($this->getActualMagentoProduct());
+        return $this->retrieveIdentifiers->process(
+            $this->getAmazonListing(),
+            $this->getActualMagentoProduct()
+        );
     }
 
     // ---------------------------------------

@@ -179,19 +179,12 @@ class Grid extends AbstractGrid
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $productId = (int)$row->getId();
-        $productSku = htmlspecialchars($row->getSku());
-        $label = $this->__('Link To This Product');
-
-        $js = <<<JS
-OrderEditItemObj.assignProduct('{$productId}', '{$productSku}');
-JS;
-
-        $html = <<<HTML
-&nbsp;<a href="javascript:void(0);" onclick="{$js}">{$label}</a>
-HTML;
-
-        return $html;
+        return sprintf(
+            '&nbsp;<a href="javascript:void(0);" onclick="OrderEditItemObj.assignProduct(\'%s\', \'%s\')">%s</a>',
+            (int)$row->getId(),
+            $this->_escaper->escapeJs($row->getSku()),
+            __('Link To This Product')
+        );
     }
 
     protected function callbackFilterTitle($collection, $column)

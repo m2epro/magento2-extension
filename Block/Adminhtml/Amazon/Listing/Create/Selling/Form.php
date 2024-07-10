@@ -1,19 +1,17 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Amazon\Listing as AmazonListing;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing as ResourceAmazonListing;
 use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validator\Sku\General as ValidatorSkuGeneral;
 
 class Form extends AbstractForm
 {
+    public const FIELD_NAME_GENERAL_ID_ATTRIBUTE = 'general_id_attribute';
+    public const FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE = 'worldwide_id_attribute';
+
     protected $useFormContainer = true;
 
     /** @var \Ess\M2ePro\Model\Listing */
@@ -869,10 +867,173 @@ HTML
             ]
         );
 
+        $this->addProductIdentifiersFileset($formData, $form);
+
         $form->setUseContainer($this->useFormContainer);
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    private function addProductIdentifiersFileset(array $listingData, \Magento\Framework\Data\Form $form): void
+    {
+        $fieldset = $form->addFieldset(
+            'product_identifiers',
+            [
+                'legend' => __('Product Identifiers'),
+                'collapsable' => true,
+            ]
+        );
+
+        $attributesTextType = $this->magentoAttributeHelper->filterAllAttrByInputTypes(['text']);
+
+        $generalIdAttribute = $listingData[ResourceAmazonListing::COLUMN_GENERAL_ID_ATTRIBUTE] ?? null;
+        $this->addGeneralIdAttributeField($fieldset, $attributesTextType, $generalIdAttribute);
+
+        $worldwideIdAttribute = $listingData[ResourceAmazonListing::COLUMN_WORLDWIDE_ID_ATTRIBUTE] ?? null;
+        $this->addWorldwideIdAttributeField($fieldset, $attributesTextType, $worldwideIdAttribute);
+    }
+
+    private function addGeneralIdAttributeField(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $attributesTextType,
+        ?string $generalIdAttribute
+    ): void {
+        $preparedAttributes = [];
+        $warningToolTip = '';
+
+        if (
+            $generalIdAttribute !== null
+            && !$this->magentoAttributeHelper->isExistInAttributesArray($generalIdAttribute, $attributesTextType)
+        ) {
+            $warningToolTip = $this->getAttributeWarningTooltipHtml();
+        }
+
+        foreach ($attributesTextType as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if ($generalIdAttribute !== null && $generalIdAttribute === $attribute['code']) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => ResourceAmazonListing::COLUMN_GENERAL_ID_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'general_id_mode',
+            self::SELECT,
+            [
+                'name' => 'general_id_mode',
+                'label' => __('ASIN / ISBN'),
+                'title' => __('ASIN / ISBN'),
+                'values' => [
+                    'none' => __('None'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => ['is_magento_attribute' => true],
+                    ],
+                ],
+                'value' => $generalIdAttribute ?? '',
+                'create_magento_attribute' => true,
+                'tooltip' => __(
+                    'Select a Magento Attribute that contains the ASIN/ISBN value for the products you want to list.'
+                    . ' The selected attribute will be used during the automatic search for Amazon products,'
+                    . ' overriding global <a href="%url">Product Identifier settings</a>.',
+                    ['url' => $this->_urlBuilder->getUrl('*/amazon_settings')]
+                ),
+                'after_element_html' => $warningToolTip,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            self::FIELD_NAME_GENERAL_ID_ATTRIBUTE,
+            'hidden',
+            [
+                'name' => 'general_id_attribute',
+                'value' => $generalIdAttribute,
+            ]
+        );
+    }
+
+    private function addWorldwideIdAttributeField(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        array $attributesTextType,
+        ?string $worldwideIdAttribute
+    ): void {
+        $preparedAttributes = [];
+        $warningToolTip = '';
+
+        if (
+            $worldwideIdAttribute !== null
+            && !$this->magentoAttributeHelper->isExistInAttributesArray($worldwideIdAttribute, $attributesTextType)
+        ) {
+            $warningToolTip = $this->getAttributeWarningTooltipHtml();
+        }
+
+        foreach ($attributesTextType as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if ($worldwideIdAttribute !== null && $worldwideIdAttribute === $attribute['code']) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => ResourceAmazonListing::COLUMN_WORLDWIDE_ID_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'worldwide_id_mode',
+            self::SELECT,
+            [
+                'name' => 'worldwide_id_mode',
+                'label' => __('UPC / EAN'),
+                'title' => __('UPC / EAN'),
+                'values' => [
+                    'none' => __('None'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => ['is_magento_attribute' => true],
+                    ],
+                ],
+                'value' => $worldwideIdAttribute ?? '',
+                'create_magento_attribute' => true,
+                'tooltip' => __(
+                    'Select a Magento Attribute that contains the UPC/EAN value for the products you want to list. '
+                    . ' The selected attribute will be used to associate your item with Amazon'
+                    . ' catalog or create a new ASIN/ISBN, overriding global'
+                    . ' <a href="%url">Product Identifier settings</a>.',
+                    ['url' => $this->_urlBuilder->getUrl('*/amazon_settings')]
+                ),
+                'after_element_html' => $warningToolTip,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text');
+
+        $fieldset->addField(
+            self::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE,
+            'hidden',
+            [
+                'name' => 'worldwide_id_attribute',
+                'value' => $worldwideIdAttribute,
+            ]
+        );
+    }
+
+    private function getAttributeWarningTooltipHtml(): string
+    {
+        $tooltipHtml = $this->getTooltipHtml(
+            (string)__(
+                'Selected Magento Attribute is invalid. Please ensure that the Attribute exists in your Magento,'
+                . ' has a relevant Input Type and it is included in all Attribute Sets.'
+                . ' Otherwise, select a different Attribute from the drop-down.'
+            )
+        );
+
+        return sprintf('<span class="fix-magento-tooltip m2e-tooltip-grid-warning">%s</span>', $tooltipHtml);
     }
 
     /**
@@ -1102,9 +1263,6 @@ JS
         return $recommendedValues;
     }
 
-    /**
-     * @return array
-     */
     public function getDefaultFieldsValues(): array
     {
         return [
@@ -1137,6 +1295,9 @@ JS
             'restock_date_mode' => AmazonListing::RESTOCK_DATE_MODE_NONE,
             'restock_date_value' => $this->dataHelper->getCurrentTimezoneDate(),
             'restock_date_custom_attribute' => '',
+
+            ResourceAmazonListing::COLUMN_GENERAL_ID_ATTRIBUTE => null,
+            ResourceAmazonListing::COLUMN_WORLDWIDE_ID_ATTRIBUTE => null,
         ];
     }
 

@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon;
+
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing as ResourceAmazonList;
 
 /**
  * @method \Ess\M2ePro\Model\Listing getParentObject()
@@ -122,7 +118,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return parent::save();
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function delete()
     {
@@ -135,7 +131,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $temp;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
@@ -157,7 +153,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->listingSourceModels[$productId];
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -193,7 +189,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getMarketplace()->getChildObject();
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Template\SellingFormat
@@ -311,7 +307,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getShippingTemplate()->getSource($magentoProduct);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param bool $asObjects
@@ -335,7 +331,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getParentObject()->getCategories($asObjects, $filters);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -353,7 +349,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return (int)$this->getData('auto_website_adding_product_type_template_id');
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -843,7 +839,29 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return array_values(array_unique($ids));
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function isExistsGeneralIdAttribute(): bool
+    {
+        return $this->getDataByKey(ResourceAmazonList::COLUMN_GENERAL_ID_ATTRIBUTE) !== null;
+    }
+
+    public function getGeneralIdAttribute(): string
+    {
+        return $this->getDataByKey(ResourceAmazonList::COLUMN_GENERAL_ID_ATTRIBUTE);
+    }
+
+    public function isExistsWorldwideIdAttribute(): bool
+    {
+        return $this->getDataByKey(ResourceAmazonList::COLUMN_WORLDWIDE_ID_ATTRIBUTE) !== null;
+    }
+
+    public function getWorldwideIdAttribute(): string
+    {
+        return $this->getDataByKey(ResourceAmazonList::COLUMN_WORLDWIDE_ID_ATTRIBUTE);
+    }
+
+    // ----------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
@@ -1071,12 +1089,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return true;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    // ----------------------------------------
 }

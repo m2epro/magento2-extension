@@ -1,30 +1,26 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Amazon;
 
-use Ess\M2ePro\Helper\Component\Amazon;
-use Ess\M2ePro\Model\Listing\Product;
 use Magento\Framework\DB\Select;
 
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_LISTING_ID = 'listing_id';
+    public const COLUMN_RESTOCK_DATE_CUSTOM_ATTRIBUTE = 'restock_date_custom_attribute';
+    public const COLUMN_GENERAL_ID_ATTRIBUTE = 'general_id_attribute';
+    public const COLUMN_WORLDWIDE_ID_ATTRIBUTE = 'worldwide_id_attribute';
+
     /** @var bool */
     protected $_isPkAutoIncrement = false;
 
-    //########################################
-
     public function _construct()
     {
-        $this->_init('m2epro_amazon_listing', 'listing_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_LISTING,
+            self::COLUMN_LISTING_ID
+        );
     }
-
-    //########################################
 
     public function getUsedProductsIds($listingId)
     {

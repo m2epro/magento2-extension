@@ -28,6 +28,7 @@ class Tables
     public const TABLE_AMAZON_ACCOUNT = self::PREFIX . 'amazon_account';
     public const TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING = self::PREFIX . 'amazon_account_merchant_setting';
     public const TABLE_AMAZON_MARKETPLACE = self::PREFIX . 'amazon_marketplace';
+    public const TABLE_AMAZON_LISTING = self::PREFIX . 'amazon_listing';
     public const TABLE_AMAZON_LISTING_PRODUCT = self::PREFIX . 'amazon_listing_product';
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
 

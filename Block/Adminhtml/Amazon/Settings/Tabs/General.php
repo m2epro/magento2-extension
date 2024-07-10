@@ -46,6 +46,11 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     '
                 In this section, you can configure the general settings for the interaction between M2E Pro and
                 Amazon Marketplaces.<br/><br/>
+
+                Specify Product Identifier values for your Amazon items at a global level.<br/>
+                If you prefer to set product IDs per listing, please navigate
+                to Listings > Items > Edit Settings > Selling > Product Identifiers.<br/><br/>
+
                 Enable <a href="%url%" target="_blank" class="external-link">Amazon Business (B2B)</a> to apply the
                 Business Price and QTY Discounts to your offers on the selected marketplaces.
                 ',

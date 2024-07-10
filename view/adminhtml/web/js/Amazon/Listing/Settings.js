@@ -85,6 +85,14 @@ define([
             $('restock_date_mode')
                 .observe('change', AmazonListingCreateSellingObj.restock_date_mode_change)
                 .simulate('change');
+
+            $('general_id_mode')
+                    .observe('change', AmazonListingCreateSellingObj.general_id_mode_change)
+                    .simulate('change');
+
+            $('worldwide_id_mode')
+                    .observe('change', AmazonListingCreateSellingObj.worldwide_id_mode_change)
+                    .simulate('change');
         },
 
         // ---------------------------------------

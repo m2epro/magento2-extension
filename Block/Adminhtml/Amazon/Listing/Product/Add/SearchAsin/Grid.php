@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -15,10 +9,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\Configuration */
-    private $config;
-    /** @var \Ess\M2ePro\Model\Listing */
-    private $listing;
+    private \Ess\M2ePro\Model\Amazon\Listing\ProductIdentifiersConfig $productIdentifiersConfig;
+    private ?\Ess\M2ePro\Model\Listing $listing = null;
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     protected $magentoProductCollectionFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
@@ -27,12 +19,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
-
     protected $lockedDataCache = [];
+    private bool $isExistsGeneralIdAttribute = false;
+    private bool $isExistsWorldwideAttribute = false;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
-        \Ess\M2ePro\Helper\Component\Amazon\Configuration $config,
+        \Ess\M2ePro\Model\Amazon\Listing\ProductIdentifiersConfig $productIdentifiersConfig,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -42,7 +35,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        $this->config = $config;
+        $this->productIdentifiersConfig = $productIdentifiersConfig;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->amazonFactory = $amazonFactory;
         $this->dataHelper = $dataHelper;
@@ -54,7 +47,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         parent::_construct();
 
-        $this->listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $this->getRequest()->getParam('id'));
+        /** @var \Ess\M2ePro\Model\Listing $listing */
+        $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $this->getRequest()->getParam('id'));
+        $this->listing = $listing;
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing $amazonListing */
+        $amazonListing = $listing->getChildObject();
+        $this->isExistsGeneralIdAttribute = $this->productIdentifiersConfig->isExistsGeneralIdAttribute($amazonListing);
+        $this->isExistsWorldwideAttribute = $this->productIdentifiersConfig->isExistsWorldwideAttribute($amazonListing);
 
         // Initialization block
         // ---------------------------------------
@@ -166,8 +166,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         if (
-            $this->config->isGeneralIdModeCustomAttribute()
-            || $this->config->isWorldwideIdModeCustomAttribute()
+            $this->isExistsGeneralIdAttribute
+            || $this->isExistsWorldwideAttribute
         ) {
             $this->addColumn('settings', [
                 'header' => __('Search Values'),
@@ -274,40 +274,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnSettings($id, $row, $column, $isExport)
     {
-        $value = '';
+        $result = '';
+
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $listingProduct */
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $id)->getChildObject();
         $identifiers = $listingProduct->getIdentifiers();
 
-        if ($this->config->isGeneralIdModeCustomAttribute()) {
-            $generalId = $identifiers->getGeneralId();
+        $asinValue = __('Not set');
+        if ($generalId = $identifiers->getGeneralId()) {
+            $asinValue = $generalId->hasResolvedType()
+                ? $generalId->getIdentifier()
+                : __('Inappropriate value');
+        }
+        $result .= sprintf('<b>%s</b>: %s<br/>', __('ASIN/ISBN'), $asinValue);
 
-            if (empty($generalId)) {
-                $attrValue = __('Not set');
-            } elseif ($generalId->hasUnresolvedType()) {
-                $attrValue = __('Inappropriate value');
-            } else {
-                $attrValue = $generalId->getIdentifier();
-            }
-
-            $value .= '<b>' . __('ASIN/ISBN') . '</b>: ' . $attrValue . '<br/>';
+        $worldwideIdValue = __('Not set');
+        if ($worldwideId = $identifiers->getWorldwideId()) {
+            $worldwideIdValue = $worldwideId->hasResolvedType()
+                ? $worldwideId->getIdentifier()
+                : __('Inappropriate value');
         }
 
-        if ($this->config->isWorldwideIdModeCustomAttribute()) {
-            $worldwideId = $identifiers->getWorldwideId();
+        $result .= sprintf('<b>%s</b>: %s<br/>', __('UPC/EAN'), $worldwideIdValue);
 
-            if (empty($worldwideId)) {
-                $attrValue = __('Not Set');
-            } elseif ($worldwideId->hasUnresolvedType()) {
-                $attrValue = __('Inappropriate value');
-            } else {
-                $attrValue = $worldwideId->getIdentifier();
-            }
-
-            $value .= '<b>' . __('UPC/EAN') . '</b>: ' . $attrValue;
-        }
-
-        return $value;
+        return $result;
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
@@ -636,7 +626,10 @@ JS
 JS
         );
 
-        if ($this->config->isGeneralIdModeNone() && $this->config->isWorldwideIdModeNone()) {
+        if (
+            !$this->isExistsGeneralIdAttribute
+            && !$this->isExistsWorldwideAttribute
+        ) {
             $warningNotification = $this->__(
                 "To have your products assigned to the existing ASIN/ISBN in the Amazon catalog, please configure"
                 . " Product Identifiers settings in Amazon > Configuration > Settings > Main"

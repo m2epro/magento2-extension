@@ -161,6 +161,28 @@ define([
 
         // ---------------------------------------
 
+        general_id_mode_change: function () {
+            const self = AmazonListingCreateSellingObj;
+            const generalIdAttribute = $('general_id_attribute');
+
+            generalIdAttribute.value = '';
+            if (this.value !== 'none') {
+                self.updateHiddenValue(this, generalIdAttribute);
+            }
+        },
+
+        worldwide_id_mode_change: function () {
+            const self = AmazonListingCreateSellingObj;
+            const worldwideIdAttribute = $('worldwide_id_attribute');
+
+            worldwideIdAttribute.value = '';
+            if (this.value !== 'none') {
+                self.updateHiddenValue(this, worldwideIdAttribute);
+            }
+        },
+
+        // ---------------------------------------
+
         appendToText: function (ddId, targetId) {
             if ($(ddId).value == '') {
                 return;

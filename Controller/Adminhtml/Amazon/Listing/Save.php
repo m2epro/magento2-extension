@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
+
+use Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling\Form as CreateSellingForm;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
@@ -114,6 +110,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             'restock_date_mode',
             'restock_date_value',
             'restock_date_custom_attribute',
+
+            CreateSellingForm::FIELD_NAME_GENERAL_ID_ATTRIBUTE,
+            CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE,
         ];
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -131,6 +130,20 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             );
             $templateData['restock_date_value'] = gmdate('Y-m-d H:i:s', $timestamp);
         }
+
+        // Product identifiers
+        // ---------------------------------------
+
+        $templateData[\Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_GENERAL_ID_ATTRIBUTE] =
+            !empty($templateData[CreateSellingForm::FIELD_NAME_GENERAL_ID_ATTRIBUTE])
+                ? $templateData[CreateSellingForm::FIELD_NAME_GENERAL_ID_ATTRIBUTE]
+                : null;
+
+        $templateData[\Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_WORLDWIDE_ID_ATTRIBUTE] =
+            !empty($templateData[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE])
+                ? $templateData[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE]
+                : null;
+
         // ---------------------------------------
 
         $listing->addData($templateData);
