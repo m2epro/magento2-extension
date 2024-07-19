@@ -8,6 +8,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     /** @var \Ess\M2ePro\Helper\Data */
     protected $helperData;
+    private \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesService;
 
     /**
      * @param \Ess\M2ePro\Helper\Data $helperData
@@ -15,11 +16,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
      * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
      */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesService,
         \Ess\M2ePro\Helper\Data $helperData,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         $this->helperData = $helperData;
+        $this->offerImagesService = $offerImagesService;
         parent::__construct($amazonFactory, $context);
     }
 
@@ -143,6 +146,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             !empty($templateData[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE])
                 ? $templateData[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE]
                 : null;
+
+        $offerImages = [];
+        if ($post['condition_value'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {
+            $offerImages = $this->offerImagesService->prepareOfferImagesData($post->toArray());
+        }
+
+        $listing->getChildObject()->setOfferImages($offerImages);
 
         // ---------------------------------------
 

@@ -473,6 +473,24 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getGenerateSkuMode() == self::GENERATE_SKU_MODE_YES;
     }
 
+    public function setOfferImages(array $offerImages)
+    {
+        $this->setData(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_OFFER_IMAGES,
+            json_encode($offerImages, JSON_THROW_ON_ERROR)
+        );
+    }
+
+    public function getOfferImages(): array
+    {
+        $data = $this->getData(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_OFFER_IMAGES);
+        if (empty($data)) {
+            return [];
+        }
+
+        return (array)json_decode($data, true);
+    }
+
     // ---------------------------------------
 
     /**

@@ -8,8 +8,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
     private \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion\CollectionFactory $collectionFactory;
+    private \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion\CollectionFactory $collectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -18,6 +20,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->globalDataHelper = $globalDataHelper;
+        $this->dashboardUrlGenerator = $dashboardUrlGenerator;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -187,7 +190,7 @@ HTML;
                 include a maximum of 500 items.</p>
 HTML
                 ,
-                'https://www.ebay.com/sh/mkt/promotionmanager/dashboard'
+                $this->dashboardUrlGenerator->generate((int)$this->globalDataHelper->getValue('marketplaceId'))
             );
 
             $helpBlockHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([

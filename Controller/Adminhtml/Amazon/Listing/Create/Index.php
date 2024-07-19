@@ -12,8 +12,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     private $transferring;
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $helperDataSession;
+    private \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesService,
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Transferring $transferring,
@@ -23,6 +25,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $this->helperWizard = $helperWizard;
         $this->transferring = $transferring;
         $this->helperDataSession = $helperDataSession;
+        $this->offerImagesService = $offerImagesService;
 
         parent::__construct($amazonFactory, $context);
     }
@@ -196,6 +199,16 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             !empty($data[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE])
                 ? $data[CreateSellingForm::FIELD_NAME_WORLDWIDE_ID_ATTRIBUTE]
                 : null;
+
+        if (isset($data['offer_images']) && is_array($data['offer_images'])) {
+            $offerImages = [];
+            if ($data['condition_value'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {
+                $offerImages = $this->offerImagesService->prepareOfferImagesData($data['offer_images']);
+            }
+
+            $data['offer_images'] = $this->offerImagesService->convertToString($offerImages);
+        }
+
         // ---------------------------------------
 
         // Add new Listing

@@ -28,8 +28,11 @@ class Form extends AbstractForm
 
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionDataHelper;
+    /** @var \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService */
+    private AmazonListing\OfferImagesFormService $offerImagesFormService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesFormService,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -39,10 +42,12 @@ class Form extends AbstractForm
         \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
         array $data = []
     ) {
+        $this->offerImagesFormService = $offerImagesFormService;
         $this->amazonFactory = $amazonFactory;
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->dataHelper = $dataHelper;
         $this->sessionDataHelper = $sessionDataHelper;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -592,6 +597,8 @@ HTML
                 'after_element_html' => $button->toHtml(),
             ]
         );
+
+        $this->addListingPhotosSetting($form, $attributesByTypes, $formData);
 
         // Gift Wrap
         $fieldset = $form->addFieldset(
@@ -1298,6 +1305,8 @@ JS
 
             ResourceAmazonListing::COLUMN_GENERAL_ID_ATTRIBUTE => null,
             ResourceAmazonListing::COLUMN_WORLDWIDE_ID_ATTRIBUTE => null,
+
+            'offer_images' => null
         ];
     }
 
@@ -1326,6 +1335,10 @@ JS
             }
 
             $data['restock_date_value'] = $dateTime;
+        }
+
+        if (isset($data['offer_images']) && is_string($data['offer_images'])) {
+            $data['offer_images'] = $this->offerImagesFormService->convertToArray($data['offer_images']);
         }
 
         return $data;
@@ -1421,5 +1434,179 @@ JS
         $this->useFormContainer = $useFormContainer;
 
         return $this;
+    }
+
+    private function addListingPhotosSetting(
+        \Magento\Framework\Data\Form $form,
+        array $attributesByTypes,
+        array $formData
+    ) {
+        $mainImageKey = \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_MAIN_OFFER_IMAGE_LOCATOR;
+        $otherImageKey = \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_OTHER_OFFER_IMAGE_LOCATOR;
+
+        $offerImagesData = $formData['offer_images'] ?? [];
+
+        $fieldset = $form->addFieldset(
+            'magento_block_amazon_offer_images_settings',
+            [
+                'legend' => __('Listing Photos'),
+                'collapsable' => true,
+            ]
+        );
+
+        $mainImageMode = $offerImagesData[$mainImageKey][0]['mode'] ?? '';
+        $mainImageAttribute = $offerImagesData[$mainImageKey][0]['attribute_code'] ?? '';
+
+        $preparedAttributes = [];
+        foreach ($attributesByTypes['text_select'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+
+            if (
+                $mainImageMode !== \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_NOT_CONFIGURED
+                && $attribute['code'] == $mainImageAttribute
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'offer_images_main_image_attribute_code',
+            'hidden',
+            [
+                'name' => sprintf('offer_images[%s][0][attribute_code]', $mainImageKey),
+                'value' => $mainImageAttribute,
+            ]
+        );
+
+        $baseImageAttrs = ['attribute_code' => 'image'];
+        if (
+            $mainImageMode !== \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_NOT_CONFIGURED
+            && $mainImageAttribute === 'image'
+        ) {
+            $baseImageAttrs['selected'] = 'selected';
+        }
+
+        $fieldset->addField(
+            'offer_images_main_image_mode',
+            self::SELECT,
+            [
+                'name' => sprintf('offer_images[%s][0][mode]', $mainImageKey),
+                'label' => __('Main Image'),
+                'values' => [
+                    [
+                        'label' => __('None'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_NOT_CONFIGURED,
+                    ],
+                    [
+                        'label' => __('Product Base Image'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                        'attrs' => $baseImageAttrs,
+                    ],
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
+
+        $otherImageMode = $offerImagesData[$otherImageKey][0]['mode'] ?? '';
+        $otherImageAttribute = $offerImagesData[$otherImageKey][0]['attribute_code'] ?? '';
+        $otherImageImagesLimit = $offerImagesData[$otherImageKey][0]['images_limit'] ?? '';
+
+        $fieldset->addField(
+            'offer_images_other_image_attribute_code',
+            'hidden',
+            [
+                'name' => sprintf('offer_images[%s][0][attribute_code]', $otherImageKey),
+                'value' => $otherImageAttribute
+            ]
+        );
+
+        $fieldset->addField(
+            'offer_images_other_image_images_limit',
+            'hidden',
+            [
+                'name' => sprintf('offer_images[%s][0][images_limit]', $otherImageKey),
+                'value' => $otherImageImagesLimit
+            ]
+        );
+
+        $galleryImagesOptions = [];
+        for ($upToNumber = 1; $upToNumber < 9; $upToNumber++) {
+            $value = [
+                'value' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE,
+                'label' => $upToNumber == 1 ? $upToNumber : __('Up to %num', ['num' => $upToNumber]),
+                'attrs' => [
+                    'attribute_code' => 'media_gallery',
+                    'images_limit' => $upToNumber,
+                ]
+            ];
+
+            if (
+                $otherImageImagesLimit
+                && $otherImageImagesLimit == $upToNumber
+            ) {
+                $value['attrs']['selected'] = 'selected';
+            }
+
+            $galleryImagesOptions[] = $value;
+        }
+
+        $preparedAttributes = [];
+        foreach ($attributesByTypes['text_select'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $otherImageMode != \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_NOT_CONFIGURED
+                && $attribute['code'] == $otherImageAttribute
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => 2,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField(
+            'offer_images_other_image_mode',
+            self::SELECT,
+            [
+                'name' => sprintf('offer_images[%s][0][mode]', $otherImageKey),
+                'label' => __('Other Image'),
+                'values' => [
+                    [
+                        'label' => __('None'),
+                        'value' => \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_NOT_CONFIGURED,
+                        'attrs' => [
+                            'attribute_code' => 'image'
+                        ]
+                    ],
+                    [
+                        'label' => __('Product Images'),
+                        'value' => $galleryImagesOptions,
+                    ],
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'create_magento_attribute' => true,
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
     }
 }

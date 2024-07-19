@@ -6,9 +6,10 @@ define([
 ], function (jQuery, confirm, modal) {
     window.Promotion = Class.create(Grid, {
 
-        initialize: function (accountId, marketplaceId) {
+        initialize: function (accountId, marketplaceId, promoDashboardUrl) {
             this.accountId = accountId;
             this.marketplaceId = marketplaceId;
+            this.promoDashboardUrl = promoDashboardUrl;
         },
 
         handleSelectChange: function(selectElement, id, method) {
@@ -38,7 +39,7 @@ define([
             const gridHtml = transport.responseText;
             const buttons = this.getPopupButtons();
 
-            this.createOrUpdateModal('modal_promotion', 'Manage Promotion', gridHtml, buttons);
+            this.createOrUpdateModal('modal_promotion', 'Manage Promotions', gridHtml, buttons);
         },
 
         getPopupButtons: function () {
@@ -46,8 +47,8 @@ define([
                 class: 'action-primary action-accept',
                 text: M2ePro.translator.translate('Create New Promotion'),
                 click: function (event) {
-                    window.open('https://www.ebay.com/sh/mkt/promotionmanager/dashboard', '_blank');
-                }
+                    window.open(this.promoDashboardUrl, '_blank');
+                }.bind(this)
             }, {
                 class: 'action-primary action-accept',
                 text: M2ePro.translator.translate('Refresh Promotions'),

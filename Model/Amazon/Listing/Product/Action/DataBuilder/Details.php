@@ -71,7 +71,18 @@ class Details extends AbstractModel
             );
         }
 
-        $data = array_merge($data, $this->getTaxCodeData(), $this->getConditionData());
+        $data = array_merge($data, $this->getTaxCodeData());
+        $conditionData = $this->getConditionData();
+
+        if (
+            isset($conditionData['attributes'])
+            || isset($data['attributes'])
+        ) {
+            $data['attributes'] = array_merge($data['attributes'] ?? [], $conditionData['attributes'] ?? []);
+            unset($conditionData['attributes']);
+        }
+
+        $data = array_merge($data, $conditionData);
 
         if (!$amazonListingProduct->isAfnChannel()) {
             $data = array_merge($data, $this->getShippingData());
@@ -193,6 +204,12 @@ class Details extends AbstractModel
         }
 
         $this->processNotFoundAttributes('Condition / Condition Note');
+
+        if ($condition['condition'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {
+            $this->searchNotFoundAttributes();
+            $condition['attributes'] = $this->buildSpecificsData($this->getAmazonListing()->getOfferImages());
+            $this->processNotFoundAttributes('Offer Images');
+        }
 
         return $condition;
     }

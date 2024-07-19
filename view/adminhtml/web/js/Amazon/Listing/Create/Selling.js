@@ -69,10 +69,13 @@ define([
                 conditionValue = $('condition_value'),
                 conditionCustomAttribute = $('condition_custom_attribute'),
                 conditionNoteModeTr = $('condition_note_mode_tr'),
-                conditionNoteValueTr = $('condition_note_value_tr');
+                conditionNoteValueTr = $('condition_note_value_tr'),
+                offerImagesWrapper = $('magento_block_amazon_offer_images_settings-wrapper');
 
             conditionNoteModeTr.show();
             conditionNoteValueTr.show();
+            offerImagesWrapper.show();
+
 
             conditionValue.value = '';
             conditionCustomAttribute.value = '';
@@ -84,6 +87,7 @@ define([
                     conditionNoteModeTr.hide();
                     conditionNoteValueTr.hide();
                     $('condition_custom_tr').hide();
+                    offerImagesWrapper.hide();
                 } else {
                     self.condition_note_mode_change();
                 }
@@ -91,6 +95,30 @@ define([
                 self.updateHiddenValue(this, conditionCustomAttribute);
                 conditionNoteModeTr.show();
                 self.condition_note_mode_change();
+            }
+        },
+
+        offer_images_main_image_mode_change: function () {
+
+            const hiddenAttributeCode = $('offer_images_main_image_attribute_code')
+            hiddenAttributeCode.value = ''
+
+            if (this.value == 2) {
+                hiddenAttributeCode.value = this.options[this.selectedIndex].getAttribute('attribute_code');
+            }
+        },
+
+        offer_images_other_image_mode_change: function () {
+
+            const hiddenAttributeCode = $('offer_images_other_image_attribute_code');
+            const hiddenImagesLimit = $('offer_images_other_image_images_limit');
+
+            hiddenAttributeCode.value = '';
+            hiddenImagesLimit.value = '';
+
+            if (this.value == 2) {
+                hiddenImagesLimit.value = this.options[this.selectedIndex].getAttribute('images_limit');
+                hiddenAttributeCode.value = this.options[this.selectedIndex].getAttribute('attribute_code');
             }
         },
 

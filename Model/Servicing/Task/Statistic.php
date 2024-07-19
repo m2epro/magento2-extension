@@ -536,7 +536,7 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         $data = [];
 
         $this->fillUpDataByMethod($data, 'appendExtensionSystemInfo');
-        $this->fillUpDataByMethod($data, 'appendExtensionM2eProUpdaterModuleInfo');
+        $this->appendAmazonMcfInfo($data);
 
         $this->fillUpDataByMethod($data, 'appendExtensionTablesInfo');
         $this->fillUpDataByMethod($data, 'appendExtensionSettingsInfo');
@@ -568,25 +568,6 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
     private function appendExtensionSystemInfo(array &$data): void
     {
         $data['info']['version'] = $this->helperModule->getPublicVersion();
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return void
-     */
-    private function appendExtensionM2eProUpdaterModuleInfo(array &$data): void
-    {
-        $updaterModule = (array)$this->moduleList->getOne('Ess_M2eProUpdater');
-
-        $updaterData['installed'] = (int)$updaterModule;
-
-        if ($updaterData['installed']) {
-            $updaterData['status'] = (int)$this->moduleManager->isEnabled($updaterModule['name']);
-            $updaterData['version'] = empty($updaterModule['setup_version']) ? '' : $updaterModule['setup_version'];
-        }
-
-        $data['info']['m2eproupdater_module'] = $updaterData;
     }
 
     // ---------------------------------------
@@ -1329,6 +1310,21 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
                 'magento_code' => $amazonShippingMap['magento_code'],
             ];
         }
+    }
+
+    private function appendAmazonMcfInfo(array &$data)
+    {
+        $moduleAmazonMcf = $this->moduleList->getOne('M2E_AmazonMcf');
+        if ($moduleAmazonMcf === null) {
+            return;
+        }
+
+        $isEnabled = $this->moduleManager->isEnabled($moduleAmazonMcf['name']);
+
+        $data['amazon_mcf'] = [
+            'version' => $moduleAmazonMcf['setup_version'] ?? '',
+            'enabled' => $isEnabled,
+        ];
     }
 
     // ---------------------------------------

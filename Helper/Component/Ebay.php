@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Component;
 
 use Ess\M2ePro\Model\Listing\Product as ListingProduct;
@@ -49,15 +43,6 @@ class Ebay
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
-     * @param \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,

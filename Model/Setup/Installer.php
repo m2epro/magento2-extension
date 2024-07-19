@@ -8782,6 +8782,12 @@ class Installer
                                        ['nullable' => false]
                                    )
                                    ->addColumn(
+                                       \Ess\M2ePro\Model\ResourceModel\Amazon\Listing::COLUMN_OFFER_IMAGES,
+                                       Table::TYPE_TEXT,
+                                       self::LONG_COLUMN_SIZE,
+                                       ['default' => null]
+                                   )
+                                   ->addColumn(
                                        'gift_wrap_mode',
                                        Table::TYPE_SMALLINT,
                                        null,

@@ -1,22 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\AffectedListingsProducts
- */
 class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory  */
-    protected $amazonFactory;
+    protected \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory;
 
-    //########################################
+    // ----------------------------------------
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -29,24 +19,34 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function loadCollection(array $filters = [])
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', $this->model->getId());
+        $listingProductCollection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Listing\Product::LISTING_ID_FIELD,
+            ['eq' => (int)$this->model->getId()]
+        );
 
         if (!empty($filters['only_physical_units'])) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
+            $listingProductCollection->addFieldToFilter(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_IS_VARIATION_PARENT,
+                ['eq' => 0]
+            );
         }
 
         if (!empty($filters['template_shipping_id'])) {
-            $listingProductCollection->addFieldToFilter('template_shipping_id', ['null' => true]);
+            $listingProductCollection->addFieldToFilter(
+                \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_TEMPLATE_SHIPPING_ID,
+                [
+                    ['null' => true],
+                    ['eq' => 0],
+                ]
+            );
         }
 
         return $listingProductCollection;
     }
-
-    //########################################
 }

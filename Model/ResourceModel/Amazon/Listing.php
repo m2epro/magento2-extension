@@ -10,6 +10,7 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_RESTOCK_DATE_CUSTOM_ATTRIBUTE = 'restock_date_custom_attribute';
     public const COLUMN_GENERAL_ID_ATTRIBUTE = 'general_id_attribute';
     public const COLUMN_WORLDWIDE_ID_ATTRIBUTE = 'worldwide_id_attribute';
+    public const COLUMN_OFFER_IMAGES = 'offer_images';
 
     /** @var bool */
     protected $_isPkAutoIncrement = false;

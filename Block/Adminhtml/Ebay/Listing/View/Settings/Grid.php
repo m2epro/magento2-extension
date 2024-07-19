@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings;
 
 use Ess\M2ePro\Model\Ebay\Template\Manager;
@@ -47,6 +41,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionDataHelper;
 
+    private \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator;
+
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
@@ -60,6 +56,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
+        \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator,
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
@@ -74,6 +71,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->databaseHelper = $databaseHelper;
         $this->sessionDataHelper = $sessionDataHelper;
+        $this->dashboardUrlGenerator = $dashboardUrlGenerator;
         parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
 
@@ -432,7 +430,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         $this->getMassactionBlock()->addItem('managePromotion', [
-            'label' => __('Manage Promotion'),
+            'label' => __('Manage Promotions'),
             'url' => '',
         ], 'other');
 
@@ -1109,7 +1107,7 @@ JS
             'task_completed_warning_message' => $this->__($taskCompletedWarningMessage),
             'task_completed_error_message' => $this->__($taskCompletedErrorMessage),
             'Add New Listing' => $this->__('Add New Listing'),
-            'Manage Promotion' => __('Manage Promotion'),
+            'Manage Promotions' => __('Manage Promotions'),
             'Assign' => __('Assign'),
             'Refresh Promotions' => __('Refresh Promotions'),
             'Select Discount' => __('Select Discount'),
@@ -1167,7 +1165,8 @@ JS
 
         window.PromotionObj = new Promotion(
             '{$this->listing->getAccountId()}',
-            '{$this->listing->getMarketplaceId()}'
+            '{$this->listing->getMarketplaceId()}',
+            '{$this->dashboardUrlGenerator->generate($this->listing->getMarketplaceId())}'
         );
     });
 JS

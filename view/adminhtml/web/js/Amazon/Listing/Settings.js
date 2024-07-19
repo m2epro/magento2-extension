@@ -68,6 +68,14 @@ define([
             $('condition_mode').observe('change', AmazonListingCreateSellingObj.condition_mode_change)
                 .simulate('change');
 
+            $('offer_images_main_image_mode')
+                .observe('change', AmazonListingCreateSellingObj.offer_images_main_image_mode_change)
+                .simulate('change');
+
+            $('offer_images_other_image_mode')
+                    .observe('change', AmazonListingCreateSellingObj.offer_images_other_image_mode_change)
+                    .simulate('change');
+
             $('condition_note_mode').observe('change', AmazonListingCreateSellingObj.condition_note_mode_change);
 
             $('gift_wrap_mode')
