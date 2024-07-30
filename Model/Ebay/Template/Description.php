@@ -66,6 +66,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const IMAGE_MAIN_MODE_PRODUCT = 1;
     public const IMAGE_MAIN_MODE_ATTRIBUTE = 2;
 
+    public const VIDEO_MODE_NONE = 0;
+    public const VIDEO_MODE_ATTRIBUTE = 2;
+
     public const GALLERY_IMAGES_MODE_NONE = 0;
     public const GALLERY_IMAGES_MODE_PRODUCT = 1;
     public const GALLERY_IMAGES_MODE_ATTRIBUTE = 2;
@@ -984,6 +987,26 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         );
     }
 
+    public function isVideoModeNone(): bool
+    {
+        return $this->getVideoMode() === self::VIDEO_MODE_NONE;
+    }
+
+    public function isVideoModeAttribute(): bool
+    {
+        return $this->getVideoMode() === self::VIDEO_MODE_ATTRIBUTE;
+    }
+
+    private function getVideoMode(): int
+    {
+        return (int)$this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description::COLUMN_VIDEO_MODE);
+    }
+
+    public function getVideoAttribute(): ?string
+    {
+        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description::COLUMN_VIDEO_ATTRIBUTE);
+    }
+
     // ---------------------------------------
 
     /**
@@ -1000,6 +1023,4 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     {
         return true;
     }
-
-    //########################################
 }

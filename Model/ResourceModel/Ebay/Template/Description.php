@@ -1,15 +1,13 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
 class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_USE_SUPERSIZE_IMAGES = 'use_supersize_images';
+    public const COLUMN_VIDEO_MODE = 'video_mode';
+    public const COLUMN_VIDEO_ATTRIBUTE = 'video_attribute';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 

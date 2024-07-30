@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Relist\Response
- */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
     public const INSTRUCTION_TYPE_CHECK_QTY = 'success_relist_check_qty';
@@ -25,9 +16,28 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     public const INSTRUCTION_TYPE_CHECK_RETURN = 'success_relist_check_return';
     public const INSTRUCTION_TYPE_CHECK_OTHER = 'success_relist_check_other';
 
-    //########################################
+    private \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor;
 
-    public function processSuccess(array $response, array $responseParams = [])
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ) {
+        parent::__construct(
+            $dataHasher,
+            $componentEbayCategoryEbay,
+            $activeRecordFactory,
+            $helperFactory,
+            $modelFactory
+        );
+
+        $this->videoProductProcessor = $videoProductProcessor;
+    }
+
+    public function processSuccess(array $response, array $responseParams = []): void
     {
         $this->prepareMetadata();
 
@@ -69,6 +79,8 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->getListingProduct()->save();
 
         $this->updateVariationsValues(false);
+
+        $this->videoProductProcessor->process($this->getListingProduct());
     }
 
     public function processAlreadyActive(array $response, array $responseParams = [])
@@ -76,8 +88,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $responseParams['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
         $this->processSuccess($response, $responseParams);
     }
-
-    //########################################
 
     protected function processRecheckInstructions(array $data)
     {
@@ -161,8 +171,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         return $data;
     }
 
-    //########################################
-
     protected function removeConditionNecessary($data)
     {
         if (!isset($data['additional_data'])) {
@@ -175,6 +183,4 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         return $data;
     }
-
-    //########################################
 }

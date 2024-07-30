@@ -51,8 +51,9 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             ];
         }
 
-        $rawMagentoVariations = $this->getHelper('Component\Ebay')
-                                     ->prepareOptionsForVariations($rawMagentoVariations);
+        /** @var \Ess\M2ePro\Helper\Component\Ebay $ebayComponentHelper */
+        $ebayComponentHelper = $this->getHelper('Component\Ebay');
+        $rawMagentoVariations = $ebayComponentHelper->prepareOptionsForVariations($rawMagentoVariations);
 
         $magentoVariations = $this->prepareMagentoVariations($rawMagentoVariations);
 
@@ -334,8 +335,9 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
             foreach ($currentVariation as $cOption) {
                 if (
-                    trim($mOption['attribute']) == trim($cOption['attribute']) &&
-                    trim($mOption['option']) == trim($cOption['option'])
+                    trim($mOption['product_id']) == trim($cOption['product_id'])
+                    && trim($mOption['attribute']) == trim($cOption['attribute'])
+                    && trim($mOption['option']) == trim($cOption['option'])
                 ) {
                     $haveOption = true;
                     break;
@@ -350,12 +352,12 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         return true;
     }
 
-    private function getVariationHash($variation)
+    private function getVariationHash($variation): string
     {
         $hash = [];
 
         foreach ($variation['options'] as $option) {
-            $hash[] = trim($option['attribute']) . '-' . trim($option['option']);
+            $hash[] = trim($option['product_id']) . '-' . trim($option['attribute']) . '-' . trim($option['option']);
         }
 
         return implode('##', $hash);

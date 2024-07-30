@@ -71,6 +71,10 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             if (!$this->validateVariationsOptions()) {
                 return false;
             }
+
+            if (!$this->validateBundleMapping()) {
+                return false;
+            }
         }
 
         if (!$this->validateCategory()) {

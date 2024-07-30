@@ -389,6 +389,51 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
+    protected function validateBundleMapping(): bool
+    {
+        $uniqueOptions = [];
+
+        /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+        foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
+            $tmpOptions = [];
+            foreach ($variation->getOptions(true) as $option) {
+                if ($option->getProductType() !== \Ess\M2ePro\Helper\Magento\Product::TYPE_BUNDLE) {
+                    continue;
+                }
+
+                if (empty($option->getOption())) {
+                    $this->addMessage(
+                        sprintf(
+                            '"%s" option used for Product variation title is missing a value(s)',
+                            $option->getAttribute()
+                        )
+                    );
+
+                    return false;
+                }
+
+                $tmpOptions[$option->getAttribute()] = $option->getOption();
+            }
+
+            if ($tmpOptions === []) {
+                continue;
+            }
+
+            ksort($tmpOptions);
+            $tmpUniqueKey = implode('#', $tmpOptions);
+
+            if (isset($uniqueOptions[$tmpUniqueKey])) {
+                $this->addMessage('Product variation options contain duplicate values.');
+
+                return false;
+            }
+
+            $uniqueOptions[$tmpUniqueKey] = true;
+        }
+
+        return true;
+    }
+
     protected function validateVariationsFixedPrice()
     {
         if (

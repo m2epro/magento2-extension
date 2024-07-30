@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -53,6 +47,10 @@ class Data extends AbstractForm
 
         $allAttributesByTypes = [
             'text' => $this->magentoAttributeHelper->filterByInputTypes($this->attributes, ['text']),
+            'text_textarea' => $this->magentoAttributeHelper->filterByInputTypes(
+                $this->attributes,
+                ['text', 'textarea']
+            ),
             'text_select' => $this->magentoAttributeHelper->filterByInputTypes($this->attributes, ['text', 'select']),
             'text_images' => $this->magentoAttributeHelper->filterByInputTypes(
                 $this->attributes,
@@ -638,6 +636,69 @@ class Data extends AbstractForm
                 ),
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
+
+        // ---------------------------------------
+
+        $videoFieldset = $form->addFieldset(
+            'video_block',
+            [
+                'legend' => __('Videos'),
+                'collapsable' => true,
+            ]
+        );
+
+        $preparedAttributes = [];
+        foreach ($allAttributesByTypes['text_textarea'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $formData['video_mode'] == Description::VIDEO_MODE_ATTRIBUTE
+                && $formData['video_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => Description::VIDEO_MODE_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $videoFieldset->addField(
+            'video',
+            self::SELECT,
+            [
+                'container_id' => 'product_video_tr',
+                'label' => __('Product Video'),
+                'name' => 'description[video_mode]',
+                'values' => [
+                    Description::VIDEO_MODE_NONE => __('None'),
+                    [
+                        'label' => __('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true,
+                        ],
+                    ],
+                ],
+                'value' => $formData['video_mode'] != Description::VIDEO_MODE_ATTRIBUTE
+                    ? $formData['video_mode'] : '',
+                'create_magento_attribute' => true,
+                'tooltip' => __(
+                    'Select a Magento Attribute that stores a valid URL to your product video.'
+                ),
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea');
+
+        $videoFieldset->addField(
+            'video_attribute',
+            'hidden',
+            [
+                'name' => 'description[video_attribute]',
+                'value' => $formData['video_attribute'],
+            ]
+        );
+
+        // ---------------------------------------
 
         $watermarkFieldset = $form->addFieldset(
             'watermark_block',

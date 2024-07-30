@@ -10,12 +10,10 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\Processor */
     private $instructionProcessorFactory;
-    /** @var EbayInstruction\AutoActions\Handler */
-    private $ebayAutoActionHandler;
-    /** @var EbayInstruction\SynchronizationTemplate\Handler */
-    private $ebaySynchronizationTemplateHandler;
-    /** @var \Ess\M2ePro\Model\Config\Manager */
-    private $configManager;
+    private EbayInstruction\AutoActions\Handler $ebayAutoActionHandler;
+    private EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler;
+    private EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler;
+    private \Ess\M2ePro\Model\Config\Manager $configManager;
 
     public function __construct(
         \Ess\M2ePro\Model\Cron\Manager $cronManager,
@@ -30,7 +28,8 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Config\Manager $configManager,
         \Ess\M2ePro\Model\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory,
         EbayInstruction\AutoActions\Handler $ebayAutoActionHandler,
-        EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler
+        EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler,
+        EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler
     ) {
         parent::__construct(
             $cronManager,
@@ -47,6 +46,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->instructionProcessorFactory = $instructionProcessorFactory;
         $this->ebayAutoActionHandler = $ebayAutoActionHandler;
         $this->ebaySynchronizationTemplateHandler = $ebaySynchronizationTemplateHandler;
+        $this->ebayVideoCollectHandler = $ebayVideoCollectHandler;
     }
 
     protected function performActions(): void
@@ -55,6 +55,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $processor->setComponent(\Ess\M2ePro\Helper\Component\Ebay::NICK);
         $processor->setMaxListingsProductsCount($this->getListingProductsLimit());
 
+        $processor->registerHandler($this->ebayVideoCollectHandler);
         $processor->registerHandler($this->ebayAutoActionHandler);
         $processor->registerHandler($this->ebaySynchronizationTemplateHandler);
 

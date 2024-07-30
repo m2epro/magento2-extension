@@ -1,33 +1,23 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Description\Diff
- */
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
-    //########################################
-
-    public function isDifferent()
+    public function isDifferent(): bool
     {
-        return $this->isTitleDifferent() ||
-            $this->isSubtitleDifferent() ||
-            $this->isDescriptionDifferent() ||
-            $this->isImagesDifferent() ||
-            $this->isVariationImagesDifferent() ||
-            $this->isOtherDifferent();
+        return $this->isTitleDifferent()
+            || $this->isSubtitleDifferent()
+            || $this->isDescriptionDifferent()
+            || $this->isImagesDifferent()
+            || $this->isVariationImagesDifferent()
+            || $this->isVideoDifferent()
+            || $this->isOtherDifferent();
     }
 
-    //########################################
-
-    public function isTitleDifferent()
+    public function isTitleDifferent(): bool
     {
         $keys = [
             'title_mode',
@@ -37,7 +27,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isSubtitleDifferent()
+    public function isSubtitleDifferent(): bool
     {
         $keys = [
             'subtitle_mode',
@@ -47,7 +37,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isDescriptionDifferent()
+    public function isDescriptionDifferent(): bool
     {
         $keys = [
             'description_mode',
@@ -57,7 +47,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isImagesDifferent()
+    public function isImagesDifferent(): bool
     {
         $keys = [
             'gallery_type',
@@ -77,7 +67,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isVariationImagesDifferent()
+    public function isVariationImagesDifferent(): bool
     {
         $keys = [
             'variation_images_mode',
@@ -89,7 +79,17 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         return $this->isSettingsDifferent($keys);
     }
 
-    public function isOtherDifferent()
+    public function isVideoDifferent(): bool
+    {
+        $keys = [
+            'video_mode',
+            'video_attribute',
+        ];
+
+        return $this->isSettingsDifferent($keys);
+    }
+
+    public function isOtherDifferent(): bool
     {
         $keys = [
             'condition_mode',
@@ -101,6 +101,4 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 
         return $this->isSettingsDifferent($keys);
     }
-
-    //########################################
 }

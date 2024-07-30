@@ -85,7 +85,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
                 $order = $orderBuilder->process();
                 $order && $orders[] = $order;
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->_synchronizationLog->addMessageFromException($e);
                 $this->getHelper('Module_Exception')->process($e);
                 continue;
@@ -109,7 +109,7 @@ class Creator extends \Ess\M2ePro\Model\AbstractModel
 
             try {
                 $this->createMagentoOrder($order);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->_synchronizationLog->addMessageFromException($e);
                 $this->getHelper('Module_Exception')->process($e);
                 continue;

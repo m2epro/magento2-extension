@@ -14,6 +14,10 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE = 'ktypes_resolve_last_try_date';
     public const COLUMN_KTYPES_RESOLVE_ATTEMPT = 'ktypes_resolve_attempt';
 
+    public const COLUMN_VIDEO_URL = 'video_url';
+    public const COLUMN_VIDEO_ID = 'video_id';
+    public const COLUMN_ONLINE_VIDEO_ID = 'online_video_id';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 

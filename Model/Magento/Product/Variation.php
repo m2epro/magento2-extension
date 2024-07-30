@@ -36,6 +36,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
     protected $magentoProduct;
     /** @var \Ess\M2ePro\Helper\Module\Translation */
     protected $moduleTranslation;
+    private \Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ReplacerFactory $bundleOptionsMappingReplacerFactory;
 
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
@@ -47,7 +48,8 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Downloadable\Model\LinkFactory $downloadableLinkFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation
+        \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
+        \Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ReplacerFactory $bundleOptionsMappingReplacerFactory
     ) {
         $this->productFactory = $productFactory;
         $this->entityOptionCollectionFactory = $entityOptionCollectionFactory;
@@ -59,6 +61,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
         $this->moduleTranslation = $moduleTranslation;
 
         parent::__construct($helperFactory, $modelFactory);
+        $this->bundleOptionsMappingReplacerFactory = $bundleOptionsMappingReplacerFactory;
     }
 
     //########################################
@@ -408,12 +411,15 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
             )->getItems();
 
             foreach ($selectionsCollectionItems as $item) {
-                $optionCombinationTitle[] = $item->getName();
+                $bundleOptionMappingReplacer = $this->bundleOptionsMappingReplacerFactory
+                    ->create($singleOption, $item);
+
+                $optionCombinationTitle[] = $bundleOptionMappingReplacer->getName();
                 $possibleVariationProductOptions[] = [
                     'product_id' => $item->getProductId(),
                     'product_type' => $product->getTypeId(),
                     'attribute' => $optionTitle,
-                    'option' => $item->getName(),
+                    'option' => $bundleOptionMappingReplacer->getName(),
                 ];
             }
 

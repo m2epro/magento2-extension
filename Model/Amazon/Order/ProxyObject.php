@@ -15,6 +15,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
     protected $helper;
     /** @var \Ess\M2ePro\Model\Amazon\Order\UkTaxService */
     private $ukTaxService;
+    private \Magento\Customer\Model\ResourceModel\AddressRepository $addressRepository;
 
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\UkTaxService $ukTaxService,
@@ -27,7 +28,8 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Order\UserInfoFactory $userInfoFactory,
-        \Ess\M2ePro\Helper\Component\Amazon $helper
+        \Ess\M2ePro\Helper\Component\Amazon $helper,
+        \Magento\Customer\Model\ResourceModel\AddressRepository $addressRepository
     ) {
         parent::__construct(
             $currency,
@@ -42,6 +44,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         $this->helper = $helper;
         $this->priceTaxRateFactory = $priceTaxRateFactory;
         $this->ukTaxService = $ukTaxService;
+        $this->addressRepository = $addressRepository;
     }
 
     /**
@@ -95,20 +98,50 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $amazonAccount->getMagentoOrdersNumberRegularPrefix(); //General
     }
 
+    public function getCustomer()
+    {
+        $customer = parent::getCustomer();
+        /** @var \Ess\M2ePro\Model\Amazon\Account $amazonAccount */
+        $amazonAccount = $this->order->getParentObject()->getAccount()->getChildObject();
+
+        $buyerCompanyName = $this->getBuyerCompanyName();
+        if (
+            !empty($buyerCompanyName)
+            && $amazonAccount->isMagentoOrdersCustomerNew()
+        ) {
+            foreach ($customer->getAddresses() as $address) {
+                if (!$address->isDefaultBilling()) {
+                    continue;
+                }
+
+                $address->setCompany($buyerCompanyName);
+                $this->addressRepository->save($address);
+            }
+        }
+
+        return $customer;
+    }
+
     /**
      * @return array
      */
     public function getBillingAddressData()
     {
         if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
-            return parent::getBillingAddressData();
+            $billingAddress = parent::getBillingAddressData();
+            $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
+
+            return $billingAddress;
         }
 
         if (
             $this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingIfSameCustomerAndRecipient() &&
             $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
         ) {
-            return parent::getBillingAddressData();
+            $billingAddress = parent::getBillingAddressData();
+            $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
+
+            return $billingAddress;
         }
 
         $customerUserInfo = $this->createUserInfoFromRawName($this->order->getBuyerName());
@@ -471,7 +504,7 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
                     "Customization for SKU %sku: <a href='%customized_link'>Link</a><br>",
                     [
                         'sku' => $amazonOrderItem->getSku(),
-                        'customized_link' => $amazonOrderItem->getCustomizedInfo()
+                        'customized_link' => $amazonOrderItem->getCustomizedInfo(),
                     ]
                 );
             }
@@ -599,5 +632,22 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         }
 
         return false;
+    }
+
+    private function appendCompanyToBillingAddressData(array $billingAddressData): array
+    {
+        $buyerCompanyName = $this->getBuyerCompanyName();
+        if (!empty($buyerCompanyName)) {
+            $billingAddressData['company'] = $buyerCompanyName;
+        }
+
+        return $billingAddressData;
+    }
+
+    private function getBuyerCompanyName(): string
+    {
+        $addressData = $this->order->getShippingAddress()->getRawData();
+
+        return $addressData['buyer_company_name'] ?? '';
     }
 }

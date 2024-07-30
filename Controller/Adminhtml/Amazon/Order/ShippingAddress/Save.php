@@ -1,18 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Order;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Order\ShippingAddress\Save
- */
 class Save extends Order
 {
     public function execute()
@@ -55,6 +46,7 @@ class Save extends Order
             'recipient_name',
             'phone',
             'street',
+            'company',
         ];
 
         foreach ($keys as $key) {

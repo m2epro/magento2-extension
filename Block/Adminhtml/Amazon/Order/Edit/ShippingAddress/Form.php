@@ -103,6 +103,17 @@ class Form extends AbstractForm
         );
 
         $fieldset->addField(
+            'company',
+            'text',
+            [
+                'name' => 'company',
+                'label' => __('Company'),
+                'value' => isset($address['company'])
+                    ? $this->dataHelper->escapeHtml($address['company']) : '',
+            ]
+        );
+
+        $fieldset->addField(
             'street_0',
             'text',
             [

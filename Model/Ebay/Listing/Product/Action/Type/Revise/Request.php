@@ -1,25 +1,30 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
 class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
-    /**
-     * @return array
-     */
-    public function getActionData()
+    public function getActionData(): array
     {
+        $generalData = $this->getGeneralData();
+        $otherData = $this->getOtherData();
+
+        if (
+            isset($generalData['product_details'])
+            || isset($otherData['product_details'])
+        ) {
+            $otherData['product_details'] = array_merge(
+                $otherData['product_details'] ?? [],
+                $generalData['product_details'] ?? []
+            );
+            unset($generalData['product_details']);
+        }
+
         $data = array_merge(
             [
                 'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal(),
             ],
-            $this->getGeneralData(),
+            $generalData,
             $this->getQtyData(),
             $this->getPriceData(),
             $this->getTitleData(),
@@ -31,7 +36,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             $this->getReturnData(),
             $this->getShippingData(),
             $this->getVariationsData(),
-            $this->getOtherData()
+            $otherData
         );
 
         if ($this->getConfigurator()->isGeneralAllowed()) {

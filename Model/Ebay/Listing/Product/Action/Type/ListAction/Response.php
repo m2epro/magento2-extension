@@ -1,21 +1,31 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Response
- */
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
-    //########################################
+    private \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor;
 
-    public function processSuccess(array $response, array $responseParams = [])
+    public function __construct(
+        \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ) {
+        parent::__construct(
+            $dataHasher,
+            $componentEbayCategoryEbay,
+            $activeRecordFactory,
+            $helperFactory,
+            $modelFactory
+        );
+
+        $this->videoProductProcessor = $videoProductProcessor;
+    }
+
+    public function processSuccess(array $response, array $responseParams = []): void
     {
         $this->prepareMetadata();
 
@@ -62,9 +72,9 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->getListingProduct()->save();
 
         $this->updateVariationsValues(false);
-    }
 
-    //########################################
+        $this->videoProductProcessor->process($this->getListingProduct());
+    }
 
     protected function appendSpecificsReplacementValues($data)
     {
@@ -100,6 +110,4 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         return $data;
     }
-
-    //########################################
 }

@@ -86,7 +86,7 @@ class UploadByUser extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
                 ) {
                     $manager->clear();
                 }
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 $message = $this->getHelper('Module_Translation')->__(
                     'The "Upload Orders By User" Action for eBay Account "%account%" was completed with error.',
                     $account->getTitle()

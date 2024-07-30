@@ -24,7 +24,8 @@ abstract class AbstractModel extends CheckerAbstractModel
                 $this->getRevisePartsInstructionTypes(),
                 $this->getReviseShippingInstructionTypes(),
                 $this->getReviseReturnInstructionTypes(),
-                $this->getReviseOtherInstructionTypes()
+                $this->getReviseOtherInstructionTypes(),
+                $this->getBundleOptionsMappingInstructionTypes(),
             )
         );
     }
@@ -295,6 +296,14 @@ abstract class AbstractModel extends CheckerAbstractModel
             \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel::
             INSTRUCTION_TYPE_MAGMI_PLUGIN_PRODUCT_CHANGED,
             \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::INSTRUCTION_TYPE,
+            \Ess\M2ePro\Model\Ebay\Video\UploadingStatusProcessor::INSTRUCTION_TYPE_PRODUCT_VIDEO_URL_UPLOADED,
+        ];
+    }
+
+    protected function getBundleOptionsMappingInstructionTypes(): array
+    {
+        return [
+            \Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\Instructions::INSTRUCTION_TYPE,
         ];
     }
 

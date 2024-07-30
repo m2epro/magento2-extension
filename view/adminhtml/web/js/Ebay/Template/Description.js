@@ -96,6 +96,10 @@ define([
                 .observe('change', EbayTemplateDescriptionObj.variation_images_change)
                 .simulate('change');
 
+            $('video')
+                    .observe('change', EbayTemplateDescriptionObj.video_change)
+                    .simulate('change');
+
             $('product_details_brand')
                 .observe('change', EbayTemplateDescriptionObj.product_details_brand_change)
                 .simulate('change');
@@ -383,6 +387,16 @@ define([
             jQuery('.products-images-mode-change-label').each(function(index, elem) {
                 jQuery(elem).find('.label span').text(jQuery(elem).find('.' + this.value).text());
             }.bind(this));
+        },
+
+        video_change: function() {
+            var self = EbayTemplateDescriptionObj;
+
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::VIDEO_MODE_ATTRIBUTE')) {
+                self.updateHiddenValue(this, $('video_attribute'));
+            } else {
+                $('video_attribute').value = '';
+            }
         },
 
         product_details_brand_change: function() {

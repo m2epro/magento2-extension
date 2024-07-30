@@ -990,13 +990,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $this->setSettings('additional_data', $additionalData);
         $this->save();
     }
+
     public function createCreditMemo(): ?\Magento\Sales\Model\Order\Creditmemo
     {
         $creditMemo = null;
 
         try {
             $creditMemo = $this->getChildObject()->createCreditMemo();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->helperModuleException->process($e);
             $this->addErrorLog('CreditMemo was not created. Reason: %msg%', ['msg' => $e->getMessage()]);
         }

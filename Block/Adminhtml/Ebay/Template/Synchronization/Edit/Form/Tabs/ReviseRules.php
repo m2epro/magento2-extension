@@ -316,7 +316,8 @@ HTML
                 ],
                 'tooltip' => __(
                     'Automatically revises Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size,
-                    Taxation and Immediate Payment on eBay when the related data is modified in Policy Templates.'
+                    Taxation, Immediate Payment and Video on eBay when the related data is modified in
+                    Policy Templates.'
                 ),
             ]
         );
@@ -333,7 +334,7 @@ HTML
                             <br/>
                             <b>
                                 Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size,
-                                Taxation and Immediate Payment on eBay
+                                Taxation, Immediate Payment and Video on eBay
                             </b>'
                         ),
                     ],

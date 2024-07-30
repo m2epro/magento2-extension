@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
+use Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ObserverHandler\BundleOptionsCollector;
+
 class Before extends AbstractAddUpdate
 {
     public const BEFORE_EVENT_KEY = 'ess_m2epro_before_event_key';
@@ -16,14 +18,18 @@ class Before extends AbstractAddUpdate
      */
     private $proxy = null;
 
+    private BundleOptionsCollector $bundleOptionsCollector;
+
     public function __construct(
         \Ess\M2ePro\Observer\Product\AddUpdate\Before\ProxyFactory $proxyFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        BundleOptionsCollector $bundleOptionsCollector
     ) {
         $this->proxyFactory = $proxyFactory;
+        $this->bundleOptionsCollector = $bundleOptionsCollector;
         parent::__construct($productFactory, $helperFactory, $activeRecordFactory, $modelFactory);
     }
 
@@ -67,6 +73,9 @@ class Before extends AbstractAddUpdate
         $this->getProxy()->setData('special_price_to_date', $this->getProduct()->getSpecialToDate());
         $this->getProxy()->setData('tier_price', $this->getProduct()->getTierPrice());
         $this->getProxy()->setData('default_qty', $this->getDefaultQty());
+        $this->getProxy()->setBundleOptionNames(
+            $this->bundleOptionsCollector->collectOptionNames($this->getProduct())
+        );
 
         $this->getProxy()->setAttributes($this->getTrackingAttributesWithValues());
     }

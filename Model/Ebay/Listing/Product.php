@@ -924,7 +924,79 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this;
     }
 
-    //########################################
+    // ---------------------------------------
+
+    public function hasVideoUrl(): bool
+    {
+        return !empty($this->getVideoUrl());
+    }
+
+    public function getVideoUrl(): ?string
+    {
+        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_URL);
+    }
+
+    public function setVideoUrl(?string $value): self
+    {
+        $this->setData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_URL,
+            $value
+        );
+
+        return $this;
+    }
+
+    public function hasVideoId(): bool
+    {
+        return !empty($this->getVideoId());
+    }
+
+    public function getVideoId(): ?string
+    {
+        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_ID);
+    }
+
+    public function setVideoId(?string $value): self
+    {
+        $this->setData(
+            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_ID,
+            $value
+        );
+
+        return $this;
+    }
+
+    public function hasOnlineVideoId(): bool
+    {
+        return !empty($this->getOnlineVideoId());
+    }
+
+    public function getOnlineVideoId(): ?string
+    {
+        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_VIDEO_ID);
+    }
+
+    // ----------------------------------------
+
+    public function findVideoUrlByPolicy(): ?string
+    {
+        $descriptionTemplate = $this->getEbayDescriptionTemplate();
+
+        if (!$descriptionTemplate->isVideoModeAttribute()) {
+            return null;
+        }
+
+        $magentoVideoAttribute = $descriptionTemplate->getVideoAttribute();
+        $videoUrl = $this->getMagentoProduct()->getAttributeValue($magentoVideoAttribute);
+
+        if (empty($videoUrl)) {
+            return null;
+        }
+
+        return $videoUrl;
+    }
+
+    // ---------------------------------------
 
     public function getSku()
     {

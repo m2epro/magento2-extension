@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Observer\Product\AddUpdate\Before;
 
 class Proxy
@@ -24,6 +18,7 @@ class Proxy
     private $websiteIds = [];
     /** @var array */
     private $categoriesIds = [];
+    private array $bundleOptionNames = [];
 
     /**
      * @param int $value
@@ -125,5 +120,15 @@ class Proxy
         return $this->categoriesIds;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function setBundleOptionNames(array $bundleOptionNames): void
+    {
+        $this->bundleOptionNames = $bundleOptionNames;
+    }
+
+    public function getBundleOptionNames(): array
+    {
+        return $this->bundleOptionNames;
+    }
 }

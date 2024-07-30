@@ -814,13 +814,13 @@ class Builder extends AbstractModel
 
                 $listingProduct->getChildObject()->setData('online_qty', 0);
 
-                $tempLogMessages = [
-                    $this->helperFactory->getObject('Module\Translation')->__(
-                        'Item QTY was changed from %from% to %to% .',
-                        empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
-                        0
-                    ),
-                ];
+                $tempLogMessages = [];
+                if ($currentOnlineQty !== 0) {
+                    $tempLogMessages[] = (string)__(
+                        'Item QTY was changed from %from to 0.',
+                        ['from' => $currentOnlineQty]
+                    );
+                }
 
                 if (!$listingProduct->isInactive()) {
                     $statusChangedFrom = $this->getHelper('Component\Amazon')

@@ -42,6 +42,15 @@ class GlobalData
      */
     public function setValue($key, $value): void
     {
+        $currentValue = $this->getValue($key);
+        if ($currentValue !== null) {
+            if ($currentValue === $value) {
+                return;
+            }
+
+            $this->unsetValue($key);
+        }
+
         $globalKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER . '_' . $key;
         $this->registryModel->register($globalKey, $value);
     }

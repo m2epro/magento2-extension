@@ -175,6 +175,18 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['use_supersize_images'] = (int)$this->rawData['use_supersize_images'];
         }
 
+        // ---------------------------------------
+
+        if (isset($this->rawData['video_mode'])) {
+            $data['video_mode'] = (int)$this->rawData['video_mode'];
+        }
+
+        if (isset($this->rawData['video_attribute'])) {
+            $data['video_attribute'] = $this->rawData['video_attribute'];
+        }
+
+        // ---------------------------------------
+
         if (isset($this->rawData['watermark_mode'])) {
             $data['watermark_mode'] = (int)$this->rawData['watermark_mode'];
         }
@@ -312,6 +324,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'variation_images_limit' => 1,
             'variation_images_attribute' => '',
             'default_image_url' => '',
+
+            'video_mode' => Description::VIDEO_MODE_NONE,
+            'video_attribute' => '',
 
             'variation_configurable_images' => \Ess\M2ePro\Helper\Json::encode([]),
             'use_supersize_images' => Description::USE_SUPERSIZE_IMAGES_NO,

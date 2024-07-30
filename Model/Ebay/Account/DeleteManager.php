@@ -8,8 +8,10 @@ class DeleteManager
     private \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory $shippingTemplateCollectionFactory;
     private \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructureHelper;
     private \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository;
+    private \Ess\M2ePro\Model\Ebay\Video\Repository $videoRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Video\Repository $videoRepository,
         \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository,
         \Ess\M2ePro\Helper\Module\Database\Structure $moduleDatabaseStructureHelper,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory $shippingTemplateCollectionFactory,
@@ -19,6 +21,7 @@ class DeleteManager
         $this->shippingTemplateCollectionFactory = $shippingTemplateCollectionFactory;
         $this->moduleDatabaseStructureHelper = $moduleDatabaseStructureHelper;
         $this->promotionRepository = $promotionRepository;
+        $this->videoRepository = $videoRepository;
     }
 
     /**
@@ -62,6 +65,8 @@ class DeleteManager
         $ebayAccount = $account->getChildObject();
 
         $this->promotionRepository->removeAllByAccountId((int)$ebayAccount->getId());
+
+        $this->videoRepository->removeAllByAccountId((int)$ebayAccount->getId());
 
         $storeCategoriesTable = $this->moduleDatabaseStructureHelper
                                      ->getTableNameWithPrefix('m2epro_ebay_account_store_category');

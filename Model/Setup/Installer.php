@@ -8,8 +8,10 @@ use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Setup\SetupInterface;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item as AmazonOrderItem;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayListingProduct;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as EbayTemplateDescription;
 use Ess\M2ePro\Model\ResourceModel\Marketplace as MarketplaceResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace as AmazonMarketplaceResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Bundle\Options\Mapping as MappingResource;
 
 class Installer
 {
@@ -4331,6 +4333,21 @@ class Installer
                                             Table::TYPE_SMALLINT,
                                             null,
                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                        )->addColumn(
+                                            EbayListingProduct::COLUMN_VIDEO_URL,
+                                            Table::TYPE_TEXT,
+                                            null,
+                                            ['default' => null]
+                                        )->addColumn(
+                                            EbayListingProduct::COLUMN_VIDEO_ID,
+                                            Table::TYPE_TEXT,
+                                            255,
+                                            ['default' => null]
+                                        )->addColumn(
+                                            EbayListingProduct::COLUMN_ONLINE_VIDEO_ID,
+                                            Table::TYPE_TEXT,
+                                            255,
+                                            ['default' => null]
                                         )
                                         ->addIndex('ebay_item_id', 'ebay_item_id')
                                         ->addIndex('item_uuid', 'item_uuid')
@@ -5667,10 +5684,22 @@ class Installer
                                                  ['default' => null]
                                              )
                                              ->addColumn(
-                                                 'use_supersize_images',
+                                                 EbayTemplateDescription::COLUMN_USE_SUPERSIZE_IMAGES,
                                                  Table::TYPE_SMALLINT,
                                                  null,
                                                  ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_VIDEO_MODE,
+                                                 Table::TYPE_SMALLINT,
+                                                 null,
+                                                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_VIDEO_ATTRIBUTE,
+                                                 Table::TYPE_TEXT,
+                                                 255,
+                                                 ['default' => null]
                                              )
                                              ->addColumn(
                                                  'watermark_mode',
@@ -6995,6 +7024,112 @@ class Installer
                                    ->setOption('collate', 'utf8_general_ci')
                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayListingProductPromotionTable);
+
+        $ebayVideoTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_VIDEO
+        );
+        $ebayVideoTable = $this->getConnection()
+                               ->newTable($ebayVideoTableName)
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_ID,
+                                   Table::TYPE_INTEGER,
+                                   null,
+                                   [
+                                       'unsigned' => true,
+                                       'primary' => true,
+                                       'nullable' => false,
+                                       'auto_increment' => true,
+                                   ]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_ACCOUNT_ID,
+                                   Table::TYPE_INTEGER,
+                                   null,
+                                   ['unsigned' => true, 'nullable' => false]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_URL,
+                                   Table::TYPE_TEXT,
+                                   null,
+                                   ['nullable' => false]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_STATUS,
+                                   Table::TYPE_INTEGER,
+                                   null,
+                                   ['nullable' => false]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_VIDEO_ID,
+                                   Table::TYPE_TEXT,
+                                   255,
+                                   ['default' => null]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_ERROR,
+                                   Table::TYPE_TEXT,
+                                   255,
+                                   ['default' => null]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_UPDATE_DATE,
+                                   Table::TYPE_DATETIME,
+                                   null,
+                                   ['default' => null]
+                               )
+                               ->addColumn(
+                                   \Ess\M2ePro\Model\ResourceModel\Ebay\Video::COLUMN_CREATE_DATE,
+                                   Table::TYPE_DATETIME,
+                                   null,
+                                   ['default' => null]
+                               )
+                               ->setOption('type', 'INNODB')
+                               ->setOption('charset', 'utf8')
+                               ->setOption('collate', 'utf8_general_ci')
+                               ->setOption('row_format', 'dynamic');
+        $this->getConnection()->createTable($ebayVideoTable);
+
+        //region ebay_bundle_options_mapping
+        $ebayBundleOptionsMappingTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_BUNDLE_OPTIONS_MAPPING
+        );
+
+        $ebayBundleOptionsMappingTable = $this
+            ->getConnection()
+            ->newTable($ebayBundleOptionsMappingTableName);
+
+        $ebayBundleOptionsMappingTable
+            ->addColumn(
+                MappingResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ]
+            )
+            ->addColumn(
+                MappingResource::COLUMN_OPTION_TITLE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                MappingResource::COLUMN_ATTRIBUTE_CODE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addIndex('option_title', MappingResource::COLUMN_OPTION_TITLE)
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($ebayBundleOptionsMappingTable);
+        //endregion
     }
 
     /**
@@ -11300,7 +11435,7 @@ class Installer
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
-                    'is_vat_calculation_service_available' => 0,
+                    'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 0,
                 ],
                 [
@@ -11318,7 +11453,7 @@ class Installer
                     'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
-                    'is_vat_calculation_service_available' => 0,
+                    'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 0,
                 ],
                 [

@@ -71,6 +71,9 @@ abstract class AbstractModel
         '6.60.*',
         '6.61.*',
         '6.62.*',
+        '6.63.*',
+        '6.64.*',
+        '6.65.*',
     ];
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */

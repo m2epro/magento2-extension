@@ -205,7 +205,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['shipping_price'] = isset($orderData['price']['shipping'])
                     ? (float)$orderData['price']['shipping'] : 0;
 
-                $order['shipping_address'] = $this->parseShippingAddress($shipping, $marketplace);
+                $order['shipping_address'] = $this->parseShippingAddress($orderData, $marketplace);
 
                 $order['shipping_date_to'] = $shipping['ship_date']['to'];
                 $order['delivery_date_to'] = $shipping['delivery_date']['to'];
@@ -290,9 +290,10 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
      * @return array
      */
     private function parseShippingAddress(
-        array $shippingData,
+        array $orderData,
         \Ess\M2ePro\Model\Marketplace $marketplace
     ): array {
+        $shippingData = $orderData['shipping'];
         $location = $shippingData['location'] ?? [];
         $address = $shippingData['address'] ?? [];
 
@@ -304,13 +305,14 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             'postal_code' => trim((string)($location['postal_code'] ?? '')),
             'recipient_name' => trim((string)($shippingData['buyer'] ?? '')),
             'phone' => $shippingData['phone'] ?? '',
-            'company' => '',
+            'company' => $shippingData['company_name'] ?? '',
             'address_type' => trim((string)($shippingData['address_type'] ?? '')),
             'street' => array_filter([
                 $address['first'] ?? '',
                 $address['second'] ?? '',
                 $address['third'] ?? '',
             ]),
+            'buyer_company_name' => $orderData['buyer_company_name'] ?? '',
         ];
 
         $group = '/amazon/order/settings/marketplace_' . $marketplace->getId() . '/';
@@ -319,6 +321,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
         if (
             $useFirstStreetLineAsCompany
+            && empty($parsedAddress['company'])
             && $parsedAddress['address_type'] === self::AMAZON_ADDRESS_TYPE_COMMERCIAL
             && count($parsedAddress['street']) > 1
         ) {

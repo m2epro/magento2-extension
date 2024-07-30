@@ -645,11 +645,11 @@ class Builder extends AbstractModel
             $buyerCancellationRequestedStatusCurrent === EbayOrder::BUYER_CANCELLATION_STATUS_REQUESTED
             && !$this->isBuyerCancellationRequestedStatusFromChannel
         ) {
-            $this->order->addInfoLog((string)__('Cancellation request was processed'));
+            $this->order->addInfoLog((string)__('Cancellation request was processed.'));
         }
 
         if ($isInitBuyerReturnRequest) {
-            $this->order->addWarningLog((string)__('Buyer requested return on eBay'));
+            $this->order->addWarningLog((string)__('Buyer requested return on eBay.'));
         }
 
         if ($this->getData('order_status') == OrderHelper::EBAY_ORDER_STATUS_CANCELLED) {

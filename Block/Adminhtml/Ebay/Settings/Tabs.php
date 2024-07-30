@@ -6,6 +6,7 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
     public const TAB_ID_GENERAL = 'general';
     public const TAB_ID_MOTORS = 'motors';
+    public const TAB_ID_MAPPING = 'mapping';
 
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
     private $componentEbayMotors;
@@ -77,6 +78,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
             $this->addTab(self::TAB_ID_MOTORS, $tab);
         }
+
+        $this->addTab(self::TAB_ID_MAPPING, [
+            'label' => __('Mapping'),
+            'title' => __('Mapping'),
+            'content' => $this->getLayout()->createBlock(
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Mapping::class
+            )->toHtml(),
+        ]);
 
         // ---------------------------------------
 

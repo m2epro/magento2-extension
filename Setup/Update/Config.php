@@ -364,11 +364,14 @@ class Config extends AbstractConfig
                 'AddPriceLastUpdateDateColumnToEbayListingProductTable',
                 'RemoveAuEpidsVisibleFromConfigTable',
                 'RemoveEbayCharity',
-                'AddAmazonMarketplaceSaudiArabia'
+                'AddAmazonMarketplaceSaudiArabia',
+                'AddEbayBundleOptionMappingTable',
             ],
             'y24_m07' => [
                 'AddProductIdentifiersSettingsForAmazonListing',
                 'AddOfferImagesToAmazonListing',
+                'EnableVatCalculationServiceForPolandAndSweden',
+                'AddEbayVideo',
             ],
         ];
     }
@@ -444,7 +447,10 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m06\RemoveAuEpidsVisibleFromConfigTable::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonMarketplaceSaudiArabia::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,
+            \Ess\M2ePro\Setup\Update\y24_m06\AddEbayBundleOptionMappingTable::class,
+            \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddOfferImagesToAmazonListing::class,
+            \Ess\M2ePro\Setup\Update\y24_m07\AddEbayVideo::class,
         ];
     }
 

@@ -36,7 +36,8 @@ class Other extends AbstractModel
             $this->getVatTaxData(),
             $this->getLotSizeData(),
             $this->getPaymentData(),
-            $this->getPriceDiscountMapData()
+            $this->getPriceDiscountMapData(),
+            $this->getVideoIdData()
         );
 
         return $data;
@@ -132,7 +133,7 @@ class Other extends AbstractModel
         return [
             'payment' => [
                 'paypal' => [
-                    'immediate_payment' => $payPalImmediatePayment
+                    'immediate_payment' => $payPalImmediatePayment,
                 ],
             ],
         ];
@@ -152,9 +153,24 @@ class Other extends AbstractModel
         ];
 
         $exposure = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getPriceDiscountMapExposureType();
-        $data['minimum_advertised_price_exposure'] = \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price::
-        getPriceDiscountMapExposureType($exposure);
+        $data['minimum_advertised_price_exposure'] =
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Price::getPriceDiscountMapExposureType($exposure);
 
         return ['price_discount_map' => $data];
+    }
+
+    private function getVideoIdData(): array
+    {
+        if (!$this->getEbayListingProduct()->hasVideoId() && !$this->getEbayListingProduct()->hasOnlineVideoId()) {
+            return [];
+        }
+
+        $videoId = $this->getEbayListingProduct()->hasVideoId() ? $this->getEbayListingProduct()->getVideoId() : '';
+
+        return [
+            'product_details' => [
+                'video_id' => $videoId,
+            ],
+        ];
     }
 }

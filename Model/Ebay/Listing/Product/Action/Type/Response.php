@@ -671,7 +671,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    protected function appendOtherValues($data)
+    protected function appendOtherValues($data): array
     {
         $requestMetadata = $this->getRequestMetaData();
         if (!isset($requestMetadata['other_data'])) {
@@ -682,6 +682,10 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Helper\Json::encode($requestMetadata['other_data']),
             'md5'
         );
+
+        if (isset($requestMetadata['other_data']['product_details']['video_id'])) {
+            $data['online_video_id'] = $requestMetadata['other_data']['product_details']['video_id'];
+        }
 
         return $data;
     }

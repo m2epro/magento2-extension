@@ -2,6 +2,7 @@
 
 namespace Ess\M2ePro\Observer\Product\AddUpdate;
 
+use Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ObserverHandler\BundleOptionsCollector;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
 
@@ -20,6 +21,8 @@ class After extends AbstractAddUpdate
     protected $storeManager;
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $objectManager;
+    private \Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ObserverHandler $bundleOptionsHandler;
+    private BundleOptionsCollector $bundleOptionsCollector;
 
     public function __construct(
         \Ess\M2ePro\Model\Listing\Auto\Actions\Mode\Factory $listingAutoActionsModeFactory,
@@ -29,12 +32,16 @@ class After extends AbstractAddUpdate
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ObserverHandler $bundleOptionsHandler,
+        BundleOptionsCollector $bundleOptionsCollector
     ) {
         $this->eavConfig = $eavConfig;
         $this->storeManager = $storeManager;
         $this->objectManager = $objectManager;
         $this->listingAutoActionsModeFactory = $listingAutoActionsModeFactory;
+        $this->bundleOptionsHandler = $bundleOptionsHandler;
+        $this->bundleOptionsCollector = $bundleOptionsCollector;
         parent::__construct($productFactory, $helperFactory, $activeRecordFactory, $modelFactory);
     }
 
@@ -76,6 +83,7 @@ class After extends AbstractAddUpdate
 
                 $this->addListingProductInstructions();
 
+                $this->updateBundleOptionMappings();
                 $this->updateListingsProductsVariations();
             }
         } else {
@@ -105,6 +113,9 @@ class After extends AbstractAddUpdate
                                   ->updateProductTitle($this->getProductId(), $name);
     }
 
+    /**
+     * Use \Ess\M2ePro\Model\Listing\Product\Variation\UpdaterService::batchUpdateVariations
+     */
     protected function updateListingsProductsVariations()
     {
         /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater[] $variationUpdatersByComponent */
@@ -741,5 +752,11 @@ class After extends AbstractAddUpdate
         );
     }
 
-    //########################################
+    private function updateBundleOptionMappings(): void
+    {
+        $beforeOptionNames = $this->getProxy()->getBundleOptionNames();
+        $afterOptionNames = $this->bundleOptionsCollector->collectOptionNames($this->getProduct());
+
+        $this->bundleOptionsHandler->handle($beforeOptionNames, $afterOptionNames);
+    }
 }

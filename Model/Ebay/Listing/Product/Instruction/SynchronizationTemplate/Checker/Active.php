@@ -2,6 +2,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\SynchronizationTemplate\Checker;
 
+use Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\Instructions as BundleOptionsMappingInstructions;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 
 class Active extends AbstractModel
@@ -349,6 +350,14 @@ class Active extends AbstractModel
                 $configurator->disallowOther();
                 unset($tags['other']);
             }
+        }
+
+        if ($this->input->hasInstructionWithTypes($this->getBundleOptionsMappingInstructionTypes())) {
+            $configurator->allowQty();
+            $configurator->allowPrice();
+            $configurator->allowVariations();
+
+            $tags['other'] = true;
         }
 
         $types = $configurator->getAllowedDataTypes();
