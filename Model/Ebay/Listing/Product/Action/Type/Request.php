@@ -201,13 +201,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                     continue;
                 }
 
-                if (
-                    !$ebayVariation->getOnlineQtySold() &&
-                    ($ebayVariation->isInactive() || $ebayVariation->isHidden())
-                ) {
-                    continue;
-                }
-
                 unset($variation['price']);
                 unset($variation['price_discount_stp']);
                 unset($variation['price_discount_map']);

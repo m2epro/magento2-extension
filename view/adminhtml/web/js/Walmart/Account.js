@@ -509,7 +509,7 @@ define([
                 $('magento_block_walmart_accounts_magento_orders_number-wrapper').show();
                 $('magento_block_walmart_accounts_magento_orders_customer-wrapper').show();
                 $('magento_block_walmart_accounts_magento_orders_status_mapping-wrapper').show();
-                $('magento_block_walmart_accounts_magento_orders_refund_and_cancellation-wrappe').show();
+                $('magento_block_walmart_accounts_magento_orders_refund_and_cancellation-wrapper').show();
                 $('magento_block_walmart_accounts_magento_orders_tax-wrapper').show();
                 $('magento_orders_reservation_rules-wrapper').show();
             }
