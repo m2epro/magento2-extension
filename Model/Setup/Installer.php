@@ -9645,15 +9645,18 @@ class Installer
                                        ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonMarketplaceTable);
 
-        $amazonOrderTable = $this->getConnection()->newTable($this->getFullTableName('amazon_order'))
+        #region amazon_order
+        $amazonOrderTable = $this->getConnection()->newTable(
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ORDER)
+        )
                                  ->addColumn(
-                                     'order_id',
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_ORDER_ID,
                                      Table::TYPE_INTEGER,
                                      null,
                                      ['unsigned' => true, 'primary' => true, 'nullable' => false]
                                  )
                                  ->addColumn(
-                                     'amazon_order_id',
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_AMAZON_ORDER_ID,
                                      Table::TYPE_TEXT,
                                      255,
                                      ['nullable' => false]
@@ -9701,10 +9704,16 @@ class Installer
                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                  )
                                  ->addColumn(
-                                     'is_invoice_sent',
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_INVOICE_SENT,
                                      Table::TYPE_SMALLINT,
                                      null,
                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                                 )
+                                 ->addColumn(
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_DATE_OF_INVOICE_SENDING,
+                                     Table::TYPE_DATETIME,
+                                     null,
+                                     ['default' => null]
                                  )
                                  ->addColumn(
                                      'is_credit_memo_sent',
@@ -9878,7 +9887,10 @@ class Installer
                                  ->addIndex('seller_order_id', 'seller_order_id')
                                  ->addIndex('is_prime', 'is_prime')
                                  ->addIndex('is_business', 'is_business')
-                                 ->addIndex('is_invoice_sent', 'is_invoice_sent')
+                                 ->addIndex(
+                                     'is_invoice_sent',
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_IS_INVOICE_SENT,
+                                 )
                                  ->addIndex('is_credit_memo_sent', 'is_credit_memo_sent')
                                  ->addIndex('buyer_email', 'buyer_email')
                                  ->addIndex('buyer_name', 'buyer_name')
@@ -9891,6 +9903,7 @@ class Installer
                                  ->setOption('collate', 'utf8_general_ci')
                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonOrderTable);
+        #endregion
 
         $amazonOrderItemTable = $this->getConnection()->newTable($this->getFullTableName('amazon_order_item'))
                                      ->addColumn(

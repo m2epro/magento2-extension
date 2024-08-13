@@ -52,6 +52,7 @@ class ItemsConnector extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
                 $this->createDateTime($promotion['start_date']),
                 $this->createDateTime($promotion['end_date']),
                 $discounts,
+                $promotion['listing_ids']
             );
 
             $this->responseData[] = $channelPromotion;

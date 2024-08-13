@@ -1,15 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay;
 
 use Ess\M2ePro\Helper\Component\Ebay as EbayHelper;
 use Magento\Sales\Model\Order\Creditmemo;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Order as ResourceEbayOrder;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -524,7 +519,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     public function getPurchaseCreateDate()
     {
-        return $this->getData('purchase_create_date');
+        return $this->getData(ResourceEbayOrder::COLUMN_PURCHASE_CREATE_DATE);
     }
 
     /**

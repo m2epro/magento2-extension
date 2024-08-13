@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -14,40 +8,16 @@ use Magento\Framework\Message\MessageInterface;
 
 class Order extends AbstractForm
 {
-    protected $orderConfig;
-    protected $customerGroup;
-    protected $taxClass;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
-    private $storeWebsite;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Magento */
-    private $magentoHelper;
-    /** @var \Ess\M2ePro\Helper\Magento\Store */
-    private $storeHelper;
-    /** @var \Ess\M2ePro\Model\Account */
-    private $account;
-    /** @var \Ess\M2ePro\Model\Ebay\Account\BuilderFactory */
-    private $ebayAccountBuilderFactory;
+    private \Magento\Sales\Model\Order\Config $orderConfig;
+    private \Magento\Customer\Model\Group $customerGroup;
+    private \Magento\Tax\Model\ClassModel $taxClass;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite;
+    private \Ess\M2ePro\Helper\Magento $magentoHelper;
+    private \Ess\M2ePro\Helper\Magento\Store $storeHelper;
+    private \Ess\M2ePro\Model\Account $account;
+    private \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory;
 
-    /**
-     * @param \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory
-     * @param \Ess\M2ePro\Model\Account $account
-     * @param \Ess\M2ePro\Helper\Magento\Store $storeHelper
-     * @param \Magento\Tax\Model\ClassModel $taxClass
-     * @param \Magento\Customer\Model\Group $customerGroup
-     * @param \Magento\Sales\Model\Order\Config $orderConfig
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Account\BuilderFactory $ebayAccountBuilderFactory,
         \Ess\M2ePro\Model\Account $account,
@@ -60,7 +30,6 @@ class Order extends AbstractForm
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
@@ -71,7 +40,6 @@ class Order extends AbstractForm
         $this->taxClass = $taxClass;
         $this->supportHelper = $supportHelper;
         $this->storeWebsite = $storeWebsite;
-        $this->dataHelper = $dataHelper;
         $this->magentoHelper = $magentoHelper;
         $this->storeHelper = $storeHelper;
 
@@ -81,7 +49,8 @@ class Order extends AbstractForm
     protected function _prepareForm()
     {
         $account = $this->account;
-
+        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
+        $ebayAccount = $account->getChildObject();
         $websites = $this->storeWebsite->getWebsites(true);
 
         // ---------------------------------------
@@ -101,7 +70,7 @@ class Order extends AbstractForm
         $none = ['value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None')];
         array_unshift($productTaxClasses, $none);
 
-        $formData = array_merge($account->getData(), $account->getChildObject()->getData());
+        $formData = array_merge($account->getData(), $ebayAccount->getData());
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
             ? \Ess\M2ePro\Helper\Json::decode($formData['magento_orders_settings']) : [];
 
@@ -163,6 +132,23 @@ HTML
         );
 
         $fieldset->addField(
+            'magento_orders_listings_create_from_date',
+            'text',
+            [
+                'container_id' => 'magento_orders_listings_create_from_date_container',
+                'name' => 'magento_orders_settings[listing][create_from_date]',
+                'label' => __('Create From Date'),
+                'tooltip' => __(
+                    'Select the start date for channel orders to be created in Magento.'
+                    . ' Orders purchased before this date will not be imported into Magento.'
+                ),
+                'value' => $ebayAccount->getMagentoOrdersListingsCreateFromDate()
+                                       ->setTimezone(self::getDateTimeZone())
+                                       ->format('Y-m-d H:i:s'),
+            ]
+        );
+
+        $fieldset->addField(
             'magento_orders_listings_store_mode',
             'select',
             [
@@ -219,6 +205,23 @@ HTML
                     'Choose whether a Magento Order should be created if an eBay Order is received for an item
                     that does <b>not</b> belong to the M2E Pro Listing.'
                 ),
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_listings_other_create_from_date',
+            'text',
+            [
+                'container_id' => 'magento_orders_listings_other_create_from_date_container',
+                'name' => 'magento_orders_settings[listing_other][create_from_date]',
+                'label' => __('Create From Date'),
+                'tooltip' => __(
+                    'Select the start date for channel orders to be created in Magento.'
+                    . ' Orders purchased before this date will not be imported into Magento.'
+                ),
+                'value' => $ebayAccount->getMagentoOrdersListingsOtherCreateFromDate()
+                                       ->setTimezone(self::getDateTimeZone())
+                                       ->format('Y-m-d H:i:s'),
             ]
         );
 
@@ -836,5 +839,12 @@ HTML
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    public static function getDateTimeZone(): \DateTimeZone
+    {
+        return new \DateTimeZone(
+            \Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone()
+        );
     }
 }

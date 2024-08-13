@@ -1,27 +1,23 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
 class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_ORDER_ID = 'order_id';
+    public const COLUMN_PURCHASE_CREATE_DATE = 'purchase_create_date';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
-    //########################################
-
     public function _construct()
     {
-        $this->_init('m2epro_ebay_order', 'order_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_ORDER,
+            self::COLUMN_ORDER_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
-
-    //########################################
 
     public function getOrdersContainingItemsFromOrder($accountId, array $items)
     {
@@ -71,8 +67,6 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         return $collection->getItems();
     }
 
-    //########################################
-
     public function getCancellationCandidatesChannelIds($accountId, \DateTime $startDate, \DateTime $endDate)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $collection */
@@ -98,6 +92,4 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         return $ebayOrdersIds;
     }
-
-    //########################################
 }

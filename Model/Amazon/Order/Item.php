@@ -334,17 +334,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $this->isOrdersCreationEnabled();
     }
 
-    /**
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function isOrdersCreationEnabled(): bool
     {
         $channelItem = $this->getChannelItem();
-        $isOtherListingsEnabled = $this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled();
 
         if ($channelItem === null) {
-            return $isOtherListingsEnabled;
+            return $this->isOrdersCreationEnabledForListingsOther(
+                $this->getAmazonAccount(),
+                $this->getAmazonOrder()
+            );
         }
 
         if (
@@ -354,10 +352,38 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
                 $channelItem->getMarketplaceId()
             )
         ) {
-            return $isOtherListingsEnabled;
+            return $this->isOrdersCreationEnabledForListingsOther(
+                $this->getAmazonAccount(),
+                $this->getAmazonOrder()
+            );
         }
 
-        return $this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled();
+        return $this->isOrdersCreationEnabledForListings(
+            $this->getAmazonAccount(),
+            $this->getAmazonOrder()
+        );
+    }
+
+    private function isOrdersCreationEnabledForListingsOther(
+        \Ess\M2ePro\Model\Amazon\Account $amazonAccount,
+        \Ess\M2ePro\Model\Amazon\Order $amazonOrder
+    ): bool {
+        if (!$amazonAccount->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        return $amazonOrder->getPurchaseCreateDate() >= $amazonAccount->getMagentoOrdersListingsOtherCreateFromDate();
+    }
+
+    private function isOrdersCreationEnabledForListings(
+        \Ess\M2ePro\Model\Amazon\Account $amazonAccount,
+        \Ess\M2ePro\Model\Amazon\Order $amazonOrder
+    ): bool {
+        if (!$amazonAccount->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        return $amazonOrder->getPurchaseCreateDate() >= $amazonAccount->getMagentoOrdersListingsCreateFromDate();
     }
 
     /**

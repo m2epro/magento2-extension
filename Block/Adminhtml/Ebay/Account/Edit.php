@@ -65,4 +65,11 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         $this->addButton('save_buttons', $saveButtons);
     }
+
+    protected function _prepareLayout()
+    {
+        $this->css->addFile('magento/form/datePicker.css');
+
+        return parent::_prepareLayout();
+    }
 }

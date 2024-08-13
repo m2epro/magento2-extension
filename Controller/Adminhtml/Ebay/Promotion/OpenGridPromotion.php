@@ -6,34 +6,24 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Promotion;
 
 class OpenGridPromotion extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
-    private \Ess\M2ePro\Helper\Data\GlobalData $globalData;
-
-    public function __construct(
-        \Ess\M2ePro\Helper\Data\GlobalData $globalData,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        parent::__construct($context);
-
-        $this->globalData = $globalData;
-    }
-
-    public function execute()
+    public function execute(): \Magento\Framework\Controller\ResultInterface
     {
-        $this->globalData->setValue(
-            'accountId',
-            $this->getRequest()->getParam('account_id')
+        $accountId = (int)$this->getRequest()->getParam('account_id');
+        $marketplaceId = (int)$this->getRequest()->getParam('marketplace_id');
+
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Promotion\Grid $grid */
+        $grid = $this->getLayout()->createBlock(
+            \Ess\M2ePro\Block\Adminhtml\Ebay\Promotion\Grid::class,
+            '',
+            [
+                'data' => [
+                    'accountId' => $accountId,
+                    'marketplaceId' => $marketplaceId
+                ]
+            ]
         );
 
-        $this->globalData->setValue(
-            'marketplaceId',
-            $this->getRequest()->getParam('marketplace_id')
-        );
-
-        $block = $this->getLayout()->createBlock(
-            \Ess\M2ePro\Block\Adminhtml\Ebay\Promotion\Grid::class
-        );
-
-        $this->setAjaxContent($block->toHtml());
+        $this->setAjaxContent($grid->toHtml());
 
         return $this->getResult();
     }

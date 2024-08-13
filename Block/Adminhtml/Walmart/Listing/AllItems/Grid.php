@@ -33,12 +33,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Listing */
     private $walmartListingResource;
     /** @var \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions */
-    private $advancedFiltersAllItemsOptions;
+    private $advancedFilterAllItemsOptions;
     /** @var \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory */
     private $advancedFilterFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions $advancedFiltersAllItemsOptions,
+        \Ess\M2ePro\Model\Walmart\AdvancedFilter\AllItemsOptions $advancedFilterAllItemsOptions,
         \Ess\M2ePro\Block\Adminhtml\Widget\Grid\AdvancedFilter\FilterFactory $advancedFilterFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing $listingResource,
         \Ess\M2ePro\Model\ResourceModel\Walmart\Listing $walmartListingResource,
@@ -62,7 +62,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->listingProductResource = $listingProductResource;
         $this->walmartListingProductResource = $walmartListingProductResource;
         $this->walmartListingResource = $walmartListingResource;
-        $this->advancedFiltersAllItemsOptions = $advancedFiltersAllItemsOptions;
+        $this->advancedFilterAllItemsOptions = $advancedFilterAllItemsOptions;
         $this->advancedFilterFactory = $advancedFilterFactory;
 
         parent::__construct($context, $backendHelper, $data);
@@ -301,6 +301,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addDescriptionPolicyAdvancedFilter();
 
         $this->addCategoryAdvancedFilter();
+        $this->addMagentoProductTypeAdvancedFilter();
 
         parent::_prepareAdvancedFilters();
     }
@@ -1105,7 +1106,7 @@ HTML;
 
     private function addMarketplaceAdvancedFilter(): void
     {
-        $options = $this->advancedFiltersAllItemsOptions->getMarketplaceOptions();
+        $options = $this->advancedFilterAllItemsOptions->getMarketplaceOptions();
         if ($options->isEmpty()) {
             return;
         }
@@ -1133,7 +1134,7 @@ HTML;
 
     private function addAccountAdvancedFilter(): void
     {
-        $options = $this->advancedFiltersAllItemsOptions->getAccountOptions();
+        $options = $this->advancedFilterAllItemsOptions->getAccountOptions();
         if ($options->isEmpty()) {
             return;
         }
@@ -1161,7 +1162,7 @@ HTML;
 
     private function addSellingPolicyAdvancedFilter(): void
     {
-        $options = $this->advancedFiltersAllItemsOptions->getSellingPolicyOptions();
+        $options = $this->advancedFilterAllItemsOptions->getSellingPolicyOptions();
         if ($options->isEmpty()) {
             return;
         }
@@ -1191,7 +1192,7 @@ HTML;
 
     private function addSynchronizationPolicyAdvancedFilter()
     {
-        $options = $this->advancedFiltersAllItemsOptions->getSynchronizationPolicyOptions();
+        $options = $this->advancedFilterAllItemsOptions->getSynchronizationPolicyOptions();
         if ($options->isEmpty()) {
             return;
         }
@@ -1221,7 +1222,7 @@ HTML;
 
     private function addDescriptionPolicyAdvancedFilter()
     {
-        $options = $this->advancedFiltersAllItemsOptions->getDescriptionPolicyOptions();
+        $options = $this->advancedFilterAllItemsOptions->getDescriptionPolicyOptions();
         if ($options->isEmpty()) {
             return;
         }
@@ -1251,7 +1252,7 @@ HTML;
 
     private function addCategoryAdvancedFilter()
     {
-        $options = $this->advancedFiltersAllItemsOptions->getCategoryOptions();
+        $options = $this->advancedFilterAllItemsOptions->getCategoryOptions();
         if ($options->isEmpty()) {
             return;
         }
@@ -1270,6 +1271,35 @@ HTML;
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'category',
             __('Category'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addMagentoProductTypeAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllItemsOptions->getMagentoProductTypeOptions();
+
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->getSelect()->where('e.type_id = ?', $filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'magento_product_type',
+            __('Magento Product Type'),
             $options,
             $filterCallback
         );

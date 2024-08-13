@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -57,14 +51,6 @@ class Order extends AbstractForm
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    /**
-     * @param array $formData
-     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset
-     * @param \Ess\M2ePro\Model\Account|null $account
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function addImportTaxRegistrationNumber(
         array $formData,
         Fieldset $fieldset,
@@ -120,6 +106,8 @@ in the Shipping Address of your Magento Order.'
     {
         /** @var \Ess\M2ePro\Model\Account|null $account */
         $account = $this->globalDataHelper->getValue('edit_account');
+        /** @var \Ess\M2ePro\Model\Amazon\Account|null $amazonAccount */
+        $amazonAccount = $account !== null ? $account->getChildObject() : null;
 
         // ---------------------------------------
         $websites = $this->storeWebsiteHelper->getWebsites(true);
@@ -140,7 +128,7 @@ in the Shipping Address of your Magento Order.'
         $none = ['value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => __('None')];
         array_unshift($productTaxClasses, $none);
 
-        $formData = $account !== null ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
+        $formData = $account !== null ? array_merge($account->getData(), $amazonAccount->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
             ? \Ess\M2ePro\Helper\Json::decode($formData['magento_orders_settings']) : [];
 
@@ -229,6 +217,22 @@ HTML
         );
 
         $fieldset->addField(
+            'magento_orders_listings_create_from_date',
+            'text',
+            [
+                'container_id' => 'magento_orders_listings_create_from_date_container',
+                'name' => 'magento_orders_settings[listing][create_from_date]',
+                'label' => __('Create From Date'),
+                'tooltip' => __(
+                    'Select the start date for channel orders to be created in Magento.'
+                    . ' Orders purchased before this date will not be imported into Magento.'
+                ),
+                'value' => $this->getMagentoOrdersListingsCreateFromDate($amazonAccount)
+                                ->format('Y-m-d H:i:s')
+            ]
+        );
+
+        $fieldset->addField(
             'magento_orders_listings_store_mode',
             'select',
             [
@@ -286,6 +290,22 @@ HTML
                     'Choose whether a Magento Order should be created if an Amazon Order is received for an item that
                     does <b>not</b> belong to the M2E Pro Listing.'
                 ),
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_listings_other_create_from_date',
+            'text',
+            [
+                'container_id' => 'magento_orders_listings_other_create_from_date_container',
+                'name' => 'magento_orders_settings[listing_other][create_from_date]',
+                'label' => __('Create From Date'),
+                'tooltip' => __(
+                    'Select the start date for channel orders to be created in Magento.'
+                    . ' Orders purchased before this date will not be imported into Magento.'
+                ),
+                'value' => $this->getMagentoOrdersListingsOtherCreateFromDate($amazonAccount)
+                                ->format('Y-m-d H:i:s'),
             ]
         );
 
@@ -1076,5 +1096,36 @@ HTML
         );
 
         return parent::_prepareForm();
+    }
+
+    private function getMagentoOrdersListingsCreateFromDate(
+        ?\Ess\M2ePro\Model\Amazon\Account $amazonAccount
+    ): \DateTime {
+        if ($amazonAccount === null) {
+            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+        }
+
+        return $amazonAccount
+            ->getMagentoOrdersListingsCreateFromDate()
+            ->setTimezone(self::getDateTimeZone());
+    }
+
+    private function getMagentoOrdersListingsOtherCreateFromDate(
+        ?\Ess\M2ePro\Model\Amazon\Account $amazonAccount
+    ): \DateTime {
+        if ($amazonAccount === null) {
+            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+        }
+
+        return $amazonAccount
+            ->getMagentoOrdersListingsOtherCreateFromDate()
+            ->setTimezone(self::getDateTimeZone());
+    }
+
+    public static function getDateTimeZone(): \DateTimeZone
+    {
+        return new \DateTimeZone(
+            \Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone()
+        );
     }
 }

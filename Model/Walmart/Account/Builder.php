@@ -1,22 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Account;
 
 use Ess\M2ePro\Model\Walmart\Account;
 
-/**
- * Class Ess\M2ePro\Model\Walmart\Account\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    //########################################
-
     protected function prepareData()
     {
         $data = [];
@@ -167,13 +156,20 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'create_from_date',
             'store_mode',
             'store_id',
         ];
         foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            if (!isset($tempSettings[$key])) {
+                continue;
             }
+
+            if ($key === 'create_from_date') {
+                $tempSettings[$key] = $this->convertDate($tempSettings[$key]);
+            }
+
+            $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
         }
 
         // Unmanaged orders settings
@@ -184,14 +180,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'create_from_date',
             'product_mode',
             'product_tax_class_id',
             'store_id',
         ];
         foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            if (!isset($tempSettings[$key])) {
+                continue;
             }
+
+            if ($key === 'create_from_date') {
+                $tempSettings[$key] = $this->convertDate($tempSettings[$key]);
+            }
+
+            $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
         }
 
         // order number settings
@@ -366,8 +369,25 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         return $data;
     }
 
+    /**
+     * @param \DateTime|string $date
+     */
+    private function convertDate($date): string
+    {
+        if (is_string($date)) {
+            return $date;
+        }
+
+        $date = clone $date;
+
+        return $date->setTimezone(new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()))
+                    ->format('Y-m-d H:i:s');
+    }
+
     public function getDefaultData()
     {
+        $currentGmtDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+
         return [
             'title' => '',
             'marketplace_id' => 0,
@@ -383,7 +403,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'other_listings_mapping_settings' => [
                 'sku' => [
                     'mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
-                    'priority' => 1
+                    'priority' => 1,
                 ],
             ],
             'mapping_sku_mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
@@ -392,11 +412,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'magento_orders_settings' => [
                 'listing' => [
                     'mode' => 1,
+                    'create_from_date' => $currentGmtDate,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null,
                 ],
                 'listing_other' => [
                     'mode' => 1,
+                    'create_from_date' => $currentGmtDate,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => null,
@@ -434,8 +456,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     'shipping_address_region_override' => 1,
                 ],
                 'qty_reservation' => [
-                    'days' => 1
-                ]
+                    'days' => 1,
+                ],
             ],
             'create_magento_invoice' => 1,
             'create_magento_shipment' => 1,

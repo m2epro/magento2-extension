@@ -71,6 +71,15 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
             ]
         );
 
+        $this->addColumn('online_sku', [
+            'header' => __('Channel SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_sku',
+            'escape' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\OnlineSku::class,
+        ]);
+
         $this->addColumn(
             'is_custom_template',
             [
@@ -215,9 +224,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
                                       ->getSku();
         }
 
-        $onlineSku = $row->getData('online_sku');
-        !empty($onlineSku) && $sku = $onlineSku;
-
         $valueHtml .=
             '<br/>' . '<strong>' . $this->__('SKU') . ':</strong>&nbsp;' . $this->escapeHtml($sku);
 
@@ -237,7 +243,6 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\
         $collection->addFieldToFilter(
             [
                 ['attribute' => 'sku', 'like' => '%' . $value . '%'],
-                ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
                 ['attribute' => 'name', 'like' => '%' . $value . '%'],
                 ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
             ]

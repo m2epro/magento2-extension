@@ -30,6 +30,8 @@ class AllItemsOptions
     private $listingResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
     private $listingProductResource;
+    private \Magento\Catalog\Model\ResourceModel\Product $magentoProductResource;
+    private \Magento\Catalog\Model\Product\Type $magentoProductType;
 
     public function __construct(
         DropDownFilter\OptionCollectionFactory $optionCollectionFactory,
@@ -43,7 +45,9 @@ class AllItemsOptions
         \Ess\M2ePro\Model\ResourceModel\Template\Description $descriptionPolicyResource,
         \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category $walmartCategoryResource,
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
-        \Ess\M2ePro\Model\ResourceModel\Account $accountResource
+        \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
+        \Magento\Catalog\Model\ResourceModel\Product $magentoProductResource,
+        \Magento\Catalog\Model\Product\Type $magentoProductType
     ) {
         $this->walmartListingResource = $walmartListingResource;
         $this->walmartListingProductResource = $walmartListingProductResource;
@@ -57,6 +61,8 @@ class AllItemsOptions
         $this->listingProductResource = $listingProductResource;
         $this->optionCollectionFactory = $optionCollectionFactory;
         $this->optionFactory = $optionFactory;
+        $this->magentoProductResource = $magentoProductResource;
+        $this->magentoProductType = $magentoProductType;
     }
 
     public function getAccountOptions(): DropDownFilter\OptionCollection
@@ -230,6 +236,36 @@ class AllItemsOptions
                 $optionData['value'],
                 $optionData['group']
             );
+            $optionCollection->addOption($option);
+        }
+
+        return $optionCollection;
+    }
+
+    public function getMagentoProductTypeOptions(): DropDownFilter\OptionCollection
+    {
+        $select = $this->getBaseSelect();
+        $select->joinInner(
+            ['mp' => $this->magentoProductResource->getEntityTable()],
+            sprintf(
+                'mp.entity_id = listing_product.%s',
+                \Ess\M2ePro\Model\ResourceModel\Listing\Product::PRODUCT_ID_FIELD
+            ),
+            ['type_id']
+        );
+
+        $select->group('mp.type_id');
+        $select->order('mp.type_id');
+
+        $optionsData = $select->query()->fetchAll();
+        $magentoProductTypes = $this->magentoProductType->getOptionArray();
+
+        $optionCollection = $this->optionCollectionFactory->create();
+        foreach ($optionsData as $optionData) {
+            $optionLabel = $magentoProductTypes[($optionData['type_id'])];
+            $optionValue = $optionData['type_id'];
+
+            $option = $this->optionFactory->create($optionLabel, $optionValue);
             $optionCollection->addOption($option);
         }
 

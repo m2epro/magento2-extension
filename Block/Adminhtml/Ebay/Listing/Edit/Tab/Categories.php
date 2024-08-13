@@ -112,17 +112,6 @@ class Categories extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
     });
 JS
         );
-//        $this->js->addOnReadyJs(
-//            <<<JS
-//    require([
-//        'jquery'
-//    ], function($){
-//        var blockTitle = $('#categories_mode_block_title');
-//        blockTitle.find('.control-value').html('sgfhd');
-//        console.log('adsg');
-//    });
-//JS
-//        );
 
         return parent::_prepareLayout();
     }

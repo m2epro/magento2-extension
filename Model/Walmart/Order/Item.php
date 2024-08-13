@@ -1,20 +1,13 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
-/**
- * @method \Ess\M2ePro\Model\Order\Item getParentObject()
- */
-
 namespace Ess\M2ePro\Model\Walmart\Order;
 
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
 use Magento\Framework\Data\Collection\AbstractDb;
 
+/**
+ * @method \Ess\M2ePro\Model\Order\Item getParentObject()
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
     public const STATUS_CREATED = 'created';
@@ -229,10 +222,12 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
     private function isOrdersCreationEnabled(): bool
     {
         $channelItem = $this->getChannelItem();
-        $isOtherListingsEnabled = $this->getWalmartAccount()->isMagentoOrdersListingsOtherModeEnabled();
 
         if ($channelItem === null) {
-            return $isOtherListingsEnabled;
+            return $this->isOrdersCreationEnabledForListingsOther(
+                $this->getWalmartAccount(),
+                $this->getWalmartOrder()
+            );
         }
 
         if (
@@ -242,10 +237,42 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
                 $channelItem->getMarketplaceId()
             )
         ) {
-            return $isOtherListingsEnabled;
+            return $this->isOrdersCreationEnabledForListingsOther(
+                $this->getWalmartAccount(),
+                $this->getWalmartOrder()
+            );
         }
 
-        return $this->getWalmartAccount()->isMagentoOrdersListingsModeEnabled();
+        return $this->isOrdersCreationEnabledForListings(
+            $this->getWalmartAccount(),
+            $this->getWalmartOrder()
+        );
+    }
+
+    private function isOrdersCreationEnabledForListingsOther(
+        \Ess\M2ePro\Model\Walmart\Account $walmartAccount,
+        \Ess\M2ePro\Model\Walmart\Order $walmartOrder
+    ): bool {
+        if (!$walmartAccount->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($walmartOrder->getPurchaseCreateDate());
+
+        return $purchaseCreateDate >= $walmartAccount->getMagentoOrdersListingsOtherCreateFromDate();
+    }
+
+    private function isOrdersCreationEnabledForListings(
+        \Ess\M2ePro\Model\Walmart\Account $walmartAccount,
+        \Ess\M2ePro\Model\Walmart\Order $walmartOrder
+    ): bool {
+        if (!$walmartAccount->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($walmartOrder->getPurchaseCreateDate());
+
+        return $purchaseCreateDate >= $walmartAccount->getMagentoOrdersListingsCreateFromDate();
     }
 
     /**

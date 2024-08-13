@@ -36,9 +36,10 @@ class AllItemsOptions
     private $listingProductResource;
     /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Repository */
     private $tagRelationRepository;
-
     private \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion $promotionResource;
     private \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource;
+    private \Magento\Catalog\Model\ResourceModel\Product $magentoProductResource;
+    private \Magento\Catalog\Model\Product\Type $magentoProductType;
 
     public function __construct(
         DropDownFilter\OptionCollectionFactory $optionCollectionFactory,
@@ -57,7 +58,9 @@ class AllItemsOptions
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
         \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion $promotionResource,
-        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource
+        \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion $listingProductPromotionResource,
+        \Magento\Catalog\Model\ResourceModel\Product $magentoProductResource,
+        \Magento\Catalog\Model\Product\Type $magentoProductType
     ) {
         $this->ebayListingResource = $ebayListingResource;
         $this->ebayListingProductResource = $ebayListingProductResource;
@@ -76,6 +79,8 @@ class AllItemsOptions
         $this->optionFactory = $optionFactory;
         $this->promotionResource = $promotionResource;
         $this->listingProductPromotionResource = $listingProductPromotionResource;
+        $this->magentoProductResource = $magentoProductResource;
+        $this->magentoProductType = $magentoProductType;
     }
 
     public function getAccountOptions(): DropDownFilter\OptionCollection
@@ -402,6 +407,36 @@ class AllItemsOptions
                 $optionData['label'],
                 $optionData['value'],
             );
+            $optionCollection->addOption($option);
+        }
+
+        return $optionCollection;
+    }
+
+    public function getMagentoProductTypeOptions(): DropDownFilter\OptionCollection
+    {
+        $select = $this->getBaseSelect();
+        $select->joinInner(
+            ['mp' => $this->magentoProductResource->getEntityTable()],
+            sprintf(
+                'mp.entity_id = listing_product.%s',
+                \Ess\M2ePro\Model\ResourceModel\Listing\Product::PRODUCT_ID_FIELD
+            ),
+            ['type_id']
+        );
+
+        $select->group('mp.type_id');
+        $select->order('mp.type_id');
+
+        $optionsData = $select->query()->fetchAll();
+        $magentoProductTypes = $this->magentoProductType->getOptionArray();
+
+        $optionCollection = $this->optionCollectionFactory->create();
+        foreach ($optionsData as $optionData) {
+            $optionLabel = $magentoProductTypes[($optionData['type_id'])];
+            $optionValue = $optionData['type_id'];
+
+            $option = $this->optionFactory->create($optionLabel, $optionValue);
             $optionCollection->addOption($option);
         }
 

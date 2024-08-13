@@ -46,4 +46,15 @@ class Collection
     {
         return array_values($this->promotions);
     }
+
+    public function getByPromotionId(string $promotionId): ?\Ess\M2ePro\Model\Ebay\Promotion
+    {
+        foreach ($this->promotions as $promotion) {
+            if ($promotion->getPromotionId() === $promotionId) {
+                return $promotion;
+            }
+        }
+
+        return null;
+    }
 }

@@ -576,6 +576,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
     }
 
+    public function getMagentoOrdersListingsCreateFromDate(): \DateTime
+    {
+        $date = $this->getSetting('magento_orders_settings', ['listing', 'create_from_date']);
+        if ($date === null) {
+            /** @var \Ess\M2ePro\Model\Account $parentObject */
+            $parentObject = $this->getParentObject();
+
+            return $parentObject->getCreateDate();
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
+    }
+
     /**
      * @return bool
      */
@@ -606,6 +619,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isMagentoOrdersListingsOtherModeEnabled(): bool
     {
         return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
+    }
+
+    public function getMagentoOrdersListingsOtherCreateFromDate(): \DateTime
+    {
+        $date = $this->getSetting('magento_orders_settings', ['listing_other', 'create_from_date']);
+        if ($date === null) {
+            /** @var \Ess\M2ePro\Model\Account $parentObject */
+            $parentObject = $this->getParentObject();
+
+            return $parentObject->getCreateDate();
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
     }
 
     /**

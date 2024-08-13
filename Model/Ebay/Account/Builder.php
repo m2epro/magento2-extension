@@ -1,37 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Account;
 
 use Ess\M2ePro\Model\Ebay\Account as Account;
 
-/**
- * Class Ess\M2ePro\Model\Ebay\Account\Builder
- */
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    protected $activeRecordFactory;
-    protected $ebayFactory;
-
-    //########################################
+    private \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
-        $this->activeRecordFactory = $activeRecordFactory;
-        $this->ebayFactory = $ebayFactory;
         parent::__construct($helperFactory, $modelFactory);
-    }
 
-    //########################################
+        $this->activeRecordFactory = $activeRecordFactory;
+    }
 
     protected function prepareData()
     {
@@ -181,13 +166,20 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'create_from_date',
             'store_mode',
             'store_id',
         ];
         foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            if (!isset($tempSettings[$key])) {
+                continue;
             }
+
+            if ($key === 'create_from_date') {
+                $tempSettings[$key] = $this->convertDate($tempSettings[$key]);
+            }
+
+            $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
         }
 
         // Unmanaged orders settings
@@ -198,14 +190,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'create_from_date',
             'product_mode',
             'product_tax_class_id',
             'store_id',
         ];
         foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            if (!isset($tempSettings[$key])) {
+                continue;
             }
+
+            if ($key === 'create_from_date') {
+                $tempSettings[$key] = $this->convertDate($tempSettings[$key]);
+            }
+
+            $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
         }
 
         // order number settings
@@ -404,10 +403,24 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     }
 
     /**
-     * @return array
+     * @param \DateTime|string $date
      */
+    private function convertDate($date): string
+    {
+        if (is_string($date)) {
+            return $date;
+        }
+
+        $date = clone $date;
+
+        return $date->setTimezone(new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()))
+                    ->format('Y-m-d H:i:s');
+    }
+
     public function getDefaultData(): array
     {
+        $currentGmtDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+
         return [
             'title' => '',
             'user_id' => '',
@@ -429,11 +442,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'magento_orders_settings' => [
                 'listing' => [
                     'mode' => 1,
+                    'create_from_date' => $currentGmtDate,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null,
                 ],
                 'listing_other' => [
                     'mode' => 1,
+                    'create_from_date' => $currentGmtDate,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => null,

@@ -5,6 +5,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing;
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
+    public const COLUMN_EBAY_ITEM_ID = 'ebay_item_id';
     public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
     public const COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH = 'online_product_identifiers_hash';
 

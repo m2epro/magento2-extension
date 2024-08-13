@@ -1,26 +1,13 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Account;
 
 use Ess\M2ePro\Model\Amazon\Account;
 
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
-    /** @var \Ess\M2ePro\Helper\Magento\Store */
-    private $magentoStoreHelper;
+    private \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Store $magentoStoreHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -32,10 +19,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         $this->magentoStoreHelper = $magentoStoreHelper;
     }
 
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     protected function prepareData(): array
     {
         $data = [];
@@ -157,13 +140,20 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'create_from_date',
             'store_mode',
             'store_id',
         ];
         foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            if (!isset($tempSettings[$key])) {
+                continue;
             }
+
+            if ($key === 'create_from_date') {
+                $tempSettings[$key] = $this->convertDate($tempSettings[$key]);
+            }
+
+            $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
         }
 
         // Unmanaged orders settings
@@ -174,14 +164,21 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $keys = [
             'mode',
+            'create_from_date',
             'product_mode',
             'product_tax_class_id',
             'store_id',
         ];
         foreach ($keys as $key) {
-            if (isset($tempSettings[$key])) {
-                $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
+            if (!isset($tempSettings[$key])) {
+                continue;
             }
+
+            if ($key === 'create_from_date') {
+                $tempSettings[$key] = $this->convertDate($tempSettings[$key]);
+            }
+
+            $data['magento_orders_settings'][$tempKey][$key] = $tempSettings[$key];
         }
 
         // order number settings
@@ -194,7 +191,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             $data['magento_orders_settings'][$tempKey]['source'] = $tempSettings['source'];
         }
 
-        if (!empty($tempSettings['apply_to_amazon'])) {
+        if (isset($tempSettings['apply_to_amazon'])) {
             $data['magento_orders_settings'][$tempKey]['apply_to_amazon'] = $tempSettings['apply_to_amazon'];
         }
 
@@ -401,10 +398,24 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     }
 
     /**
-     * @return array
+     * @param \DateTime|string $date
      */
+    private function convertDate($date): string
+    {
+        if (is_string($date)) {
+            return $date;
+        }
+
+        $date = clone $date;
+
+        return $date->setTimezone(new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()))
+                    ->format('Y-m-d H:i:s');
+    }
+
     public function getDefaultData(): array
     {
+        $currentGmtDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
+
         return [
             // general
             'title' => '',
@@ -424,11 +435,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'magento_orders_settings' => [
                 'listing' => [
                     'mode' => 1,
+                    'create_from_date' => $currentGmtDate,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null,
                 ],
                 'listing_other' => [
                     'mode' => 1,
+                    'create_from_date' => $currentGmtDate,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => $this->magentoStoreHelper->getDefaultStoreId(),
@@ -502,9 +515,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
         ];
     }
 
-    /**
-     * @return bool
-     */
     private function isNeedExcludeStates(): bool
     {
         if ($this->rawData['marketplace_id'] != \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_US) {

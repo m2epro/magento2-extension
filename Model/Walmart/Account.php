@@ -1,15 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Account
  * @method \Ess\M2ePro\Model\Account getParentObject()
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
@@ -63,14 +56,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public const MAGENTO_ORDERS_STATUS_MAPPING_PROCESSING = 'processing';
     public const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
 
-    //########################################
-
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
     private $marketplaceModel = null;
-
-    //########################################
 
     public function _construct()
     {
@@ -78,14 +67,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Account::class);
     }
 
-    //########################################
-
     public function getWalmartItems($asObjects = false, array $filters = [])
     {
         return $this->getRelatedSimpleItems('Walmart\Item', 'account_id', $asObjects, $filters);
     }
-
-    //########################################
 
     public function getProcessingList(): array
     {
@@ -123,8 +108,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     {
         $this->marketplaceModel = $instance;
     }
-
-    //########################################
 
     public function getServerHash()
     {
@@ -203,7 +186,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $tempInfo === null ? null : \Ess\M2ePro\Helper\Json::decode($tempInfo);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -447,7 +430,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $setting;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -579,7 +562,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->getOtherListingsMappingUpcMode() == self::OTHER_LISTINGS_MAPPING_UPC_MODE_CUSTOM_ATTRIBUTE;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -587,6 +570,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function isMagentoOrdersListingsModeEnabled()
     {
         return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
+    }
+
+    public function getMagentoOrdersListingsCreateFromDate(): \DateTime
+    {
+        $date = $this->getSetting('magento_orders_settings', ['listing', 'create_from_date']);
+        if ($date === null) {
+            /** @var \Ess\M2ePro\Model\Account $parentObject */
+            $parentObject = $this->getParentObject();
+
+            return $parentObject->getCreateDate();
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
     }
 
     /**
@@ -621,6 +617,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function isMagentoOrdersListingsOtherModeEnabled()
     {
         return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
+    }
+
+    public function getMagentoOrdersListingsOtherCreateFromDate(): \DateTime
+    {
+        $date = $this->getSetting('magento_orders_settings', ['listing_other', 'create_from_date']);
+        if ($date === null) {
+            /** @var \Ess\M2ePro\Model\Account $parentObject */
+            $parentObject = $this->getParentObject();
+
+            return $parentObject->getCreateDate();
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
     }
 
     /**

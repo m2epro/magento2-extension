@@ -11,19 +11,22 @@ class Synchronization
     private \Ess\M2ePro\Model\Ebay\Promotion\Delete $deleteService;
     private \Ess\M2ePro\Model\Ebay\Promotion\UpdateFromChannel $updateFromChannelService;
     private \Ess\M2ePro\Model\Ebay\Promotion\Create $createService;
+    private \Ess\M2ePro\Model\Ebay\Promotion\ExpiredPromotionsHandler $expiredPromotionHandler;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Promotion\Repository $repository,
         \Ess\M2ePro\Model\Ebay\Promotion\Channel\Retrieve $retrieverFromChannel,
         \Ess\M2ePro\Model\Ebay\Promotion\Delete $deleteService,
         \Ess\M2ePro\Model\Ebay\Promotion\UpdateFromChannel $updateFromChannelService,
-        \Ess\M2ePro\Model\Ebay\Promotion\Create $createService
+        \Ess\M2ePro\Model\Ebay\Promotion\Create $createService,
+        \Ess\M2ePro\Model\Ebay\Promotion\ExpiredPromotionsHandler $expiredPromotionHandler
     ) {
         $this->repository = $repository;
         $this->retrieverFromChannel = $retrieverFromChannel;
         $this->deleteService = $deleteService;
         $this->updateFromChannelService = $updateFromChannelService;
         $this->createService = $createService;
+        $this->expiredPromotionHandler = $expiredPromotionHandler;
     }
 
     public function process(
@@ -36,6 +39,8 @@ class Synchronization
             (int)$ebayAccount->getId(),
             (int)$marketplace->getId()
         );
+
+        $this->expiredPromotionHandler->process($ebayAccount, $marketplace);
 
         $this->remove($channelPromotionsCollection, $existPromotionsCollection);
         $this->update($channelPromotionsCollection, $existPromotionsCollection);

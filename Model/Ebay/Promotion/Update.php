@@ -109,7 +109,7 @@ class Update
         array $listingProducts,
         array $existListingProductPromotions,
         array $itemsWithErrors
-    ) {
+    ): void {
         foreach ($listingProducts as $listingProduct) {
             $itemId = $listingProduct->getChildObject()->getEbayItem()->getItemId();
             $listingProductId = $listingProduct->getId();
@@ -122,7 +122,7 @@ class Update
                         'Item was removed from Promotion "%promotion_name"',
                         ['promotion_name' => $promotion->getName()]
                     );
-                    $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO);
+                    $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS);
                 } else {
                     $message = (string)__(
                         'Item was not added to Promotion "%promotion_name"',
@@ -235,10 +235,10 @@ class Update
         $listingProduct = $this->loadListingProduct($listingProductPromotion->getListingProductId());
 
         $message = (string)__(
-            'Item was removed from Promotion "%promotion_name',
+            'Item was removed from Promotion "%promotion_name"',
             ['promotion_name' => $promotion->getName()]
         );
-        $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_INFO);
+        $this->writeLog($listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS);
     }
 
     /**

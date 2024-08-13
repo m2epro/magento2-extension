@@ -2,7 +2,8 @@ define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
     'extjs/ext-tree-checkbox',
-    'mage/adminhtml/form'
+    'mage/adminhtml/form',
+    'mage/calendar'
 ], function(modal) {
 
     window.EbayAccount = Class.create(Common, {
@@ -83,6 +84,26 @@ define([
                     'If Yes is chosen, you must select at least one Attribute for Product Linking.'
                 )
             );
+
+            this.initMagentoOrdersCreateFromDate();
+        },
+
+        initMagentoOrdersCreateFromDate: function () {
+            const listingsCreateFromDate = jQuery('#magento_orders_listings_create_from_date');
+            listingsCreateFromDate.calendar({
+                showsTime: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm:00',
+                showButtonPanel: false,
+            }).datepicker('setDate', listingsCreateFromDate.val());
+
+            const listingsOtherCreateFromDate = jQuery('#magento_orders_listings_other_create_from_date');
+            listingsOtherCreateFromDate.calendar({
+                showsTime: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm:00',
+                showButtonPanel: false,
+            }).datepicker('setDate', listingsOtherCreateFromDate.val());
         },
 
         initObservers: function() {
@@ -105,8 +126,6 @@ define([
                     .observe('change', this.mapping_item_id_mode_change)
                     .simulate('change');
             }
-
-            //$('ebayAccountEditTabs_listingOther').removeClassName('changed');
 
             if ($('ebayAccountEditTabs_order')) {
 
@@ -383,8 +402,10 @@ define([
             var self = EbayAccountObj;
 
             if ($('magento_orders_listings_mode').value == 1) {
+                $('magento_orders_listings_create_from_date_container').show();
                 $('magento_orders_listings_store_mode_container').show();
             } else {
+                $('magento_orders_listings_create_from_date_container').hide();
                 $('magento_orders_listings_store_mode_container').hide();
                 $('magento_orders_listings_store_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT');
             }
@@ -406,9 +427,11 @@ define([
             var self = EbayAccountObj;
 
             if ($('magento_orders_listings_other_mode').value == 1) {
+                $('magento_orders_listings_other_create_from_date_container').show();
                 $('magento_orders_listings_other_product_mode_container').show();
                 $('magento_orders_listings_other_store_id_container').show();
             } else {
+                $('magento_orders_listings_other_create_from_date_container').hide();
                 $('magento_orders_listings_other_product_mode_container').hide();
                 $('magento_orders_listings_other_store_id_container').hide();
                 $('magento_orders_listings_other_product_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE');

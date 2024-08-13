@@ -1,44 +1,23 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit
- */
 class Edit extends AbstractContainer
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Module\Wizard */
-    private $wizardHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Module\Wizard $wizardHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Module\Wizard $wizardHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context
-     * @param array $data
-     */
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         \Ess\M2ePro\Helper\Module\Wizard $wizardHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     ) {
-        $this->supportHelper = $supportHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->wizardHelper = $wizardHelper;
+
         parent::__construct($context, $data);
     }
 
@@ -145,10 +124,10 @@ class Edit extends AbstractContainer
         }
     }
 
-    //########################################
-
     protected function _prepareLayout()
     {
+        $this->css->addFile('magento/form/datePicker.css');
+
         $this->jsTranslator->addTranslations([
             'is_ready_for_document_generation' => __(
                 <<<HTML

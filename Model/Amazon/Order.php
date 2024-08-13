@@ -2,8 +2,8 @@
 
 namespace Ess\M2ePro\Model\Amazon;
 
-use Ess\M2ePro\Model\Amazon\Order\Tax\ProductPriceTaxFactory;
 use Magento\Sales\Model\Order\Creditmemo;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order as ResourceAmazonOrder;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
@@ -23,6 +23,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public const INVOICE_SOURCE_MAGENTO = 'magento';
     public const INVOICE_SOURCE_EXTENSION = 'extension';
+
+    private const DATE_INTERVAL_IN_HOURS_FOR_INVOICE_SENDING_FROM_REPORT  = 24;
 
     /** @var \Ess\M2ePro\Model\Magento\Order\ShipmentFactory */
     private $shipmentFactory;
@@ -45,8 +47,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     private $subTotalPrice = null;
     /** @var null|float  */
     private $grandTotalPrice = null;
-    /** @var mixed */
-    private $creditmemoFactor;
+    private \Magento\Sales\Model\Order\CreditmemoFactory $creditmemoFactory;
     /** @var \Magento\Sales\Model\Service\CreditmemoService */
     private $creditmemoService;
 
@@ -178,6 +179,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->shippingAddressFactory->create([
             'order' => $this->getParentObject(),
         ])->setData($address);
+    }
+
+    public function getPurchaseCreateDate(): \DateTime
+    {
+        return \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+            $this->getDataByKey(ResourceAmazonOrder::COLUMN_PURCHASE_CREATE_DATE)
+        );
     }
 
     /**
@@ -428,6 +436,42 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         return $this->getStatus() == self::STATUS_INVOICE_UNCONFIRMED;
     }
+
+    //----------------------------------
+
+    public function isInvoiceSent(): bool
+    {
+        return (bool)$this->getDataByKey(ResourceAmazonOrder::COLUMN_IS_INVOICE_SENT);
+    }
+
+    public function isExistsDateOfInvoiceSent(): bool
+    {
+        return $this->getDataByKey(ResourceAmazonOrder::COLUMN_DATE_OF_INVOICE_SENDING) !== null;
+    }
+
+    public function getDateOfInvoiceSent(): \DateTime
+    {
+        if (!$this->isExistsDateOfInvoiceSent()) {
+            throw new \LogicException('Date Of Invoice Sent is not set');
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt(
+            $this->getDataByKey(ResourceAmazonOrder::COLUMN_DATE_OF_INVOICE_SENDING)
+        );
+    }
+
+    public function markThatInvoiceSentToChannel(): self
+    {
+        $this->setData(ResourceAmazonOrder::COLUMN_IS_INVOICE_SENT, 1);
+        $this->setData(
+            ResourceAmazonOrder::COLUMN_DATE_OF_INVOICE_SENDING,
+            \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')
+        );
+
+        return $this;
+    }
+
+    //----------------------------------
 
     /**
      * @return bool
@@ -1028,7 +1072,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return true;
     }
 
-    public function canSendInvoiceFromReport()
+    public function canSendInvoiceFromReport(): bool
     {
         if (!$this->getAmazonAccount()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()) {
             return false;
@@ -1044,6 +1088,29 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
         $reportData = $this->getSettings('invoice_data_report');
         if (empty($reportData)) {
+            return false;
+        }
+
+        if (!$this->canSendInvoiceFromReportAgain()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function canSendInvoiceFromReportAgain(): bool
+    {
+        if (!$this->isInvoiceSent()) {
+            return true;
+        }
+
+        $limitDateOfInvoiceSent = \M2E\AmazonMcf\Helper\Date::createCurrentGmt()->modify(
+            sprintf('-%d hours', self::DATE_INTERVAL_IN_HOURS_FOR_INVOICE_SENDING_FROM_REPORT)
+        );
+        if (
+            $this->isExistsDateOfInvoiceSent()
+            && $this->getDateOfInvoiceSent() > $limitDateOfInvoiceSent
+        ) {
             return false;
         }
 

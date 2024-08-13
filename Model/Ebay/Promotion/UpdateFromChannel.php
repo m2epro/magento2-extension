@@ -7,29 +7,34 @@ namespace Ess\M2ePro\Model\Ebay\Promotion;
 class UpdateFromChannel
 {
     private Repository $repository;
+    private \Ess\M2ePro\Model\Ebay\Promotion\ItemSynchronization $itemSynchronizationService;
 
-    public function __construct(Repository $repository)
-    {
+    public function __construct(
+        Repository $repository,
+        \Ess\M2ePro\Model\Ebay\Promotion\ItemSynchronization $itemSynchronizationService
+    ) {
         $this->repository = $repository;
+        $this->itemSynchronizationService = $itemSynchronizationService;
     }
 
     public function process(
         \Ess\M2ePro\Model\Ebay\Promotion $promotion,
         \Ess\M2ePro\Model\Ebay\Promotion\Channel\Promotion $channel
     ): void {
-        if (!$this->nothingUpdate($promotion, $channel)) {
-            return;
+        if ($this->hasChanges($promotion, $channel)) {
+            $promotion->setName($channel->getName())
+                      ->setType($channel->getType())
+                      ->setStatus($channel->getStatus())
+                      ->setPriority($channel->getPriority())
+                      ->setStartDate($channel->getStartDate())
+                      ->setEndDate($channel->getEndDate());
+
+            $this->repository->save($promotion);
         }
 
-        $promotion->setName($channel->getName())
-                       ->setType($channel->getType())
-                       ->setStatus($channel->getStatus())
-                       ->setPriority($channel->getPriority())
-                       ->setStartDate($channel->getStartDate())
-                       ->setEndDate($channel->getEndDate());
+        $this->itemSynchronizationService->syncItems($promotion, $channel);
 
-        $this->repository->save($promotion);
-
+        /*
         if (!$promotion->isTypeWithDiscounts()) {
             return;
         }
@@ -37,16 +42,16 @@ class UpdateFromChannel
         $existDiscounts = $this->repository->findDiscountsByPromotionId($promotion->getId());
         $channelDiscounts = $channel->getDiscounts();
 
-        // todo
         if (!$this->isDiscountsChanged($existDiscounts, $channelDiscounts)) {
             return;
         }
 
-        //$this->removeDiscountsAndListingProductPromotions($promotion);
-        //$this->createDiscounts($promotion, $channelDiscounts);
+        $this->removeDiscountsAndListingProductPromotions($promotion);
+        $this->createDiscounts($promotion, $channelDiscounts);
+        */
     }
 
-    private function nothingUpdate(\Ess\M2ePro\Model\Ebay\Promotion $promotion, Channel\Promotion $channel): bool
+    private function hasChanges(\Ess\M2ePro\Model\Ebay\Promotion $promotion, Channel\Promotion $channel): bool
     {
         // todo check discounts if exist
         return $promotion->getName() !== $channel->getName()

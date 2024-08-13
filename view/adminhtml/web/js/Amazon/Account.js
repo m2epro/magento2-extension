@@ -1,5 +1,6 @@
 define([
-    'M2ePro/Common'
+    'M2ePro/Common',
+    'mage/calendar'
 ], function() {
 
     window.AmazonAccount = Class.create(Common, {
@@ -7,8 +8,6 @@ define([
         // ---------------------------------------
 
         initialize: function() {
-            var self = this;
-
             this.setValidationCheckRepetitionValue('M2ePro-account-title',
                 M2ePro.translator.translate('The specified Title is already used for other Account. Account Title must be unique.'),
                 'Account', 'title', 'id',
@@ -86,6 +85,26 @@ define([
 
                 return checkResult;
             }, M2ePro.translator.translate('is_ready_for_document_generation'));
+
+            this.initMagentoOrdersCreateFromDate()
+        },
+
+        initMagentoOrdersCreateFromDate: function () {
+            const listingsCreateFromDate = jQuery('#magento_orders_listings_create_from_date');
+            listingsCreateFromDate.calendar({
+                showsTime: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm:00',
+                showButtonPanel: false,
+            }).datepicker('setDate', listingsCreateFromDate.val());
+
+            const listingsOtherCreateFromDate = jQuery('#magento_orders_listings_other_create_from_date');
+            listingsOtherCreateFromDate.calendar({
+                showsTime: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm:00',
+                showButtonPanel: false,
+            }).datepicker('setDate', listingsOtherCreateFromDate.val());
         },
 
         initObservers: function() {
@@ -278,8 +297,10 @@ define([
             var self = AmazonAccountObj;
 
             if ($('magento_orders_listings_mode').value == 1) {
+                $('magento_orders_listings_create_from_date_container').show();
                 $('magento_orders_listings_store_mode_container').show();
             } else {
+                $('magento_orders_listings_create_from_date_container').hide();
                 $('magento_orders_listings_store_mode_container').hide();
                 $('magento_orders_listings_store_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT');
             }
@@ -302,9 +323,11 @@ define([
 
             if ($('magento_orders_listings_other_mode').value == 1) {
                 $('magento_orders_listings_other_product_mode_container').show();
+                $('magento_orders_listings_other_create_from_date_container').show();
                 $('magento_orders_listings_other_store_id_container').show();
             } else {
                 $('magento_orders_listings_other_product_mode_container').hide();
+                $('magento_orders_listings_other_create_from_date_container').hide();
                 $('magento_orders_listings_other_store_id_container').hide();
                 $('magento_orders_listings_other_product_mode').value = M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE');
                 $('magento_orders_listings_other_store_id').value = '';

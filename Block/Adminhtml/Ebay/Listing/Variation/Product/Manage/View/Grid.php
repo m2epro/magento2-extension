@@ -184,7 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         $this->addColumn('online_sku', [
-            'header' => $this->__('SKU'),
+            'header' => __('Channel SKU'),
             'align' => 'left',
             'width' => '150px',
             'index' => 'online_sku',

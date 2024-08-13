@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay;
 
 use Ess\M2ePro\Model\Exception\Logic;
@@ -66,47 +60,13 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public const MAGENTO_ORDERS_STATUS_MAPPING_PAID = 'processing';
     public const MAGENTO_ORDERS_STATUS_MAPPING_SHIPPED = 'complete';
 
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category */
-    private $componentEbayCategory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory */
-    private $shippingTemplateCollectionFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Shipping\CollectionFactory $shippingTemplateCollectionFactory,
-        \Ess\M2ePro\Helper\Component\Ebay\Category $componentEbayCategory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        parent::__construct(
-            $parentFactory,
-            $modelFactory,
-            $activeRecordFactory,
-            $helperFactory,
-            $context,
-            $registry,
-            $resource,
-            $resourceCollection,
-            $data
-        );
-
-        $this->shippingTemplateCollectionFactory = $shippingTemplateCollectionFactory;
-        $this->componentEbayCategory = $componentEbayCategory;
-    }
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Account::class);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function save()
     {
@@ -115,7 +75,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return parent::save();
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param bool $asObjects
@@ -165,7 +125,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getRelatedSimpleItems('Ebay\Item', 'account_id', $asObjects, $filters);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -177,7 +137,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                                                ->getSize();
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -283,7 +243,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getFeedbacksAutoResponseOnlyPositive() == 1;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -424,7 +384,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $setting;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -520,7 +480,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getOtherListingsMappingItemIdMode() == self::OTHER_LISTINGS_MAPPING_ITEM_ID_MODE_CUSTOM_ATTRIBUTE;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param int $marketplaceId
@@ -534,7 +494,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $storeId !== null ? (int)$storeId : \Magento\Store\Model\Store::DEFAULT_STORE_ID;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -542,6 +502,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isMagentoOrdersListingsModeEnabled()
     {
         return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
+    }
+
+    public function getMagentoOrdersListingsCreateFromDate(): \DateTime
+    {
+        $date = $this->getSetting('magento_orders_settings', ['listing', 'create_from_date']);
+        if ($date === null) {
+            /** @var \Ess\M2ePro\Model\Account $parentObject */
+            $parentObject = $this->getParentObject();
+
+            return $parentObject->getCreateDate();
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
     }
 
     /**
@@ -576,6 +549,19 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isMagentoOrdersListingsOtherModeEnabled()
     {
         return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
+    }
+
+    public function getMagentoOrdersListingsOtherCreateFromDate(): \DateTime
+    {
+        $date = $this->getSetting('magento_orders_settings', ['listing_other', 'create_from_date']);
+        if ($date === null) {
+            /** @var \Ess\M2ePro\Model\Account $parentObject */
+            $parentObject = $this->getParentObject();
+
+            return $parentObject->getCreateDate();
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt($date);
     }
 
     /**
@@ -1014,7 +1000,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return (bool)$this->getData('skip_evtin');
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return array
@@ -1069,7 +1055,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return false;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getRateTables()
     {
@@ -1215,7 +1201,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->buildEbayStoreCategoriesTreeRec($this->getEbayStoreCategories(), 0);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function updateShippingDiscountProfiles($marketplaceId)
     {
@@ -1255,7 +1241,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         )->save();
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isCacheEnabled()
     {

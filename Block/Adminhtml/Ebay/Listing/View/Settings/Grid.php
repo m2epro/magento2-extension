@@ -111,7 +111,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'product_id=entity_id',
             [
                 'id' => 'id',
-                'ebay_status' => 'status',
+                'status' => 'status',
                 'additional_data' => 'additional_data',
             ],
             '{{table}}.listing_id=' . (int)$this->listing->getId()
@@ -318,6 +318,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'escape' => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
+        ]);
+
+        $this->addColumn('online_sku', [
+            'header' => __('Channel SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_sku',
+            'escape' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\OnlineSku::class,
         ]);
 
         if ($this->isMotorsAvailable() && $this->motorsAttribute) {

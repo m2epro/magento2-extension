@@ -234,6 +234,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addProductTypeAdvancedFilter();
 
         $this->addErrorsAdvancedFilter();
+        $this->addMagentoProductTypeAdvancedFilter();
 
         parent::_prepareAdvancedFilters();
     }
@@ -1811,6 +1812,35 @@ JS
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'tax_code',
             __('Tax Code Policy'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addMagentoProductTypeAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllItemsOptions->getMagentoProductTypeOptions();
+
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->getSelect()->where('e.type_id = ?', $filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'magento_product_type',
+            __('Magento Product Type'),
             $options,
             $filterCallback
         );

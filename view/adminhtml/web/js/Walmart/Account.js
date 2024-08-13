@@ -1,5 +1,6 @@
 define([
-    'M2ePro/Common'
+    'M2ePro/Common',
+    'mage/calendar'
 ], function() {
 
     window.WalmartAccount = Class.create(Common, {
@@ -145,6 +146,24 @@ define([
                 return checkResult;
 
             }, M2ePro.translator.translate('M2E Pro was not able to get access to the Walmart Account'));
+        },
+
+        initMagentoOrdersCreateFromDate: function () {
+            const listingsCreateFromDate = jQuery('#magento_orders_listings_create_from_date');
+            listingsCreateFromDate.calendar({
+                showsTime: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm:00',
+                showButtonPanel: false,
+            }).datepicker('setDate', listingsCreateFromDate.val());
+
+            const listingsOtherCreateFromDate = jQuery('#magento_orders_listings_other_create_from_date');
+            listingsOtherCreateFromDate.calendar({
+                showsTime: true,
+                dateFormat: 'yy-mm-dd',
+                timeFormat: 'HH:mm:00',
+                showButtonPanel: false,
+            }).datepicker('setDate', listingsOtherCreateFromDate.val());
         },
 
         initObservers: function() {
@@ -345,8 +364,10 @@ define([
             var self = WalmartAccountObj;
 
             if ($('magento_orders_listings_mode').value == 1) {
+                $('magento_orders_listings_create_from_date_container').show();
                 $('magento_orders_listings_store_mode_container').show();
             } else {
+                $('magento_orders_listings_create_from_date_container').hide();
                 $('magento_orders_listings_store_mode_container').hide();
                 $('magento_orders_listings_store_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT');
             }
@@ -368,10 +389,12 @@ define([
             var self = WalmartAccountObj;
 
             if ($('magento_orders_listings_other_mode').value == 1) {
+                $('magento_orders_listings_other_create_from_date_container').show();
                 $('magento_orders_listings_other_product_mode_container').show();
                 $('magento_orders_listings_other_store_id_container').show();
             } else {
                 $('magento_orders_listings_other_product_mode_container').hide();
+                $('magento_orders_listings_other_create_from_date_container').hide();
                 $('magento_orders_listings_other_store_id_container').hide();
                 $('magento_orders_listings_other_product_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Walmart\\Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE');
                 $('magento_orders_listings_other_store_id').value = '';

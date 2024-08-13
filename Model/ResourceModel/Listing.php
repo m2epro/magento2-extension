@@ -6,6 +6,7 @@ class Listing extends ActiveRecord\Component\Parent\AbstractModel
 {
     public const COLUMN_ID = 'id';
     public const COLUMN_ACCOUNT_ID = 'account_id';
+    public const COLUMN_MARKETPLACE_ID = 'marketplace_id';
 
     public function _construct()
     {

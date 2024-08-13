@@ -373,6 +373,9 @@ class Config extends AbstractConfig
                 'EnableVatCalculationServiceForPolandAndSweden',
                 'AddEbayVideo',
             ],
+            'y24_m08' => [
+                'AddDateOfInvoiceSendingToAmazonOrder',
+            ],
         ];
     }
 

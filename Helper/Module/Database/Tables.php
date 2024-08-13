@@ -8,6 +8,8 @@ class Tables
 {
     public const PREFIX = 'm2epro_';
 
+    public const TABLE_ACCOUNT = self::PREFIX . 'account';
+
     public const TABLE_MARKETPLACE = self::PREFIX . 'marketplace';
     public const TABLE_LISTING = self::PREFIX . 'listing';
 
@@ -15,6 +17,9 @@ class Tables
     public const TABLE_LISTING_PRODUCT_INSTRUCTION = self::PREFIX . 'listing_product_instruction';
     public const TABLE_LISTING_AUTO_CATEGORY = self::PREFIX . 'listing_auto_category';
 
+    public const TABLE_ORDER = self::PREFIX . 'order';
+
+    public const TABLE_EBAY_ITEM = self::PREFIX . 'ebay_item';
     public const TABLE_EBAY_LISTING = self::PREFIX . 'ebay_listing';
     public const TABLE_EBAY_LISTING_PRODUCT = self::PREFIX . 'ebay_listing_product';
     public const TABLE_EBAY_LISTING_PRODUCT_PROMOTION = self::PREFIX . 'ebay_listing_product_promotion';
@@ -26,6 +31,7 @@ class Tables
     public const TABLE_EBAY_MARKETPLACE = self::PREFIX . 'ebay_marketplace';
     public const TABLE_EBAY_DICTIONARY_MARKETPLACE = self::PREFIX . 'ebay_dictionary_marketplace';
     public const TABLE_EBAY_VIDEO = self::PREFIX . 'ebay_video';
+    public const TABLE_EBAY_ORDER = self::PREFIX . 'ebay_order';
 
     public const TABLE_EBAY_BUNDLE_OPTIONS_MAPPING = self::PREFIX . 'ebay_bundle_options_mapping';
 
@@ -34,7 +40,10 @@ class Tables
     public const TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING = self::PREFIX . 'amazon_account_merchant_setting';
     public const TABLE_AMAZON_MARKETPLACE = self::PREFIX . 'amazon_marketplace';
     public const TABLE_AMAZON_LISTING_PRODUCT = self::PREFIX . 'amazon_listing_product';
+    public const TABLE_AMAZON_ORDER = self::PREFIX . 'amazon_order';
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
+
+    public const TABLE_WALMART_ORDER = self::PREFIX . 'walmart_order';
 
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;

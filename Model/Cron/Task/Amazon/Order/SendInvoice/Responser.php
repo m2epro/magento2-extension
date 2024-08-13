@@ -1,18 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice;
 
 use Ess\M2ePro\Model\Amazon\Order\Invoice as AmazonOrderInvoice;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Amazon\Order\SendInvoice\Responser
- */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\ItemsResponser
 {
     /** @var \Ess\M2ePro\Model\Order */
@@ -20,8 +11,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
 
     /** @var \Ess\M2ePro\Model\Order\Change */
     protected $orderChange;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -47,8 +36,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
         $this->order = $this->amazonFactory->getObjectLoaded('Order', $params['order']['order_id']);
         $this->orderChange = $this->activeRecordFactory->getObject('Order\Change')->load($params['order']['change_id']);
     }
-
-    //########################################
 
     public function failDetected($messageText)
     {
@@ -95,8 +82,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
         }
     }
 
-    //########################################
-
     protected function processResponseData()
     {
         $this->order->getLog()->setInitiator($this->orderChange->getCreatorType());
@@ -121,7 +106,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
         $this->orderChange->delete();
 
         if ($this->params['order']['document_type'] == AmazonOrderInvoice::DOCUMENT_TYPE_INVOICE) {
-            $this->order->getChildObject()->setData('is_invoice_sent', 1)->save();
+            /** @var  \Ess\M2ePro\Model\Amazon\Order $amazonOrder */
+            $amazonOrder = $this->order->getChildObject();
+            $amazonOrder->markThatInvoiceSentToChannel()
+                        ->save();
             $this->order->addSuccessLog(
                 'Invoice #%document_number% was sent.',
                 [
@@ -162,6 +150,4 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\SendInvoice\It
             );
         }
     }
-
-    //########################################
 }

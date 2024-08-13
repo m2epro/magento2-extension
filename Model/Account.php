@@ -1,31 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model;
 
 use Ess\M2ePro\Model\Amazon\Account as AmazonAccount;
 use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 use Ess\M2ePro\Model\Walmart\Account as WalmartAccount;
+use Ess\M2ePro\Model\ResourceModel\Account as ResourceAccount;
 
 /**
  * @method AmazonAccount|EbayAccount|WalmartAccount getChildObject()
  */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Account::class);
     }
-
-    //########################################
 
     /**
      * @param bool $onlyMainConditions
@@ -49,8 +40,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                                                ->getSize();
     }
 
-    //########################################
-
     public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data_Cache_Permanent')->removeTagValues('account');
@@ -58,14 +47,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return parent::save($reloadOnCreate);
     }
 
-    //########################################
-
     public function getListings()
     {
         return $this->getRelatedComponentItems('Listing', 'account_id', true);
     }
-
-    //########################################
 
     /**
      * @param bool $asObjects
@@ -109,8 +94,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return $orders;
     }
 
-    //########################################
-
     public function getTitle()
     {
         return $this->getData('title');
@@ -136,5 +119,14 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         return true;
     }
 
-    //########################################
+    public function getCreateDate(): \DateTime
+    {
+        if ($this->getDataByKey(ResourceAccount::COLUMN_CREATE_DATE) === null) {
+            throw new \LogicException('Create Date must be set');
+        }
+
+        return \Ess\M2ePro\Helper\Date::createDateGmt(
+            $this->getDataByKey(ResourceAccount::COLUMN_CREATE_DATE)
+        );
+    }
 }

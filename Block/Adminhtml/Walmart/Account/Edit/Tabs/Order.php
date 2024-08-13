@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -13,38 +7,14 @@ use Ess\M2ePro\Model\Walmart\Account;
 
 class Order extends AbstractForm
 {
-    /** @var \Magento\Sales\Model\Order\Config */
-    protected $orderConfig;
-    /** @var \Magento\Customer\Model\Group */
-    protected $customerGroup;
-    /** @var \Magento\Tax\Model\ClassModel */
-    protected $taxClass;
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
-    /** @var \Ess\M2ePro\Helper\Magento\Store\Website */
-    private $storeWebsite;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Magento */
-    private $magentoHelper;
-    /** @var \Ess\M2ePro\Helper\Magento\Store */
-    private $storeHelper;
+    private \Magento\Sales\Model\Order\Config $orderConfig;
+    private \Magento\Customer\Model\Group $customerGroup;
+    private \Magento\Tax\Model\ClassModel $taxClass;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
+    private \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Magento\Store $storeHelper;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Magento\Store $storeHelper
-     * @param \Magento\Tax\Model\ClassModel $taxClass
-     * @param \Magento\Customer\Model\Group $customerGroup
-     * @param \Magento\Sales\Model\Order\Config $orderConfig
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Ess\M2ePro\Helper\Module\Support $supportHelper
-     * @param \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper
-     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Store $storeHelper,
         \Magento\Tax\Model\ClassModel $taxClass,
@@ -56,7 +26,6 @@ class Order extends AbstractForm
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Magento\Store\Website $storeWebsite,
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
-        \Ess\M2ePro\Helper\Magento $magentoHelper,
         array $data = []
     ) {
         $this->orderConfig = $orderConfig;
@@ -65,7 +34,6 @@ class Order extends AbstractForm
         $this->supportHelper = $supportHelper;
         $this->storeWebsite = $storeWebsite;
         $this->globalDataHelper = $globalDataHelper;
-        $this->magentoHelper = $magentoHelper;
         $this->storeHelper = $storeHelper;
 
         parent::__construct($context, $registry, $formFactory, $data);
@@ -73,8 +41,12 @@ class Order extends AbstractForm
 
     protected function _prepareForm()
     {
+        /** @var \Ess\M2ePro\Model\Account|null $account */
         $account = $this->globalDataHelper->getValue('edit_account');
-        $ordersSettings = $account !== null ? $account->getChildObject()->getData('magento_orders_settings') : [];
+        /** @var \Ess\M2ePro\Model\Walmart\Account|null $walmartAccount */
+        $walmartAccount = $account !== null ? $account->getChildObject() : null;
+
+        $ordersSettings = $walmartAccount !== null ? $walmartAccount->getData('magento_orders_settings') : [];
         $ordersSettings = !empty($ordersSettings) ? \Ess\M2ePro\Helper\Json::decode($ordersSettings) : [];
 
         // ---------------------------------------
@@ -157,6 +129,22 @@ HTML
         );
 
         $fieldset->addField(
+            'magento_orders_listings_create_from_date',
+            'text',
+            [
+                'container_id' => 'magento_orders_listings_create_from_date_container',
+                'name' => 'magento_orders_settings[listing][create_from_date]',
+                'label' => __('Create From Date'),
+                'tooltip' => __(
+                    'Select the start date for channel orders to be created in Magento.'
+                    . ' Orders purchased before this date will not be imported into Magento.'
+                ),
+                'value' => $this->getMagentoOrdersListingsCreateFromDate($walmartAccount)
+                                ->format('Y-m-d H:i:s')
+            ]
+        );
+
+        $fieldset->addField(
             'magento_orders_listings_store_mode',
             'select',
             [
@@ -214,6 +202,22 @@ HTML
                     'Choose whether a Magento Order should be created if a Walmart Order is received for an item that
                     does <b>not</b> belong to the M2E Pro Listing.'
                 ),
+            ]
+        );
+
+        $fieldset->addField(
+            'magento_orders_listings_other_create_from_date',
+            'text',
+            [
+                'container_id' => 'magento_orders_listings_other_create_from_date_container',
+                'name' => 'magento_orders_settings[listing_other][create_from_date]',
+                'label' => __('Create From Date'),
+                'tooltip' => __(
+                    'Select the start date for channel orders to be created in Magento.'
+                    . ' Orders purchased before this date will not be imported into Magento.'
+                ),
+                'value' => $this->getMagentoOrdersListingsOtherCreateFromDate($walmartAccount)
+                                ->format('Y-m-d H:i:s'),
             ]
         );
 
@@ -766,5 +770,36 @@ HTML
         );
 
         return parent::_prepareForm();
+    }
+
+    private function getMagentoOrdersListingsCreateFromDate(
+        ?\Ess\M2ePro\Model\Walmart\Account $walmartAccount
+    ): \DateTime {
+        if ($walmartAccount === null) {
+            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+        }
+
+        return $walmartAccount
+            ->getMagentoOrdersListingsCreateFromDate()
+            ->setTimezone(self::getDateTimeZone());
+    }
+
+    private function getMagentoOrdersListingsOtherCreateFromDate(
+        ?\Ess\M2ePro\Model\Walmart\Account $walmartAccount
+    ): \DateTime {
+        if ($walmartAccount === null) {
+            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
+        }
+
+        return $walmartAccount
+            ->getMagentoOrdersListingsOtherCreateFromDate()
+            ->setTimezone(self::getDateTimeZone());
+    }
+
+    public static function getDateTimeZone(): \DateTimeZone
+    {
+        return new \DateTimeZone(
+            \Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone()
+        );
     }
 }

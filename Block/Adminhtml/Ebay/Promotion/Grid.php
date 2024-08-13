@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Promotion;
 
+use Ess\M2ePro\Model\Ebay\Promotion;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private int $accountId;
+    private int $marketplaceId;
     private \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion\CollectionFactory $collectionFactory;
     private \Ess\M2ePro\Model\Ebay\Promotion\DashboardUrlGenerator $dashboardUrlGenerator;
 
@@ -15,11 +18,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\ResourceModel\Ebay\Promotion\CollectionFactory $collectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
-        \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
         array $data = []
     ) {
+        $this->accountId = $data['accountId'];
+        $this->marketplaceId = $data['marketplaceId'];
         $this->collectionFactory = $collectionFactory;
-        $this->globalDataHelper = $globalDataHelper;
         $this->dashboardUrlGenerator = $dashboardUrlGenerator;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -38,9 +41,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultSort('promotion_id');
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(true);
-        $this->setFilterVisibility(false);
-        $this->setPagerVisibility(false);
-        $this->setDefaultLimit(100);
+        $this->setDefaultLimit(20);
         $this->setUseAjax(true);
         // ---------------------------------------
     }
@@ -49,11 +50,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $collection = $this->collectionFactory->create();
 
-        $accountId = $this->globalDataHelper->getValue('accountId');
-        $marketplaceId = $this->globalDataHelper->getValue('marketplaceId');
-
-        $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
-        $collection->addFieldToFilter('main_table.account_id', $accountId);
+        $collection->addFieldToFilter('main_table.marketplace_id', $this->marketplaceId);
+        $collection->addFieldToFilter('main_table.account_id', $this->accountId);
 
         $this->setCollection($collection);
 
@@ -68,31 +66,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type' => 'text',
             'width' => '150px',
             'index' => 'name',
-            'filter' => false,
-            'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnName'],
+            'sortable' => true,
         ]);
 
         $this->addColumn('type', [
             'header' => __('Type'),
             'align' => 'right',
-            'type' => 'text',
+            'type' => 'options',
             'width' => '75px',
             'index' => 'type',
-            'filter' => false,
-            'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnType'],
+            'filter_index' => 'type',
+            'sortable' => true,
+            'options' => $this->getFormattedPromotionTypeOptions(),
+            'filter_condition_callback' => [$this, 'callbackFilterType'],
         ]);
 
         $this->addColumn('status', [
             'header' => __('Status'),
             'align' => 'right',
-            'type' => 'text',
+            'type' => 'options',
             'width' => '75px',
             'index' => 'status',
-            'filter' => false,
-            'sortable' => false,
-            'frame_callback' => [$this, 'callbackColumnStatus'],
+            'sortable' => true,
+            'options' => $this->getFormattedPromotionStatusOptions(),
+            'filter_condition_callback' => [$this, 'callbackFilterStatus'],
         ]);
 
         $this->addColumn('start_date', [
@@ -100,9 +97,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align' => 'left',
             'type' => 'datetime',
             'index' => 'start_date',
-            'format' => \IntlDateFormatter::MEDIUM,
-            'filter' => false,
-            'sortable' => false,
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'sortable' => true,
+            'filter_index' => 'start_date',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class,
         ]);
 
         $this->addColumn('end_date', [
@@ -110,9 +108,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align' => 'left',
             'type' => 'datetime',
             'index' => 'end_date',
-            'format' => \IntlDateFormatter::MEDIUM,
-            'filter' => false,
-            'sortable' => false,
+            'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+            'sortable' => true,
+            'filter_index' => 'end_date',
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\DateTime::class,
         ]);
 
         $this->addColumn('actions', [
@@ -126,19 +125,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
     }
 
-    public function callbackColumnName($value, $row, $column, $isExport): string
+    private function getFormattedPromotionTypeOptions(): array
     {
-        return $value;
+        return $this->formatOptions(Promotion::getTypes());
     }
 
-    public function callbackColumnType($value, $row, $column, $isExport): string
+    private function getFormattedPromotionStatusOptions(): array
     {
-        return $this->formatPromotionTypeOrStatus($value);
+        return $this->formatOptions(Promotion::getStatuses());
     }
 
-    public function callbackColumnStatus($value, $row, $column, $isExport): string
+    private function formatOptions(array $options): array
     {
-        return $this->formatPromotionTypeOrStatus($value);
+        $formattedOptions = [];
+        foreach ($options as $option) {
+            $formattedOptions[$option] = $this->formatPromotionTypeOrStatus($option);
+        }
+        return $formattedOptions;
+    }
+
+    private function formatPromotionTypeOrStatus(string $type): string
+    {
+        $parts = explode('_', $type);
+        $formattedParts = array_map(function ($part) {
+            return ucfirst(strtolower($part));
+        }, $parts);
+        return implode(' ', $formattedParts);
     }
 
     public function callbackColumnActions($value, $row, $column, $isExport): string
@@ -163,46 +175,61 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 HTML;
     }
 
-    private function formatPromotionTypeOrStatus(string $type): string
+    public function callbackFilterType($collection, $column): void
     {
-        $parts = explode('_', $type);
+        $value = $column->getFilter()->getValue();
+        if ($value === null) {
+            return;
+        }
 
-        $formattedParts = array_map(function ($part) {
-            return ucfirst(strtolower($part));
-        }, $parts);
+        $collection->addFieldToFilter('type', $value);
+    }
 
-        return implode(' ', $formattedParts);
+    public function callbackFilterStatus($collection, $column): void
+    {
+        $value = $column->getFilter()->getValue();
+        if ($value === null) {
+            return;
+        }
+
+        $collection->addFieldToFilter('status', $value);
     }
 
     protected function getHelpBlockHtml(): string
     {
-        $helpBlockHtml = '';
-
-        if ($this->canDisplayContainer()) {
-            $content = __(
-                <<<HTML
-                <p>In this section, you can manage your eBay promotions. Browse your active and scheduled promotions,
-                apply them to your listings, or remove any that are no longer needed. To create a new promotion or
-                modify existing ones, you can do so easily through your eBay Seller Hub
-                (<a href="%1" target="_blank" class="external-link">link</a>).</p><br>
-                <p><strong>Important</strong>: Please be aware that adding new items to an existing promotion will
-                overwrite any items that were previously included. Due to eBay API restrictions, each promotion can
-                include a maximum of 500 items.</p>
-HTML
-                ,
-                $this->dashboardUrlGenerator->generate((int)$this->globalDataHelper->getValue('marketplaceId'))
-            );
-
-            $helpBlockHtml = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)->setData([
-                'content' => $content,
-            ])->toHtml();
+        if (!$this->canDisplayContainer()) {
+            return '';
         }
 
-        return $helpBlockHtml;
+        $content = __(
+            '<p>In this section, you can manage your eBay promotions. Browse your active and scheduled promotions,'
+            . ' apply them to your listings, or remove any that are no longer needed. To create a new promotion or'
+            . ' modify existing ones, you can do so easily through your eBay Seller Hub'
+            . ' (<a href="%url" target="_blank" class="external-link">link</a>).</p><br>'
+            . ' <p><strong>Important</strong>: Please be aware that adding new items to an existing promotion will'
+            . ' overwrite any items that were previously included. Due to eBay API restrictions, each promotion can'
+            . ' include a maximum of 500 items.</p>',
+            ['url' => $this->dashboardUrlGenerator->generate($this->marketplaceId)]
+        );
+
+        return $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\HelpBlock::class)
+                    ->setData(['content' => $content,])
+                    ->toHtml();
     }
 
     protected function _toHtml(): string
     {
         return $this->getHelpBlockHtml() . parent::_toHtml();
+    }
+
+    public function getGridUrl(): string
+    {
+        return $this->getUrl('*/ebay_promotion/openGridPromotion', [
+            '_current' => true,
+            '_query' => [
+                'account_id' => $this->accountId,
+                'marketplace_id' => $this->marketplaceId,
+            ],
+        ]);
     }
 }

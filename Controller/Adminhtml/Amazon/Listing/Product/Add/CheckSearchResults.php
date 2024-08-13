@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
-/**
- * Class \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add\CheckSearchResults
- */
 class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 {
     public function execute()
@@ -25,11 +16,11 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $listingProductsIds = $this->filterProductsForNewAsin($listingProductsIds);
 
         if (
-            empty($listingProductsIds) ||
-            !$this->getListing()->getMarketplace()->getChildObject()->isNewAsinAvailable()
+            empty($listingProductsIds)
+            || !$this->getListing()->getMarketplace()->getChildObject()->isNewAsinAvailable()
         ) {
             $redirectUrl = $this->getUrl('*/*/index', [
-                'step' => 5,
+                'step' => 6,
                 'id' => $this->getRequest()->getParam('id'),
                 'wizard' => $this->getRequest()->getParam('wizard'),
             ]);
@@ -47,7 +38,7 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             $this->setJsonContent([
                 'redirect' => $this->getUrl('*/*/index', [
                     'id' => $this->getRequest()->getParam('id'),
-                    'step' => $showNewAsinStep ? 4 : 5,
+                    'step' => $showNewAsinStep ? 4 : 6,
                     'wizard' => $this->getRequest()->getParam('wizard'),
                 ]),
             ]);

@@ -4,7 +4,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\AllItems;
 
 use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion as EbayListingProductPromotionResource;
-use Ess\M2ePro\Model\ResourceModel\Ebay\Promotion as EbayPromotionResource;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option as ProductVariationOption;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
@@ -237,6 +236,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
+        $this->addColumn('online_sku', [
+            'header' => __('Channel SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_sku',
+            'escape' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\OnlineSku::class,
+        ]);
+
         $this->addColumn('item_id', [
             'header' => __('Item ID'),
             'align' => 'left',
@@ -334,6 +342,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addErrorAdvancedFilter();
 
         $this->addPromotionAdvancedFilter();
+        $this->addMagentoProductTypeAdvancedFilter();
 
         parent::_prepareAdvancedFilters();
     }
@@ -468,9 +477,6 @@ HTML;
             . '&nbsp;' . $marketplace->getTitle();
 
         $sku = $row->getData('sku');
-        $onlineSku = $row->getData('online_sku');
-
-        !empty($onlineSku) && $sku = $onlineSku;
         $sku = $this->dataHelper->escapeHtml($sku);
 
         $skuWord = __('SKU');
@@ -636,7 +642,6 @@ HTML;
 
         $collection->addFieldToFilter([
             ['attribute' => 'sku', 'like' => '%' . $value . '%'],
-            ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
             ['attribute' => 'name', 'like' => '%' . $value . '%'],
             ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
             ['attribute' => 'listing_title', 'like' => '%' . $value . '%'],
@@ -1132,6 +1137,35 @@ HTML;
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'promotion',
             __('Promotion'),
+            $options,
+            $filterCallback
+        );
+
+        $this->addAdvancedFilter($filter);
+    }
+
+    private function addMagentoProductTypeAdvancedFilter(): void
+    {
+        $options = $this->advancedFilterAllItemsOptions->getMagentoProductTypeOptions();
+
+        if ($options->isEmpty()) {
+            return;
+        }
+
+        $filterCallback = function (
+            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
+            string $filterValue
+        ): void {
+            if (empty($filterValue)) {
+                return;
+            }
+
+            $collection->getSelect()->where('e.type_id = ?', $filterValue);
+        };
+
+        $filter = $this->advancedFilterFactory->createDropDownFilter(
+            'magento_product_type',
+            __('Magento Product Type'),
             $options,
             $filterCallback
         );

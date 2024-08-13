@@ -235,4 +235,26 @@ class Promotion extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             );
         }
     }
+
+    public static function getTypes(): array
+    {
+        return [
+            self::TYPE_CODED_COUPON,
+            self::TYPE_MARKDOWN_SALE,
+            self::TYPE_ORDER_DISCOUNT,
+            self::TYPE_VOLUME_DISCOUNT,
+        ];
+    }
+
+    public static function getStatuses(): array
+    {
+        return [
+            self::STATUS_SCHEDULED,
+            self::STATUS_RUNNING,
+            self::STATUS_PAUSED,
+            self::STATUS_DRAFT,
+            self::STATUS_ENDED,
+            self::STATUS_INVALID,
+        ];
+    }
 }

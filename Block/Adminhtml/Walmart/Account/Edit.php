@@ -1,21 +1,13 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
 class Edit extends AbstractContainer
 {
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Module\Wizard */
-    private $wizardHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Module\Wizard $wizardHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper,
@@ -25,6 +17,7 @@ class Edit extends AbstractContainer
     ) {
         $this->globalDataHelper = $globalDataHelper;
         $this->wizardHelper = $wizardHelper;
+
         parent::__construct($context, $data);
     }
 
@@ -151,12 +144,15 @@ class Edit extends AbstractContainer
 
     protected function _prepareLayout()
     {
+        $this->css->addFile('magento/form/datePicker.css');
+
         $this->js->add(
             <<<JS
     require([
         'M2ePro/Walmart/Account',
     ], function() {
         window.WalmartAccountObj = new WalmartAccount();
+        WalmartAccountObj.initMagentoOrdersCreateFromDate();
     });
 JS
         );

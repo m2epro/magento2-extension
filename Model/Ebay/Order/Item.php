@@ -359,13 +359,15 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->isOrdersCreationEnabled();
     }
 
-    protected function isOrdersCreationEnabled(): bool
+    private function isOrdersCreationEnabled(): bool
     {
         $channelItem = $this->getChannelItem();
-        $isOtherListingsEnabled = $this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled();
 
         if ($channelItem === null) {
-            return $isOtherListingsEnabled;
+            return $this->isOrdersCreationEnabledForListingsOther(
+                $this->getEbayAccount(),
+                $this->getEbayOrder()
+            );
         }
 
         if (
@@ -375,10 +377,42 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
                 $channelItem->getMarketplaceId()
             )
         ) {
-            return $isOtherListingsEnabled;
+            return $this->isOrdersCreationEnabledForListingsOther(
+                $this->getEbayAccount(),
+                $this->getEbayOrder()
+            );
         }
 
-        return $this->getEbayAccount()->isMagentoOrdersListingsModeEnabled();
+        return $this->isOrdersCreationEnabledForListings(
+            $this->getEbayAccount(),
+            $this->getEbayOrder()
+        );
+    }
+
+    private function isOrdersCreationEnabledForListingsOther(
+        \Ess\M2ePro\Model\Ebay\Account $ebayAccount,
+        \Ess\M2ePro\Model\Ebay\Order $ebayOrder
+    ): bool {
+        if (!$ebayAccount->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($ebayOrder->getPurchaseCreateDate());
+
+        return $purchaseCreateDate >= $ebayAccount->getMagentoOrdersListingsOtherCreateFromDate();
+    }
+
+    private function isOrdersCreationEnabledForListings(
+        \Ess\M2ePro\Model\Ebay\Account $ebayAccount,
+        \Ess\M2ePro\Model\Ebay\Order $ebayOrder
+    ): bool {
+        if (!$ebayAccount->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($ebayOrder->getPurchaseCreateDate());
+
+        return $purchaseCreateDate >= $ebayAccount->getMagentoOrdersListingsCreateFromDate();
     }
 
     public function getAssociatedProductId()

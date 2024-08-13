@@ -1,0 +1,7 @@
+._has-datepicker {
+    max-width: 19rem !important;
+}
+
+._has-datepicker + .ui-datepicker-trigger {
+    margin-left: -4.6rem !important;
+}

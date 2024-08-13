@@ -194,6 +194,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
+        $this->addColumn('online_sku', [
+            'header' => __('Channel SKU'),
+            'align' => 'left',
+            'type' => 'text',
+            'index' => 'online_sku',
+            'escape' => false,
+            'renderer' => \Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\OnlineSku::class,
+        ]);
+
         $this->addColumn('ebay_item_id', [
             'header' => $this->__('Item ID'),
             'align' => 'left',
@@ -369,9 +378,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                                       ->getSku();
         }
 
-        $onlineSku = $row->getData('online_sku');
-        !empty($onlineSku) && $sku = $onlineSku;
-
         if ($isExport) {
             return $sku;
         }
@@ -494,7 +500,6 @@ HTML;
         $collection->addFieldToFilter(
             [
                 ['attribute' => 'sku', 'like' => '%' . $value . '%'],
-                ['attribute' => 'online_sku', 'like' => '%' . $value . '%'],
                 ['attribute' => 'name', 'like' => '%' . $value . '%'],
                 ['attribute' => 'online_title', 'like' => '%' . $value . '%'],
                 ['attribute' => 'online_main_category', 'like' => '%' . $value . '%'],

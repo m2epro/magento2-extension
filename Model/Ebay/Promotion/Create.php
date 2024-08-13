@@ -9,15 +9,18 @@ class Create
     private Repository $repository;
     private \Ess\M2ePro\Model\Ebay\PromotionFactory $factory;
     private DiscountFactory $discountFactory;
+    private \Ess\M2ePro\Model\Ebay\Promotion\ItemSynchronization $itemSynchronizationService;
 
     public function __construct(
         Repository $repository,
         \Ess\M2ePro\Model\Ebay\PromotionFactory $factory,
-        \Ess\M2ePro\Model\Ebay\Promotion\DiscountFactory $discountFactory
+        \Ess\M2ePro\Model\Ebay\Promotion\DiscountFactory $discountFactory,
+        \Ess\M2ePro\Model\Ebay\Promotion\ItemSynchronization $itemSynchronizationService
     ) {
         $this->repository = $repository;
         $this->factory = $factory;
         $this->discountFactory = $discountFactory;
+        $this->itemSynchronizationService = $itemSynchronizationService;
     }
 
     public function process(
@@ -40,9 +43,13 @@ class Create
 
         $this->repository->create($promotion);
 
+        $this->itemSynchronizationService->createItems($promotion, $channelPromotion->getItems());
+
+        /*
         if ($promotion->isTypeWithDiscounts()) {
             $this->createDiscounts($promotion, $channelPromotion->getDiscounts());
         }
+        */
 
         return $promotion;
     }

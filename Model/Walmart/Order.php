@@ -3,9 +3,9 @@
 namespace Ess\M2ePro\Model\Walmart;
 
 use Magento\Sales\Model\Order\Creditmemo;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Order as ResourceWalmartOrder;
 
 /**
- * Class \Ess\M2ePro\Model\Walmart\Order
  * @method \Ess\M2ePro\Model\Order getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Walmart\Order getResource()
  */
@@ -23,7 +23,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
     private $subTotalPrice = null;
     private $grandTotalPrice = null;
 
- /** @var \Ess\M2ePro\Model\Walmart\Order\ShippingAddressFactory */
+    /** @var \Ess\M2ePro\Model\Walmart\Order\ShippingAddressFactory */
     protected $shippingAddressFactory;
     /** @var \Magento\Sales\Model\Order\Email\Sender\OrderSender */
     private $orderSender;
@@ -353,6 +353,11 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstr
         }
 
         return true;
+    }
+
+    public function getPurchaseCreateDate(): string
+    {
+        return $this->getDataByKey(ResourceWalmartOrder::COLUMN_PURCHASE_CREATE_DATE);
     }
 
     public function isWalmartFulfillment(): bool

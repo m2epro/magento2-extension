@@ -1,24 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Account
- */
 class Account extends ActiveRecord\Component\Parent\AbstractModel
 {
-    //########################################
+    public const COLUMN_ID = 'id';
+    public const COLUMN_CREATE_DATE = 'create_date';
 
     public function _construct()
     {
-        $this->_init('m2epro_account', 'id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_ACCOUNT,
+            self::COLUMN_ID
+        );
     }
-
-    //########################################
 }

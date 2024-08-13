@@ -80,14 +80,18 @@ class Repository
         return $result;
     }
 
-    public function removePromotionsByAccount(int $accountId): void
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Promotion[]
+     */
+    public function findExpiredPromotions(): array
     {
-        $this->promotionResource
-            ->getConnection()
-            ->delete(
-                $this->promotionResource->getMainTable(),
-                ["account_id <= '$accountId'"],
-            );
+        $collection = $this->promotionCollectionFactory->create();
+        $collection->addFieldToFilter(
+            EbayPromotionResource::COLUMN_END_DATE,
+            ['lt' => \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s')]
+        );
+
+        return array_values($collection->getItems());
     }
 
     public function createDiscount(\Ess\M2ePro\Model\Ebay\Promotion\Discount $discount): void
