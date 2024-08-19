@@ -113,7 +113,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'start_date' => 'start_date',
                 'online_title' => 'online_title',
                 'online_sku' => 'online_sku',
-                'available_qty' => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
+                'available_qty' => new \Zend_Db_Expr(
+                    '(CAST(elp.online_qty AS SIGNED) - CAST(elp.online_qty_sold AS SIGNED))'
+                ),
                 'ebay_item_id' => 'ebay_item_id',
                 'online_main_category' => 'online_main_category',
                 'online_qty_sold' => 'online_qty_sold',
@@ -516,12 +518,12 @@ HTML;
         }
 
         $where = '';
-        $availableQty = 'elp.online_qty - elp.online_qty_sold';
+        $availableQty = 'CAST(elp.online_qty AS SIGNED) - CAST(elp.online_qty_sold AS SIGNED)';
 
         if (isset($cond['from']) || isset($cond['to'])) {
             if (isset($cond['from']) && $cond['from'] != '') {
                 $value = $collection->getConnection()->quote($cond['from']);
-                $where .= "{$availableQty} >= {$value}";
+                $where .= "$availableQty >= $value";
             }
 
             if (isset($cond['to']) && $cond['to'] != '') {

@@ -165,7 +165,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'width' => '50px',
             'type' => 'number',
             'index' => 'available_qty',
-            'filter_index' => new \Zend_Db_Expr('(CAST(second_table.online_qty AS SIGNED) - CAST(second_table.online_qty_sold AS SIGNED))'),
+            'filter_index' => new \Zend_Db_Expr(
+                '(CAST(second_table.online_qty AS SIGNED) - CAST(second_table.online_qty_sold AS SIGNED))'
+            ),
             'renderer' => OnlineQty::class,
             'render_online_qty' => OnlineQty::ONLINE_AVAILABLE_QTY,
         ]);

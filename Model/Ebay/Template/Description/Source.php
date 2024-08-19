@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 class Source extends \Ess\M2ePro\Model\AbstractModel
@@ -436,7 +430,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @param $imageObj
+     * @param \Ess\M2ePro\Model\Magento\Product\Image $imageObj
      *
      * @return void
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -470,6 +464,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $imageObj->setPath($markingImagePath)
                          ->setUrl($imageObj->getUrlByPath())
                          ->resetHash();
+
+                $imageObj->markAsHasWatermark();
 
                 return;
             }
@@ -567,6 +563,8 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $imageObj->setPath($markingImagePath)
                  ->setUrl($imageObj->getUrlByPath())
                  ->resetHash();
+
+        $imageObj->markAsHasWatermark();
     }
 
     /**

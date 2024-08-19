@@ -1,15 +1,32 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
+
+use Ess\M2ePro\Model\Ebay\Listing\Product\Image\RemoveEpcHostedImagesWithWatermarkService;
 
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
+    private RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark;
+
+    public function __construct(
+        RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
+        \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ) {
+        parent::__construct(
+            $dataHasher,
+            $componentEbayCategoryEbay,
+            $activeRecordFactory,
+            $helperFactory,
+            $modelFactory
+        );
+
+        $this->removeEpcHostedImagesWithWatermark = $removeEpcHostedImagesWithWatermark;
+    }
+
     public function processSuccess(array $response, array $responseParams = [])
     {
         $this->prepareMetadata();
@@ -56,6 +73,8 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $this->updateVariationsValues(true);
         $this->updateEbayItem();
+
+        $this->removeEpcHostedImagesWithWatermark->process($this->getEbayListingProduct());
     }
 
     public function processAlreadyStopped(array $response, array $responseParams = [])

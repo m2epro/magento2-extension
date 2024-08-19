@@ -2,12 +2,16 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
+use Ess\M2ePro\Model\Ebay\Listing\Product\Image\RemoveEpcHostedImagesWithWatermarkService;
+
 class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Response
 {
     private \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor;
+    private RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
+        RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -23,6 +27,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         );
 
         $this->videoProductProcessor = $videoProductProcessor;
+        $this->removeEpcHostedImagesWithWatermark = $removeEpcHostedImagesWithWatermark;
     }
 
     public function processSuccess(array $response, array $responseParams = []): void
@@ -74,6 +79,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->updateVariationsValues(false);
 
         $this->videoProductProcessor->process($this->getListingProduct());
+        $this->removeEpcHostedImagesWithWatermark->process($this->getEbayListingProduct());
     }
 
     protected function appendSpecificsReplacementValues($data)

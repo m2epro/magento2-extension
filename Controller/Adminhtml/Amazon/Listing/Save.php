@@ -149,7 +149,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $offerImages = [];
         if ($post['condition_value'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {
-            $offerImages = $this->offerImagesService->prepareOfferImagesData($post->toArray());
+            $offerImages = $this->offerImagesService->prepareOfferImagesData($post['offer_images']);
         }
 
         $listing->getChildObject()->setOfferImages($offerImages);

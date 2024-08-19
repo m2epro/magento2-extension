@@ -717,6 +717,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     // ---------------------------------------
 
+    public function isEpcEbayImagesMode(): bool
+    {
+        $isEpsEbayImagesMode = $this->getParentObject()
+                                    ->getAdditionalData()['is_eps_ebay_images_mode'] ?? false;
+
+        return $isEpsEbayImagesMode === true;
+    }
+
+    // ---------------------------------------
+
     /**
      * @return bool
      */

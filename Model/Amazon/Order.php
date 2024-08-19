@@ -1191,26 +1191,23 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     public function canCreateCreditMemo(): bool
     {
-        if (
-            !$this->getAmazonAccount()->isCreateCreditMemoEnabled()
-            && $this->isCanceled()
-        ) {
-            return false;
-        }
-
-        if (
-            !$this->getAmazonAccount()->isCreateCreditMemoBuyerRequestedCancelEnabled()
-            && $this->isBuyerRequestedCancel()
-        ) {
-            return false;
-        }
-
         $magentoOrder = $this->getParentObject()->getMagentoOrder();
         if ($magentoOrder === null) {
             return false;
         }
 
         if ($magentoOrder->hasCreditmemos() || !$magentoOrder->canCreditmemo()) {
+            return false;
+        }
+
+        if ($this->isCanceled()) {
+            return $this->getAmazonAccount()->isCreateCreditMemoEnabled();
+        }
+
+        if (
+            !$this->getAmazonAccount()->isCreateCreditMemoBuyerRequestedCancelEnabled()
+            && $this->isBuyerRequestedCancel()
+        ) {
             return false;
         }
 

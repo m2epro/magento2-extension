@@ -21,6 +21,7 @@ class Image extends AbstractModel
     protected $area = Area::AREA_FRONTEND;
     /** @var \Ess\M2ePro\Helper\Module\Configuration */
     private $moduleConfiguration;
+    private bool $hasWatermark = false;
 
     public function __construct(
         \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
@@ -40,7 +41,7 @@ class Image extends AbstractModel
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return string
@@ -167,7 +168,7 @@ class Image extends AbstractModel
         return $this;
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function isSelfHosted()
     {
@@ -176,7 +177,7 @@ class Image extends AbstractModel
         return $this->getPath() && $fileDriver->isFile($this->getPath());
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getPathByUrl()
     {
@@ -210,7 +211,7 @@ class Image extends AbstractModel
         return str_replace(' ', '%20', $imageLink);
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function getBaseMediaUrl()
     {
@@ -223,5 +224,15 @@ class Image extends AbstractModel
         );
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function hasWatermark(): bool
+    {
+        return $this->hasWatermark;
+    }
+
+    public function markAsHasWatermark(): void
+    {
+        $this->hasWatermark = true;
+    }
 }

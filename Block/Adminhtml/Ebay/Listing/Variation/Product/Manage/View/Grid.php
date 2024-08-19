@@ -128,7 +128,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'delete' => 'second_table.delete',
                 'online_price' => 'second_table.online_price',
                 'online_sku' => 'second_table.online_sku',
-                'available_qty' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
+                'available_qty' => new \Zend_Db_Expr(
+                    '(CAST(second_table.online_qty AS SIGNED) - CAST(second_table.online_qty_sold AS SIGNED))'
+                ),
                 'online_qty_sold' => 'second_table.online_qty_sold',
                 'status' => 'second_table.status',
                 'attributes' => 'GROUP_CONCAT(`mlpvo`.`attribute`, \'==\', `mlpvo`.`option` SEPARATOR \'||\')',

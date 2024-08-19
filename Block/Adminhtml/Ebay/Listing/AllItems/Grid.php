@@ -142,7 +142,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'ebay_item_id' => 'ebay_item_id',
                 'online_title' => 'online_title',
                 'online_sku' => 'online_sku',
-                'online_qty' => new \Zend_Db_Expr('(elp.online_qty - elp.online_qty_sold)'),
+                'online_qty' => new \Zend_Db_Expr(
+                    '(CAST(elp.online_qty AS SIGNED) - CAST(elp.online_qty_sold AS SIGNED))'
+                ),
                 'online_qty_sold' => 'online_qty_sold',
                 'online_bids' => 'online_bids',
                 'online_start_price' => 'online_start_price',
@@ -660,7 +662,7 @@ HTML;
         }
 
         $where = '';
-        $onlineQty = 'elp.online_qty - elp.online_qty_sold';
+        $onlineQty = 'CAST(elp.online_qty AS SIGNED) - CAST(elp.online_qty_sold AS SIGNED)';
 
         if (isset($cond['from']) || isset($cond['to'])) {
             if (isset($cond['from']) && $cond['from'] != '') {
@@ -739,7 +741,7 @@ HTML;
                 // fix for wrong fields wrapping with "`" when statement in ()
                 $onlineQty = 'IF(
                     1=1,
-                    elp.online_qty - elp.online_qty_sold,
+                    CAST(elp.online_qty AS SIGNED) - CAST(elp.online_qty_sold AS SIGNED),
                     NULL
                 )';
                 $collection->getSelect()->order(
