@@ -24,8 +24,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     private $exceptionHelper;
     /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory */
     private $handlerInputFactory;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
-    private $blockingErrorConfig;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
@@ -34,7 +32,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory $handlerInputFactory,
-        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
@@ -46,7 +43,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         $this->exceptionHelper = $exceptionHelper;
         $this->handlerInputFactory = $handlerInputFactory;
-        $this->blockingErrorConfig = $blockingErrorConfig;
     }
 
     public function setComponent(string $component): self

@@ -19,8 +19,6 @@ abstract class BaseInventoryTracker implements TrackerInterface
     protected $logger;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
     private $attributesQueryBuilder;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
-    private $blockingErrorConfig;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker */
     private $enterpriseChecker;
 
@@ -30,7 +28,6 @@ abstract class BaseInventoryTracker implements TrackerInterface
         InventoryStock $inventoryStock,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         TrackerLogger $logger,
-        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker
     ) {
         $this->channel = $channel;
@@ -38,7 +35,6 @@ abstract class BaseInventoryTracker implements TrackerInterface
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->logger = $logger;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
-        $this->blockingErrorConfig = $blockingErrorConfig;
         $this->enterpriseChecker = $enterpriseChecker;
     }
 
@@ -229,9 +225,8 @@ abstract class BaseInventoryTracker implements TrackerInterface
         /* We do not include products marked duplicate in the sample */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
-        $blockingErrorsRetryHours = $this->blockingErrorConfig->getEbayBlockingErrorRetrySeconds();
-        $minRetryDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
-        $minRetryDate->modify("-$blockingErrorsRetryHours seconds");
+        $dateTimeModifier = sprintf('-%s seconds', \Ess\M2ePro\Model\Tag\BlockingErrors::RETRY_ACTION_SECONDS);
+        $minRetryDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify($dateTimeModifier);
 
         /* Exclude products with a blocking error */
         $query->andWhere(

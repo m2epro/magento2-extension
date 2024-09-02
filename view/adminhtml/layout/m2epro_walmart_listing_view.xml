@@ -1,0 +1,18 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="page.main.actions">
+            <container name="ess.m2epro.walmart.listing.switchers"
+                       htmlTag="div"
+                       htmlClass="listing-view-switchers-container">
+                <block class="Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher"
+                       name="walmart_listing_view_switcher"/>
+                <block class="Ess\M2ePro\Block\Adminhtml\Listing\Switcher" name="walmart_listing_switcher">
+                    <arguments>
+                        <argument name="component_mode" xsi:type="string">walmart</argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceBlock>
+    </body>
+</page>

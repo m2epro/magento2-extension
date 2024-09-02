@@ -133,6 +133,8 @@ class Repository
                 AmazonListingProductResource::COLUMN_SKU
             )
         );
+        $collection->getSelect()
+                   ->group(\Magento\Inventory\Model\ResourceModel\SourceItem::ID_FIELD_NAME);
 
         return $collection->getItems();
     }

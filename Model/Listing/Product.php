@@ -44,8 +44,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     public const GROUPED_PRODUCT_MODE_OPTIONS = 0;
     public const GROUPED_PRODUCT_MODE_SET = 1;
 
-    private const MAX_BLOCKING_ERROR_DURATION_SECONDS = 86400;
-
     /**
      * It allows to delete an object without checking if it is isLocked()
      * @var bool
@@ -348,33 +346,25 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     // ---------------------------------------
 
-    public function isBlockingByError(): bool
+    public function hasBlockingByError(): bool
     {
-        $blockingErrorDate = $this->getLastBlockingErrorDate();
-
-        if ($blockingErrorDate === null) {
+        $rawDate = $this->getData('last_blocking_error_date');
+        if (empty($rawDate)) {
             return false;
         }
 
-        if (
-            \Ess\M2ePro\Helper\Date::createCurrentGmt()->getTimestamp() - $blockingErrorDate->getTimestamp() >
-            self::MAX_BLOCKING_ERROR_DURATION_SECONDS
-        ) {
-            return false;
-        }
+        $lastBlockingDate = \Ess\M2ePro\Helper\Date::createDateGmt($rawDate);
+        $dateTimeModifier = sprintf('-%s seconds', \Ess\M2ePro\Model\Tag\BlockingErrors::RETRY_ACTION_SECONDS);
+        $twentyFourHoursAgoDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify($dateTimeModifier);
 
-        return true;
+        return $lastBlockingDate->getTimestamp() > $twentyFourHoursAgoDate->getTimestamp();
     }
 
-    public function getLastBlockingErrorDate(): ?\DateTime
+    public function removeBlockingByError(): self
     {
-        $lastBlockingErrorDate = $this->getData('last_blocking_error_date');
+        $this->setData('last_blocking_error_date');
 
-        if ($lastBlockingErrorDate !== null) {
-            $lastBlockingErrorDate = \Ess\M2ePro\Helper\Date::createDateGmt($lastBlockingErrorDate);
-        }
-
-        return $lastBlockingErrorDate;
+        return $this;
     }
 
     // ---------------------------------------

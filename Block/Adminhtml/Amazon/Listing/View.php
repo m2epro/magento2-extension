@@ -4,14 +4,10 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    /** @var  \Ess\M2ePro\Model\Listing */
-    protected $listing;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\Session */
-    private $sessionDataHelper;
+    protected \Ess\M2ePro\Model\Listing $listing;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    private \Ess\M2ePro\Helper\Data\Session $sessionDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
@@ -63,11 +59,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                     available Actions accessible in the Mass Actions drop-down.</p>'
                 ),
             ]);
-
-            $this->setPageActionsBlock(
-                'Amazon_Listing_View_Switcher',
-                'amazon_listing_view_switcher'
-            );
         }
 
         // ---------------------------------------

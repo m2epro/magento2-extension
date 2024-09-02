@@ -1,108 +1,49 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Order\Creditmemo;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Order\Creditmemo\Handler
- */
 class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
 {
     public const AMAZON_REFUND_REASON_CUSTOMER_RETURN = 'CustomerReturn';
     public const AMAZON_REFUND_REASON_NO_INVENTORY = 'NoInventory';
     public const AMAZON_REFUND_REASON_BUYER_CANCELED = 'BuyerCanceled';
 
-    /**
-     * @param \Ess\M2ePro\Model\Order $order
-     * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
-     *
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->dataHelper = $dataHelper;
+    }
+
     protected function getItemsToRefund(
         \Ess\M2ePro\Model\Order $order,
         \Magento\Sales\Model\Order\Creditmemo $creditmemo
-    ) {
+    ): array {
+        $refundReason = $this->getRefundReason($order);
+        $ordersItemsByAmazonId = $this->getAmazonOrderItemsByAmazonId($order);
+
         $itemsForRefund = [];
+        foreach ($creditmemo->getItems() as $creditmemoItem) {
+            $cancelledQty = (int)$creditmemoItem->getQty();
 
-        $refundReason = $this->isOrderStatusShipped($order) || $order->isOrderStatusUpdatingToShipped() ?
-            self::AMAZON_REFUND_REASON_CUSTOMER_RETURN :
-            self::AMAZON_REFUND_REASON_NO_INVENTORY;
+            $items = $this->getOrderItemsFromCreditMemoItem($creditmemoItem);
 
-        /** @var \Ess\M2ePro\Model\Order\ProxyObject $proxy */
-        $proxy = $order->getProxy()->setStore($order->getStore());
+            foreach ($items as $data) {
+                $orderItemId = $data['order_item_id'] ?? null;
 
-        $isTaxAddedToShippingCost = $proxy->isTaxModeNone() && $proxy->getShippingPriceTaxRate() > 0;
-
-        $fullShippingCostRefunded = $creditmemo->getShippingAmount() > 0 ?
-            $proxy->getShippingData()['shipping_price'] === $creditmemo->getShippingAmount() :
-            false;
-
-        $fullShippingTaxRefunded = $creditmemo->getShippingTaxAmount() > 0 ?
-            $order->getChildObject()->getShippingPriceTaxAmount() === $creditmemo->getShippingTaxAmount() :
-            false;
-
-        $orderItemsCollection = $order->getItemsCollection();
-        $ordersItemsByAmazonId = [];
-        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
-        foreach ($orderItemsCollection as $orderItem) {
-            $ordersItemsByAmazonId[$orderItem->getChildObject()->getAmazonOrderItemId()] = $orderItem;
-        }
-        foreach ($creditmemo->getAllItems() as $creditmemoItem) {
-            /** @var \Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem */
-
-            $additionalData = $creditmemoItem->getOrderItem()->getAdditionalData();
-            if (!is_string($additionalData)) {
-                continue;
-            }
-
-            $additionalData = $this->getHelper('Data')->unserialize($additionalData);
-
-            if (
-                !isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
-                !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])
-            ) {
-                continue;
-            }
-
-            $qtyAvailable = (int)$creditmemoItem->getQty();
-
-            foreach ($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'] as &$data) {
-                if ($qtyAvailable <= 0 || !isset($data['order_item_id'])) {
-                    continue;
-                }
-
-                $orderItemId = $data['order_item_id'];
-                if (in_array($orderItemId, $itemsForRefund)) {
-                    continue;
-                }
-
-                if (!isset($ordersItemsByAmazonId[$orderItemId])) {
+                if (!$orderItemId || !isset($ordersItemsByAmazonId[$orderItemId])) {
                     continue;
                 }
 
                 $item = $ordersItemsByAmazonId[$orderItemId];
-                /*
-                 * Extension stores Refunded QTY for each item starting from v1.5.1
-                 */
-                $itemQtyRef = isset($data['refunded_qty'][$orderItemId]) ? $data['refunded_qty'][$orderItemId] : 0;
-                $itemQty = $item->getChildObject()->getQtyPurchased();
 
-                if ($itemQtyRef >= $itemQty) {
-                    continue;
-                }
-
-                if ($itemQty > $qtyAvailable) {
-                    $itemQty = $qtyAvailable;
-                }
-
-                $price = $creditmemoItem->getPriceInclTax();
-                $tax = $creditmemoItem->getTaxAmount();
+                $price = $creditmemoItem->getPrice() ?? 0.0;
+                $tax = $creditmemoItem->getTaxAmount() ?? 0.0;
 
                 if ($price > $item->getChildObject()->getPrice()) {
                     $price = $item->getChildObject()->getPrice();
@@ -112,61 +53,93 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                     $tax = $item->getChildObject()->getTaxAmount();
                 }
 
+                $cancelledItemQty = $cancelledQty;
+                if ($cancelledItemQty > $item->getChildObject()->getQtyPurchased()) {
+                    $cancelledItemQty = $item->getChildObject()->getQtyPurchased();
+
+                    $cancelledQty -= $cancelledItemQty;
+                    if ($cancelledQty < 0) {
+                        $cancelledQty = 0;
+                    }
+                }
+
                 $itemForRefund = [
                     'item_id' => $orderItemId,
                     'reason' => $refundReason,
-                    'qty' => $itemQty,
+                    'purchased_qty' => $item->getChildObject()->getQtyPurchased(),
+                    'cancelled_qty' => $cancelledItemQty,
                     'prices' => [
                         'product' => $price,
+                        'shipping' => $item->getChildObject()->getShippingPrice(),
                     ],
                     'taxes' => [
                         'product' => $tax,
+                        'shipping' => $item->getChildObject()->getShippingTaxAmount(),
                     ],
                 ];
 
-                if ($fullShippingCostRefunded) {
-                    $itemForRefund['prices']['shipping'] = $item->getChildObject()->getShippingPrice();
-                }
-
-                if ($fullShippingTaxRefunded || ($fullShippingCostRefunded && $isTaxAddedToShippingCost)) {
-                    $itemForRefund['taxes']['shipping'] = $item->getChildObject()->getShippingTaxAmount();
-                }
-
                 $itemsForRefund[] = $itemForRefund;
-
-                $qtyAvailable -= $itemQty;
-                $data['refunded_qty'][$orderItemId] = $itemQty;
             }
-
-            unset($data);
-
-            $creditmemoItem->getOrderItem()->setAdditionalData(
-                $this->getHelper('Data')->serialize($additionalData)
-            );
-            $creditmemoItem->getOrderItem()->save();
         }
 
         return $itemsForRefund;
     }
 
-    /**
-     * @return string
-     */
-    protected function getComponentMode()
+    protected function getComponentMode(): string
     {
         return \Ess\M2ePro\Helper\Component\Amazon::NICK;
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Order $order
-     *
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function isOrderStatusShipped(\Ess\M2ePro\Model\Order $order)
+    protected function isOrderStatusShipped(\Ess\M2ePro\Model\Order $order): bool
     {
         return $order->getChildObject()->isShipped() || $order->getChildObject()->isPartiallyShipped();
     }
 
-    //########################################
+    private function getRefundReason(\Ess\M2ePro\Model\Order $order): string
+    {
+        if ($order->getChildObject()->isShipped()) {
+            return self::AMAZON_REFUND_REASON_CUSTOMER_RETURN;
+        }
+
+        if ($order->getChildObject()->isPartiallyShipped()) {
+            return self::AMAZON_REFUND_REASON_CUSTOMER_RETURN;
+        }
+
+        if ($order->isOrderStatusUpdatingToShipped()) {
+            return self::AMAZON_REFUND_REASON_CUSTOMER_RETURN;
+        }
+
+        return self::AMAZON_REFUND_REASON_NO_INVENTORY;
+    }
+
+    private function getAmazonOrderItemsByAmazonId(\Ess\M2ePro\Model\Order $order): array
+    {
+        $orderItemsCollection = $order->getItemsCollection();
+        $ordersItemsByAmazonId = [];
+        /** @var \Ess\M2ePro\Model\Order\Item $orderItem */
+        foreach ($orderItemsCollection as $orderItem) {
+            $ordersItemsByAmazonId[$orderItem->getChildObject()->getAmazonOrderItemId()] = $orderItem;
+        }
+
+        return $ordersItemsByAmazonId;
+    }
+
+    private function getOrderItemsFromCreditMemoItem(\Magento\Sales\Model\Order\Creditmemo\Item $creditmemoItem): array
+    {
+        $additionalData = $creditmemoItem->getOrderItem()->getAdditionalData();
+        if (!is_string($additionalData)) {
+            return [];
+        }
+
+        $additionalData = $this->dataHelper->unserialize($additionalData);
+
+        if (
+            !isset($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items']) ||
+            !is_array($additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'])
+        ) {
+            return [];
+        }
+
+        return $additionalData[\Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER]['items'];
+    }
 }

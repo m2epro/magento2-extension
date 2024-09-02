@@ -218,7 +218,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseTitleInstructionTypes())
         ) {
             if ($this->isMeetReviseTitleRequirements()) {
@@ -231,7 +231,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseSubtitleInstructionTypes())
         ) {
             if ($this->isMeetReviseSubtitleRequirements()) {
@@ -244,7 +244,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseDescriptionInstructionTypes())
         ) {
             if ($this->isMeetReviseDescriptionRequirements()) {
@@ -257,7 +257,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseImagesInstructionTypes())
         ) {
             if ($this->isMeetReviseImagesRequirements()) {
@@ -275,7 +275,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseProductIdentifiersInstructionsTypes())
         ) {
             if ($this->isMeetReviseGeneralRequirements()) {
@@ -288,7 +288,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseCategoriesInstructionTypes())
         ) {
             if ($this->isMeetReviseCategoriesRequirements()) {
@@ -301,7 +301,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getRevisePartsInstructionTypes())
         ) {
             if ($this->isMeetRevisePartsRequirements()) {
@@ -314,7 +314,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseShippingInstructionTypes())
         ) {
             if ($this->isMeetReviseShippingRequirements()) {
@@ -327,7 +327,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseReturnInstructionTypes())
         ) {
             if ($this->isMeetReviseReturnRequirements()) {
@@ -340,7 +340,7 @@ class Active extends AbstractModel
         }
 
         if (
-            !$this->input->getListingProduct()->isBlockingByError()
+            !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseOtherInstructionTypes())
         ) {
             if ($this->isMeetReviseOtherRequirements()) {

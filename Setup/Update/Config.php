@@ -375,6 +375,7 @@ class Config extends AbstractConfig
             ],
             'y24_m08' => [
                 'AddDateOfInvoiceSendingToAmazonOrder',
+                'RemoveBlockingErrorsFromConfigTable',
             ],
         ];
     }
@@ -454,6 +455,7 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddOfferImagesToAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddEbayVideo::class,
+            \Ess\M2ePro\Setup\Update\y24_m08\RemoveBlockingErrorsFromConfigTable::class,
         ];
     }
 

@@ -72,6 +72,8 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $this->setVariationData($generalId);
 
+        $this->getListingProduct()->removeBlockingByError();
+
         $this->getListingProduct()->save();
 
         if (!$variationManager->isRelationParentType()) {

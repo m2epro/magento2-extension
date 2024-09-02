@@ -15,30 +15,25 @@ class Buffer
     private const MAX_PACK_SIZE = 500;
 
     /** @var array<int, Buffer\Item> */
-    private $items = [];
-    /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
-    private $relationResource;
-    /** @var \Ess\M2ePro\Model\Tag\Repository */
-    private $tagRepository;
-    /** @var \Ess\M2ePro\Model\Tag\ListingProduct\Repository */
-    private $listingProductTagRepository;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
-    private $listingProductResource;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
-    private $blockingErrorConfig;
+    private array $items = [];
+    private ResourceModel\Tag\ListingProduct\Relation $relationResource;
+    private \Ess\M2ePro\Model\Tag\Repository $tagRepository;
+    private Repository $listingProductTagRepository;
+    private ResourceModel\Listing\Product $listingProductResource;
+    private \Ess\M2ePro\Model\Tag\BlockingErrors $blockingErrors;
 
     public function __construct(
         \Ess\M2ePro\Model\Tag\Repository $tagRepository,
         ResourceModel\Tag\ListingProduct\Relation $relationResource,
         \Ess\M2ePro\Model\Tag\ListingProduct\Repository $listingProductTagRepository,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
-        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig
+        \Ess\M2ePro\Model\Tag\BlockingErrors $blockingErrors
     ) {
         $this->relationResource = $relationResource;
         $this->tagRepository = $tagRepository;
         $this->listingProductTagRepository = $listingProductTagRepository;
         $this->listingProductResource = $listingProductResource;
-        $this->blockingErrorConfig = $blockingErrorConfig;
+        $this->blockingErrors = $blockingErrors;
     }
 
     public function addTag(\Ess\M2ePro\Model\Listing\Product $listingProduct, \Ess\M2ePro\Model\Tag $tag): void
@@ -159,7 +154,7 @@ class Buffer
         $pack = [];
         $blockingErrorsPack = [];
 
-        $ebayBlockingErrorsList = $this->blockingErrorConfig->getEbayBlockingErrorsList();
+        $ebayBlockingErrorsList = $this->blockingErrors->getList();
 
         foreach ($items as $item) {
             $existRelation = $existsRelations[$item->getProductId()] ?? [];
@@ -211,7 +206,6 @@ class Buffer
         if (!empty($pack)) {
             foreach (array_chunk($pack, self::MAX_PACK_SIZE, true) as $chunk) {
                 $this->relationResource->removeTags($chunk);
-                $this->listingProductResource->deleteLastBlockingErrorDate(array_keys($chunk));
             }
         }
     }

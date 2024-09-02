@@ -1,23 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 class View extends AbstractContainer
 {
-    /** @var \Ess\M2ePro\Model\Listing */
-    private $listing;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+    private \Ess\M2ePro\Model\Listing $listing;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
@@ -76,11 +67,6 @@ class View extends AbstractContainer
                     unique set of available Actions accessible in the Mass Actions drop-down.</p>'
                     ),
                 ]
-            );
-
-            $this->setPageActionsBlock(
-                'Ebay_Listing_View_Switcher',
-                'ebay_listing_view_switcher'
             );
         }
 

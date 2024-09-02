@@ -47,6 +47,8 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
         $this->getAmazonListingProduct()->addData($data);
         $this->getAmazonListingProduct()->setIsStoppedManually(false);
 
+        $this->getListingProduct()->removeBlockingByError();
+
         $this->setLastSynchronizationDates();
 
         $this->getListingProduct()->save();

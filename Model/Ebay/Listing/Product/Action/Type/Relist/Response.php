@@ -76,6 +76,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $this->getListingProduct()->addData($data);
         $this->getListingProduct()->getChildObject()->addData($data);
+        $this->getListingProduct()->removeBlockingByError();
         $this->getListingProduct()->save();
 
         $this->updateVariationsValues(false);

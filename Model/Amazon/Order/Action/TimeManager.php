@@ -11,8 +11,8 @@ namespace Ess\M2ePro\Model\Amazon\Order\Action;
 class TimeManager
 {
     private const INTERVAL_ACTION_UPDATE = 3600;
-    private const INTERVAL_ACTION_CANCEL = 18000;
-    private const INTERVAL_ACTION_REFUND = 18000;
+    private const INTERVAL_ACTION_CANCEL = 7200;
+    private const INTERVAL_ACTION_REFUND = 7200;
 
     /** @var \Ess\M2ePro\Model\Registry\Manager */
     private $registryManager;

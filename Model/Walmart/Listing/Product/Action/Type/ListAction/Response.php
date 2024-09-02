@@ -45,6 +45,8 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
         $this->getWalmartListingProduct()->addData($data);
         $this->getWalmartListingProduct()->setIsStoppedManually(false);
 
+        $this->getListingProduct()->removeBlockingByError();
+
         $this->getListingProduct()->save();
 
         $instructionDate = new \DateTime('now', new \DateTimeZone('UTC'));

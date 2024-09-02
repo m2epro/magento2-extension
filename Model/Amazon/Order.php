@@ -915,12 +915,18 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return false;
         }
 
-        $adjustmentFee = $creditMemo !== null ? $creditMemo->getAdjustmentNegative() : null;
+        $adjustmentFee = $creditMemo !== null ? (float)$creditMemo->getAdjustmentNegative() : 0.0;
+        $adjustmentRefund = $creditMemo !== null ? (float)$creditMemo->getAdjustmentPositive() : 0.0;
+        $shippingRefund = $creditMemo !== null ? (float)$creditMemo->getShippingAmount() : 0.0;
+        $shippingTaxRefund = $creditMemo !== null ? (float)$creditMemo->getShippingTaxAmount() : 0.0;
 
         $params = [
             'order_id' => $this->getAmazonOrderId(),
             'currency' => $this->getCurrency(),
             'adjustment_fee' => $adjustmentFee,
+            'adjustment_refund' => $adjustmentRefund,
+            'shipping_refund' => $shippingRefund,
+            'shipping_tax_refund' => $shippingTaxRefund,
             'items' => $items
         ];
 

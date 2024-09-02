@@ -50,6 +50,8 @@ class Response extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Res
 
         $this->setLastSynchronizationDates();
 
+        $this->getListingProduct()->removeBlockingByError();
+
         $this->getListingProduct()->save();
     }
 

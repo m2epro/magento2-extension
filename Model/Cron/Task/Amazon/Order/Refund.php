@@ -133,12 +133,15 @@ class Refund extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $connectorData = [
-                'order_id' => $change->getOrderId(),
                 'change_id' => $change->getId(),
+                'order_id' => $change->getOrderId(),
                 'amazon_order_id' => $changeParams['order_id'],
                 'currency' => $changeParams['currency'],
+                'adjustment_fee' => $changeParams['adjustment_fee'] ?? 0,
+                'adjustment_refund' => $changeParams['adjustment_refund'] ?? 0,
+                'shipping_refund' => $changeParams['shipping_refund'] ?? 0,
+                'shipping_tax_refund' => $changeParams['shipping_tax_refund'] ?? 0,
                 'items' => $changeParams['items'],
-                'adjustment_fee' => $changeParams['adjustment_fee'] ?? null
             ];
 
             /** @var \Ess\M2ePro\Model\Cron\Task\Amazon\Order\Refund\Requester $connectorObj */

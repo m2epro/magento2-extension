@@ -218,32 +218,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
 
     public function updateLastBlockingErrorDate(array $listingProductIds, \DateTime $dateTime): int
     {
-        return $this->changeLastBlockingErrorDate(
-            $listingProductIds,
-            $dateTime->format('Y-m-d H:i:s')
-        );
-    }
-
-    public function deleteLastBlockingErrorDate(array $listingProductIds): int
-    {
-        return $this->changeLastBlockingErrorDate(
-            $listingProductIds,
-            new \Zend_Db_Expr('NULL')
-        );
-    }
-
-    /**
-     * @param array $listingProductIds
-     * @param \Zend_Db_Expr|string $value
-     *
-     * @return int
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function changeLastBlockingErrorDate(array $listingProductIds, $value): int
-    {
         return $this->getConnection()->update(
             $this->getMainTable(),
-            ['last_blocking_error_date' => $value],
+            ['last_blocking_error_date' => $dateTime->format('Y-m-d H:i:s')],
             ['id IN (?)' => $listingProductIds]
         );
     }

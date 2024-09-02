@@ -624,6 +624,20 @@ a.walmart-listing-view-switch-variation-mode:before {
     font-size: 1rem;
 }
 
+.listing-view-switchers-container .store-switcher{
+    margin-right: 50px;
+}
+.listing-view-switchers-container .switcher-simple{
+    float: left;
+    margin-top: .59rem;
+    padding: 5px 10px;
+}
+
+.listing-view-switchers-container .switcher-simple label{
+    font-weight: 600;
+    padding-right: 8px;
+}
+
 /* Disable events for action button child  */
 /* ================================================ */
 

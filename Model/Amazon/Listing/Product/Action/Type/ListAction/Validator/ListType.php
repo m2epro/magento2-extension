@@ -325,8 +325,9 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
             $this->addMessage(
                 $this->log->encodeDescription(
-                    '%worldwide_id_type% %worldwide_id% provided in Main Settings
-                     is not found on Amazon. Please set Product Type to create New ASIN/ISBN.',
+                    'No ASIN found for the %worldwide_id_type% %worldwide_id% provided in the Main Settings.
+                    Ensure that creation of new ASIN/ISBN is enabled and that a valid Product Type
+                    is assigned to the Listing Product.',
                     ['!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId->getIdentifier()]
                 )
             );

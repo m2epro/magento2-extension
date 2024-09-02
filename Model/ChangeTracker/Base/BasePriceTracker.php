@@ -20,23 +20,19 @@ abstract class BasePriceTracker implements TrackerInterface
     protected $attributesQueryBuilder;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition */
     private $priceConditionBuilder;
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig */
-    private $blockingErrorConfig;
 
     public function __construct(
         string $channel,
         QueryBuilderFactory $queryBuilderFactory,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         PriceConditionFactory $conditionFactory,
-        TrackerLogger $logger,
-        \Ess\M2ePro\Helper\Component\Ebay\BlockingErrorConfig $blockingErrorConfig
+        TrackerLogger $logger
     ) {
         $this->channel = $channel;
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->attributesQueryBuilder = $attributesQueryBuilder;
         $this->priceConditionBuilder = $conditionFactory->create($channel);
         $this->logger = $logger;
-        $this->blockingErrorConfig = $blockingErrorConfig;
     }
 
     /**
@@ -187,9 +183,8 @@ abstract class BasePriceTracker implements TrackerInterface
         /* We do not include products marked duplicate */
         $query->andWhere("JSON_EXTRACT(lp.additional_data, '$.item_duplicate_action_required') IS NULL");
 
-        $blockingErrorsRetryHours = $this->blockingErrorConfig->getEbayBlockingErrorRetrySeconds();
-        $minRetryDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
-        $minRetryDate->modify("-$blockingErrorsRetryHours seconds");
+        $dateTimeModifier = sprintf('-%s seconds', \Ess\M2ePro\Model\Tag\BlockingErrors::RETRY_ACTION_SECONDS);
+        $minRetryDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->modify($dateTimeModifier);
 
         /* Exclude products with a blocking error */
         $query->andWhere(

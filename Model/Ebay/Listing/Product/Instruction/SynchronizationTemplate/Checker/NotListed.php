@@ -35,7 +35,7 @@ class NotListed extends AbstractModel
             return false;
         }
 
-        if ($listingProduct->isBlockingByError()) {
+        if ($listingProduct->hasBlockingByError()) {
             return false;
         }
 
