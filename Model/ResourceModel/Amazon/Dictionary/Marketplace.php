@@ -1,24 +1,17 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace
- */
 class Marketplace extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    //########################################
+    public const COLUMN_ID = 'id';
+    public const COLUMN_MARKETPLACE_ID = 'marketplace_id';
+    public const COLUMN_PRODUCT_TYPES = 'product_types';
 
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('m2epro_amazon_dictionary_marketplace', 'id');
+        $this->_init(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_DICTIONARY_MARKETPLACE, self::COLUMN_ID);
     }
-
-    //########################################
 }

@@ -928,11 +928,7 @@ HTML;
 
         $marketPlaceId = $this->getListingProduct()->getListing()->getMarketplaceId();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
-        $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
-        $detailsModel->setMarketplaceId($marketPlaceId);
-
-        $channelThemes = $detailsModel->getVariationThemes($productTypeTemplate->getNick());
+        $channelThemes = $productTypeTemplate->getDictionary()->getVariationThemes();
 
         $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];

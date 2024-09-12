@@ -376,6 +376,10 @@ class Config extends AbstractConfig
             'y24_m08' => [
                 'AddDateOfInvoiceSendingToAmazonOrder',
                 'RemoveBlockingErrorsFromConfigTable',
+                'UpdateAmazonDictionaryProductType'
+            ],
+            'y24_m09' => [
+                'RemoveIsNewAsinAvailableFromAmazonMarketplace'
             ],
         ];
     }
@@ -438,24 +442,34 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y23_m12\AddCreateShipmentFbaOrdersColumn::class,
             \Ess\M2ePro\Setup\Update\y23_m12\AddTecdocKtypesIt::class,
             \Ess\M2ePro\Setup\Update\y23_m12\AddAmazonInventoryFbaFieldsInAmazonAccountTable::class,
+
             \Ess\M2ePro\Setup\Update\y24_m01\AddListingProductAdvancedFilterTable::class,
             \Ess\M2ePro\Setup\Update\y24_m01\ImproveAutoUpdateEbayFinalFees::class,
+
             \Ess\M2ePro\Setup\Update\y24_m02\AddReviseProductIdentifiersToEbaySyncTemplate::class,
             \Ess\M2ePro\Setup\Update\y24_m02\DisableAmazonMarketplaceWithoutAccounts::class,
+
             \Ess\M2ePro\Setup\Update\y24_m03\AddOnlineRegularMapPriceToAmazonListingProduct::class,
             \Ess\M2ePro\Setup\Update\y24_m03\AddKtypesResolveAttemptColumn::class,
             \Ess\M2ePro\Setup\Update\y24_m03\CreateAndFillAmazonAccountMerchantSettingTable::class,
+
             \Ess\M2ePro\Setup\Update\y24_m05\AddEbayPromotion::class,
+
             \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonShippingPalletDelivery::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddPriceLastUpdateDateColumnToEbayListingProductTable::class,
             \Ess\M2ePro\Setup\Update\y24_m06\RemoveAuEpidsVisibleFromConfigTable::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonMarketplaceSaudiArabia::class,
-            \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddEbayBundleOptionMappingTable::class,
+
+            \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddOfferImagesToAmazonListing::class,
             \Ess\M2ePro\Setup\Update\y24_m07\AddEbayVideo::class,
+
             \Ess\M2ePro\Setup\Update\y24_m08\RemoveBlockingErrorsFromConfigTable::class,
+            \Ess\M2ePro\Setup\Update\y24_m08\UpdateAmazonDictionaryProductType::class,
+
+            \Ess\M2ePro\Setup\Update\y24_m09\RemoveIsNewAsinAvailableFromAmazonMarketplace::class,
         ];
     }
 

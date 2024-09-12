@@ -1,19 +1,27 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Dictionary;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace as ResourceModel;
+
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace::class);
+    }
+
+    public function create(
+        \Ess\M2ePro\Model\Marketplace $marketplace,
+        array $productTypes
+    ): self {
+        $this->setData(ResourceModel::COLUMN_MARKETPLACE_ID, $marketplace->getId())
+             ->setData(ResourceModel::COLUMN_PRODUCT_TYPES, json_encode($productTypes));
+
+        return $this;
     }
 
     public function getId(): int
@@ -23,61 +31,11 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getMarketplaceId(): int
     {
-        return (int)$this->getData('marketplace_id');
+        return (int)$this->getData(ResourceModel::COLUMN_MARKETPLACE_ID);
     }
 
-    public function setMarketplaceId(int $marketplaceId): self
-    {
-        $this->setData('marketplace_id', $marketplaceId);
-
-        return $this;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function getClientDetailsLastUpdateDate(): \DateTime
-    {
-        return \Ess\M2ePro\Helper\Date::createDateGmt($this->getData('client_details_last_update_date'));
-    }
-
-    public function setClientDetailsLastUpdateDate(\DateTime $value): self
-    {
-        $this->setData('client_details_last_update_date', $value->format('Y-m-d H:i:s'));
-
-        return $this;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function getServerDetailsLastUpdateDate(): \DateTime
-    {
-        return \Ess\M2ePro\Helper\Date::createDateGmt($this->getData('server_details_last_update_date'));
-    }
-
-    public function setServerDetailsLastUpdateDate(\DateTime $value): self
-    {
-        $this->setData('server_details_last_update_date', $value->format('Y-m-d H:i:s'));
-
-        return $this;
-    }
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function getProductTypes(): array
     {
-        return $this->getSettings('product_types');
-    }
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function setProductTypes(array $productTypes): self
-    {
-        $this->setSettings('product_types', $productTypes);
-
-        return $this;
+        return (array)json_decode((string)$this->getData(ResourceModel::COLUMN_PRODUCT_TYPES), true);
     }
 }

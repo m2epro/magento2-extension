@@ -18,8 +18,6 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
     private $accountBuilder;
     /** @var \Ess\M2ePro\Model\AccountFactory */
     private $accountFactory;
-    /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Updater */
-    protected $marketplaceUpdater;
     /** @var \Ess\M2ePro\Model\MarketplaceFactory */
     protected $marketplaceFactory;
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
@@ -36,7 +34,6 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         \Ess\M2ePro\Model\Amazon\Account\Builder $accountBuilder,
         \Ess\M2ePro\Model\AccountFactory $accountFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Model\Amazon\Marketplace\Updater $marketplaceUpdater,
         \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -45,7 +42,6 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
         $this->marketplaceResource = $marketplaceResource;
         $this->marketplaceFactory = $marketplaceFactory;
-        $this->marketplaceUpdater = $marketplaceUpdater;
         $this->helperException = $helperException;
         $this->accountServerUpdate = $accountServerUpdate;
         $this->accountCollectionFactory = $accountCollectionFactory;
@@ -107,7 +103,6 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
                 (string)$params['selling_partner_id']
             );
         }
-        $this->marketplaceUpdater->update($marketplace);
 
         return $result;
     }

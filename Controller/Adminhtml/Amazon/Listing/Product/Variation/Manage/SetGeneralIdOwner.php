@@ -18,27 +18,16 @@ class SetGeneralIdOwner extends Main
     private $listingProductFactory;
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $session;
-    /** @var \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory */
-    private $amazonMarketplaceDetailsFactory;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data\Session $session
-     * @param \Ess\M2ePro\Model\Listing\ProductFactory $listingProductFactory
-     * @param \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory $amazonMarketplaceDetailsFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Data\Session $session,
         \Ess\M2ePro\Model\Listing\ProductFactory $listingProductFactory,
-        \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory $amazonMarketplaceDetailsFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
         $this->listingProductFactory = $listingProductFactory;
         $this->session = $session;
-        $this->amazonMarketplaceDetailsFactory = $amazonMarketplaceDetailsFactory;
     }
 
     /**
@@ -134,11 +123,7 @@ class SetGeneralIdOwner extends Main
                 return $data;
             }
 
-            $detailsModel = $this->amazonMarketplaceDetailsFactory->create();
-            $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
-            $themes = $detailsModel->getVariationThemes(
-                $amazonListingProduct->getProductTypeTemplate()->getNick()
-            );
+            $themes = $amazonListingProduct->getProductTypeTemplate()->getDictionary()->getVariationThemes();
 
             if (empty($themes)) {
                 $data['success'] = false;
@@ -155,7 +140,7 @@ class SetGeneralIdOwner extends Main
 
             $isCountEqual = false;
             foreach ($themes as $theme) {
-                if (count($theme['attributes']) == count($productAttributes)) {
+                if (count($theme['attributes']) === count($productAttributes)) {
                     $isCountEqual = true;
                     break;
                 }
@@ -169,8 +154,13 @@ class SetGeneralIdOwner extends Main
             }
         }
 
-        $listingProduct->getChildObject()->setData('is_general_id_owner', $generalIdOwner)->save();
-        $amazonListingProduct->getVariationManager()->getTypeModel()->getProcessor()->process();
+        $listingProduct->getChildObject()
+                       ->setData('is_general_id_owner', $generalIdOwner)
+                       ->save();
+        $amazonListingProduct->getVariationManager()
+                             ->getTypeModel()
+                             ->getProcessor()
+                             ->process();
 
         return $data;
     }

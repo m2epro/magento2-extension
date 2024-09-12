@@ -2,26 +2,23 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode;
 
-use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory as AmazonProductTypeCollectionFactory;
-
 class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractGlobalMode
 {
     /** @var \Ess\M2ePro\Helper\Module\Support */
     private $supportHelper;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
-    private $amazonProductTypeCollectionFactory;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $amazonTemplateProductTypeRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $amazonTemplateProductTypeRepository,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Module\Support $supportHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        AmazonProductTypeCollectionFactory $amazonProductTypeCollectionFactory,
         array $data = []
     ) {
         $this->supportHelper = $supportHelper;
-        $this->amazonProductTypeCollectionFactory = $amazonProductTypeCollectionFactory;
+        $this->amazonTemplateProductTypeRepository = $amazonTemplateProductTypeRepository;
         parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
     }
 
@@ -156,16 +153,15 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abs
             ]
         );
 
-        $collection = $this->amazonProductTypeCollectionFactory->create();
-        $collection->appendFilterMarketplaceId($this->getListing()->getMarketplaceId());
-
-        $productTypesTemplates = $collection->getData();
+        $productTypesTemplates = $this->amazonTemplateProductTypeRepository->findByMarketplaceId(
+            $this->getListing()->getMarketplaceId(),
+        );
 
         $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($productTypesTemplates as $template) {
             $options[] = [
-                'label' => $this->_escaper->escapeHtml($template['title']),
-                'value' => $template['id']
+                'label' => $this->_escaper->escapeHtml($template->getTitle()),
+                'value' => $template->getId(),
             ];
         }
 

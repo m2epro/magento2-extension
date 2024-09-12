@@ -1,0 +1,27 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="m2epro_general_handler"/>
+    <head>
+        <css src="Ess_M2ePro::css/amazon/product_type.css"/>
+    </head>
+    <body>
+        <referenceBlock name="menu">
+            <action method="setActive">
+                <argument name="itemId" xsi:type="string">Ess_M2ePro::amazon_configuration_product_types</argument>
+            </action>
+        </referenceBlock>
+
+        <referenceBlock name="main.top">
+            <block class="Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\HelpBlock"/>
+        </referenceBlock>
+
+        <referenceContainer name="content">
+            <block class="Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\RefreshAmazonDataProgressBar"/>
+
+            <container name="m2epro.amazon.progress_bar" htmlTag="div" htmlId="product_type_content_container">
+                <uiComponent name="m2epro_amazon_template_product_type_grid"/>
+            </container>
+
+        </referenceContainer>
+    </body>
+</page>

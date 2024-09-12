@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs\General;
 
 class SearchPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
@@ -15,11 +9,6 @@ class SearchPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     /** @var array */
     private $productTypes = [];
 
-    /**
-     * @param array $productTypes
-     *
-     * @return $this
-     */
     public function setProductTypes(array $productTypes): self
     {
         $this->productTypes = $productTypes;

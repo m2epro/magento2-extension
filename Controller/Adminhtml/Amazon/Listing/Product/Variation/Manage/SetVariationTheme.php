@@ -12,15 +12,12 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 
 class SetVariationTheme extends Main
 {
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Variation */
     protected $variationHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon\Vocabulary */
     protected $vocabularyHelper;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
         \Ess\M2ePro\Helper\Component\Amazon\Variation $variationHelper,
         \Ess\M2ePro\Helper\Component\Amazon\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -28,7 +25,6 @@ class SetVariationTheme extends Main
     ) {
         parent::__construct($amazonFactory, $context);
 
-        $this->productTypeHelper = $productTypeHelper;
         $this->variationHelper = $variationHelper;
         $this->vocabularyHelper = $vocabularyHelper;
     }
@@ -50,21 +46,18 @@ class SetVariationTheme extends Main
 
         $parentTypeModel = $amazonListingProduct->getVariationManager()->getTypeModel();
 
+        $variationThemesAttributes = $amazonListingProduct->getProductTypeTemplate()
+                                                          ->getDictionary()
+                                                          ->getVariationThemesAttributes($variationTheme);
+
         $additionalData = $listingProduct->getAdditionalData();
         if (
             empty($additionalData['migrated_to_product_types'])
             && $amazonListingProduct->isGeneralIdOwner()
         ) {
-            $productType = $amazonListingProduct->getProductTypeTemplate();
-            $productTypeNick = $productType->getNick();
-            $marketplaceId = $listingProduct->getListing()->getMarketplaceId();
-            $dictionary = $this->productTypeHelper->getMarketplaceDictionary($marketplaceId);
-            $dictionaryProductTypes = $dictionary->getProductTypes();
-            if (!empty($dictionaryProductTypes[$productTypeNick]['variation_themes'][$variationTheme])) {
-                $themeData = $dictionaryProductTypes[$productTypeNick]['variation_themes'][$variationTheme];
+            if (!empty($variationThemesAttributes)) {
                 $sets = [];
-
-                foreach ($themeData['attributes'] as $attribute) {
+                foreach ($variationThemesAttributes as $attribute) {
                     $sets[$attribute] = [];
                 }
 
@@ -88,16 +81,10 @@ class SetVariationTheme extends Main
 
         $this->variationHelper->increaseThemeUsageCount($variationTheme, $listingProduct->getMarketplace()->getId());
 
-        $productDataNick = $amazonListingProduct->getProductTypeTemplate()->getNick();
-
-        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $marketplaceDetails */
-        $marketplaceDetails = $this->modelFactory->getObject('Amazon_Marketplace_Details');
-        $marketplaceDetails->setMarketplaceId($amazonListingProduct->getMarketplace()->getId());
-
-        $themeAttributes = $marketplaceDetails->getVariationThemeAttributes($productDataNick, $variationTheme);
+        $themeAttributes = $variationThemesAttributes;
         $productAttributes = $parentTypeModel->getProductAttributes();
 
-        if (count($themeAttributes) != 1 || count($productAttributes) != 1) {
+        if (count($themeAttributes) !== 1 || count($productAttributes) !== 1) {
             $parentTypeModel->getProcessor()->process();
             $this->setJsonContent($result);
 

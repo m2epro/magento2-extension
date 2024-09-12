@@ -6,20 +6,15 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType;
 
 class IsUniqueTitle extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
-    private $productTypeCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType */
-    private $dictionaryProductTypeResource;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory $productTypeCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType $dictionaryProductTypeResource,
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
-        $this->productTypeCollectionFactory = $productTypeCollectionFactory;
-        $this->dictionaryProductTypeResource = $dictionaryProductTypeResource;
+        $this->templateProductTypeRepository = $templateProductTypeRepository;
     }
 
     public function execute(): \Magento\Framework\Controller\ResultInterface
@@ -33,7 +28,7 @@ class IsUniqueTitle extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Pro
         }
 
         $this->setJsonContent([
-            'result' => $this->isUniqueTitle($title, (int)$marketplaceId, (int)$productTypeId)
+            'result' => $this->isUniqueTitle($title, (int)$marketplaceId, (int)$productTypeId),
         ]);
 
         return $this->getResult();
@@ -41,19 +36,12 @@ class IsUniqueTitle extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Pro
 
     private function isUniqueTitle(string $title, int $marketplaceId, int $productTypeId): bool
     {
-        $collection = $this->productTypeCollectionFactory->create();
-        $collection->joinInner(
-            ['dictionary' => $this->dictionaryProductTypeResource->getMainTable()],
-            'dictionary.id = dictionary_product_type_id',
-            ['marketplace_id' => 'marketplace_id']
+        $exist = $this->templateProductTypeRepository->findByTitleMarketplace(
+            $title,
+            $marketplaceId,
+            $productTypeId > 0 ? $productTypeId : null
         );
 
-        $collection->addFieldToFilter('main_table.title', ['eq' => $title]);
-        $collection->addFieldToFilter('dictionary.marketplace_id', ['eq' => $marketplaceId]);
-        if ($productTypeId > 0) {
-            $collection->addFieldToFilter('main_table.id', ['neq' => $productTypeId]);
-        }
-
-        return $collection->getSize() === 0;
+        return $exist === null;
     }
 }

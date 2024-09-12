@@ -56,14 +56,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     /**
      * @return bool
      */
-    public function isNewAsinAvailable()
-    {
-        return (bool)$this->getData('is_new_asin_available');
-    }
-
-    /**
-     * @return bool
-     */
     public function isMerchantFulfillmentAvailable()
     {
         return (bool)$this->getData('is_merchant_fulfillment_available');

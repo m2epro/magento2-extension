@@ -1,19 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Component\Amazon;
 
 class Variation
 {
     private const DATA_REGISTRY_KEY = 'amazon_variation_themes_usage';
 
-    /** @var \Ess\M2ePro\Model\Factory */
-    private $modelFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     private $activeRecordFactory;
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
@@ -32,7 +24,6 @@ class Variation
     private $listingProductCollectionFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonParentFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
@@ -42,7 +33,6 @@ class Variation
         \Ess\M2ePro\Model\Registry\Manager $registry,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
     ) {
-        $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->amazonParentFactory = $amazonParentFactory;
         $this->resourceConnection = $resourceConnection;
@@ -271,9 +261,6 @@ class Variation
 
     public function filterParentProductsByVariationTheme($productsIds)
     {
-        /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Details $detailsModel */
-        $detailsModel = $this->modelFactory->getObject('Amazon_Marketplace_Details');
-
         foreach ($productsIds as $key => $productId) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             $listingProduct = $this->amazonParentFactory->getObjectLoaded('Listing\Product', $productId);
@@ -285,19 +272,15 @@ class Variation
                 continue;
             }
 
-            $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
-
             $productType = $amazonListingProduct->getProductTypeTemplate();
             if ($productType === null) {
                 unset($productsIds[$key]);
                 continue;
             }
 
-            $themes = $detailsModel->getVariationThemes(
-                $productType->getNick()
-            );
+            $dictionary = $productType->getDictionary();
 
-            if (empty($themes)) {
+            if (!$dictionary->hasVariationThemes()) {
                 unset($productsIds[$key]);
             }
         }
@@ -357,6 +340,4 @@ class Variation
         $cacheKey = __CLASS__ . self::DATA_REGISTRY_KEY;
         $this->cachePermanent->removeValue($cacheKey);
     }
-
-    //########################################
 }

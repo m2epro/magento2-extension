@@ -1,66 +1,40 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Magento\Order;
 
-/**
- * Class \Ess\M2ePro\Model\Magento\Order\Updater
- */
-class Updater extends \Ess\M2ePro\Model\AbstractModel
+class Updater
 {
-    //########################################
+    private \Magento\Customer\Model\CustomerFactory $customerFactory;
+    private \Magento\Customer\Model\AddressFactory $customerAddressFactory;
+    private \Magento\Sales\Model\Order\AddressFactory $addressFactory;
+    private \Magento\Sales\Model\Order $magentoOrder;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
-    protected $customerFactory;
-    protected $customerAddressFactory;
-    protected $addressFactory;
-
-    /** @var \Magento\Sales\Model\Order $magentoOrder */
-    protected $magentoOrder;
-
-    protected $needSave = false;
-
-    //########################################
+    private bool $needSave = false;
 
     public function __construct(
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Customer\Model\AddressFactory $customerAddressFactory,
         \Magento\Sales\Model\Order\AddressFactory $addressFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Helper\Data $dataHelper
     ) {
         $this->customerFactory = $customerFactory;
         $this->customerAddressFactory = $customerAddressFactory;
         $this->addressFactory = $addressFactory;
-        parent::__construct($helperFactory, $modelFactory);
+        $this->dataHelper = $dataHelper;
     }
-
-    //########################################
 
     /**
      * Set magento order for updating
-     *
-     * @param \Magento\Sales\Model\Order $order
-     *
-     * @return $this
      */
-    public function setMagentoOrder(\Magento\Sales\Model\Order $order)
+    public function setMagentoOrder(\Magento\Sales\Model\Order $order): self
     {
         $this->magentoOrder = $order;
 
         return $this;
     }
 
-    //########################################
-
-    /**
-     * @return \Magento\Customer\Model\Customer
-     */
-    private function getMagentoCustomer()
+    private function getMagentoCustomer(): ?\Magento\Customer\Model\Customer
     {
         if ($this->magentoOrder->getCustomerIsGuest()) {
             return null;
@@ -79,14 +53,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         return $customer->getId() ? $customer : null;
     }
 
-    //########################################
-
-    /**
-     * Update shipping address
-     *
-     * @param array $addressInfo
-     */
-    public function updateShippingAddress(array $addressInfo)
+    public function updateShippingAddress(array $addressInfo): void
     {
         if ($this->magentoOrder->isCanceled()) {
             return;
@@ -95,7 +62,6 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $shippingAddress = $this->magentoOrder->getShippingAddress();
         if ($shippingAddress instanceof \Magento\Sales\Model\Order\Address) {
             $shippingAddress->addData($addressInfo);
-            $shippingAddress->save();
         } else {
             /** @var \Magento\Sales\Model\Order\Address $shippingAddress */
             $shippingAddress = $this->addressFactory->create();
@@ -104,8 +70,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
             // we need to set shipping address to order before address save to init parent_id field
             $this->magentoOrder->setShippingAddress($shippingAddress);
-            $shippingAddress->save();
         }
+        $shippingAddress->save();
 
         // we need to save order to update data in table sales_flat_order_grid
         // setData method will force magento model to save entity
@@ -113,22 +79,39 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $this->needSave = true;
     }
 
-    public function updateShippingDescription($shippingDescription)
+    public function updateBillingAddress(array $addressInfo): void
+    {
+        if ($this->magentoOrder->isCanceled()) {
+            return;
+        }
+
+        $billingAddress = $this->magentoOrder->getBillingAddress();
+        if ($billingAddress instanceof \Magento\Sales\Model\Order\Address) {
+            $billingAddress->addData($addressInfo);
+        } else {
+            /** @var \Magento\Sales\Model\Order\Address $billingAddress */
+            $billingAddress = $this->addressFactory->create();
+            $billingAddress->setCustomerId($this->magentoOrder->getCustomerId());
+            $billingAddress->addData($addressInfo);
+
+            $this->magentoOrder->setBillingAddress($billingAddress);
+        }
+        $billingAddress->save();
+
+        $this->magentoOrder->setForceUpdateGridRecords(false);
+        $this->needSave = true;
+    }
+
+    public function updateShippingDescription($shippingDescription): void
     {
         $this->magentoOrder->setData('shipping_description', $shippingDescription);
         $this->needSave = true;
     }
 
-    //########################################
-
     /**
      * Update customer email
-     *
-     * @param $email
-     *
-     * @return null
      */
-    public function updateCustomerEmail($email)
+    public function updateCustomerEmail($email): void
     {
         if ($this->magentoOrder->isCanceled()) {
             return;
@@ -160,10 +143,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * Update customer address
-     *
-     * @param array $customerAddress
      */
-    public function updateCustomerAddress(array $customerAddress)
+    public function updateCustomerAddress(array $customerAddress): void
     {
         if ($this->magentoOrder->isCanceled()) {
             return;
@@ -189,14 +170,10 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $customerAddress->save();
     }
 
-    //########################################
-
     /**
      * Update payment data (payment method, transactions, etc)
-     *
-     * @param array $newPaymentData
      */
-    public function updatePaymentData(array $newPaymentData)
+    public function updatePaymentData(array $newPaymentData): void
     {
         if ($this->magentoOrder->isCanceled()) {
             return;
@@ -205,21 +182,15 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $payment = $this->magentoOrder->getPayment();
         if ($payment instanceof \Magento\Sales\Model\Order\Payment) {
             $payment->setAdditionalData(
-                $this->getHelper('Data')->serialize($newPaymentData)
+                $this->dataHelper->serialize($newPaymentData)
             )->save();
         }
     }
 
-    //########################################
-
     /**
      * Add notes
-     *
-     * @param mixed $comments
-     *
-     * @return null
      */
-    public function updateComments($comments)
+    public function updateComments($comments): void
     {
         if ($this->magentoOrder->isCanceled()) {
             return;
@@ -231,23 +202,17 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         !is_array($comments) && $comments = [$comments];
 
-        $header = '<br/><b><u>' . $this->getHelper('Module\Translation')->__('M2E Pro Notes') . ':</u></b><br/><br/>';
+        $header = '<br/><b><u>' . __('M2E Pro Notes') . ':</u></b><br/><br/>';
         $comments = implode('<br/><br/>', $comments);
 
         $this->magentoOrder->addCommentToStatusHistory($header . $comments);
         $this->needSave = true;
     }
 
-    //########################################
-
     /**
      * Update status
-     *
-     * @param $status
-     *
-     * @return null
      */
-    public function updateStatus($status)
+    public function updateStatus($status): void
     {
         if ($this->magentoOrder->isCanceled()) {
             return;
@@ -269,9 +234,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $this->needSave = true;
     }
 
-    //########################################
-
-    public function cancel()
+    public function cancel(): void
     {
         $this->magentoOrder->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_CANCEL, true);
         $this->magentoOrder->setActionFlag(\Magento\Sales\Model\Order::ACTION_FLAG_UNHOLD, true);
@@ -279,17 +242,13 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $this->magentoOrder->cancel()->save();
     }
 
-    //########################################
-
     /**
      * Save magento order only once and only if it's needed
      */
-    public function finishUpdate()
+    public function finishUpdate(): void
     {
         if ($this->needSave) {
             $this->magentoOrder->save();
         }
     }
-
-    //########################################
 }

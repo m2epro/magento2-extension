@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit;
 
 class FieldTemplates extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
@@ -15,11 +9,6 @@ class FieldTemplates extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     /** @var array */
     private $attributes;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -44,9 +33,7 @@ class FieldTemplates extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             ]
         );
     }
-    /**
-     * @return array
-     */
+
     public function getAvailableAttributes(): array
     {
         return $this->attributes;

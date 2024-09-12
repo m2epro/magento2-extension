@@ -1,14 +1,10 @@
 define([
     'underscore',
-    'Magento_Ui/js/modal/alert',
-    'M2ePro/Amazon/Listing/Create/General/MarketplaceSynchProgress',
-    'M2ePro/Plugin/ProgressBar',
-    'M2ePro/Plugin/AreaWrapper'
-], function(_, alert) {
+    'M2ePro/Common'
+], function(_) {
 
-    window.AmazonListingCreateGeneral = Class.create({
+    window.AmazonListingCreateGeneral = Class.create(Common, {
 
-        marketplaceSynchProgressObj: null,
         accounts: null,
         selectedAccountId: null,
 
@@ -16,11 +12,6 @@ define([
 
         initialize: function() {
             var self = this;
-
-            self.marketplaceSynchProgressObj = new AmazonListingCreateGeneralMarketplaceSynchProgress(
-                new ProgressBar('progress_bar'),
-                new AreaWrapper('content_container')
-            );
 
             CommonObj.setValidationCheckRepetitionValue(
                 'M2ePro-listing-title',
@@ -75,13 +66,9 @@ define([
             var self = this;
 
             $('save_and_next').observe('click', function() {
-                if (self.marketplaceSynchProgressObj.runningNow) {
-                    alert({
-                        content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
-                    });
-                    return;
+                if (jQuery('#edit_form').valid()) {
+                    self.saveClick(M2ePro.url.get('amazon_listing_create/index'), true);
                 }
-                jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
             });
         },
 
@@ -183,42 +170,6 @@ define([
             });
         },
 
-        synchronizeMarketplace: function(marketplaceId) {
-            var self = this;
-
-            new Ajax.Request(M2ePro.url.get('general/isMarketplaceEnabled'), {
-                method: 'get',
-                parameters: {marketplace_id: marketplaceId},
-                onSuccess: function(transport) {
-
-                    var result = transport.responseText.evalJSON();
-                    if (result.status) {
-                        return self.marketplaceSynchProgressObj.end();
-                    }
-
-                    var params = {};
-                    params['status_' + marketplaceId] = 1;
-
-                    new Ajax.Request(M2ePro.url.get('amazon_marketplace/save'), {
-                        method: 'post',
-                        parameters: params,
-                        onSuccess: function() {
-
-                            var title = 'Amazon ' + $('marketplace_title').innerHTML;
-                            $('save_and_next').disable();
-
-                            self.marketplaceSynchProgressObj.runTask(
-                                title,
-                                M2ePro.url.get('amazon_marketplace/runSynchNow', {marketplace_id: marketplaceId}),
-                                M2ePro.url.get('amazon_marketplace/synchGetExecutingInfo'),
-                                'AmazonListingCreateGeneralObj.marketplaceSynchProgressObj.end()'
-                            );
-                        }
-                    });
-                }
-            });
-        },
-
         isAccountsEqual: function(newAccounts) {
             if (!newAccounts.length && !this.accounts.length) {
                 return true;
@@ -232,7 +183,5 @@ define([
                 return _.where(newAccounts, account).length > 0;
             });
         }
-
-        // ---------------------------------------
     });
 });

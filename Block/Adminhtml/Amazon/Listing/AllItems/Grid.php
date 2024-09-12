@@ -344,25 +344,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $collection = $this->amazonProductCollectionFactory->create();
         $collection->distinct(true);
-        $collection->joinLeft(
-            ['main_table_child' => $this->amazonProductResource->getMainTable()],
-            'main_table.listing_product_id = main_table_child.variation_parent_id'
-        );
         $collection->join(
             ['tag_rel' => $this->tagRelationResource->getMainTable()],
             'main_table.listing_product_id = tag_rel.listing_product_id'
-            . ' OR main_table_child.listing_product_id = tag_rel.listing_product_id'
-        );
-        $collection->join(
-            ['tag' => $this->tagResource->getMainTable()],
-            'tag.id = tag_rel.tag_id'
         );
 
-        $collection->getSelect()->where('main_table.variation_parent_id IS NULL');
-        $collection->getSelect()->where('tag.id = ?', $tagId);
+        $collection->getSelect()->where('tag_rel.tag_id = ?', $tagId);
 
         $collection->getSelect()->reset('columns');
-        $collection->getSelect()->columns('main_table.listing_product_id');
+        $collection->getSelect()->columns(
+            new \Zend_Db_Expr('IFNULL(main_table.variation_parent_id, main_table.listing_product_id)')
+        );
 
         return $collection->getSelect();
     }

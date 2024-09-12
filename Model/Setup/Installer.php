@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Model\Setup;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace as AmazonDictionaryMarketplaceResoruce;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as AmazonDictionaryProductTypeResource;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Config\ConfigOptionsListConstants;
@@ -8479,11 +8481,12 @@ class Installer
                                                          ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonDictionaryCategoryProductDataTable);
 
+        # region amazon_dictionary_marketplace
         $amazonDictionaryMarketplaceTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_dictionary_marketplace')
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_DICTIONARY_MARKETPLACE)
         )
                                                  ->addColumn(
-                                                     'id',
+                                                     AmazonDictionaryMarketplaceResoruce::COLUMN_ID,
                                                      Table::TYPE_INTEGER,
                                                      null,
                                                      [
@@ -8494,41 +8497,34 @@ class Installer
                                                      ]
                                                  )
                                                  ->addColumn(
-                                                     'marketplace_id',
+                                                     AmazonDictionaryMarketplaceResoruce::COLUMN_MARKETPLACE_ID,
                                                      Table::TYPE_INTEGER,
                                                      null,
                                                      ['unsigned' => true, 'nullable' => false]
                                                  )
                                                  ->addColumn(
-                                                     'client_details_last_update_date',
-                                                     Table::TYPE_DATETIME,
-                                                     null,
-                                                     ['default' => null]
-                                                 )
-                                                 ->addColumn(
-                                                     'server_details_last_update_date',
-                                                     Table::TYPE_DATETIME,
-                                                     null,
-                                                     ['default' => null]
-                                                 )
-                                                 ->addColumn(
-                                                     'product_types',
+                                                     AmazonDictionaryMarketplaceResoruce::COLUMN_PRODUCT_TYPES,
                                                      Table::TYPE_TEXT,
                                                      self::LONG_COLUMN_SIZE,
                                                      ['default' => null]
                                                  )
-                                                 ->addIndex('marketplace_id', 'marketplace_id')
+                                                 ->addIndex(
+                                                     'marketplace_id',
+                                                     AmazonDictionaryMarketplaceResoruce::COLUMN_MARKETPLACE_ID
+                                                 )
                                                  ->setOption('type', 'INNODB')
                                                  ->setOption('charset', 'utf8')
                                                  ->setOption('collate', 'utf8_general_ci')
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonDictionaryMarketplaceTable);
+        # endregion
 
+        #region amazon_dictionary_product_type
         $amazonDictionaryProductTypeTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_dictionary_product_type')
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_DICTIONARY_PRODUCT_TYPE)
         )
                                                  ->addColumn(
-                                                     'id',
+                                                     AmazonDictionaryProductTypeResource::COLUMN_ID,
                                                      Table::TYPE_INTEGER,
                                                      null,
                                                      [
@@ -8539,31 +8535,55 @@ class Installer
                                                      ]
                                                  )
                                                  ->addColumn(
-                                                     'marketplace_id',
+                                                     AmazonDictionaryProductTypeResource::COLUMN_MARKETPLACE_ID,
                                                      Table::TYPE_INTEGER,
                                                      null,
                                                      ['unsigned' => true, 'nullable' => false]
                                                  )
                                                  ->addColumn(
-                                                     'nick',
+                                                     AmazonDictionaryProductTypeResource::COLUMN_NICK,
                                                      Table::TYPE_TEXT,
                                                      255,
                                                      ['nullable' => false]
                                                  )
                                                  ->addColumn(
-                                                     'title',
+                                                     AmazonDictionaryProductTypeResource::COLUMN_TITLE,
                                                      Table::TYPE_TEXT,
                                                      255,
                                                      ['nullable' => false]
                                                  )
                                                  ->addColumn(
-                                                     'scheme',
+                                                     AmazonDictionaryProductTypeResource::COLUMN_SCHEMA,
                                                      Table::TYPE_TEXT,
                                                      self::LONG_COLUMN_SIZE,
                                                      ['nullable' => false]
                                                  )
                                                  ->addColumn(
-                                                     'invalid',
+                                                     AmazonDictionaryProductTypeResource::COLUMN_VARIATION_THEMES,
+                                                     Table::TYPE_TEXT,
+                                                     self::LONG_COLUMN_SIZE,
+                                                     ['nullable' => false],
+                                                 )
+                                                 ->addColumn(
+                                                     AmazonDictionaryProductTypeResource::COLUMN_ATTRIBUTES_GROUPS,
+                                                     Table::TYPE_TEXT,
+                                                     self::LONG_COLUMN_SIZE,
+                                                     ['nullable' => false],
+                                                 )
+                                                 ->addColumn(
+                                                     AmazonDictionaryProductTypeResource::COLUMN_CLIENT_DETAILS_LAST_UPDATE_DATE,
+                                                     Table::TYPE_DATETIME,
+                                                     null,
+                                                     ['nullable' => false],
+                                                 )
+                                                 ->addColumn(
+                                                     AmazonDictionaryProductTypeResource::COLUMN_SERVER_DETAILS_LAST_UPDATE_DATE,
+                                                     Table::TYPE_DATETIME,
+                                                     null,
+                                                     ['nullable' => false],
+                                                 )
+                                                 ->addColumn(
+                                                     AmazonDictionaryProductTypeResource::COLUMN_INVALID,
                                                      Table::TYPE_SMALLINT,
                                                      null,
                                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
@@ -8578,6 +8598,7 @@ class Installer
                                                  ->setOption('collate', 'utf8_general_ci')
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonDictionaryProductTypeTable);
+        # endregion
 
         $amazonDictionarySpecificTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_dictionary_specific')
@@ -9577,7 +9598,9 @@ class Installer
                                                                 ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonIndexerListingProductVariationParentTable);
 
-        $amazonMarketplaceTable = $this->getConnection()->newTable($this->getFullTableName('amazon_marketplace'))
+        $amazonMarketplaceTable = $this->getConnection()->newTable(
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_MARKETPLACE)
+        )
                                        ->addColumn(
                                            'marketplace_id',
                                            Table::TYPE_INTEGER,
@@ -9589,12 +9612,6 @@ class Installer
                                            Table::TYPE_TEXT,
                                            255,
                                            ['nullable' => false]
-                                       )
-                                       ->addColumn(
-                                           'is_new_asin_available',
-                                           Table::TYPE_SMALLINT,
-                                           null,
-                                           ['unsigned' => true, 'nullable' => false, 'default' => 1]
                                        )
                                        ->addColumn(
                                            'is_merchant_fulfillment_available',
@@ -9620,7 +9637,6 @@ class Installer
                                            null,
                                            ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                        )
-                                       ->addIndex('is_new_asin_available', 'is_new_asin_available')
                                        ->addIndex(
                                            'is_merchant_fulfillment_available',
                                            'is_merchant_fulfillment_available'
@@ -11341,7 +11357,6 @@ class Installer
                 [
                     'marketplace_id' => 24,
                     'default_currency' => 'CAD',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
@@ -11350,7 +11365,6 @@ class Installer
                 [
                     'marketplace_id' => 25,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11359,7 +11373,6 @@ class Installer
                 [
                     'marketplace_id' => 26,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11368,7 +11381,6 @@ class Installer
                 [
                     'marketplace_id' => 28,
                     'default_currency' => 'GBP',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11377,7 +11389,6 @@ class Installer
                 [
                     'marketplace_id' => 29,
                     'default_currency' => 'USD',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11386,7 +11397,6 @@ class Installer
                 [
                     'marketplace_id' => 30,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11395,7 +11405,6 @@ class Installer
                 [
                     'marketplace_id' => 31,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11404,7 +11413,6 @@ class Installer
                 [
                     'marketplace_id' => 34,
                     'default_currency' => 'MXN',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
@@ -11413,7 +11421,6 @@ class Installer
                 [
                     'marketplace_id' => 35,
                     'default_currency' => 'AUD',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 0,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
@@ -11422,7 +11429,6 @@ class Installer
                 [
                     'marketplace_id' => 39,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11431,7 +11437,6 @@ class Installer
                 [
                     'marketplace_id' => 40,
                     'default_currency' => 'TRY',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
@@ -11440,7 +11445,6 @@ class Installer
                 [
                     'marketplace_id' => 41,
                     'default_currency' => 'SEK',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 1,
@@ -11449,7 +11453,6 @@ class Installer
                 [
                     'marketplace_id' => 42,
                     'default_currency' => 'JPY',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
@@ -11458,7 +11461,6 @@ class Installer
                 [
                     'marketplace_id' => 43,
                     'default_currency' => 'PLN',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 1,
@@ -11467,7 +11469,6 @@ class Installer
                 [
                     'marketplace_id' => 44,
                     'default_currency' => 'BRL',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11476,7 +11477,6 @@ class Installer
                 [
                     'marketplace_id' => 45,
                     'default_currency' => 'SGD',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11485,7 +11485,6 @@ class Installer
                 [
                     'marketplace_id' => 46,
                     'default_currency' => 'INR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11494,7 +11493,6 @@ class Installer
                 [
                     'marketplace_id' => 47,
                     'default_currency' => 'AED',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 0,
@@ -11503,7 +11501,6 @@ class Installer
                 [
                     'marketplace_id' => 48,
                     'default_currency' => 'EUR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11512,7 +11509,6 @@ class Installer
                 [
                     'marketplace_id' => 49,
                     'default_currency' => 'ZAR',
-                    'is_new_asin_available' => 1,
                     'is_merchant_fulfillment_available' => 1,
                     'is_business_available' => 1,
                     'is_vat_calculation_service_available' => 1,
@@ -11521,7 +11517,6 @@ class Installer
                 [
                     AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 50,
                     AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'SAR',
-                    AmazonMarketplaceResource::COLUMN_IS_NEW_ASIN_AVAILABLE => 1,
                     AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
                     AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
                     AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,

@@ -70,6 +70,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
             $this->getMessagesSet()->clearEntities();
             $this->validate();
 
+            $this->clearVariationsThatCanNotBeDeleted();
+
             $this->prepareModuleVariations();
             $this->validateModuleVariations();
 
@@ -110,6 +112,13 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return true;
+    }
+
+    private function clearVariationsThatCanNotBeDeleted()
+    {
+        $this->listingProduct
+            ->setSetting('additional_data', 'variations_that_can_not_be_deleted', [])
+            ->save();
     }
 
     private function validateModuleVariations()
@@ -750,7 +759,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     {
         $hash = [];
 
-        foreach ($variation['specifics'] as $name => $value) {
+        foreach ($variation['specifics'] ?? [] as $name => $value) {
             $hash[] = trim($name) . '-' . trim($value);
         }
 

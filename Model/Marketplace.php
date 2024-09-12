@@ -73,9 +73,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
     // ----------------------------------------
 
-    public function getTitle()
+    public function getTitle(): string
     {
-        return $this->getData('title');
+        return (string)$this->getData('title');
     }
 
     public function getCode()

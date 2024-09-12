@@ -73,7 +73,7 @@ class AddAmazonMarketplaceSaudiArabia extends \Ess\M2ePro\Model\Setup\Upgrade\En
             [
                 AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 50,
                 AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'SAR',
-                AmazonMarketplaceResource::COLUMN_IS_NEW_ASIN_AVAILABLE => 1,
+                'is_new_asin_available' => 1,
                 AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
                 AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
                 AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,

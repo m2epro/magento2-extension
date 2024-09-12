@@ -1,38 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AutoAction\Mode\Category;
-
-use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory as AmazonProductTypeCollectionFactory;
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\AbstractForm
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
-    private $amazonProductTypeCollectionFactory;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $amazonTemplateProductTypeRepository;
 
-    /**
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param AmazonProductTypeCollectionFactory $amazonProductTypeCollectionFactory
-     * @param array $data
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $amazonTemplateProductTypeRepository,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        AmazonProductTypeCollectionFactory $amazonProductTypeCollectionFactory,
         array $data = []
     ) {
+        $this->amazonTemplateProductTypeRepository = $amazonTemplateProductTypeRepository;
         parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
-        $this->amazonProductTypeCollectionFactory = $amazonProductTypeCollectionFactory;
     }
 
     public function _construct()
@@ -44,8 +27,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
         $this->setId('amazonListingAutoActionModeCategoryForm');
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -155,16 +136,15 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             ]
         );
 
-        $collection = $this->amazonProductTypeCollectionFactory->create();
-        $collection->appendFilterMarketplaceId($this->getListing()->getMarketplaceId());
-
-        $productTypeTemplates = $collection->getData();
+        $productTypeTemplates = $this->amazonTemplateProductTypeRepository->findByMarketplaceId(
+            $this->getListing()->getMarketplaceId()
+        );
 
         $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
         foreach ($productTypeTemplates as $template) {
             $options[] = [
-                'label' => $this->_escaper->escapeHtml($template['title']),
-                'value' => $template['id'],
+                'label' => $this->_escaper->escapeHtml($template->getTitle()),
+                'value' => $template->getId(),
             ];
         }
 

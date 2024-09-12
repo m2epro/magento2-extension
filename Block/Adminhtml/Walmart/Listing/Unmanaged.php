@@ -244,7 +244,7 @@ JS
         <div>
             <h3>{$this->__('Confirm the Unmanaged Listings reset')}</h3>
             <p>{$this->__(
-            'This action will remove all the items from Amazon Unmanaged Listings.
+            'This action will remove all the items from Walmart Unmanaged Listings.
              It will take some time to import them again.'
         )}</p>
              <br>

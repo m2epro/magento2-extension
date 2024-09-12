@@ -6,8 +6,6 @@ class AttributesValidator
 {
     public const ERROR_TAG_CODE = '99001-m2e';
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\ProductType\Validation */
     private $productTypeValidationResource;
     /** @var \Ess\M2ePro\Model\Amazon\ProductType\ValidationFactory */
@@ -18,21 +16,22 @@ class AttributesValidator
     private $amazonTagFactory;
     /** @var \Ess\M2ePro\Model\TagFactory */
     private $baseTagFactory;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
 
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
         \Ess\M2ePro\Model\ResourceModel\Amazon\ProductType\Validation $productTypeValidationResource,
         \Ess\M2ePro\Model\Amazon\ProductType\ValidationFactory $productTypeValidationFactory,
         \Ess\M2ePro\Model\Tag\ListingProduct\Buffer $tagBuffer,
         \Ess\M2ePro\Model\Amazon\TagFactory $amazonTagFactory,
         \Ess\M2ePro\Model\TagFactory $baseTagFactory
     ) {
-        $this->productTypeHelper = $productTypeHelper;
         $this->productTypeValidationResource = $productTypeValidationResource;
         $this->productTypeValidationFactory = $productTypeValidationFactory;
         $this->tagBuffer = $tagBuffer;
         $this->amazonTagFactory = $amazonTagFactory;
         $this->baseTagFactory = $baseTagFactory;
+        $this->templateProductTypeRepository = $templateProductTypeRepository;
     }
 
     public function validate(
@@ -55,10 +54,11 @@ class AttributesValidator
         $validationResult->setErrorMessages([]);
 
         try {
-            $productType = $this->productTypeHelper->getProductTypeById($productTypeId);
-        } catch (\Ess\M2ePro\Model\Exception\Logic $exception) {
+            $productType = $this->templateProductTypeRepository->get($productTypeId);
+        } catch (\Ess\M2ePro\Model\Exception\EntityNotFound $exception) {
             $validationResult->setInvalidStatus();
-            $validationResult->addErrorMessage(\__('Product Type not found'));
+            $validationResult->addErrorMessage(__('Product Type not found'));
+
             $resource->save($validationResult);
 
             return;

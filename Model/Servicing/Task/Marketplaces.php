@@ -1,19 +1,13 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Servicing\Task;
 
 class Marketplaces implements \Ess\M2ePro\Model\Servicing\TaskInterface
 {
     public const NAME = 'marketplaces';
 
-    /** @var bool */
-    private $needToCleanCache = false;
+    private bool $needToCleanCache = false;
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     private $parentFactory;
     /** @var \Magento\Framework\App\ResourceConnection */
@@ -22,76 +16,71 @@ class Marketplaces implements \Ess\M2ePro\Model\Servicing\TaskInterface
     private $cachePermanent;
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseStructure;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon */
-    private $componentAmazon;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\ProductType\Repository $amazonDictionaryPTRepository;
+    private \Ess\M2ePro\Model\Amazon\Marketplace\Repository $amazonMarketplaceRepository;
+    private \Ess\M2ePro\Model\Amazon\Marketplace\Issue\ProductTypeOutOfDate\Cache $issueOutOfDateCache;
 
-    /**
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Magento\Framework\App\ResourceConnection $resource
-     * @param \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent
-     * @param \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure
-     * @param \Ess\M2ePro\Helper\Component\Amazon $componentAmazon
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Dictionary\ProductType\Repository $amazonDictionaryProductTypeRepository,
+        \Ess\M2ePro\Model\Amazon\Marketplace\Repository $amazonMarketplaceRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Helper\Module\Database\Structure $databaseStructure,
-        \Ess\M2ePro\Helper\Component\Amazon $componentAmazon
+        \Ess\M2ePro\Model\Amazon\Marketplace\Issue\ProductTypeOutOfDate\Cache $issueOutOfDateCache
     ) {
         $this->parentFactory = $parentFactory;
         $this->resource = $resource;
         $this->cachePermanent = $cachePermanent;
         $this->databaseStructure = $databaseStructure;
-        $this->componentAmazon = $componentAmazon;
+        $this->amazonDictionaryPTRepository = $amazonDictionaryProductTypeRepository;
+        $this->amazonMarketplaceRepository = $amazonMarketplaceRepository;
+        $this->issueOutOfDateCache = $issueOutOfDateCache;
     }
 
     // ----------------------------------------
 
-    /**
-     * @return string
-     */
     public function getServerTaskName(): string
     {
         return self::NAME;
     }
 
-    // ----------------------------------------
-
-    /**
-     * @return array
-     */
-    public function getRequestData(): array
-    {
-        return [];
-    }
-
-    // ----------------------------------------
-
-    /**
-     * @return bool
-     */
     public function isAllowed(): bool
     {
         return true;
     }
 
+    public function getRequestData(): array
+    {
+        return [
+            'amazon' => $this->buildAmazonMarketplaceData(),
+        ];
+    }
+
+    private function buildAmazonMarketplaceData(): array
+    {
+        $result = [];
+        $marketplacePtMap = $this->amazonDictionaryPTRepository->getValidNickMapByMarketplaceNativeId();
+        foreach ($marketplacePtMap as $nativeMarketplaceId => $productTypesNicks) {
+            $result[] = [
+                'marketplace' => $nativeMarketplaceId,
+                'product_types' => $productTypesNicks
+            ];
+        }
+
+        return $result;
+    }
+
     // ----------------------------------------
 
-    /**
-     * @param array $data
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function processResponseData(array $data): void
     {
         if (isset($data['ebay_last_update_dates']) && is_array($data['ebay_last_update_dates'])) {
             $this->processEbayLastUpdateDates($data['ebay_last_update_dates']);
         }
 
-        if (isset($data['amazon_last_update_dates']) && is_array($data['amazon_last_update_dates'])) {
-            $this->processAmazonLastUpdateDates($data['amazon_last_update_dates']);
+        if (isset($data['amazon']) && is_array($data['amazon'])) {
+            $this->processAmazonLastUpdateDates($data['amazon']);
         }
 
         if (isset($data['walmart_last_update_dates']) && is_array($data['walmart_last_update_dates'])) {
@@ -103,12 +92,6 @@ class Marketplaces implements \Ess\M2ePro\Model\Servicing\TaskInterface
         }
     }
 
-    /**
-     * @param array $lastUpdateDates
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function processEbayLastUpdateDates(array $lastUpdateDates): void
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $accountCollection */
@@ -155,61 +138,36 @@ class Marketplaces implements \Ess\M2ePro\Model\Servicing\TaskInterface
         }
     }
 
-    /**
-     * @param array $lastUpdateDates
-     *
-     * @return void
-     */
-    private function processAmazonLastUpdateDates(array $lastUpdateDates): void
+    private function processAmazonLastUpdateDates(array $lastUpdateDatesByProductTypes): void
     {
-        $enabledMarketplaces = $this->componentAmazon
-            ->getMarketplacesAvailableForApiCreation();
+        foreach ($lastUpdateDatesByProductTypes as $row) {
+            $nativeMarketplaceId = (int)$row['marketplace'];
+            $productTypesLastUpdateByNick = [];
+            foreach ($row['product_types'] as ['name' => $productTypeNick, 'last_update' => $lastUpdateDate]) {
+                $productTypesLastUpdateByNick[$productTypeNick] = \Ess\M2ePro\Helper\Date::createDateGmt(
+                    $lastUpdateDate
+                );
+            }
 
-        $connection = $this->resource->getConnection();
-        $dictionaryTable = $this->databaseStructure
-            ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
-
-        /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
-        foreach ($enabledMarketplaces as $marketplace) {
-            if (!isset($lastUpdateDates[$marketplace->getNativeId()])) {
+            $marketplace = $this->amazonMarketplaceRepository->findByNativeId($nativeMarketplaceId);
+            if ($marketplace === null) {
                 continue;
             }
 
-            $serverLastUpdateDate = $lastUpdateDates[$marketplace->getNativeId()];
+            foreach ($this->amazonDictionaryPTRepository->findByMarketplace($marketplace) as $productType) {
+                if (!isset($productTypesLastUpdateByNick[$productType->getNick()])) {
+                    continue;
+                }
 
-            $select = $connection->select()
-                                 ->from($dictionaryTable, [
-                                     'client_details_last_update_date',
-                                 ])
-                                 ->where('marketplace_id = ?', $marketplace->getId());
+                $productType->setServerDetailsLastUpdateDate($productTypesLastUpdateByNick[$productType->getNick()]);
 
-            $clientLastUpdateDate = $connection->fetchOne($select);
-
-            if ($clientLastUpdateDate === null) {
-                $clientLastUpdateDate = $serverLastUpdateDate;
+                $this->amazonDictionaryPTRepository->save($productType);
             }
-
-            if ($clientLastUpdateDate < $serverLastUpdateDate) {
-                $this->needToCleanCache = true;
-            }
-
-            $connection->update(
-                $dictionaryTable,
-                [
-                    'server_details_last_update_date' => $serverLastUpdateDate,
-                    'client_details_last_update_date' => $clientLastUpdateDate,
-                ],
-                ['marketplace_id = ?' => $marketplace->getId()]
-            );
         }
+
+        $this->issueOutOfDateCache->clear();
     }
 
-    /**
-     * @param array $lastUpdateDates
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function processWalmartLastUpdateDates(array $lastUpdateDates): void
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection $accountCollection */

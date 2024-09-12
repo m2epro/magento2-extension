@@ -15,31 +15,19 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
     /** @var array */
     private $otherImagesSpecifics;
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\ProductType\Repository $dictionaryProductTypeRepository;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param array $data
-     */
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
+        \Ess\M2ePro\Model\Amazon\Dictionary\ProductType\Repository $dictionaryProductTypeRepository,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
-        $this->productTypeHelper = $productTypeHelper;
-        $this->otherImagesSpecifics = $productTypeHelper->getOtherImagesSpecifics();
+        $this->otherImagesSpecifics = \Ess\M2ePro\Helper\Component\Amazon\ProductType::getOtherImagesSpecifics();
+        $this->dictionaryProductTypeRepository = $dictionaryProductTypeRepository;
     }
 
-    /**
-     * @return array|mixed|string[]
-     * @throws \Ess\M2ePro\Model\Exception
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     protected function prepareData()
     {
         if ($this->model->getId()) {
@@ -59,11 +47,11 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 $temp[$key] = $this->rawData['general'][$key];
             }
 
-            $dictionary = $this->productTypeHelper->getProductTypeDictionary(
+            $dictionary = $this->dictionaryProductTypeRepository->findByMarketplaceAndNick(
                 (int)$temp['marketplace_id'],
                 (string)$temp['nick']
             );
-            if (!$dictionary->getId()) {
+            if ($dictionary === null) {
                 throw new \Ess\M2ePro\Model\Exception(
                     "Product Type data not found for provided marketplace_id and product type nick"
                 );

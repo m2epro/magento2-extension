@@ -1,19 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Marketplace;
 
+/**
+ * @method  \Ess\M2ePro\Model\Marketplace[] getItems()
+ * @method  \Ess\M2ePro\Model\Marketplace getFirstItem()
+ */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
-    /**
-     * @return void
-     */
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
         $this->_init(
@@ -22,11 +17,6 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         );
     }
 
-    /**
-     * @param string $component
-     *
-     * @return $this
-     */
     public function appendFilterEnabledMarketplaces(string $component): self
     {
         $this->addFieldToFilter('component_mode', $component);

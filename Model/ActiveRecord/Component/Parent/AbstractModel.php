@@ -142,9 +142,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         return $this->getComponentMode() == \Ess\M2ePro\Helper\Component\Ebay::NICK;
     }
 
-    public function isComponentModeAmazon()
+    public function isComponentModeAmazon(): bool
     {
-        return $this->getComponentMode() == \Ess\M2ePro\Helper\Component\Amazon::NICK;
+        return $this->getComponentMode() === \Ess\M2ePro\Helper\Component\Amazon::NICK;
     }
 
     public function isComponentModeWalmart()

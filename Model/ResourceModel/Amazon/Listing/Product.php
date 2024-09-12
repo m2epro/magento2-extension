@@ -5,6 +5,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
+    public const COLUMN_TEMPLATE_PRODUCT_TYPE_ID = 'template_product_type_id';
     public const COLUMN_ONLINE_REGULAR_MAP_PRICE = 'online_regular_map_price';
     public const COLUMN_IS_VARIATION_PARENT = 'is_variation_parent';
     public const COLUMN_TEMPLATE_SHIPPING_ID = 'template_shipping_id';
@@ -12,6 +13,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_IS_AFN_CHANNEL = 'is_afn_channel';
     public const COLUMN_ONLINE_AFN_QTY = 'online_afn_qty';
     public const COLUMN_GENERAL_ID = 'general_id';
+    public const COLUMN_IS_GENERAL_ID_OWNER = 'is_general_id_owner';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
@@ -31,7 +33,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         $this->amazonFactory = $amazonFactory;
     }
 
-    public function _construct()
+    public function _construct(): void
     {
         $this->_init(
             \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_LISTING_PRODUCT,

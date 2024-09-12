@@ -13,8 +13,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $helperDataSession;
     private \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesService;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\MarketplaceService $amazonDictionaryMarketplaceService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Dictionary\MarketplaceService $amazonDictionaryMarketplaceService,
         \Ess\M2ePro\Model\Amazon\Listing\OfferImagesFormService $offerImagesService,
         \Ess\M2ePro\Helper\Module\Wizard $helperWizard,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
@@ -22,12 +24,12 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         \Ess\M2ePro\Helper\Data\Session $helperDataSession,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
+        parent::__construct($amazonFactory, $context);
         $this->helperWizard = $helperWizard;
         $this->transferring = $transferring;
         $this->helperDataSession = $helperDataSession;
         $this->offerImagesService = $offerImagesService;
-
-        parent::__construct($amazonFactory, $context);
+        $this->amazonDictionaryMarketplaceService = $amazonDictionaryMarketplaceService;
     }
 
     protected function _isAllowed()
@@ -85,6 +87,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->setSessionValue('marketplace_id', (int)$post['marketplace_id']);
             $this->setSessionValue('account_id', (int)$post['account_id']);
             $this->setSessionValue('store_id', (int)$post['store_id']);
+
+            $this->activateAndPrepareDictionaryMarketplaceIfNeed((int)$post['marketplace_id']);
 
             $this->_redirect('*/*/index', ['_current' => true, 'step' => 2]);
 
@@ -301,5 +305,23 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         }
 
         $this->helperWizard->setStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK, $step);
+    }
+
+    private function activateAndPrepareDictionaryMarketplaceIfNeed(int $marketplaceId): void
+    {
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplaceObj */
+        $marketplaceObj = $this->activeRecordFactory->getObjectLoaded(
+            'Marketplace',
+            $marketplaceId
+        );
+
+        if (!$marketplaceObj->isStatusEnabled()) {
+            $marketplaceObj->enable();
+            $marketplaceObj->save();
+        }
+
+        if (!$this->amazonDictionaryMarketplaceService->isExistForMarketplace($marketplaceObj)) {
+            $this->amazonDictionaryMarketplaceService->update($marketplaceObj);
+        }
     }
 }

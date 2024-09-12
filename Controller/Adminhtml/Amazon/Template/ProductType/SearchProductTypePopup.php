@@ -1,36 +1,35 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType;
 
 class SearchProductTypePopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
 {
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace\Repository $dictionaryMarketplace;
+    private \Ess\M2ePro\Model\Amazon\Marketplace\Repository $amazonMarketplaceRepository;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\MarketplaceService $dictionaryMarketplaceService;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
-     * @param \Ess\M2ePro\Controller\Adminhtml\Context $context
-     */
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
+        \Ess\M2ePro\Model\Amazon\Dictionary\MarketplaceService $dictionaryMarketplaceService,
+        \Ess\M2ePro\Model\Amazon\Marketplace\Repository $amazonMarketplaceRepository,
+        \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace\Repository $dictionaryMarketplace,
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
-        $this->productTypeHelper = $productTypeHelper;
+        $this->dictionaryMarketplace = $dictionaryMarketplace;
+        $this->amazonMarketplaceRepository = $amazonMarketplaceRepository;
+        $this->templateProductTypeRepository = $templateProductTypeRepository;
+        $this->dictionaryMarketplaceService = $dictionaryMarketplaceService;
     }
 
     public function execute()
     {
         $marketplaceId = $this->getRequest()->getParam('marketplace_id');
-        if (!$marketplaceId) {
+        if ($marketplaceId === null) {
             $this->setJsonContent([
                 'result' => false,
                 'message' => 'You should provide correct marketplace_id.',
@@ -39,7 +38,7 @@ class SearchProductTypePopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Tem
             return $this->getResult();
         }
 
-        $productTypes = $this->getAvailableProductTypes((int)$marketplaceId);
+        $productTypes = $this->getAvailableProductTypes($this->amazonMarketplaceRepository->get((int)$marketplaceId));
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs\General\SearchPopup $block */
         $block = $this->getLayout()
@@ -52,18 +51,11 @@ class SearchProductTypePopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Tem
         return $this->getResult();
     }
 
-    /**
-     * @param int $marketplaceId
-     *
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function getAvailableProductTypes(int $marketplaceId): array
+    private function getAvailableProductTypes(\Ess\M2ePro\Model\Marketplace $marketplace): array
     {
-        $marketplaceDictionaryItem = $this->productTypeHelper->getMarketplaceDictionary($marketplaceId);
-        if (!$marketplaceDictionaryItem->getId()) {
-            return [];
+        $marketplaceDictionaryItem = $this->dictionaryMarketplace->findByMarketplace($marketplace);
+        if ($marketplaceDictionaryItem === null) {
+            $marketplaceDictionaryItem = $this->dictionaryMarketplaceService->update($marketplace);
         }
 
         $productTypes = $marketplaceDictionaryItem->getProductTypes();
@@ -72,7 +64,10 @@ class SearchProductTypePopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Tem
         }
 
         $result = [];
-        $alreadyUsedProductTypes = $this->productTypeHelper->getConfiguredProductTypesList($marketplaceId);
+        $alreadyUsedProductTypes = [];
+        foreach ($this->templateProductTypeRepository->findByMarketplaceId((int)$marketplace->getId()) as $template) {
+            $alreadyUsedProductTypes[$template->getDictionary()->getNick()] = (int)$template->getId();
+        }
 
         foreach ($productTypes as $productType) {
             $productTypeData = [
@@ -80,7 +75,7 @@ class SearchProductTypePopup extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Tem
                 'title' => $productType['title'],
             ];
 
-            if (!empty($alreadyUsedProductTypes[$productType['nick']])) {
+            if (isset($alreadyUsedProductTypes[$productType['nick']])) {
                 $productTypeData['exist_product_type_id'] = $alreadyUsedProductTypes[$productType['nick']];
             }
             $result[] = $productTypeData;

@@ -5,6 +5,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon;
 class Account extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     public const COLUMN_ACCOUNT_ID = 'account_id';
+    public const COLUMN_MARKETPLACE_ID = 'marketplace_id';
     public const COLUMN_MERCHANT_ID = 'merchant_id';
 
     /** @var bool  */

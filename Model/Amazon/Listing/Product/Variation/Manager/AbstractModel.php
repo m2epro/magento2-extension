@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager;
 
-/**
- * Class \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\AbstractModel
- */
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
@@ -44,37 +35,26 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    /**
-     * @param \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager
-     */
-    public function setVariationManager(\Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager)
-    {
+    public function setVariationManager(
+        \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager
+    ): void {
         $this->variationManager = $variationManager;
         $this->listingProduct = $variationManager->getListingProduct();
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
-     */
-    public function getVariationManager()
+    public function getVariationManager(): \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
     {
         return $this->variationManager;
     }
 
     // ---------------------------------------
 
-    /**
-     * @return \Ess\M2ePro\Model\Listing\Product
-     */
-    public function getListingProduct()
+    public function getListingProduct(): \Ess\M2ePro\Model\Listing\Product
     {
         return $this->listingProduct;
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Listing\Product
-     */
-    public function getAmazonListingProduct()
+    public function getAmazonListingProduct(): \Ess\M2ePro\Model\Amazon\Listing\Product
     {
         return $this->getListingProduct()->getChildObject();
     }

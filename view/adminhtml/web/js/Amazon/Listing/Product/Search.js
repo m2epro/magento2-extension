@@ -293,11 +293,6 @@ define([
         addNewGeneralId: function (listingProductIds) {
             var self = this;
 
-            if (!M2ePro.customData.isNewAsinAvailable) {
-                self.alert(M2ePro.translator.translate('new_asin_not_available').replace('%code%', M2ePro.customData.marketplace.code));
-                return;
-            }
-
             listingProductIds = listingProductIds || self.params.productId;
 
             new Ajax.Request(M2ePro.url.get('amazon_listing_product/mapToNewAsin'), {

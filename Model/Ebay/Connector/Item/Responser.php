@@ -293,7 +293,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
     /**
      * @param Message[] $messages
      *
-     * @return Message|bool
+     * @return Message|false
      * 21916587: The multi-variation titles have been changed and were not updated on the eBay.
      * 21916626: Variations Specifics and Item Specifics entered for a Multi-SKU item should be different.
      * 21916603: Variation specifics cannot be changed in restricted revise
@@ -316,6 +316,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
             21916582,
             21916672,
             21919061,
+            21916591, // A variation could not be found for the given SKU number {0}.
         ];
 
         foreach ($messages as $message) {

@@ -1,28 +1,13 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit;
 
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
 {
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType $productType */
-    private $productType;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType $productType;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType $productType
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder
-     * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\Amazon\Template\ProductType $productType,
@@ -31,9 +16,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         \Magento\Backend\Model\Auth\Session $authSession,
         array $data = []
     ) {
-        parent::__construct($context, $jsonEncoder, $authSession, $data);
         $this->dataHelper = $dataHelper;
         $this->productType = $productType;
+        parent::__construct($context, $jsonEncoder, $authSession, $data);
     }
 
     /**
@@ -47,18 +32,13 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         $this->setDestElementId('tabs_edit_form_data');
     }
 
-    /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Exception
-     */
     protected function _prepareLayout(): Tabs
     {
         $this->addTab(
             'general',
             [
-                'label' => $this->__('General'),
-                'title' => $this->__('General'),
+                'label' => __('General'),
+                'title' => __('General'),
                 'content' => $this->getLayout()
                     ->createBlock(
                         \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs\General::class,
@@ -88,10 +68,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         return parent::_prepareLayout();
     }
 
-    /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs|\Magento\Backend\Block\Widget\Tabs
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function _beforeToHtml()
     {
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Amazon_Template_ProductType'));

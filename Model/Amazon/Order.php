@@ -216,6 +216,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return $this->getData('tax_registration_id');
     }
 
+    public function setTaxRegistrationId(string $taxRegistrationId): Order
+    {
+        $this->setData('tax_registration_id', $taxRegistrationId);
+
+        return $this;
+    }
+
     /**
      * @return bool
      */

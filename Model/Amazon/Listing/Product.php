@@ -2,9 +2,11 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing;
 
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonProductResource;
+
 /**
  * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product getResource()
+ * @method AmazonProductResource getResource()
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -44,8 +46,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     public const BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED = 5;
 
-    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
-    private $productTypeFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory */
     private $amazonPriceCalculatorFactory;
     private Product\RetrieveIdentifiers $retrieveIdentifiers;
@@ -59,9 +59,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     private $variationManager = null;
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing|null */
     private $repricingModel = null;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $productTypeTemplateRepository;
 
     public function __construct(
-        \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $productTypeTemplateRepository,
         \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculatorFactory $amazonPriceCalculatorFactory,
         \Ess\M2ePro\Model\Amazon\Listing\Product\RetrieveIdentifiers $retrieveIdentifiers,
         \Ess\M2ePro\Model\Amazon\Search\Dispatcher $searchDispatcher,
@@ -89,18 +90,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $data
         );
 
-        $this->productTypeFactory = $productTypeFactory;
         $this->amazonPriceCalculatorFactory = $amazonPriceCalculatorFactory;
         $this->retrieveIdentifiers = $retrieveIdentifiers;
         $this->searchDispatcher = $searchDispatcher;
         $this->configuration = $configuration;
         $this->helperData = $helperData;
+        $this->productTypeTemplateRepository = $productTypeTemplateRepository;
     }
 
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::class);
+        $this->_init(AmazonProductResource::class);
     }
 
     public function getListingProductId(): int
@@ -393,28 +394,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     // ---------------------------------------
 
-    /**
-     * @return bool
-     */
     public function isExistsProductTypeTemplate(): bool
     {
         return $this->getTemplateProductTypeId() > 0;
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\ProductType|null
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function getProductTypeTemplate(): ?\Ess\M2ePro\Model\Amazon\Template\ProductType
     {
         if (!$this->isExistsProductTypeTemplate()) {
             return null;
         }
 
-        $productType = $this->productTypeFactory->create();
-        $productType->load($this->getTemplateProductTypeId());
-
-        return $productType;
+        return $this->productTypeTemplateRepository->get($this->getTemplateProductTypeId());
     }
 
     /**
@@ -501,7 +492,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
                                          ->getFirstItem();
     }
 
-    public function getVariationManager()
+    public function getVariationManager(): \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager
     {
         if ($this->variationManager === null) {
             $this->variationManager = $this->modelFactory->getObject('Amazon_Listing_Product_Variation_Manager');
@@ -592,7 +583,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function getTemplateProductTypeId(): int
     {
-        return (int)$this->getData('template_product_type_id');
+        return (int)$this->getData(AmazonProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID);
     }
 
     /**
@@ -602,7 +593,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function setTemplateProductTypeId($productType)
     {
-        $this->setData('template_product_type_id', $productType);
+        $this->setData(AmazonProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID, $productType);
     }
 
     /**
@@ -699,7 +690,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isGeneralIdOwner()
     {
-        return (int)$this->getData('is_general_id_owner') == self::IS_GENERAL_ID_OWNER_YES;
+        return (int)$this->getData(AmazonProductResource::COLUMN_IS_GENERAL_ID_OWNER) == self::IS_GENERAL_ID_OWNER_YES;
+    }
+
+    public function setIsGeneralIdOwner($isGeneralId): void
+    {
+        $this->setData(AmazonProductResource::COLUMN_IS_GENERAL_ID_OWNER, (int)$isGeneralId);
     }
 
     // ---------------------------------------
@@ -996,7 +992,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getOnlineRegularMapPrice(): float
     {
         $onlineRegularMapPrice = $this->getDataByKey(
-            \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product::COLUMN_ONLINE_REGULAR_MAP_PRICE
+            AmazonProductResource::COLUMN_ONLINE_REGULAR_MAP_PRICE
         );
 
         if (empty($onlineRegularMapPrice)) {

@@ -1,29 +1,39 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive\InvoiceDataReport;
 
-/**
- * Class Ess\M2ePro\Model\Cron\Task\Amazon\Order\Receive\InvoiceDataReport\Responser
- */
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDataReport\ItemsResponser
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Log $synchronizationLog */
     protected $synchronizationLog = null;
+    private \Ess\M2ePro\Model\Magento\Order\Updater $orderUpdater;
 
-    //########################################
+    public function __construct(
+        \Ess\M2ePro\Model\Magento\Order\Updater $orderUpdater,
+        \Ess\M2ePro\Model\Connector\Connection\Response $response,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        array $params = []
+    ) {
+        $this->orderUpdater = $orderUpdater;
 
-    /**
-     * @param array $messages
-     *
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function processResponseMessages(array $messages = [])
+        parent::__construct(
+            $response,
+            $helperFactory,
+            $modelFactory,
+            $amazonFactory,
+            $walmartFactory,
+            $ebayFactory,
+            $activeRecordFactory,
+            $params
+        );
+    }
+
+    protected function processResponseMessages(array $messages = []): void
     {
         parent::processResponseMessages();
 
@@ -36,16 +46,13 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
                 : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getSynchronizationLog()->addMessage(
-                $this->getHelper('Module_Translation')->__($message->getText()),
+                (string)__($message->getText()),
                 $logType
             );
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function isNeedProcessResponse()
+    protected function isNeedProcessResponse(): bool
     {
         if (!parent::isNeedProcessResponse()) {
             return false;
@@ -58,27 +65,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
         return true;
     }
 
-    //########################################
-
-    /**
-     * @param string $messageText
-     */
-    public function failDetected($messageText)
+    public function failDetected($messageText): void
     {
         parent::failDetected($messageText);
 
         $this->getSynchronizationLog()->addMessage(
-            $this->getHelper('Module_Translation')->__($messageText),
+            (string)__($messageText),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
         );
     }
 
-    //########################################
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    protected function processResponseData()
+    protected function processResponseData(): void
     {
         $responseData = $this->getPreparedResponseData();
         $responseData = $responseData['data'];
@@ -110,6 +107,22 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
                 continue;
             }
 
+            $buyerVatNumber = $orderData['buyer-vat-number'] ?? null;
+
+            if (!empty($buyerVatNumber)) {
+                if (empty($order->getChildObject()->getTaxRegistrationId())) {
+                    $order->getChildObject()->setTaxRegistrationId($buyerVatNumber);
+
+                    $magentoOrder = $order->getMagentoOrder();
+                    if ($magentoOrder !== null) {
+                        $this->orderUpdater->setMagentoOrder($magentoOrder);
+                        $this->orderUpdater->updateShippingAddress(['vat_id' => $buyerVatNumber]);
+                        $this->orderUpdater->updateBillingAddress(['vat_id' => $buyerVatNumber]);
+                        $this->orderUpdater->finishUpdate();
+                    }
+                }
+            }
+
             $order->getChildObject()->setSettings('invoice_data_report', $orderData);
             $order->getChildObject()->save();
 
@@ -117,12 +130,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
         }
     }
 
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Synchronization\Log
-     */
-    protected function getSynchronizationLog()
+    protected function getSynchronizationLog(): \Ess\M2ePro\Model\Synchronization\Log
     {
         if ($this->synchronizationLog !== null) {
             return $this->synchronizationLog;
@@ -134,6 +142,4 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\InvoiceDat
 
         return $this->synchronizationLog;
     }
-
-    //########################################
 }

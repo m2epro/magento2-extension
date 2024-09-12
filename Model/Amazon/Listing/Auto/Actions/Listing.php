@@ -1,35 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Listing\Auto\Actions;
 
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory */
-    private $amazonFactory;
-    /** @var \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory */
-    private $marketplaceDetailsFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType */
-    private $productTypeResource;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Model\Amazon\Marketplace\DetailsFactory $marketplaceDetailsFactory,
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
         \Ess\M2ePro\Model\Listing $listing,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType $productTypeResource,
-        \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
     ) {
         parent::__construct($listing, $activeRecordFactory, $exceptionHelper);
-        $this->amazonFactory = $amazonFactory;
-        $this->marketplaceDetailsFactory = $marketplaceDetailsFactory;
-        $this->productTypeResource = $productTypeResource;
+        $this->templateProductTypeRepository = $templateProductTypeRepository;
     }
 
     /**
@@ -250,9 +234,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $amazonListingProduct = $listingProduct->getChildObject();
 
         if (!$amazonListingProduct->getVariationManager()->isRelationParentType()) {
-            $amazonListingProduct->setData('template_product_type_id', $params['template_product_type_id']);
-            $amazonListingProduct->setData(
-                'is_general_id_owner',
+            $amazonListingProduct->setTemplateProductTypeId($params['template_product_type_id']);
+            $amazonListingProduct->setIsGeneralIdOwner(
                 \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
             );
 
@@ -273,26 +256,21 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        $detailsModel = $this->marketplaceDetailsFactory->create();
-        $detailsModel->setMarketplaceId($listingProduct->getListing()->getMarketplaceId());
+        $productTypeTemplate = $this->templateProductTypeRepository->get((int)$params['template_product_type_id']);
 
-        $productTypeTemplate = $this->productTypeResource
-            ->loadById((int)$params['template_product_type_id']);
-
-        $possibleThemes = $detailsModel->getVariationThemes($productTypeTemplate->getNick());
+        $possibleThemes = $productTypeTemplate->getDictionary()->getVariationThemes();
 
         $productAttributes = $amazonListingProduct->getVariationManager()
                                                   ->getTypeModel()
                                                   ->getProductAttributes();
 
         foreach ($possibleThemes as $theme) {
-            if (count($theme['attributes']) != count($productAttributes)) {
+            if (count($theme['attributes']) !== count($productAttributes)) {
                 continue;
             }
 
-            $amazonListingProduct->setData('template_product_type_id', $params['template_product_type_id']);
-            $amazonListingProduct->setData(
-                'is_general_id_owner',
+            $amazonListingProduct->setTemplateProductTypeId($params['template_product_type_id']);
+            $amazonListingProduct->setIsGeneralIdOwner(
                 \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES
             );
 

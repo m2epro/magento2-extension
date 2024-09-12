@@ -1,15 +1,19 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template;
 
 class ProductType extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
+    public const COLUMN_ID = 'id';
+    public const COLUMN_DICTIONARY_PRODUCT_TYPE_ID = 'dictionary_product_type_id';
+    public const COLUMN_TITLE = 'title';
+    public const COLUMN_VIEW_MODE = 'view_mode';
+    public const COLUMN_SETTINGS = 'settings';
+    public const COLUMN_UPDATE_DATE = 'update_date';
+    public const COLUMN_CREATE_DATE = 'create_date';
+
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
     private $productTypeFactory;
 
@@ -25,24 +29,8 @@ class ProductType extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractM
         $this->productTypeFactory = $productTypeFactory;
     }
 
-    /**
-     * @return void
-     */
-    protected function _construct()
+    protected function _construct(): void
     {
-        $this->_init('m2epro_amazon_template_product_type', 'id');
-    }
-
-    /**
-     * @param int $productTypeId
-     *
-     * @return \Ess\M2ePro\Model\Amazon\Template\ProductType
-     */
-    public function loadById(int $productTypeId): \Ess\M2ePro\Model\Amazon\Template\ProductType
-    {
-        $productType = $this->productTypeFactory->create();
-        $this->load($productType, $productTypeId);
-
-        return $productType;
+        $this->_init(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_TEMPLATE_PRODUCT_TYPE, self::COLUMN_ID);
     }
 }

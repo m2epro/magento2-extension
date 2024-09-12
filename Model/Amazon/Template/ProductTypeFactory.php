@@ -1,17 +1,12 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Template;
 
 class ProductTypeFactory
 {
-    /** @var \Magento\Framework\ObjectManagerInterface */
-    private $objectManager;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
     public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
     {
@@ -19,6 +14,11 @@ class ProductTypeFactory
     }
 
     public function create(): ProductType
+    {
+        return $this->objectManager->create(ProductType::class);
+    }
+
+    public function createEmpty(): ProductType
     {
         return $this->objectManager->create(ProductType::class);
     }

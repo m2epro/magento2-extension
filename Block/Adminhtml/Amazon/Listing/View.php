@@ -232,8 +232,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
         $this->jsUrl->add($this->getUrl('*/listing_mapping/remap'), 'listing_mapping/remap');
 
-        $this->jsUrl->add($this->getUrl('*/amazon_marketplace/index'), 'marketplaceSynchUrl');
-
         $this->jsUrl->add(
             $this->getUrl('*/listing/saveListingAdditionalData', [
                 'id' => $this->listing['id'],
@@ -261,9 +259,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 $this->listing->getMarketplace()->getData(),
                 $this->listing->getMarketplace()->getChildObject()->getData()
             )
-        );
-        $isNewAsinAvailable = \Ess\M2ePro\Helper\Json::encode(
-            $this->listing->getMarketplace()->getChildObject()->isNewAsinAvailable()
         );
 
         $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
@@ -311,9 +306,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $autoMapAsinSearchProducts = $this->__('Search %product_title% Product(s) on Amazon.');
         $autoMapAsinProgressTitle = $this->__('Automatic Assigning ASIN/ISBN to Item(s)');
         $autoMapAsinErrorMessage = $this->__('Server is currently unavailable. Please try again later.');
-        $newAsinNotAvailable = $this->__(
-            'The new ASIN/ISBN creation functionality is not available in %code% Marketplace yet.'
-        );
         $notSynchronizedMarketplace = $this->__(
             'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.'
         ) . ' ' . $this->__('Press "Save And Update" Button after redirect on Marketplace Page.');
@@ -389,7 +381,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'automap_asin_progress_title' => $autoMapAsinProgressTitle,
             'automap_error_message' => $autoMapAsinErrorMessage,
 
-            'new_asin_not_available' => $newAsinNotAvailable,
             'not_synchronized_marketplace' => $notSynchronizedMarketplace,
 
             'no_variations_left' => $noVariationsLeftText,
@@ -431,7 +422,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         M2ePro.customData.ignoreListings = '{$ignoreListings}';
 
         M2ePro.customData.marketplace = {$marketplace};
-        M2ePro.customData.isNewAsinAvailable = {$isNewAsinAvailable};
 
         ListingGridObj = new AmazonListingViewGrid(
             '{$gridId}',

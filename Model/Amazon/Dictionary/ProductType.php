@@ -1,166 +1,179 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Dictionary;
 
 use Ess\M2ePro\Model\Amazon\ProductType\Validator\ValidatorBuilder;
 use Ess\M2ePro\Model\Amazon\ProductType\Validator\ValidatorInterface;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as ProductTypeResource;
 
 class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
-    /** @var ?array */
-    private $flatScheme;
-    /** @var ?array */
-    private $groups;
+    private array $flatScheme;
 
-    public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        parent::__construct(
-            $modelFactory,
-            $activeRecordFactory,
-            $helperFactory,
-            $context,
-            $registry,
-            $resource,
-            $resourceCollection,
-            $data
-        );
-
-        $this->productTypeHelper = $productTypeHelper;
-    }
-
-    /**
-     * @return void
-     */
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType::class);
+        $this->_init(ProductTypeResource::class);
     }
 
-    /**
-     * @return int
-     */
+    public function create(
+        \Ess\M2ePro\Model\Marketplace $marketplace,
+        string $nick,
+        string $title,
+        array $schema,
+        array $variationThemes,
+        array $attributesGroups,
+        \DateTime $serverUpdateDate,
+        \DateTime $clientUpdateDate
+    ): self {
+        $this->setData(ProductTypeResource::COLUMN_MARKETPLACE_ID, (int)$marketplace->getId())
+             ->setData(ProductTypeResource::COLUMN_NICK, $nick)
+             ->setData(ProductTypeResource::COLUMN_TITLE, $title)
+             ->setScheme($schema)
+             ->setVariationThemes($variationThemes)
+             ->setAttributesGroups($attributesGroups)
+             ->setClientDetailsLastUpdateDate($clientUpdateDate)
+             ->setServerDetailsLastUpdateDate($serverUpdateDate);
+
+        return $this;
+    }
+
+    // ----------------------------------------
+
     public function getMarketplaceId(): int
     {
-        return (int)$this->getData('marketplace_id');
+        return (int)$this->getData(
+            ProductTypeResource::COLUMN_MARKETPLACE_ID
+        );
     }
 
-    /**
-     * @param int $marketplaceId
-     *
-     * @return $this
-     */
-    public function setMarketplaceId(int $marketplaceId): self
-    {
-        $this->setData('marketplace_id', $marketplaceId);
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getNick(): string
     {
-        return (string)$this->getData('nick');
+        return (string)$this->getData(ProductTypeResource::COLUMN_NICK);
     }
 
-    /**
-     * @param string $nick
-     *
-     * @return $this
-     */
-    public function setNick(string $nick): self
-    {
-        $this->setData('nick', $nick);
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
-        return (string)$this->getData('title');
+        return (string)$this->getData(ProductTypeResource::COLUMN_TITLE);
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle(string $title): self
+    public function setScheme(array $schema): self
     {
-        $this->setData('title', $title);
+        $this->setData(ProductTypeResource::COLUMN_SCHEMA, json_encode($schema));
 
         return $this;
     }
 
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function getScheme(): array
     {
-        $scheme = \Ess\M2ePro\Helper\Json::decode((string)$this->getData('scheme'));
+        $value = $this->getData(ProductTypeResource::COLUMN_SCHEMA);
+        if (empty($value)) {
+            return [];
+        }
 
-        return is_array($scheme) ? $scheme : [];
+        return (array)json_decode($value, true);
     }
 
-    /**
-     * @param array $scheme
-     *
-     * @return $this
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function setScheme(array $scheme): self
+    public function setVariationThemes(array $variationThemes): self
     {
-        $this->setData('scheme', \Ess\M2ePro\Helper\Json::encode($scheme));
+        $this->setData(ProductTypeResource::COLUMN_VARIATION_THEMES, json_encode($variationThemes));
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
+    public function hasVariationThemes(): bool
+    {
+        return !empty($this->getVariationThemes());
+    }
+
+    public function getVariationThemes(): array
+    {
+        $value = $this->getData(ProductTypeResource::COLUMN_VARIATION_THEMES);
+        if (empty($value)) {
+            return [];
+        }
+
+        return (array)json_decode($value, true);
+    }
+
+    public function hasVariationTheme(string $variationTheme): bool
+    {
+        return isset($this->getVariationThemes()[$variationTheme]);
+    }
+
+    public function getVariationThemesAttributes(string $variationTheme): array
+    {
+        return $this->getVariationThemes()[$variationTheme]['attributes'] ?? [];
+    }
+
+    public function setAttributesGroups(array $attributesGroups): self
+    {
+        $this->setData(ProductTypeResource::COLUMN_ATTRIBUTES_GROUPS, json_encode($attributesGroups));
+
+        return $this;
+    }
+
+    public function getAttributesGroups(): array
+    {
+        $value = $this->getData(ProductTypeResource::COLUMN_ATTRIBUTES_GROUPS);
+        if (empty($value)) {
+            return [];
+        }
+
+        return (array)json_decode($value, true);
+    }
+
+    public function getClientDetailsLastUpdateDate(): \DateTime
+    {
+        return \Ess\M2ePro\Helper\Date::createDateGmt(
+            $this->getData(ProductTypeResource::COLUMN_CLIENT_DETAILS_LAST_UPDATE_DATE)
+        );
+    }
+
+    public function setClientDetailsLastUpdateDate(\DateTime $value): self
+    {
+        $this->setData(ProductTypeResource::COLUMN_CLIENT_DETAILS_LAST_UPDATE_DATE, $value->format('Y-m-d H:i:s'));
+
+        return $this;
+    }
+
+    public function getServerDetailsLastUpdateDate(): \DateTime
+    {
+        return \Ess\M2ePro\Helper\Date::createDateGmt(
+            $this->getData(ProductTypeResource::COLUMN_SERVER_DETAILS_LAST_UPDATE_DATE)
+        );
+    }
+
+    public function setServerDetailsLastUpdateDate(\DateTime $value): self
+    {
+        $this->setData(ProductTypeResource::COLUMN_SERVER_DETAILS_LAST_UPDATE_DATE, $value->format('Y-m-d H:i:s'));
+
+        return $this;
+    }
+
     public function isInvalid(): bool
     {
-        return (bool)$this->getData('invalid');
+        return (bool)$this->getData(ProductTypeResource::COLUMN_INVALID);
     }
 
-    /**
-     * @param bool $invalid
-     *
-     * @return $this
-     */
-    public function setInvalid(bool $invalid): self
+    public function markAsInvalid(): self
     {
-        $this->setData('invalid', $invalid);
+        $this->setData(ProductTypeResource::COLUMN_INVALID, (int)true);
 
         return $this;
     }
 
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
+    public function markAsValid(): self
+    {
+        $this->setData(ProductTypeResource::COLUMN_INVALID, (int)false);
+
+        return $this;
+    }
+
+    // ----------------------------------------
+
     public function getValidatorByPath(string $path): ValidatorInterface
     {
         $flatScheme = $this->getFlatScheme();
@@ -187,7 +200,7 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     private function getFlatScheme(): array
     {
-        if ($this->flatScheme === null) {
+        if (!isset($this->flatScheme)) {
             $this->flatScheme = $this->convertSchemeToFlat($this->getScheme());
         }
 
@@ -221,18 +234,6 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     private function getGroupTitleByNick(string $groupNick): string
     {
-        if ($this->groups === null) {
-            $groups = $this->productTypeHelper->getProductTypeGroups(
-                $this->getMarketplaceId(),
-                $this->getNick()
-            );
-
-            $this->groups = array_combine(
-                array_column($groups, 'nick'),
-                array_column($groups, 'title')
-            );
-        }
-
-        return $this->groups[$groupNick] ?? '';
+        return $this->getAttributesGroups()[$groupNick] ?? '';
     }
 }

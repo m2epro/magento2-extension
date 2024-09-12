@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Synchronization;
 
 /**
@@ -51,15 +45,11 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
      */
     protected $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Synchronization\Log::class);
     }
-
-    //########################################
 
     /**
      * @param int $id
@@ -85,11 +75,11 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->task = (int)$task;
     }
 
-    //########################################
+    // ----------------------------------------
 
-    public function addMessageFromException(\Throwable $exception)
+    public function addMessageFromException(\Throwable $exception): void
     {
-        return $this->addMessage(
+        $this->addMessage(
             $exception->getMessage(),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
             [],
@@ -97,12 +87,17 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         );
     }
 
+    public function addErrorMessage(string $text): void
+    {
+        $this->addMessage($text, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR);
+    }
+
     public function addMessage(
         $description = null,
         $type = null,
         array $additionalData = [],
         $detailedDescription = null
-    ) {
+    ): void {
         $dataForAdd = [
             'description' => $description,
             'detailed_description' => $detailedDescription,
@@ -135,7 +130,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->getResource()->clearMessages($filters);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function setFatalErrorHandler()
     {
@@ -171,6 +166,4 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             }
         );
     }
-
-    //########################################
 }

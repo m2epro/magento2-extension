@@ -1,42 +1,25 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs;
 
 class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     /** @var array */
     private $formData = [];
-    /** @var array */
-    private $marketplaceData = [];
+
+    /** @var \Ess\M2ePro\Model\Marketplace[] */
+    private array $allowedMarketplaces = [];
 
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon */
-    private $amazonHelper;
-    /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType $productType */
-    private $productType;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory */
     private $productTypeBuilderFactory;
+    private \Ess\M2ePro\Model\Amazon\Marketplace\Repository $amazonMarketplaceRepository;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType $productType;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param \Ess\M2ePro\Helper\Component\Amazon $amazonHelper
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType $productType
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory $productTypeBuilderFactory
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param array $data
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Marketplace\Repository $amazonMarketplaceRepository,
         \Ess\M2ePro\Helper\Data $dataHelper,
-        \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Model\Amazon\Template\ProductType $productType,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory $productTypeBuilderFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -45,30 +28,21 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
-        $this->amazonHelper = $amazonHelper;
         $this->productType = $productType;
         $this->productTypeBuilderFactory = $productTypeBuilderFactory;
+        $this->amazonMarketplaceRepository = $amazonMarketplaceRepository;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    /**
-     * @return void
-     */
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
         $this->setId('amazonTemplateProductTypeEditTabsGeneral');
 
         $this->formData = $this->getFormData();
-        $marketplaces = $this->amazonHelper->getMarketplacesAvailableForAsinCreation();
-        $marketplaces = $marketplaces->toArray();
-        $this->marketplaceData = $marketplaces['items'];
+        $this->allowedMarketplaces = $this->amazonMarketplaceRepository->findWithAccounts();
     }
 
-    /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Edit\Tabs\General
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     protected function _prepareForm(): General
     {
         $form = $this->_formFactory->create();
@@ -91,9 +65,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             []
         );
 
-        $isEdit = (bool)$this->productType->getId();
-        $marketplaceId = $this->productType->getMarketplaceId();
-        if (!$marketplaceId) {
+        $isEdit = !$this->productType->isObjectNew();
+        $marketplaceId = $isEdit ? $this->productType->getMarketplaceId() : null;
+        if ($marketplaceId === null) {
             $marketplaceId = $this->getSuggestedMarketplaceId();
         }
 
@@ -115,8 +89,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             self::SELECT,
             [
                 'name' => 'general[marketplace_id]',
-                'label' => $this->__('Marketplace'),
-                'title' => $this->__('Marketplace'),
+                'label' => __('Marketplace'),
+                'title' => __('Marketplace'),
                 'values' => $this->getMarketplaceDataOptions(),
                 'value' => $marketplaceId,
                 'class' => 'required-entry',
@@ -130,7 +104,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'general_product_type_selection',
             'note',
             [
-                'label' => $this->__('Product Type'),
+                'label' => __('Product Type'),
                 'required' => true,
                 'after_element_html' => $this->getProductTypeEditHtml($isEdit)
             ]
@@ -149,9 +123,6 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         return parent::_prepareForm();
     }
 
-    /**
-     * @return string[]
-     */
     public function getFormData(): array
     {
         if ($this->productType->getId()) {
@@ -218,32 +189,27 @@ CSS
             ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']]
         ];
 
-        foreach ($this->marketplaceData as $marketplace) {
+        foreach ($this->allowedMarketplaces as $marketplace) {
             $optionsResult[] = [
-                'value' => $marketplace['id'],
-                'label' => $this->__($marketplace['title'])
+                'value' => $marketplace->getId(),
+                'label' => __($marketplace->getTitle())
             ];
         }
 
         return $optionsResult;
     }
 
-    /**
-     * @param bool $isEdit
-     *
-     * @return string
-     */
     private function getProductTypeEditHtml(bool $isEdit): string
     {
-        $textNotSelected = $this->__('Not Selected');
-        $textEdit = $this->__('Edit');
+        $textNotSelected = __('Not Selected');
+        $textEdit = __('Edit');
 
         $title = $isEdit ? $this->getDictionaryTitle() : '';
         $quotedTitle = $this->dataHelper->escapeHtml($title);
         $displayModeNotSelected = $isEdit ? 'none' : 'inline-block';
         $displayModeTitle = $isEdit ? 'inline-block' : 'none';
 
-        $productTypeNick = $this->productType->getNick();
+        $productTypeNick = $isEdit ? $this->productType->getNick() : '';
         $quotedNick = $this->dataHelper->escapeHtml($productTypeNick);
 
         return <<<HTML
@@ -268,9 +234,6 @@ CSS
 HTML;
     }
 
-    /**
-     * @return int
-     */
     private function getSuggestedMarketplaceId(): int
     {
         return (int)$this->getRequest()->getParam('marketplace_id', 0);

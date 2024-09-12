@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Module\Database;
 
 class Structure
@@ -34,16 +28,6 @@ class Structure
     /** @var \Ess\M2ePro\Helper\Data\Cache\Runtime */
     private $runtimeCacheHelper;
 
-    /**
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReaderFactory
-     * @param \Magento\Framework\Component\ComponentRegistrar $componentRegistrar
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
-     * @param \Ess\M2ePro\Helper\Component $componentHelper
-     * @param \Ess\M2ePro\Helper\Data\Cache\Runtime $runtimeCacheHelper
-     */
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReaderFactory,

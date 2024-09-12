@@ -109,6 +109,11 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
+    /**
+     * @param string $processorName
+     *
+     * @return Processor\Sub\AbstractModel
+     */
     private function getProcessorModel($processorName)
     {
         $model = $this->modelFactory->getObject(
@@ -210,10 +215,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    /**
-     * @return array|null
-     */
-    public function getPossibleThemes()
+    public function getPossibleThemes(): array
     {
         if ($this->possibleThemes !== null) {
             return $this->possibleThemes;
@@ -226,11 +228,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             return $this->possibleThemes = [];
         }
 
-        $possibleThemes = $this->modelFactory->getObject('Amazon_Marketplace_Details')
-            ->setMarketplaceId($marketPlaceId)
-            ->getVariationThemes(
-                $productType->getNick()
-            );
+        $possibleThemes = $productType->getDictionary()->getVariationThemes();
 
         $themesUsageData = $this->variationHelper->getThemesUsageData();
         $usedThemes = [];

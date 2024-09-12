@@ -4,15 +4,13 @@ namespace Ess\M2ePro\Model\Amazon\Dashboard\Sales;
 
 use Ess\M2ePro\Model\Dashboard\Date\DateRange;
 use Ess\M2ePro\Model\Dashboard\Sales\PointSet;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Order as AmazonOrderResource;
 
 class Calculator implements \Ess\M2ePro\Model\Dashboard\Sales\CalculatorInterface
 {
-    /** @var \Ess\M2ePro\Model\Dashboard\Date\DateRangeFactory */
-    private $dateRangeFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Order\CollectionFactory */
-    private $resourceCollectionFactory;
-    /** @var \Ess\M2ePro\Model\Dashboard\Sales\PointFactory */
-    private $pointFactory;
+    private \Ess\M2ePro\Model\Dashboard\Date\DateRangeFactory $dateRangeFactory;
+    private AmazonOrderResource\CollectionFactory $resourceCollectionFactory;
+    private \Ess\M2ePro\Model\Dashboard\Sales\PointFactory $pointFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Dashboard\Date\DateRangeFactory $dateRangeFactory,
@@ -83,7 +81,8 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Sales\CalculatorInterfac
         $select->columns(
             [
                 sprintf(
-                    'DATE_FORMAT(purchase_update_date, "%s") AS date',
+                    'DATE_FORMAT(%s, "%s") AS date',
+                    AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE,
                     $isHourlyInterval ? '%Y-%m-%d %H' : '%Y-%m-%d'
                 ),
                 sprintf('%s AS value', $valueColumn),
@@ -99,15 +98,16 @@ class Calculator implements \Ess\M2ePro\Model\Dashboard\Sales\CalculatorInterfac
         );
         $select->where(
             sprintf(
-                "purchase_update_date BETWEEN '%s' AND '%s'",
+                "%s BETWEEN '%s' AND '%s'",
+                AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE,
                 $dateRange->getDateStart()->format('Y-m-d H:i:s'),
                 $dateRange->getDateEnd()->format('Y-m-d H:i:s')
             )
         );
         if ($isHourlyInterval) {
-            $select->group('HOUR(main_table.purchase_update_date)');
+            $select->group(sprintf('HOUR(main_table.%s)', AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE));
         }
-        $select->group('DAY(main_table.purchase_update_date)');
+        $select->group(sprintf('DAY(main_table.%s)', AmazonOrderResource::COLUMN_PURCHASE_CREATE_DATE));
         $select->order('date');
 
         $queryData = $select->query()->fetchAll();

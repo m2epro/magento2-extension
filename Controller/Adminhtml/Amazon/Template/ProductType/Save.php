@@ -1,27 +1,16 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType;
 
-use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory as ProductTypeCollectionFactory;
 use Ess\M2ePro\Model\Amazon\Template\ProductType\AffectedListingsProductsFactory
     as ProductTypeAffectedListingsProductsFactory;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
 {
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory */
     private $productTypeFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory */
     private $productTypeBuilderFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
-    private $productTypeCollectionFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType\SnapshotBuilderFactory */
     private $productTypeSnapshotBuilderFactory;
     /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType\DiffFactory */
@@ -34,38 +23,36 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
     private $registryManager;
     /** @var \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\ManagerFactory */
     private $attributeMappingManagerFactory;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
+    private \Ess\M2ePro\Helper\Url $urlHelper;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
         \Ess\M2ePro\Model\Registry\Manager $registryManager,
-        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Url $urlHelper,
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\BuilderFactory $productTypeBuilderFactory,
-        ProductTypeCollectionFactory $productTypeCollectionFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\SnapshotBuilderFactory $productTypeSnapshotBuilderFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\DiffFactory $productTypeDiffFactory,
         ProductTypeAffectedListingsProductsFactory $productTypeAffectedProductsFactory,
         \Ess\M2ePro\Model\Amazon\Template\ProductType\ChangeProcessorFactory $productTypeChangeProcessorFactory,
         \Ess\M2ePro\Model\Amazon\ProductType\AttributeMapping\ManagerFactory $attributeMappingManagerFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
         parent::__construct($amazonFactory, $context);
-        $this->dataHelper = $dataHelper;
         $this->productTypeFactory = $productTypeFactory;
         $this->productTypeBuilderFactory = $productTypeBuilderFactory;
-        $this->productTypeCollectionFactory = $productTypeCollectionFactory;
         $this->productTypeSnapshotBuilderFactory = $productTypeSnapshotBuilderFactory;
         $this->productTypeDiffFactory = $productTypeDiffFactory;
         $this->productTypeAffectedProductsFactory = $productTypeAffectedProductsFactory;
         $this->productTypeChangeProcessorFactory = $productTypeChangeProcessorFactory;
         $this->registryManager = $registryManager;
         $this->attributeMappingManagerFactory = $attributeMappingManagerFactory;
+        $this->templateProductTypeRepository = $templateProductTypeRepository;
+        $this->urlHelper = $urlHelper;
     }
 
-    /**
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface|\Magento\Framework\View\Result\Page
-     * @throws \Ess\M2ePro\Model\Exception\Logic|\Magento\Framework\Exception\LocalizedException
-     */
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();
@@ -75,10 +62,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
                     'status' => false,
                     'message' => 'Incorrect input',
                 ]);
+
                 return $this->getResult();
             }
 
             $this->_forward('index');
+
             return;
         }
 
@@ -95,6 +84,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
                             'status' => false,
                             'message' => $message,
                         ]);
+
                         return $this->getResult();
                     }
 
@@ -107,7 +97,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
             }
 
             if ($this->isTryingOverrideExistingSettings((int)$temp['marketplace_id'], (string)$temp['nick'])) {
-                $message = $this->__(
+                $message = __(
                     'Product Type Settings were not saved: duplication of Product Type Settings'
                     . ' for marketplace is not allowed.'
                 );
@@ -117,6 +107,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
                         'status' => false,
                         'message' => $message,
                     ]);
+
                     return $this->getResult();
                 }
 
@@ -127,10 +118,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         }
 
         $builder = $this->productTypeBuilderFactory->create();
-        $productType = $this->productTypeFactory->create();
+
+        $productType = $this->productTypeFactory->createEmpty();
 
         if ($id) {
-            $productType->load($id);
+            $productType = $this->templateProductTypeRepository->get($id);
         }
 
         $oldData = [];
@@ -139,8 +131,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         }
 
         $builder->build($productType, $post);
-        $productType = $builder->getModel();
-        $this->messageManager->addSuccessMessage($this->__('Product Type Settings were saved'));
+
+        $this->messageManager->addSuccessMessage(__('Product Type Settings were saved'));
 
         $newData = $this->makeSnapshot($productType);
 
@@ -160,7 +152,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
         $attributeMappingManager = $this->attributeMappingManagerFactory->create($productType);
         $attributeMappingManager->createNewMappings();
 
-        $backUrl = $this->dataHelper->getBackUrl(
+        $backUrl = $this->urlHelper->getBackUrl(
             '*/amazon_template_productType/index',
             [],
             ['edit' => ['id' => $productType->getId()]]
@@ -198,33 +190,16 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductType
      * This code prevents attempt to create duplicate when user tries to create new product type settings.
      * Situation like this possible when one user starts to create product type, another user creates the same one,
      * and first user saves settings for same (marketplace_id, nick).
-     *
-     * @param int $marketplaceId
-     * @param string $nick
-     *
-     * @return bool
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function isTryingOverrideExistingSettings(
         int $marketplaceId,
         string $nick
     ): bool {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\Collection $collection */
-        $collection = $this->productTypeCollectionFactory->create()
-            ->appendFilterMarketplaceId($marketplaceId)
-            ->appendFilterNick($nick);
+        $template = $this->templateProductTypeRepository->findByMarketplaceIdAndNick($marketplaceId, $nick);
 
-        /** @var \Ess\M2ePro\Model\Amazon\Template\ProductType $item */
-        $item = $collection->getFirstItem();
-
-        return (bool)$item->getId();
+        return $template !== null;
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Amazon\Template\ProductType $productType
-     *
-     * @return array
-     */
     private function makeSnapshot(
         \Ess\M2ePro\Model\Amazon\Template\ProductType $productType
     ): array {

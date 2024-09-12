@@ -158,4 +158,16 @@
                 type="Ess\M2ePro\Model\Ebay\Api\Data\Order\OrderItem\TaxDetails" />
     <preference for="Ess\M2ePro\Api\Ebay\Data\Order\OrderItem\TaxDetails\CollectAndRemitInterface"
                 type="Ess\M2ePro\Model\Ebay\Api\Data\Order\OrderItem\TaxDetails\CollectAndRemit" />
+
+    <!-- UI component config -->
+
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="m2epro_amazon_template_product_type_grid_source" xsi:type="string">
+                    Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\Grid\Collection
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>

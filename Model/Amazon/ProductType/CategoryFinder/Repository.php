@@ -4,25 +4,15 @@ namespace Ess\M2ePro\Model\Amazon\ProductType\CategoryFinder;
 
 class Repository
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory */
-    private $marketplaceDictionaryCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\CollectionFactory */
-    private $dictionaryProductTypeCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
-    private $templateProductTypeCollectionFactory;
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace\Repository $dictionaryMarketplaceRepository;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace\CollectionFactory $marketplaceCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType\CollectionFactory $productTypeCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory $templateTypeCollectionFactory,
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $templateProductTypeRepository,
+        \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace\Repository $dictionaryMarketplaceRepository
     ) {
-        $this->marketplaceDictionaryCollectionFactory = $marketplaceCollectionFactory;
-        $this->dictionaryProductTypeCollectionFactory = $productTypeCollectionFactory;
-        $this->templateProductTypeCollectionFactory = $templateTypeCollectionFactory;
-        $this->productTypeHelper = $productTypeHelper;
+        $this->dictionaryMarketplaceRepository = $dictionaryMarketplaceRepository;
+        $this->templateProductTypeRepository = $templateProductTypeRepository;
     }
 
     /**
@@ -30,55 +20,51 @@ class Repository
      * @param array $nicks
      *
      * @return array<string, array{nick:string, title:string, templateId: int|null}>
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getAvailableProductTypes(int $marketplaceId, array $nicks): array
     {
-        $productTypes = $this->getProductTypesFromMarketplaceDictionary($marketplaceId);
-        $alreadyUsedProductTypes = $this->productTypeHelper->getConfiguredProductTypesList($marketplaceId);
+        $productTypesMap = $this->getProductTypesFromMarketplaceDictionary($marketplaceId);
+        $alreadyUsedProductTypesMap = $this->getProductTypesTemplates($marketplaceId);
 
         $availableProductTypes = [];
         foreach ($nicks as $nick) {
-            foreach ($productTypes as $productType) {
-                if ($nick == $productType['nick']) {
-                    $availableProductTypes[$nick] = [
-                        'nick' => $productType['nick'],
-                        'title' => $productType['title'],
-                        'templateId' => $alreadyUsedProductTypes[$productType['nick']] ?? null,
-                    ];
-                }
+            if (isset($productTypesMap[$nick])) {
+                $availableProductTypes[$nick] = [
+                    'nick' => $productTypesMap[$nick]['nick'],
+                    'title' => $productTypesMap[$nick]['title'],
+                    'templateId' => $alreadyUsedProductTypesMap[$productTypesMap[$nick]['nick']] ?? null,
+                ];
             }
         }
 
         return $availableProductTypes;
     }
 
-    /**
-     * @param int $marketplaceId
-     *
-     * @return list<array{nick:string, title:string}>
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     private function getProductTypesFromMarketplaceDictionary(int $marketplaceId): array
     {
-        $collection = $this->marketplaceDictionaryCollectionFactory->create();
-        $collection->appendFilterMarketplaceId($marketplaceId);
-
-        /** @var \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace $marketplaceDictionaryItem */
-        $marketplaceDictionaryItem = $collection->getFirstItem();
-
-        if ($marketplaceDictionaryItem === null) {
+        $dictionary = $this->dictionaryMarketplaceRepository->findByMarketplaceId($marketplaceId);
+        if ($dictionary === null) {
             return [];
         }
 
-        $productTypes = $marketplaceDictionaryItem->getProductTypes();
+        $productTypes = $dictionary->getProductTypes();
 
         $result = [];
         foreach ($productTypes as $productType) {
-            $result[] = [
+            $result[$productType['nick']] = [
                 'nick' => $productType['nick'],
                 'title' => $productType['title'],
             ];
+        }
+
+        return $result;
+    }
+
+    private function getProductTypesTemplates(int $marketplaceId): array
+    {
+        $result = [];
+        foreach ($this->templateProductTypeRepository->findByMarketplaceId($marketplaceId) as $productType) {
+            $result[$productType->getNick()] = (int)$productType->getId();
         }
 
         return $result;

@@ -24,26 +24,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $checkNewAsinAccepted;
     /** @var \Ess\M2ePro\Helper\Data */
     private $dataHelper;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory */
-    private $productTypeCollectionFactory;
+    private \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $amazonTemplateProductTypeRepository;
 
-    /**
-     * @param ProductTypeCollectionFactory $productTypeCollectionFactory
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Backend\Helper\Data $backendHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param array $data
-     */
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType\CollectionFactory $productTypeCollectionFactory,
+        \Ess\M2ePro\Model\Amazon\Template\ProductType\Repository $amazonTemplateProductTypeRepository,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->dataHelper = $dataHelper;
-        $this->productTypeCollectionFactory = $productTypeCollectionFactory;
-
+        $this->amazonTemplateProductTypeRepository = $amazonTemplateProductTypeRepository;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -155,8 +146,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $this->setNoTemplatesText();
 
-        $collection = $this->productTypeCollectionFactory->create();
-        $collection->appendFilterMarketplaceId($this->getMarketplaceId());
+        $collection = $this->amazonTemplateProductTypeRepository->getCollectionForGrid();
+        $collection->getSelect()
+                   ->where('adpt.marketplace_id = ?', $this->getMarketplaceId());
 
         $this->setCollection($collection);
 

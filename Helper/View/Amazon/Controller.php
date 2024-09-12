@@ -1,44 +1,28 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\View\Amazon;
-
-use Ess\M2ePro\Model\Issue\LocatorInterface;
 
 class Controller
 {
-    /** @var \Ess\M2ePro\Model\Factory */
-    private $modelFactory;
+    private \Ess\M2ePro\Model\Factory $modelFactory;
 
-    /**
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     */
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->modelFactory = $modelFactory;
     }
 
-    /**
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function addMessages(): void
     {
         /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationChannel */
         $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_Session');
         $issueLocators = [
-            'Amazon_Marketplace_Issue_NotUpdated',
+            'Amazon_Marketplace_Issue_ProductTypeOutOfDate',
             'Amazon_Repricing_Issue_InvalidToken',
         ];
 
         foreach ($issueLocators as $locator) {
-            /** @var LocatorInterface $locatorModel */
+            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Issue\ProductTypeOutOfDate|\Ess\M2ePro\Model\Amazon\Repricing\Issue\InvalidToken $locatorModel */
             $locatorModel = $this->modelFactory->getObject($locator);
 
             foreach ($locatorModel->getIssues() as $issue) {

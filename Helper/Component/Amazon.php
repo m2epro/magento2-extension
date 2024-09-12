@@ -10,8 +10,6 @@ class Amazon
 {
     public const NICK = 'amazon';
 
-    public const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'amazon_marketplace_synchronization';
-
     public const MARKETPLACE_CA = 24;
     public const MARKETPLACE_DE = 25;
     public const MARKETPLACE_FR = 26;
@@ -224,14 +222,6 @@ class Amazon
         return $carriers[$carrierCode] ?? $title;
     }
 
-    public function getMarketplacesAvailableForApiCreation()
-    {
-        return $this->amazonFactory->getObject('Marketplace')->getCollection()
-                                   ->addFieldToFilter('component_mode', self::NICK)
-                                   ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
-                                   ->setOrder('sorder', 'ASC');
-    }
-
     public function getMarketplacesList()
     {
         $collection = $this->marketplaceCollectionFactory->create();
@@ -274,11 +264,6 @@ class Amazon
                    ->addFieldToFilter('marketplace_id', $marketplaceId)
                    ->addFieldToFilter('location', $location);
         return $collection->getFirstItem();
-    }
-
-    public function getMarketplacesAvailableForAsinCreation()
-    {
-        return $this->getMarketplacesAvailableForApiCreation()->addFieldToFilter('is_new_asin_available', 1);
     }
 
     /**

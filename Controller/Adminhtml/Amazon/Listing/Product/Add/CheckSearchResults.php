@@ -15,10 +15,7 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $listingProductsIds = $this->filterProductsForNewAsin($listingProductsIds);
 
-        if (
-            empty($listingProductsIds)
-            || !$this->getListing()->getMarketplace()->getChildObject()->isNewAsinAvailable()
-        ) {
+        if (empty($listingProductsIds)) {
             $redirectUrl = $this->getUrl('*/*/index', [
                 'step' => 6,
                 'id' => $this->getRequest()->getParam('id'),

@@ -157,9 +157,6 @@ HTML
         $autoMapAsinSearchProducts = __('Search %product_title% Product(s) on Amazon.');
         $autoMapAsinProgressTitle = __('Automatic Assigning ASIN/ISBN to Item(s)');
         $autoMapAsinErrorMessage = __('Server is currently unavailable. Please try again later.');
-        $newAsinNotAvailable = $this->__(
-            'The new ASIN/ISBN creation functionality is not available in %code% Marketplace yet.'
-        );
         $notSynchronizedMarketplace = __(
             'In order to use New ASIN/ISBN functionality, please re-synchronize Marketplace data.'
         ) . ' ' . __('Press "Save And Update" Button after redirect on Marketplace Page.');
@@ -176,7 +173,6 @@ HTML
 
             'sending_data_message' => $sendingDataToAmazonMessage,
 
-            'new_asin_not_available' => $newAsinNotAvailable,
             'not_synchronized_marketplace' => $notSynchronizedMarketplace,
 
             'enter_productSearch_query' => $enterProductSearchQueryMessage,

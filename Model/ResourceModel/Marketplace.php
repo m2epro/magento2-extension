@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ResourceModel;
 
 class Marketplace extends ActiveRecord\Component\Parent\AbstractModel
@@ -13,8 +15,21 @@ class Marketplace extends ActiveRecord\Component\Parent\AbstractModel
     public const COLUMN_SORDER = 'sorder';
     public const COLUMN_GROUP_TITLE = 'group_title';
     public const COLUMN_COMPONENT_MODE = 'component_mode';
+    private \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace\Repository $amazonDictionaryMarketplaceRepository;
 
-    public function _construct()
+    public function __construct(
+        \Ess\M2ePro\Model\Amazon\Dictionary\Marketplace\Repository $amazonDictionaryMarketplaceRepository,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        $connectionName = null
+    ) {
+        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
+        $this->amazonDictionaryMarketplaceRepository = $amazonDictionaryMarketplaceRepository;
+    }
+
+    public function _construct(): void
     {
         $this->_init(
             \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_MARKETPLACE,
@@ -22,21 +37,16 @@ class Marketplace extends ActiveRecord\Component\Parent\AbstractModel
         );
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Marketplace $marketplace
-     */
-    public function isDictionaryExist($marketplace)
+    public function isDictionaryExist(\Ess\M2ePro\Model\Marketplace $marketplace): bool
     {
         $connection = $this->getConnection();
-        $tableName = null;
 
         switch ($marketplace->getComponentMode()) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
                 $tableName = 'm2epro_ebay_dictionary_marketplace';
                 break;
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                $tableName = 'm2epro_amazon_dictionary_marketplace';
-                break;
+                return $this->amazonDictionaryMarketplaceRepository->findByMarketplace($marketplace) !== null;
             case \Ess\M2ePro\Helper\Component\Walmart::NICK:
                 $tableName = 'm2epro_walmart_dictionary_marketplace';
                 break;

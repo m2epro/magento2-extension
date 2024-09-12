@@ -1,19 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Amazon\Template;
 
-/**
- * @method getSettings($fieldName)
- * @method getSetting($fieldName, $settingNamePath, $defaultValue = null)
- * @method setSettings($fieldName, array $settings = [])
- * @method setSetting($fieldName, $settingNamePath, $settingValue)
- */
+use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType as ProductTypeResource;
+
 class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     public const FIELD_NOT_CONFIGURED = 0;
@@ -25,25 +15,11 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public const GENERAL_PRODUCT_TYPE_NICK = 'PRODUCT';
 
-    /** @var \Ess\M2ePro\Helper\Component\Amazon\ProductType */
-    private $productTypeHelper;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\ProductType $dictionary;
+    private \Ess\M2ePro\Model\Amazon\Dictionary\ProductType\Repository $dictionaryProductTypeRepository;
 
-    /** @var ?\Ess\M2ePro\Model\Amazon\Dictionary\ProductType */
-    private $dictionary = null;
-
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
-     */
     public function __construct(
-        \Ess\M2ePro\Helper\Component\Amazon\ProductType $productTypeHelper,
+        \Ess\M2ePro\Model\Amazon\Dictionary\ProductType\Repository $dictionaryProductTypeRepository,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -63,54 +39,24 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $resourceCollection,
             $data
         );
-        $this->productTypeHelper = $productTypeHelper;
+        $this->dictionaryProductTypeRepository = $dictionaryProductTypeRepository;
     }
 
-    /**
-     * @return void
-     */
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType::class);
+        $this->_init(ProductTypeResource::class);
     }
 
-    /**
-     * @return int
-     */
     public function getDictionaryProductTypeId(): int
     {
-        return (int)$this->getData('dictionary_product_type_id');
+        return (int)$this->getData(ProductTypeResource::COLUMN_DICTIONARY_PRODUCT_TYPE_ID);
     }
 
-    /**
-     * @return int
-     */
-    public function getMarketplaceId(): int
-    {
-        return $this->getDictionary()->getMarketplaceId();
-    }
-
-    /**
-     * @return string
-     */
-    public function getNick(): string
-    {
-        return $this->getDictionary()->getNick();
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->getData('title');
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Dictionary\ProductType
-     */
     public function getDictionary(): \Ess\M2ePro\Model\Amazon\Dictionary\ProductType
     {
-        if ($this->dictionary === null) {
-            $this->dictionary = $this->productTypeHelper->getProductTypeDictionaryById(
+        if (!isset($this->dictionary)) {
+            $this->dictionary = $this->dictionaryProductTypeRepository->get(
                 $this->getDictionaryProductTypeId()
             );
         }
@@ -118,13 +64,24 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->dictionary;
     }
 
-    /**
-     * @return array
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
+    public function getMarketplaceId(): int
+    {
+        return $this->getDictionary()->getMarketplaceId();
+    }
+
+    public function getNick(): string
+    {
+        return $this->getDictionary()->getNick();
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->getData(ProductTypeResource::COLUMN_TITLE);
+    }
+
     public function getCustomAttributesName(): array
     {
-        $specifics = $this->getSettings('settings');
+        $specifics = $this->getSelfSetting();
         $customAttributes = [];
         foreach ($specifics as $values) {
             foreach ($values as $value) {
@@ -162,7 +119,8 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     private function getCustomAttributes(): array
     {
-        $specifics = $this->getSettings('settings');
+        $specifics = $this->getSelfSetting();
+
         $filterCallback = static function (array $values) {
             foreach ($values as $value) {
                 if (!isset($value['mode'])) {
@@ -180,11 +138,21 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getViewMode(): int
     {
-        $viewMode = $this->getData('view_mode');
+        $viewMode = $this->getData(ProductTypeResource::COLUMN_VIEW_MODE);
         if ($viewMode === null) {
             return self::VIEW_MODE_REQUIRED_ATTRIBUTES;
         }
 
         return (int)$viewMode;
+    }
+
+    public function getSelfSetting(): array
+    {
+        $value = $this->getData(ProductTypeResource::COLUMN_SETTINGS);
+        if (empty($value)) {
+            return [];
+        }
+
+        return (array)json_decode($value, true);
     }
 }

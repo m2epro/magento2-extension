@@ -1,34 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel\Marketplace;
 
 class CollectionFactory
 {
-    /** @var \Magento\Framework\ObjectManagerInterface */
-    private $objectManager;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
-    /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     */
     public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return \Ess\M2ePro\Model\ResourceModel\Marketplace\Collection
-     */
-    public function create(array $data = []): Collection
+    public function create(): Collection
     {
-        return $this->objectManager->create(Collection::class, $data);
+        return $this->objectManager->create(Collection::class);
     }
 
     public function createWithEbayChildMode(): Collection

@@ -41,6 +41,12 @@ class Tables
     public const TABLE_AMAZON_MARKETPLACE = self::PREFIX . 'amazon_marketplace';
     public const TABLE_AMAZON_LISTING_PRODUCT = self::PREFIX . 'amazon_listing_product';
     public const TABLE_AMAZON_ORDER = self::PREFIX . 'amazon_order';
+
+    public const TABLE_AMAZON_DICTIONARY_MARKETPLACE = self::PREFIX . 'amazon_dictionary_marketplace';
+    public const TABLE_AMAZON_DICTIONARY_PRODUCT_TYPE = self::PREFIX . 'amazon_dictionary_product_type';
+
+    public const TABLE_AMAZON_TEMPLATE_PRODUCT_TYPE = self::PREFIX . 'amazon_template_product_type';
+
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
 
     public const TABLE_WALMART_ORDER = self::PREFIX . 'walmart_order';

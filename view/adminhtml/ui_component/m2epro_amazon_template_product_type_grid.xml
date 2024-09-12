@@ -1,0 +1,140 @@
+<?xml version="1.0" ?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">
+                m2epro_amazon_template_product_type_grid.m2epro_amazon_template_product_type_grid_data_source
+            </item>
+            <item name="deps" xsi:type="string">
+                m2epro_amazon_template_product_type_grid.m2epro_amazon_template_product_type_grid_source
+            </item>
+        </item>
+        <item name="buttons" xsi:type="array">
+            <item name="refresh" xsi:type="string">\Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Button\RefreshAmazonData</item>
+            <item name="add_product_type" xsi:type="string">\Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\Button\AddNewButton</item>
+        </item>
+        <item name="spinner" xsi:type="string">m2epro_amazon_template_product_type_grid_columns</item>
+    </argument>
+
+    <dataSource name="m2epro_amazon_template_product_type_grid_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">\Ess\M2ePro\Ui\DataProvider</argument>
+            <argument name="name" xsi:type="string">m2epro_amazon_template_product_type_grid_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">id</argument>
+            <argument name="requestFieldName" xsi:type="string">id</argument>
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/provider</item>
+                    <item name="update_url" path="mui/index/render" xsi:type="url"/>
+                    <item name="storageConfig" xsi:type="array">
+                        <item name="indexField" xsi:type="string">id</item>
+                    </item>
+                </item>
+            </argument>
+        </argument>
+    </dataSource>
+
+    <listingToolbar name="listing_top">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="sticky" xsi:type="boolean">false</item>
+            </item>
+        </argument>
+
+        <filters name="listing_filters">
+
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="templates" xsi:type="array">
+                        <item name="filters" xsi:type="array">
+                            <item name="select" xsi:type="array">
+                                <item name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</item>
+                                <item name="template" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+                            </item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+
+            <filterSelect name="marketplace_id"
+                          provider="${ $.parentName }"
+                          template="ui/grid/filters/elements/ui-select"
+                          component="Magento_Ui/js/form/element/ui-select"
+            >
+                <settings>
+                    <label>Marketplace</label>
+                    <dataScope>marketplace_id</dataScope>
+                    <options class="Ess\M2ePro\Ui\Template\ProductType\Component\Listing\Select\Marketplace"/>
+                </settings>
+            </filterSelect>
+
+        </filters>
+
+        <paging name="listing_paging"/>
+
+    </listingToolbar>
+
+    <columns name="m2epro_amazon_template_product_type_grid_columns">
+
+        <settings>
+            <childDefaults>
+                <param name="draggable" xsi:type="boolean">false</param>
+            </childDefaults>
+        </settings>
+
+        <!--  column name from provider  -->
+        <column name="id">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" translate="true" xsi:type="string">ID</item>
+                    <item name="visible" xsi:type="boolean">false</item>
+                </item>
+            </argument>
+        </column>
+
+        <column name="template_title" class="Ess\M2ePro\Ui\Template\ProductType\Component\Listing\Column\Title">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" translate="true" xsi:type="string">Title</item>
+                    <item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>
+                    <item name="filter" xsi:type="string">text</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </column>
+
+        <column name="marketplace" class="Ess\M2ePro\Ui\Template\ProductType\Component\Listing\Column\Marketplace">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" translate="true" xsi:type="string">Marketplace</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                </item>
+            </argument>
+        </column>
+
+        <column name="create_date" class="Magento\Ui\Component\Listing\Columns\Date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" translate="true" xsi:type="string">Create Date</item>
+                    <item name="filter" xsi:type="string">dateRange</item>
+                    <item name="sortOrder" xsi:type="number">30</item>
+                </item>
+            </argument>
+        </column>
+
+        <column name="update_date" class="Magento\Ui\Component\Listing\Columns\Date">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" translate="true" xsi:type="string">Update Date</item>
+                    <item name="filter" xsi:type="string">dateRange</item>
+                    <item name="sortOrder" xsi:type="number">40</item>
+                </item>
+            </argument>
+        </column>
+
+        <actionsColumn name="actions" class = "Ess\M2ePro\Block\Adminhtml\Amazon\Template\ProductType\ActionColumn"/>
+
+    </columns>
+</listing>
