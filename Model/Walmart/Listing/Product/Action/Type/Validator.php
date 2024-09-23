@@ -335,11 +335,9 @@ HTML;
             !$this->getWalmartListingProduct()->isMissedOnChannel() &&
             !$this->getWalmartListingProduct()->isOnlinePriceInvalid()
         ) {
-            $message = <<<HTML
-The action cannot be submitted. Your Item is in Incomplete status because some Item data may
- contradict Walmart rules. To restore the Item to Active status, please adjust the related Policy settings and
- click Reset next to that Item. M2E Pro will resubmit the Item automatically.
-HTML;
+            $message = 'The action cannot be submitted. Your Item is in Incomplete status because some ' .
+                'Item data may contradict Walmart rules. To restore the Item to Active status, please ' .
+                'adjust the related Policy settings and Revise the Item manually.';
 
             $this->addMessage($message);
 

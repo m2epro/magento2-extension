@@ -57,6 +57,14 @@ class UpdateAmazonDictionaryProductType extends \Ess\M2ePro\Model\Setup\Upgrade\
 
     private function updateLastUpdateDate(): void
     {
+        $marketplaceDictionaryModifier = $this->getTableModifier(TablesHelper::TABLE_AMAZON_DICTIONARY_MARKETPLACE);
+        if (
+            !$marketplaceDictionaryModifier->isColumnExists('client_details_last_update_date')
+            || !$marketplaceDictionaryModifier->isColumnExists('server_details_last_update_date')
+        ) {
+            return;
+        }
+
         $dictionaryMarketplaceTableName = $this->getFullTableName(TablesHelper::TABLE_AMAZON_DICTIONARY_MARKETPLACE);
         $dictionaryPTTableName = $this->getFullTableName(TablesHelper::TABLE_AMAZON_DICTIONARY_PRODUCT_TYPE);
 

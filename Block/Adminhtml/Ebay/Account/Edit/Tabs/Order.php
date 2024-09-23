@@ -434,6 +434,26 @@ HTML
             ]
         );
 
+        $shipByDateFieldset->addField(
+            'skip_evtin',
+            'select',
+            [
+                'label' => __('Skip eVTN'),
+                'title' => __('Skip eVTN'),
+                'name' => 'skip_evtin',
+                'options' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['skip_evtin'],
+                'tooltip' => __(
+                    'Set <b>Yes</b> if you want to exclude
+                    <a href="%url" target="_blank">eVTN</a> from your Magento orders.',
+                    ['url' => 'https://help.m2epro.com/support/solutions/articles/9000199785']
+                ),
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_ebay_accounts_magento_orders_customer',
             [

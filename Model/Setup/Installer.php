@@ -3073,7 +3073,7 @@ class Installer
                                      ['unsigned' => true, 'nullable' => false, 'default' => 1]
                                  )
                                  ->addColumn(
-                                     'skip_evtin',
+                                     \Ess\M2ePro\Model\ResourceModel\Ebay\Account::COLUMN_SKIP_EVTIN,
                                      Table::TYPE_SMALLINT,
                                      null,
                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]

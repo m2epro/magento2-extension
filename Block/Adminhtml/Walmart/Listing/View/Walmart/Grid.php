@@ -355,11 +355,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // ---------------------------------------
 
-        $this->getMassactionBlock()->addItem('resetProducts', [
-            'label' => __('Reset Incomplete Item(s)'),
-            'url' => '',
-        ], 'other');
-
         return parent::_prepareMassaction();
     }
 

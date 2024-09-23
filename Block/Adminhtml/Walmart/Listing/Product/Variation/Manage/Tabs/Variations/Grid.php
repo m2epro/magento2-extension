@@ -325,11 +325,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'url' => '',
         ]);
 
-        $this->getMassactionBlock()->addItem('resetProducts', [
-            'label' => __('Reset Incomplete Item(s)'),
-            'url' => '',
-        ], 'other');
-
         // ---------------------------------------
 
         return parent::_prepareMassaction();

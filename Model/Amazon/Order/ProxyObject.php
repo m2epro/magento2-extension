@@ -122,14 +122,14 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $customer;
     }
 
-    /**
-     * @return array
-     */
-    public function getBillingAddressData()
+    public function getBillingAddressData(): array
     {
         if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {
             $billingAddress = parent::getBillingAddressData();
-            $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
+
+            if ($this->order->getAmazonAccount()->isImportBuyerCompanyName()) {
+                $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
+            }
 
             return $billingAddress;
         }
@@ -139,7 +139,10 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
             $this->order->getShippingAddress()->hasSameBuyerAndRecipient()
         ) {
             $billingAddress = parent::getBillingAddressData();
-            $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
+
+            if ($this->order->getAmazonAccount()->isImportBuyerCompanyName()) {
+                $billingAddress = $this->appendCompanyToBillingAddressData($billingAddress);
+            }
 
             return $billingAddress;
         }

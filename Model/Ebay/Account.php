@@ -655,9 +655,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return isset($settings['use_marketplace_prefix']) ? (bool)$settings['use_marketplace_prefix'] : false;
     }
 
-    /**
-     * @return bool
-     */
     public function isImportShipByDateToMagentoOrder(): bool
     {
         return (bool)$this->getSetting(
@@ -665,6 +662,20 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             ['shipping_information', 'ship_by_date'],
             true
         );
+    }
+
+    public function isRegionOverrideRequired(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['shipping_information', 'shipping_address_region_override'],
+            1
+        );
+    }
+
+    public function isSkipEvtinModeOn(): bool
+    {
+        return (bool)$this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Account::COLUMN_SKIP_EVTIN);
     }
 
     public function getMagentoOrdersCreationMode()
@@ -992,14 +1003,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return (bool)$this->getData('create_magento_shipment');
     }
 
-    /**
-     * @return bool
-     */
-    public function isSkipEvtinModeOn()
-    {
-        return (bool)$this->getData('skip_evtin');
-    }
-
     // ----------------------------------------
 
     /**
@@ -1246,15 +1249,6 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isCacheEnabled()
     {
         return true;
-    }
-
-    public function isRegionOverrideRequired(): bool
-    {
-        return (bool)$this->getSetting(
-            'magento_orders_settings',
-            ['shipping_information', 'shipping_address_region_override'],
-            1
-        );
     }
 
     public function isFinalFeeUpdateEnabled(): bool

@@ -67,8 +67,6 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const _ACTION_SWITCH_TO_AFN_ON_COMPONENT = 'Switching Fulfillment to AFN';
     public const ACTION_SWITCH_TO_MFN_ON_COMPONENT = 30;
     public const _ACTION_SWITCH_TO_MFN_ON_COMPONENT = 'Switching Fulfillment to MFN';
-    public const ACTION_RESET_BLOCKED_PRODUCT = 32;
-    public const _ACTION_RESET_BLOCKED_PRODUCT = 'Reset Incomplete Item';
 
     public const ACTION_CHANGE_PRODUCT_SPECIAL_PRICE_FROM_DATE = 19;
     public const _ACTION_CHANGE_PRODUCT_SPECIAL_PRICE_FROM_DATE = 'Change of Product Special Price from date in Magento Store';

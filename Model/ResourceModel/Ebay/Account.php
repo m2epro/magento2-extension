@@ -1,24 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
 class Account extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_ACCOUNT_ID = 'account_id';
+    public const COLUMN_SKIP_EVTIN = 'skip_evtin';
+
     /** @var bool */
     protected $_isPkAutoIncrement = false;
 
-    /**
-     * @return void
-     */
-    public function _construct()
+    public function _construct(): void
     {
-        $this->_init('m2epro_ebay_account', 'account_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_ACCOUNT,
+            self::COLUMN_ACCOUNT_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
 }

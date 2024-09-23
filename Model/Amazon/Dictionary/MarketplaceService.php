@@ -107,7 +107,7 @@ class MarketplaceService
 
     private function restoreInvalidProductTypes(
         \Ess\M2ePro\Model\Marketplace $marketplace,
-        mixed $listProductTypesNicks
+        array $listProductTypesNicks
     ): void {
         $existProductTypesMap = array_flip($listProductTypesNicks);
         foreach ($this->dictionaryProductTypeRepository->findByMarketplace($marketplace) as $productType) {

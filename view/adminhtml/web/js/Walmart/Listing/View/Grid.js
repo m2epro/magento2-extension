@@ -60,7 +60,6 @@ define([
                 duplicateAction: this.duplicateProducts.bind(this),
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
                 deleteAndRemoveAction: this.actionHandler.deleteAndRemoveAction.bind(this.actionHandler),
-                resetProductsAction: this.actionHandler.resetProductsAction.bind(this.actionHandler),
 
                 changeTemplateCategoryIdAction: (function(id) {
                     id = id || this.getSelectedProductsString();

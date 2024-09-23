@@ -311,6 +311,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'website_id',
             'group_id',
             'billing_address_mode',
+            'import_buyer_company_name',
         ];
         foreach ($keys as $key) {
             if (isset($tempSettings[$key])) {
@@ -478,6 +479,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                     ],
                     'billing_address_mode' =>
                         Account::USE_SHIPPING_ADDRESS_AS_BILLING_IF_SAME_CUSTOMER_AND_RECIPIENT,
+                    'import_buyer_company_name' => 1,
                 ],
                 'status_mapping' => [
                     'mode' => Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT,

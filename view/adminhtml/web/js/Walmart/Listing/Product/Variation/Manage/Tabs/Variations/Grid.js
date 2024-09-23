@@ -60,7 +60,6 @@ define([
 
             this.actions = Object.extend(this.actions, {
                 deleteAndRemoveAction: this.actionHandler.deleteAndRemoveAction.bind(this.actionHandler),
-                resetProductsAction: this.actionHandler.resetProductsAction.bind(this.actionHandler)
             });
         },
 

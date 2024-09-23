@@ -184,7 +184,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'runStopProducts' => $this->getUrl('*/walmart_listing/runStopProducts'),
                 'runStopAndRemoveProducts' => $this->getUrl('*/walmart_listing/runStopAndRemoveProducts'),
                 'runDeleteAndRemoveProducts' => $this->getUrl('*/walmart_listing/runDeleteAndRemoveProducts'),
-                'runResetProducts' => $this->getUrl('*/walmart_listing/runResetProducts'),
             ]
         );
 
@@ -274,8 +273,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $deletingAndRemovingSelectedItemsMessage = __('Removing From Walmart And Listing Selected Items');
         $removingSelectedItemsMessage = __('Removing From Listing Selected Items');
 
-        $resetBlockedProductsMessage = __('Reset Incomplete Items');
-
         $selectItemsMessage = __('Please select the Products you want to perform the Action on.');
         $selectActionMessage = __('Please select Action.');
 
@@ -333,7 +330,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'stopping_and_removing_selected_items_message' => $stoppingAndRemovingSelectedItemsMessage,
                 'deleting_and_removing_selected_items_message' => $deletingAndRemovingSelectedItemsMessage,
                 'removing_selected_items_message' => $removingSelectedItemsMessage,
-                'reset_blocked_products_message' => $resetBlockedProductsMessage,
 
                 'select_items_message' => $selectItemsMessage,
                 'select_action_message' => $selectActionMessage,

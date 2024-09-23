@@ -834,6 +834,21 @@ HTML
             ]
         );
 
+        $fieldset->addField(
+            'magento_orders_customer_import_buyer_company_name',
+            'select',
+            [
+                'container_id' => 'magento_orders_customer_import_buyer_company_name_container',
+                'name' => 'magento_orders_settings[customer][import_buyer_company_name]',
+                'label' => __('Import Buyer Company Name for B2B Orders'),
+                'values' => [
+                    0 => __('No'),
+                    1 => __('Yes'),
+                ],
+                'value' => $formData['magento_orders_settings']['customer']['import_buyer_company_name'],
+            ]
+        );
+
         $fieldset = $form->addFieldset(
             'magento_block_amazon_accounts_magento_orders_tax',
             [

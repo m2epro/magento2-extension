@@ -100,28 +100,6 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'skip_evtin',
-            'select',
-            [
-                'label' => $this->__('Skip eVTN'),
-                'title' => $this->__('Skip eVTN'),
-                'name' => 'skip_evtin',
-                'options' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'tooltip' => (string) __(
-                    <<<HTML
-Set <b>Yes</b> if you want to exclude
-<a href="%1" target="_blank">eVTN</a> from your Magento orders.
-HTML
-                    ,
-                    'https://help.m2epro.com/support/solutions/articles/9000199785'
-                ),
-            ]
-        );
-
         $form->setValues($formData);
 
         $form->setUseContainer(false);

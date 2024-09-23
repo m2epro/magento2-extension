@@ -772,7 +772,12 @@ HTML;
 
         $collection
             ->getSelect()
-            ->where('buyer_email LIKE ? OR buyer_user_id LIKE ? OR buyer_name LIKE ?', '%' . $value . '%');
+            ->where(
+                'second_table.buyer_email LIKE ?
+                OR second_table.buyer_user_id LIKE ?
+                OR second_table.buyer_name LIKE ?',
+                '%' . $value . '%'
+            );
     }
 
     protected function callbackFilterStatus($collection, $column)

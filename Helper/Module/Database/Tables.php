@@ -19,6 +19,7 @@ class Tables
 
     public const TABLE_ORDER = self::PREFIX . 'order';
 
+    public const TABLE_EBAY_ACCOUNT = self::PREFIX . 'ebay_account';
     public const TABLE_EBAY_ITEM = self::PREFIX . 'ebay_item';
     public const TABLE_EBAY_LISTING = self::PREFIX . 'ebay_listing';
     public const TABLE_EBAY_LISTING_PRODUCT = self::PREFIX . 'ebay_listing_product';

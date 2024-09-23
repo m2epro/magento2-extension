@@ -1039,6 +1039,15 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         );
     }
 
+    public function isImportBuyerCompanyName(): bool
+    {
+        return (bool)$this->getSetting(
+            'magento_orders_settings',
+            ['customer', 'import_buyer_company_name'],
+            1
+        );
+    }
+
     /**
      * @return bool
      */

@@ -30,7 +30,6 @@ class Grid extends AbstractGrid
             \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT => '',
             \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT => '',
             \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_TIER_PRICE => '',
-            \Ess\M2ePro\Model\Listing\Log::ACTION_RESET_BLOCKED_PRODUCT => '',
         ];
     }
 
