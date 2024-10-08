@@ -333,20 +333,14 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     // ----------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getAutoGlobalAddingProductTypeTemplateId()
+    public function getAutoGlobalAddingProductTypeTemplateId(): int
     {
-        return (int)$this->getData('auto_global_adding_product_type_template_id');
+        return (int)$this->getData(ResourceAmazonList::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_TEMPLATE_ID);
     }
 
-    /**
-     * @return int
-     */
-    public function getAutoWebsiteAddingProductTypeTemplateId()
+    public function getAutoWebsiteAddingProductTypeTemplateId(): int
     {
-        return (int)$this->getData('auto_website_adding_product_type_template_id');
+        return (int)$this->getData(ResourceAmazonList::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_TEMPLATE_ID);
     }
 
     // ----------------------------------------

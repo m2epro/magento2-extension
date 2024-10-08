@@ -4,7 +4,7 @@ define([
     'M2ePro/Listing/Moving',
     'M2ePro/Listing/Mapping',
     'M2ePro/Walmart/Listing/View/Action',
-    'M2ePro/Walmart/Listing/Product/Template/Category',
+    'M2ePro/Walmart/Listing/Product/ProductType',
     'M2ePro/Walmart/Listing/Product/Variation/Manage',
     'M2ePro/Walmart/Listing/Product/EditChannelData'
 ], function (MessageObj) {
@@ -51,7 +51,7 @@ define([
             this.movingHandler = new ListingMoving(this);
             this.mappingHandler = new ListingMapping(this, 'walmart');
 
-            this.templateCategoryHandler    = new WalmartListingProductTemplateCategory(this);
+            this.productTypeHandler = new WalmartListingProductProductType(this);
 
             this.variationProductManageHandler = new WalmartListingProductVariationManage(this);
             this.editChannelDataHandler = new WalmartListingProductEditChannelData(this);
@@ -61,9 +61,9 @@ define([
                 movingAction: this.movingHandler.run.bind(this.movingHandler),
                 deleteAndRemoveAction: this.actionHandler.deleteAndRemoveAction.bind(this.actionHandler),
 
-                changeTemplateCategoryIdAction: (function(id) {
+                changeProductTypeAction: (function(id) {
                     id = id || this.getSelectedProductsString();
-                    this.templateCategoryHandler.validateProductsForTemplateCategoryAssign(id, null)
+                    this.productTypeHandler.validateProductsForProductTypeAssign(id, null)
                 }).bind(this),
 
                 remapProductAction: function(id) {

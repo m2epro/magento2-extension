@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+class Add extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\AbstractAdd
 {
     /** @var \Ess\M2ePro\Helper\Data\Session */
     private $sessionHelper;

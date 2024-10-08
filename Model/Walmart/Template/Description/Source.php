@@ -346,32 +346,6 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    public function getAttributes()
-    {
-        if ($this->getWalmartDescriptionTemplate()->isAttributesModeNone()) {
-            return [];
-        }
-
-        $result = [];
-        $src = $this->getWalmartDescriptionTemplate()->getAttributesSource();
-
-        foreach ($src['template'] as $value) {
-            if (empty($value)) {
-                continue;
-            }
-
-            $result[$value['name']] = $this->getHelper('Module_Renderer_Description')->parseTemplate(
-                $value['value'],
-                $this->getMagentoProduct()
-            );
-        }
-
-        return $result;
-    }
-
     // ---------------------------------------
 
     /**

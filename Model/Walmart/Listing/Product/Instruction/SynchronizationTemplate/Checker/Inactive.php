@@ -183,7 +183,12 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if (!$walmartListingProduct->isExistCategoryTemplate()) {
+        if (
+            $walmartListingProduct
+                ->getWalmartMarketplace()
+                ->isSupportedProductType()
+            && !$walmartListingProduct->isExistsProductType()
+        ) {
             return false;
         }
 

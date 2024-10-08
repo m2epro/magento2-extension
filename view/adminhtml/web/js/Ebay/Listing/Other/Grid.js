@@ -1,22 +1,26 @@
 define([
-    'M2ePro/Listing/Other/Grid'
+    'M2ePro/Listing/Other/Grid',
+    'M2ePro/Ebay/Listing/Moving'
 ], function () {
     window.EbayListingOtherGrid = Class.create(ListingOtherGrid, {
 
         // ---------------------------------------
 
-        tryToMove: function(listingId)
+        afterPrepareAction: function()
         {
-            this.movingHandler.submit(listingId, this.onSuccess)
+            this.movingHandler = new EbayListingMoving(this);
         },
 
-        onSuccess: function(listingId, hasOnlineCategory = false)
-        {
-            var refererUrl = M2ePro.url.get('categorySettings', {id: listingId});
+        // ---------------------------------------
 
-            if (hasOnlineCategory) {
-                refererUrl = M2ePro.url.get('ebay_listing/view', {id: listingId});
-            }
+        tryToMove: function(listingId)
+        {
+            this.movingHandler.submit(listingId, this.onSuccess);
+        },
+
+        onSuccess: function(wizardId)
+        {
+            var refererUrl = M2ePro.url.get('categorySettings', {id: wizardId});
 
             setLocation(refererUrl);
         },

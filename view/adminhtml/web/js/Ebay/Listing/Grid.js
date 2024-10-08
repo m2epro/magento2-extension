@@ -21,8 +21,8 @@ define([
         addProductsSourceProductsAction: function(id)
         {
             setLocation(M2ePro.url.get('ebay_listing_product_add/index', {
-                id: id,
-                source: 'product',
+                listing_id: id,
+                type: 'general',
                 clear: true,
                 back: this.backParam
             }));

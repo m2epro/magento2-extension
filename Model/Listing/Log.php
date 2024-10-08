@@ -61,6 +61,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const _ACTION_DELETE_PRODUCT_FROM_COMPONENT = 'Remove Product from Channel';
     public const ACTION_STOP_AND_REMOVE_PRODUCT = 17;
     public const _ACTION_STOP_AND_REMOVE_PRODUCT = 'Stop on Channel / Remove from Listing';
+    public const ACTION_RETIRE_AND_REMOVE_PRODUCT = 40;
+    public const _ACTION_RETIRE_AND_REMOVE_PRODUCT = 'Retire on Channel / Remove from Listing';
     public const ACTION_DELETE_AND_REMOVE_PRODUCT = 23;
     public const _ACTION_DELETE_AND_REMOVE_PRODUCT = 'Remove from Channel & Listing';
     public const ACTION_SWITCH_TO_AFN_ON_COMPONENT = 29;

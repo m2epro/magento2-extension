@@ -4,7 +4,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode as SourceModeBlock;
 
-class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\AbstractAdd
 {
     /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
     private $viewStateFactory;
@@ -83,10 +83,10 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
                 }
                 break;
             case 3:
-                $this->addCategoryTemplateView();
+                $this->processStep3($listing->getMarketplace());
                 break;
             case 4:
-                $this->review();
+                $this->review($listing->getMarketplace());
                 break;
             default:
                 return $this->_redirect('*/*/index', ['_current' => true, 'step' => 1]);
@@ -254,7 +254,21 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $gridContainer->getChildBlock('grid')->setCurrentCategoryId($this->getSessionValue('current_category_id'));
     }
 
-    protected function addCategoryTemplateView()
+    private function processStep3(\Ess\M2ePro\Model\Marketplace $marketplace): void
+    {
+        if (
+            !$marketplace->getChildObject()
+                         ->isSupportedProductType()
+        ) {
+            $this->review($marketplace);
+
+            return;
+        }
+
+        $this->addProductTypeView();
+    }
+
+    private function addProductTypeView(): void
     {
         $listingProductsIds = $this->getAddedListingProductsIds();
 
@@ -264,15 +278,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink(
-            'help/m2/walmart-integration/m2e-pro-listing-set-up/configuring-policies/category-policy'
-        );
-
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set Category Policy'));
+        $this->getResultPage()->getConfig()->getTitle()->prepend((string)__('Set Product Type'));
 
         $this->addContent(
             $this->getLayout()
-                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\CategoryTemplate::class)
+                 ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\ProductType::class)
         );
     }
 
@@ -292,29 +302,20 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         return $listingProductsIds;
     }
 
-    protected function review()
+    private function review(\Ess\M2ePro\Model\Marketplace $marketplace): void
     {
         $listingId = $this->getRequest()->getParam('id');
         $additionalData = $this->getListing()->getSettings('additional_data');
 
         if (empty($additionalData['adding_listing_products_ids'])) {
-            return $this->_redirect('*/walmart_listing/view', ['id' => $listingId]);
+            $this->_redirect('*/walmart_listing/view', ['id' => $listingId]);
+
+            return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
-        $collection = $this->listingProductCollectionFactory
-            ->create(['childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]);
-        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
-        $collection->getSelect()->columns([
-            'id' => 'main_table.id',
-        ]);
-        $collection->getSelect()->where(
-            "`main_table`.`id` IN (?) AND `second_table`.`template_category_id` IS NULL",
-            $additionalData['adding_listing_products_ids']
-        );
-
-        $failedProductsIds = $collection->getColumnValues('id');
-        $this->deleteListingProducts($failedProductsIds);
+        if (!$marketplace->getChildObject()->isCanada()) {
+            $this->removeFailedProducts($additionalData['adding_listing_products_ids']);
+        }
 
         //-- Remove successfully moved Unmanaged items
         if (isset($additionalData['source']) && $additionalData['source'] == SourceModeBlock::MODE_OTHER) {
@@ -346,6 +347,24 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         $this->clear();
 
         $this->addContent($blockReview);
+    }
+
+    private function removeFailedProducts(array $addingListingProductsIds): void
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
+        $collection = $this->listingProductCollectionFactory
+            ->create(['childMode' => \Ess\M2ePro\Helper\Component\Walmart::NICK]);
+        $collection->getSelect()->reset(\Magento\Framework\DB\Select::COLUMNS);
+        $collection->getSelect()->columns([
+            'id' => 'main_table.id',
+        ]);
+        $collection->getSelect()->where(
+            "`main_table`.`id` IN (?) AND `second_table`.`product_type_id` IS NULL",
+            $addingListingProductsIds
+        );
+
+        $failedProductsIds = $collection->getColumnValues('id');
+        $this->deleteListingProducts($failedProductsIds);
     }
 
     private function deleteListingOthers()
@@ -499,7 +518,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
         if ($additionalData = $this->getListing()->getSettings('additional_data')) {
             $additionalData['adding_listing_products_ids'] = [];
             unset($additionalData['source']);
-            unset($additionalData['adding_category_templates_data']);
+            unset($additionalData['adding_product_type_data']);
             $this->getListing()->setSettings('additional_data', $additionalData)->save();
         }
     }

@@ -7,6 +7,10 @@ namespace Ess\M2ePro\Model\Amazon\Template\ProductType;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as DictionaryProductTypeResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product as AmazonProductResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Template\ProductType as ProductTypeResource;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing as AmazonListingResource;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Auto\Category\Group as AutoCategoryGroupResource;
+use Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Auto\Category\Group\CollectionFactory
+    as AutoCategoryGroupCollectionFactory;
 
 class Repository
 {
@@ -17,6 +21,8 @@ class Repository
     private \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource;
     private \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory;
     private \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\CollectionFactory $amazonListingCollectionFactory;
+    private AutoCategoryGroupCollectionFactory $autoCategoryGroupCollectionFactory;
 
     private array $runtimeCache = [];
 
@@ -27,7 +33,9 @@ class Repository
         \Ess\M2ePro\Model\Amazon\Template\ProductTypeFactory $productTypeFactory,
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
-        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory
+        \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\CollectionFactory $amazonListingCollectionFactory,
+        AutoCategoryGroupCollectionFactory $autoCategoryGroupCollectionFactory
     ) {
         $this->resource = $resource;
         $this->collectionFactory = $collectionFactory;
@@ -36,6 +44,8 @@ class Repository
         $this->marketplaceResource = $marketplaceResource;
         $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
+        $this->amazonListingCollectionFactory = $amazonListingCollectionFactory;
+        $this->autoCategoryGroupCollectionFactory = $autoCategoryGroupCollectionFactory;
     }
 
     public function create(\Ess\M2ePro\Model\Amazon\Template\ProductType $productType): void
@@ -223,20 +233,70 @@ class Repository
         return array_values($marketplaceCollection->getItems());
     }
 
+    // ----------------------------------------
+
     public function isUsed(\Ess\M2ePro\Model\Amazon\Template\ProductType $productType): bool
+    {
+        $productTypeId = (int)$productType->getId();
+
+        return $this->isUsedInProducts($productTypeId)
+            || $this->isUsedInListings($productTypeId)
+            || $this->isUsedInAutoCategoryGroups($productTypeId);
+    }
+
+    private function isUsedInProducts(int $productTypeId): bool
     {
         $collection = $this->listingProductCollectionFactory->createWithAmazonChildMode();
 
         $collection->getSelect()
                    ->where(
                        sprintf('%s = ?', AmazonProductResource::COLUMN_TEMPLATE_PRODUCT_TYPE_ID),
-                       $productType->getId()
+                       $productTypeId
                    )
                    ->limit(1);
 
         $product = $collection->getFirstItem();
 
         return !$product->isObjectNew();
+    }
+
+    private function isUsedInListings(int $productTypeId): bool
+    {
+        $listingCollection = $this->amazonListingCollectionFactory->create();
+        $listingCollection->getSelect()
+                          ->where(
+                              sprintf(
+                                  '%s = ? OR %s = ?',
+                                  AmazonListingResource::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_TEMPLATE_ID,
+                                  AmazonListingResource::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_TEMPLATE_ID,
+                              ),
+                              $productTypeId
+                          )
+                          ->limit(1);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing $listing */
+        $listing = $listingCollection->getFirstItem();
+
+        return !$listing->isObjectNew();
+    }
+
+    private function isUsedInAutoCategoryGroups(int $productTypeId): bool
+    {
+        $autoCategoryGroupCollection = $this->autoCategoryGroupCollectionFactory->create();
+        $autoCategoryGroupCollection->getSelect()
+                                    ->where(
+                                        sprintf(
+                                            '%s = ?',
+                                            AutoCategoryGroupResource::COLUMN_ADDING_PRODUCT_TYPE_TEMPLATE_ID
+                                        ),
+                                        $productTypeId
+                                    )
+                                    ->limit(1);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Auto\Category\Group $autoCategoryGroup */
+        $autoCategoryGroup = $autoCategoryGroupCollection->getFirstItem();
+
+        return !$autoCategoryGroup->isObjectNew();
     }
 
     // ----------------------------------------

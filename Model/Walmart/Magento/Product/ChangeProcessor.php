@@ -128,7 +128,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $walmartSellingFormatTemplate->getItemWeightAttributes(),
             $walmartSellingFormatTemplate->getMustShipAloneAttributes(),
             $walmartSellingFormatTemplate->getShipsInOriginalPackagingModeAttributes(),
-            $walmartSellingFormatTemplate->getAttributesAttributes()
         );
 
         foreach ($walmartSellingFormatTemplate->getShippingOverrides(true) as $shippingOverride) {
@@ -139,13 +138,13 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             }
         }
 
-        if ($this->getWalmartListingProduct()->isExistCategoryTemplate()) {
-            $categoryTemplate = $this->getWalmartListingProduct()->getCategoryTemplate();
-            foreach ($categoryTemplate->getSpecifics(true) as $specific) {
-                /** @var \Ess\M2ePro\Model\Walmart\Template\Category\Specific $specific */
-
-                if ($specific->isModeCustomAttribute()) {
-                    $trackingAttributes[] = $specific->getCustomAttribute();
+        if ($this->getWalmartListingProduct()->isExistsProductType()) {
+            $productType = $this->getWalmartListingProduct()->getProductType();
+            foreach ($productType->getAttributesSettings() as $attributesSetting) {
+                foreach ($attributesSetting->getValues() as $attributeValue) {
+                    if ($attributeValue->isProductAttributeCode()) {
+                        $trackingAttributes[] = $attributeValue->getValue();
+                    }
                 }
             }
         }
@@ -160,7 +159,6 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Magento\Product\ChangeProcessor\
             $walmartDescriptionTemplate->getDescriptionAttributes(),
             $walmartDescriptionTemplate->getKeyFeaturesAttributes(),
             $walmartDescriptionTemplate->getOtherFeaturesAttributes(),
-            $walmartDescriptionTemplate->getAttributesAttributes(),
             $walmartDescriptionTemplate->getManufacturerAttributes(),
             $walmartDescriptionTemplate->getManufacturerPartNumberAttributes(),
             $walmartDescriptionTemplate->getMsrpRrpAttributes(),

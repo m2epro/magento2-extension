@@ -1,20 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace\Collection
- */
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -23,6 +14,4 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
             \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::class
         );
     }
-
-    //########################################
 }

@@ -1,22 +1,16 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart;
+
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing as WalmartListingResource;
 
 class Listing implements \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorInterface
 {
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory */
-    private $listingEntityCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Collection|null  */
-    private $entityCollection;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingEntityCollectionFactory;
+    private ?\Ess\M2ePro\Model\ResourceModel\Listing\Collection $entityCollection = null;
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory$listingEntityCollectionFactory
+        \Ess\M2ePro\Model\ResourceModel\Listing\CollectionFactory $listingEntityCollectionFactory
     ) {
         $this->listingEntityCollectionFactory = $listingEntityCollectionFactory;
     }
@@ -69,10 +63,10 @@ class Listing implements \Ess\M2ePro\Model\Servicing\Task\Analytics\CollectorInt
                 'auto_website_deleting_mode' => $item->getData('auto_website_deleting_mode'),
                 'update_date' => $item->getData('update_date'),
                 'create_date' => $item->getData('create_date'),
-                'auto_global_adding_category_template_id' =>
-                    $childItem->getData('auto_global_adding_category_template_id'),
-                'auto_website_adding_category_template_id' =>
-                    $childItem->getData('auto_website_adding_category_template_id'),
+                WalmartListingResource::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID =>
+                    $childItem->getData(WalmartListingResource::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID),
+                WalmartListingResource::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID =>
+                    $childItem->getData(WalmartListingResource::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID),
                 'template_description_id' => $childItem->getData('template_description_id'),
                 'template_selling_format_id' => $childItem->getData('template_selling_format_id'),
                 'template_synchronization_id' => $childItem->getData('template_synchronization_id'),

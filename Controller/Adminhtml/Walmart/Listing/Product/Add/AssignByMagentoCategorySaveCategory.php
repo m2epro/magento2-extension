@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\AbstractAdd
 {
     public function execute()
     {
@@ -19,14 +13,16 @@ class AssignByMagentoCategorySaveCategory extends \Ess\M2ePro\Controller\Adminht
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        !is_array($magentoCategoryIds) && $magentoCategoryIds = array_filter(explode(',', $magentoCategoryIds));
-        $templatesData = $this->getListing()->getSetting('additional_data', 'adding_category_templates_data', []);
+        if (!is_array($magentoCategoryIds)) {
+            $magentoCategoryIds = array_filter(explode(',', $magentoCategoryIds));
+        }
+        $templatesData = $this->getListing()->getSetting('additional_data', 'adding_product_type_data', []);
 
         foreach ($magentoCategoryIds as $magentoCategoryId) {
             $templatesData[$magentoCategoryId] = $templateId;
         }
 
-        $this->getListing()->setSetting('additional_data', 'adding_category_templates_data', $templatesData);
+        $this->getListing()->setSetting('additional_data', 'adding_product_type_data', $templatesData);
         $this->getListing()->save();
 
         $this->setJsonContent(['result' => true]);

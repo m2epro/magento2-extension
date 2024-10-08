@@ -107,8 +107,6 @@ class TemplateSellingFormat implements \Ess\M2ePro\Model\Servicing\Task\Analytic
                 'sale_time_end_date_mode' => $childItem->getData('sale_time_end_date_mode'),
                 'sale_time_end_date_value' => $childItem->getData('sale_time_end_date_value'),
                 'sale_time_end_date_custom_attribute' => $childItem->getData('sale_time_end_date_custom_attribute'),
-                'attributes_mode' => $childItem->getData('attributes_mode'),
-                'attributes' => $childItem->getData('attributes'),
                 'shipping_overrides' => $this->addShippingOverridesData($item->getData('id')),
                 'promotions' => $this->addPromotionData($item->getData('id')),
             ];

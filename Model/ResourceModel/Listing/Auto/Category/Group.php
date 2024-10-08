@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Listing\Auto\Category\Group
- */
 class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     public const ADDING_MODE_FIELD = 'adding_mode';
@@ -18,10 +9,11 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
     public function _construct()
     {
-        $this->_init('m2epro_listing_auto_category_group', 'id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_LISTING_AUTO_CATEGORY_GROUP,
+            'id'
+        );
     }
-
-    //########################################
 
     public function getCategoriesFromOtherGroups($listingId, $groupId = null)
     {
@@ -58,8 +50,6 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
         return $data;
     }
 
-    //########################################
-
     public function isEmpty($groupId)
     {
         $autoCategoryTable = $this->activeRecordFactory->getObject('Listing_Auto_Category')->getResource()
@@ -74,6 +64,4 @@ class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Paren
 
         return count($result) === 0;
     }
-
-    //########################################
 }

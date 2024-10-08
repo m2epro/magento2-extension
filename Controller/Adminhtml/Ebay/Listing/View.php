@@ -2,6 +2,9 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\Repository as WizardRepository;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard;
+
 class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
     /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory */
@@ -15,12 +18,15 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
     /** @var \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager */
     private $viewStateManager;
 
+    private WizardRepository $wizardRepository;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewStateFactory $viewStateFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\ViewState\Manager $viewStateManager,
         \Ess\M2ePro\Model\Ebay\Magento\Product\RuleFactory $ruleFactory,
         \Ess\M2ePro\Helper\Data\GlobalData $globalData,
         \Ess\M2ePro\Helper\Data\Session $sessionHelper,
+        WizardRepository $wizardRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     ) {
@@ -31,6 +37,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->sessionHelper = $sessionHelper;
         $this->ruleFactory = $ruleFactory;
         $this->viewStateManager = $viewStateManager;
+        $this->wizardRepository = $wizardRepository;
     }
 
     public function execute()
@@ -73,17 +80,16 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return $this->_redirect('*/ebay_listing/index');
         }
 
-        $productAddIds = $listing->getChildObject()->getData('product_add_ids');
-        $productAddIds = array_filter((array)\Ess\M2ePro\Helper\Json::decode($productAddIds));
+        $existWizard = $this->wizardRepository->findNotCompletedByListingAndType($listing, Wizard::TYPE_GENERAL);
 
-        if (!empty($productAddIds)) {
+        if ($existWizard !== null && !$existWizard->isCompleted()) {
             $this->getMessageManager()->addNotice(
                 $this->__(
                     'Please make sure you finish adding new Products before moving to the next step.'
                 )
             );
 
-            return $this->_redirect('*/ebay_listing_product_category_settings', ['id' => $id, 'step' => 1]);
+            return $this->_redirect('*/ebay_listing_wizard/index', ['id' => $existWizard->getId()]);
         }
 
         $this->globalData->setValue('view_listing', $listing);

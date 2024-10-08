@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Variation\Manage\Tabs\Settings;
 
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
@@ -71,12 +65,17 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     than one Variant Attribute for Variational Item that varies by multiple attributes.<br><br>
 
                     <strong>Note:</strong> the list of Walmart Variant Attributes available for the selection is
-                    determined by Walmart Category assigned to your Product.'
+                    determined by Product Type assigned to your Product.'
                 ),
             ]
         );
 
-        $possibleAttributes = $this->getPossibleAttributes();
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
+        $walmartListingProduct = $this->getListingProduct()->getChildObject();
+        $possibleAttributes = $walmartListingProduct->isExistsProductType()
+            ? $walmartListingProduct->getProductType()->getVariationAttributes()
+            : [];
+
         $channelAttributes = $this->getListingProductTypeModel()->getChannelAttributes();
 
         $html = <<<HTML
@@ -102,7 +101,7 @@ HTML;
         </tr>
 HTML;
 
-            foreach ($possibleAttributes as $key => $attribute) {
+            foreach ($possibleAttributes as $attribute) {
                 if (in_array($attribute, $channelAttributes)) {
                     $html .= <<<HTML
         <tr class="channel_attribute">
@@ -159,7 +158,7 @@ HTML;
                 </td>
             </tr>
 HTML;
-        foreach ($possibleAttributes as $key => $attribute) {
+        foreach ($possibleAttributes as $attribute) {
             $checked = '';
             if (in_array($attribute, $channelAttributes)) {
                 $checked = 'checked="checked"';
@@ -527,13 +526,17 @@ HTML;
                 'style' => 'margin-left: 70px;',
             ]);
 
+            $swatchImagesValues = [];
+            foreach ($possibleAttributes as $attr) {
+                $swatchImagesValues[$attr] = $attr;
+            }
             $fieldset->addField(
                 'swatch_images_attributes',
                 'select',
                 [
                     'label' => __('Swatch Variant Attribute'),
                     'name' => 'swatch_images',
-                    'values' => $possibleAttributes,
+                    'values' => $swatchImagesValues,
                     'value' => $this->getSwatchImagesAttribute(),
                     'after_element_html' => $button->toHtml(),
                 ]
@@ -737,28 +740,6 @@ CSS
     public function getProductAttributes()
     {
         return $this->getListingProductTypeModel()->getProductAttributes();
-    }
-
-    // ---------------------------------------
-
-    public function getPossibleAttributes()
-    {
-        if (!$this->getListingProduct()->getChildObject()->isExistCategoryTemplate()) {
-            return [];
-        }
-
-        $possibleAttributes = $this->modelFactory->getObject('Walmart_Marketplace_Details')
-                                                 ->setMarketplaceId(
-                                                     $this->getListingProduct()->getMarketplace()->getId()
-                                                 )
-                                                 ->getVariationAttributes(
-                                                     $this->getListingProduct()
-                                                          ->getChildObject()
-                                                          ->getCategoryTemplate()
-                                                          ->getProductDataNick()
-                                                 );
-
-        return $possibleAttributes;
     }
 
     // ---------------------------------------

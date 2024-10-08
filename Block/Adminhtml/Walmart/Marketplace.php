@@ -1,22 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Marketplace
- */
 class Marketplace extends AbstractContainer
 {
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
@@ -31,14 +20,6 @@ class Marketplace extends AbstractContainer
         $this->removeButton('back');
 
         // ---------------------------------------
-        $this->addButton('run_update_all', [
-            'label' => __('Update All Now'),
-            'onclick' => 'MarketplaceObj.updateAction()',
-            'class' => 'save update_all_marketplace primary',
-        ]);
-        // ---------------------------------------
-
-        // ---------------------------------------
         $this->addButton('run_synch_now', [
             'label' => __('Save'),
             'onclick' => 'MarketplaceObj.saveAction();',
@@ -46,8 +27,6 @@ class Marketplace extends AbstractContainer
         ]);
         // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareLayout()
     {
@@ -57,7 +36,7 @@ class Marketplace extends AbstractContainer
                 Enable the required Marketplaces and press <strong>Save</strong>. The Marketplace data will be
                 downloaded and synchronized with your M2E Pro installation.</p><br>
                 <p>It is recommended to update Marketplaces when any related changes are announced by Walmart.
-                To do it, press <strong>Update All Now</strong>.</p><br>
+                To do it, press <strong>Update Now</strong>.</p><br>
                 <p><strong>Note:</strong> installation and update processes might be a time-consuming depending
                 on the number of enabled Marketplaces and your server environment.</p><br>'
             ),
@@ -74,6 +53,4 @@ class Marketplace extends AbstractContainer
             parent::_toHtml() .
             '</div>';
     }
-
-    //########################################
 }

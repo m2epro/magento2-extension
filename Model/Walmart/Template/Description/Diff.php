@@ -41,8 +41,6 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'key_features',
             'other_features_mode',
             'other_features',
-            'attributes_mode',
-            'attributes',
             'manufacturer_mode',
             'manufacturer_custom_value',
             'manufacturer_custom_attribute',

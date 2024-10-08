@@ -128,7 +128,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             )
         );
 
-        $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
+        $path = 'walmart_listing_autoAction/getProductTypesList';
         $this->jsUrl->add(
             $this->getUrl(
                 '*/' . $path,

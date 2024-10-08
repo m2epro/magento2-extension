@@ -126,6 +126,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // ---------------------------------------
 
+        $collection->getSelect()->group('lp.id');
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();

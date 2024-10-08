@@ -372,6 +372,7 @@ class Config extends AbstractConfig
                 'AddOfferImagesToAmazonListing',
                 'EnableVatCalculationServiceForPolandAndSweden',
                 'AddEbayVideo',
+                'NewListingWizardTables',
             ],
             'y24_m08' => [
                 'AddDateOfInvoiceSendingToAmazonOrder',
@@ -379,7 +380,10 @@ class Config extends AbstractConfig
                 'UpdateAmazonDictionaryProductType'
             ],
             'y24_m09' => [
-                'RemoveIsNewAsinAvailableFromAmazonMarketplace'
+                'RemoveIsNewAsinAvailableFromAmazonMarketplace',
+                'AddInternationalShippingRateTablesForAustralia',
+                'RemoveUnusedAmazonTables',
+                'AddWalmartProductTypes',
             ],
         ];
     }
@@ -470,6 +474,9 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m08\UpdateAmazonDictionaryProductType::class,
 
             \Ess\M2ePro\Setup\Update\y24_m09\RemoveIsNewAsinAvailableFromAmazonMarketplace::class,
+            \Ess\M2ePro\Setup\Update\y24_m09\RemoveUnusedAmazonTables::class,
+            \Ess\M2ePro\Setup\Update\y24_m07\NewListingWizardTables::class,
+            \Ess\M2ePro\Setup\Update\y24_m09\AddWalmartProductTypes::class,
         ];
     }
 

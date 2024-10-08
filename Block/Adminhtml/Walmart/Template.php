@@ -40,9 +40,6 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $content = __(
             '
-            <strong>Category Policy</strong> includes the Walmart Category/Subcategory and
-            Specifics that best describe your Item.<br/><br/>
-
             <strong>Description Policy</strong> highlights the most essential Product details, e.g.
             Title, Brand, Images, etc.<br/><br/>
 
@@ -77,11 +74,6 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _getAddTemplateButtonOptions()
     {
         $data = [
-            Grid::TEMPLATE_CATEGORY => [
-                'label' => __('Category'),
-                'id' => 'category',
-                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_CATEGORY) . "')",
-            ],
             Grid::TEMPLATE_DESCRIPTION => [
                 'label' => __('Description'),
                 'id' => 'description',

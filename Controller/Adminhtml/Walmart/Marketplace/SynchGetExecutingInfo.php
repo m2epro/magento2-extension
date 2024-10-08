@@ -1,21 +1,24 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
-use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
-
-class SynchGetExecutingInfo extends Marketplace
+class SynchGetExecutingInfo extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace
 {
+    private \Ess\M2ePro\Model\Walmart\Marketplace\SynchronizationFactory $synchronizationFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\Marketplace\SynchronizationFactory $synchronizationFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->synchronizationFactory = $synchronizationFactory;
+    }
+
     public function execute()
     {
-        /** @var \Ess\M2ePro\Model\Walmart\Marketplace\Synchronization $synchronization */
-        $synchronization = $this->modelFactory->getObject('Walmart_Marketplace_Synchronization');
+        $synchronization = $this->synchronizationFactory->create();
         if (!$synchronization->isLocked()) {
             $this->setJsonContent(['mode' => 'inactive']);
 

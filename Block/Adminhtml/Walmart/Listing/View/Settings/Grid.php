@@ -1,25 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Settings;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
-    /** @var  \Ess\M2ePro\Model\Listing */
+    /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
     protected $magentoProductCollectionFactory;
     protected $walmartFactory;
     protected $resourceConnection;
+    private \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType $productTypeResource;
 
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType $productTypeResource,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -29,6 +25,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->walmartFactory = $walmartFactory;
+        $this->productTypeResource = $productTypeResource;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $dataHelper, $globalDataHelper, $data);
     }
@@ -81,7 +78,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ['wlp' => $wlpTable],
             'listing_product_id=id',
             [
-                'template_category_id' => 'template_category_id',
+                'product_type_id' => 'product_type_id',
                 'variation_child_statuses' => 'variation_child_statuses',
                 'walmart_sku' => 'sku',
                 'gtin' => 'gtin',
@@ -100,12 +97,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             '{{table}}.variation_parent_id is NULL'
         );
 
-        $tdTable = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getResource()->getMainTable();
         $collection->joinTable(
-            ['wtc' => $tdTable],
-            'id=template_category_id',
+            ['pt' => $this->productTypeResource->getMainTable()],
+            'id = product_type_id',
             [
-                'template_category_title' => 'title',
+                'product_type_title' => 'title',
             ],
             null,
             'left'
@@ -167,14 +163,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'filter_condition_callback' => [$this, 'callbackFilterGtin'],
         ]);
 
-        $this->addColumn('category_template', [
-            'header' => __('Category Policy'),
+        if (
+            !$this->listing->getMarketplace()
+                           ->getChildObject()
+                           ->isSupportedProductType()
+        ) {
+            return parent::_prepareColumns();
+        }
+
+        $this->addColumn('product_type', [
+            'header' => __('Product Type'),
             'align' => 'left',
             'width' => '250px',
             'type' => 'text',
             'index' => 'template_category_title',
             'filter_index' => 'template_category_title',
-            'frame_callback' => [$this, 'callbackColumnTemplateCategory'],
+            'frame_callback' => [$this, 'callbackColumnProductType'],
+            'filter_condition_callback' => [$this, 'callbackFilterProductType'],
         ]);
 
         $this->addColumn('actions', [
@@ -198,7 +203,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function getGroupOrder()
     {
         $groups = [
-            'edit_template_category' => __('Category Policy'),
+            'edit_product_type' => __('Product Type'),
             'other' => __('Other'),
         ];
 
@@ -208,11 +213,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function getColumnActionsItems()
     {
         $actions = [
-            'assignTemplateCategory' => [
-                'caption' => __('Use Another Category Policy'),
-                'group' => 'edit_template_category',
+            'assignProductType' => [
+                'caption' => __('Assign Product Type'),
+                'group' => 'edit_product_type',
                 'field' => 'id',
-                'onclick_action' => 'ListingGridObj.actions[\'changeTemplateCategoryIdAction\']',
+                'onclick_action' => 'ListingGridObj.actions[\'changeProductTypeAction\']',
             ],
         ];
 
@@ -230,6 +235,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareMassaction()
     {
+        $isSupportedPt = $this->listing->getMarketplace()
+                                       ->getChildObject()
+                                       ->isSupportedProductType();
+
         // Set massaction identifiers
         // ---------------------------------------
         $this->setMassactionIdField('id');
@@ -239,16 +248,21 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // Set mass-action
         // ---------------------------------------
         $groups = [
-            'category_policy' => __('Category Policy'),
             'other' => __('Other'),
         ];
 
+        if ($isSupportedPt) {
+            $groups['product_type'] = __('Product Type');
+        }
+
         $this->getMassactionBlock()->setGroups($groups);
 
-        $this->getMassactionBlock()->addItem('changeTemplateCategoryId', [
-            'label' => __('Use Another'),
-            'url' => '',
-        ], 'category_policy');
+        if ($isSupportedPt) {
+            $this->getMassactionBlock()->addItem('changeProductType', [
+                'label' => __('Assign Product Type'),
+                'url' => '',
+            ], 'product_type');
+        }
 
         $this->getMassactionBlock()->addItem('moving', [
             'label' => __('Move Item(s) to Another Listing'),
@@ -339,24 +353,46 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $value;
     }
 
-    public function callbackColumnTemplateCategory($value, $row, $column, $isExport)
+    public function callbackColumnProductType($value, $row, $column, $isExport)
     {
         $html = __('N/A');
 
-        if ($row->getData('template_category_id')) {
-            $url = $this->getUrl('*/walmart_template_category/edit', [
-                'id' => $row->getData('template_category_id'),
+        if ($row->getData('product_type_id')) {
+            $url = $this->getUrl('*/walmart_productType/edit', [
+                'id' => $row->getData('product_type_id'),
                 'close_on_save' => true,
             ]);
 
-            $templateTitle = $this->dataHelper->escapeHtml($row->getData('template_category_title'));
+            $title = $row->getData('product_type_title');
 
             return <<<HTML
-<a target="_blank" href="{$url}">{$templateTitle}</a>
+<a target="_blank" href="{$url}">{$title}</a>
 HTML;
         }
 
         return $html;
+    }
+
+    protected function callbackFilterProductType($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        $inputValue = null;
+
+        if (
+            is_array($value)
+            && isset($value['input'])
+        ) {
+            $inputValue = $value['input'];
+        } elseif (is_string($value)) {
+            $inputValue = $value;
+        }
+
+        if ($inputValue !== null) {
+            $collection->addAttributeToFilter(
+                'product_type_title',
+                ['like' => '%' . $inputValue . '%']
+            );
+        }
     }
 
     protected function callbackFilterTitle($collection, $column)

@@ -37,7 +37,7 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
      */
     public function getLagTimeData()
     {
-        if ($this->getMarketplace()->getCode() !== 'CA') {
+        if (!$this->getWalmartMarketplace()->isCanada()) {
             return [];
         }
 

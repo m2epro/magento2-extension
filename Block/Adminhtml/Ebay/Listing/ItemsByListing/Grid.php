@@ -182,17 +182,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             ],
 
             'addProductsSourceProducts' => [
-                'caption' => __('Add From Products List'),
+                'caption' => __('Add Products'),
                 'group' => 'products_actions',
                 'field' => 'id',
                 'onclick_action' => 'EbayListingGridObj.addProductsSourceProductsAction',
-            ],
-
-            'addProductsSourceCategories' => [
-                'caption' => __('Add From Categories'),
-                'group' => 'products_actions',
-                'field' => 'id',
-                'onclick_action' => 'EbayListingGridObj.addProductsSourceCategoriesAction',
             ],
 
             'autoActions' => [
@@ -385,6 +378,8 @@ HTML;
 
         $this->jsUrl->add($this->getUrl('*/ebay_listing_edit/selectStoreView'), 'listing/selectStoreView');
         $this->jsUrl->add($this->getUrl('*/ebay_listing_edit/saveStoreView'), 'listing/saveStoreView');
+
+        $this->jsUrl->add($this->getUrl('*/ebay_listing_wizard/create'), 'ebay_listing_product_add/index');
 
         $this->jsTranslator->add('Edit Listing Title', __('Edit Listing Title'));
         $this->jsTranslator->add('Edit Listing Store View', __('Edit Listing Store View'));

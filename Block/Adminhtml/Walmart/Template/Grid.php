@@ -13,7 +13,6 @@ use Magento\Framework\DB\Select;
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     public const TEMPLATE_SELLING_FORMAT = 'selling_format';
-    public const TEMPLATE_CATEGORY = 'category';
     public const TEMPLATE_SYNCHRONIZATION = 'synchronization';
     public const TEMPLATE_DESCRIPTION = 'description';
 
@@ -27,19 +26,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $resourceConnection;
     /** @var \Ess\M2ePro\Model\MarketplaceFactory */
     private $marketplaceFactory;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
 
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory
-     * @param \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
-     * @param \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context
-     * @param \Magento\Backend\Helper\Data $backendHelper
-     * @param \Ess\M2ePro\Helper\Data $dataHelper
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Marketplace\CollectionFactory $marketplaceCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
@@ -48,7 +35,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Model\MarketplaceFactory $marketplaceFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
-        \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
         $this->marketplaceCollectionFactory = $marketplaceCollectionFactory;
@@ -56,7 +42,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->walmartFactory = $walmartFactory;
         $this->resourceConnection = $resourceConnection;
         $this->marketplaceFactory = $marketplaceFactory;
-        $this->dataHelper = $dataHelper;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -81,30 +66,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $marketPlaceMainTable = $this->marketplaceFactory->create()->getResource()->getMainTable();
-
-        // Prepare category collection
-        // ---------------------------------------
-        $collectionCategory = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getCollection();
-        $collectionCategory->getSelect()->reset(Select::COLUMNS);
-        $collectionCategory->getSelect()->join(
-            ['mm' => $marketPlaceMainTable],
-            'main_table.marketplace_id=mm.id',
-            []
-        );
-        $collectionCategory->getSelect()->columns(
-            [
-                'id as template_id',
-                'title',
-                new \Zend_Db_Expr('\'' . self::TEMPLATE_CATEGORY . '\' as `type`'),
-                new \Zend_Db_Expr('mm.title as `marketplace_title`'),
-                new \Zend_Db_Expr('mm.id as `marketplace_id`'),
-                'create_date',
-                'update_date',
-                'category_path',
-                'browsenode_id',
-            ]
-        );
-        // ---------------------------------------
 
         // Prepare selling format collection
         // ---------------------------------------
@@ -178,7 +139,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Prepare union select
         // ---------------------------------------
         $collectionsArray = [
-            $collectionCategory->getSelect(),
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
             $collectionDescription->getSelect(),
@@ -222,16 +182,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'header' => __('Details'),
             'align' => 'left',
             'type' => 'text',
-            //            'width'         => '150px',
             'index' => 'title',
             'escape' => true,
             'filter_index' => 'main_table.title',
-            'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle'],
         ]);
 
         $options = [
-            self::TEMPLATE_CATEGORY => __('Category'),
             self::TEMPLATE_SELLING_FORMAT => __('Selling'),
             self::TEMPLATE_DESCRIPTION => __('Description'),
             self::TEMPLATE_SYNCHRONIZATION => __('Synchronization'),
@@ -320,26 +277,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ]);
 
         return parent::_prepareColumns();
-    }
-
-    public function callbackColumnTitle($value, $row, $column, $isExport)
-    {
-        if ($row->getData('type') != self::TEMPLATE_CATEGORY) {
-            return $value;
-        }
-
-        $title = $this->dataHelper->escapeHtml($value);
-
-        $categoryWord = __('Category');
-        $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"
-            : __('Not Set');
-
-        return <<<HTML
-{$title}
-<div>
-    <span style="font-weight: bold">{$categoryWord}</span>: <span style="color: #505050">{$categoryPath}</span><br/>
-</div>
-HTML;
     }
 
     public function callbackColumnMarketplace($value, $row, $column, $isExport)

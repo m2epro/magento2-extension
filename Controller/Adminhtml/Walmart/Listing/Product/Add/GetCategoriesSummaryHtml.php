@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Summary\Grid;
 use Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category\Tree;
 
-class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\AbstractAdd
 {
     public function execute()
     {

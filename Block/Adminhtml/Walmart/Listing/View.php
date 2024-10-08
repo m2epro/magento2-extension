@@ -148,7 +148,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             )
         );
 
-        $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
+        $path = 'walmart_listing_autoAction/getProductTypesList';
         $this->jsUrl->add(
             $this->getUrl(
                 '*/' . $path,
@@ -189,7 +189,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Listing_Product'));
         $this->jsUrl->addUrls(
-            $this->dataHelper->getControllerActions('Walmart_Listing_Product_Template_Category')
+            $this->dataHelper->getControllerActions('Walmart_Listing_Product_ProductType')
         );
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart_Listing_Product_Variation'));
         $this->jsUrl->addUrls(
@@ -242,8 +242,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $temp = $this->sessionDataHelper->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
-
-        $templateCategoryPopupTitle = __('Assign Category Policy');
 
         $popupTitle = __('Moving Walmart Items');
 
@@ -334,7 +332,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'select_items_message' => $selectItemsMessage,
                 'select_action_message' => $selectActionMessage,
 
-                'templateCategoryPopupTitle' => $templateCategoryPopupTitle,
+                'productTypePopupTitle' => __('Assign Product Type'),
 
                 'assign' => $assignString,
 
@@ -354,7 +352,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                 'switch_to_individual_mode_popup_title' => $switchToIndividualModePopUpTitle,
                 'switch_to_parent_mode_popup_title' => $switchToParentModePopUpTitle,
 
-                'Add New Category Policy' => __('Add New Category Policy'),
+                'Add New Product Type' => __('Add New Product Type'),
                 'Add New Child Product' => __('Add New Child Product'),
 
                 'Edit SKU' => __('Edit SKU'),

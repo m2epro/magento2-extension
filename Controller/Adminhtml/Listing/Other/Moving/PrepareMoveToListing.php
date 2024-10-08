@@ -88,11 +88,18 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
             ->query()
             ->fetch();
 
-        $response = [
-            'result' => true,
-            'accountId' => (int)$row['account_id'],
-            'marketplaceId' => (int)$row['marketplace_id'],
-        ];
+        if ($row !== false) {
+            $response = [
+                'result' => true,
+                'accountId' => (int)$row['account_id'],
+                'marketplaceId' => (int)$row['marketplace_id'],
+            ];
+        } else {
+            $response = [
+                'result' => false,
+                'message' => __('Magento product not found. Please reload the page.'),
+            ];
+        }
 
         $this->setJsonContent($response);
 

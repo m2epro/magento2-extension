@@ -288,8 +288,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Walmart\Connector\Command\Pen
         $this->buildRequestDataObject($requestDataRaw);
 
         if (isset($requestDataRaw['sku'])) {
-            $helperProductData = $this->getHelper('Component_Walmart_ProductData');
-            $requestDataRaw['sku'] = $helperProductData->encodeWalmartSku($requestDataRaw['sku']);
+            $requestDataRaw['sku'] = rawurlencode($requestDataRaw['sku']);
         }
 
         return $requestDataRaw;

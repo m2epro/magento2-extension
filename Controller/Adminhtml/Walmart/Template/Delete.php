@@ -54,10 +54,6 @@ class Delete extends Template
     private function getTemplateObject($type, $id)
     {
         switch ($type) {
-            case \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_CATEGORY:
-                $model = $this->activeRecordFactory->getObject('Walmart_Template_Category')->load($id);
-                break;
-
             case \Ess\M2ePro\Block\Adminhtml\Walmart\Template\Grid::TEMPLATE_SELLING_FORMAT:
                 $model = $this->walmartFactory->getObjectLoaded('Template\SellingFormat', $id);
                 break;

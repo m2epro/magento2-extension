@@ -220,24 +220,6 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @return array|null
-     */
-    public function getPossibleChannelAttributes()
-    {
-        if ($this->possibleChannelAttributes !== null) {
-            return $this->possibleChannelAttributes;
-        }
-
-        $possibleChannelAttributes = $this->modelFactory->getObject('Walmart_Marketplace_Details')
-                                                        ->setMarketplaceId($this->getMarketplaceId())
-                                                        ->getVariationAttributes(
-                                                            $this->getWalmartCategoryTemplate()->getProductDataNick()
-                                                        );
-
-        return $this->possibleChannelAttributes = $possibleChannelAttributes;
-    }
-
-    /**
      * @return int|null
      */
     public function getMarketplaceId()

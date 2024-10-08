@@ -1,0 +1,36 @@
+<?php
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\WalmartMigrationToProductTypes\Content $block */
+
+?>
+
+<div class="wizard-note">
+    <div>
+        <?= __("
+            This M2E Pro version introduces important changes related to Walmart’s new Item Spec 5.0.
+            <br><br>
+
+            To ensure that your Walmart integration continues to function smoothly and in full compliance with the new specifications, it's essential to update the Walmart category data in your M2E Pro.
+            This update will align your product information with the latest Walmart requirements.
+            <br><br>
+
+            A new entity, Product Type, has also been introduced in this version. To list and update your products on Walmart, it is now essential to configure and assign a Product Type to each product.
+            <br><br>
+
+            Additionally, please note that if you had previously configured any Auto Add/Remove Rules for your M2E Pro Listings, these Rules will no longer be available after the migration to the new Walmart Item Spec 5.0.
+            You will need to create new Rules to replace the old ones.
+            <br><br>
+
+            Please note, that this step is crucial for the seamless operation of your Walmart listings. By pressing OK, the system will automatically update the necessary data.
+            <br><br>
+        ")
+        ?>
+    </div>
+
+    <button title="<?= __('Ok') ?>"
+            type="button"
+            class="action-default scalable action primary"
+            onclick="setLocation('<?= $block->getSyncUrl() ?>')">
+        <span><?= __('OK') ?></span>
+    </button>
+</div>

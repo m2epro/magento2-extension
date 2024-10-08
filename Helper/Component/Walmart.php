@@ -15,6 +15,8 @@ class Walmart
     public const NICK = 'walmart';
 
     public const MARKETPLACE_SYNCHRONIZATION_LOCK_ITEM_NICK = 'walmart_marketplace_synchronization';
+    public const MARKETPLACE_WITH_PRODUCT_TYPE_SYNCHRONIZATION_LOCK_ITEM_NICK
+        = 'walmart_marketplace_with_product_type_synchronization';
 
     public const MARKETPLACE_US = 37;
     public const MARKETPLACE_CA = 38;

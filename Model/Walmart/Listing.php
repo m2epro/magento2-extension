@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart;
 
 /**
@@ -14,28 +8,11 @@ namespace Ess\M2ePro\Model\Walmart;
  */
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Template\Description */
-    private $descriptionTemplateModel;
-    /** @var \Ess\M2ePro\Model\Template\SellingFormat */
-    private $sellingFormatTemplateModel;
-    /** @var \Ess\M2ePro\Model\Template\Synchronization */
-    private $synchronizationTemplateModel;
-    /** @var \Ess\M2ePro\Helper\Module\Configuration */
-    private $moduleConfiguration;
+    private ?\Ess\M2ePro\Model\Template\Description $descriptionTemplateModel = null;
+    private ?\Ess\M2ePro\Model\Template\SellingFormat $sellingFormatTemplateModel = null;
+    private ?\Ess\M2ePro\Model\Template\Synchronization $synchronizationTemplateModel = null;
+    private \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration;
 
-    /**
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
-     */
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -65,15 +42,11 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         $this->moduleConfiguration = $moduleConfiguration;
     }
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing::class);
     }
-
-    //########################################
 
     public function delete()
     {
@@ -87,7 +60,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $temp;
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Account
@@ -123,7 +96,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->getMarketplace()->getChildObject();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Template\Description
@@ -224,7 +197,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->getSynchronizationTemplate()->getChildObject();
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @param bool $asObjects
@@ -237,25 +210,23 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return $this->getParentObject()->getProducts($asObjects, $filters);
     }
 
-    //########################################
+    // ---------------------------------------
 
-    /**
-     * @return int
-     */
-    public function getAutoGlobalAddingCategoryTemplateId()
+    public function getAutoGlobalAddingProductTypeId(): int
     {
-        return (int)$this->getData('auto_global_adding_category_template_id');
+        return (int)$this->getDataByKey(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID
+        );
     }
 
-    /**
-     * @return int
-     */
-    public function getAutoWebsiteAddingCategoryTemplateId()
+    public function getAutoWebsiteProductTypeId(): int
     {
-        return (int)$this->getData('auto_website_adding_category_template_id');
+        return (int)$this->getDataByKey(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID
+        );
     }
 
-    //########################################
+    // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
@@ -402,12 +373,12 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return true;
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function isCacheEnabled()
     {
         return true;
     }
 
-    //########################################
+    // ---------------------------------------
 }

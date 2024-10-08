@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\ProductType\Edit\FieldTemplates $block */
+
+$attributes = $block->getAvailableAttributes();
+
+?>
+
+<div id="template_field" style="display: none;">
+    <div id="field_container_%id%"
+        class="admin__field field %containerClass%">
+        <label class="label admin__field-label product_type_field_label" for="field_mode_%id%">
+            <span>%title%</span>
+        </label>
+
+        <select id="field_mode_%id%"
+                name="field_data%formId%[mode]"
+                class="select admin__control-select product_type_field_mode M2ePro-validate-product-type-specific-mode %modeClass%">
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Walmart\ProductType::FIELD_NOT_CONFIGURED; ?>"
+                style="color: grey;"><?php echo $block->__('Not Selected'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Walmart\ProductType::FIELD_CUSTOM_VALUE; ?>"
+                style="color: black;">
+                <?php echo $block->__('Custom Value'); ?></option>
+            <option
+                value="<?php echo \Ess\M2ePro\Model\Walmart\ProductType::FIELD_CUSTOM_ATTRIBUTE; ?>"
+                style="color: black;">
+                <?php echo $block->__('Custom Attribute'); ?></option>
+        </select>
+
+        <div class="m2epro-field-tooltip admin__field-tooltip ">
+            <a class="admin__field-tooltip-action" href="javascript://"></a>
+            <div class="admin__field-tooltip-content">%tooltip%</div>
+        </div>
+
+        <span id="custom_value_container_%id%"
+              class="product_type_value_container"
+              style="display: none;">
+
+            <select id="field_attribute_%id%"
+                    name="field_data%formId%[attribute_code]"
+                    class="select admin__control-select product_type_setting_element"
+                    style="display: none;">
+                <option value="0" selected="selected"><?php echo __('None'); ?></option>
+                %additional_attribute_options%
+                <optgroup label="Magento Attributes" class="M2ePro-custom-attribute-optgroup">
+                    <?php foreach ($attributes as $attribute) : ?>
+                        <option value="<?php echo $attribute['code']; ?>">
+                        <?php echo $block->escapeHtml($attribute['label']); ?>
+                    </option>
+                    <?php endforeach; ?>
+                </optgroup>
+            </select>
+        </span>
+    </div>
+</div>
+
+<div id="template_image_option" style="display: none;">
+    <option value="image"><?php echo __('Product Base Image'); ?></option>
+</div>
+
+<div id="template_images_optgroup" style="display: none;">
+    <optgroup label="<?php echo __('Product Images'); ?>">
+        <option value="1">1</option>
+        <option value="2"><?php echo __('Up to 2'); ?></option>
+        <option value="3"><?php echo __('Up to 3'); ?></option>
+        <option value="4"><?php echo __('Up to 4'); ?></option>
+        <option value="5"><?php echo __('Up to 5'); ?></option>
+        <option value="6"><?php echo __('Up to 6'); ?></option>
+        <option value="7"><?php echo __('Up to 7'); ?></option>
+        <option value="8"><?php echo __('Up to 8'); ?></option>
+    </optgroup>
+</div>
+
+<div id="template_fieldset" style="display: none;">
+    <fieldset class="fieldset admin__fieldset m2epro-fieldset product_type_generated_field">
+        <legend class="admin__legend legend">
+        <span>%title%<div
+                style="%tooltip_style%"
+                class="m2epro-field-tooltip m2epro-field-tooltip-right m2epro-fieldset-tooltip admin__field-tooltip">
+                <a class="admin__field-tooltip-action" href="javascript://"></a>
+                <div class="admin__field-tooltip-content">%tooltip%</div>
+            </div>
+        </span>
+        </legend>
+        <br>
+
+        <div class="messages"></div>
+    </fieldset>
+</div>

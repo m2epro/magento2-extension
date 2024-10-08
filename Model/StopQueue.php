@@ -99,6 +99,10 @@ class StopQueue extends ActiveRecord\AbstractModel
             $ebayListingProduct = $listingProduct->getChildObject();
             $ebayAccount = $ebayListingProduct->getEbayAccount();
 
+            if (empty($ebayListingProduct->getEbayItem()->getItemId())) {
+                throw new \Exception('Wrong Ebay Item ID');
+            }
+
             $data = [
                 'account' => $ebayAccount->getServerHash(),
                 'marketplace' => $ebayListingProduct->getMarketplace()->getNativeId(),

@@ -33,33 +33,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
         $data['key_features'] = \Ess\M2ePro\Helper\Json::encode($data['key_features']);
         $data['other_features'] = \Ess\M2ePro\Helper\Json::encode($data['other_features']);
-        $data['attributes'] = \Ess\M2ePro\Helper\Json::encode(
-            $this->getComparedData($data, 'attributes_name', 'attributes_value')
-        );
 
         return $data;
-    }
-
-    protected function getComparedData($data, $keyName, $valueName)
-    {
-        $result = [];
-
-        if (!isset($data[$keyName]) || !isset($data[$valueName])) {
-            return $result;
-        }
-
-        $keyData = array_filter($data[$keyName]);
-        $valueData = array_filter($data[$valueName]);
-
-        if (count($keyData) !== count($valueData)) {
-            return $result;
-        }
-
-        foreach ($keyData as $index => $value) {
-            $result[] = ['name' => $value, 'value' => $valueData[$index]];
-        }
-
-        return $result;
     }
 
     public function getDefaultData()
@@ -126,11 +101,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 
             'other_features_mode' => Description::OTHER_FEATURES_MODE_NONE,
             'other_features' => \Ess\M2ePro\Helper\Json::encode([]),
-
-            'attributes_mode' => Description::ATTRIBUTES_MODE_NONE,
-            'attributes' => \Ess\M2ePro\Helper\Json::encode([]),
-            'attributes_name' => \Ess\M2ePro\Helper\Json::encode([]),
-            'attributes_value' => \Ess\M2ePro\Helper\Json::encode([]),
         ];
     }
 

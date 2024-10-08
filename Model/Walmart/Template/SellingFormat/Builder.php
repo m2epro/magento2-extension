@@ -72,37 +72,11 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
                 ->format('Y-m-d 00:00:00');
         }
 
-        $data['attributes'] = \Ess\M2ePro\Helper\Json::encode(
-            $this->getComparedData($data, 'attributes_name', 'attributes_value')
-        );
-
         $data['price_modifier'] = \Ess\M2ePro\Helper\Json::encode(
             \Ess\M2ePro\Model\Template\SellingFormat\BuilderHelper::getPriceModifierData('price', $this->rawData)
         );
 
         return $data;
-    }
-
-    protected function getComparedData($data, $keyName, $valueName)
-    {
-        $result = [];
-
-        if (!isset($data[$keyName]) || !isset($data[$valueName])) {
-            return $result;
-        }
-
-        $keyData = array_filter($data[$keyName]);
-        $valueData = array_filter($data[$valueName]);
-
-        if (count($keyData) !== count($valueData)) {
-            return $result;
-        }
-
-        foreach ($keyData as $index => $value) {
-            $result[] = ['name' => $value, 'value' => $valueData[$index]];
-        }
-
-        return $result;
     }
 
     public function getDefaultData()
@@ -155,11 +129,6 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'ships_in_original_packaging_mode' => WalmartSellingFormat::SHIPS_IN_ORIGINAL_PACKAGING_MODE_NONE,
             'ships_in_original_packaging_value' => '',
             'ships_in_original_packaging_custom_attribute' => '',
-
-            'attributes_mode' => WalmartSellingFormat::ATTRIBUTES_MODE_NONE,
-            'attributes' => '',
-            'attributes_name' => \Ess\M2ePro\Helper\Json::encode([]),
-            'attributes_value' => \Ess\M2ePro\Helper\Json::encode([]),
 
             'shipping_override_rule_mode' => WalmartSellingFormat::SHIPPING_OVERRIDE_RULE_MODE_NO,
             'shipping_override_rule' => [],

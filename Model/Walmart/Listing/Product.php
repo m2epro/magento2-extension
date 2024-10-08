@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing;
 
 use Ess\M2ePro\Model\Listing\Product\PriceCalculator;
 use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
 use Ess\M2ePro\Model\Walmart\Template\SellingFormat\Promotion;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product as ListingProductResource;
 
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
@@ -20,30 +15,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
 
     public const PROMOTIONS_MAX_ALLOWED_COUNT = 10;
 
+    private \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository;
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager */
     private $variationManager;
     /** @var \Ess\M2ePro\Helper\Component\Walmart\Vocabulary */
     private $vocabularyHelper;
     /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory */
     private $walmartPriceCalculatorFactory;
-    /** @var \Ess\M2ePro\Model\Listing\Product\PriceRounder */
-    private $rounder;
 
-    /**
-     * @param \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper
-     * @param \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
-     * @param array $data
-     */
     public function __construct(
+        \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository,
         \Ess\M2ePro\Helper\Component\Walmart\Vocabulary $vocabularyHelper,
         \Ess\M2ePro\Model\Walmart\Listing\Product\PriceCalculatorFactory $walmartPriceCalculatorFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
@@ -53,7 +34,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Ess\M2ePro\Model\Listing\Product\PriceRounder $rounder,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -71,20 +51,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
             $data
         );
 
-        $this->rounder = $rounder;
+        $this->productTypeRepository = $productTypeRepository;
         $this->vocabularyHelper = $vocabularyHelper;
         $this->walmartPriceCalculatorFactory = $walmartPriceCalculatorFactory;
     }
-
-    //########################################
 
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::class);
     }
-
-    //########################################
 
     /**
      * @return bool
@@ -226,6 +202,29 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function getWalmartListing()
     {
         return $this->getListing()->getChildObject();
+    }
+
+    // ---------------------------------------
+
+    public function isExistsProductType(): bool
+    {
+        return $this->getDataByKey(ListingProductResource::COLUMN_PRODUCT_TYPE_ID) !== null;
+    }
+
+    public function getProductTypeId(): int
+    {
+        return (int)$this->getDataByKey(ListingProductResource::COLUMN_PRODUCT_TYPE_ID);
+    }
+
+    public function getProductType(): \Ess\M2ePro\Model\Walmart\ProductType
+    {
+        if (!$this->isExistsProductType()) {
+            throw new \LogicException('Product type not found');
+        }
+
+        return $this->productTypeRepository->get(
+            (int)$this->getDataByKey(ListingProductResource::COLUMN_PRODUCT_TYPE_ID)
+        );
     }
 
     // ---------------------------------------
@@ -391,7 +390,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
                                          ->getFirstItem();
     }
 
-    public function getVariationManager()
+    public function getVariationManager(): \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager
     {
         if ($this->variationManager === null) {
             $this->variationManager = $this->modelFactory->getObject('Walmart_Listing_Product_Variation_Manager');
@@ -411,39 +410,6 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
     public function getVariations($asObjects = false, array $filters = [], $tryToGetFromStorage = true)
     {
         return $this->getParentObject()->getVariations($asObjects, $filters, $tryToGetFromStorage);
-    }
-
-    //########################################
-
-    /**
-     * @return int
-     */
-    public function getTemplateCategoryId()
-    {
-        return (int)($this->getData('template_category_id'));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExistCategoryTemplate()
-    {
-        return $this->getTemplateCategoryId() > 0;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Walmart\Template\Category | null
-     */
-    public function getCategoryTemplate()
-    {
-        if (!$this->isExistCategoryTemplate()) {
-            return null;
-        }
-
-        return $this->activeRecordFactory->getCachedObjectLoaded(
-            'Walmart_Template_Category',
-            $this->getTemplateCategoryId()
-        );
     }
 
     // ---------------------------------------

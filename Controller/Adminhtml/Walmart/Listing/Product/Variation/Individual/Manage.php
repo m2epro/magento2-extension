@@ -106,8 +106,8 @@ class Manage extends Main
         );
 
         $duplicatedListingProduct->getChildObject()->setData(
-            'template_category_id',
-            $listingProduct->getChildObject()->getTemplateCategoryId()
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_PRODUCT_TYPE_ID,
+            $listingProduct->getChildObject()->getProductTypeId()
         );
         $duplicatedListingProduct->save();
 

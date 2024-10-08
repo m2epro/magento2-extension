@@ -174,7 +174,6 @@ class Analytics implements \Ess\M2ePro\Model\Servicing\TaskInterface
             \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\TemplateDescription::class,
             \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\EbayTemplateReturnPolicy::class,
             \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Ebay\EbayTemplateCategory::class,
-            \Ess\M2ePro\Model\Servicing\Task\Analytics\Collector\Walmart\WalmartTemplateCategory::class,
         ];
     }
 

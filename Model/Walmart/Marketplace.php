@@ -1,23 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+namespace Ess\M2ePro\Model\Walmart;
 
 /**
  * @method \Ess\M2ePro\Model\Marketplace getParentObject()
  */
-
-namespace Ess\M2ePro\Model\Walmart;
-
-/**
- * Class \Ess\M2ePro\Model\Walmart\Marketplace
- */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\AbstractModel
 {
-    //########################################
+    private const CODE_CANADA = 'CA';
+    private const CODE_UNITED_STATES = 'US';
 
     public function _construct()
     {
@@ -25,14 +16,10 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Walmart\Marketplace::class);
     }
 
-    //########################################
-
     public function getCurrency()
     {
         return $this->getData('default_currency');
     }
-
-    //########################################
 
     public function getDeveloperKey()
     {
@@ -44,7 +31,20 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         return $this->getData('default_currency');
     }
 
-    //########################################
+    public function isUnitedStates(): bool
+    {
+        return $this->getParentObject()->getCode() === self::CODE_UNITED_STATES;
+    }
+
+    public function isCanada(): bool
+    {
+        return $this->getParentObject()->getCode() === self::CODE_CANADA;
+    }
+
+    public function isSupportedProductType(): bool
+    {
+        return $this->isUnitedStates();
+    }
 
     public function save()
     {
@@ -60,12 +60,8 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart
         return parent::delete();
     }
 
-    //########################################
-
     public function isCacheEnabled()
     {
         return true;
     }
-
-    //########################################
 }

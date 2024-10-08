@@ -1,12 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction;
+
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing as WalmartListResource;
+use Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Auto\Category\Group as AutoCategoryGroupResource;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
 {
@@ -35,11 +32,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
             'auto_global_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_global_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'auto_global_adding_category_template_id' => null,
+            WalmartListResource::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID => null,
             'auto_website_adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'auto_website_adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
             'auto_website_deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
-            'auto_website_adding_category_template_id' => null,
+            WalmartListResource::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID => null,
         ];
 
         $groupData = [
@@ -58,7 +55,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
         if ($data['auto_mode'] == \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL) {
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_GLOBAL;
             $listingData['auto_global_adding_mode'] = $data['auto_global_adding_mode'];
-            $listingData['auto_global_adding_category_template_id'] = $data['adding_category_template_id'];
+            $listingData[
+                WalmartListResource::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID
+            ] = $data['adding_product_type_id'];
 
             if ($listingData['auto_global_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
                 $listingData['auto_global_adding_add_not_visible'] = $data['auto_global_adding_add_not_visible'];
@@ -71,7 +70,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
             $listingData['auto_mode'] = \Ess\M2ePro\Model\Listing::AUTO_MODE_WEBSITE;
             $listingData['auto_website_adding_mode'] = $data['auto_website_adding_mode'];
             $listingData['auto_website_deleting_mode'] = $data['auto_website_deleting_mode'];
-            $listingData['auto_website_adding_category_template_id'] = $data['adding_category_template_id'];
+            $listingData[
+                WalmartListResource::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID
+            ] = $data['adding_product_type_id'];
 
             if ($listingData['auto_website_adding_mode'] != \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE) {
                 $listingData['auto_website_adding_add_not_visible'] = $data['auto_website_adding_add_not_visible'];
@@ -97,13 +98,13 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\AutoAction
                 $group->save();
             }
 
-            if (!empty($data['adding_category_template_id'])) {
+            if (!empty($data['adding_product_type_id'])) {
                 $group->getChildObject()->setData(
-                    'adding_category_template_id',
-                    $data['adding_category_template_id']
+                    AutoCategoryGroupResource::COLUMN_ADDING_PRODUCT_TYPE_ID,
+                    $data['adding_product_type_id']
                 );
             } else {
-                $group->getChildObject()->setData('adding_category_template_id', null);
+                $group->getChildObject()->setData(AutoCategoryGroupResource::COLUMN_ADDING_PRODUCT_TYPE_ID, null);
             }
 
             $group->save();

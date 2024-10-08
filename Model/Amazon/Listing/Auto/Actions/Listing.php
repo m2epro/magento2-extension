@@ -256,7 +256,12 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             return;
         }
 
-        $productTypeTemplate = $this->templateProductTypeRepository->get((int)$params['template_product_type_id']);
+        $productTypeTemplate = $this->templateProductTypeRepository->find(
+            (int)$params['template_product_type_id']
+        );
+        if ($productTypeTemplate === null) {
+            return;
+        }
 
         $possibleThemes = $productTypeTemplate->getDictionary()->getVariationThemes();
 

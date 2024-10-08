@@ -91,25 +91,34 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
      */
     public function getChannelItem(): ?\Ess\M2ePro\Model\Amazon\Item
     {
-        if ($this->channelItem === null) {
-            $this->channelItem = $this->activeRecordFactory->getObject('Amazon\Item')->getCollection()
-                                                           ->addFieldToFilter(
-                                                               'account_id',
-                                                               $this->getParentObject()->getOrder()->getAccountId()
-                                                           )
-                                                           ->addFieldToFilter(
-                                                               'marketplace_id',
-                                                               $this->getParentObject()->getOrder()->getMarketplaceId()
-                                                           )
-                                                           ->addFieldToFilter('sku', $this->getSku())
-                                                           ->setOrder(
-                                                               'create_date',
-                                                               \Magento\Framework\Data\Collection::SORT_ORDER_DESC
-                                                           )
-                                                           ->getFirstItem();
+        if ($this->channelItem !== null) {
+            return $this->channelItem;
         }
 
-        return $this->channelItem->getId() !== null ? $this->channelItem : null;
+        /** @var \Ess\M2ePro\Model\Amazon\Item $channelItem */
+        $channelItem = $this
+            ->activeRecordFactory
+            ->getObject('Amazon\Item')->getCollection()
+            ->addFieldToFilter(
+                'account_id',
+                $this->getParentObject()->getOrder()->getAccountId()
+            )
+            ->addFieldToFilter(
+                'marketplace_id',
+                $this->getParentObject()->getOrder()->getMarketplaceId()
+            )
+            ->addFieldToFilter('sku', $this->getSku())
+            ->setOrder(
+                'create_date',
+                \Magento\Framework\Data\Collection::SORT_ORDER_DESC
+            )
+            ->getFirstItem();
+
+        if ($channelItem->isObjectNew()) {
+            return null;
+        }
+
+        return $this->channelItem = $channelItem;
     }
 
     public function getAmazonOrderItemId()

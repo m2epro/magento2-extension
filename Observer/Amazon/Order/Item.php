@@ -60,6 +60,20 @@ class Item extends \Ess\M2ePro\Observer\AbstractModel
                 'store_id' => $amazonOrderItem->getAmazonOrder()->getAssociatedStoreId(),
             ];
 
+            /** @var \Ess\M2ePro\Helper\Magento\Product $productHelper */
+            $productHelper = $this->helperFactory->getObject('Magento\Product');
+            /** @var \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration */
+            $moduleConfiguration = $this->helperFactory->getObject('Module\Configuration');
+
+            if (
+                $productHelper->isGroupedType($product->getTypeId())
+                && $moduleConfiguration->isGroupedProductModeSet()
+            ) {
+                $dataForAdd['additional_data'] = \Ess\M2ePro\Helper\Json::encode([
+                    'grouped_product_mode' => 1,
+                ]);
+            }
+
             $this->activeRecordFactory->getObject('Amazon\Item')->setData($dataForAdd)->save();
         }
     }

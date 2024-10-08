@@ -852,37 +852,6 @@ HTML
 
         // ---------------------------------------
 
-        $fieldset = $form->addFieldset(
-            'magento_block_walmart_template_selling_format_attributes',
-            [
-                'legend' => __('Attributes'),
-                'class' => 'm2epro-marketplace-depended-block',
-                'collapsable' => false,
-            ]
-        );
-
-        // ---------------------------------------
-
-        $fieldset->addField(
-            'attributes_mode',
-            self::SELECT,
-            [
-                'name' => 'attributes_mode',
-                'label' => __('Attributes'),
-                'title' => __('Attributes'),
-                'values' => [
-                    ['value' => SellingFormat::ATTRIBUTES_MODE_NONE, 'label' => __('None')],
-                    ['value' => SellingFormat::ATTRIBUTES_MODE_CUSTOM, 'label' => __('Custom Value')],
-                ],
-                'value' => $this->formData['attributes_mode'],
-                'tooltip' => __('Specify up to 5 additional features that describe your Item.'),
-            ]
-        );
-
-        $this->appendAttributesFields($fieldset, 5, 'attributes');
-
-        // ---------------------------------------
-
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -1165,119 +1134,6 @@ HTML
                     ->toHtml();
     }
 
-    public function appendAttributesFields(
-        \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
-        $fieldCount,
-        $name
-    ) {
-        $helper = $this->dataHelper;
-        for ($i = 0; $i < $fieldCount; $i++) {
-            $value = '';
-            if (!empty($this->formData[$name][$i]['name'])) {
-                $value = $helper->escapeHtml($this->formData[$name][$i]['name']);
-            }
-
-            $nameBlock = $this->elementFactory->create(
-                'text',
-                [
-                    'data' => [
-                        'name' => $name . '_name[]',
-                        'value' => $value,
-                        'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\'' . $name . '\',this)',
-                        'class' => 'M2ePro-required-when-visible',
-                        'css_class' => $name . '_tr no-margin-bottom',
-                        'after_element_html' => ' /',
-                    ],
-                ]
-            );
-            $nameBlock->setId($name . '_name_' . $i);
-            $nameBlock->setForm($fieldSet->getForm());
-
-            $value = '';
-            if (!empty($this->formData[$name][$i]['value'])) {
-                $value = $helper->escapeHtml($this->formData[$name][$i]['value']);
-            }
-
-            $valueBlock = $this->elementFactory->create(
-                'text',
-                [
-                    'data' => [
-                        'name' => $name . '_value[]',
-                        'value' => $value,
-                        'onkeyup' => 'WalmartTemplateSellingFormatObj.multi_element_keyup(\'' . $name . '\',this)',
-                        'class' => 'M2ePro-required-when-visible',
-                        'css_class' => $name . '_tr no-margin-bottom',
-                        'tooltip' => __('Max. 100 characters.'),
-                    ],
-                ]
-            );
-            $valueBlock->setId($name . '_value_' . $i);
-            $valueBlock->setForm($fieldSet->getForm());
-
-            $button = $this->getLayout()
-                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
-                           ->addData([
-                               'label' => __('Insert'),
-                               'destination_id' => $name . '_value_' . $i,
-                               'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
-                               'on_click_callback' => "WalmartTemplateSellingFormatObj.multi_element_keyup
-                                        ('{$name}',$('{$name}_value_{$i}'));",
-                               'class' => 'primary attributes-container-td',
-                               'style' => 'display: inline-block; margin-left: 5px;',
-                           ]);
-
-            $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
-                'data' => [
-                    'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
-                    'class' => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                    'create_magento_attribute' => true,
-                ],
-            ])->addCustomAttribute('allowed_attribute_types', 'text,select')
-                                                    ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
-
-            $selectAttrBlock->setId('selectAttr_' . $name . '_value_' . $i);
-            $selectAttrBlock->setForm($fieldSet->getForm());
-
-            $fieldSet->addField(
-                'attributes_container_' . $i,
-                self::CUSTOM_CONTAINER,
-                [
-                    'container_id' => 'custom_title_tr',
-                    'label' => $this->__('Attributes (name / value) #%number%', $i + 1),
-                    'title' => $this->__('Attributes (name / value) #%number%', $i + 1),
-                    'style' => 'display: inline-block;',
-                    'text' => $nameBlock->toHtml() . $valueBlock->toHtml(),
-                    'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
-                    'css_class' => 'attributes_tr',
-                    'field_extra_attributes' => 'style="display: none;"',
-                ]
-            );
-        }
-
-        $fieldSet->addField(
-            $name . '_actions',
-            self::CUSTOM_CONTAINER,
-            [
-                'label' => '',
-                'text' => <<<HTML
-                <a id="show_{$name}_action"
-                   href="javascript: void(0);"
-                   onclick="WalmartTemplateSellingFormatObj.showElement('{$name}');">
-                   {$this->__('Add New')}
-                </a>
-                        /
-                <a id="hide_{$name}_action"
-                   href="javascript: void(0);"
-                   onclick="WalmartTemplateSellingFormatObj.hideElement('{$name}');">
-                   {$this->__('Remove')}
-                </a>
-HTML
-                ,
-                'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
-            ]
-        );
-    }
-
     /**
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \ReflectionException
@@ -1437,7 +1293,6 @@ JS
 
         $data['shipping_override_rule'] = $this->templateModel->getChildObject()->getShippingOverrides();
         $data['promotions'] = $this->templateModel->getChildObject()->getPromotions();
-        $data['attributes'] = \Ess\M2ePro\Helper\Json::decode($data['attributes']);
 
         return array_merge($default, $data);
     }

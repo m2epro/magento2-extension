@@ -1,17 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
 
-use Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace;
-
-class RunSynchNow extends Marketplace
+class RunSynchNow extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Marketplace
 {
+    private \Ess\M2ePro\Model\Walmart\Marketplace\SynchronizationFactory $synchronizationFactory;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\Marketplace\SynchronizationFactory $synchronizationFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    ) {
+        parent::__construct($walmartFactory, $context);
+
+        $this->synchronizationFactory = $synchronizationFactory;
+    }
+
     public function execute()
     {
         // @codingStandardsIgnoreLine
@@ -23,13 +27,18 @@ class RunSynchNow extends Marketplace
             (int)$this->getRequest()->getParam('marketplace_id')
         );
 
-        /** @var \Ess\M2ePro\Model\Walmart\Marketplace\Synchronization $synchronization */
-        $synchronization = $this->modelFactory->getObject('Walmart_Marketplace_Synchronization');
+        $synchronization = $this->synchronizationFactory->create();
+        if ($synchronization->isMarketplaceAllowed($marketplace)) {
+            $this->setJsonContent(['result' => 'error']);
+
+            return $this->getResult();
+        }
+
         $synchronization->setMarketplace($marketplace);
 
         if ($synchronization->isLocked()) {
             $synchronization->getlog()->addMessage(
-                $this->__(
+                (string)__(
                     'Marketplaces cannot be updated now. '
                     . 'Please wait until another marketplace synchronization is completed, then try again.'
                 ),
@@ -43,7 +52,7 @@ class RunSynchNow extends Marketplace
 
         try {
             $synchronization->process();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $synchronization->getlog()->addMessageFromException($e);
 
             $synchronization->getLockItemManager()->remove();

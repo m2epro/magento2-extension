@@ -77,8 +77,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return;
         }
 
-        $this->setWizardStep('listingGeneral');
-
         if ($this->getRequest()->isPost()) {
             $post = $this->getRequest()->getPost();
 
@@ -164,26 +162,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
             $this->clearSession();
 
-            if ((bool)$this->getRequest()->getParam('wizard', false)) {
-                $this->setWizardStep('sourceMode');
-
-                $this->_redirect('*/wizard_installationEbay');
-
-                return;
-            }
-
             $this->_redirect(
-                '*/ebay_listing_product_add/sourceMode',
+                '*/ebay_listing_wizard/create',
                 [
-                    'id' => $listing->getId(),
-                    'listing_creation' => true,
+                    'listing_id' => $listing->getId(),
+                    'type' => \Ess\M2ePro\Model\Ebay\Listing\Wizard::TYPE_GENERAL,
                 ]
             );
 
             return;
         }
 
-        $this->setWizardStep('listingTemplates');
         $this->addContent(
             $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Create\Templates::class)
         );
@@ -263,20 +252,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             null
         );
     }
-
-    //########################################
-
-    private function setWizardStep($step)
-    {
-        $wizardHelper = $this->getHelper('Module_Wizard');
-        if (!$wizardHelper->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {
-            return;
-        }
-
-        $wizardHelper->setStep(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK, $step);
-    }
-
-    //########################################
 
     private function isCreationModeListingOnly()
     {

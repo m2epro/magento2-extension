@@ -50,54 +50,60 @@ class Form extends AbstractForm
                 ['legend' => __($group['title'])]
             );
 
-            foreach ($group['marketplaces'] as $marketplace) {
+            foreach ($group['marketplaces'] as $groupMarketplace) {
+                /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
+                $marketplace = $groupMarketplace['instance'];
                 $afterElementHtml = '
-                <div id="run_single_button_' . $marketplace['instance']->getId() . '" class="control-value"';
-                $marketplace['instance']->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
+                <div id="run_single_button_' . $marketplace->getId() . '" class="control-value"';
+                $marketplace->getStatus() == \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE &&
                 $afterElementHtml .= ' style="display: none;"';
                 $afterElementHtml .= '">';
 
+                $onClick = $marketplace->getChildObject()
+                                       ->isSupportedProductType()
+                    ? 'WalmartMarketplaceWithProductTypeSyncObj.runSingleSynchronization(this)'
+                    : 'MarketplaceObj.runSingleSynchronization(this)';
                 $afterElementHtml .= $this->getLayout()
                                           ->createBlock(\Magento\Backend\Block\Widget\Button::class)
                                           ->setData([
                                               'label' => __('Update Now'),
-                                              'onclick' => 'MarketplaceObj.runSingleSynchronization(this)',
+                                              'onclick' => $onClick,
                                               'class' => 'run_single_button primary',
                                           ])->toHtml();
 
                 $afterElementHtml .= <<<HTML
                 </div>
                 <div id="synch_info_container" class="control-value">
-                    <div id="synch_info_wait_{$marketplace['instance']->getId()}"
+                    <div id="synch_info_wait_{$marketplace->getId()}"
                         class="value" style="display: none; color: gray;">&nbsp; {$this->__('Waiting')}</div>
 
-                    <div id="synch_info_process_{$marketplace['instance']->getId()}"
+                    <div id="synch_info_process_{$marketplace->getId()}"
                         class="value" style="display: none; color: blue;">&nbsp; {$this->__('Processing')}</div>
 
-                    <div id="synch_info_complete_{$marketplace['instance']->getId()}"
+                    <div id="synch_info_complete_{$marketplace->getId()}"
                         class="value" style="display: none; color: green;">{$this->__('Completed')}</div>
 
-                    <div id="synch_info_error_{$marketplace['instance']->getId()}"
+                    <div id="synch_info_error_{$marketplace->getId()}"
                         class="value" style="display: none; color: red;">{$this->__('Error')}</div>
 
-                    <div id="synch_info_skip_{$marketplace['instance']->getId()}"
+                    <div id="synch_info_skip_{$marketplace->getId()}"
                         class="value" style="display: none; color: gray;">{$this->__('Skipped')}</div>
 
-                    <div id="marketplace_title_{$marketplace['instance']->getId()}"
-                        class="value" style="display: none;">{$marketplace['instance']->getTitle()}</div>
+                    <div id="marketplace_title_{$marketplace->getId()}"
+                        class="value" style="display: none;">{$marketplace->getTitle()}</div>
                 </div>
-                <div id="changed_{$marketplace['instance']->getId()}" class="changed control-value"
+                <div id="changed_{$marketplace->getId()}" class="changed control-value"
                     style="display: none;">
                 </div>
 HTML;
 
                 $selectData = [
-                    'label' => __($marketplace['instance']->getData('title')),
+                    'label' => __($marketplace->getData('title')),
                     'style' => 'display: inline-block;',
                     'after_element_html' => $afterElementHtml,
                 ];
 
-                if ($marketplace['params']['locked']) {
+                if ($groupMarketplace['params']['locked']) {
                     $selectData['disabled'] = 'disabled';
                     $selectData['values'] = [
                         \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => __('Enabled') . ' - ' .
@@ -109,18 +115,18 @@ HTML;
                         \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => __('Disabled'),
                         \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE => __('Enabled'),
                     ];
-                    $selectData['value'] = $marketplace['instance']->getStatus();
+                    $selectData['value'] = $marketplace->getStatus();
                 }
 
-                $selectData['name'] = 'status_' . $marketplace['instance']->getId();
+                $selectData['name'] = 'status_' . $marketplace->getId();
                 $selectData['class'] = 'marketplace_status_select';
-                $selectData['note'] = $marketplace['instance']->getUrl();
+                $selectData['note'] = $marketplace->getUrl();
 
                 $fieldset->addField(
-                    'status_' . $marketplace['instance']->getId(),
+                    'status_' . $marketplace->getId(),
                     self::SELECT,
                     $selectData
-                )->addCustomAttribute('marketplace_id', $marketplace['instance']->getId())
+                )->addCustomAttribute('marketplace_id', $marketplace->getId())
                          ->addCustomAttribute('component_name', \Ess\M2ePro\Helper\Component\Walmart::NICK)
                          ->addCustomAttribute('component_title', $this->walmartHelper->getTitle())
                          ->addCustomAttribute('onchange', 'MarketplaceObj.changeStatus(this);');
@@ -136,7 +142,7 @@ HTML;
     protected function prepareData()
     {
         // ---------------------------------------
-        /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplaces */
+        /** @var \Ess\M2ePro\Model\Marketplace[] $tempMarketplaces */
         $tempMarketplaces = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Walmart::NICK, 'Marketplace')
                                                 ->getCollection()
                                                 ->setOrder('group_title', 'ASC')
@@ -159,6 +165,7 @@ HTML;
                 'marketplaces' => [],
             ];
 
+            /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplace */
             foreach ($tempMarketplaces as $tempMarketplace) {
                 if ($groupOrderTitle != $tempMarketplace->getGroupTitle()) {
                     continue;
@@ -172,9 +179,10 @@ HTML;
                 $storedStatuses[] = [
                     'marketplace_id' => $tempMarketplace->getId(),
                     'status' => $tempMarketplace->getStatus(),
+                    'is_need_sync_after_save' => !$tempMarketplace->getChildObject()
+                                                                  ->isSupportedProductType(),
                 ];
 
-                /** @var \Ess\M2ePro\Model\Marketplace $tempMarketplace */
                 $marketplace = [
                     'instance' => $tempMarketplace,
                     'params' => ['locked' => $isLocked],
@@ -198,24 +206,56 @@ HTML;
                 ['back' => $this->dataHelper->makeBackUrlParam('*/walmart_synchronization/index')]
             ),
             'runSynchNow' => $this->getUrl('*/walmart_marketplace/runSynchNow'),
+            'walmart_marketplace_withProductType/runSynchNow' => $this->getUrl(
+                '*/walmart_marketplace_withProductType/runSynchNow'
+            ),
+            'walmart_marketplace_withProductType/synchGetExecutingInfo' => $this->getUrl(
+                '*/walmart_marketplace_withProductType/synchGetExecutingInfo'
+            ),
         ]);
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Marketplace'));
+
+        $syncLogUrl = $this->getUrl('*/walmart_synchronization_log/index');
+        $this->jsTranslator->addTranslations([
+            'marketplace_sync_success_message' => (string)__('Marketplace synchronization was completed.'),
+            'marketplace_sync_error_message' => (string)__(
+                'Marketplace synchronization was completed with errors.'
+                . ' <a target="_blank" href="%url">View Log</a> for the details.',
+                ['url' => $syncLogUrl]
+            ),
+            'marketplace_sync_warning_message' => (string)__(
+                'Marketplace synchronization was completed with warnings.'
+                . ' <a target="_blank" href="%url">View Log</a> for the details.',
+                ['url' => $syncLogUrl]
+            ),
+        ]);
 
         $storedStatuses = \Ess\M2ePro\Helper\Json::encode($this->storedStatuses);
         $this->js->addOnReadyJs(
             <<<JS
             require([
-                'M2ePro/Marketplace',
+                'M2ePro/Walmart/Marketplace',
                 'M2ePro/SynchProgress',
+                'M2ePro/Walmart/Marketplace/WithProductType/Sync',
+                'M2ePro/Walmart/Marketplace/WithProductType/SyncProgress',
                 'M2ePro/Plugin/ProgressBar',
                 'M2ePro/Plugin/AreaWrapper'
             ], function() {
                 window.MarketplaceProgressObj = new SynchProgress(
                     new ProgressBar('marketplaces_progress_bar'),
                     new AreaWrapper('marketplaces_content_container')
-                 );
-                window.MarketplaceObj = new Marketplace(MarketplaceProgressObj, $storedStatuses);
+                );
+                window.MarketplaceObj = new WalmartMarketplace(MarketplaceProgressObj, $storedStatuses);
+
+                const walmartMarketplaceWithProductTypeSyncProgress = new WalmartMarketplaceWithProductTypeSyncProgress(
+                    new ProgressBar('marketplaces_progress_bar'),
+                    new AreaWrapper('marketplaces_content_container')
+                );
+                window.WalmartMarketplaceWithProductTypeSyncObj = new WalmartMarketplaceWithProductTypeSync(
+                    walmartMarketplaceWithProductTypeSyncProgress,
+                    $storedStatuses
+                );
             });
 JS
         );

@@ -171,12 +171,6 @@ define([
                 .observe('change', WalmartTemplateSellingFormatObj.ships_in_original_packaging_mode_change)
                 .simulate('change');
 
-            $('attributes_mode')
-                .observe('change', function () {
-                    WalmartTemplateSellingFormatObj.multi_element_mode_change.call(this,'attributes',10);
-                })
-                .simulate('change');
-
             $('lag_time_mode')
                 .observe('change', WalmartTemplateSellingFormatObj.lag_time_mode_change)
                 .simulate('change');

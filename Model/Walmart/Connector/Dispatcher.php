@@ -1,33 +1,28 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Connector;
 
 class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Framework\Code\NameBuilder */
-    private $nameBuilder;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
-    private $walmartFactory;
-    /** @var \Ess\M2ePro\Model\Walmart\Connector\Protocol */
-    private $protocol;
+    private \Magento\Framework\Code\NameBuilder $nameBuilder;
+    private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory;
+    private \Ess\M2ePro\Model\Walmart\Connector\Protocol $protocol;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
     public function __construct(
         \Ess\M2ePro\Model\Walmart\Connector\Protocol $protocol,
         \Magento\Framework\Code\NameBuilder $nameBuilder,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         parent::__construct($helperFactory, $modelFactory);
+
         $this->nameBuilder = $nameBuilder;
         $this->walmartFactory = $walmartFactory;
         $this->protocol = $protocol;
+        $this->objectManager = $objectManager;
     }
 
     // ----------------------------------------
@@ -67,6 +62,31 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'params' => $params,
             'account' => $account,
         ]);
+        $connectorObject->setProtocol($this->protocol);
+
+        return $connectorObject;
+    }
+
+    public function getConnectorByClass(
+        string $className,
+        array $params = [],
+        $account = null
+    ): \Ess\M2ePro\Model\Connector\Command\AbstractModel {
+        if (is_int($account) || is_string($account)) {
+            $account = $this->walmartFactory->getCachedObjectLoaded(
+                'Account',
+                (int)$account
+            );
+        }
+
+        /** @var \Ess\M2ePro\Model\Connector\Command\AbstractModel $connectorObject */
+        $connectorObject = $this->objectManager->create(
+            $className,
+            [
+                'params' => $params,
+                'account' => $account,
+            ]
+        );
         $connectorObject->setProtocol($this->protocol);
 
         return $connectorObject;

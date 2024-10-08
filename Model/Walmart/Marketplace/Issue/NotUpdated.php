@@ -129,7 +129,7 @@ class NotUpdated implements \Ess\M2ePro\Model\Issue\LocatorInterface
 %marketplace_title% data was changed on Walmart. You need to resynchronize the marketplace(s) to correctly
 associate your products with Walmart catalog.<br>
 Please go to Walmart Integration > Configuration >
-<a href="%url%" target="_blank">Marketplaces</a> and press <b>Update All Now</b>.
+<a href="%url%" target="_blank">Marketplaces</a> and press <b>Update Now</b>.
 TEXT;
 
         $tempMessage = $this->translationHelper->__(

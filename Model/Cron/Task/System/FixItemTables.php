@@ -115,6 +115,7 @@ CONDITION
         $listingProductCollection->addFieldToFilter('ai.sku', ['null' => true]);
         $listingProductCollection->addFieldToFilter('second_table.sku', ['notnull' => true]);
 
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Linking $linkingObject */
         $linkingObject = $this->amazonLinkingFactory->create();
 
         $this->getOperationHistory()->addText("Bad amazon products: " . $listingProductCollection->count());

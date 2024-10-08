@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Walmart\Main;
@@ -39,8 +33,8 @@ class DuplicateProducts extends Main
             );
 
             $duplicatedListingProduct->getChildObject()->setData(
-                'template_category_id',
-                $listingProduct->getChildObject()->getTemplateCategoryId()
+                \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_PRODUCT_TYPE_ID,
+                $listingProduct->getChildObject()->getProductTypeId()
             );
             $duplicatedListingProduct->save();
 

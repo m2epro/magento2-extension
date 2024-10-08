@@ -1,42 +1,23 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Walmart\Listing;
 
 class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
-    /** @var bool  */
+    public const COLUMN_LISTING_PRODUCT_ID = 'listing_product_id';
+    public const COLUMN_PRODUCT_TYPE_ID = 'product_type_id';
+
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
     protected $_isPkAutoIncrement = false;
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory  */
-    protected $walmartFactory;
 
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
-    private $listingProductResource;
-
-    /**
-     * @param \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory
-     * @param \Ess\M2ePro\Helper\Factory $helperFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
-     * @param \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
-     * @param null $connectionName
-     */
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         $connectionName = null
     ) {
-        $this->walmartFactory = $walmartFactory;
         $this->listingProductResource = $listingProductResource;
 
         parent::__construct(
@@ -48,17 +29,16 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         );
     }
 
-    //########################################
-
     public function _construct()
     {
-        $this->_init('m2epro_walmart_listing_product', 'listing_product_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_LISTING_PRODUCT,
+            self::COLUMN_LISTING_PRODUCT_ID
+        );
         $this->_isPkAutoIncrement = false;
     }
 
-    //########################################
-
-    public function mapChannelItemProduct(\Ess\M2ePro\Model\Walmart\Listing\Product $listingProduct)
+    public function mapChannelItemProduct(\Ess\M2ePro\Model\Walmart\Listing\Product $listingProduct): void
     {
         $walmartItemTable = $this->activeRecordFactory->getObject('Walmart\Item')->getResource()->getMainTable();
 
@@ -88,12 +68,6 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         );
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     *
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     public function moveChildrenToListing(\Ess\M2ePro\Model\Listing\Product $listingProduct): void
     {
         $connection = $this->getConnection();
@@ -117,6 +91,4 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
         $connection->query($updateQuery);
     }
-
-    //########################################
 }

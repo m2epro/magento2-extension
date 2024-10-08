@@ -1,31 +1,29 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Category;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode\Category\Form
- */
 class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\AbstractForm
 {
-    //########################################
+    private \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository,
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $formFactory, $dataHelper, $data);
+        $this->productTypeRepository = $productTypeRepository;
+    }
 
     public function _construct()
     {
         parent::_construct();
 
-        // Initialization block
-        // ---------------------------------------
         $this->setId('walmartListingAutoActionModeCategoryForm');
-        // ---------------------------------------
     }
-
-    //########################################
 
     protected function _prepareForm()
     {
@@ -112,42 +110,41 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             ]
         );
 
-        $collection = $this->activeRecordFactory->getObject('Walmart_Template_Category')->getCollection();
-        $collection->addFieldToFilter('marketplace_id', $this->getListing()->getMarketplaceId());
+        $productTypes = $this->productTypeRepository->retrieveByMarketplaceId(
+            $this->getListing()->getMarketplaceId()
+        );
 
-        $categoryTemplates = $collection->getData();
-
-        $options = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
-        foreach ($categoryTemplates as $template) {
+        $productTypeOptions = [['label' => '', 'value' => '', 'attrs' => ['class' => 'empty']]];
+        foreach ($productTypes as $productType) {
             $tmp = [
-                'label' => $this->escapeHtml($template['title']),
-                'value' => $template['id'],
+                'label' => $productType->getTitle(),
+                'value' => $productType->getId(),
             ];
 
-            $options[] = $tmp;
+            $productTypeOptions[] = $tmp;
         }
 
-        $url = $this->getUrl('*/walmart_template_category/new', [
+        $url = $this->getUrl('*/walmart_productType/edit', [
             'marketplace_id' => $this->getListing()->getMarketplaceId(),
             'close_on_save' => true,
         ]);
 
         $fieldSet->addField(
-            'adding_category_template_id',
+            'adding_product_type_id',
             self::SELECT,
             [
-                'name' => 'adding_category_template_id',
-                'label' => __('Category Policy'),
-                'title' => __('Category Policy'),
-                'values' => $options,
-                'value' => $this->formData['adding_category_template_id'],
-                'field_extra_attributes' => 'id="auto_action_walmart_add_and_assign_category_template"',
+                'name' => 'adding_product_type_id',
+                'label' => __('Product Type'),
+                'title' => __('Product Type'),
+                'values' => $productTypeOptions,
+                'value' => $this->formData['adding_product_type_id'],
+                'field_extra_attributes' => 'id="auto_action_walmart_add_and_assign_product_type"',
                 'required' => true,
                 'after_element_html' => $this->getTooltipHtml(
                     __(
-                        'Select Category Policy you want to assign to Product(s).<br><br>
+                        'Select Product Type you want to assign to Product(s).<br><br>
                     <strong>Note:</strong> Submitting of Category data is required when you create a new offer
-                    on Walmart. Category Policy must be assigned to Products before they are added to M2E Pro Listing.'
+                    on Walmart. Product Type must be assigned to Products before they are added to M2E Pro Listing.'
                     )
                 ) . '<a href="javascript: void(0);"
                     style="vertical-align: inherit; margin-left: 65px;"
@@ -183,8 +180,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
         return $this;
     }
 
-    //########################################
-
     public function getDefault()
     {
         return [
@@ -194,11 +189,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             'adding_mode' => \Ess\M2ePro\Model\Listing::ADDING_MODE_NONE,
             'deleting_mode' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
             'adding_add_not_visible' => \Ess\M2ePro\Model\Listing::AUTO_ADDING_ADD_NOT_VISIBLE_YES,
-            'adding_category_template_id' => null,
+            'adding_product_type_id' => null,
         ];
     }
-
-    //########################################
 
     protected function _afterToHtml($html)
     {
@@ -213,7 +206,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
             .observe('change', ListingAutoActionObj.addingModeChange)
             .simulate('change');
 
-        $('adding_category_template_id').observe('change', function(el) {
+        $('adding_product_type_id').observe('change', function(el) {
             var options = $(el.target).select('.empty');
             options.length > 0 && options[0].hide();
         });
@@ -222,6 +215,4 @@ JS
 
         return parent::_afterToHtml($html);
     }
-
-    //########################################
 }

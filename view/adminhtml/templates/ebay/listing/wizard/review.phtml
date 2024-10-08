@@ -1,0 +1,42 @@
+<?php
+/**
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Review $block */
+
+$buttons = <<<HTML
+<div>
+    {$block->getChildHtml('go_to_listing')} &nbsp; {$block->__('or')} &nbsp; {$block->getChildHtml('save_and_list')}
+</div>
+HTML;
+
+?>
+
+<div class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
+
+    <?php
+
+    $help = $block->createBlock('HelpBlock');
+    $help->setData(
+        [
+            'no_collapse' => true,
+            'no_hide' => true,
+            'always_show' => true,
+            'content' => $block->__(
+                'Product(s) have been <strong>Added</strong> to the Listing.<br/><br/>
+            At this point you can either <strong>Go To The Listing</strong>, or <strong>List Added Products</strong> Now.<br/><br/>
+            %1',
+                $buttons
+            ),
+            'style' => 'margin-bottom: 0',
+        ]
+    );
+
+    echo $help->toHtml(); ?>
+
+</div>

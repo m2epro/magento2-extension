@@ -8,14 +8,22 @@ class Tables
 {
     public const PREFIX = 'm2epro_';
 
+    public const TABLE_REGISTRY = self::PREFIX . 'registry';
+
     public const TABLE_ACCOUNT = self::PREFIX . 'account';
 
     public const TABLE_MARKETPLACE = self::PREFIX . 'marketplace';
     public const TABLE_LISTING = self::PREFIX . 'listing';
+    public const TABLE_WIZARD = self::PREFIX . 'wizard';
+
+    public const TABLE_NAME_EBAY_LISTING_WIZARD = self::PREFIX . 'ebay_listing_wizard';
+    public const TABLE_NAME_EBAY_LISTING_WIZARD_STEP = self::PREFIX . 'ebay_listing_wizard_step';
+    public const TABLE_NAME_EBAY_LISTING_WIZARD_PRODUCT = self::PREFIX . 'ebay_listing_wizard_product';
 
     public const TABLE_LISTING_PRODUCT = self::PREFIX . 'listing_product';
     public const TABLE_LISTING_PRODUCT_INSTRUCTION = self::PREFIX . 'listing_product_instruction';
     public const TABLE_LISTING_AUTO_CATEGORY = self::PREFIX . 'listing_auto_category';
+    public const TABLE_LISTING_AUTO_CATEGORY_GROUP = self::PREFIX . 'listing_auto_category_group';
 
     public const TABLE_ORDER = self::PREFIX . 'order';
 
@@ -50,7 +58,18 @@ class Tables
 
     public const TABLE_AMAZON_ORDER_ITEM = self::PREFIX . 'amazon_order_item';
 
+    public const TABLE_WALMART_LISTING = self::PREFIX . 'walmart_listing';
+    public const TABLE_WALMART_LISTING_PRODUCT = self::PREFIX . 'walmart_listing_product';
+    public const TABLE_WALMART_LISTING_AUTO_CATEGORY_GROUP = self::PREFIX . 'walmart_listing_auto_category_group';
     public const TABLE_WALMART_ORDER = self::PREFIX . 'walmart_order';
+    public const TABLE_WALMART_PRODUCT_TYPE = self::PREFIX . 'walmart_product_type';
+    public const TABLE_WALMART_DICTIONARY_MARKETPLACE = self::PREFIX . 'walmart_dictionary_marketplace';
+    public const TABLE_WALMART_DICTIONARY_CATEGORY = self::PREFIX . 'walmart_dictionary_category';
+    public const TABLE_WALMART_DICTIONARY_PRODUCT_TYPE = self::PREFIX . 'walmart_dictionary_product_type';
+    public const TABLE_WALMART_TEMPLATE_SELLING_FORMAT = self::PREFIX . 'walmart_template_selling_format';
+    public const TABLE_WALMART_TEMPLATE_DESCRIPTION = self::PREFIX . 'walmart_template_description';
+
+    public const TABLE_STOP_QUEUE = self::PREFIX . 'stop_queue';
 
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;

@@ -49,7 +49,7 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
             return false;
         }
 
-        if (!$this->validateCategory()) {
+        if (!$this->validateWalmartProductType()) {
             return false;
         }
 

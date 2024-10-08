@@ -1,11 +1,5 @@
 <?php
 
-/*
- * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ss-UA [M2E Pro]
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder;
 
 use Ess\M2ePro\Helper\Data\Product\Identifier;
@@ -13,18 +7,38 @@ use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Par
 
 class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\AbstractModel
 {
+    private \Ess\M2ePro\Model\Walmart\ProductType\AttributeSetting\Provider $attributeSettingProvider;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\ProductType\AttributeSetting\Provider $attributeSettingProvider,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+
+        $this->attributeSettingProvider = $attributeSettingProvider;
+    }
+
     public function getBuilderData()
     {
         $sellingFormatTemplateSource = $this->getWalmartListingProduct()->getSellingFormatTemplateSource();
+        $walmartListingProduct = $this->getWalmartListingProduct();
 
         $data = [
-            'product_data_nick' => $this->getWalmartListingProduct()->getCategoryTemplate()->getProductDataNick(),
-            'product_data' => $this->getProductData(),
             'product_id_data' => $this->getProductIdData(),
             'description_data' => $this->getDescriptionData(),
             'shipping_weight' => $sellingFormatTemplateSource->getItemWeight(),
-            'additional_attributes' => $sellingFormatTemplateSource->getAttributes(),
         ];
+
+        if ($walmartListingProduct->isExistsProductType()) {
+            $data['product_type_nick'] = $walmartListingProduct->getProductType()
+                                                               ->getNick();
+            $data['attributes'] = $this->getAttributes(
+                $walmartListingProduct->getProductType(),
+                $walmartListingProduct->getActualMagentoProduct()
+            );
+        }
 
         if ($this->getWalmartListingProduct()->getWpid()) {
             $data['wpid'] = $this->getWalmartListingProduct()->getWpid();
@@ -85,30 +99,25 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         return $data;
     }
 
-    //########################################
+    /**
+     * @return list<string, string[]|string>
+     */
+    private function getAttributes(
+        \Ess\M2ePro\Model\Walmart\ProductType $productType,
+        \Ess\M2ePro\Model\Magento\Product $product
+    ): array {
+        $attributes = $this->attributeSettingProvider->getAttributes($productType, $product);
 
-    private function getProductData()
-    {
-        $data = [];
-
-        $this->searchNotFoundAttributes();
-
-        foreach ($this->getWalmartListingProduct()->getCategoryTemplate()->getSpecifics(true) as $specific) {
-            $source = $specific->getSource($this->getWalmartListingProduct()->getActualMagentoProduct());
-
-            if (!$specific->isRequired() && !$specific->isModeNone() && !$source->getValue()) {
-                continue;
+        $resultData = [];
+        foreach ($attributes as $attribute) {
+            $value = $attribute->getValues();
+            if (count($value) === 1) {
+                $value = reset($value);
             }
-
-            $data = array_replace_recursive(
-                $data,
-                \Ess\M2ePro\Helper\Json::decode($source->getPath())
-            );
+            $resultData[$attribute->getName()] = $value;
         }
 
-        $this->processNotFoundAttributes('Product Specifics');
-
-        return $data;
+        return $resultData;
     }
 
     // ---------------------------------------
@@ -225,10 +234,6 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
             $data['swatch_images'] = $this->getSwatchImages();
         }
 
-        $this->searchNotFoundAttributes();
-        $data['additional_attributes'] = $source->getAttributes();
-        $this->processNotFoundAttributes('Attributes');
-
         return $data;
     }
 
@@ -324,7 +329,7 @@ class Details extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuild
         $result = [];
 
         $shippingOverrides = $this->getWalmartListingProduct()->getWalmartSellingFormatTemplate()
-                                  ->getShippingOverrides(true);
+                                    ->getShippingOverrides(true);
 
         if (empty($shippingOverrides)) {
             return $result;

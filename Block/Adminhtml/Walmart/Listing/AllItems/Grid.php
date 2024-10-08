@@ -300,7 +300,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->addSynchronizationPolicyAdvancedFilter();
         $this->addDescriptionPolicyAdvancedFilter();
 
-        $this->addCategoryAdvancedFilter();
         $this->addMagentoProductTypeAdvancedFilter();
 
         parent::_prepareAdvancedFilters();
@@ -1243,34 +1242,6 @@ HTML;
         $filter = $this->advancedFilterFactory->createDropDownFilter(
             'description_policy',
             __('Description Policy'),
-            $options,
-            $filterCallback
-        );
-
-        $this->addAdvancedFilter($filter);
-    }
-
-    private function addCategoryAdvancedFilter()
-    {
-        $options = $this->advancedFilterAllItemsOptions->getCategoryOptions();
-        if ($options->isEmpty()) {
-            return;
-        }
-
-        $filterCallback = function (
-            \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection $collection,
-            string $filterValue
-        ): void {
-            if (empty($filterValue)) {
-                return;
-            }
-
-            $collection->getSelect()->where('wlp.template_category_id = ?', (int)$filterValue);
-        };
-
-        $filter = $this->advancedFilterFactory->createDropDownFilter(
-            'category',
-            __('Category'),
             $options,
             $filterCallback
         );

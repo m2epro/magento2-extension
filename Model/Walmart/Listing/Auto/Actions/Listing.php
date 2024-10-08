@@ -1,21 +1,22 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Auto\Actions;
 
 class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 {
-    /**
-     * @param \Magento\Catalog\Model\Product $product
-     * @param int $deletingMode
-     *
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
+    private \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\ProductType\Repository $productTypeRepository,
+        \Ess\M2ePro\Model\Listing $listing,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Module\Exception $exceptionHelper
+    ) {
+        parent::__construct($listing, $activeRecordFactory, $exceptionHelper);
+
+        $this->productTypeRepository = $productTypeRepository;
+    }
+
     public function deleteProduct(\Magento\Catalog\Model\Product $product, int $deletingMode): void
     {
         if ($deletingMode == \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE) {
@@ -81,13 +82,6 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         }
     }
 
-    /**
-     * @param \Magento\Catalog\Model\Product $product
-     * @param \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function addProductByCategoryGroup(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing\Auto\Category\Group $categoryGroup
@@ -111,21 +105,12 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Auto\Category\Group $walmartCategoryGroup */
         $walmartCategoryGroup = $categoryGroup->getChildObject();
-
-        $params = [
-            'template_category_id' => $walmartCategoryGroup->getAddingCategoryTemplateId(),
-        ];
-
-        $this->processAddedListingProduct($listingProduct, $params);
+        $this->processAddedListingProduct(
+            $walmartCategoryGroup->getProductTypeId(),
+            $listingProduct
+        );
     }
 
-    /**
-     * @param \Magento\Catalog\Model\Product $product
-     * @param \Ess\M2ePro\Model\Listing $listing
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function addProductByGlobalListing(
         \Magento\Catalog\Model\Product $product,
         \Ess\M2ePro\Model\Listing $listing
@@ -149,12 +134,10 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing $walmartListing */
         $walmartListing = $listing->getChildObject();
-
-        $params = [
-            'template_category_id' => $walmartListing->getAutoGlobalAddingCategoryTemplateId(),
-        ];
-
-        $this->processAddedListingProduct($listingProduct, $params);
+        $this->processAddedListingProduct(
+            $walmartListing->getAutoGlobalAddingProductTypeId(),
+            $listingProduct
+        );
     }
 
     /**
@@ -185,30 +168,26 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing $walmartListing */
         $walmartListing = $listing->getChildObject();
-
-        $params = [
-            'template_category_id' => $walmartListing->getAutoWebsiteAddingCategoryTemplateId(),
-        ];
-
-        $this->processAddedListingProduct($listingProduct, $params);
+        $this->processAddedListingProduct(
+            $walmartListing->getAutoWebsiteProductTypeId(),
+            $listingProduct
+        );
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
-     * @param array $params
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    private function processAddedListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $params): void
-    {
-        if (empty($params['template_category_id'])) {
+    private function processAddedListingProduct(
+        int $productTypeId,
+        \Ess\M2ePro\Model\Listing\Product $listingProduct
+    ): void {
+        if (!$this->productTypeRepository->isExists($productTypeId)) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
-        $walmartListingProduct->setData('template_category_id', $params['template_category_id']);
+        $walmartListingProduct->setData(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_PRODUCT_TYPE_ID,
+            $productTypeId
+        );
         $walmartListingProduct->save();
 
         if ($walmartListingProduct->getVariationManager()->isRelationParentType()) {

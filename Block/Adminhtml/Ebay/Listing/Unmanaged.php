@@ -119,9 +119,8 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
 
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
             'moveToListingGridHtml' => $this->getUrl('*/listing_other_moving/moveToListingGrid'),
-            'moveToListing' => $this->getUrl('*/ebay_listing_unmanaged/moveToListing'),
-            'categorySettings' => $this->getUrl('*/ebay_listing_product_category_settings/otherCategories'),
-
+            'moveToListing' => $this->getUrl('*/ebay_listing_wizard/createUnmanaged'),
+            'categorySettings' => $this->getUrl('*/ebay_listing_wizard/index'),
             'removingProducts' => $this->getUrl('*/ebay_listing_unmanaged/removing'),
             'unmappingProducts' => $this->getUrl('*/listing_other_mapping/unmapping'),
 
@@ -170,6 +169,7 @@ class Unmanaged extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContain
                 'lou' => 'M2ePro/Listing/Other/Unmapping',
 
                 'elog' => 'M2ePro/Ebay/Listing/Other/Grid',
+                'ebayMoving' => 'M2ePro/Ebay/Listing/Moving'
             ],
             <<<JS
 

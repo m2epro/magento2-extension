@@ -1,0 +1,21 @@
+<?php
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\ProductType $block */
+
+?>
+
+<div id="product_type_pop_up_content">
+    <div>
+
+        <?php if (!empty($block->getMessages())) : ?>
+            <div id="product_type_error_block">
+                <?php echo $block->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $block->getChildHtml('help_block'); ?>
+
+        <div id="product_type_grid"></div>
+
+    </div>
+</div>

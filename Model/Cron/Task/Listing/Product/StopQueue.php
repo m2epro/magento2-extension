@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Listing\Product;
 
 class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
@@ -26,16 +20,18 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     public const AMAZON_REQUEST_MAX_ITEMS_COUNT = 10000;
     public const WALMART_REQUEST_MAX_ITEMS_COUNT = 10000;
 
-    /** @var \Ess\M2ePro\Model\Amazon\ThrottlingManager  */
-    protected $amazonThrottlingManager;
-    /** @var \Ess\M2ePro\Model\Walmart\ThrottlingManager  */
-    protected $walmartThrottlingManager;
-
-    //########################################
+    private \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager;
+    private \Ess\M2ePro\Model\Walmart\ThrottlingManager $walmartThrottlingManager;
+    private \Ess\M2ePro\Model\ResourceModel\StopQueue $stopQueueResource;
+    private \Ess\M2ePro\Model\ResourceModel\StopQueue\CollectionFactory $collectionFactory;
+    private \Ess\M2ePro\Helper\Server\Maintenance $maintenanceHelper;
 
     public function __construct(
         \Ess\M2ePro\Model\Walmart\ThrottlingManager $walmartThrottlingManager,
         \Ess\M2ePro\Model\Amazon\ThrottlingManager $amazonThrottlingManager,
+        \Ess\M2ePro\Model\ResourceModel\StopQueue $stopQueueResource,
+        \Ess\M2ePro\Model\ResourceModel\StopQueue\CollectionFactory $collectionFactory,
+        \Ess\M2ePro\Helper\Server\Maintenance $maintenanceHelper,
         \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
@@ -46,8 +42,6 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
         \Magento\Framework\App\ResourceConnection $resource
     ) {
-        $this->amazonThrottlingManager = $amazonThrottlingManager;
-        $this->walmartThrottlingManager = $walmartThrottlingManager;
         parent::__construct(
             $cronManager,
             $helperData,
@@ -59,22 +53,23 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $taskRepo,
             $resource
         );
+        $this->amazonThrottlingManager = $amazonThrottlingManager;
+        $this->walmartThrottlingManager = $walmartThrottlingManager;
+        $this->stopQueueResource = $stopQueueResource;
+        $this->collectionFactory = $collectionFactory;
+        $this->maintenanceHelper = $maintenanceHelper;
     }
 
-    //########################################
-
-    public function isPossibleToRun()
+    public function isPossibleToRun(): bool
     {
-        if ($this->getHelper('Server\Maintenance')->isNow()) {
+        if ($this->maintenanceHelper->isNow()) {
             return false;
         }
 
         return parent::isPossibleToRun();
     }
 
-    //########################################
-
-    protected function performActions()
+    protected function performActions(): void
     {
         $this->removeOldRecords();
 
@@ -83,14 +78,12 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->processWalmart();
     }
 
-    //########################################
-
-    public function removeOldRecords()
+    private function removeOldRecords(): void
     {
         $minDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
         $minDateTime->modify('- ' . self::MAX_PROCESSED_LIFETIME_HOURS_INTERVAL . ' hours');
 
-        $collection = $this->activeRecordFactory->getObject('StopQueue')->getCollection();
+        $collection = $this->collectionFactory->create();
         $collection->addFieldToFilter('is_processed', 1);
         $collection->addFieldToFilter('update_date', ['lt' => $minDateTime->format('Y-m-d H:i:s')]);
 
@@ -104,7 +97,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     //----------------------------------------
 
-    protected function processEbay()
+    private function processEbay(): void
     {
         /** @var \Ess\M2ePro\Model\StopQueue[] $items */
         $items = $this->getNotProcessedItems(\Ess\M2ePro\Helper\Component\Ebay::NICK);
@@ -124,6 +117,9 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             }
 
             $itemRequestData = $itemAdditionalData['request_data'];
+            if (empty($itemRequestData['item_id'])) {
+                continue;
+            }
 
             $accountMarketplaceActionType = $itemRequestData['account']
                 . '_' .
@@ -151,7 +147,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     //----------------------------------------
 
-    protected function stopItemEbay($account, $marketplace, $accountMarketplaceRequestData)
+    private function stopItemEbay($account, $marketplace, $accountMarketplaceRequestData): void
     {
         $requestDataPacks = array_chunk($accountMarketplaceRequestData, self::EBAY_REQUEST_MAX_ITEMS_COUNT);
 
@@ -169,7 +165,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    protected function hideItemEbay($account, $marketplace, $accountMarketplaceRequestData)
+    private function hideItemEbay($account, $marketplace, $accountMarketplaceRequestData): void
     {
         foreach ($accountMarketplaceRequestData as $requestData) {
             $requestData = [
@@ -186,9 +182,9 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
-    protected function processAmazon()
+    private function processAmazon(): void
     {
         /** @var \Ess\M2ePro\Model\StopQueue[] $items */
         $items = $this->getNotProcessedItems(\Ess\M2ePro\Helper\Component\Amazon::NICK);
@@ -262,9 +258,7 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->markItemsAsProcessed($processedItemsIds);
     }
 
-    //########################################
-
-    protected function processWalmart()
+    private function processWalmart(): void
     {
         /** @var \Ess\M2ePro\Model\StopQueue[] $items */
         $items = $this->getNotProcessedItems(\Ess\M2ePro\Helper\Component\Walmart::NICK);
@@ -349,30 +343,30 @@ class StopQueue extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->markItemsAsProcessed($processedItemsIds);
     }
 
-    //########################################
+    // ----------------------------------------
 
-    protected function getNotProcessedItems($component)
+    private function getNotProcessedItems(string $component)
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\StopQueue\Collection $collection */
-        $collection = $this->activeRecordFactory->getObject('StopQueue')->getCollection();
+        $collection = $this->collectionFactory->create();
         $collection->addFieldToFilter('is_processed', 0);
         $collection->addFieldToFilter('component_mode', $component);
 
         return $collection->getItems();
     }
 
-    protected function markItemsAsProcessed(array $itemsIds)
+    private function markItemsAsProcessed(array $itemsIds): void
     {
         if (empty($itemsIds)) {
             return;
         }
 
         $this->resource->getConnection()->update(
-            $this->getHelper('Module_Database_Structure')->getTableNameWithPrefix('m2epro_stop_queue'),
-            ['is_processed' => 1, 'update_date' => $this->helperData->getCurrentGmtDate()],
+            $this->stopQueueResource->getMainTable(),
+            [
+                'is_processed' => 1,
+                'update_date' => \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s'),
+            ],
             ['id IN (?)' => $itemsIds]
         );
     }
-
-    //########################################
 }

@@ -1,17 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AutoAction\Mode;
 
 class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\AbstractCategory
 {
-    /** @var \Ess\M2ePro\Helper\Module\Support */
-    private $supportHelper;
+    private \Ess\M2ePro\Helper\Module\Support $supportHelper;
 
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -35,8 +28,6 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
         // ---------------------------------------
     }
 
-    //########################################
-
     protected function prepareGroupsGrid()
     {
         $groupGrid = $this->getLayout()
@@ -48,8 +39,6 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
 
         return $groupGrid;
     }
-
-    //########################################
 
     protected function _afterToHtml($html)
     {
@@ -83,6 +72,4 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Abstr
 
         return $helpBlock->toHtml() . parent::_toHtml();
     }
-
-    //########################################
 }

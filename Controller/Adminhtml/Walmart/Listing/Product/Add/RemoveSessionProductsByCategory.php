@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add;
 
-class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Add
+class RemoveSessionProductsByCategory extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\AbstractAdd
 {
     public function execute()
     {

@@ -1,19 +1,17 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Walmart\Listing;
 
 class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\ActionAbstract
 {
-    /** @var \Ess\M2ePro\Helper\Module\Exception */
-    private $exceptionHelper;
+    private \Ess\M2ePro\Helper\Module\Exception $exceptionHelper;
+    private \Ess\M2ePro\Model\Listing\Log\Factory $logFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLoggerResource;
+    private \Ess\M2ePro\Model\Listing\Log $listingLogger;
 
     public function __construct(
+        \Ess\M2ePro\Model\ResourceModel\Listing\Log $listingLoggerResource,
+        \Ess\M2ePro\Model\Listing\Log $listingLogger,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -21,6 +19,8 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
         parent::__construct($walmartFactory, $context);
 
         $this->exceptionHelper = $exceptionHelper;
+        $this->listingLoggerResource = $listingLoggerResource;
+        $this->listingLogger = $listingLogger;
     }
 
     public function execute()
@@ -119,8 +119,35 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
 
                 try {
                     $dispatcher->process($connector);
-                } catch (\Exception $exception) {
+
+                    $hasErrorsOrWarnings = false;
+
+                    foreach ($connector->getResponse()->getMessages()->getEntities() as $message) {
+                        if ($message->isError() || $message->isWarning()) {
+                            $this->writeLog(
+                                $listingProduct,
+                                (string)__($message->getText()),
+                                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                            );
+                            $hasErrorsOrWarnings = true;
+                        }
+                    }
+
+                    if (!$hasErrorsOrWarnings) {
+                        $this->writeLog(
+                            $listingProduct,
+                            (string)__('Item was Retired from Walmart catalog.'),
+                            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS
+                        );
+                    }
+
+                    if ($hasErrorsOrWarnings) {
+                        continue;
+                    }
+                } catch (\Throwable $exception) {
                     $this->exceptionHelper->process($exception);
+
+                    continue;
                 }
             }
 
@@ -138,5 +165,23 @@ class RunDeleteAndRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Walmar
         $this->setJsonContent(['result' => 'success']);
 
         return $this->getResult();
+    }
+
+    private function writeLog(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        string $message,
+        int $type
+    ): void {
+        $this->listingLogger->setComponentMode(\Ess\M2ePro\Helper\Component\Walmart::NICK);
+        $this->listingLogger->addProductMessage(
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            $this->listingLoggerResource->getNextActionId(),
+            \Ess\M2ePro\Model\Listing\Log::ACTION_RETIRE_AND_REMOVE_PRODUCT,
+            $message,
+            $type
+        );
     }
 }

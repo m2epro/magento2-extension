@@ -1,0 +1,116 @@
+#selected_product_type_container {
+    border: 1px solid #e3e3e3;
+    background-color: #ffffff;
+    margin-bottom: 30px;
+}
+
+#selected_product_type_container > div {
+    padding: 1em .5em 1em 1.8rem;
+}
+
+#product_type_browse_results {
+    max-height: none;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+#product_type_search_results {
+    min-width: 450px;
+    max-height: none;
+    display: inline-block;
+    margin-bottom: 30px;
+}
+
+.product_type_error_content {
+    text-align: center;
+    margin: auto 1rem;
+    font-size: large;
+}
+
+option[data-exist-product-type-id] {
+    color: darkgray;
+}
+
+.product_type_error_content > p {
+    white-space: normal;
+}
+
+.chooser_browser {
+    display: flex;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+.chooser_input_container {
+    margin-bottom: 30px;
+}
+
+#product_type_browse_query, #product_type_search_query {
+    width: 450px;
+    box-sizing: border-box;
+    border: 1px solid #adadad;
+    border-radius: 1px;
+    padding: 4px;
+    color: #303030;
+    background-color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    height: 33px;
+}
+
+.modal-action-button {
+    margin-left: 15px;
+}
+
+.product_type_nick {
+    color: black;
+    cursor: default;
+}
+
+.product_type_nick_not_selected {
+    color: grey;
+    font-style: italic;
+    cursor: default;
+}
+
+.product_type_field_label {
+    margin-left: 0 !important;
+    padding-left: 2.5rem !important;
+    width: 25% !important;
+    text-align: left;
+}
+
+.product_type_field_mode {
+    margin-left: 3rem;
+    vertical-align: top;
+}
+
+.product_type_setting_element {
+    width: 40% !important;
+}
+
+.product_type_value_container {
+    margin-left: 6rem;
+}
+
+.product_type_array_control_elements {
+    margin-bottom: 4rem;
+    display: flex;
+    justify-content: left;
+}
+
+.product-type-dictionary-warning .admin__field-tooltip-action:before {
+    content: '\e623';
+    color: #EB5202;
+    font-size: 1.6rem;
+}
+
+.product-type-dictionary-warning > div {
+    vertical-align: baseline;
+}
+
+.admin__actions-switch {
+    order: -2;
+    margin-top: 12px;
+}

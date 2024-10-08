@@ -13,6 +13,7 @@ class Walmart
     public const NICK = 'walmart';
 
     public const WIZARD_INSTALLATION_NICK = 'installationWalmart';
+    public const WIZARD_WALMART_MIGRATION_TO_PRODUCT_TYPES_NICK = 'walmartMigrationToProductTypes';
     public const MENU_ROOT_NODE_NICK = 'Ess_M2ePro::walmart';
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */

@@ -20,8 +20,6 @@ class AllItemsOptions
     private $synchronizationPolicyResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Template\Description */
     private $descriptionPolicyResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category */
-    private $walmartCategoryResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Marketplace */
     private $marketplaceResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Account */
@@ -43,7 +41,6 @@ class AllItemsOptions
         \Ess\M2ePro\Model\ResourceModel\Template\SellingFormat $sellingPolicyResource,
         \Ess\M2ePro\Model\ResourceModel\Template\Synchronization $synchronizationPolicyResource,
         \Ess\M2ePro\Model\ResourceModel\Template\Description $descriptionPolicyResource,
-        \Ess\M2ePro\Model\ResourceModel\Walmart\Template\Category $walmartCategoryResource,
         \Ess\M2ePro\Model\ResourceModel\Marketplace $marketplaceResource,
         \Ess\M2ePro\Model\ResourceModel\Account $accountResource,
         \Magento\Catalog\Model\ResourceModel\Product $magentoProductResource,
@@ -54,7 +51,6 @@ class AllItemsOptions
         $this->sellingPolicyResource = $sellingPolicyResource;
         $this->synchronizationPolicyResource = $synchronizationPolicyResource;
         $this->descriptionPolicyResource = $descriptionPolicyResource;
-        $this->walmartCategoryResource = $walmartCategoryResource;
         $this->marketplaceResource = $marketplaceResource;
         $this->accountResource = $accountResource;
         $this->listingResource = $listingResource;
@@ -198,43 +194,6 @@ class AllItemsOptions
             $option = $this->optionFactory->create(
                 $optionData['label'],
                 $optionData['value']
-            );
-            $optionCollection->addOption($option);
-        }
-
-        return $optionCollection;
-    }
-
-    public function getCategoryOptions(): DropDownFilter\OptionCollection
-    {
-        $select = $this->getBaseSelect();
-
-        $select->joinInner(
-            ['category' => $this->walmartCategoryResource->getMainTable()],
-            'category.id = walmart_listing_product.template_category_id',
-            [
-                'value' => 'id',
-                'label' => 'title',
-            ]
-        );
-        $select->joinLeft(
-            ['marketplace' => $this->marketplaceResource->getMainTable()],
-            'marketplace.id = category.marketplace_id',
-            [
-                'group' => 'title',
-            ]
-        );
-        $select->group(['category.id', 'marketplace.title', 'category.category_path']);
-        $select->order(['marketplace.title', 'category.category_path']);
-
-        $optionsData = $select->query()->fetchAll();
-
-        $optionCollection = $this->optionCollectionFactory->create();
-        foreach ($optionsData as $optionData) {
-            $option = $this->optionFactory->create(
-                $optionData['label'],
-                $optionData['value'],
-                $optionData['group']
             );
             $optionCollection->addOption($option);
         }

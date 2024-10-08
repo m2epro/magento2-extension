@@ -3,7 +3,6 @@ define([
     'Magento_Ui/js/modal/modal',
     'M2ePro/Listing/View/Grid',
     'M2ePro/Walmart/Listing/View/Action',
-    'M2ePro/Walmart/Listing/Product/Template/Category',
     'M2ePro/Walmart/Listing/Product/EditChannelData'
 ], function(MessageObj, modal) {
 
@@ -55,7 +54,6 @@ define([
                 previewItemsAction: this.actionHandler.previewItemsAction.bind(this.actionHandler)
             };
 
-            this.templateCategoryHandler = new WalmartListingProductTemplateCategory(this);
             this.editChannelDataHandler = new WalmartListingProductEditChannelData(this);
 
             this.actions = Object.extend(this.actions, {

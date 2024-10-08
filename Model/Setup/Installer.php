@@ -2,6 +2,7 @@
 
 namespace Ess\M2ePro\Model\Setup;
 
+use Ess\M2ePro\Helper\Module\Database\Tables as TablesHelper;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace as AmazonDictionaryMarketplaceResoruce;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as AmazonDictionaryProductTypeResource;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -11,9 +12,13 @@ use Magento\Framework\Setup\SetupInterface;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item as AmazonOrderItem;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayListingProduct;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as EbayTemplateDescription;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Marketplace as EbayMarketplaceResource;
 use Ess\M2ePro\Model\ResourceModel\Marketplace as MarketplaceResource;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace as AmazonMarketplaceResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Bundle\Options\Mapping as MappingResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Product as ListingWizardProductResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Step as ListingStepResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard as ListingWizardResource;
 
 class Installer
 {
@@ -28,7 +33,7 @@ class Installer
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
-    /** @var \Ess\M2ePro\Helper\Module\Database\Tables */
+    /** @var TablesHelper */
     private $tablesHelper;
 
     /** @var \Magento\Framework\Module\ModuleListInterface */
@@ -46,7 +51,7 @@ class Installer
     /**
      * @param \Magento\Framework\App\DeploymentConfig $deploymentConfig
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Ess\M2ePro\Helper\Module\Database\Tables $tablesHelper
+     * @param TablesHelper $tablesHelper
      * @param \Ess\M2ePro\Helper\Module\Maintenance $maintenance
      * @param \Ess\M2ePro\Model\ResourceModel\Setup $setupResource
      * @param \Magento\Framework\Module\ModuleListInterface $moduleList
@@ -55,7 +60,7 @@ class Installer
     public function __construct(
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        \Ess\M2ePro\Helper\Module\Database\Tables $tablesHelper,
+        TablesHelper $tablesHelper,
         \Ess\M2ePro\Helper\Module\Maintenance $maintenance,
         \Ess\M2ePro\Model\ResourceModel\Setup $setupResource,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
@@ -880,6 +885,256 @@ class Installer
                                                    ->setOption('collate', 'utf8_general_ci')
                                                    ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($listingProductVariationOptionTable);
+
+        #region listing_wizard
+        $listingWizardTable = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName(TablesHelper::TABLE_NAME_EBAY_LISTING_WIZARD));
+
+        $listingWizardTable
+            ->addColumn(
+                ListingWizardResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_LISTING_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_TYPE,
+                Table::TYPE_TEXT,
+                50,
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_CURRENT_STEP_NICK,
+                Table::TYPE_TEXT,
+                150,
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_PRODUCT_COUNT_TOTAL,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_IS_COMPLETED,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_PROCESS_START_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_PROCESS_END_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_UPDATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addColumn(
+                ListingWizardResource::COLUMN_CREATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addIndex('listing_id', ListingWizardResource::COLUMN_LISTING_ID)
+            ->addIndex('is_completed', ListingWizardResource::COLUMN_IS_COMPLETED)
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($listingWizardTable);
+        #endregion
+
+        #region listing_wizard_step
+        $stepTable = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName(TablesHelper::TABLE_NAME_EBAY_LISTING_WIZARD_STEP));
+
+        $stepTable
+            ->addColumn(
+                ListingStepResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ],
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_WIZARD_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false],
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_NICK,
+                Table::TYPE_TEXT,
+                150,
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_DATA,
+                Table::TYPE_TEXT,
+                self::LONG_COLUMN_SIZE,
+                ['default' => null],
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_IS_COMPLETED,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_IS_SKIPPED,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_UPDATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addColumn(
+                ListingStepResource::COLUMN_CREATE_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null],
+            )
+            ->addIndex('wizard_id', ListingStepResource::COLUMN_WIZARD_ID)
+            ->addIndex('is_completed', ListingStepResource::COLUMN_IS_COMPLETED)
+            ->addIndex('is_skipped', ListingStepResource::COLUMN_IS_SKIPPED)
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($stepTable);
+        #endregion
+
+        #region listing_wizard_product
+        $productTable = $this
+            ->getConnection()
+            ->newTable($this->getFullTableName(TablesHelper::TABLE_NAME_EBAY_LISTING_WIZARD_PRODUCT));
+
+        $productTable
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_WIZARD_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_UNMANAGED_PRODUCT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_MAGENTO_PRODUCT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_TEMPLATE_CATEGORY_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_TEMPLATE_CATEGORY_SECONDARY_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_STORE_CATEGORY_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_STORE_CATEGORY_SECONDARY_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => true],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_EBAY_ITEM_ID,
+                Table::TYPE_TEXT,
+                50
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_VALIDATION_STATUS,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_VALIDATION_ERRORS,
+                Table::TYPE_TEXT,
+                null
+            )
+            ->addColumn(
+                ListingWizardProductResource::COLUMN_IS_PROCESSED,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+            )
+            ->addIndex('wizard_id', ListingWizardProductResource::COLUMN_WIZARD_ID)
+            ->addIndex('store_category_id', ListingWizardProductResource::COLUMN_STORE_CATEGORY_ID)
+            ->addIndex('template_category_id', ListingWizardProductResource::COLUMN_TEMPLATE_CATEGORY_ID)
+            ->addIndex('ebay_item_id', ListingWizardProductResource::COLUMN_EBAY_ITEM_ID)
+            ->addIndex('is_processed', ListingWizardProductResource::COLUMN_IS_PROCESSED)
+            ->addIndex(
+                'wizard_id_magento_product_id',
+                [
+                    ListingWizardProductResource::COLUMN_WIZARD_ID,
+                    ListingWizardProductResource::COLUMN_MAGENTO_PRODUCT_ID
+                ],
+                ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE],
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($productTable);
+        #endregion
 
         $listingProductInstruction = $this->getConnection()->newTable(
             $this->getFullTableName('listing_product_instruction')
@@ -2515,7 +2770,7 @@ class Installer
                             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($wizardTable);
 
-        $registryTable = $this->getConnection()->newTable($this->getFullTableName('registry'))
+        $registryTable = $this->getConnection()->newTable($this->getFullTableName(TablesHelper::TABLE_REGISTRY))
                               ->addColumn(
                                   'id',
                                   Table::TYPE_INTEGER,
@@ -2808,7 +3063,7 @@ class Installer
         $moduleConfig->insert('/health_status/notification/', 'level', 40);
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName('wizard'),
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WIZARD),
             [
                 [
                     'nick' => 'installationEbay',
@@ -2866,6 +3121,14 @@ class Installer
                     'type' => 1,
                     'priority' => 7,
                 ],
+                [
+                    'nick' => 'walmartMigrationToProductTypes',
+                    'view' => 'walmart',
+                    'status' => 3,
+                    'step' => null,
+                    'type' => 1,
+                    'priority' => 8,
+                ]
             ]
         );
 
@@ -4049,7 +4312,7 @@ class Installer
 
         #reigon ebay_listing_product
         $ebayListingProductTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING_PRODUCT
+            TablesHelper::TABLE_EBAY_LISTING_PRODUCT
         );
         $ebayListingProductTable = $this->getConnection()->newTable($ebayListingProductTableName)
                                         ->addColumn(
@@ -4561,9 +4824,11 @@ class Installer
                                                            ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayListingProductScheduledStopActionTable);
 
-        $ebayMarketplaceTable = $this->getConnection()->newTable($this->getFullTableName('ebay_marketplace'))
+        $ebayMarketplaceTable = $this->getConnection()->newTable(
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_MARKETPLACE)
+        )
                                      ->addColumn(
-                                         'marketplace_id',
+                                         EbayMarketplaceResource::COLUMN_MARKETPLACE_ID,
                                          Table::TYPE_INTEGER,
                                          null,
                                          ['unsigned' => true, 'primary' => true, 'nullable' => false]
@@ -4641,7 +4906,7 @@ class Installer
                                          ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                      )
                                      ->addColumn(
-                                         'is_international_shipping_rate_table',
+                                         EbayMarketplaceResource::COLUMN_IS_INTERNATIONAL_SHIPPING_RATE_TABLE,
                                          Table::TYPE_SMALLINT,
                                          null,
                                          ['unsigned' => true, 'nullable' => false, 'default' => 0]
@@ -6623,7 +6888,7 @@ class Installer
 
         #region ebay_template_synchronization
         $ebayTemplateSynchronizationTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_TEMPLATE_SYNCHRONIZATION
+            TablesHelper::TABLE_EBAY_TEMPLATE_SYNCHRONIZATION
         );
         $ebayTemplateSynchronizationTable = $this->getConnection()
                                                  ->newTable($ebayTemplateSynchronizationTableName)
@@ -6870,7 +7135,7 @@ class Installer
         #endregion
 
         $ebayPromotionTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_PROMOTION
+            TablesHelper::TABLE_EBAY_PROMOTION
         );
         $ebayPromotionTable = $this->getConnection()
                                    ->newTable($ebayPromotionTableName)
@@ -6958,7 +7223,7 @@ class Installer
         $this->getConnection()->createTable($ebayPromotionTable);
 
         $ebayListingProductPromotionTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_LISTING_PRODUCT_PROMOTION
+            TablesHelper::TABLE_EBAY_LISTING_PRODUCT_PROMOTION
         );
 
         $ebayListingProductPromotionTable = $this->getConnection()
@@ -7023,7 +7288,7 @@ class Installer
         $this->getConnection()->createTable($ebayListingProductPromotionTable);
 
         $ebayVideoTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_VIDEO
+            TablesHelper::TABLE_EBAY_VIDEO
         );
         $ebayVideoTable = $this->getConnection()
                                ->newTable($ebayVideoTableName)
@@ -7088,7 +7353,7 @@ class Installer
 
         //region ebay_bundle_options_mapping
         $ebayBundleOptionsMappingTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_BUNDLE_OPTIONS_MAPPING
+            TablesHelper::TABLE_EBAY_BUNDLE_OPTIONS_MAPPING
         );
 
         $ebayBundleOptionsMappingTable = $this
@@ -7459,7 +7724,7 @@ class Installer
         );
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName('ebay_marketplace'),
+            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_MARKETPLACE),
             [
                 [
                     'marketplace_id' => 1,
@@ -7544,7 +7809,7 @@ class Installer
                     'is_stp_advanced' => 0,
                     'is_map' => 0,
                     'is_local_shipping_rate_table' => 1,
-                    'is_international_shipping_rate_table' => 0,
+                    'is_international_shipping_rate_table' => 1,
                     'is_english_measurement_system' => 0,
                     'is_metric_measurement_system' => 1,
                     'is_managed_payments' => 1,
@@ -8088,7 +8353,7 @@ class Installer
 
         #region amazon_account_merchant_setting
         $amazonAccountMerchantSettingTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING
+            TablesHelper::TABLE_AMAZON_ACCOUNT_MERCHANT_SETTING
         );
         $amazonAccountMerchantSettingTable = $this->getConnection()->newTable($amazonAccountMerchantSettingTableName);
         $amazonAccountMerchantSettingTable->addColumn(
@@ -8295,87 +8560,6 @@ class Installer
                                             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonAccountRepricingTable);
 
-        $amazonDictionaryCategoryTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_dictionary_category')
-        )
-                                              ->addColumn(
-                                                  'id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  [
-                                                      'unsigned' => true,
-                                                      'primary' => true,
-                                                      'nullable' => false,
-                                                      'auto_increment' => true,
-                                                  ]
-                                              )
-                                              ->addColumn(
-                                                  'marketplace_id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'category_id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'parent_category_id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  ['unsigned' => true, 'default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'browsenode_id',
-                                                  Table::TYPE_DECIMAL,
-                                                  [20, 0],
-                                                  ['unsigned' => true, 'nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'product_data_nicks',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'title',
-                                                  Table::TYPE_TEXT,
-                                                  255,
-                                                  ['nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'path',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'keywords',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'is_leaf',
-                                                  Table::TYPE_SMALLINT,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                              )
-                                              ->addIndex('browsenode_id', 'browsenode_id')
-                                              ->addIndex('category_id', 'category_id')
-                                              ->addIndex('is_leaf', 'is_leaf')
-                                              ->addIndex('marketplace_id', 'marketplace_id')
-                                              ->addIndex('path', [['name' => 'path', 'size' => 255]])
-                                              ->addIndex('parent_category_id', 'parent_category_id')
-                                              ->addIndex('title', 'title')
-                                              ->setOption('type', 'INNODB')
-                                              ->setOption('charset', 'utf8')
-                                              ->setOption('collate', 'utf8_general_ci')
-                                              ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($amazonDictionaryCategoryTable);
-
         $shippingMethodsTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_shipping_map')
         )
@@ -8427,63 +8611,9 @@ class Installer
 
         $this->getConnection()->createTable($shippingMethodsTable);
 
-        $amazonDictionaryCategoryProductDataTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_dictionary_category_product_data')
-        )
-                                                         ->addColumn(
-                                                             'id',
-                                                             Table::TYPE_INTEGER,
-                                                             null,
-                                                             [
-                                                                 'unsigned' => true,
-                                                                 'primary' => true,
-                                                                 'nullable' => false,
-                                                                 'auto_increment' => true,
-                                                             ]
-                                                         )
-                                                         ->addColumn(
-                                                             'marketplace_id',
-                                                             Table::TYPE_INTEGER,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'browsenode_id',
-                                                             Table::TYPE_DECIMAL,
-                                                             [20, 0],
-                                                             ['unsigned' => true, 'nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'product_data_nick',
-                                                             Table::TYPE_TEXT,
-                                                             255,
-                                                             ['nullable' => false]
-                                                         )
-                                                         ->addColumn(
-                                                             'is_applicable',
-                                                             Table::TYPE_SMALLINT,
-                                                             null,
-                                                             ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                         )
-                                                         ->addColumn(
-                                                             'required_attributes',
-                                                             Table::TYPE_TEXT,
-                                                             null,
-                                                             ['default' => null]
-                                                         )
-                                                         ->addIndex('marketplace_id', 'marketplace_id')
-                                                         ->addIndex('browsenode_id', 'browsenode_id')
-                                                         ->addIndex('product_data_nick', 'product_data_nick')
-                                                         ->addIndex('is_applicable', 'is_applicable')
-                                                         ->setOption('type', 'INNODB')
-                                                         ->setOption('charset', 'utf8')
-                                                         ->setOption('collate', 'utf8_general_ci')
-                                                         ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($amazonDictionaryCategoryProductDataTable);
-
         # region amazon_dictionary_marketplace
         $amazonDictionaryMarketplaceTable = $this->getConnection()->newTable(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_DICTIONARY_MARKETPLACE)
+            $this->getFullTableName(TablesHelper::TABLE_AMAZON_DICTIONARY_MARKETPLACE)
         )
                                                  ->addColumn(
                                                      AmazonDictionaryMarketplaceResoruce::COLUMN_ID,
@@ -8521,7 +8651,7 @@ class Installer
 
         #region amazon_dictionary_product_type
         $amazonDictionaryProductTypeTable = $this->getConnection()->newTable(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_DICTIONARY_PRODUCT_TYPE)
+            $this->getFullTableName(TablesHelper::TABLE_AMAZON_DICTIONARY_PRODUCT_TYPE)
         )
                                                  ->addColumn(
                                                      AmazonDictionaryProductTypeResource::COLUMN_ID,
@@ -8599,120 +8729,6 @@ class Installer
                                                  ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($amazonDictionaryProductTypeTable);
         # endregion
-
-        $amazonDictionarySpecificTable = $this->getConnection()->newTable(
-            $this->getFullTableName('amazon_dictionary_specific')
-        )
-                                              ->addColumn(
-                                                  'id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  [
-                                                      'unsigned' => true,
-                                                      'primary' => true,
-                                                      'nullable' => false,
-                                                      'auto_increment' => true,
-                                                  ]
-                                              )
-                                              ->addColumn(
-                                                  'marketplace_id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'specific_id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'parent_specific_id',
-                                                  Table::TYPE_INTEGER,
-                                                  null,
-                                                  ['unsigned' => true, 'default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'product_data_nick',
-                                                  Table::TYPE_TEXT,
-                                                  255,
-                                                  ['nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'title',
-                                                  Table::TYPE_TEXT,
-                                                  255,
-                                                  ['nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'xml_tag',
-                                                  Table::TYPE_TEXT,
-                                                  255,
-                                                  ['nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'xpath',
-                                                  Table::TYPE_TEXT,
-                                                  255,
-                                                  ['nullable' => false]
-                                              )
-                                              ->addColumn(
-                                                  'type',
-                                                  Table::TYPE_SMALLINT,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                              )
-                                              ->addColumn(
-                                                  'values',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'recommended_values',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'params',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'data_definition',
-                                                  Table::TYPE_TEXT,
-                                                  null,
-                                                  ['default' => null]
-                                              )
-                                              ->addColumn(
-                                                  'min_occurs',
-                                                  Table::TYPE_SMALLINT,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                              )
-                                              ->addColumn(
-                                                  'max_occurs',
-                                                  Table::TYPE_SMALLINT,
-                                                  null,
-                                                  ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                              )
-                                              ->addIndex('marketplace_id', 'marketplace_id')
-                                              ->addIndex('max_occurs', 'max_occurs')
-                                              ->addIndex('min_occurs', 'min_occurs')
-                                              ->addIndex('parent_specific_id', 'parent_specific_id')
-                                              ->addIndex('title', 'title')
-                                              ->addIndex('type', 'type')
-                                              ->addIndex('specific_id', 'specific_id')
-                                              ->addIndex('xml_tag', 'xml_tag')
-                                              ->addIndex('xpath', 'xpath')
-                                              ->addIndex('product_data_nick', 'product_data_nick')
-                                              ->setOption('type', 'INNODB')
-                                              ->setOption('charset', 'utf8')
-                                              ->setOption('collate', 'utf8_general_ci')
-                                              ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($amazonDictionarySpecificTable);
 
         $amazonInventorySkuTable = $this->getConnection()->newTable($this->getFullTableName('amazon_inventory_sku'))
                                         ->addColumn(
@@ -8834,7 +8850,7 @@ class Installer
 
         #region amazon_listing
         $amazonListingTable = $this->getConnection()->newTable(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_LISTING)
+            $this->getFullTableName(TablesHelper::TABLE_AMAZON_LISTING)
         )
                                    ->addColumn(
                                        'listing_id',
@@ -9151,7 +9167,7 @@ class Installer
 
         #region amazon_listing_product
         $amazonListingProductTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_LISTING_PRODUCT
+            TablesHelper::TABLE_AMAZON_LISTING_PRODUCT
         );
         $amazonListingProductTable = $this->getConnection()->newTable($amazonListingProductTableName);
         $amazonListingProductTable->addColumn(
@@ -9599,7 +9615,7 @@ class Installer
         $this->getConnection()->createTable($amazonIndexerListingProductVariationParentTable);
 
         $amazonMarketplaceTable = $this->getConnection()->newTable(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_MARKETPLACE)
+            $this->getFullTableName(TablesHelper::TABLE_AMAZON_MARKETPLACE)
         )
                                        ->addColumn(
                                            'marketplace_id',
@@ -9658,7 +9674,7 @@ class Installer
 
         #region amazon_order
         $amazonOrderTable = $this->getConnection()->newTable(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_ORDER)
+            $this->getFullTableName(TablesHelper::TABLE_AMAZON_ORDER)
         )
                                  ->addColumn(
                                      \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_ORDER_ID,
@@ -11073,7 +11089,7 @@ class Installer
         $moduleConfig->insert('/amazon/configuration/', 'general_id_custom_attribute');
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_MARKETPLACE),
+            $this->getFullTableName(TablesHelper::TABLE_MARKETPLACE),
             [
                 [
                     'id' => 24,
@@ -11352,7 +11368,7 @@ class Installer
         );
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_AMAZON_MARKETPLACE),
+            $this->getFullTableName(TablesHelper::TABLE_AMAZON_MARKETPLACE),
             [
                 [
                     'marketplace_id' => 24,
@@ -11658,136 +11674,6 @@ class Installer
         $this->getConnection()->createTable($walmartAccountTable);
 
         /**
-         * Create table 'm2epro_walmart_dictionary_category'
-         */
-        $walmartDictionaryCategoryTable = $this->getConnection()->newTable(
-            $this->getFullTableName('walmart_dictionary_category')
-        )
-                                               ->addColumn(
-                                                   'id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   [
-                                                       'unsigned' => true,
-                                                       'primary' => true,
-                                                       'nullable' => false,
-                                                       'auto_increment' => true,
-                                                   ]
-                                               )
-                                               ->addColumn(
-                                                   'marketplace_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   ['nullable' => false, 'unsigned' => true]
-                                               )
-                                               ->addColumn(
-                                                   'category_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   ['unsigned' => true, 'nullable' => false]
-                                               )
-                                               ->addColumn(
-                                                   'parent_category_id',
-                                                   Table::TYPE_INTEGER,
-                                                   null,
-                                                   ['unsigned' => true, 'nullable' => true]
-                                               )
-                                               ->addColumn(
-                                                   'browsenode_id',
-                                                   Table::TYPE_DECIMAL,
-                                                   [20, 0],
-                                                   ['unsigned' => true, 'nullable' => false]
-                                               )
-                                               ->addColumn(
-                                                   'product_data_nicks',
-                                                   Table::TYPE_TEXT,
-                                                   null,
-                                                   ['default' => null]
-                                               )
-                                               ->addColumn(
-                                                   'title',
-                                                   Table::TYPE_TEXT,
-                                                   255,
-                                                   ['nullable' => false]
-                                               )
-                                               ->addColumn(
-                                                   'path',
-                                                   Table::TYPE_TEXT,
-                                                   null,
-                                                   ['default' => null]
-                                               )
-                                               ->addColumn(
-                                                   'keywords',
-                                                   Table::TYPE_TEXT,
-                                                   null,
-                                                   ['default' => null]
-                                               )
-                                               ->addColumn(
-                                                   'is_leaf',
-                                                   Table::TYPE_SMALLINT,
-                                                   null,
-                                                   ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                               )
-                                               ->addIndex('browsenode_id', 'browsenode_id')
-                                               ->addIndex('category_id', 'category_id')
-                                               ->addIndex('is_leaf', 'is_leaf')
-                                               ->addIndex('marketplace_id', 'marketplace_id')
-                                               ->addIndex('path', [['name' => 'path', 'size' => 255]])
-                                               ->addIndex('parent_category_id', 'parent_category_id')
-                                               ->addIndex('title', 'title')
-                                               ->setOption('type', 'INNODB')
-                                               ->setOption('charset', 'utf8')
-                                               ->setOption('collate', 'utf8_general_ci')
-                                               ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($walmartDictionaryCategoryTable);
-
-        /**
-         * Create table 'm2epro_walmart_dictionary_marketplace'
-         */
-        $walmartDictionaryMarketplaceTable = $this->getConnection()
-                                                  ->newTable($this->getFullTableName('walmart_dictionary_marketplace'))
-                                                  ->addColumn(
-                                                      'id',
-                                                      Table::TYPE_INTEGER,
-                                                      null,
-                                                      [
-                                                          'unsigned' => true,
-                                                          'primary' => true,
-                                                          'nullable' => false,
-                                                          'auto_increment' => true,
-                                                      ]
-                                                  )
-                                                  ->addColumn(
-                                                      'marketplace_id',
-                                                      Table::TYPE_INTEGER,
-                                                      null,
-                                                      ['unsigned' => true, 'nullable' => false]
-                                                  )
-                                                  ->addColumn(
-                                                      'client_details_last_update_date',
-                                                      Table::TYPE_DATETIME,
-                                                      null,
-                                                      ['default' => null]
-                                                  )
-                                                  ->addColumn(
-                                                      'server_details_last_update_date',
-                                                      Table::TYPE_DATETIME,
-                                                      null,
-                                                      ['default' => null]
-                                                  )
-                                                  ->addColumn(
-                                                      'product_data',
-                                                      Table::TYPE_TEXT,
-                                                      self::LONG_COLUMN_SIZE,
-                                                      ['default' => null]
-                                                  )
-                                                  ->addIndex('marketplace_id', 'marketplace_id')
-                                                  ->setOption('type', 'INNODB')
-                                                  ->setOption('charset', 'utf8')
-                                                  ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($walmartDictionaryMarketplaceTable);
-
-        /**
          * Create table 'm2epro_walmart_dictionary_specific'
          */
         $walmartDictionarySpecificTable = $this->getConnection()
@@ -11902,6 +11788,217 @@ class Installer
                                                ->setOption('collate', 'utf8_general_ci')
                                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($walmartDictionarySpecificTable);
+
+        #region walmart_dictionary_category
+        $walmartDictionaryCategoryTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_DICTIONARY_CATEGORY
+        );
+        $walmartDictionaryCategoryTable = $this->getConnection()
+                                               ->newTable($walmartDictionaryCategoryTableName);
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_ID,
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'primary' => true,
+                'nullable' => false,
+                'auto_increment' => true,
+            ]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_MARKETPLACE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['nullable' => false, 'unsigned' => true]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_CATEGORY_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_PARENT_CATEGORY_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => true]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_TITLE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_PRODUCT_TYPE_NICK,
+            Table::TYPE_TEXT,
+            255,
+            ['defaul' => null]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_PRODUCT_TYPE_TITLE,
+            Table::TYPE_TEXT,
+            255,
+            ['defaul' => null]
+        );
+        $walmartDictionaryCategoryTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_IS_LEAF,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartDictionaryCategoryTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_CATEGORY_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_CATEGORY_ID
+        );
+        $walmartDictionaryCategoryTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_MARKETPLACE_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_MARKETPLACE_ID
+        );
+        $walmartDictionaryCategoryTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_PARENT_CATEGORY_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_PARENT_CATEGORY_ID
+        );
+        $walmartDictionaryCategoryTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_TITLE,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_TITLE
+        );
+        $walmartDictionaryCategoryTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_IS_LEAF,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Category::COLUMN_IS_LEAF
+        );
+        $walmartDictionaryCategoryTable->setOption('type', 'INNODB');
+        $walmartDictionaryCategoryTable->setOption('charset', 'utf8');
+        $walmartDictionaryCategoryTable->setOption('collate', 'utf8_general_ci');
+        $walmartDictionaryCategoryTable->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($walmartDictionaryCategoryTable);
+        #endregion
+
+        #region walmart_dictionary_marketplace
+        $walmartDictionaryMarketplaceTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_DICTIONARY_MARKETPLACE
+        );
+        $walmartDictionaryMarketplaceTable = $this->getConnection()
+                                                  ->newTable($walmartDictionaryMarketplaceTableName);
+        $walmartDictionaryMarketplaceTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_ID,
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'primary' => true,
+                'nullable' => false,
+                'auto_increment' => true,
+            ]
+        );
+        $walmartDictionaryMarketplaceTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_MARKETPLACE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartDictionaryMarketplaceTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_CLIENT_DETAILS_LAST_UPDATE_DATE,
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $walmartDictionaryMarketplaceTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_SERVER_DETAILS_LAST_UPDATE_DATE,
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $walmartDictionaryMarketplaceTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_PRODUCT_TYPES,
+            Table::TYPE_TEXT,
+            self::LONG_COLUMN_SIZE,
+            ['default' => null]
+        );
+        $walmartDictionaryMarketplaceTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_MARKETPLACE_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\Marketplace::COLUMN_MARKETPLACE_ID
+        );
+        $walmartDictionaryMarketplaceTable->setOption('type', 'INNODB');
+        $walmartDictionaryMarketplaceTable->setOption('charset', 'utf8');
+        $walmartDictionaryMarketplaceTable->setOption('collate', 'utf8_general_ci');
+
+        $this->getConnection()->createTable($walmartDictionaryMarketplaceTable);
+        #endregion
+
+        #region walmart_dictionary_product_type
+        $walmartDictionaryProductTypeTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_DICTIONARY_PRODUCT_TYPE
+        );
+        $walmartDictionaryProductTypeTable = $this->getConnection()->newTable(
+            $walmartDictionaryProductTypeTableName
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_ID,
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'primary' => true,
+                'nullable' => false,
+                'auto_increment' => true,
+            ]
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_MARKETPLACE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_NICK,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_TITLE,
+            Table::TYPE_TEXT,
+            255,
+            ['nullable' => false]
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_ATTRIBUTES,
+            Table::TYPE_TEXT,
+            self::LONG_COLUMN_SIZE,
+            ['nullable' => false]
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_VARIATION_ATTRIBUTES,
+            Table::TYPE_TEXT,
+            self::LONG_COLUMN_SIZE,
+            ['nullable' => false]
+        );
+        $walmartDictionaryProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_INVALID,
+            Table::TYPE_SMALLINT,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'default' => 0]
+        );
+        $walmartDictionaryProductTypeTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_MARKETPLACE_ID
+            . '__'
+            . \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_NICK,
+            [
+                \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_MARKETPLACE_ID,
+                \Ess\M2ePro\Model\ResourceModel\Walmart\Dictionary\ProductType::COLUMN_NICK,
+            ],
+            ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+        );
+        $walmartDictionaryProductTypeTable->setOption('type', 'INNODB');
+        $walmartDictionaryProductTypeTable->setOption('charset', 'utf8');
+        $walmartDictionaryProductTypeTable->setOption('collate', 'utf8_general_ci');
+        $walmartDictionaryProductTypeTable->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($walmartDictionaryProductTypeTable);
+        #endregion
 
         /**
          * Create table 'm2epro_walmart_listing_product_indexer_variation_parent'
@@ -12030,90 +12127,95 @@ class Installer
                             ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($walmartItem);
 
-        /**
-         * Create table 'm2epro_walmart_listing'
-         */
-        $walmartListingTable = $this->getConnection()->newTable($this->getFullTableName('walmart_listing'))
-                                    ->addColumn(
-                                        'listing_id',
-                                        Table::TYPE_INTEGER,
-                                        null,
-                                        ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                    )
-                                    ->addColumn(
-                                        'auto_global_adding_category_template_id',
-                                        Table::TYPE_INTEGER,
-                                        null,
-                                        ['unsigned' => true, 'default' => null]
-                                    )
-                                    ->addColumn(
-                                        'auto_website_adding_category_template_id',
-                                        Table::TYPE_INTEGER,
-                                        null,
-                                        ['unsigned' => true, 'default' => null]
-                                    )
-                                    ->addColumn(
-                                        'template_description_id',
-                                        Table::TYPE_INTEGER,
-                                        null,
-                                        ['unsigned' => true, 'nullable' => false]
-                                    )
-                                    ->addColumn(
-                                        'template_selling_format_id',
-                                        Table::TYPE_INTEGER,
-                                        null,
-                                        ['unsigned' => true, 'nullable' => false]
-                                    )
-                                    ->addColumn(
-                                        'template_synchronization_id',
-                                        Table::TYPE_INTEGER,
-                                        null,
-                                        ['unsigned' => true, 'nullable' => false]
-                                    )
-                                    ->addIndex(
-                                        'auto_global_adding_category_template_id',
-                                        'auto_global_adding_category_template_id'
-                                    )
-                                    ->addIndex(
-                                        'auto_website_adding_category_template_id',
-                                        'auto_website_adding_category_template_id'
-                                    )
-                                    ->addIndex('template_selling_format_id', 'template_selling_format_id')
-                                    ->addIndex('template_description_id', 'template_description_id')
-                                    ->addIndex('template_synchronization_id', 'template_synchronization_id')
-                                    ->setOption('type', 'INNODB')
-                                    ->setOption('charset', 'utf8')
-                                    ->setOption('collate', 'utf8_general_ci')
-                                    ->setOption('row_format', 'dynamic');
-        $this->getConnection()->createTable($walmartListingTable);
+        #region walmart_listing
+        $walmartListingTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_LISTING
+        );
+        $walmartListingTable = $this->getConnection()->newTable($walmartListingTableName);
+        $walmartListingTable->addColumn(
+            'listing_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'primary' => true, 'nullable' => false]
+        );
+        $walmartListingTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingTable->addColumn(
+            'template_description_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartListingTable->addColumn(
+            'template_selling_format_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartListingTable->addColumn(
+            'template_synchronization_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartListingTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID
+        );
+        $walmartListingTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing::COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID
+        );
+        $walmartListingTable->addIndex('template_selling_format_id', 'template_selling_format_id');
+        $walmartListingTable->addIndex('template_description_id', 'template_description_id');
+        $walmartListingTable->addIndex('template_synchronization_id', 'template_synchronization_id');
+        $walmartListingTable->setOption('type', 'INNODB');
+        $walmartListingTable->setOption('charset', 'utf8');
+        $walmartListingTable->setOption('collate', 'utf8_general_ci');
+        $walmartListingTable->setOption('row_format', 'dynamic');
 
-        /**
-         * Create table 'm2epro_walmart_listing_auto_category_group'
-         */
-        $walmartListingAutoCategoryGroupTable = $this->getConnection()
-                                                     ->newTable(
-                                                         $this->getFullTableName('walmart_listing_auto_category_group')
-                                                     )
-                                                     ->addColumn(
-                                                         'listing_auto_category_group_id',
-                                                         Table::TYPE_INTEGER,
-                                                         null,
-                                                         ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                                     )
-                                                     ->addColumn(
-                                                         'adding_category_template_id',
-                                                         Table::TYPE_INTEGER,
-                                                         null,
-                                                         ['unsigned' => true, 'default' => null]
-                                                     )
-                                                     ->addIndex(
-                                                         'adding_category_template_id',
-                                                         'adding_category_template_id'
-                                                     )
-                                                     ->setOption('type', 'INNODB')
-                                                     ->setOption('charset', 'utf8')
-                                                     ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingTable);
+        #endregion
+
+        #region walmart_listing_auto_category_group
+        $walmartListingAutoCategoryGroupTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_LISTING_AUTO_CATEGORY_GROUP
+        );
+        $walmartListingAutoCategoryGroupTable = $this->getConnection()->newTable(
+            $walmartListingAutoCategoryGroupTableName
+        );
+        $walmartListingAutoCategoryGroupTable->addColumn(
+            'listing_auto_category_group_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'primary' => true, 'nullable' => false]
+        );
+        $walmartListingAutoCategoryGroupTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Auto\Category\Group::COLUMN_ADDING_PRODUCT_TYPE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingAutoCategoryGroupTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Auto\Category\Group::COLUMN_ADDING_PRODUCT_TYPE_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Auto\Category\Group::COLUMN_ADDING_PRODUCT_TYPE_ID,
+        );
+        $walmartListingAutoCategoryGroupTable->setOption('type', 'INNODB');
+        $walmartListingAutoCategoryGroupTable->setOption('charset', 'utf8');
+        $walmartListingAutoCategoryGroupTable->setOption('collate', 'utf8_general_ci');
+
         $this->getConnection()->createTable($walmartListingAutoCategoryGroupTable);
+        #endregion
 
         /**
          * Create table 'm2epro_walmart_listing_other'
@@ -12231,6 +12333,12 @@ class Installer
         );
         $walmartListingProductTable->addColumn(
             'template_category_id',
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'default' => null]
+        );
+        $walmartListingProductTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\Listing\Product::COLUMN_PRODUCT_TYPE_ID,
             Table::TYPE_INTEGER,
             null,
             ['unsigned' => true, 'default' => null]
@@ -13005,7 +13113,7 @@ class Installer
          * Create table 'm2epro_walmart_template_description'
          */
         $walmartTemplateDescriptionTable = $this->getConnection()
-                                                ->newTable($this->getFullTableName('walmart_template_description'))
+                                                ->newTable($this->getFullTableName(TablesHelper::TABLE_WALMART_TEMPLATE_DESCRIPTION))
                                                 ->addColumn(
                                                     'template_description_id',
                                                     Table::TYPE_INTEGER,
@@ -13240,18 +13348,6 @@ class Installer
                                                     null,
                                                     ['nullable' => false]
                                                 )
-                                                ->addColumn(
-                                                    'attributes_mode',
-                                                    Table::TYPE_SMALLINT,
-                                                    null,
-                                                    ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                )
-                                                ->addColumn(
-                                                    'attributes',
-                                                    Table::TYPE_TEXT,
-                                                    null,
-                                                    ['nullable' => false]
-                                                )
                                                 ->setOption('type', 'INNODB')
                                                 ->setOption('charset', 'utf8')
                                                 ->setOption('collate', 'utf8_general_ci')
@@ -13262,7 +13358,7 @@ class Installer
          * Create table 'm2epro_walmart_template_selling_format'
          */
         $walmartTemplateSellingFormatTable = $this->getConnection()
-                                                  ->newTable($this->getFullTableName('walmart_template_selling_format'))
+                                                  ->newTable($this->getFullTableName(TablesHelper::TABLE_WALMART_TEMPLATE_SELLING_FORMAT))
                                                   ->addColumn(
                                                       'template_selling_format_id',
                                                       Table::TYPE_INTEGER,
@@ -13471,18 +13567,6 @@ class Installer
                                                       'sale_time_end_date_custom_attribute',
                                                       Table::TYPE_TEXT,
                                                       255,
-                                                      ['nullable' => false]
-                                                  )
-                                                  ->addColumn(
-                                                      'attributes_mode',
-                                                      Table::TYPE_SMALLINT,
-                                                      null,
-                                                      ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                                  )
-                                                  ->addColumn(
-                                                      'attributes',
-                                                      Table::TYPE_TEXT,
-                                                      null,
                                                       ['nullable' => false]
                                                   )
                                                   ->addIndex('marketplace_id', 'marketplace_id')
@@ -13868,6 +13952,71 @@ class Installer
                                                     ->setOption('collate', 'utf8_general_ci')
                                                     ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($walmartTemplateSynchronizationTable);
+
+        #region walmart_product_type
+        $walmartProductTypeTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_PRODUCT_TYPE
+        );
+        $walmartProductTypeTable = $this->getConnection()->newTable(
+            $this->getFullTableName($walmartProductTypeTableName)
+        );
+        $walmartProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_ID,
+            Table::TYPE_INTEGER,
+            null,
+            [
+                'unsigned' => true,
+                'primary' => true,
+                'nullable' => false,
+                'auto_increment' => true,
+            ]
+        );
+        $walmartProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_TITLE,
+            Table::TYPE_TEXT,
+            255,
+            ['default' => null]
+        );
+        $walmartProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_DICTIONARY_PRODUCT_TYPE_ID,
+            Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false]
+        );
+        $walmartProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_ATTRIBUTES_SETTINGS,
+            Table::TYPE_TEXT,
+            self::LONG_COLUMN_SIZE,
+            ['nullable' => false]
+        );
+        $walmartProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_UPDATE_DATE,
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $walmartProductTypeTable->addColumn(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_CREATE_DATE,
+            Table::TYPE_DATETIME,
+            null,
+            ['default' => null]
+        );
+        $walmartProductTypeTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_DICTIONARY_PRODUCT_TYPE_ID,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_DICTIONARY_PRODUCT_TYPE_ID,
+            ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+        );
+        $walmartProductTypeTable->addIndex(
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_TITLE,
+            \Ess\M2ePro\Model\ResourceModel\Walmart\ProductType::COLUMN_TITLE
+        );
+        $walmartProductTypeTable->setOption('type', 'INNODB');
+        $walmartProductTypeTable->setOption('charset', 'utf8');
+        $walmartProductTypeTable->setOption('collate', 'utf8_general_ci');
+        $walmartProductTypeTable->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($walmartProductTypeTable);
+        #endregion
     }
 
     /**

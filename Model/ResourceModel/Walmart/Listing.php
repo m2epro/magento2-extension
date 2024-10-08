@@ -1,28 +1,25 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Walmart;
 
 use Magento\Framework\DB\Select;
 
 class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
+    public const COLUMN_LISTING_ID = 'listing_id';
+    public const COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_ID = 'auto_global_adding_product_type_id';
+    public const COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_ID = 'auto_website_adding_product_type_id';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 
-    //########################################
-
     public function _construct()
     {
-        $this->_init('m2epro_walmart_listing', 'listing_id');
+        $this->_init(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_LISTING,
+            self::COLUMN_LISTING_ID
+        );
     }
-
-    //########################################
 
     public function getUsedProductsIds($listingId)
     {

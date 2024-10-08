@@ -129,7 +129,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             )
         );
 
-        $path = 'walmart_listing_autoAction/getCategoryTemplatesList';
+        $path = 'walmart_listing_autoAction/getProductTypesList';
         $this->jsUrl->add(
             $this->getUrl('*/' . $path, [
                 'marketplace_id' => $listing->getMarketplaceId(),

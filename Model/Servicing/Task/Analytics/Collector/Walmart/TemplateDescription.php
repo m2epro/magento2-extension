@@ -93,8 +93,6 @@ class TemplateDescription implements \Ess\M2ePro\Model\Servicing\Task\Analytics\
                 'key_features' => $childItem->getData('key_features'),
                 'other_features_mode' => $childItem->getData('other_features_mode'),
                 'other_features' => $childItem->getData('other_features'),
-                'attributes_mode' => $childItem->getData('attributes_mode'),
-                'attributes' => $childItem->getData('attributes'),
             ];
 
             yield new \Ess\M2ePro\Model\Servicing\Task\Analytics\Row($item->getData('id'), $preparedData);

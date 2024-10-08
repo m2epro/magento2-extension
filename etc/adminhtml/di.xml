@@ -117,4 +117,19 @@
                 type="Ess\M2ePro\Plugin\Order\Magento\View" />
     </type>
 
+    <!-- Wizard product validators settings -->
+
+    <type name="Ess\M2ePro\Model\Ebay\Listing\Wizard\Validator\ValidatorComposite">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="category_specifics_validator" xsi:type="object">
+                    Ess\M2ePro\Model\Ebay\Listing\Wizard\Validator\SpecificValidator
+                </item>
+                <item name="primary_category_validator" xsi:type="object">
+                    Ess\M2ePro\Model\Ebay\Listing\Wizard\Validator\PrimaryCategoryValidator
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

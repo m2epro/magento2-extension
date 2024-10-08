@@ -278,10 +278,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    protected function validateCategory()
+    protected function validateWalmartProductType(): bool
     {
-        if (!$this->getWalmartListingProduct()->isExistCategoryTemplate()) {
-            $this->addMessage('Categories Settings are not set.');
+        if (
+            $this->getWalmartMarketplace()->isSupportedProductType()
+            && !$this->getWalmartListingProduct()->isExistsProductType()
+        ) {
+            $this->addMessage('Product Type are not set.');
 
             return false;
         }

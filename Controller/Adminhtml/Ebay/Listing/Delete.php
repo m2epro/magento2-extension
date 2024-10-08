@@ -9,9 +9,24 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\DeleteService;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
+use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class Delete extends Listing
 {
+    private DeleteService $deleteService;
+
+    public function __construct(
+        DeleteService $deleteService,
+        Factory $ebayFactory,
+        Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->deleteService = $deleteService;
+    }
+
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -31,6 +46,7 @@ class Delete extends Listing
                 $locked++;
             } else {
                 $listing->delete();
+                $this->deleteService->removeByListing($listing);
                 $deleted++;
             }
         }

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Create;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -13,16 +7,12 @@ use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 
 class Form extends AbstractForm
 {
-    /** @var \Ess\M2ePro\Model\Listing */
-    protected $listing;
-
-    /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory */
-    protected $walmartFactory;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Model\Walmart\Marketplace\Repository $marketplaceRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Walmart\Marketplace\Repository $marketplaceRepository,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Walmart\Factory $walmartFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -32,10 +22,12 @@ class Form extends AbstractForm
     ) {
         $this->walmartFactory = $walmartFactory;
         $this->dataHelper = $dataHelper;
+        $this->marketplaceRepository = $marketplaceRepository;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
-    //########################################
+    // ---------------------------------------
 
     protected function _prepareForm()
     {
@@ -441,7 +433,7 @@ HTML
         return parent::_prepareForm();
     }
 
-    //########################################
+    // ---------------------------------------
 
     protected function _prepareLayout()
     {
@@ -452,6 +444,14 @@ HTML
 
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Account'));
         $this->jsUrl->addUrls($this->dataHelper->getControllerActions('Walmart\Marketplace'));
+        $this->jsUrl->addUrls([
+            'walmart_marketplace_withProductType/runSynchNow' => $this->getUrl(
+                '*/walmart_marketplace_withProductType/runSynchNow'
+            ),
+            'walmart_marketplace_withProductType/synchGetExecutingInfo' => $this->getUrl(
+                '*/walmart_marketplace_withProductType/synchGetExecutingInfo'
+            ),
+        ]);
 
         $this->jsUrl->addUrls(
             [
@@ -568,6 +568,7 @@ HTML
             __('Please wait while Synchronization is finished.')
         );
 
+        $marketplacesSyncSettings = \json_encode($this->getMarketplacesSyncSettings());
         $this->js->add(
             <<<JS
     require([
@@ -580,6 +581,7 @@ HTML
         window.TemplateManagerObj = new TemplateManager();
 
         window.WalmartListingCreateGeneralObj = new WalmartListingCreateGeneral();
+        window.WalmartListingCreateGeneralObj.setMarketplacesSyncSettings($marketplacesSyncSettings);
         window.WalmartListingSettingsObj = new WalmartListingSettings();
 
         WalmartListingCreateGeneralObj.initObservers();
@@ -591,7 +593,7 @@ JS
         return parent::_prepareLayout();
     }
 
-    //########################################
+    // ---------------------------------------
 
     protected function getSellingFormatTemplates()
     {
@@ -644,7 +646,7 @@ JS
         return $result['items'];
     }
 
-    //########################################
+    // ---------------------------------------
 
     public function getDefaultFieldsValues()
     {
@@ -660,20 +662,17 @@ JS
         ];
     }
 
-    //########################################
-
-    protected function getListing()
+    private function getMarketplacesSyncSettings(): array
     {
-        if (!$listingId = $this->getRequest()->getParam('id')) {
-            throw new \Ess\M2ePro\Model\Exception('Listing is not defined');
+        $result = [];
+        foreach ($this->marketplaceRepository->findActive() as $marketplace) {
+            $result[] = [
+                'marketplace_id' => (int)$marketplace->getId(),
+                'is_sync_with_product_type' => $marketplace->getChildObject()
+                                                           ->isSupportedProductType(),
+            ];
         }
 
-        if ($this->listing === null) {
-            $this->listing = $this->walmartFactory->getCachedObjectLoaded('Listing', $listingId);
-        }
-
-        return $this->listing;
+        return $result;
     }
-
-    //########################################
 }

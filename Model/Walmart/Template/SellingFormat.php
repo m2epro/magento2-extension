@@ -50,9 +50,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     public const DATE_VALUE = 1;
     public const DATE_ATTRIBUTE = 2;
 
-    public const ATTRIBUTES_MODE_NONE = 0;
-    public const ATTRIBUTES_MODE_CUSTOM = 1;
-
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
@@ -928,78 +925,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walma
     }
 
     // ---------------------------------------
-
-    /**
-     * @return int
-     */
-    public function getAttributesMode()
-    {
-        return (int)$this->getData('attributes_mode');
-    }
-
-    public function getAttributesTemplate()
-    {
-        return $this->getData('attributes') === null
-            ? [] : \Ess\M2ePro\Helper\Json::decode($this->getData('attributes'));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAttributesModeNone()
-    {
-        return $this->getAttributesMode() == self::ATTRIBUTES_MODE_NONE;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAttributesModeCustom()
-    {
-        return $this->getAttributesMode() == self::ATTRIBUTES_MODE_CUSTOM;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAttributesSource()
-    {
-        return [
-            'mode' => $this->getAttributesMode(),
-            'template' => $this->getAttributesTemplate(),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getAttributesAttributes()
-    {
-        $src = $this->getAttributesSource();
-
-        if ($src['mode'] == self::ATTRIBUTES_MODE_NONE) {
-            return [];
-        }
-
-        $attributes = [];
-
-        if ($src['mode'] == self::ATTRIBUTES_MODE_CUSTOM) {
-            $match = [];
-
-            $templateValues = [];
-            foreach ($src['template'] as $item) {
-                $templateValues[] = $item['value'];
-            }
-
-            $searchTerms = implode(PHP_EOL, $templateValues);
-            preg_match_all('/#([a-zA-Z_0-9]+?)#/', $searchTerms, $match);
-            $match && $attributes = $match[1];
-        }
-
-        return $attributes;
-    }
-
-    //########################################
 
     /**
      * @return bool

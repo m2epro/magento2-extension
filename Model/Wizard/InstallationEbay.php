@@ -20,16 +20,7 @@ class InstallationEbay extends Wizard
 
         'listingTutorial',
         'listingGeneral',
-        'listingTemplates',
 
-        'sourceMode',
-        'productSelection',
-        'productSettings',
-
-        'categoryStepOne',
-        'categoryStepTwo',
-        'categoryStepThree',
-        'categoryStepValidation',
     ];
 
     /**

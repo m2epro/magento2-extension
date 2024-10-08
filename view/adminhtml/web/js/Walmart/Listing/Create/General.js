@@ -11,6 +11,7 @@ define([
         marketplaceSynchProgressObj: null,
         accounts: null,
         selectedAccountId: null,
+        marketplacesSyncSettings: [],
 
         // ---------------------------------------
 
@@ -90,7 +91,21 @@ define([
                     });
                     return;
                 }
-                jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
+                var marketplaceId = $('marketplace_id').value;
+                if (jQuery('#edit_form').valid()) {
+                    self.synchronizeMarketplace(marketplaceId)
+                }
+            });
+        },
+
+        setMarketplacesSyncSettings: function (marketplaces) {
+            this.marketplacesSyncSettings = marketplaces;
+        },
+
+        isMarketplaceSyncWithProductType: function (marketplaceId) {
+            return this.marketplacesSyncSettings.some((item) => {
+                return item.marketplace_id === marketplaceId
+                        && item.is_sync_with_product_type;
             });
         },
 
@@ -111,7 +126,7 @@ define([
             new Ajax.Request(M2ePro.url.get('general/getAccounts'), {
                 method: 'get',
                 parameters: {component: M2ePro.php.constant('Ess_M2ePro_Helper_Component_Walmart::NICK')},
-                onSuccess: function(transport) {
+                onSuccess: function (transport) {
                     var accounts = transport.responseText.evalJSON();
 
                     if (_.isNull(self.accounts)) {
@@ -141,7 +156,7 @@ define([
 
                     account_select_el.update();
                     account_select_el.appendChild(new Element('option', {style: 'display: none'}));
-                    accounts.each(function(account) {
+                    accounts.each(function (account) {
                         account_select_el.appendChild(new Element('option', {value: account.id})).insert(account.title);
                     });
 
@@ -216,6 +231,20 @@ define([
                             var title = 'Walmart ' + $('marketplace_title').innerHTML;
                             $('save_and_next').disable();
 
+                            if (self.isMarketplaceSyncWithProductType(parseInt(marketplaceId))) {
+                                self.marketplaceSynchProgressObj.runTask(
+                                        title,
+                                        M2ePro.url.get(
+                                                'walmart_marketplace_withProductType/runSynchNow',
+                                                {marketplace_id: marketplaceId}
+                                        ),
+                                        M2ePro.url.get('walmart_marketplace_withProductType/synchGetExecutingInfo'),
+                                        'WalmartListingCreateGeneralObj.marketplaceSynchProgressObj.end()'
+                                );
+
+                                return;
+                            }
+
                             self.marketplaceSynchProgressObj.runTask(
                                 title,
                                 M2ePro.url.get('walmart_marketplace/runSynchNow', {marketplace_id: marketplaceId}),
@@ -228,7 +257,7 @@ define([
             });
         },
 
-        isAccountsEqual: function(newAccounts) {
+        isAccountsEqual: function (newAccounts) {
             if (!newAccounts.length && !this.accounts.length) {
                 return true;
             }
@@ -237,14 +266,14 @@ define([
                 return false;
             }
 
-            return _.every(this.accounts, function(account) {
+            return _.every(this.accounts, function (account) {
                 return _.where(newAccounts, account).length > 0;
             });
         },
 
         // ---------------------------------------
 
-        store_id_change: function() {
+        store_id_change: function () {
             WalmartListingSettingsObj.checkSellingFormatMessages();
         }
 

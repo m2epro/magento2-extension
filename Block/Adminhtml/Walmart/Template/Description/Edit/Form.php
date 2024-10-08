@@ -830,35 +830,6 @@ HTML
 
         $this->appendKeywordsFields($fieldSet, 5, 'other_features', __('Other Features'));
 
-        $fieldSet->addField('other_features_mode_separator', self::SEPARATOR, []);
-
-        // ---------------------------------------
-
-        $fieldSet->addField(
-            'attributes_mode',
-            self::SELECT,
-            [
-                'name' => 'attributes_mode',
-                'label' => __('Attributes'),
-                'title' => __('Attributes'),
-                'values' => [
-                    ['value' => Description::ATTRIBUTES_MODE_NONE, 'label' => __('None')],
-                    ['value' => Description::ATTRIBUTES_MODE_CUSTOM, 'label' => __('Custom Value')],
-                ],
-                'value' => $this->formData['attributes_mode'],
-                'tooltip' => __(
-                    'Specify up to 5 additional features that describe your Item.<br>
-                    To add Attributes, you can either:<br>
-                    - Enter both the name and the value manually<br>
-                    - Enter the name manually, then select a Magento Attribute with the relevant value and
-                        click <strong>Insert</strong>.
-                    '
-                ),
-            ]
-        );
-
-        $this->appendAttributesFields($fieldSet, 5, 'attributes');
-
         // ---------------------------------------
 
         $form->setUseContainer(true);
@@ -1193,10 +1164,6 @@ JS
             $data['other_features'] = \Ess\M2ePro\Helper\Json::decode($data['other_features'], true);
         }
 
-        if (!empty($data['attributes'])) {
-            $data['attributes'] = \Ess\M2ePro\Helper\Json::decode($data['attributes'], true);
-        }
-
         return array_merge($default, $data);
     }
 
@@ -1246,119 +1213,6 @@ JS
                         'Either enter the value manually or select a Magento Attribute with the
                         relevant value and click <strong>Insert</strong>. Max. 50 characters allowed.'
                     ),
-                ]
-            );
-        }
-
-        $fieldSet->addField(
-            $name . '_actions',
-            self::CUSTOM_CONTAINER,
-            [
-                'label' => '',
-                'text' => <<<HTML
-                <a id="show_{$name}_action"
-                   href="javascript: void(0);"
-                   onclick="WalmartTemplateDescriptionObj.showElement('{$name}');">
-                   {$this->__('Add New')}
-                </a>
-                        /
-                <a id="hide_{$name}_action"
-                   href="javascript: void(0);"
-                   onclick="WalmartTemplateDescriptionObj.hideElement('{$name}');">
-                   {$this->__('Remove')}
-                </a>
-HTML
-                ,
-                'field_extra_attributes' => 'id="' . $name . '_actions_tr" style="display: none;"',
-            ]
-        );
-    }
-
-    public function appendAttributesFields(
-        \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
-        $fieldCount,
-        $name
-    ) {
-        $helper = $this->dataHelper;
-        for ($i = 0; $i < $fieldCount; $i++) {
-            $value = '';
-            if (!empty($this->formData[$name][$i]['name'])) {
-                $value = $helper->escapeHtml($this->formData[$name][$i]['name']);
-            }
-
-            $nameBlock = $this->elementFactory->create(
-                'text',
-                [
-                    'data' => [
-                        'name' => $name . '_name[]',
-                        'value' => $value,
-                        'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\'' . $name . '\',this)',
-                        'class' => 'M2ePro-required-when-visible',
-                        'css_class' => $name . '_tr no-margin-bottom',
-                        'after_element_html' => ' /',
-                    ],
-                ]
-            );
-            $nameBlock->setId($name . '_name_' . $i);
-            $nameBlock->setForm($fieldSet->getForm());
-
-            $value = '';
-            if (!empty($this->formData[$name][$i]['value'])) {
-                $value = $helper->escapeHtml($this->formData[$name][$i]['value']);
-            }
-
-            $valueBlock = $this->elementFactory->create(
-                'text',
-                [
-                    'data' => [
-                        'name' => $name . '_value[]',
-                        'value' => $value,
-                        'onkeyup' => 'WalmartTemplateDescriptionObj.multi_element_keyup(\'' . $name . '\',this)',
-                        'class' => 'M2ePro-required-when-visible',
-                        'css_class' => $name . '_tr no-margin-bottom',
-                        'tooltip' => __('Max. 100 characters.'),
-                    ],
-                ]
-            );
-            $valueBlock->setId($name . '_value_' . $i);
-            $valueBlock->setForm($fieldSet->getForm());
-
-            $button = $this->getLayout()
-                           ->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button\MagentoAttribute::class)
-                           ->addData([
-                               'label' => __('Insert'),
-                               'destination_id' => $name . '_value_' . $i,
-                               'magento_attributes' => $this->getClearAttributesByInputTypesOptions(),
-                               'on_click_callback' => "WalmartTemplateDescriptionObj.multi_element_keyup
-                                        ('{$name}',$('{$name}_value_{$i}'));",
-                               'class' => 'primary attributes-container-td',
-                               'style' => 'display: inline-block; margin-left: 5px;',
-                           ]);
-
-            $selectAttrBlock = $this->elementFactory->create(self::SELECT, [
-                'data' => [
-                    'values' => $this->getClearAttributesByInputTypesOptions('text_select'),
-                    'class' => 'M2ePro-required-when-visible magento-attribute-custom-input',
-                    'create_magento_attribute' => true,
-                ],
-            ])->addCustomAttribute('allowed_attribute_types', 'text,select')
-                                                    ->addCustomAttribute('apply_to_all_attribute_sets', 'false');
-
-            $selectAttrBlock->setId('selectAttr_' . $name . '_value_' . $i);
-            $selectAttrBlock->setForm($fieldSet->getForm());
-
-            $fieldSet->addField(
-                'attributes_container_' . $i,
-                self::CUSTOM_CONTAINER,
-                [
-                    'container_id' => 'custom_title_tr',
-                    'label' => $this->__('Attributes (name / value) #%number%', $i + 1),
-                    'title' => $this->__('Attributes (name / value) #%number%', $i + 1),
-                    'style' => 'display: inline-block;',
-                    'text' => $nameBlock->toHtml() . $valueBlock->toHtml(),
-                    'after_element_html' => $selectAttrBlock->toHtml() . $button->toHtml(),
-                    'css_class' => 'attributes_tr',
-                    'field_extra_attributes' => 'style="display: none;"',
                 ]
             );
         }

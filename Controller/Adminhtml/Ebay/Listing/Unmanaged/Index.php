@@ -8,8 +8,25 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Unmanaged;
 
+use Ess\M2ePro\Model\Ebay\Listing\Wizard;
+use Ess\M2ePro\Model\Ebay\Listing\Wizard\Repository as WizardRepository;
+use Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory;
+use Ess\M2ePro\Controller\Adminhtml\Context;
+
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
+    private WizardRepository $wizardRepository;
+
+    public function __construct(
+        WizardRepository $wizardRepository,
+        Factory $ebayFactory,
+        Context $context
+    ) {
+        parent::__construct($ebayFactory, $context);
+
+        $this->wizardRepository = $wizardRepository;
+    }
+
     public function execute()
     {
         if ($this->getRequest()->getQuery('ajax')) {
@@ -18,6 +35,18 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             );
 
             return $this->getResult();
+        }
+
+        $existWizard = $this->wizardRepository->findNotCompletedWizardByType(Wizard::TYPE_UNMANAGED);
+
+        if ($existWizard !== null && !$existWizard->isCompleted()) {
+            $this->getMessageManager()->addNotice(
+                $this->__(
+                    'Please make sure you finish adding new Products before moving to the next step.'
+                )
+            );
+
+            return $this->_redirect('*/ebay_listing_wizard/index', ['id' => $existWizard->getId()]);
         }
 
         $this->addContent(

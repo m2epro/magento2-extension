@@ -1,21 +1,9 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
-/**
- * Class
- * \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\MatchedAttributes
- */
 class MatchedAttributes extends AbstractModel
 {
-    //########################################
-
     protected function check()
     {
         if (!$this->getProcessor()->getTypeModel()->hasMatchedAttributes()) {
@@ -45,13 +33,18 @@ class MatchedAttributes extends AbstractModel
             return;
         }
 
-        $possibleChannelAttributes = $this->getProcessor()->getPossibleChannelAttributes();
-
         if ($this->getProcessor()->getTypeModel()->getVirtualChannelAttributes()) {
             $matchedAttributes = $this->getProcessor()->getTypeModel()->getRealMatchedAttributes();
         }
 
         $channelMatchedAttributes = array_values($matchedAttributes);
+
+        $walmartListingProduct = $this->getProcessor()->getWalmartListingProduct();
+        $possibleChannelAttributes = $walmartListingProduct->isExistsProductType()
+            ? $walmartListingProduct
+                ->getProductType()
+                ->getVariationAttributes()
+            : [];
 
         if (array_diff($channelMatchedAttributes, $possibleChannelAttributes)) {
             $this->getProcessor()->getTypeModel()->setMatchedAttributes([], false);
@@ -75,8 +68,6 @@ class MatchedAttributes extends AbstractModel
              ->setMatchedAttributes($this->matchAttributes($channelAttributes), false);
     }
 
-    //########################################
-
     private function matchAttributes($channelAttributes)
     {
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Matcher\Attribute $attributeMatcher */
@@ -91,6 +82,4 @@ class MatchedAttributes extends AbstractModel
 
         return $attributeMatcher->getMatchedAttributes();
     }
-
-    //########################################
 }

@@ -80,12 +80,6 @@ define([
                 })
                 .simulate('change');
 
-            $('attributes_mode')
-                .observe('change', function () {
-                    WalmartTemplateDescriptionObj.multi_element_mode_change.call(this,'attributes',5);
-                })
-                .simulate('change');
-
             $('description_mode')
                 .observe('change', WalmartTemplateDescriptionObj.description_mode_change)
                 .simulate('change');

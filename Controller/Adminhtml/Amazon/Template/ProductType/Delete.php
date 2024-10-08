@@ -47,7 +47,10 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Template\ProductTyp
 
         if ($locked) {
             $tempString = __('%locked record(s) are used in Listing(s).', ['locked' => $locked]) . ' ';
-            $tempString .= __('Product Type must not be in use to be deleted.');
+            $tempString .= __(
+                'Unable to delete Product Type: It is currently in use in one or more Listings'
+                . ' or Auto Rules. Please ensure the Product Type is not associated with any active records.'
+            );
             $this->messageManager->addErrorMessage($tempString);
         }
 

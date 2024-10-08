@@ -1,0 +1,90 @@
+<?php
+
+// @codingStandardsIgnoreFile
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Walmart\ProductType\Edit\Tabs\General\SearchPopup $block */
+
+$searchTooltip = __('Enter keywords in marketplace-specific language. Use plurals to get better search results.');
+
+?>
+
+<div>
+    <div id="chooser_container">
+        <div id="selected_product_type_container">
+            <div style="vertical-align: middle;">
+                <strong><?= __('Product Type'); ?></strong>
+                <span style="vertical-align: middle; padding-left: 5px">
+                    <span id="search_popup_selected_product_type_title"></span>
+                    <span id="search_popup_product_type_not_selected" style="color: grey;"><?= __(
+                            'Not Selected'
+                        ) ?></span>
+                </span>
+                <a style="vertical-align: middle; padding-left: 5px" href="javascript:void(0)"
+                   id="product_type_reset_link"><?= __('Reset'); ?></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="m2epro-tabs-horizontal">
+        <div id="productTypeChooserTabs" class="ui-tabs ui-corner-all ui-widget ui-widget-content">
+            <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"
+                role="tablist">
+                <li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0"
+                    aria-controls="productTypeChooserTabs_browse_content"
+                    aria-labelledby="productTypeChooserTabs_browse" aria-selected="true" aria-expanded="true">
+                    <a href="#productTypeChooserTabs_browse_content" id="productTypeChooserTabs_browse" title="<?=
+                    __('Browse'); ?>" onclick="WalmartProductTypeSearchObj.onClickPopupTab(this);"
+                       class="tab-item-link ui-tabs-anchor ui-tabs-active" data-tab-type="" role="presentation"
+                       tabindex="-1">
+                        <span><?= __('Browse'); ?></span>
+                    </a>
+                </li>
+                <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1"
+                    aria-controls="productTypeChooserTabs_search_content"
+                    aria-labelledby="productTypeChooserTabs_search" aria-selected="false" aria-expanded="false">
+                    <a href="#productTypeChooserTabs_search_content" id="productTypeChooserTabs_search" title="<?=
+                    __('Search'); ?>" onclick="WalmartProductTypeSearchObj.onClickPopupTab(this);"
+                       class="tab-item-link ui-tabs-anchor" data-tab-type="" role="presentation" tabindex="-1">
+                        <span><?= __('Search'); ?></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="chooser_tabs_container">
+        <div id="productTypeChooserTabs_browse_content" aria-labelledby="productTypeChooserTabs_browse"
+             class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="false">
+            <div class="chooser_browser">
+                <select id="product_type_browse_results" size="8"
+                        class="multiselect admin__control-multiselect"></select>
+                <div></div>
+            </div>
+
+            <div id="product_type_browse_error_content" class="product_type_error_content"></div>
+        </div>
+
+        <div id="productTypeChooserTabs_search_content" aria-labelledby="productTypeChooserTabs_search"
+             class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="true"
+             style="display: none;">
+            <div class="chooser_input_container">
+                <input id="product_type_search_query" type="text" placeholder="<?=
+                __('Enter product type name'); ?>"
+                       onkeyup="WalmartProductTypeSearchObj.applySearchFilter();">
+                <a onclick="WalmartProductTypeSearchObj.resetSearchFilter()" style="margin-left: 2rem;"><?=
+                    __('Reset'); ?></a>
+            </div>
+            <div class="chooser_browser">
+                <select id="product_type_search_results" size="8"
+                        class="multiselect admin__control-multiselect"></select>
+                <div id="product_type_search_error_content" class="product_type_error_content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        WalmartProductTypeSearchObj.initPopup(
+            <?= \Ess\M2ePro\Helper\Json::encode($block->getProductTypes()) ?>
+        );
+    </script>
+</div>

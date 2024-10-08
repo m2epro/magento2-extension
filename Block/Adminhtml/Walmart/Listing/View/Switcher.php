@@ -46,7 +46,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
             In Manage Variation pop-up, Walmart Variant Groups can be configured.
         </li>
         <li>
-            <strong>Settings</strong> – allows you to assign a new Category Policy to the selected Item,
+            <strong>Settings</strong> – allows you to assign a new Product Type to the selected Item,
             duplicate the Item in the current Listing or move it to another one.
         </li>
         <li>

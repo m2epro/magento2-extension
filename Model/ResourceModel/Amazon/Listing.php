@@ -11,6 +11,8 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_GENERAL_ID_ATTRIBUTE = 'general_id_attribute';
     public const COLUMN_WORLDWIDE_ID_ATTRIBUTE = 'worldwide_id_attribute';
     public const COLUMN_OFFER_IMAGES = 'offer_images';
+    public const COLUMN_AUTO_GLOBAL_ADDING_PRODUCT_TYPE_TEMPLATE_ID = 'auto_global_adding_product_type_template_id';
+    public const COLUMN_AUTO_WEBSITE_ADDING_PRODUCT_TYPE_TEMPLATE_ID = 'auto_website_adding_product_type_template_id';
 
     /** @var bool */
     protected $_isPkAutoIncrement = false;
