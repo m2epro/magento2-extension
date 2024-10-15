@@ -190,6 +190,7 @@ abstract class AbstractModel extends CheckerAbstractModel
     protected function getReviseProductIdentifiersInstructionsTypes(): array
     {
         return [
+            ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             \Ess\M2ePro\Model\Ebay\Magento\Product\ChangeProcessor::INSTRUCTION_TYPE_PRODUCT_IDENTIFIERS_DATA_CHANGED,
             ChangeIdentifierTracker::INSTRUCTION_TYPE_PRODUCT_IDENTIFIER_CONFIG_CHANGED,
             SynchronizationChangeProcessor::INSTRUCTION_TYPE_REVISE_PRODUCT_IDENTIFIERS_ENABLED,

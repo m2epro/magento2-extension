@@ -1,21 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Description
- */
 class Description extends AbstractModel
 {
-    //########################################
-
-    public function getBuilderData()
+    public function getBuilderData(): array
     {
         $this->searchNotFoundAttributes();
 
@@ -24,10 +13,14 @@ class Description extends AbstractModel
 
         $this->processNotFoundAttributes('Description');
 
+        $descriptionTemplate = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
+
         return [
             'description' => $data,
+            'product_details' => [
+                'include_ebay_details' => $descriptionTemplate->isProductDetailsIncludeEbayDetails(),
+                'include_image' => $descriptionTemplate->isProductDetailsIncludeImage(),
+            ],
         ];
     }
-
-    //########################################
 }

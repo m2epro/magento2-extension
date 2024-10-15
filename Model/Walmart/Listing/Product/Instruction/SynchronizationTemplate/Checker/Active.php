@@ -63,7 +63,12 @@ class Active extends AbstractModel
 
         /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
         $walmartListingProduct = $listingProduct->getChildObject();
-        if (!$walmartListingProduct->isExistsProductType()) {
+        if (
+            $walmartListingProduct
+                ->getWalmartMarketplace()
+                ->isSupportedProductType()
+            && !$walmartListingProduct->isExistsProductType()
+        ) {
             return false;
         }
 

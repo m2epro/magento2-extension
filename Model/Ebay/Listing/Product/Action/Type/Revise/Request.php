@@ -8,16 +8,20 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     {
         $generalData = $this->getGeneralData();
         $otherData = $this->getOtherData();
+        $descriptionData = $this->getDescriptionData();
 
         if (
             isset($generalData['product_details'])
             || isset($otherData['product_details'])
+            || isset($descriptionData['product_details'])
         ) {
             $otherData['product_details'] = array_merge(
                 $otherData['product_details'] ?? [],
-                $generalData['product_details'] ?? []
+                $generalData['product_details'] ?? [],
+                $descriptionData['product_details'] ?? []
             );
             unset($generalData['product_details']);
+            unset($descriptionData['product_details']);
         }
 
         $data = array_merge(
@@ -29,7 +33,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             $this->getPriceData(),
             $this->getTitleData(),
             $this->getSubtitleData(),
-            $this->getDescriptionData(),
+            $descriptionData,
             $this->getImagesData(),
             $this->getCategoriesData(),
             $this->getPartsData(),

@@ -214,6 +214,16 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
         return $this->hasDescription() ? $this->getData()['description'] : null;
     }
 
+    public function getProductDetailsIncludeEbayDetails(): ?string
+    {
+        return $this->getProductDetails()['include_ebay_details'] ?? null;
+    }
+
+    public function getProductDetailsIncludeImage(): ?string
+    {
+        return $this->getProductDetails()['include_image'] ?? null;
+    }
+
     // ---------------------------------------
 
     public function getDuration()
@@ -256,6 +266,16 @@ class RequestData extends \Ess\M2ePro\Model\Listing\Product\Action\RequestData
     public function getProductDetailsIsbn(): ?string
     {
         return $this->getProductDetails()['isbn'] ?? null;
+    }
+
+    public function getProductDetailsBrand(): ?string
+    {
+        return $this->getProductDetails()['brand'] ?? null;
+    }
+
+    public function getProductDetailsMpn(): ?string
+    {
+        return $this->getProductDetails()['mpn'] ?? null;
     }
 
     // ---------------------------------------

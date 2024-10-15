@@ -313,8 +313,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
             return;
         }
 
-        if (!$marketplace->getChildObject()->isCanada()) {
-            $this->removeFailedProducts($additionalData['adding_listing_products_ids']);
+        if ($marketplace->getChildObject()->isSupportedProductType()) {
+            $this->removeProductsWithoutProductTypes($additionalData['adding_listing_products_ids']);
         }
 
         //-- Remove successfully moved Unmanaged items
@@ -349,7 +349,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
         $this->addContent($blockReview);
     }
 
-    private function removeFailedProducts(array $addingListingProductsIds): void
+    private function removeProductsWithoutProductTypes(array $addingListingProductsIds): void
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $collection */
         $collection = $this->listingProductCollectionFactory

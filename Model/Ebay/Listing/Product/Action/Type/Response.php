@@ -18,6 +18,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     protected $requestMetaData = [];
     protected $activeRecordFactory;
 
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher */
     private $dataHasher;
     /** @var \Ess\M2ePro\Model\Listing\Product */
@@ -28,6 +29,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -36,6 +38,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
+        $this->descriptionHasher = $descriptionHasher;
         $this->dataHasher = $dataHasher;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
@@ -571,16 +574,16 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    protected function appendDescriptionValues($data)
+    protected function appendDescriptionValues($data): array
     {
-        if (!$this->getRequestData()->hasDescription()) {
-            return $data;
-        }
-
-        $data['online_description'] = $this->getHelper('Data')->hashString(
-            $this->getRequestData()->getDescription(),
-            'md5'
+        $requestData = $this->getRequestData();
+        $hash = $this->descriptionHasher->hashProductDescriptionFields(
+            $requestData->getDescription(),
+            $requestData->getProductDetailsIncludeEbayDetails(),
+            $requestData->getProductDetailsIncludeImage()
         );
+
+        $data[\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_DESCRIPTION] = $hash;
 
         return $data;
     }
@@ -607,7 +610,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $requestData->getProductDetailsUpc(),
             $requestData->getProductDetailsEan(),
             $requestData->getProductDetailsIsbn(),
-            $requestData->getProductDetailsEpid()
+            $requestData->getProductDetailsEpid(),
+            $requestData->getProductDetailsBrand(),
+            $requestData->getProductDetailsMpn()
         );
 
         $data[\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH] = $hash;

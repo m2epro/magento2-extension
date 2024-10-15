@@ -4,6 +4,7 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Revise;
 
 class Checker
 {
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher */
     private $dataHasher;
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\TitleFactory */
@@ -34,6 +35,7 @@ class Checker
     private $configuratorFactory;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\ConfiguratorFactory $configuratorFactory,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\TitleFactory $titleDataBuilderFactory,
@@ -63,6 +65,7 @@ class Checker
         $this->helperData = $helperData;
         $this->configuratorFactory = $configuratorFactory;
         $this->dataHasher = $dataHasher;
+        $this->descriptionHasher = $descriptionHasher;
     }
 
     public function calculateForManualAction(\Ess\M2ePro\Model\Listing\Product $listingProduct): Checker\Result
@@ -327,9 +330,13 @@ class Checker
 
         $actionData = $actionDataBuilder->getBuilderData();
 
-        $hashDescription = $this->helperData->md5String($actionData['description']);
+        $hash = $this->descriptionHasher->hashProductDescriptionFields(
+            $actionData['description'] ?? null,
+            $actionData['product_details']['include_ebay_details'] ?? null,
+            $actionData['product_details']['include_image'] ?? null
+        );
 
-        return $hashDescription !== $ebayListingProduct->getOnlineDescription();
+        return $hash !== $ebayListingProduct->getOnlineDescription();
     }
 
     /**
@@ -364,6 +371,10 @@ class Checker
             return false;
         }
 
+        if ($ebayListingProduct->getSku() !== $ebayListingProduct->getOnlineSku()) {
+            return true;
+        }
+
         $generalDataBuilder = $this->generalDataBuilderFactory->create(
             $ebayListingProduct->getParentObject()
         );
@@ -379,7 +390,9 @@ class Checker
             $productDetails['upc'] ?? null,
             $productDetails['ean'] ?? null,
             $productDetails['isbn'] ?? null,
-            $productDetails['epid'] ?? null
+            $productDetails['epid'] ?? null,
+            $productDetails['brand'] ?? null,
+            $productDetails['mpn'] ?? null
         );
 
         return $hash !== $ebayListingProduct->getOnlineProductIdentifiersHash();

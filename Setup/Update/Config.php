@@ -385,6 +385,9 @@ class Config extends AbstractConfig
                 'RemoveUnusedAmazonTables',
                 'AddWalmartProductTypes',
             ],
+            'y24_m10' => [
+                'DropTableWalmartDictionarySpecific',
+            ],
         ];
     }
 
@@ -477,6 +480,8 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m09\RemoveUnusedAmazonTables::class,
             \Ess\M2ePro\Setup\Update\y24_m07\NewListingWizardTables::class,
             \Ess\M2ePro\Setup\Update\y24_m09\AddWalmartProductTypes::class,
+
+            \Ess\M2ePro\Setup\Update\y24_m10\DropTableWalmartDictionarySpecific::class,
         ];
     }
 

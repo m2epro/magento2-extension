@@ -14,7 +14,8 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             || $this->isImagesDifferent()
             || $this->isVariationImagesDifferent()
             || $this->isVideoDifferent()
-            || $this->isOtherDifferent();
+            || $this->isOtherDifferent()
+            || $this->isProductIdentifierDifferent();
     }
 
     public function isTitleDifferent(): bool
@@ -42,6 +43,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
         $keys = [
             'description_mode',
             'description_template',
+            'product_details',
         ];
 
         return $this->isSettingsDifferent($keys);
@@ -97,6 +99,15 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'condition_attribute',
             'condition_note_mode',
             'condition_note_template',
+        ];
+
+        return $this->isSettingsDifferent($keys);
+    }
+
+    public function isProductIdentifierDifferent(): bool
+    {
+        $keys = [
+            'product_details',
         ];
 
         return $this->isSettingsDifferent($keys);

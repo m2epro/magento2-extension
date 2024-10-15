@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
+use Ess\M2ePro\Model\Ebay\Listing\Product\ChangeIdentifierTracker;
+
 class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\ChangeProcessorAbstract
 {
     public const INSTRUCTION_INITIATOR = 'template_description_change_processor';
@@ -100,6 +102,19 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
 
             $data[] = [
                 'type' => self::INSTRUCTION_TYPE_OTHER_DATA_CHANGED,
+                'priority' => $priority,
+            ];
+        }
+
+        if ($diff->isProductIdentifierDifferent()) {
+            $priority = 5;
+
+            if ($status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
+                $priority = 30;
+            }
+
+            $data[] = [
+                'type' => ChangeIdentifierTracker::INSTRUCTION_TYPE_PRODUCT_IDENTIFIER_CONFIG_CHANGED,
                 'priority' => $priority,
             ];
         }

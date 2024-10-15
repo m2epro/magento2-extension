@@ -63,20 +63,10 @@ class General extends AbstractModel
             return [];
         }
 
-        $data = array_merge(
+        return array_merge(
             $this->getProductsIdentifiersData(),
             $this->getMPNAndBrandData()
         );
-
-        if (empty($data)) {
-            return $data;
-        }
-
-        $template = $this->getEbayListingProduct()->getEbayDescriptionTemplate();
-        $data['include_ebay_details'] = $template->isProductDetailsIncludeEbayDetails();
-        $data['include_image'] = $template->isProductDetailsIncludeImage();
-
-        return $data;
     }
 
     private function getProductsIdentifiersData(): array

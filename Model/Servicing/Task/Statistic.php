@@ -1119,7 +1119,6 @@ class Statistic implements \Ess\M2ePro\Model\Servicing\TaskInterface
         $this->_appendComponentPolicyInfo('selling_format', 'walmart', $data);
         $this->_appendComponentPolicyInfo('synchronization', 'walmart', $data);
         $this->_appendComponentPolicyInfo('description', 'walmart', $data);
-        $this->_appendComponentPolicyInfo('category', 'walmart', $data);
     }
 
     /**

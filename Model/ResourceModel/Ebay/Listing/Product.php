@@ -8,6 +8,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_EBAY_ITEM_ID = 'ebay_item_id';
     public const COLUMN_TEMPLATE_SYNCHRONIZATION_ID = 'template_synchronization_id';
     public const COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH = 'online_product_identifiers_hash';
+    public const COLUMN_ONLINE_DESCRIPTION = 'online_description';
 
     public const COLUMN_PRICE_LAST_UPDATE_DATE = 'price_last_update_date';
 
