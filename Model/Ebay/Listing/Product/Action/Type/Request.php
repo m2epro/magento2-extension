@@ -447,15 +447,13 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         return $dataBuilder->getBuilderData();
     }
 
-    /**
-     * @return array
-     */
-    public function getDescriptionData()
+    public function getDescriptionData(): array
     {
         if (!$this->getConfigurator()->isDescriptionAllowed()) {
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Description $dataBuilder */
         $dataBuilder = $this->getDataBuilder('description');
 
         return $dataBuilder->getBuilderData();

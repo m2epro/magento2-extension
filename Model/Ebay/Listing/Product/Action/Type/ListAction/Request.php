@@ -71,27 +71,47 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             $this->getEbayListingProduct()->setData('item_uuid', $uuid)->save();
         }
 
+        $generalData = $this->getGeneralData();
+        $descriptionData = $this->getDescriptionData();
+        $otherData = $this->getOtherData();
+
+        if (
+            isset($generalData['product_details'])
+            || isset($descriptionData['product_details'])
+            || isset($otherData['product_details'])
+        ) {
+            $generalData['product_details'] = array_merge(
+                $generalData['product_details'] ?? [],
+                $descriptionData['product_details'] ?? [],
+                $otherData['product_details'] ?? []
+            );
+            unset($descriptionData['product_details']);
+            unset($otherData['product_details']);
+        }
+
         $data = array_merge(
             [
                 'sku' => $this->getEbayListingProduct()->getSku(),
                 'item_uuid' => $uuid,
             ],
-            $this->getGeneralData(),
+            $generalData,
             $this->getQtyData(),
             $this->getPriceData(),
             $this->getTitleData(),
             $this->getSubtitleData(),
-            $this->getDescriptionData(),
+            $descriptionData,
             $this->getImagesData(),
             $this->getCategoriesData(),
             $this->getPartsData(),
             $this->getReturnData(),
             $this->getShippingData(),
             $this->getVariationsData(),
-            $this->getOtherData()
+            $otherData
         );
 
-        $this->isVerifyCall && $data['verify_call'] = true;
+        if ($this->isVerifyCall) {
+            $data['verify_call'] = true;
+        }
 
         return $data;
     }
