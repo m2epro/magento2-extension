@@ -5,6 +5,7 @@ namespace Ess\M2ePro\Model\Setup;
 use Ess\M2ePro\Helper\Module\Database\Tables as TablesHelper;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\Marketplace as AmazonDictionaryMarketplaceResoruce;
 use Ess\M2ePro\Model\ResourceModel\Amazon\Dictionary\ProductType as AmazonDictionaryProductTypeResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Account as ebayAccountResource;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Config\ConfigOptionsListConstants;
@@ -3063,7 +3064,7 @@ class Installer
         $moduleConfig->insert('/health_status/notification/', 'level', 40);
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WIZARD),
+            $this->getFullTableName(TablesHelper::TABLE_WIZARD),
             [
                 [
                     'nick' => 'installationEbay',
@@ -3160,197 +3161,210 @@ class Installer
      */
     private function installEbaySchema()
     {
-        $ebayAccountTable = $this->getConnection()->newTable($this->getFullTableName('ebay_account'))
-                                 ->addColumn(
-                                     'account_id',
-                                     Table::TYPE_INTEGER,
-                                     null,
-                                     ['unsigned' => true, 'primary' => true, 'nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'mode',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'server_hash',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'user_id',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'is_token_exist',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'sell_api_token_expired_date',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'marketplaces_data',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'inventory_last_synchronization',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'other_listings_synchronization',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                 )
-                                 ->addColumn(
-                                     'other_listings_mapping_mode',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'other_listings_mapping_settings',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'other_listings_last_synchronization',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'feedbacks_receive',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'feedbacks_auto_response',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'feedbacks_auto_response_only_positive',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'feedbacks_last_used_id',
-                                     Table::TYPE_INTEGER,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'ebay_store_title',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'ebay_store_url',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'ebay_store_subscription_level',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'ebay_store_description',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'info',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'user_preferences',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'rate_tables',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'ebay_shipping_discount_profiles',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'job_token',
-                                     Table::TYPE_TEXT,
-                                     255,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'orders_last_synchronization',
-                                     Table::TYPE_DATETIME,
-                                     null,
-                                     ['default' => null]
-                                 )
-                                 ->addColumn(
-                                     'magento_orders_settings',
-                                     Table::TYPE_TEXT,
-                                     null,
-                                     ['nullable' => false]
-                                 )
-                                 ->addColumn(
-                                     'create_magento_invoice',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                 )
-                                 ->addColumn(
-                                     'create_magento_shipment',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 1]
-                                 )
-                                 ->addColumn(
-                                     \Ess\M2ePro\Model\ResourceModel\Ebay\Account::COLUMN_SKIP_EVTIN,
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['unsigned' => true, 'nullable' => false, 'default' => 0]
-                                 )
-                                 ->addColumn(
-                                     'messages_receive',
-                                     Table::TYPE_SMALLINT,
-                                     null,
-                                     ['nullable' => false, 'default' => 0]
-                                 )
-                                 ->setOption('type', 'INNODB')
-                                 ->setOption('charset', 'utf8')
-                                 ->setOption('collate', 'utf8_general_ci')
-                                 ->setOption('row_format', 'dynamic');
+        $tableName = $this->getFullTableName(TablesHelper::TABLE_EBAY_ACCOUNT);
+
+        $ebayAccountTable = $this->getConnection()->newTable($tableName);
+
+        $ebayAccountTable
+            ->addColumn(
+                ebayAccountResource::COLUMN_ACCOUNT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_SERVER_HASH,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_USER_ID,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_IS_TOKEN_EXIST,
+                Table::TYPE_SMALLINT,
+                null,
+                ['nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_SELL_API_TOKEN_EXPIRED_DATE,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_MARKETPLACES_DATA,
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_INVENTORY_LAST_SYNCHRONIZATION,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_OTHER_LISTINGS_SYNCHRONIZATION,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_OTHER_LISTINGS_MAPPING_MODE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_OTHER_LISTINGS_MAPPING_SETTINGS,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_OTHER_LISTINGS_LAST_SYNCHRONIZATION,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_FEEDBACKS_RECEIVE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_FEEDBACKS_AUTO_RESPONSE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_FEEDBACKS_AUTO_RESPONSE_ONLY_POSITIVE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_FEEDBACKS_LAST_USED_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_EBAY_SITE,
+                Table::TYPE_TEXT,
+                20,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_EBAY_STORE_TITLE,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_EBAY_STORE_URL,
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_EBAY_STORE_SUBSCRIPTION_LEVEL,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_EBAY_STORE_DESCRIPTION,
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_INFO,
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_USER_PREFERENCES,
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_RATE_TABLES,
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_EBAY_SHIPPING_DISCOUNT_PROFILES,
+                Table::TYPE_TEXT,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_JOB_TOKEN,
+                Table::TYPE_TEXT,
+                255,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_ORDERS_LAST_SYNCHRONIZATION,
+                Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_MAGENTO_ORDERS_SETTINGS,
+                Table::TYPE_TEXT,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_CREATE_MAGENTO_INVOICE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_CREATE_MAGENTO_SHIPMENT,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_SKIP_EVTIN,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ebayAccountResource::COLUMN_MESSAGES_RECEIVE,
+                Table::TYPE_SMALLINT,
+                null,
+                ['nullable' => false, 'default' => 0]
+            );
+
+        $ebayAccountTable
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
         $this->getConnection()->createTable($ebayAccountTable);
 
         $ebayAccountStoreCategoryTable = $this->getConnection()->newTable(
@@ -4825,7 +4839,7 @@ class Installer
         $this->getConnection()->createTable($ebayListingProductScheduledStopActionTable);
 
         $ebayMarketplaceTable = $this->getConnection()->newTable(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_MARKETPLACE)
+            $this->getFullTableName(TablesHelper::TABLE_EBAY_MARKETPLACE)
         )
                                      ->addColumn(
                                          EbayMarketplaceResource::COLUMN_MARKETPLACE_ID,
@@ -7724,7 +7738,7 @@ class Installer
         );
 
         $this->getConnection()->insertMultiple(
-            $this->getFullTableName(\Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_MARKETPLACE),
+            $this->getFullTableName(TablesHelper::TABLE_EBAY_MARKETPLACE),
             [
                 [
                     'marketplace_id' => 1,
@@ -11675,7 +11689,7 @@ class Installer
 
         #region walmart_dictionary_category
         $walmartDictionaryCategoryTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_DICTIONARY_CATEGORY
+            TablesHelper::TABLE_WALMART_DICTIONARY_CATEGORY
         );
         $walmartDictionaryCategoryTable = $this->getConnection()
                                                ->newTable($walmartDictionaryCategoryTableName);
@@ -11762,7 +11776,7 @@ class Installer
 
         #region walmart_dictionary_marketplace
         $walmartDictionaryMarketplaceTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_DICTIONARY_MARKETPLACE
+            TablesHelper::TABLE_WALMART_DICTIONARY_MARKETPLACE
         );
         $walmartDictionaryMarketplaceTable = $this->getConnection()
                                                   ->newTable($walmartDictionaryMarketplaceTableName);
@@ -11814,7 +11828,7 @@ class Installer
 
         #region walmart_dictionary_product_type
         $walmartDictionaryProductTypeTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_DICTIONARY_PRODUCT_TYPE
+            TablesHelper::TABLE_WALMART_DICTIONARY_PRODUCT_TYPE
         );
         $walmartDictionaryProductTypeTable = $this->getConnection()->newTable(
             $walmartDictionaryProductTypeTableName
@@ -12013,7 +12027,7 @@ class Installer
 
         #region walmart_listing
         $walmartListingTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_LISTING
+            TablesHelper::TABLE_WALMART_LISTING
         );
         $walmartListingTable = $this->getConnection()->newTable($walmartListingTableName);
         $walmartListingTable->addColumn(
@@ -12073,7 +12087,7 @@ class Installer
 
         #region walmart_listing_auto_category_group
         $walmartListingAutoCategoryGroupTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_LISTING_AUTO_CATEGORY_GROUP
+            TablesHelper::TABLE_WALMART_LISTING_AUTO_CATEGORY_GROUP
         );
         $walmartListingAutoCategoryGroupTable = $this->getConnection()->newTable(
             $walmartListingAutoCategoryGroupTableName
@@ -13839,7 +13853,7 @@ class Installer
 
         #region walmart_product_type
         $walmartProductTypeTableName = $this->getFullTableName(
-            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_WALMART_PRODUCT_TYPE
+            TablesHelper::TABLE_WALMART_PRODUCT_TYPE
         );
         $walmartProductTypeTable = $this->getConnection()->newTable(
             $this->getFullTableName($walmartProductTypeTableName)

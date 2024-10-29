@@ -1257,4 +1257,29 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         return (bool)$setting;
     }
+
+    public function getEbaySite(): string
+    {
+        $site = (string)$this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Account::COLUMN_EBAY_SITE);
+        if (!empty($site)) {
+            return $site;
+        }
+
+        $info = $this->getInfo();
+        if (empty($info)) {
+            return '';
+        }
+
+        $infoData = json_decode($info, true);
+        if (!is_array($infoData) || !isset($infoData['Site'])) {
+            return '';
+        }
+
+        return $infoData['Site'];
+    }
+
+    public function getInfo()
+    {
+        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Account::COLUMN_INFO);
+    }
 }

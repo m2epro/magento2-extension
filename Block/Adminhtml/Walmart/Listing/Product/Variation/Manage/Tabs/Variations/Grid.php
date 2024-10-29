@@ -446,6 +446,9 @@ HTML;
             $sortedOptions = [];
 
             foreach ($matchedAttributes as $magentoAttr => $walmartAttr) {
+                if (empty($options[$walmartAttr])) {
+                    continue;
+                }
                 $sortedOptions[$walmartAttr] = $options[$walmartAttr];
             }
 

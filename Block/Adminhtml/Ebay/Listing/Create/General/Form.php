@@ -64,13 +64,19 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $title = $this->ebayFactory->getObject('Listing')->getCollection()->getSize() == 0 ? 'Default' : '';
         $accountId = '';
 
-        $account = $this->ebayFactory->getObject('Account')->getCollection()->getLastItem();
+        /** @var \Ess\M2ePro\Model\Account $accountModel */
+        $accountModel = $this->ebayFactory->getObject('Account');
+        /** @var \Ess\M2ePro\Model\Account $account */
+        $account = $accountModel->getCollection()->getLastItem();
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', '');
         $marketplaceSelectionDisabled = true;
         if (!$marketplaceId && $account->getId()) {
             $accountId = $account->getId();
-            $info = \Ess\M2ePro\Helper\Json::decode($account->getChildObject()->getInfo());
-            $marketplaceId = $this->activeRecordFactory->getObject('Marketplace')->getIdByCode($info['Site']);
+            /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
+            $ebayAccount = $account->getChildObject();
+            /** @var \Ess\M2ePro\Model\Marketplace $marketplaceModel */
+            $marketplaceModel = $this->activeRecordFactory->getObject('Marketplace');
+            $marketplaceId = $marketplaceModel->getIdByCode($ebayAccount->getEbaySite());
             $marketplaceSelectionDisabled = false;
         }
 

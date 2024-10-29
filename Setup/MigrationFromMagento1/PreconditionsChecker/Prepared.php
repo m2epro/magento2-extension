@@ -72,12 +72,13 @@ class Prepared extends AbstractModel
         }
 
         if (!$this->compareVersions($sourceParams['/migrationtomagento2/source/m2epro/']['version'])) {
+            $docUrl = \Ess\M2ePro\Helper\Module\Support::DOCUMENTATION_URL . 'migration-from-m1-to-m2';
             throw new \Exception(
                 $this->helperFactory->getObject('Module\Translation')->translate([
                     'Your current Module version <b>%v%</b> for Magento v1.x does not support Data Migration.
                     Please read our <a href="%url%" target="_blank">Migration Guide</a> for more details.',
                     $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
-                    $this->supportHelper->getDocumentationArticleUrl('migration-from-m1-to-m2')
+                    $docUrl
                 ])
             );
         }

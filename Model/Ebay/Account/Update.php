@@ -6,6 +6,7 @@ namespace Ess\M2ePro\Model\Ebay\Account;
 
 use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
 use Ess\M2ePro\Model\Ebay\Account\Issue\ValidTokens;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Account as EbayAccountResource;
 
 class Update
 {
@@ -45,10 +46,10 @@ class Update
         $responseData = $this->updateOnServer($account, $authCode, $mode);
 
         $dataForUpdate = [
-            'info' => \Ess\M2ePro\Helper\Json::encode($responseData['info']),
-            'sell_api_token_expired_date' => $responseData['token_expired_date'],
-            'user_id' => $responseData['user_id'],
-            'is_token_exist' => 1
+            EbayAccountResource::COLUMN_EBAY_SITE => $responseData['site'],
+            EbayAccountResource::COLUMN_SELL_API_TOKEN_EXPIRED_DATE => $responseData['token_expired_date'],
+            EbayAccountResource::COLUMN_USER_ID => $responseData['user_id'],
+            EbayAccountResource::COLUMN_IS_TOKEN_EXIST => 1
         ];
 
         $account->getChildObject()->addData($dataForUpdate);

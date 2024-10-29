@@ -78,9 +78,12 @@ class SetChildListingProductOptions extends Main
 
         foreach ($matchedAttributes as $productAttribute => $channelAttribute) {
             $productOption = $magentoOptions[$productAttribute];
-            $channelOption = $channelOptions[$channelAttribute];
+            $channelOption = $channelOptions[$channelAttribute] ?? null;
 
-            if ($productOption == $channelOption) {
+            if (
+                $channelOption === null
+                || $productOption == $channelOption
+            ) {
                 continue;
             }
 

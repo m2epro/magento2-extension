@@ -1,21 +1,14 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Setup\MigrationFromMagento1;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Setup\Module\Setup as MagentoSetup;
 
-/**
- * Class \Ess\M2ePro\Setup\MigrationFromMagento1\Modifier
- */
 class Modifier
 {
+    private const WIZARD_STATUS_SKIPPED = 3;
+
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
@@ -161,6 +154,14 @@ class Modifier
                 'step'     => null,
                 'type'     => 1,
                 'priority' => 5,
+            ],
+            [
+                'nick' => 'walmartMigrationToProductTypes',
+                'view' => 'walmart',
+                'status' => self::WIZARD_STATUS_SKIPPED,
+                'step' => null,
+                'type' => 1,
+                'priority' => 8,
             ]
         ];
 

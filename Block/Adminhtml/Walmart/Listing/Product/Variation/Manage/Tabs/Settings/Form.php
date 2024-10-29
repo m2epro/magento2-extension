@@ -123,10 +123,7 @@ HTML;
     <tfoot>
 HTML;
 
-        if (
-            !$this->getListingProductTypeModel()->hasChannelGroupId() &&
-            !$this->getListingProduct()->isSetProcessingLock('child_products_in_action')
-        ) {
+        if (!$this->getListingProduct()->isSetProcessingLock('child_products_in_action')) {
             $button = $this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)->setData([
                 'class' => 'action primary',
                 'label' => $this->getListingProductTypeModel()->hasChannelAttributes() ?

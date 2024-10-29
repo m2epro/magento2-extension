@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\Ebay\Account;
 
 use Ess\M2ePro\Model\Ebay\Account as Account;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Account as EbayAccountResource;
 
 class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
 {
@@ -29,7 +30,8 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'mode',
             'user_id',
             'is_token_exist',
-            'info',
+            EbayAccountResource::COLUMN_INFO,
+            EbayAccountResource::COLUMN_EBAY_SITE,
             'server_hash',
             'sell_api_token_expired_date',
         ];
@@ -433,7 +435,7 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'other_listings_mapping_settings' => [
                 'sku' => [
                     'mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
-                    'priority' => 1
+                    'priority' => 1,
                 ],
             ],
             'mapping_sku_mode' => Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT,
@@ -505,10 +507,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'create_magento_shipment' => 1,
             'skip_evtin' => 0,
 
+            EbayAccountResource::COLUMN_EBAY_SITE => '',
             'ebay_store_title' => '',
             'ebay_store_url' => '',
             'ebay_store_subscription_level' => '',
             'ebay_store_description' => '',
+
+            EbayAccountResource::COLUMN_INFO => json_encode([]),
 
             'feedbacks_receive' => 0,
             'feedbacks_auto_response' => Account::FEEDBACKS_AUTO_RESPONSE_NONE,

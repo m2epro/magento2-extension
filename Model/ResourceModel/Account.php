@@ -7,6 +7,7 @@ namespace Ess\M2ePro\Model\ResourceModel;
 class Account extends ActiveRecord\Component\Parent\AbstractModel
 {
     public const COLUMN_ID = 'id';
+    public const COLUMN_TITLE = 'title';
     public const COLUMN_CREATE_DATE = 'create_date';
 
     public function _construct()

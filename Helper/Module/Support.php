@@ -1,15 +1,11 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Helper\Module;
 
 class Support
 {
+    public const DOCUMENTATION_URL = 'https://docs-m2.m2epro.com/';
+
     /** @var \Magento\Backend\Model\UrlInterface */
     protected $urlBuilder;
     /** @var \Ess\M2ePro\Model\Factory */
@@ -23,14 +19,6 @@ class Support
     /** @var \Ess\M2ePro\Model\Config\Manager */
     private $config;
 
-    /**
-     * @param \Magento\Backend\Model\UrlInterface $urlBuilder
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     * @param \Ess\M2ePro\Helper\Magento $magentoHelper
-     * @param \Ess\M2ePro\Helper\Module $moduleHelper
-     * @param \Ess\M2ePro\Helper\Client $clientHelper
-     * @param \Ess\M2ePro\Model\Config\Manager $config
-     */
     public function __construct(
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Model\Factory $modelFactory,

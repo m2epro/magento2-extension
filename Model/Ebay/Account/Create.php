@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ess\M2ePro\Model\Ebay\Account;
 
 use Ess\M2ePro\Model\Ebay\Account as EbayAccount;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Account as EbayAccountResource;
 
 class Create
 {
@@ -44,13 +45,13 @@ class Create
             throw new \Ess\M2ePro\Model\Exception('An account with the same eBay User ID already exists.');
         }
 
-        $data['mode'] = $mode;
-        $data['is_token_exist'] = 1;
-        $data['info'] = \Ess\M2ePro\Helper\Json::encode($responseData['info']);
-        $data['sell_api_token_expired_date'] = $responseData['token_expired_date'];
-        $data['server_hash'] = $responseData['hash'];
-        $data['user_id'] = $responseData['user_id'];
-        $data['title'] = $responseData['user_id'];
+        $data[EbayAccountResource::COLUMN_MODE] = $mode;
+        $data[EbayAccountResource::COLUMN_IS_TOKEN_EXIST] = 1;
+        $data[EbayAccountResource::COLUMN_EBAY_SITE] = $responseData['site'];
+        $data[EbayAccountResource::COLUMN_SELL_API_TOKEN_EXPIRED_DATE] = $responseData['token_expired_date'];
+        $data[EbayAccountResource::COLUMN_SERVER_HASH] = $responseData['hash'];
+        $data[EbayAccountResource::COLUMN_USER_ID] = $responseData['user_id'];
+        $data[\Ess\M2ePro\Model\ResourceModel\Account::COLUMN_TITLE] = $responseData['user_id'];
 
         $builder->build($account, $data);
 
