@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Category\Specific
- */
 class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     public const MODE_ITEM_SPECIFICS = 1;
@@ -38,15 +29,11 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     private $categorySpecificSourceModels = [];
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category\Specific::class);
     }
-
-    //########################################
 
     public function delete()
     {
@@ -57,7 +44,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $temp;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Template\Category
@@ -108,14 +95,35 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     // ----------------------------------------
 
+    public function setTemplateCategoryId(int $id): self
+    {
+        $this->setData('template_category_id', $id);
+
+        return $this;
+    }
+
     public function getTemplateCategoryId(): int
     {
         return (int)$this->getData('template_category_id');
     }
 
+    public function setMode(int $mode): self
+    {
+        $this->setData('mode', $mode);
+
+        return $this;
+    }
+
     public function getMode(): int
     {
         return (int)$this->getData('mode');
+    }
+
+    public function setAttributeTitle(string $title): self
+    {
+        $this->setData('attribute_title', $title);
+
+        return $this;
     }
 
     public function getAttributeTitle(): string
@@ -128,9 +136,30 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return $this->getData('value_custom_value');
     }
 
+    public function setValueCustomAttribute(string $value): self
+    {
+        $this->setData('value_custom_attribute', $value);
+
+        return $this;
+    }
+
     public function getValueCustomAttribute()
     {
         return $this->getData('value_custom_attribute');
+    }
+
+    public function setValueCustomAttributeMode(): self
+    {
+        $this->setValueMode(self::VALUE_MODE_CUSTOM_ATTRIBUTE);
+
+        return $this;
+    }
+
+    public function setValueMode(int $mode): self
+    {
+        $this->setData('value_mode', $mode);
+
+        return $this;
     }
 
     public function getValueMode(): int
@@ -154,27 +183,27 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
     public function isNoneValueMode(): bool
     {
-        return $this->getValueMode() == self::VALUE_MODE_NONE;
+        return $this->getValueMode() === self::VALUE_MODE_NONE;
     }
 
     public function isEbayRecommendedValueMode(): bool
     {
-        return $this->getValueMode() == self::VALUE_MODE_EBAY_RECOMMENDED;
+        return $this->getValueMode() === self::VALUE_MODE_EBAY_RECOMMENDED;
     }
 
     public function isCustomValueValueMode(): bool
     {
-        return $this->getValueMode() == self::VALUE_MODE_CUSTOM_VALUE;
+        return $this->getValueMode() === self::VALUE_MODE_CUSTOM_VALUE;
     }
 
     public function isCustomAttributeValueMode(): bool
     {
-        return $this->getValueMode() == self::VALUE_MODE_CUSTOM_ATTRIBUTE;
+        return $this->getValueMode() === self::VALUE_MODE_CUSTOM_ATTRIBUTE;
     }
 
     public function isCustomLabelAttributeValueMode(): bool
     {
-        return $this->getValueMode() == self::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE;
+        return $this->getValueMode() === self::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE;
     }
 
     // ----------------------------------------

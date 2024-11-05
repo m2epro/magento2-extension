@@ -208,6 +208,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
                 $order['shipping_address'] = $this->parseShippingAddress($orderData, $marketplace);
 
                 $order['shipping_date_to'] = $shipping['ship_date']['to'];
+                $order['delivery_date_from'] = $shipping['delivery_date']['from'];
                 $order['delivery_date_to'] = $shipping['delivery_date']['to'];
 
                 $order['currency'] = trim((string)($orderData['currency'] ?? ''));

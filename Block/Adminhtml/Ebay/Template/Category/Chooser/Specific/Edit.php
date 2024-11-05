@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific;
 
 use Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
@@ -35,7 +29,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         $this->dataHelper = $dataHelper;
     }
 
-    public function _construct()
+    public function _construct(): void
     {
         parent::_construct();
 
@@ -150,6 +144,14 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::class)
         );
 
+        $parentHtml = parent::_toHtml();
+
+        $jsCustomChangeSpecifics = '';
+        // Block/Adminhtml/Ebay/Template/Category/Chooser/Specific/Edit/Form.php:58
+        if (Form\Element\Dictionary::$isSetMappedAttribute) {
+            $jsCustomChangeSpecifics = 'EbayTemplateCategorySpecificsObj.markAsCustomChanged();';
+        }
+
         $this->js->add(
             <<<JS
     require([
@@ -158,11 +160,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         window.EbayTemplateCategorySpecificsObj = new EbayTemplateCategorySpecifics();
         EbayTemplateCategorySpecificsObj.createSpecificsSnapshot();
+        $jsCustomChangeSpecifics
     });
 JS
         );
-
-        $parentHtml = parent::_toHtml();
 
         return <<<HTML
 <div id="chooser_container_specific">

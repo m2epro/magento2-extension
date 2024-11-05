@@ -93,6 +93,13 @@ class ChangeProcessor extends \Ess\M2ePro\Model\Ebay\Template\ChangeProcessor\Ch
             ];
         }
 
+        if ($diff->isComplianceDocumentsDifferent() && $status == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
+            $data[] = [
+                'type' => self::INSTRUCTION_TYPE_COMPLIANCE_DOCUMENTS_DATA_CHANGED,
+                'priority' => 30,
+            ];
+        }
+
         if ($diff->isOtherDifferent()) {
             $priority = 5;
 

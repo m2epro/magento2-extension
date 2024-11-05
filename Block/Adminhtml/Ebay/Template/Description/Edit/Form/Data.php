@@ -1303,6 +1303,23 @@ HTML
             ]
         );
 
+        $documentFieldset = $form->addFieldset(
+            'magento_block_ebay_template_description_compliance_documents',
+            [
+                'legend' => __('Compliance Documents'),
+                'collapsable' => true,
+            ]
+        );
+
+        $documentFieldset->addField(
+            'compliance_documents',
+            ComplianceDocuments\FormElement::class,
+            [
+                'attributes' => $allAttributesByTypes['text_textarea'],
+                'saved_compliance_documents' => $formData['compliance_documents'],
+            ]
+        )->setRenderer($this->getLayout()->createBlock(ComplianceDocuments\FormElementRender::class));
+
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_description_form_data_upgrade_tools',
             [
@@ -1480,6 +1497,12 @@ JS
             unset($data['product_details']);
         }
 
+        if (!empty($data['compliance_documents']) && is_string($data['compliance_documents'])) {
+            $data['compliance_documents'] = \Ess\M2ePro\Helper\Json::decode($data['compliance_documents']);
+        } else {
+            unset($data['compliance_documents']);
+        }
+
         if (!empty($data['variation_configurable_images']) && is_string($data['variation_configurable_images'])) {
             $data['variation_configurable_images'] = \Ess\M2ePro\Helper\Json::decode(
                 $data['variation_configurable_images']
@@ -1523,6 +1546,7 @@ JS
 
         $default['enhancement'] = explode(',', $default['enhancement']);
         $default['product_details'] = \Ess\M2ePro\Helper\Json::decode($default['product_details']);
+        $default['compliance_documents'] = \Ess\M2ePro\Helper\Json::decode($default['compliance_documents']);
         $default['variation_configurable_images'] = \Ess\M2ePro\Helper\Json::decode(
             $default['variation_configurable_images']
         );

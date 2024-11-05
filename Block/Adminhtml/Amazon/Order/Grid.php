@@ -162,6 +162,20 @@ class Grid extends AbstractGrid
         );
 
         $this->addColumn(
+            'delivery_date',
+            [
+                'header' => __('Deliver By Date'),
+                'align' => 'left',
+                'type' => 'datetime',
+                'filter' => \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime::class,
+                'format' => \IntlDateFormatter::MEDIUM,
+                'filter_time' => true,
+                'index' => 'delivery_date_from',
+                'frame_callback' => [$this, 'callbackDeliveryDate'],
+            ]
+        );
+
+        $this->addColumn(
             'magento_order_num',
             [
                 'header' => __('Magento Order #'),
@@ -390,6 +404,20 @@ class Grid extends AbstractGrid
     {
         return $this->_localeDate->formatDate(
             $row->getChildObject()->getData('shipping_date_to'),
+            \IntlDateFormatter::MEDIUM,
+            true
+        );
+    }
+
+    public function callbackDeliveryDate($value, $row, $column, $isExport)
+    {
+        $deliveryDate = $row->getChildObject()->getData('delivery_date_from');
+        if (empty($deliveryDate)) {
+            return __('N/A');
+        }
+
+        return $this->_localeDate->formatDate(
+            $deliveryDate,
             \IntlDateFormatter::MEDIUM,
             true
         );

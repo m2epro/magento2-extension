@@ -22,6 +22,9 @@ class CollectHandler implements \Ess\M2ePro\Model\Listing\Product\Instruction\Ha
         return [
             ChangeProcessorAbstract::INSTRUCTION_TYPE_PRODUCT_DATA_POTENTIALLY_CHANGED,
             ChangeProcessor::INSTRUCTION_TYPE_VIDEO_DATA_CHANGED,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_OTHER,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_PRODUCT_MOVED_FROM_LISTING,
+            \Ess\M2ePro\Model\Listing::INSTRUCTION_TYPE_CHANGE_LISTING_STORE_VIEW,
         ];
     }
 

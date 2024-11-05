@@ -8,9 +8,11 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as DescriptionResource;
+
 /**
  * @method \Ess\M2ePro\Model\Template\Description getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description getResource()
+ * @method DescriptionResource getResource()
  */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -141,7 +143,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description::class);
+        $this->_init(DescriptionResource::class);
     }
 
     /**
@@ -999,15 +1001,27 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     private function getVideoMode(): int
     {
-        return (int)$this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description::COLUMN_VIDEO_MODE);
+        return (int)$this->getDataByKey(DescriptionResource::COLUMN_VIDEO_MODE);
     }
 
     public function getVideoAttribute(): ?string
     {
-        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description::COLUMN_VIDEO_ATTRIBUTE);
+        return $this->getDataByKey(DescriptionResource::COLUMN_VIDEO_ATTRIBUTE);
     }
 
     // ---------------------------------------
+
+    public function getComplianceDocuments(): array
+    {
+        $complianceDocuments = $this->getData(DescriptionResource::COLUMN_COMPLIANCE_DOCUMENTS);
+        if (empty($complianceDocuments)) {
+            return [];
+        }
+
+        return json_decode($complianceDocuments, true);
+    }
+
+    // ----------------------------------------
 
     /**
      * @return bool

@@ -13,6 +13,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private EbayInstruction\AutoActions\Handler $ebayAutoActionHandler;
     private EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler;
     private EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler;
+    private EbayInstruction\ComplianceDocuments\Handler $ebayDocumentsHandler;
     private \Ess\M2ePro\Model\Config\Manager $configManager;
 
     public function __construct(
@@ -29,7 +30,8 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory,
         EbayInstruction\AutoActions\Handler $ebayAutoActionHandler,
         EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler,
-        EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler
+        EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler,
+        EbayInstruction\ComplianceDocuments\Handler $ebayDocumentsHandler
     ) {
         parent::__construct(
             $cronManager,
@@ -47,6 +49,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->ebayAutoActionHandler = $ebayAutoActionHandler;
         $this->ebaySynchronizationTemplateHandler = $ebaySynchronizationTemplateHandler;
         $this->ebayVideoCollectHandler = $ebayVideoCollectHandler;
+        $this->ebayDocumentsHandler = $ebayDocumentsHandler;
     }
 
     protected function performActions(): void
@@ -56,6 +59,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $processor->setMaxListingsProductsCount($this->getListingProductsLimit());
 
         $processor->registerHandler($this->ebayVideoCollectHandler);
+        $processor->registerHandler($this->ebayDocumentsHandler);
         $processor->registerHandler($this->ebayAutoActionHandler);
         $processor->registerHandler($this->ebaySynchronizationTemplateHandler);
 

@@ -28,6 +28,10 @@ class AffectedProducts
      */
     public function getListingProducts(array $optionTitles): array
     {
+        if (empty($optionTitles)) {
+            return [];
+        }
+
         $collection = $this->collectionFactory->create();
         $collection->addFieldToFilter(
             \Ess\M2ePro\Model\ResourceModel\Listing\Product::COLUMN_ID,

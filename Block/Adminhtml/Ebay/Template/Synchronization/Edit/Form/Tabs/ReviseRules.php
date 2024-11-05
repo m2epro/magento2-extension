@@ -314,11 +314,9 @@ HTML
                     0 => $this->__('No'),
                     1 => $this->__('Yes'),
                 ],
-                'tooltip' => __(
-                    'Automatically revises Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size,
-                    Taxation, Immediate Payment and Video on eBay when the related data is modified in
-                    Policy Templates.'
-                ),
+                'tooltip' => __('Automatically revises Minimum Advertised Price (MAP), Item Condition, ' .
+                    'Condition Note, Lot Size, Taxation, Immediate Payment, Compliance Documents and Video on eBay ' .
+                    'when the related data is modified in Policy Templates.'),
             ]
         );
 
@@ -329,14 +327,10 @@ HTML
                 'messages' => [
                     [
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
-                        'content' => __(
-                            'With Other option enabled, all of the following details will be automatically synchronized:
-                            <br/>
-                            <b>
-                                Minimum Advertised Price (MAP), Item Condition, Condition Note, Lot Size,
-                                Taxation, Immediate Payment and Video on eBay
-                            </b>'
-                        ),
+                        'content' => __('With Other option enabled, all of the following details will ' .
+                            'be automatically synchronized:<br/><b>Minimum Advertised Price (MAP), Item Condition, ' .
+                            'Condition Note, Lot Size, Taxation, Immediate Payment, Compliance Documents ' .
+                            'and Video on eBay</b>'),
                     ],
                 ],
                 'style' => 'width: 70%; margin-left: 70px; margin-top: -20px;',

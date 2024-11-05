@@ -120,6 +120,7 @@ class Builder extends AbstractModel
         $this->setData('shipping_mapping', $data['shipping_mapping']);
         $this->setData('shipping_price', (float)$data['shipping_price']);
         $this->setData('shipping_date_to', $data['shipping_date_to']);
+        $this->setData('delivery_date_from', $data['delivery_date_from']);
         $this->setData('delivery_date_to', $data['delivery_date_to']);
         // ---------------------------------------
 

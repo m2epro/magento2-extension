@@ -1,21 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Category;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Template\Category\AffectedListingsProducts
- */
 class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListingsProductsAbstract
 {
     private $ebayFactory;
-
-    //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -28,7 +17,7 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @inheritDoc
@@ -44,6 +33,4 @@ class AffectedListingsProducts extends \Ess\M2ePro\Model\Template\AffectedListin
 
         return $collection;
     }
-
-    //########################################
 }

@@ -572,7 +572,10 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $dataBuilder = $this->getDataBuilder('other');
         $data = $dataBuilder->getBuilderData();
 
-        $this->addMetaData('other_data', $data);
+        $this->addMetaData(
+            'other_data',
+            array_merge($data, ['compliance_documents' => $dataBuilder->getMetaData()['compliance_documents'] ?? []])
+        );
 
         return $data;
     }

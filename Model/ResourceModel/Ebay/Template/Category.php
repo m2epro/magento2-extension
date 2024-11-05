@@ -1,21 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
-/**
- * Class \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Category
- */
 class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
-    //########################################
-
-    public function _construct()
+    public function _construct(): void
     {
         $this->_init('m2epro_ebay_template_category', 'id');
         $this->addUniqueField(
@@ -26,12 +15,12 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
                     'category_attribute',
                     'is_custom_template',
                 ],
-                'title' => $this->helperFactory->getObject('Module\Translation')->__('CategoryTemplate with same data'),
+                'title' => (string)__('CategoryTemplate with same data'),
             ]
         );
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function loadByCategoryValue(
         \Ess\M2ePro\Model\Ebay\Template\Category $object,
@@ -59,7 +48,7 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
         }
     }
 
-    //########################################
+    // ----------------------------------------
 
     protected function _checkUnique(\Magento\Framework\Model\AbstractModel $object)
     {
@@ -69,6 +58,4 @@ class Category extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMode
 
         return parent::_checkUnique($object);
     }
-
-    //########################################
 }

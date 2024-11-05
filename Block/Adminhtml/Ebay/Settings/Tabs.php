@@ -6,10 +6,9 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
     public const TAB_ID_GENERAL = 'general';
     public const TAB_ID_MOTORS = 'motors';
-    public const TAB_ID_MAPPING = 'mapping';
+    public const TAB_ID_MAPPING_ATTRIBUTES = 'mapping';
 
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors */
-    private $componentEbayMotors;
+    private \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Motors $componentEbayMotors,
@@ -23,11 +22,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $this->componentEbayMotors = $componentEbayMotors;
     }
 
-    /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     protected function _prepareLayout()
     {
         // ---------------------------------------
@@ -79,11 +73,11 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
             $this->addTab(self::TAB_ID_MOTORS, $tab);
         }
 
-        $this->addTab(self::TAB_ID_MAPPING, [
-            'label' => __('Mapping'),
-            'title' => __('Mapping'),
+        $this->addTab(self::TAB_ID_MAPPING_ATTRIBUTES, [
+            'label' => __('Attribute Mapping'),
+            'title' => __('Attribute Mapping'),
             'content' => $this->getLayout()->createBlock(
-                \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\Mapping::class
+                \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\AttributeMapping::class
             )->toHtml(),
         ]);
 
@@ -92,13 +86,23 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         return parent::_prepareLayout();
     }
 
-    /**
-     * @return \Ess\M2ePro\Block\Adminhtml\Settings\Tabs|\Magento\Backend\Block\Widget\Tabs
-     */
     protected function _beforeToHtml()
     {
+        $result = parent::_beforeToHtml();
+
         $this->jsUrl->add($this->getUrl('*/ebay/getGlobalMessages'), 'getGlobalMessages');
 
-        return parent::_beforeToHtml();
+        $urlForSetGpsrToCategory = $this->getUrl('*/ebay_settings_attributeMapping/setGpsrToCategory');
+
+        $this->js->addRequireJs(
+            [
+                's' => 'M2ePro/Ebay/Settings',
+            ],
+            <<<JS
+        window.EbaySettingsObj = new EbaySettings("$urlForSetGpsrToCategory");
+JS
+        );
+
+        return $result;
     }
 }

@@ -14,6 +14,7 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             || $this->isImagesDifferent()
             || $this->isVariationImagesDifferent()
             || $this->isVideoDifferent()
+            || $this->isComplianceDocumentsDifferent()
             || $this->isOtherDifferent()
             || $this->isProductIdentifierDifferent();
     }
@@ -108,6 +109,15 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
     {
         $keys = [
             'product_details',
+        ];
+
+        return $this->isSettingsDifferent($keys);
+    }
+
+    public function isComplianceDocumentsDifferent(): bool
+    {
+        $keys = [
+            'compliance_documents',
         ];
 
         return $this->isSettingsDifferent($keys);

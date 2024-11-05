@@ -8,10 +8,12 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 {
     private \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor;
     private RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark;
+    private \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $documentProductProcessor;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
         \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
+        \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $documentProductProcessor,
         RemoveEpcHostedImagesWithWatermarkService $removeEpcHostedImagesWithWatermark,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
@@ -30,6 +32,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $this->videoProductProcessor = $videoProductProcessor;
         $this->removeEpcHostedImagesWithWatermark = $removeEpcHostedImagesWithWatermark;
+        $this->documentProductProcessor = $documentProductProcessor;
     }
 
     public function processSuccess(array $response, array $responseParams = []): void
@@ -82,6 +85,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->updateVariationsValues(false);
 
         $this->videoProductProcessor->process($this->getListingProduct());
+        $this->documentProductProcessor->process($this->getListingProduct(), true);
         $this->removeEpcHostedImagesWithWatermark->process($this->getEbayListingProduct());
     }
 

@@ -109,6 +109,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     public const ACTION_VIDEO = 39;
     public const _ACTION_VIDEO = 'Upload Product Video on Channel';
 
+    public const ACTION_COMPLIANCE_DOCUMENTS = 41;
+    public const _ACTION_COMPLIANCE_DOCUMENTS = 'Upload Compliance Documents on Channel';
+
     protected function _construct(): void
     {
         parent::_construct();

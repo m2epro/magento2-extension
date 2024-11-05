@@ -41,6 +41,9 @@ class Tables
     public const TABLE_EBAY_DICTIONARY_MARKETPLACE = self::PREFIX . 'ebay_dictionary_marketplace';
     public const TABLE_EBAY_VIDEO = self::PREFIX . 'ebay_video';
     public const TABLE_EBAY_ORDER = self::PREFIX . 'ebay_order';
+    public const TABLE_EBAY_COMPLIANCE_DOCUMENTS = self::PREFIX . 'ebay_compliance_document';
+    public const TABLE_EBAY_COMPLIANCE_DOCUMENTS_LISTING_PRODUCT
+        = self::PREFIX . 'ebay_compliance_document_listing_product';
 
     public const TABLE_EBAY_BUNDLE_OPTIONS_MAPPING = self::PREFIX . 'ebay_bundle_options_mapping';
 
@@ -70,6 +73,8 @@ class Tables
     public const TABLE_WALMART_TEMPLATE_DESCRIPTION = self::PREFIX . 'walmart_template_description';
 
     public const TABLE_STOP_QUEUE = self::PREFIX . 'stop_queue';
+
+    public const TABLE_ATTRIBUTE_MAPPING = self::PREFIX . 'attribute_mapping';
 
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;

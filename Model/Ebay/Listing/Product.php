@@ -2,9 +2,12 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing;
 
+use Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductDocumentUrlFinderResult as ComplianceDocumentFindUrlResult;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product as EbayProductResource;
+
 /**
  * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product getResource()
+ * @method EbayProductResource getResource()
  */
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -62,8 +65,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     private $rounder;
 
     private \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
         \Ess\M2ePro\Model\Ebay\Promotion\Repository $promotionRepository,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory $priceCalculatorFactory,
@@ -94,12 +99,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
         $this->priceCalculatorFactory = $priceCalculatorFactory;
         $this->promotionRepository = $promotionRepository;
+        $this->dataHelper = $dataHelper;
     }
 
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::class);
+        $this->_init(EbayProductResource::class);
     }
 
     //########################################
@@ -773,7 +779,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getOnlineProductIdentifiersHash(): ?string
     {
         return $this->getData(
-            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH
+            EbayProductResource::COLUMN_ONLINE_PRODUCT_IDENTIFIERS_HASH
         );
     }
 
@@ -904,7 +910,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function setResolveKTypeStatus(int $value): self
     {
-        $this->setData(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_STATUS, $value);
+        $this->setData(EbayProductResource::COLUMN_KTYPES_RESOLVE_STATUS, $value);
 
         return $this;
     }
@@ -912,7 +918,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function setResolveKTypeLastUpdateDate(\DateTime $value): self
     {
         $this->setData(
-            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE,
+            EbayProductResource::COLUMN_KTYPES_RESOLVE_LAST_TRY_DATE,
             $value->format('Y-m-d H:i:s')
         );
 
@@ -921,13 +927,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getResolveKTypeAttempt(): int
     {
-        return $this->getData(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_ATTEMPT);
+        return $this->getData(EbayProductResource::COLUMN_KTYPES_RESOLVE_ATTEMPT);
     }
 
     public function setResolveKTypeAttempt(int $value): self
     {
         $this->setData(
-            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_KTYPES_RESOLVE_ATTEMPT,
+            EbayProductResource::COLUMN_KTYPES_RESOLVE_ATTEMPT,
             $value
         );
 
@@ -943,13 +949,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getVideoUrl(): ?string
     {
-        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_URL);
+        return $this->getDataByKey(EbayProductResource::COLUMN_VIDEO_URL);
     }
 
     public function setVideoUrl(?string $value): self
     {
         $this->setData(
-            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_URL,
+            EbayProductResource::COLUMN_VIDEO_URL,
             $value
         );
 
@@ -963,13 +969,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getVideoId(): ?string
     {
-        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_ID);
+        return $this->getDataByKey(EbayProductResource::COLUMN_VIDEO_ID);
     }
 
     public function setVideoId(?string $value): self
     {
         $this->setData(
-            \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_VIDEO_ID,
+            EbayProductResource::COLUMN_VIDEO_ID,
             $value
         );
 
@@ -983,18 +989,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     public function getOnlineVideoId(): ?string
     {
-        return $this->getDataByKey(\Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product::COLUMN_ONLINE_VIDEO_ID);
+        return $this->getDataByKey(EbayProductResource::COLUMN_ONLINE_VIDEO_ID);
     }
 
     // ----------------------------------------
 
     public function findVideoUrlByPolicy(): ?string
     {
-        $descriptionTemplate = $this->getEbayDescriptionTemplate();
-
-        if (!$descriptionTemplate->isVideoModeAttribute()) {
+        if (!$this->isVideoModeEnabled()) {
             return null;
         }
+
+        $descriptionTemplate = $this->getEbayDescriptionTemplate();
 
         $magentoVideoAttribute = $descriptionTemplate->getVideoAttribute();
         $videoUrl = $this->getMagentoProduct()->getAttributeValue($magentoVideoAttribute);
@@ -1004,6 +1010,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         return $videoUrl;
+    }
+
+    public function isVideoModeEnabled(): bool
+    {
+        $descriptionTemplate = $this->getEbayDescriptionTemplate();
+
+        return $descriptionTemplate->isVideoModeAttribute();
     }
 
     // ---------------------------------------
@@ -1444,5 +1457,33 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isProductInPromotion(): bool
     {
         return $this->promotionRepository->isProductInPromotion($this->getId());
+    }
+
+    public function getOnlineComplianceDocuments(): array
+    {
+        $documents = $this->getData(EbayProductResource::COLUMN_ONLINE_COMPLIANCE_DOCUMENTS);
+        if (empty($documents)) {
+            return [];
+        }
+
+        return json_decode($documents, true);
+    }
+
+    public function getComplianceDocuments(): array
+    {
+        $documents = $this->getData(EbayProductResource::COLUMN_COMPLIANCE_DOCUMENTS);
+        if (empty($documents)) {
+            return [];
+        }
+
+        return json_decode($documents, true);
+    }
+
+    public function setComplianceDocuments(array $documents): void
+    {
+        $this->setData(
+            EbayProductResource::COLUMN_COMPLIANCE_DOCUMENTS,
+            json_encode($documents, JSON_THROW_ON_ERROR)
+        );
     }
 }

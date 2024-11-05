@@ -182,6 +182,10 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group' => self::GROUP_EBAY,
         ],
+        \Ess\M2ePro\Model\Cron\Task\Ebay\ComplianceDocumentsUpload::NICK => [
+            'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'group' => self::GROUP_EBAY,
+        ],
         \Ess\M2ePro\Model\Cron\Task\Ebay\SynchronizePromotions::NICK => [
             'component' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'group' => self::GROUP_EBAY,

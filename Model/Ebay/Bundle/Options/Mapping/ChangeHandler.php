@@ -20,6 +20,10 @@ class ChangeHandler
 
     public function handle(array $optionTitles)
     {
+        if (empty($optionTitles)) {
+            return;
+        }
+
         $affectedProducts = $this->affectedProducts->getListingProducts($optionTitles);
         $this->instructions->addForProducts($affectedProducts);
     }

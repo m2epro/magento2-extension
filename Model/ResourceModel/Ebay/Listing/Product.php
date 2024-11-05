@@ -20,6 +20,9 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
     public const COLUMN_VIDEO_ID = 'video_id';
     public const COLUMN_ONLINE_VIDEO_ID = 'online_video_id';
 
+    public const COLUMN_COMPLIANCE_DOCUMENTS = 'compliance_documents';
+    public const COLUMN_ONLINE_COMPLIANCE_DOCUMENTS = 'online_compliance_documents';
+
     /** @var bool  */
     protected $_isPkAutoIncrement = false;
 

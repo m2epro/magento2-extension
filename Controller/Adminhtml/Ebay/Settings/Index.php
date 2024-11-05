@@ -1,16 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Settings;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
 {
-    protected function getLayoutType()
+    protected function getLayoutType(): string
     {
         return self::LAYOUT_TWO_COLUMNS;
     }

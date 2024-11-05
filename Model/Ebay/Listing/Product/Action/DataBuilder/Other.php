@@ -1,27 +1,26 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder;
 
 class Other extends AbstractModel
 {
-    /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
-    private $componentEbayCategoryEbay;
+    private \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay;
+    private \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor;
+    private \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $complianceDocumentsProcessor;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $complianceDocumentsProcessor,
         array $data = []
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
         $this->componentEbayCategoryEbay = $componentEbayCategoryEbay;
+        $this->videoProductProcessor = $videoProductProcessor;
+        $this->complianceDocumentsProcessor = $complianceDocumentsProcessor;
     }
 
     /**
@@ -37,7 +36,8 @@ class Other extends AbstractModel
             $this->getLotSizeData(),
             $this->getPaymentData(),
             $this->getPriceDiscountMapData(),
-            $this->getVideoIdData()
+            $this->getVideoIdData(),
+            $this->getComplianceDocumentsData(),
         );
 
         return $data;
@@ -161,16 +161,90 @@ class Other extends AbstractModel
 
     private function getVideoIdData(): array
     {
-        if (!$this->getEbayListingProduct()->hasVideoId() && !$this->getEbayListingProduct()->hasOnlineVideoId()) {
+        $this->collectVideoWarningMessages();
+
+        if (
+            !$this->getEbayListingProduct()->hasVideoId()
+            && !$this->getEbayListingProduct()->hasOnlineVideoId()
+        ) {
             return [];
         }
 
-        $videoId = $this->getEbayListingProduct()->hasVideoId() ? $this->getEbayListingProduct()->getVideoId() : '';
+        $videoId = $this->getEbayListingProduct()->hasVideoId()
+            ? $this->getEbayListingProduct()->getVideoId()
+            : '';
 
         return [
             'product_details' => [
                 'video_id' => $videoId,
             ],
         ];
+    }
+
+    private function collectVideoWarningMessages(): void
+    {
+        $result = $this->videoProductProcessor->process($this->getListingProduct());
+
+        if ($result->isFail()) {
+            $this->addWarningMessage($result->getFailMessage());
+        }
+
+        if ($result->isInProgress()) {
+            $message = __(
+                'The upload of the product video is currently underway. It may take some time before ' .
+                'the video is fully processed and available on the channel.'
+            );
+            $this->addWarningMessage($message);
+        }
+    }
+
+    private function getComplianceDocumentsData(): array
+    {
+        $this->collectDocumentsWarningMessages();
+
+        $complianceDocuments = $this->getEbayListingProduct()->getComplianceDocuments();
+        $onlineComplianceDocuments = $this->getEbayListingProduct()->getOnlineComplianceDocuments();
+
+        if (
+            empty($complianceDocuments)
+            && empty($onlineComplianceDocuments)
+        ) {
+            return [];
+        }
+
+        $metadataDocuments = [];
+        foreach ($complianceDocuments as $document) {
+            $metadataDocuments[] = [
+                'type' => $document['type'],
+                'document_id' => $document['document_id']
+            ];
+        }
+
+        $this->addMetaData('compliance_documents', $metadataDocuments);
+
+        return [
+            'regulatory' => [
+                'documents' => array_column($metadataDocuments, 'document_id'),
+            ],
+        ];
+    }
+
+    private function collectDocumentsWarningMessages(): void
+    {
+        $resultCollection = $this->complianceDocumentsProcessor->process($this->getListingProduct(), false);
+
+        foreach ($resultCollection->getResults() as $processorResult) {
+            if ($processorResult->isFail()) {
+                $this->addWarningMessage($processorResult->getFailMessage());
+            }
+
+            if ($processorResult->isInProgress()) {
+                $message = __(
+                    'The upload of the product documents is currently underway. It may take some time before ' .
+                    'the documents is fully processed and available on the channel.'
+                );
+                $this->addWarningMessage($message);
+            }
+        }
     }
 }

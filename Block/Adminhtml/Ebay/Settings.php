@@ -1,21 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay;
 
-/**
- * Class \Ess\M2ePro\Block\Adminhtml\Ebay\Settings
- */
 class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 {
-    //########################################
-
-    protected function _construct()
+    protected function _construct(): void
     {
         parent::_construct();
 
@@ -30,17 +19,13 @@ class Settings extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $this->addButton('save', [
             'label' => $this->__('Save'),
-            'onclick' => 'SettingsObj.saveSettings()',
+            'onclick' => 'EbaySettingsObj.saveSettings()',
             'class' => 'primary',
         ]);
     }
-
-    //########################################
 
     protected function _toHtml()
     {
         return parent::_toHtml() . '<div id="tabs_container"></div>';
     }
-
-    //########################################
 }

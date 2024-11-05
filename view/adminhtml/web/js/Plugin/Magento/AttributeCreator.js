@@ -245,6 +245,9 @@ define([
 
             if (self.selectObj.classList.contains('product_type_setting_element')) {
                 newOption.setAttribute('value', attributeParams['code']);
+            } else if (self.selectObj.getAttribute('use_attribute_code_as_value') != undefined) {
+                newOption.setAttribute('value', attributeParams['code']);
+                newOption.removeAttribute('attribute_code');
             } else {
                 newOption.setAttribute('value', self.getNewlyCreatedAttributeValue(attributeParams));
             }

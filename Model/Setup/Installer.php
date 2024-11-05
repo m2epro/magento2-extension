@@ -20,6 +20,10 @@ use Ess\M2ePro\Model\ResourceModel\Ebay\Bundle\Options\Mapping as MappingResourc
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Product as ListingWizardProductResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Step as ListingStepResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard as ListingWizardResource;
+use Ess\M2ePro\Model\ResourceModel\AttributeMapping\Pair as PairResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments as ComplianceDocumentsResource;
+use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments\ListingProductRelation
+    as EbayComplianceDocumentListingProductRelationResource;
 
 class Installer
 {
@@ -2854,6 +2858,74 @@ class Installer
                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($archivedEntity);
 
+        # region attribute_mapping
+        $attributeMappingTable = $this->getConnection()->newTable(
+            $this->getFullTableName(TablesHelper::TABLE_ATTRIBUTE_MAPPING)
+        )
+                                      ->addColumn(
+                                          PairResource::COLUMN_ID,
+                                          Table::TYPE_INTEGER,
+                                          null,
+                                          [
+                                              'unsigned' => true,
+                                              'primary' => true,
+                                              'nullable' => false,
+                                              'auto_increment' => true,
+                                          ]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_COMPONENT,
+                                          Table::TYPE_TEXT,
+                                          50,
+                                          ['nullable' => false]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_TYPE,
+                                          Table::TYPE_TEXT,
+                                          100,
+                                          ['nullable' => false]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_CHANNEL_ATTRIBUTE_TITLE,
+                                          Table::TYPE_TEXT,
+                                          255,
+                                          ['nullable' => false]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_CHANNEL_ATTRIBUTE_CODE,
+                                          Table::TYPE_TEXT,
+                                          255,
+                                          ['nullable' => false]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_MAGENTO_ATTRIBUTE_CODE,
+                                          Table::TYPE_TEXT,
+                                          255,
+                                          ['nullable' => false]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_UPDATE_DATE,
+                                          Table::TYPE_DATETIME,
+                                          null,
+                                          ['default' => null]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_CREATE_DATE,
+                                          Table::TYPE_DATETIME,
+                                          null,
+                                          ['default' => null]
+                                      )
+                                      ->addIndex('component', PairResource::COLUMN_COMPONENT)
+                                      ->addIndex('type', PairResource::COLUMN_TYPE)
+                                      ->addIndex('create_date', PairResource::COLUMN_CREATE_DATE)
+                                      ->setOption('type', 'INNODB')
+                                      ->setOption('charset', 'utf8')
+                                      ->setOption('collate', 'utf8_general_ci')
+                                      ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($attributeMappingTable);
+        # endregion
+
         # region tag
         $tagTable = $this->getConnection()->newTable($this->getFullTableName('tag'));
         $tagTable->addColumn(
@@ -4623,6 +4695,18 @@ class Installer
                                             255,
                                             ['default' => null]
                                         )
+                                        ->addColumn(
+                                            EbayListingProduct::COLUMN_COMPLIANCE_DOCUMENTS,
+                                            Table::TYPE_TEXT,
+                                            null,
+                                            ['default' => null]
+                                        )
+                                        ->addColumn(
+                                            EbayListingProduct::COLUMN_ONLINE_COMPLIANCE_DOCUMENTS,
+                                            Table::TYPE_TEXT,
+                                            null,
+                                            ['default' => null]
+                                        )
                                         ->addIndex('ebay_item_id', 'ebay_item_id')
                                         ->addIndex('item_uuid', 'item_uuid')
                                         ->addIndex('is_duplicate', 'is_duplicate')
@@ -5991,6 +6075,12 @@ class Installer
                                              )
                                              ->addColumn(
                                                  'watermark_settings',
+                                                 Table::TYPE_TEXT,
+                                                 null,
+                                                 ['default' => null]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_COMPLIANCE_DOCUMENTS,
                                                  Table::TYPE_TEXT,
                                                  null,
                                                  ['default' => null]
@@ -7364,6 +7454,130 @@ class Installer
                                ->setOption('collate', 'utf8_general_ci')
                                ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayVideoTable);
+
+        //region ebay_compliance_document
+        $ebayComplianceDocumentsTableName = $this->getFullTableName(TablesHelper::TABLE_EBAY_COMPLIANCE_DOCUMENTS);
+
+        $ebayComplianceDocumentsTable = $this->getConnection()->newTable($ebayComplianceDocumentsTableName);
+
+        $ebayComplianceDocumentsTable
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_ACCOUNT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_HASH,
+                Table::TYPE_TEXT,
+                32,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_TYPE,
+                Table::TYPE_TEXT,
+                100,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_URL,
+                Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_STATUS,
+                Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_DOCUMENT_ID,
+                Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_ERROR,
+                Table::TYPE_TEXT,
+                255
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_CREATE_DATE,
+                Table::TYPE_DATETIME
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_UPDATE_DATE,
+                Table::TYPE_DATETIME
+            );
+
+        $ebayComplianceDocumentsTable
+            ->addIndex(
+                'account_id__type__url',
+                [
+                    ComplianceDocumentsResource::COLUMN_ACCOUNT_ID,
+                    ComplianceDocumentsResource::COLUMN_TYPE,
+                    ComplianceDocumentsResource::COLUMN_URL,
+                ],
+                ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+            );
+
+        $ebayComplianceDocumentsTable
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($ebayComplianceDocumentsTable);
+        //endregion
+
+        //region ebay_compliance_document_listing_product
+        $ebayComplianceDocumentListingProductTableName = $this->getFullTableName(
+            TablesHelper::TABLE_EBAY_COMPLIANCE_DOCUMENTS_LISTING_PRODUCT
+        );
+
+        $ebayComplianceDocumentListingProductTable = $this
+            ->getConnection()
+            ->newTable($ebayComplianceDocumentListingProductTableName);
+
+        $ebayComplianceDocumentListingProductTable
+            ->addColumn(
+                EbayComplianceDocumentListingProductRelationResource::COLUMN_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                EbayComplianceDocumentListingProductRelationResource::COLUMN_COMPLIANCE_DOCUMENT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                EbayComplianceDocumentListingProductRelationResource::COLUMN_LISTING_PRODUCT_ID,
+                Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            );
+
+        $ebayComplianceDocumentListingProductTable->addIndex(
+            'listing_product_id',
+            EbayComplianceDocumentListingProductRelationResource::COLUMN_LISTING_PRODUCT_ID
+        );
+
+        $ebayComplianceDocumentListingProductTable
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($ebayComplianceDocumentListingProductTable);
+        //endregion
 
         //region ebay_bundle_options_mapping
         $ebayBundleOptionsMappingTableName = $this->getFullTableName(
@@ -9818,6 +10032,12 @@ class Installer
                                  )
                                  ->addColumn(
                                      'shipping_date_to',
+                                     Table::TYPE_DATETIME,
+                                     null,
+                                     ['default' => null]
+                                 )
+                                 ->addColumn(
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_DELIVERY_DATE_FROM,
                                      Table::TYPE_DATETIME,
                                      null,
                                      ['default' => null]

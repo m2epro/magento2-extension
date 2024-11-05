@@ -1,10 +1,11 @@
 define([
     'jquery',
     'M2ePro/Plugin/Messages',
+    'mage/translate',
     'M2ePro/Template/Edit',
     'M2ePro/Common',
     'Magento_Ui/js/modal/modal'
-], function (jQuery, MessagesObj) {
+], function (jQuery, MessagesObj, $t) {
     window.Settings = Class.create(Common, {
 
         // ---------------------------------------
@@ -23,12 +24,12 @@ define([
 
         saveSettings: function ()
         {
-            var isFormValid = true;
-            var uiTabs = jQuery.find('div.ui-tabs-panel')
+            let isFormValid = true;
+            const uiTabs = jQuery.find('div.ui-tabs-panel');
             uiTabs.forEach(item => {
-                var elementId = item.getAttribute('data-ui-id').split('-').pop();
+                const elementId = item.getAttribute('data-ui-id').split('-').pop();
                 if (isFormValid) {
-                    var form = jQuery(item).find('form');
+                    const form = jQuery(item).find('form');
                     if (form.length) {
                         if (!form.valid()) {
                             isFormValid = false;
@@ -42,16 +43,21 @@ define([
                         jQuery("a[name='" + elementId + "']").removeClass('_changed _error');
                         var formData = form.serialize(true);
                         formData.tab = elementId;
-                        this.submitTab(M2ePro.url.get(elementId), formData);
+                        const result = this.submitTab(M2ePro.url.get(elementId), formData);
+                        this.afterSaveSettings(elementId, result);
                     }
                 }
-            })
+            });
+        },
+
+        afterSaveSettings: function (tabId, response) {
+
         },
 
         restoreAllHelpsAndRememberedChoices: function ()
         {
-            var self = this;
-            var modalDialogMessage = $('modal_interface_dialog');
+            const self = this;
+            let modalDialogMessage = $('modal_interface_dialog');
 
             if (!modalDialogMessage) {
                 modalDialogMessage = new Element('div', {
@@ -60,7 +66,7 @@ define([
             }
 
             jQuery(modalDialogMessage).confirm({
-                title: M2ePro.translator.translate('Are you sure?'),
+                title: $t('Are you sure?'),
                 actions: {
                     confirm: function() {
 
@@ -72,21 +78,19 @@ define([
                                 BlockNoticeObj.deleteAllHashedStorage();
                                 self.templateEdit.forgetSkipSaveConfirmation();
 
-                                self.messageObj.addSuccess(
-                                    M2ePro.translator.translate('Help Blocks have been restored.')
-                                );
+                                self.writeMessage($t('Help Blocks have been restored.'), true);
                             }
                         });
                     }
                 },
                 buttons: [{
-                    text: M2ePro.translator.translate('Cancel'),
+                    text: $t('Cancel'),
                     class: 'action-secondary action-dismiss',
                     click: function (event) {
                         this.closeModal(event);
                     }
                 }, {
-                    text: M2ePro.translator.translate('Confirm'),
+                    text: $t('Confirm'),
                     class: 'action-primary action-accept',
                     click: function (event) {
                         this.closeModal(event, true);
@@ -99,24 +103,30 @@ define([
 
         submitTab: function(url, formData)
         {
-            var self = this;
+            const self = this;
+
+            let submitResult = null;
 
             new Ajax.Request(url, {
                 method: 'post',
                 asynchronous: false,
                 parameters: formData || {},
                 onSuccess: function(transport) {
-                    var result = transport.responseText;
+                    const response = transport.responseText;
 
-                    self.messageObj.clear();
-                    if (!result.isJSON()) {
-                        self.messageObj.addError(result);
+                    if (!response.isJSON()) {
+                        self.writeMessage(response, false);
+
+                        submitResult = false;
+
+                        return;
                     }
 
-                    result = JSON.parse(result);
+                    const result = JSON.parse(response);
+                    submitResult = result;
 
-                    if (typeof result['view_show_block_notices_mode'] !== 'undefined') {
-                        BLOCK_NOTICES_SHOW = result['view_show_block_notices_mode'];
+                    if (typeof result.view_show_block_notices_mode !== 'undefined') {
+                        BLOCK_NOTICES_SHOW = result.view_show_block_notices_mode;
                         BlockNoticeObj.initializedBlocks = [];
                         BlockNoticeObj.init();
                     }
@@ -124,20 +134,32 @@ define([
                     if (result.messages && Array.isArray(result.messages) && result.messages.length) {
                         self.scrollPageToTop();
                         result.messages.forEach(function(el) {
-                            var key = Object.keys(el).shift();
+                            const key = Object.keys(el).shift();
                             self.messageObj['add'+key.capitalize()](el[key]);
                         });
+
                         return;
                     }
 
                     if (result.success) {
-                        self.messageObj.addSuccess(M2ePro.translator.translate('Settings saved'));
-                    } else {
-                        self.messageObj.addError(M2ePro.translator.translate('Error'));
-                    }
+                        self.writeMessage($t('Settings saved'), true);
 
+                        return;
+                    }
+                    self.writeMessage($t('Error'), false);
                 }
             });
+
+            return submitResult;
+        },
+
+        writeMessage: function (text, isSuccess) {
+            this.messageObj.clear();
+            if (isSuccess) {
+                this.messageObj.addSuccess(text);
+            } else {
+                this.messageObj.addError(text);
+            }
         }
 
         // ---------------------------------------

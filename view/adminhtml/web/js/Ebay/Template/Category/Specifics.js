@@ -4,6 +4,7 @@ define([
 ], function (jQuery, localStorage) {
     window.EbayTemplateCategorySpecifics = Class.create(Common, {
 
+        isCustomChanged: false,
         maxSelectedSpecifics: 45,
         specificsSnapshot: {},
 
@@ -81,21 +82,25 @@ define([
             EbayCategorySpecificValidationPopup.setTemplateCategoryId(template_id);
         },
 
+        markAsCustomChanged: function () {
+            this.isCustomChanged = true;
+        },
+
         isSpecificsChanged: function () {
-            return JSON.stringify(this.specificsSnapshot) !== JSON.stringify(this.collectSpecifics())
+            return this.isCustomChanged || JSON.stringify(this.specificsSnapshot) !== JSON.stringify(this.collectSpecifics());
         },
 
         collectSpecifics: function()
         {
-            var specifics = {};
+            const specifics = {};
 
-            var self = this;
+            const self = this;
             $('edit_specifics_form').select('input[name^="specific"]', 'select[name^="specific"]').each(
                 function(el) {
                     if (el.disabled) {
                         return true;
                     }
-                    var temp = el.name.match(/specific\[([a-z0-9_]*)\]\[([a-z_]*)\]/);
+                    const temp = el.name.match(/specific\[([a-z0-9_]*)\]\[([a-z_]*)\]/);
                     if (typeof specifics[temp[1]] === 'undefined') {
                         specifics[temp[1]] = {};
                     }
@@ -107,7 +112,7 @@ define([
                     if (el.multiple) {
                         specifics[temp[1]][temp[2]] = self.getSelectValues(el);
                     } else {
-                        let specific = specifics[temp[1]]['value_custom_value'];
+                        const specific = specifics[temp[1]]['value_custom_value'];
                         if (typeof specific !== 'undefined' && Object.keys(specific).length !== 0) {
                             let multi_input = [];
                             if (Object.isArray(specific)) {

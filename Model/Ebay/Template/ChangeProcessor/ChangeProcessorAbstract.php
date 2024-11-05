@@ -19,4 +19,5 @@ abstract class ChangeProcessorAbstract extends \Ess\M2ePro\Model\Template\Change
     public const INSTRUCTION_TYPE_SHIPPING_DATA_CHANGED = 'template_shipping_data_changed';
     public const INSTRUCTION_TYPE_RETURN_DATA_CHANGED = 'template_return_data_changed';
     public const INSTRUCTION_TYPE_OTHER_DATA_CHANGED = 'template_other_data_changed';
+    public const INSTRUCTION_TYPE_COMPLIANCE_DOCUMENTS_DATA_CHANGED = 'template_compliance_documents_data_changed';
 }

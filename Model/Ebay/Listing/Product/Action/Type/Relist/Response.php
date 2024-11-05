@@ -17,10 +17,12 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
     public const INSTRUCTION_TYPE_CHECK_OTHER = 'success_relist_check_other';
 
     private \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor;
+    private \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $documentsProductProcessor;
 
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DescriptionHasher $descriptionHasher,
         \Ess\M2ePro\Model\Ebay\Video\ProductProcessor $videoProductProcessor,
+        \Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductProcessor $documentsProductProcessor,
         \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataHasher $dataHasher,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -37,6 +39,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         );
 
         $this->videoProductProcessor = $videoProductProcessor;
+        $this->documentsProductProcessor = $documentsProductProcessor;
     }
 
     public function processSuccess(array $response, array $responseParams = []): void
@@ -84,6 +87,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $this->updateVariationsValues(false);
 
         $this->videoProductProcessor->process($this->getListingProduct());
+        $this->documentsProductProcessor->process($this->getListingProduct(), true);
     }
 
     public function processAlreadyActive(array $response, array $responseParams = [])

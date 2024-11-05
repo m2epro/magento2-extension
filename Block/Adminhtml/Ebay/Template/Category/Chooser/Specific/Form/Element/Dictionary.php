@@ -1,61 +1,50 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element;
 
-use Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
+use Ess\M2ePro\Model\Ebay\Template\Category\Specific;
 use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary\Multiselect as Multi;
 use Magento\Framework\Data\Form\Element\CollectionFactory;
 use Magento\Framework\Data\Form\Element\Factory;
 use Magento\Framework\Escaper;
 
-/**
- * Class Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary
- */
 class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
 {
-    public $helperFactory;
+    public static bool $isSetMappedAttribute = false;
 
-    public $layout;
-
-    /** @var \Ess\M2ePro\Helper\Module\Translation */
-    private $translationHelper;
+    /** @var \Ess\M2ePro\Model\Ebay\AttributeMapping\Pair[] */
+    private array $gpsrMappedAttributesByCode;
+    private \Magento\Framework\View\LayoutInterface $layout;
+    private \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper;
+    private \Ess\M2ePro\Model\Ebay\AttributeMapping\GpsrService $mappingAttributesGpsrService;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\AttributeMapping\GpsrService $mappingAttributesGpsrService,
+        \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         Factory $factoryElement,
         CollectionFactory $factoryCollection,
         Escaper $escaper,
-        \Ess\M2ePro\Helper\Module\Translation $translationHelper,
         $data = []
     ) {
-        $this->helperFactory = $context->getHelperFactory();
+        $this->magentoAttributeHelper = $magentoAttributeHelper;
         $this->layout = $context->getLayout();
-        parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
         $this->setType('specifics');
-        $this->translationHelper = $translationHelper;
+        $this->mappingAttributesGpsrService = $mappingAttributesGpsrService;
+        parent::__construct($factoryElement, $factoryCollection, $escaper, $data);
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function getElementHtml()
     {
         return '';
     }
 
-    //########################################
-
     public function getSpecifics()
     {
         return $this->getData('specifics');
     }
-
-    //########################################
 
     public function getAttributeTitleHiddenHtml($index, $specific)
     {
@@ -88,7 +77,7 @@ class Dictionary extends \Magento\Framework\Data\Form\Element\AbstractElement
         return $element->getElementHtml();
     }
 
-    public function getAttributeTitleLabelHtml($index, $specific)
+    public function getAttributeTitleLabelHtml($index, $specific): string
     {
         $required = '';
         if ($specific['required']) {
@@ -105,19 +94,19 @@ HTML;
         $values = [
             Specific::VALUE_MODE_NONE => [
                 'value' => Specific::VALUE_MODE_NONE,
-                'label' => $this->translationHelper->__('None'),
+                'label' => __('None'),
             ],
             Specific::VALUE_MODE_EBAY_RECOMMENDED => [
                 'value' => Specific::VALUE_MODE_EBAY_RECOMMENDED,
-                'label' => $this->translationHelper->__('eBay Recommended'),
+                'label' => __('eBay Recommended'),
             ],
             Specific::VALUE_MODE_CUSTOM_VALUE => [
                 'value' => Specific::VALUE_MODE_CUSTOM_VALUE,
-                'label' => $this->translationHelper->__('Custom Value'),
+                'label' => __('Custom Value'),
             ],
             Specific::VALUE_MODE_CUSTOM_ATTRIBUTE => [
                 'value' => Specific::VALUE_MODE_CUSTOM_ATTRIBUTE,
-                'label' => $this->translationHelper->__('Custom Attribute'),
+                'label' => __('Custom Attribute'),
             ],
         ];
 
@@ -129,24 +118,31 @@ HTML;
             ];
         }
 
-        if ($specific['type'] == Specific::RENDER_TYPE_TEXT) {
+        if ($specific['type'] === Specific::RENDER_TYPE_TEXT) {
             unset($values[Specific::VALUE_MODE_EBAY_RECOMMENDED]);
         }
 
         if (
-            $specific['type'] == Specific::RENDER_TYPE_SELECT_ONE ||
-            $specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE
+            $specific['type'] === Specific::RENDER_TYPE_SELECT_ONE
+            || $specific['type'] === Specific::RENDER_TYPE_SELECT_MULTIPLE
         ) {
             unset($values[Specific::VALUE_MODE_CUSTOM_VALUE]);
         }
 
         if (empty($specific['values'])) {
             if (
-                $specific['type'] == Specific::RENDER_TYPE_SELECT_ONE_OR_TEXT ||
-                $specific['type'] == Specific::RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT
+                $specific['type'] === Specific::RENDER_TYPE_SELECT_ONE_OR_TEXT
+                || $specific['type'] === Specific::RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT
             ) {
                 unset($values[Specific::VALUE_MODE_EBAY_RECOMMENDED]);
             }
+        }
+
+        $value = null;
+        if ($this->isConfiguredSpecific($specific)) {
+            $value = $specific['template_specific']['value_mode'];
+        } elseif ($this->isExistMappedAttribute($specific['id'])) {
+            $value = Specific::VALUE_MODE_CUSTOM_ATTRIBUTE;
         }
 
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
@@ -156,8 +152,7 @@ HTML;
                 'class' => 'specific-value-mode',
                 'style' => 'width: 100%',
                 'onchange' => "EbayTemplateCategorySpecificsObj.dictionarySpecificModeChange('{$index}', this);",
-                'value' => !empty($specific['template_specific']) ?
-                    $specific['template_specific']['value_mode'] : null,
+                'value' => $value,
                 'values' => $values,
             ],
         ]);
@@ -247,7 +242,7 @@ HTML;
 
     public function getValueCustomValueHtml($index, $specific): string
     {
-        $addMoreTxt = $this->translationHelper->__('Add more');
+        $addMoreTxt = __('Add more');
 
         $customValueRows = '';
 
@@ -282,7 +277,7 @@ HTML;
             $removeCustomValueBtn = $this->layout->createBlock(\Ess\M2ePro\Block\Adminhtml\Magento\Button::class)
                                                  ->setData(
                                                      [
-                                                         'label' => $this->translationHelper->__('Remove'),
+                                                         'label' => __('Remove'),
                                                          'onclick' => 'EbayTemplateCategorySpecificsObj.removeItemSpecificsCustomValue(this);',
                                                          'class' => 'action remove_item_specifics_custom_value_button',
                                                          'style' => 'margin-left: 3px;',
@@ -342,7 +337,7 @@ HTML;
 
     public function getValueCustomAttributeHtml($index, $specific)
     {
-        $attributes = $this->helperFactory->getObject('Magento_Attribute')->getAll();
+        $attributes = $this->magentoAttributeHelper->getAll();
 
         foreach ($attributes as &$attribute) {
             $attribute['value'] = $attribute['code'];
@@ -351,12 +346,24 @@ HTML;
 
         $display = 'display: none;';
         $disabled = true;
+        $value = '';
         if (
             isset($specific['template_specific']['value_mode']) &&
             $specific['template_specific']['value_mode'] == Specific::VALUE_MODE_CUSTOM_ATTRIBUTE
         ) {
             $display = '';
             $disabled = false;
+            $value = $specific['template_specific']['value_custom_attribute'];
+        }
+
+        if (
+            !$this->isConfiguredSpecific($specific)
+            && $this->isExistMappedAttribute($specific['id'])
+        ) {
+            $display = '';
+            $disabled = false;
+            $value = $this->getMappedAttributeValue($specific['id']);
+            self::$isSetMappedAttribute = true;
         }
 
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
@@ -365,9 +372,7 @@ HTML;
                 'name' => 'specific[dictionary_' . $index . '][value_custom_attribute]',
                 'style' => 'width: 100%;' . $display,
                 'class' => 'M2ePro-custom-attribute-can-be-created',
-                'value' => empty($specific['template_specific']['value_custom_attribute']) ?
-                    '' :
-                    $specific['template_specific']['value_custom_attribute'],
+                'value' => $value,
                 'values' => $attributes,
                 'apply_to_all_attribute_sets' => 0,
                 'disabled' => $disabled,
@@ -379,5 +384,49 @@ HTML;
         $element->setId('specific_dictionary_value_custom_attribute_' . $index);
 
         return $element->getHtml();
+    }
+
+    private function isConfiguredSpecific(array $specific): bool
+    {
+        return isset($specific['template_specific']['value_mode'])
+            && $specific['template_specific']['value_mode'] != Specific::VALUE_MODE_NONE;
+    }
+
+    private function isExistMappedAttribute(string $code): bool
+    {
+        return $this->isGpsrAttribute($code);
+    }
+
+    private function getMappedAttributeValue(string $code): string
+    {
+        if ($this->isGpsrAttribute($code)) {
+            return $this->getGpsrAttributeValue($code);
+        }
+
+        return '';
+    }
+
+    private function isGpsrAttribute(string $code): bool
+    {
+        return $this->getGpsrAttributeValue($code) !== '';
+    }
+
+    private function getGpsrAttributeValue(string $code): string
+    {
+        if (!isset($this->gpsrMappedAttributesByCode)) {
+            $attributes = [];
+            foreach ($this->mappingAttributesGpsrService->getConfigured() as $pair) {
+                $attributes[$pair->channelAttributeCode] = $pair;
+            }
+
+            $this->gpsrMappedAttributesByCode = $attributes;
+        }
+
+        $pair = $this->gpsrMappedAttributesByCode[$code] ?? null;
+        if ($pair === null) {
+            return '';
+        }
+
+        return $pair->magentoAttributeCode;
     }
 }

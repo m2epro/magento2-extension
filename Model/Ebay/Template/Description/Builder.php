@@ -117,6 +117,24 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             }
         }
 
+        if (isset($this->rawData['compliance_documents'])) {
+            $data['compliance_documents'] = $this->rawData['compliance_documents'];
+
+            if (is_array($data['compliance_documents'])) {
+                $documentsToSave = [];
+                foreach ($data['compliance_documents'] as $document) {
+                    if (empty($document['document_type']) || empty($document['document_attribute'])) {
+                        continue;
+                    }
+
+                    $hash = $this->dataHelper->md5String($document['document_type'] . $document['document_attribute']);
+                    $documentsToSave[$hash] = $document;
+                }
+
+                $data['compliance_documents'] = \Ess\M2ePro\Helper\Json::encode(array_values($documentsToSave));
+            }
+        }
+
         if (isset($this->rawData['gallery_type'])) {
             $data['gallery_type'] = (int)$this->rawData['gallery_type'];
         }
@@ -347,6 +365,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             ),
 
             'watermark_image' => null,
+            'compliance_documents' => \Ess\M2ePro\Helper\Json::encode([]),
         ];
     }
 }
