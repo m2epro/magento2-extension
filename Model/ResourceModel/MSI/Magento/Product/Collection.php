@@ -79,12 +79,9 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
     public function joinStockItem()
     {
-        /** @var \Ess\M2ePro\Helper\Magento\Store $storeHelper */
-        $storeHelper = $this->helperFactory->getObject('Magento\Store');
-
         $website = $this->getStoreId() === \Magento\Store\Model\Store::DEFAULT_STORE_ID
-            ? $storeHelper->getDefaultWebsite()
-            : $storeHelper->getWebsite($this->getStoreId());
+            ? $this->helperFactory->getObject('Magento\Store')->getDefaultWebsite()
+            : $this->helperFactory->getObject('Magento\Store')->getWebsite($this->getStoreId());
 
         $stockId = $this->stockResolver->execute($website->getId())->getStockId();
 
@@ -95,10 +92,7 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
                 'stock_quantity' => 'quantity',
                 'stock_is_in_stock' => 'is_salable',
             ],
-            [
-                'stock_id' => $stockId,
-                'website_id' => $website->getId(),
-            ],
+            null,
             'left'
         );
         $this->joinTable(
