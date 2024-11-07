@@ -66,6 +66,16 @@ define([
                     this.productTypeHandler.validateProductsForProductTypeAssign(id, null)
                 }).bind(this),
 
+                unassignProductTypeAction: (function (id) {
+                    id = id || this.getSelectedProductsString();
+                    this.confirm({
+                        actions: {
+                            confirm: () => this.productTypeHandler.unassign(id),
+                            cancel: () => false
+                        }
+                    });
+                }).bind(this),
+
                 remapProductAction: function(id) {
                     this.mappingHandler.openPopUp(id, null, this.listingId);
                 }.bind(this)

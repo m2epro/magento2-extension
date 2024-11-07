@@ -28,7 +28,7 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
             $this->getLagTimeData(),
             $this->getPriceData(),
             $this->getPromotionsData(),
-            $this->getDetailsData()
+            $this->getRequestDetailsData()
         );
 
         $params = $this->getParams();
@@ -59,5 +59,21 @@ class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Requ
         }
 
         return $data;
+    }
+
+    private function getRequestDetailsData(): array
+    {
+        if (!$this->getWalmartMarketplace()->isSupportedProductType()) {
+            return $this->getDetailsData();
+        }
+
+        if (
+            $this->getWalmartMarketplace()->isSupportedProductType()
+            && $this->getWalmartListingProduct()->isExistsProductType()
+        ) {
+            return $this->getDetailsData();
+        }
+
+        return [];
     }
 }

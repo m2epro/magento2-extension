@@ -210,27 +210,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         return $groups;
     }
 
-    protected function getColumnActionsItems()
+    private function getColumnActionsItems(): array
     {
-        $actions = [
+        return [
             'assignProductType' => [
-                'caption' => __('Assign Product Type'),
+                'caption' => __('Assign'),
                 'group' => 'edit_product_type',
                 'field' => 'id',
                 'onclick_action' => 'ListingGridObj.actions[\'changeProductTypeAction\']',
             ],
+            'unassignProductType' => [
+                'caption' => __('Unassign'),
+                'group' => 'edit_product_type',
+                'field' => 'id',
+                'onclick_action' => 'ListingGridObj.actions[\'unassignProductTypeAction\']',
+            ],
+            'remapProduct' => [
+                'caption' => __('Link to another Magento Product'),
+                'group' => 'other',
+                'field' => 'id',
+                'only_remap_product' => true,
+                'style' => 'width: 255px',
+                'onclick_action' => 'ListingGridObj.actions[\'remapProductAction\']',
+            ],
         ];
-
-        $actions['remapProduct'] = [
-            'caption' => __('Link to another Magento Product'),
-            'group' => 'other',
-            'field' => 'id',
-            'only_remap_product' => true,
-            'style' => 'width: 255px',
-            'onclick_action' => 'ListingGridObj.actions[\'remapProductAction\']',
-        ];
-
-        return $actions;
     }
 
     protected function _prepareMassaction()
@@ -259,7 +262,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($isSupportedPt) {
             $this->getMassactionBlock()->addItem('changeProductType', [
-                'label' => __('Assign Product Type'),
+                'label' => __('Assign'),
+                'url' => '',
+            ], 'product_type');
+
+            $this->getMassactionBlock()->addItem('unassignProductType', [
+                'label' => __('Unassign'),
                 'url' => '',
             ], 'product_type');
         }

@@ -178,6 +178,7 @@ abstract class Request extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\DataBuilder\Details $dataBuilder */
         $dataBuilder = $this->getDataBuilder('details');
         $data = $dataBuilder->getBuilderData();
 

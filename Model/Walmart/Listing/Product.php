@@ -216,6 +216,16 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abs
         return (int)$this->getDataByKey(ListingProductResource::COLUMN_PRODUCT_TYPE_ID);
     }
 
+    public function setProductTypeId(int $productTypeId): void
+    {
+        $this->setData(ListingProductResource::COLUMN_PRODUCT_TYPE_ID, $productTypeId);
+    }
+
+    public function unsetProductTypeId(): void
+    {
+        $this->setData(ListingProductResource::COLUMN_PRODUCT_TYPE_ID, null);
+    }
+
     public function getProductType(): \Ess\M2ePro\Model\Walmart\ProductType
     {
         if (!$this->isExistsProductType()) {
