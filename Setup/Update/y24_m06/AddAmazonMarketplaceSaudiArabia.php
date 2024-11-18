@@ -68,17 +68,26 @@ class AddAmazonMarketplaceSaudiArabia extends \Ess\M2ePro\Model\Setup\Upgrade\En
             return;
         }
 
+        $bind = [
+            AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 50,
+            AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'SAR',
+            AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
+            AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
+            AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,
+            AmazonMarketplaceResource::COLUMN_IS_PRODUCT_TAX_CODE_POLICY_AVAILABLE => 0,
+        ];
+
+        if (
+            $this->getTableModifier(Tables::TABLE_AMAZON_MARKETPLACE)
+                 ->isColumnExists('is_new_asin_available')
+        ) {
+            // May be missing after migration from m1
+            $bind['is_new_asin_available'] = 1;
+        }
+
         $this->installer->getConnection()->insert(
             $amazonMarketplaceTableName,
-            [
-                AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 50,
-                AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'SAR',
-                'is_new_asin_available' => 1,
-                AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
-                AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
-                AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,
-                AmazonMarketplaceResource::COLUMN_IS_PRODUCT_TAX_CODE_POLICY_AVAILABLE => 0,
-            ]
+            $bind
         );
     }
 }

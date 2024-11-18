@@ -79,58 +79,26 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
     public function joinStockItem()
     {
+        /** @var \Ess\M2ePro\Helper\Magento\Store $storeHelper */
+        $storeHelper = $this->helperFactory->getObject('Magento\Store');
+
         $website = $this->getStoreId() === \Magento\Store\Model\Store::DEFAULT_STORE_ID
-            ? $this->helperFactory->getObject('Magento\Store')->getDefaultWebsite()
-            : $this->helperFactory->getObject('Magento\Store')->getWebsite($this->getStoreId());
+            ? $storeHelper->getDefaultWebsite()
+            : $storeHelper->getWebsite($this->getStoreId());
 
-        $stockId = $this->stockResolver->execute($website->getId())->getStockId();
+        $defaultStockId = (int)$this->defaultStockResolver->getId();
+        $websiteStockId = (int)$this->stockResolver->execute($website->getId())->getStockId();
 
-        $this->joinTable(
-            ['it' => $this->indexNameResolver->execute($stockId)],
-            'sku=sku',
-            [
-                'stock_quantity' => 'quantity',
-                'stock_is_in_stock' => 'is_salable',
-            ],
-            null,
-            'left'
-        );
-        $this->joinTable(
-            ['it_def' => $this->indexNameResolver->execute($this->defaultStockResolver->getId())],
-            'sku=sku',
-            [
-                'def_quantity' => 'quantity',
-                'def_is_in_stock' => 'is_salable',
-            ],
-            [
-                'stock_id' => $this->stockHelper->getStockId($this->getStoreId()),
-                'website_id' => $this->stockHelper->getWebsiteId($this->getStoreId()),
-            ],
-            'left'
-        );
-
-        $this->getSelect()->columns([
-            'qty' => $this->getCheckSqlForQty(),
-            'is_in_stock' => $this->getCheckSqlForStock(),
-        ]);
-    }
-
-    public function getCheckSqlForQty()
-    {
-        return $this->getConnection()->getCheckSql(
-            'it.sku IS NOT NULL',
-            'IFNULL(it.quantity, 0)',
-            'IFNULL(it_def.quantity, 0)'
-        );
-    }
-
-    public function getCheckSqlForStock()
-    {
-        return $this->getConnection()->getCheckSql(
-            'it.sku IS NOT NULL',
-            'it.is_salable',
-            'IFNULL(it_def.is_salable, 0)'
-        );
+        if ($defaultStockId === $websiteStockId) {
+            $this->joinOnlyDefaultInventoryStockItem(
+                $this->indexNameResolver->execute($defaultStockId)
+            );
+        } else {
+            $this->joinDefaultInventoryStockItemWithWebsiteInventoryStock(
+                $this->indexNameResolver->execute($defaultStockId),
+                $this->indexNameResolver->execute($websiteStockId)
+            );
+        }
     }
 
     public function addAttributeToFilter($attribute, $condition = null, $joinType = 'inner')
@@ -163,5 +131,80 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
         }
 
         return parent::addAttributeToSort($attribute, $dir);
+    }
+
+    private function joinOnlyDefaultInventoryStockItem(string $defaultInventoryStockTableName)
+    {
+        $this->joinTable(
+            ['it_def' => $defaultInventoryStockTableName],
+            'sku=sku',
+            [
+                'def_quantity' => 'quantity',
+                'def_is_in_stock' => 'is_salable',
+            ],
+            [
+                'stock_id' => $this->stockHelper->getStockId($this->getStoreId()),
+                'website_id' => $this->stockHelper->getWebsiteId($this->getStoreId()),
+            ],
+            'left'
+        );
+
+        $this->getSelect()->columns([
+            'qty' => 'it_def.quantity',
+            'is_in_stock' => 'it_def.is_salable',
+        ]);
+    }
+
+    private function joinDefaultInventoryStockItemWithWebsiteInventoryStock(
+        string $defaultInventoryStockTableName,
+        string $websiteInventoryStockTableName
+    ) {
+        $this->joinTable(
+            ['it_def' => $defaultInventoryStockTableName],
+            'sku=sku',
+            [
+                'def_quantity' => 'quantity',
+                'def_is_in_stock' => 'is_salable',
+            ],
+            [
+                'stock_id' => $this->stockHelper->getStockId($this->getStoreId()),
+                'website_id' => $this->stockHelper->getWebsiteId($this->getStoreId()),
+            ],
+            'left'
+        );
+
+        $this->joinTable(
+            ['it' => $websiteInventoryStockTableName],
+            'sku=sku',
+            [
+                'stock_quantity' => 'quantity',
+                'stock_is_in_stock' => 'is_salable',
+            ],
+            null,
+            'left'
+        );
+
+        $this->getSelect()->columns([
+            'qty' => $this->getCheckSqlForQty(),
+            'is_in_stock' => $this->getCheckSqlForStock(),
+        ]);
+    }
+
+    private function getCheckSqlForQty(): \Zend_Db_Expr
+    {
+        return $this->getConnection()->getCheckSql(
+            'it.sku IS NOT NULL',
+            'IFNULL(it.quantity, 0)',
+            'IFNULL(it_def.quantity, 0)'
+        );
+    }
+
+    private function getCheckSqlForStock(): \Zend_Db_Expr
+    {
+        return $this->getConnection()->getCheckSql(
+            'it.sku IS NOT NULL',
+            'it.is_salable',
+            'IFNULL(it_def.is_salable, 0)'
+        );
     }
 }

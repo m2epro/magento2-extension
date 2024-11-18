@@ -156,13 +156,21 @@ class Modifier
                 'priority' => 5,
             ],
             [
+                'nick' => 'amazonMigrationToProductTypes',
+                'view' => 'amazon',
+                'status' => self::WIZARD_STATUS_SKIPPED,
+                'step' => null,
+                'type' => 1,
+                'priority' => 6,
+            ],
+            [
                 'nick' => 'walmartMigrationToProductTypes',
                 'view' => 'walmart',
                 'status' => self::WIZARD_STATUS_SKIPPED,
                 'step' => null,
                 'type' => 1,
                 'priority' => 8,
-            ]
+            ],
         ];
 
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), $wizardsData);

@@ -95,7 +95,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
                     }
                 }
             } catch (\Throwable $exception) {
-                $this->exceptionHelper->process($exception);
+                if (!$exception instanceof \Ess\M2ePro\Model\Exception\ProductNotExist) {
+                    $this->exceptionHelper->process($exception);
+                }
             }
 
             $this->instructionResource->remove(
