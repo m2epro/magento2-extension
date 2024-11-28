@@ -4,66 +4,42 @@ namespace Ess\M2ePro\Model\Listing\Product\Instruction;
 
 use Ess\M2ePro\Model\Listing\Product\Instruction\Handler\HandlerInterface;
 
-class Processor extends \Ess\M2ePro\Model\AbstractModel
+class Processor
 {
-    /** @var string */
-    private $component;
-    /** @var int */
-    private $maxListingsProductsCount;
+    private string $component;
+    private int $maxListingsProductsCount;
     /** @var HandlerInterface[] */
-    private $handlers = [];
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction */
-    private $instructionResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\CollectionFactory */
-    private $instructionCollectionFactory;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
-    private $listingProductResource;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory */
-    private $listingProductCollectionFactory;
-    /** @var \Ess\M2ePro\Helper\Module\Exception */
-    private $exceptionHelper;
-    /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory */
-    private $handlerInputFactory;
+    private array $handlers = [];
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\CollectionFactory $instructionCollectionFactory;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource;
+    private \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory;
+    private \Ess\M2ePro\Helper\Module\Exception $exceptionHelper;
+    private \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory $handlerInputFactory;
 
+    /**
+     * @param HandlerInterface[] $handlers
+     */
     public function __construct(
+        string $component,
+        int $maxListingsProductsCount,
+        array $handlers,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction $instructionResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\Instruction\CollectionFactory $instructionCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product $listingProductResource,
         \Ess\M2ePro\Model\ResourceModel\Listing\Product\CollectionFactory $listingProductCollectionFactory,
         \Ess\M2ePro\Helper\Module\Exception $exceptionHelper,
-        \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory $handlerInputFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        array $data = []
+        \Ess\M2ePro\Model\Listing\Product\Instruction\Handler\InputFactory $handlerInputFactory
     ) {
-        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->component = $component;
+        $this->maxListingsProductsCount = $maxListingsProductsCount;
+        $this->handlers = $handlers;
         $this->instructionResource = $instructionResource;
         $this->instructionCollectionFactory = $instructionCollectionFactory;
         $this->listingProductResource = $listingProductResource;
         $this->listingProductCollectionFactory = $listingProductCollectionFactory;
         $this->exceptionHelper = $exceptionHelper;
         $this->handlerInputFactory = $handlerInputFactory;
-    }
-
-    public function setComponent(string $component): self
-    {
-        $this->component = $component;
-
-        return $this;
-    }
-
-    public function setMaxListingsProductsCount(int $count): self
-    {
-        $this->maxListingsProductsCount = $count;
-
-        return $this;
-    }
-
-    public function registerHandler(HandlerInterface $handler): self
-    {
-        $this->handlers[] = $handler;
-
-        return $this;
     }
 
     public function process(): void
@@ -106,14 +82,12 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
     }
 
-    //########################################
-
     /**
      * @param \Ess\M2ePro\Model\Listing\Product[] $listingsProducts
      *
-     * @return \Ess\M2ePro\Model\Listing\Product\Instruction[]|[]
+     * @return list<int, list<int, \Ess\M2ePro\Model\Listing\Product\Instruction>>
      */
-    protected function loadInstructions(array $listingsProducts)
+    private function loadInstructions(array $listingsProducts): array
     {
         if (empty($listingsProducts)) {
             return [];
@@ -139,9 +113,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return array
+     * @return \Ess\M2ePro\Model\Listing\Product[]
      */
-    protected function getNeededListingsProducts()
+    private function getNeededListingsProducts(): array
     {
         $collection = $this->instructionCollectionFactory->create();
         $collection->applyNonBlockedFilter();
@@ -167,7 +141,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         return $listingsProductsCollection->getItems();
     }
 
-    protected function deleteInstructionsWithoutListingProducts(): void
+    private function deleteInstructionsWithoutListingProducts(): void
     {
         $collection = $this->instructionCollectionFactory->create();
         $collection->getSelect()->joinLeft(
@@ -183,17 +157,15 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         );
     }
 
-    public function deleteInstructionsOlderThenWeek(): void
+    private function deleteInstructionsOlderThenWeek(): void
     {
         $greaterThenDate = \Ess\M2ePro\Helper\Date::createCurrentGmt();
         $greaterThenDate->modify('-7 day');
 
-        $productInstructionResource = $this->instructionResource;
-
-        $productInstructionResource
+        $this->instructionResource
             ->getConnection()
             ->delete(
-                $productInstructionResource->getMainTable(),
+                $this->instructionResource->getMainTable(),
                 ['? > create_date' => $greaterThenDate->format('Y-m-d')]
             );
     }

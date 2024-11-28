@@ -8,8 +8,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'ebay/listing/product/process_instructions';
 
-    /** @var \Ess\M2ePro\Model\Listing\Product\Instruction\Processor */
-    private $instructionProcessorFactory;
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory;
     private EbayInstruction\AutoActions\Handler $ebayAutoActionHandler;
     private EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler;
     private EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler;
@@ -27,7 +26,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Model\Config\Manager $configManager,
-        \Ess\M2ePro\Model\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory,
+        \Ess\M2ePro\Model\Ebay\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory,
         EbayInstruction\AutoActions\Handler $ebayAutoActionHandler,
         EbayInstruction\SynchronizationTemplate\Handler $ebaySynchronizationTemplateHandler,
         EbayInstruction\Video\CollectHandler $ebayVideoCollectHandler,
@@ -44,6 +43,7 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $taskRepo,
             $resource
         );
+
         $this->configManager = $configManager;
         $this->instructionProcessorFactory = $instructionProcessorFactory;
         $this->ebayAutoActionHandler = $ebayAutoActionHandler;
@@ -54,21 +54,18 @@ class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions(): void
     {
-        $processor = $this->instructionProcessorFactory->create();
-        $processor->setComponent(\Ess\M2ePro\Helper\Component\Ebay::NICK);
-        $processor->setMaxListingsProductsCount($this->getListingProductsLimit());
+        $maxListingsProductsCount = (int)$this->configManager->getGroupValue(
+            '/ebay/listing/product/instructions/cron/',
+            'listings_products_per_one_time'
+        );
 
-        $processor->registerHandler($this->ebayVideoCollectHandler);
-        $processor->registerHandler($this->ebayDocumentsHandler);
-        $processor->registerHandler($this->ebayAutoActionHandler);
-        $processor->registerHandler($this->ebaySynchronizationTemplateHandler);
-
+        $processor = $this->instructionProcessorFactory->create(
+            $maxListingsProductsCount,
+            $this->ebayVideoCollectHandler,
+            $this->ebayDocumentsHandler,
+            $this->ebayAutoActionHandler,
+            $this->ebaySynchronizationTemplateHandler
+        );
         $processor->process();
-    }
-
-    private function getListingProductsLimit(): int
-    {
-        return (int)$this->configManager
-            ->getGroupValue('/ebay/listing/product/instructions/cron/', 'listings_products_per_one_time');
     }
 }

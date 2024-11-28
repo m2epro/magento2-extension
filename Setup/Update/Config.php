@@ -393,6 +393,7 @@ class Config extends AbstractConfig
             ],
             'y24_m11' => [
                 'AddDeliveryDateFromColumnToAmazonOrder',
+                'AddCustomValueToAttributeMapping',
             ]
         ];
     }
@@ -475,7 +476,6 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y24_m07\NewListingWizardTables::class,
 
-            \Ess\M2ePro\Setup\Update\y24_m10\DropTableWalmartDictionarySpecific::class,
             \Ess\M2ePro\Setup\Update\y24_m10\AddEbayComplianceDocuments::class,
             \Ess\M2ePro\Setup\Update\y24_m10\AddAttributeMapping::class,
         ];

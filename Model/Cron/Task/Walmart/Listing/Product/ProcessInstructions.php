@@ -1,41 +1,61 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product;
 
-/**
- * Class \Ess\M2ePro\Model\Cron\Task\Walmart\Listing\Product\ProcessInstructions
- */
 class ProcessInstructions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'walmart/listing/product/process_instructions';
 
-    //####################################
+    private \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory;
+    private \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\AutoActions\Handler $autoActionsHandler;
+    private \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Handler $syncTemplateHandler;
+    private \Ess\M2ePro\Model\Config\Manager $configManager;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\ProcessorFactory $instructionProcessorFactory,
+        \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\AutoActions\Handler $autoActionsHandler,
+        \Ess\M2ePro\Model\Walmart\Listing\Product\Instruction\SynchronizationTemplate\Handler $syncTemplateHandler,
+        \Ess\M2ePro\Model\Config\Manager $configManager,
+        \Ess\M2ePro\Model\Cron\Manager $cronManager,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Cron\Task\Repository $taskRepo,
+        \Magento\Framework\App\ResourceConnection $resource
+    ) {
+        parent::__construct(
+            $cronManager,
+            $helperData,
+            $eventManager,
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $taskRepo,
+            $resource
+        );
+
+        $this->instructionProcessorFactory = $instructionProcessorFactory;
+        $this->autoActionsHandler = $autoActionsHandler;
+        $this->syncTemplateHandler = $syncTemplateHandler;
+        $this->configManager = $configManager;
+    }
 
     protected function performActions()
     {
-        $processor = $this->modelFactory->getObject('Listing_Product_Instruction_Processor');
-        $processor->setComponent(\Ess\M2ePro\Helper\Component\Walmart::NICK);
-        $processor->setMaxListingsProductsCount(
-            (int)$this->getHelper('Module')->getConfig()->getGroupValue(
-                '/walmart/listing/product/instructions/cron/',
-                'listings_products_per_one_time'
-            )
-        );
-        $processor->registerHandler(
-            $this->modelFactory->getObject('Walmart_Listing_Product_Instruction_AutoActions_Handler')
-        );
-        $processor->registerHandler(
-            $this->modelFactory->getObject('Walmart_Listing_Product_Instruction_SynchronizationTemplate_Handler')
+        $maxListingsProductsCount = (int)$this->configManager->getGroupValue(
+            '/walmart/listing/product/instructions/cron/',
+            'listings_products_per_one_time'
         );
 
+        $processor = $this->instructionProcessorFactory->create(
+            $maxListingsProductsCount,
+            $this->autoActionsHandler,
+            $this->syncTemplateHandler
+        );
         $processor->process();
     }
-
-    //########################################
 }

@@ -142,7 +142,9 @@ HTML;
         if ($this->isConfiguredSpecific($specific)) {
             $value = $specific['template_specific']['value_mode'];
         } elseif ($this->isExistMappedAttribute($specific['id'])) {
-            $value = Specific::VALUE_MODE_CUSTOM_ATTRIBUTE;
+            $mode = $this->getGpsrAttributeMode($specific['id']);
+            $value = $mode === \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_ATTRIBUTE ?
+                Specific::VALUE_MODE_CUSTOM_ATTRIBUTE : Specific::VALUE_MODE_CUSTOM_VALUE;
         }
 
         /** @var \Magento\Framework\Data\Form\Element\Select $element */
@@ -266,6 +268,17 @@ HTML;
             $disabled = false;
         }
 
+        if (
+            !$this->isConfiguredSpecific($specific)
+            && $this->isExistMappedAttribute($specific['id'])
+            && $this->getMappedAttributeMode($specific['id']) === \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_CUSTOM
+        ) {
+            $display = '';
+            $disabled = false;
+            $customValues = [$this->getMappedAttributeValue($specific['id'])];
+            self::$isSetMappedAttribute = true;
+        }
+
         $displayRemoveBtn = 'display: none;';
         if ($specific['max_values'] > 1 && count($customValues) > 1 && count($customValues) < $specific['max_values']) {
             $displayRemoveBtn = '';
@@ -359,6 +372,7 @@ HTML;
         if (
             !$this->isConfiguredSpecific($specific)
             && $this->isExistMappedAttribute($specific['id'])
+            && $this->getMappedAttributeMode($specific['id']) === \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_ATTRIBUTE
         ) {
             $display = '';
             $disabled = false;
@@ -406,12 +420,21 @@ HTML;
         return '';
     }
 
-    private function isGpsrAttribute(string $code): bool
+    private function getMappedAttributeMode(string $code): ?int
     {
-        return $this->getGpsrAttributeValue($code) !== '';
+        if ($this->isGpsrAttribute($code)) {
+            return $this->getGpsrAttributeMode($code);
+        }
+
+        return null;
     }
 
-    private function getGpsrAttributeValue(string $code): string
+    private function isGpsrAttribute(string $code): bool
+    {
+        return $this->getGpsrAttribute($code) !== null;
+    }
+
+    private function getGpsrAttribute(string $code): ?\Ess\M2ePro\Model\Ebay\AttributeMapping\Pair
     {
         if (!isset($this->gpsrMappedAttributesByCode)) {
             $attributes = [];
@@ -422,11 +445,28 @@ HTML;
             $this->gpsrMappedAttributesByCode = $attributes;
         }
 
-        $pair = $this->gpsrMappedAttributesByCode[$code] ?? null;
+        return $this->gpsrMappedAttributesByCode[$code] ?? null;
+    }
+
+    private function getGpsrAttributeValue(string $code): string
+    {
+        $pair = $this->getGpsrAttribute($code);
+
         if ($pair === null) {
             return '';
         }
 
-        return $pair->magentoAttributeCode;
+        return $pair->value;
+    }
+
+    private function getGpsrAttributeMode(string $code): ?int
+    {
+        $pair = $this->getGpsrAttribute($code);
+
+        if ($pair === null) {
+            return null;
+        }
+
+        return $pair->mode;
     }
 }

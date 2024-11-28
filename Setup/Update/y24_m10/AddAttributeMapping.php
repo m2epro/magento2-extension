@@ -53,7 +53,7 @@ class AddAttributeMapping extends \Ess\M2ePro\Model\Setup\Upgrade\Entity\Abstrac
                 ['nullable' => false]
             )
             ->addColumn(
-                PairResource::COLUMN_MAGENTO_ATTRIBUTE_CODE,
+                'magento_attribute_code',
                 \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 255,
                 ['nullable' => false]

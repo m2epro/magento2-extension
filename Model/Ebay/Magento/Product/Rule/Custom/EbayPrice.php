@@ -1,58 +1,41 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom\EbayPrice
- */
 class EbayPrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
-    //########################################
-
-    /**
-     * @return string
-     */
-    public function getAttributeCode()
+    public function getAttributeCode(): string
     {
         return 'ebay_online_current_price';
     }
 
-    /**
-     * @return string
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
-        return $this->helperFactory->getObject('Module\Translation')->__('Price');
+        return (string)__('Price');
     }
 
-    /**
-     * @return string
-     */
-    public function getInputType()
+    public function getInputType(): string
     {
         return 'price';
     }
 
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        $minPrice = $product->getData('min_online_price');
-        $maxPrice = $product->getData('max_online_price');
+        $minPrice = $product->getData('min_online_price')
+            ?? $product->getData('online_current_price');
+
+        $maxPrice = $product->getData('max_online_price')
+            ?? $product->getData('online_current_price');
 
         if (!empty($minPrice) && !empty($maxPrice) && $minPrice != $maxPrice) {
             return [
-                $product->getData('min_online_price'),
-                $product->getData('max_online_price'),
+                $minPrice,
+                $maxPrice,
             ];
         }
 
-        return $product->getData('min_online_price');
+        return $minPrice;
     }
-
-    //########################################
 }

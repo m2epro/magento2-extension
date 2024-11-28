@@ -120,18 +120,14 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return array
+     * @return array{minor: float, major: int}
      */
-    public function getWeight()
+    public function getWeight(): array
     {
         $src = $this->getShippingCalculatedTemplate()->getWeightSource();
 
         if ($src['mode'] == \Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE) {
-            $weightValue = $this->getMagentoProduct()->getAttributeValue($src['attribute']);
-            if (!$weightValue) {
-                $weightValue = $this->getMagentoProduct()->getVariationMaxWeight($src['attribute']);
-            }
-
+            $weightValue = $this->getWeightValue($src['attribute'], $this->getMagentoProduct());
             $weightValue = str_replace(',', '.', $weightValue);
             $weightArray = explode('.', $weightValue);
 
@@ -181,5 +177,20 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         ];
     }
 
-    //########################################
+    /**
+     * @return float|int|string
+     */
+    private function getWeightValue(string $attributeCode, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    {
+        $value = $magentoProduct->getAttributeValue($attributeCode);
+        if (!empty($value)) {
+            return $value;
+        }
+
+        if ($magentoProduct->isGroupedType()) {
+            return $magentoProduct->getGroupedWeight();
+        }
+
+        return $magentoProduct->getVariationMaxWeight($attributeCode);
+    }
 }

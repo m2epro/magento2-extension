@@ -1,87 +1,60 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom\EbayStatus
- */
 class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
-    //########################################
-
-    /**
-     * @return string
-     */
-    public function getAttributeCode()
+    public function getAttributeCode(): string
     {
         return 'ebay_status';
     }
 
-    /**
-     * @return string
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
-        return $this->helperFactory->getObject('Module\Translation')->__('Status');
+        return (string)__('Status');
     }
 
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        return $product->getData('ebay_status');
+        return $product->getData('ebay_status')
+            ?? $product->getData('status');
     }
 
-    /**
-     * @return string
-     */
-    public function getInputType()
+    public function getInputType(): string
     {
         return 'select';
     }
 
-    /**
-     * @return string
-     */
-    public function getValueElementType()
+    public function getValueElementType(): string
     {
         return 'select';
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
-        $helper = $this->helperFactory->getObject('Module\Translation');
-
         return [
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-                'label' => $helper->__('Not Listed'),
+                'label' => __('Not Listed'),
             ],
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-                'label' => $helper->__('Listed'),
+                'label' => __('Listed'),
             ],
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN,
-                'label' => $helper->__('Listed (Hidden)'),
+                'label' => __('Listed (Hidden)'),
             ],
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-                'label' => $helper->__('Pending'),
+                'label' => __('Pending'),
             ],
             [
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_INACTIVE,
-                'label' => $helper->__('Inactive'),
+                'label' => __('Inactive'),
             ],
         ];
     }
-
-    //########################################
 }

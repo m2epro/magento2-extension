@@ -6,7 +6,7 @@ use Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Renderer\Qty as OnlineQty;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Product\Promotion as EbayListingProductPromotionResource;
 use Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation\Option as ProductVariationOption;
 
-class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
+class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
     private $listingProductResource;
@@ -32,8 +32,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $ebayFactory;
     /** @var \Ess\M2ePro\Helper\View\Ebay */
     private $ebayViewHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
     /** @var \Ess\M2ePro\Helper\Url */
     private $urlHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing */
@@ -73,7 +71,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Url $urlHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
 
         $this->listingProductResource = $listingProductResource;
         $this->ebayListingProductResource = $ebayListingProductResource;
@@ -86,7 +84,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->ebayFactory = $ebayFactory;
         $this->ebayViewHelper = $ebayViewHelper;
-        $this->dataHelper = $dataHelper;
         $this->urlHelper = $urlHelper;
         $this->ebayListingResource = $ebayListingResource;
         $this->tagRelationResource = $tagRelationResource;
@@ -106,6 +103,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultSort(false);
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
+
+        $this->showAdvancedFilterProductsOption = false;
     }
 
     public function getGridUrl()
@@ -434,12 +433,8 @@ JS
         return parent::_toHtml();
     }
 
-    public function callbackColumnProductTitle(
-        string $value,
-        \Magento\Catalog\Model\Product $row,
-        \Ess\M2ePro\Block\Adminhtml\Widget\Grid\Column\Extended\Rewrite $column,
-        bool $isExport
-    ): string {
+    public function callbackColumnProductTitle($value, $row, $column, $isExport): string
+    {
         if ($isExport) {
             return $row->getData('sku');
         }

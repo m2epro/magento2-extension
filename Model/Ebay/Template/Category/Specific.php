@@ -131,6 +131,13 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         return (string)$this->getData('attribute_title');
     }
 
+    public function setValueCustomValue(array $values): self
+    {
+        $this->setData('value_custom_value', \Ess\M2ePro\Helper\Json::encode($values));
+
+        return $this;
+    }
+
     public function getValueCustomValue()
     {
         return $this->getData('value_custom_value');
@@ -151,6 +158,15 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function setValueCustomAttributeMode(): self
     {
         $this->setValueMode(self::VALUE_MODE_CUSTOM_ATTRIBUTE);
+        $this->setData('value_custom_value', null);
+
+        return $this;
+    }
+
+    public function setValueCustomValueMode(): self
+    {
+        $this->setValueMode(self::VALUE_MODE_CUSTOM_VALUE);
+        $this->setData('value_custom_attribute', null);
 
         return $this;
     }

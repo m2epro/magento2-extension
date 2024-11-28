@@ -2898,7 +2898,13 @@ class Installer
                                           ['nullable' => false]
                                       )
                                       ->addColumn(
-                                          PairResource::COLUMN_MAGENTO_ATTRIBUTE_CODE,
+                                          PairResource::COLUMN_VALUE_MODE,
+                                          Table::TYPE_INTEGER,
+                                          null,
+                                          ['nullable' => false, 'default' => 0]
+                                      )
+                                      ->addColumn(
+                                          PairResource::COLUMN_VALUE,
                                           Table::TYPE_TEXT,
                                           255,
                                           ['nullable' => false]

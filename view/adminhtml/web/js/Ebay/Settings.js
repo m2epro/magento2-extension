@@ -68,6 +68,22 @@ define([
                     }
                 }
             });
-        }
+        },
+
+        onModeChange: function(channelAttributeCode, mode) {
+            const customValueInput = $(`#${channelAttributeCode}_custom_value`);
+            const customAttributeSelect = $(`#${channelAttributeCode}_custom_attribute`);
+
+            if (mode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\AttributeMapping\\Pair::VALUE_MODE_CUSTOM')) {
+                customValueInput.show().removeAttr('disabled');
+                customAttributeSelect.hide().attr('disabled', 'disabled');
+            } else if (mode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\AttributeMapping\\Pair::VALUE_MODE_ATTRIBUTE')) {
+                customValueInput.hide().attr('disabled', 'disabled');
+                customAttributeSelect.show().removeAttr('disabled');
+            } else {
+                customValueInput.hide().attr('disabled', 'disabled');
+                customAttributeSelect.hide().attr('disabled', 'disabled');
+            }
+        },
     });
 });

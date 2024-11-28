@@ -94,6 +94,14 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 
         $urlForSetGpsrToCategory = $this->getUrl('*/ebay_settings_attributeMapping/setGpsrToCategory');
 
+        $this->jsPhp->addConstants(
+            [
+                '\Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_NONE' => \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_NONE,
+                '\Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_CUSTOM' => \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_CUSTOM,
+                '\Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_ATTRIBUTE' => \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_ATTRIBUTE
+            ]
+        );
+
         $this->js->addRequireJs(
             [
                 's' => 'M2ePro/Ebay/Settings',

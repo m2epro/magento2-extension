@@ -8,3 +8,7 @@
 .grid-listing-column-online_price {
     width: 130px;
 }
+
+.admin__data-grid-header ._massaction .form-inline + .admin__grid-massaction {
+    margin-left: 0;
+}

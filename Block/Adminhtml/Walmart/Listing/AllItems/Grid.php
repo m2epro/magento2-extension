@@ -1,23 +1,15 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\AllItems;
 
 use Ess\M2ePro\Model\Listing\Product;
 
-class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
+class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var array */
     private $parentAndChildReviseScheduledCache = [];
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory */
     private $magentoProductCollectionFactory;
     /** @var \Magento\Framework\Locale\CurrencyInterface */
@@ -54,7 +46,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         array $data = []
     ) {
         $this->databaseHelper = $databaseHelper;
-        $this->dataHelper = $dataHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->walmartFactory = $walmartFactory;
@@ -65,7 +56,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->advancedFilterAllItemsOptions = $advancedFilterAllItemsOptions;
         $this->advancedFilterFactory = $advancedFilterFactory;
 
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
     public function _construct()
@@ -77,6 +68,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultSort(false);
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
+
+        $this->showAdvancedFilterProductsOption = false;
+    }
+
+    protected function _prepareMassaction()
+    {
+        $this->setMassactionIdField('id');
+        $this->getMassactionBlock()->addItem('', [
+            'label' => '',
+            'url' => '',
+        ]);
+
+        $this->css->add(
+            <<<CSS
+            #{$this->getId()} .admin__grid-massaction {
+                display: none;
+            }
+
+            #{$this->getId()} .admin__control-support-text {
+                margin-left: 0;
+            }
+
+CSS
+        );
+
+        return $this;
     }
 
     protected function _prepareCollection()

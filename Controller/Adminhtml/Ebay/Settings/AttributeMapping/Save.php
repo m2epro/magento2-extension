@@ -63,17 +63,21 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Settings
     private function processGpsrAttributes(array $gpsrAttributes): bool
     {
         $attributes = [];
-        foreach ($gpsrAttributes as $channelCode => $magentoCode) {
-            if (empty($magentoCode)) {
+        foreach ($gpsrAttributes as $channelCode => $attributeData) {
+            if (
+                (int)$attributeData['mode'] === \Ess\M2ePro\Model\AttributeMapping\Pair::VALUE_MODE_NONE
+                || empty($attributeData['value'])
+            ) {
                 continue;
             }
 
             $attributes[] = new \Ess\M2ePro\Model\Ebay\AttributeMapping\Pair(
                 null,
                 \Ess\M2ePro\Model\Ebay\AttributeMapping\GpsrService::MAPPING_TYPE,
+                (int)$attributeData['mode'],
                 \Ess\M2ePro\Model\Ebay\AttributeMapping\Gpsr\Provider::getAttributeTitle($channelCode) ?? $channelCode,
                 $channelCode,
-                $magentoCode
+                $attributeData['value']
             );
         }
 

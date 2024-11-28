@@ -380,15 +380,20 @@ JS
             return true;
         }
 
-        $ruleData = $this->getHelper('Data\Session')->getValue(
-            $this->getHelper('Data\GlobalData')->getValue('rule_prefix')
+        /** @var \Ess\M2ePro\Helper\Data\Session $sessionHelper */
+        $sessionHelper = $this->getHelper('Data\Session');
+        /** @var \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper */
+        $globalDataHelper = $this->getHelper('Data\GlobalData');
+
+        $ruleData = $sessionHelper->getValue($globalDataHelper->getValue('rule_prefix'));
+
+        $showHideProductsOption = $sessionHelper->getValue(
+            $globalDataHelper->getValue('hide_products_others_listings_prefix')
         );
 
-        $showHideProductsOption = $this->getHelper('Data\Session')->getValue(
-            $this->getHelper('Data\GlobalData')->getValue('hide_products_others_listings_prefix')
-        );
-
-        $showHideProductsOption === null && $showHideProductsOption = 1;
+        if ($showHideProductsOption === null) {
+            $showHideProductsOption = true;
+        }
 
         return !empty($ruleData) || ($this->showAdvancedFilterProductsOption && $showHideProductsOption);
     }

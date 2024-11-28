@@ -2,7 +2,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\AllItems;
 
-class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
+class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     private const ACTUAL_QTY_EXPRESSION = 'IF(alp.is_afn_channel = 1, alp.online_afn_qty, alp.online_qty)';
 
@@ -18,8 +18,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     private $parentAndChildReviseScheduledCache = [];
     /** @var \Ess\M2ePro\Helper\Module\Database\Structure */
     private $databaseHelper;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
     /** @var \Ess\M2ePro\Model\ResourceModel\Tag\ListingProduct\Relation */
     private $tagRelationResource;
     /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product */
@@ -65,10 +63,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         \Ess\M2ePro\Helper\Data $dataHelper,
         array $data = []
     ) {
-        parent::__construct($context, $backendHelper, $data);
+        parent::__construct($context, $backendHelper, $dataHelper, $data);
 
         $this->databaseHelper = $databaseHelper;
-        $this->dataHelper = $dataHelper;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->localeCurrency = $localeCurrency;
         $this->amazonFactory = $amazonFactory;
@@ -95,6 +92,32 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultSort(false);
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
+
+        $this->showAdvancedFilterProductsOption = false;
+    }
+
+    protected function _prepareMassaction()
+    {
+        $this->setMassactionIdField('id');
+        $this->getMassactionBlock()->addItem('', [
+            'label' => '',
+            'url' => '',
+        ]);
+
+        $this->css->add(
+            <<<CSS
+            #{$this->getId()} .admin__grid-massaction {
+                display: none;
+            }
+
+            #{$this->getId()} .admin__control-support-text {
+                margin-left: 0;
+            }
+
+CSS
+        );
+
+        return $this;
     }
 
     protected function _prepareColumns()

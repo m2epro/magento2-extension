@@ -21,12 +21,6 @@ class Update
         $this->modelFactory = $modelFactory;
     }
 
-    /**
-     * @param \Ess\M2ePro\Model\Ebay\Account $account
-     *
-     * @return void
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
     public function process(\Ess\M2ePro\Model\Ebay\Account $account): void
     {
         /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
@@ -48,23 +42,9 @@ class Update
             return;
         }
 
-        $infoKeys = [
-            'title',
-            'url',
-            'subscription_level',
-            'description',
-        ];
-
-        $dataForUpdate = [];
-        foreach ($infoKeys as $key) {
-            if (!isset($data['data'][$key])) {
-                $dataForUpdate['ebay_store_' . $key] = '';
-                continue;
-            }
-            $dataForUpdate['ebay_store_' . $key] = $data['data'][$key];
+        if (!empty($data['data'])) {
+            $this->updateAccount($data['data'], $account);
         }
-        $account->addData($dataForUpdate);
-        $account->save();
 
         $connection = $account->getResource()->getConnection();
 
@@ -91,5 +71,26 @@ class Update
 
             $connection->insertOnDuplicate($tableAccountStoreCategories, $row);
         }
+    }
+
+    private function updateAccount(array $responseData, \Ess\M2ePro\Model\Ebay\Account $account): void
+    {
+        if (!empty($responseData['title'])) {
+            $account->setEbayStoreTitle($responseData['title']);
+        }
+
+        if (!empty($responseData['url'])) {
+            $account->setEbayStoreUrl($responseData['url']);
+        }
+
+        if (!empty($responseData['subscription_level'])) {
+            $account->setEbayStoreSubscriptionLevel($responseData['subscription_level']);
+        }
+
+        if (!empty($responseData['description'])) {
+            $account->setEbayStoreDescription($responseData['description']);
+        }
+
+        $account->save();
     }
 }

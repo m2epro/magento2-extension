@@ -123,7 +123,7 @@ class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getStoreId()
     {
         if ($this->getData('store_id') === null) {
-            return 0;
+            return \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         }
 
         return $this->getData('store_id');

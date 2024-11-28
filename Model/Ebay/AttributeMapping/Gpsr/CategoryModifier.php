@@ -90,23 +90,11 @@ class CategoryModifier
                 continue;
             }
 
-            if ($specific->isNoneValueMode()) {
-                $specific->setValueCustomAttribute($gpsrAttribute->magentoAttributeCode)
-                         ->setValueCustomAttributeMode();
-
-                $specific->save();
-
-                $isChangedCategory = true;
-
-                continue;
-            }
-
             if (
-                $specific->isCustomAttributeValueMode()
-                && $specific->getValueCustomAttribute() !== $gpsrAttribute->magentoAttributeCode
+                $this->isModeDifferent($gpsrAttribute, $specific)
+                || $this->isValueDifferent($gpsrAttribute, $specific)
             ) {
-                $specific->setValueCustomAttribute($gpsrAttribute->magentoAttributeCode);
-
+                $this->updateSpecific($specific, $gpsrAttribute);
                 $specific->save();
 
                 $isChangedCategory = true;
@@ -139,12 +127,74 @@ class CategoryModifier
         $specificModel = $this->activeRecordFactory->getObject('Ebay_Template_Category_Specific');
         $specificModel->setMode(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_ITEM_SPECIFICS)
                       ->setAttributeTitle($gpsrAttribute->channelAttributeCode)
-                      ->setValueMode(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_ATTRIBUTE)
-                      ->setValueCustomAttribute($gpsrAttribute->magentoAttributeCode)
                       ->setTemplateCategoryId((int)$category->getId());
+
+        $this->updateSpecific($specificModel, $gpsrAttribute);
 
         return $specificModel;
     }
+
+    private function updateSpecific(
+        \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific,
+        \Ess\M2ePro\Model\Ebay\AttributeMapping\Pair $gpsrAttribute
+    ): void {
+        if ($gpsrAttribute->isValueModeAttribute()) {
+            $specific->setValueCustomAttribute($gpsrAttribute->value)
+                     ->setValueCustomAttributeMode();
+        } elseif ($gpsrAttribute->isValueModeCustom()) {
+            $specific->setValueCustomValue([$gpsrAttribute->value])
+                     ->setValueCustomValueMode();
+        }
+    }
+
+    private function isModeDifferent(
+        \Ess\M2ePro\Model\Ebay\AttributeMapping\Pair $gpsrAttribute,
+        \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific
+    ): bool {
+        if ($specific->isNoneValueMode()) {
+            return true;
+        }
+
+        if (
+            $specific->isCustomAttributeValueMode()
+            && !$gpsrAttribute->isValueModeAttribute()
+        ) {
+            return true;
+        }
+
+        if (
+            $specific->isCustomValueValueMode()
+            && !$gpsrAttribute->isValueModeCustom()
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isValueDifferent(
+        \Ess\M2ePro\Model\Ebay\AttributeMapping\Pair $gpsrAttribute,
+        \Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific
+    ): bool {
+        return $gpsrAttribute->value !== $this->getSpecificValue($specific);
+    }
+
+    private function getSpecificValue(\Ess\M2ePro\Model\Ebay\Template\Category\Specific $specific): string
+    {
+        if ($specific->isCustomValueValueMode()) {
+            $value = (array)json_decode($specific->getValueCustomValue() ?? '[]', true);
+
+            return (string)reset($value);
+        }
+
+        if ($specific->isCustomAttributeValueMode()) {
+            return $specific->getValueCustomAttribute() ?? '';
+        }
+
+        return '';
+    }
+
+    // ----------------------------------------
 
     private function createProductInstruction(\Ess\M2ePro\Model\Ebay\Template\Category $category): void
     {

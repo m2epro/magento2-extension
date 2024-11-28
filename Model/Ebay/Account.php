@@ -2,6 +2,7 @@
 
 namespace Ess\M2ePro\Model\Ebay;
 
+use Ess\M2ePro\Model\ResourceModel\Ebay\Account as EbayAccountResource;
 use Ess\M2ePro\Model\Exception\Logic;
 
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
@@ -1120,24 +1121,52 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getData('feedbacks_last_used_id');
     }
 
-    public function getEbayStoreTitle()
+    public function getEbayStoreTitle(): string
     {
-        return $this->getData('ebay_store_title');
+        return $this->getData(EbayAccountResource::COLUMN_EBAY_STORE_TITLE);
     }
 
-    public function getEbayStoreUrl()
+    public function setEbayStoreTitle(string $storeTitle): self
     {
-        return $this->getData('ebay_store_url');
+        $this->setData(EbayAccountResource::COLUMN_EBAY_STORE_TITLE, $storeTitle);
+
+        return $this;
     }
 
-    public function getEbayStoreSubscriptionLevel()
+    public function getEbayStoreUrl(): string
     {
-        return $this->getData('ebay_store_subscription_level');
+        return $this->getData(EbayAccountResource::COLUMN_EBAY_STORE_URL);
     }
 
-    public function getEbayStoreDescription()
+    public function setEbayStoreUrl(string $storeUrl): self
     {
-        return $this->getData('ebay_store_description');
+        $this->setData(EbayAccountResource::COLUMN_EBAY_STORE_URL, $storeUrl);
+
+        return $this;
+    }
+
+    public function getEbayStoreSubscriptionLevel(): string
+    {
+        return $this->getData(EbayAccountResource::COLUMN_EBAY_STORE_SUBSCRIPTION_LEVEL);
+    }
+
+    public function setEbayStoreSubscriptionLevel(string $storeSubscriptionLevel): self
+    {
+        $this->setData(EbayAccountResource::COLUMN_EBAY_STORE_SUBSCRIPTION_LEVEL, $storeSubscriptionLevel);
+
+        return $this;
+    }
+
+    public function getEbayStoreDescription(): string
+    {
+        return $this->getData(EbayAccountResource::COLUMN_EBAY_STORE_DESCRIPTION);
+    }
+
+    public function setEbayStoreDescription(string $storeDescription): self
+    {
+        $this->setData(EbayAccountResource::COLUMN_EBAY_STORE_DESCRIPTION, $storeDescription);
+
+        return $this;
     }
 
     public function getEbayStoreCategory($id)

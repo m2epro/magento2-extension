@@ -8,6 +8,10 @@ use Ess\M2ePro\Model\ResourceModel\AttributeMapping\Pair as PairResource;
 
 class Pair extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
+    public const VALUE_MODE_NONE = 0;
+    public const VALUE_MODE_ATTRIBUTE = 1;
+    public const VALUE_MODE_CUSTOM = 2;
+
     protected function _construct(): void
     {
         parent::_construct();
@@ -17,15 +21,17 @@ class Pair extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function create(
         string $component,
         string $type,
+        int $valueMode,
         string $channelAttributeTitle,
         string $channelAttributeCode,
-        string $magentoAttributeCode
+        string $value
     ): self {
         $this->setData(PairResource::COLUMN_COMPONENT, $component)
              ->setData(PairResource::COLUMN_TYPE, $type)
+             ->setValueMode($valueMode)
              ->setData(PairResource::COLUMN_CHANNEL_ATTRIBUTE_TITLE, $channelAttributeTitle)
              ->setData(PairResource::COLUMN_CHANNEL_ATTRIBUTE_CODE, $channelAttributeCode)
-             ->setMagentoAttributeCode($magentoAttributeCode);
+             ->setValue($value);
 
         return $this;
     }
@@ -45,6 +51,37 @@ class Pair extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return (string)$this->getData(PairResource::COLUMN_TYPE);
     }
 
+    public function isValueModeNone(): bool
+    {
+        return $this->getValueMode() === self::VALUE_MODE_NONE;
+    }
+
+    public function isValueModeAttribute(): bool
+    {
+        return $this->getValueMode() === self::VALUE_MODE_ATTRIBUTE;
+    }
+
+    public function isValueModeCustom(): bool
+    {
+        return $this->getValueMode() === self::VALUE_MODE_CUSTOM;
+    }
+
+    public function setValueMode(int $mode): self
+    {
+        if (!in_array($mode, [self::VALUE_MODE_NONE, self::VALUE_MODE_ATTRIBUTE, self::VALUE_MODE_CUSTOM])) {
+            throw new \LogicException(sprintf('Invalid value mode "%s"', $mode));
+        }
+
+        $this->setData(PairResource::COLUMN_VALUE_MODE, $mode);
+
+        return $this;
+    }
+
+    public function getValueMode(): int
+    {
+        return (int)$this->getData(PairResource::COLUMN_VALUE_MODE);
+    }
+
     public function getChannelAttributeTitle(): string
     {
         return (string)$this->getData(PairResource::COLUMN_CHANNEL_ATTRIBUTE_TITLE);
@@ -55,15 +92,15 @@ class Pair extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return (string)$this->getData(PairResource::COLUMN_CHANNEL_ATTRIBUTE_CODE);
     }
 
-    public function setMagentoAttributeCode(string $magentoAttributeCode): self
+    public function setValue(string $value): self
     {
-        $this->setData(PairResource::COLUMN_MAGENTO_ATTRIBUTE_CODE, $magentoAttributeCode);
+        $this->setData(PairResource::COLUMN_VALUE, $value);
 
         return $this;
     }
 
-    public function getMagentoAttributeCode(): string
+    public function getValue(): string
     {
-        return (string)$this->getData(PairResource::COLUMN_MAGENTO_ATTRIBUTE_CODE);
+        return (string)$this->getData(PairResource::COLUMN_VALUE);
     }
 }

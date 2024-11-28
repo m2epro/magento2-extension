@@ -40,7 +40,9 @@ define([
             var advancedFilter = new ListingProductAdvancedFilterObj();
 
             var filters = $$('#' + this.containerId + ' .data-grid-filters input',
-                             '#' + this.containerId + ' .data-grid-filters select');
+                             '#' + this.containerId + ' .data-grid-filters select',
+                             '#' + this.containerId + ' [data-role="filter-form"] input',
+                             '#' + this.containerId + ' [data-role="filter-form"] select');
             var elements = [];
             filters.forEach(function(el) {
                 if (el.value && el.value.length)
@@ -60,6 +62,9 @@ define([
                 }
 
                 this.reloadParams = this.reloadParams || {};
+
+                console.log(this.reloadParams)
+                console.log(Form.serializeElements(elements))
 
                 for (var reloadParam in this.reloadParams) {
                     reloadParam.match('^rule|^hide') && delete this.reloadParams[reloadParam];
@@ -82,6 +87,9 @@ define([
                 if (advancedFilter.isNeedClearRuleForm(this.reloadParams)) {
                     advancedFilter.clearRuleForm(this.reloadParams)
                 }
+
+                console.log(this.reloadParams)
+                console.log(Form.serializeElements(elements))
 
                 this.reload(this.addVarToUrl(this.filterVar, base64_encode(Form.serializeElements(elements))));
                 advancedFilter.clearGridReloadParams(this.reloadParams);

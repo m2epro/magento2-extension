@@ -21,12 +21,13 @@ class PairFactory
     public function create(
         string $component,
         string $type,
+        int $valueMode,
         string $channelAttributeTitle,
         string $channelAttributeCode,
-        string $magentoAttributeCode
+        string $value
     ): Pair {
         $pair = $this->createEmpty();
-        $pair->create($component, $type, $channelAttributeTitle, $channelAttributeCode, $magentoAttributeCode);
+        $pair->create($component, $type, $valueMode, $channelAttributeTitle, $channelAttributeCode, $value);
 
         return $pair;
     }

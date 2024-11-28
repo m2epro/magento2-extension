@@ -34,9 +34,10 @@ class Update
                 $new = $this->mappingFactory->create(
                     \Ess\M2ePro\Helper\Component\Ebay::NICK,
                     \Ess\M2ePro\Model\Ebay\AttributeMapping\GpsrService::MAPPING_TYPE,
+                    $newPair->mode,
                     $newPair->channelAttributeTitle,
                     $newPair->channelAttributeCode,
-                    $newPair->magentoAttributeCode
+                    $newPair->value
                 );
 
                 $this->attributeMappingRepository->create($new);
@@ -48,11 +49,15 @@ class Update
 
             unset($existedByAttributeCode[$newPair->channelAttributeCode]);
 
-            if ($exist->getMagentoAttributeCode() === $newPair->magentoAttributeCode) {
+            if (
+                $exist->getValue() === $newPair->value
+                && $exist->getValueMode() === $newPair->mode
+            ) {
                 continue;
             }
 
-            $exist->setMagentoAttributeCode($newPair->magentoAttributeCode);
+            $exist->setValueMode($newPair->mode);
+            $exist->setValue($newPair->value);
 
             $this->attributeMappingRepository->save($exist);
 
