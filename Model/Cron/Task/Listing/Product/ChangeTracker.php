@@ -88,8 +88,8 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $this->profiler->start();
         $this->initBuilders([
-            $this->priceTrackerFactory,
             $this->inventoryTrackerFactory,
+            $this->priceTrackerFactory,
         ]);
         $this->profiler->stop();
 

@@ -8,6 +8,8 @@ use Magento\InventoryCatalogApi\Api\DefaultStockProviderInterface;
 
 class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection
 {
+    private bool $isNeedJoinWebsiteInventoryStock;
+
     /** @var \Ess\M2ePro\Helper\Magento\Stock */
     private $stockHelper;
     /** @var StockIndexTableNameResolverInterface */
@@ -79,17 +81,10 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
     public function joinStockItem()
     {
-        /** @var \Ess\M2ePro\Helper\Magento\Store $storeHelper */
-        $storeHelper = $this->helperFactory->getObject('Magento\Store');
+        $defaultStockId = $this->getDefaultStockId();
+        $websiteStockId = $this->getWebsiteStockId();
 
-        $website = $this->getStoreId() === \Magento\Store\Model\Store::DEFAULT_STORE_ID
-            ? $storeHelper->getDefaultWebsite()
-            : $storeHelper->getWebsite($this->getStoreId());
-
-        $defaultStockId = (int)$this->defaultStockResolver->getId();
-        $websiteStockId = (int)$this->stockResolver->execute($website->getId())->getStockId();
-
-        if ($defaultStockId === $websiteStockId) {
+        if (!$this->isNeedJoinWebsiteInventoryStock()) {
             $this->joinOnlyDefaultInventoryStockItem(
                 $this->indexNameResolver->execute($defaultStockId)
             );
@@ -192,6 +187,10 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
     private function getCheckSqlForQty(): \Zend_Db_Expr
     {
+        if (!$this->isNeedJoinWebsiteInventoryStock()) {
+            return new \Zend_Db_Expr('IFNULL(it_def.quantity, 0)');
+        }
+
         return $this->getConnection()->getCheckSql(
             'it.sku IS NOT NULL',
             'IFNULL(it.quantity, 0)',
@@ -201,10 +200,43 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collect
 
     private function getCheckSqlForStock(): \Zend_Db_Expr
     {
+        if (!$this->isNeedJoinWebsiteInventoryStock()) {
+            return new \Zend_Db_Expr('IFNULL(it_def.is_salable, 0)');
+        }
+
         return $this->getConnection()->getCheckSql(
             'it.sku IS NOT NULL',
             'it.is_salable',
             'IFNULL(it_def.is_salable, 0)'
         );
+    }
+
+    private function getWebsiteStockId(): int
+    {
+        $storeHelper = $this->helperFactory->getObject('Magento\Store');
+
+        $website = $this->getStoreId() === \Magento\Store\Model\Store::DEFAULT_STORE_ID
+            ? $storeHelper->getDefaultWebsite()
+            : $storeHelper->getWebsite($this->getStoreId());
+
+        return (int)$this->stockResolver->execute($website->getId())->getStockId();
+    }
+
+    private function getDefaultStockId(): int
+    {
+        return (int)$this->defaultStockResolver->getId();
+    }
+
+    private function isNeedJoinWebsiteInventoryStock(): bool
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->isNeedJoinWebsiteInventoryStock)) {
+            $defaultStockId = $this->getDefaultStockId();
+            $websiteStockId = $this->getWebsiteStockId();
+
+            $this->isNeedJoinWebsiteInventoryStock = $defaultStockId !== $websiteStockId;
+        }
+
+        return $this->isNeedJoinWebsiteInventoryStock;
     }
 }

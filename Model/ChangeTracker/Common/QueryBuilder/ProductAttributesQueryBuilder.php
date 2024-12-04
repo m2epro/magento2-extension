@@ -115,6 +115,7 @@ class ProductAttributesQueryBuilder
             ['backend_type', 'attribute_code', 'attribute_id']
         );
         $select->where("backend_type != 'static'");
+        $select->where("entity_type_id = 4");
 
         $tmp = [];
         foreach ($select->query()->fetchAll() as $data) {
