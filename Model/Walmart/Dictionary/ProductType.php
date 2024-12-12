@@ -21,14 +21,9 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $this->setData(DictionaryResource::COLUMN_MARKETPLACE_ID, $marketplaceId);
         $this->setData(DictionaryResource::COLUMN_NICK, $nick);
         $this->setData(DictionaryResource::COLUMN_TITLE, $title);
-        $this->setData(
-            DictionaryResource::COLUMN_ATTRIBUTES,
-            \Ess\M2ePro\Helper\Json::encode($attributes)
-        );
-        $this->setData(
-            DictionaryResource::COLUMN_VARIATION_ATTRIBUTES,
-            \Ess\M2ePro\Helper\Json::encode($variationAttributes)
-        );
+        $this->setAttributes($attributes);
+        $this->setVariationAttributes($variationAttributes);
+
         $this->markAsValid();
     }
 
@@ -71,6 +66,16 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return \Ess\M2ePro\Helper\Json::decode($attributes);
     }
 
+    public function setAttributes(array $attributes): self
+    {
+        $this->setData(
+            DictionaryResource::COLUMN_ATTRIBUTES,
+            \Ess\M2ePro\Helper\Json::encode($attributes)
+        );
+
+        return $this;
+    }
+
     /**
      * @return string[]
      */
@@ -82,6 +87,16 @@ class ProductType extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         return \Ess\M2ePro\Helper\Json::decode($variationAttributes);
+    }
+
+    public function setVariationAttributes(array $variationAttributes): self
+    {
+        $this->setData(
+            DictionaryResource::COLUMN_VARIATION_ATTRIBUTES,
+            \Ess\M2ePro\Helper\Json::encode($variationAttributes)
+        );
+
+        return $this;
     }
 
     public function isInvalid(): bool

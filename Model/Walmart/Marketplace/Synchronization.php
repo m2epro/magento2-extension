@@ -107,11 +107,10 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
             (int)$this->marketplace->getId()
         );
 
-        $lastUpdateDate = \Ess\M2ePro\Helper\Date::createDateGmt($details['last_update']);
         $marketplaceDictionary = $this->marketplaceDictionaryFactory->createWithoutProductTypes(
             (int)$this->marketplace->getId(),
-            $lastUpdateDate,
-            $lastUpdateDate
+            \Ess\M2ePro\Helper\Date::createCurrentGmt(),
+            \Ess\M2ePro\Helper\Date::createDateGmt($details['last_update'])
         );
 
         $this->marketplaceDictionaryRepository->create($marketplaceDictionary);

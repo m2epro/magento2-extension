@@ -40,7 +40,7 @@ class MarketplaceService
         $marketplaceDictionary = $this->dictionaryMarketplaceFactory->createWithProductTypes(
             (int)$marketplace->getId(),
             $response->getProductTypes(),
-            $response->getLastUpdate(),
+            \Ess\M2ePro\Helper\Date::createCurrentGmt(),
             $response->getLastUpdate()
         );
 

@@ -8,6 +8,8 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
     private \Ess\M2ePro\Model\Walmart\Dictionary\CategoryService $categoryDictionaryService;
     private \Ess\M2ePro\Model\Walmart\Dictionary\MarketplaceService $marketplaceDictionaryService;
+    private \Ess\M2ePro\Model\Walmart\Dictionary\ProductTypeService $dictionaryProductTypeService;
+
     private \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory;
     private \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent;
     private ?\Ess\M2ePro\Model\Marketplace $marketplace = null;
@@ -18,6 +20,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
     public function __construct(
         \Ess\M2ePro\Model\Walmart\Dictionary\CategoryService $categoryDictionaryService,
         \Ess\M2ePro\Model\Walmart\Dictionary\MarketplaceService $marketplaceDictionaryService,
+        \Ess\M2ePro\Model\Walmart\Dictionary\ProductTypeService $dictionaryProductTypeService,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -30,6 +33,7 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
         $this->marketplaceDictionaryService = $marketplaceDictionaryService;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->cachePermanent = $cachePermanent;
+        $this->dictionaryProductTypeService = $dictionaryProductTypeService;
     }
 
     public function isMarketplaceAllowed(\Ess\M2ePro\Model\Marketplace $marketplace): bool
@@ -72,7 +76,11 @@ class Synchronization extends \Ess\M2ePro\Model\AbstractModel
 
         $this->marketplaceDictionaryService->update($this->marketplace);
 
-        $this->getProgressManager()->setPercentage(50);
+        $this->getProgressManager()->setPercentage(30);
+
+        $this->dictionaryProductTypeService->update($this->marketplace);
+
+        $this->getProgressManager()->setPercentage(60);
 
         $this->categoryDictionaryService->update($this->marketplace);
 

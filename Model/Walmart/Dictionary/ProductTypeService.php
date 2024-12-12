@@ -14,7 +14,7 @@ class ProductTypeService
         \Ess\M2ePro\Model\Walmart\Dictionary\ProductType\Repository $productTypeDictionaryRepository,
         \Ess\M2ePro\Model\Walmart\Dictionary\ProductTypeFactory $productTypeDictionaryFactory,
         \Ess\M2ePro\Model\Walmart\Connector\ProductType\GetInfo\Processor $getInfoConnectProcessor,
-        \Ess\M2ePro\Model\Walmart\Dictionary\Marketplace\Repository $marketplaceDictionaryRepository
+        \Ess\M2ePro\Model\Walmart\Marketplace\Repository $walmartMarketplaceRepository
     ) {
         $this->productTypeDictionaryRepository = $productTypeDictionaryRepository;
         $this->getInfoConnectProcessor = $getInfoConnectProcessor;
@@ -25,9 +25,7 @@ class ProductTypeService
         string $productTypeNick,
         \Ess\M2ePro\Model\Marketplace $marketplace
     ): \Ess\M2ePro\Model\Walmart\Dictionary\ProductType {
-        if (!$marketplace->isComponentModeWalmart()) {
-            throw new \LogicException('Marketplace is not Walmart component mode.');
-        }
+        $this->checkMarketplace($marketplace);
 
         $productTypeDictionary = $this->productTypeDictionaryRepository->findByNick(
             $productTypeNick,
@@ -53,5 +51,35 @@ class ProductTypeService
         $this->productTypeDictionaryRepository->create($productTypeDictionary);
 
         return $productTypeDictionary;
+    }
+
+    public function update(\Ess\M2ePro\Model\Marketplace $marketplace): void
+    {
+        $this->checkMarketplace($marketplace);
+
+        $productTypeDictionaries = $this->productTypeDictionaryRepository
+            ->retrieveByMarketplace($marketplace);
+
+        foreach ($productTypeDictionaries as $productTypeDictionary) {
+            if ($productTypeDictionary->isInvalid()) {
+                continue;
+            }
+            $response = $this->getInfoConnectProcessor->process(
+                $productTypeDictionary->getNick(),
+                $marketplace
+            );
+
+            $productTypeDictionary->setAttributes($response->getAttributes())
+                                  ->setVariationAttributes($response->getVariationAttributes());
+
+            $this->productTypeDictionaryRepository->save($productTypeDictionary);
+        }
+    }
+
+    private function checkMarketplace(\Ess\M2ePro\Model\Marketplace $marketplace): void
+    {
+        if (!$marketplace->isComponentModeWalmart()) {
+            throw new \LogicException('Marketplace is not Walmart component mode.');
+        }
     }
 }
