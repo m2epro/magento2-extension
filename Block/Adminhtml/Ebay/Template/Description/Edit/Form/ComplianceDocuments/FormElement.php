@@ -15,12 +15,21 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
     {
         $documents = $this->getData('saved_compliance_documents');
         if (empty($documents)) {
-            return [
-                ['document_type' => '', 'document_attribute' => ''],
-            ];
+            return $this->getEmptyDocuments();
         }
 
         return $documents;
+    }
+
+    public function getEmptyDocuments(): array
+    {
+        return [
+            [
+                'document_type' => '',
+                'document_attribute' => '',
+                'document_languages' => [],
+            ],
+        ];
     }
 
     public function renderTypesDropdown(int $index, string $selectedType)
@@ -103,6 +112,34 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
         return $select->toHtml();
     }
 
+    public function renderLanguagesDropdown(int $index, array $selectedLanguages)
+    {
+        $languages = \Ess\M2ePro\Model\Ebay\ComplianceDocuments::getDocumentLanguages();
+
+        $values = [];
+        foreach ($languages as $language => $label) {
+            $values[] = ['label' => $label, 'value' => $language];
+        }
+
+        $select = $this->_factoryElement->create(
+            \Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Multiselect::class,
+            [
+                'data' => [
+                    'name' => "description[compliance_documents][$index][document_languages]",
+                    'values' => $values,
+                    'value' => $selectedLanguages,
+                    'size' => 3,
+                    'class' => 'M2ePro-compliance-document-language-validator'
+                ],
+            ]
+        );
+
+        $select->setId('document-languages-' . $index);
+        $select->setForm($this->getForm());
+
+        return $select->toHtml();
+    }
+
     public function renderRemoveRowButton(int $index): string
     {
         $style = '';
@@ -127,17 +164,15 @@ class FormElement extends \Magento\Framework\Data\Form\Element\AbstractElement
         );
     }
 
-    public function getTooltipHtml()
+    public function getTooltipHtml(string $text): string
     {
-        //$directionToRightClass = $directionToRight ? 'm2epro-field-tooltip-right' : '';
-
         $content = __('Choose an Attribute containing a valid URL for the selected Document Type');
 
         return <<<HTML
 <div class="m2epro-field-tooltip admin__field-tooltip">
     <a class="admin__field-tooltip-action" href="javascript://"></a>
     <div class="admin__field-tooltip-content">
-        {$content}
+        {$text}
     </div>
 </div>
 HTML;

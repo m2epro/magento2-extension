@@ -11,6 +11,7 @@ class ComplianceDocuments extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\A
     public const COLUMN_HASH = 'hash';
     public const COLUMN_TYPE = 'type';
     public const COLUMN_URL = 'url';
+    public const COLUMN_LANGUAGES = 'languages';
     public const COLUMN_STATUS = 'status';
     public const COLUMN_DOCUMENT_ID = 'document_id';
     public const COLUMN_ERROR = 'error';

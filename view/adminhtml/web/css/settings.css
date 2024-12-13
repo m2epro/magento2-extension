@@ -62,3 +62,27 @@
 #modal_popup .field-new_license_key input[type="text"].input-text {
     width: 100%;
 }
+
+span:has(.attribute-wrapper) {
+    width: 100%;
+}
+
+.admin__legend .channel-attribute,
+.admin__legend .magento-attribute
+{
+    display: inline-block;
+    float: left;
+    margin: 0;
+}
+
+.admin__legend .channel-attribute {
+    width: 35%;
+}
+
+.admin__legend .magento-attribute {
+    width: 60%;
+}
+
+#variation_attributes label.label {
+    text-align: left;
+}

@@ -50,12 +50,16 @@ define([
 
         submitTab: function(url, formData)
         {
+            if (!formData) {
+                return;
+            }
+
             var self = this;
 
             new Ajax.Request(url, {
                 method: 'post',
                 asynchronous: false,
-                parameters: formData || {},
+                parameters: formData,
                 onSuccess: function(transport) {
                     var result = transport.responseText;
 

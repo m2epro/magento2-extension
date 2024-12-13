@@ -34,7 +34,8 @@ class PendingStatusProcessor
             $documents[] = [
                 'id' => $complianceDocument->getHash(),
                 'type' => $complianceDocument->getType(),
-                'url' => $complianceDocument->getUrl()
+                'url' => $complianceDocument->getUrl(),
+                'languages' => $complianceDocument->getLanguages(),
             ];
         }
 

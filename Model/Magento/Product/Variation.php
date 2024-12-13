@@ -295,6 +295,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                     'attribute' => $attributeLabel,
                     'attribute_code' => $attributeCode,
                     'option' => $attributeValue,
+                    'option_id' => $childProduct->getData($attributeCode),
                 ];
             }
 

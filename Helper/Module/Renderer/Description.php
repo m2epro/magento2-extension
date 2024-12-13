@@ -82,7 +82,7 @@ class Description
 
     private function insertAttributes($text, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
-        preg_match_all("/#([A-z_0-9]+?)#/", $text, $matches);
+        preg_match_all("/#([A-Za-z_0-9]+?)#/", $text, $matches);
 
         if (empty($matches[0])) {
             return $text;

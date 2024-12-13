@@ -5,6 +5,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Walmart\Settings;
 class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
 {
     public const TAB_ID_GENERAL = 'general';
+    public const TAB_ID_ATTRIBUTE_MAPPING = 'mapping';
 
     //########################################
 
@@ -37,6 +38,19 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
         $this->addTab(self::TAB_ID_SYNCHRONIZATION, $tab);
 
         // ---------------------------------------
+
+        $attributeMappingTabContent = $this
+            ->getLayout()
+            ->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Settings\Tabs\AttributeMapping::class)
+            ->toHtml();
+
+        $this->addTab(self::TAB_ID_ATTRIBUTE_MAPPING, [
+            'label' => __('Attribute Mapping'),
+            'title' => __('Attribute Mapping'),
+            'content' => $attributeMappingTabContent,
+        ]);
+
+        // ----------------------------------------
 
         return parent::_prepareLayout();
     }

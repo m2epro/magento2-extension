@@ -979,7 +979,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
         $processingCollection = $this->activeRecordFactory->getObject('Processing')->getCollection();
         $processingCollection->addFieldToFilter('id', ['in' => $processingIds]);
-
+        /** @var \Ess\M2ePro\Model\Walmart\Connector\Product\Dispatcher $dispatcher */
         $dispatcher = $this->modelFactory->getObject('Walmart_Connector_Product_Dispatcher');
 
         foreach ($processingActions as $processingAction) {

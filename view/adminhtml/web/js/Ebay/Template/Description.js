@@ -1,8 +1,9 @@
 define([
+    'M2ePro/Ebay/Template/Description/ComplianceDocuments',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
     'mage/adminhtml/wysiwyg/tiny_mce/setup'
-], function() {
+], function(ComplianceDocuments) {
     window.EbayTemplateDescription = Class.create(Common, {
 
         // ---------------------------------------
@@ -120,8 +121,6 @@ define([
 
             this.initCustomInsertsPopup();
             this.initPreviewPopup();
-
-            this.initDocumentsFieldObservers();
         },
 
         // ---------------------------------------
@@ -741,44 +740,6 @@ define([
                 element.value += value;
                 element.focus();
             }
-        },
-
-        initDocumentsFieldObservers: function () {
-            const tableWrapper = jQuery('#documents_table_wrapper');
-            const addRowButtonSelector = '.add_row';
-            const removeRowButtonSelector = '.remove_row';
-
-            const validateRowCount = function () {
-                tableWrapper.find(addRowButtonSelector).attr('disabled', function () {
-                    return tableWrapper.find('tbody tr').length >= 10
-                });
-            };
-
-            const addRow = function () {
-                let clonedRow = tableWrapper.find('tbody tr:last').clone();
-
-                clonedRow.find(removeRowButtonSelector).show();
-                clonedRow.find('select')
-                        .prop('selectedIndex', 0)
-                        .removeAttr('option_injected')
-                        .attr('name', (i, name) => name.replace(/(\d+)/, ($0, $1) => ++$1))
-                        .attr('id', (i, id) => id.replace(/(\d+)/, ($0, $1) => ++$1));
-                clonedRow.find('option[value="new-one-attribute"]').remove()
-
-                tableWrapper.find('tbody').append(clonedRow)
-
-                validateRowCount();
-
-                window.initializationCustomAttributeInputs();
-            };
-
-            const removeRow = function (e) {
-                jQuery(e.target.closest('tr')).remove();
-                validateRowCount();
-            }
-
-            tableWrapper.on('click', addRowButtonSelector, addRow);
-            tableWrapper.on('click', removeRowButtonSelector, removeRow);
         }
 
         // ---------------------------------------

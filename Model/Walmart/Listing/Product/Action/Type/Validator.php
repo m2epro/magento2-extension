@@ -647,6 +647,9 @@ HTML;
         $identifier = $this->getIdentifierFromConfiguration();
 
         if (empty($identifier)) {
+            $this->addMessage('Product was not listed. ' .
+                'A required Product ID (e.g., GTIN, UPC) is missing. Please provide a valid product identifier.');
+
             return false;
         }
 

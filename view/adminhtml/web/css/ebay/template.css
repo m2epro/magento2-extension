@@ -280,24 +280,18 @@ label.mage-error[for="description_template"] {
 /* Description Preview Styles */
 
 /*region Documents field*/
+#documents_table_wrapper {
+    margin-left: 30px;
+}
 #documents_table_wrapper table {
-    width: 100%;
+    table-layout: fixed
 }
 
 #documents_table_wrapper td {
-    padding: 10px 20px 10px 0;
+    border-top: 0.1rem solid #d6d6d6;
 }
 
 #documents_table_wrapper .select {
     width: 100%;
-}
-
-#documents_table_wrapper th {
-    padding-bottom: 0.7rem;
-}
-
-#documents_table_wrapper th span {
-    display: inline-block;
-    padding-top: 0.7rem;
 }
 /*endregion*/

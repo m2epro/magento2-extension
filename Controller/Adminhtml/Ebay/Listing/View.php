@@ -99,7 +99,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->setPageHelpLink('listings');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
+            __('Listing "%listing_title"', ['listing_title' =>  $listing->getTitle()])
         );
 
         $this

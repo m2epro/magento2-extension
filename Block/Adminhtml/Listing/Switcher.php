@@ -28,7 +28,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
 
     public function getLabel(): string
     {
-        return (string)__('View Listing:');
+        return (string)__('Switch Listing');
     }
 
     public function hasDefaultOption(): bool
@@ -55,7 +55,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
         foreach ($listings as $listing) {
             $listingTitle = $this->filterManager->truncate(
                 $listing->getTitle(),
-                ['length' => 70]
+                ['length' => 50]
             );
 
             $items[] = [

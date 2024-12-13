@@ -9,19 +9,27 @@ $element = $this->getElement();
 ?>
 
 <div class="admin__field documents_block_wrapper">
-    <label class="label admin__field-label"></label>
-    <div id="documents_table_wrapper" class="admin__field-control control">
-        <table>
+    <div id="documents_table_wrapper">
+        <table class="documents-table border data-grid data-grid-not-hovered">
             <colgroup>
-                <col style="width: 40%">
-                <col style="width: 40%">
+                <col style="width: 30%">
+                <col style="width: 30%">
                 <col style="width: 20%">
+                <col style="width: 10%">
             </colgroup>
             <thead>
                 <tr>
-                    <th><span><?= __('Type') ?></span></th>
-                    <th><span><?= __('Document URL') ?></span><?= $element->getTooltipHtml() ?></th>
-                    <th></th>
+                    <th class="data-grid-th"><span><?= __('Type') ?></span></th>
+                    <th class="data-grid-th">
+                        <span><?= __('Document URL') ?></span>
+                        <?= $element->getTooltipHtml(__('Choose an Attribute containing a valid URL ' .
+                            'for the selected Document Type')) ?>
+                    </th>
+                    <th class="data-grid-th">
+                        <span><?= __('Languages') ?></span>
+                        <?= $element->getTooltipHtml(__('Select one or more languages used in the document.')) ?>
+                    </th>
+                    <th class="data-grid-th"></th>
                 </tr>
             </thead>
             <tbody>
@@ -29,12 +37,18 @@ $element = $this->getElement();
             <tr>
                 <td><?= $element->renderTypesDropdown($index, $document['document_type']) ?></td>
                 <td><?= $element->renderAttributesDropdown($index, $document['document_attribute']) ?></td>
+                <td><?= $element->renderLanguagesDropdown($index, $document['document_languages'] ?? []) ?></td>
                 <td><?= $element->renderRemoveRowButton($index) ?></td>
             </tr>
             <?php endforeach; ?>
             </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4" style="text-align:right;"><?= $element->renderAddRowButton() ?></td>
+            </tr>
+            </tfoot>
         </table>
-        <?= $element->renderAddRowButton() ?>
+
     </div>
 </div>
 

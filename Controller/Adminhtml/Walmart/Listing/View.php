@@ -102,7 +102,7 @@ class View extends Main
         $this->setPageHelpLink('help/m2/walmart-integration/m2e-pro-listing-set-up/managing-listing-products');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
+            __('Listing "%listing_title"', ['listing_title' => $listing->getTitle()])
         );
 
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View::class));

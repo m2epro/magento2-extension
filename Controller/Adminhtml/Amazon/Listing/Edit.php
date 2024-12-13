@@ -36,7 +36,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Edit::class));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
+            __('Edit Listing "%listing_title" Settings', ['listing_title' => $listing->getTitle()])
         );
 
         $this->setPageHelpLink('new-listing-creation');

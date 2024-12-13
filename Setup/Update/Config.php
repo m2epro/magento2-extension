@@ -394,7 +394,11 @@ class Config extends AbstractConfig
             'y24_m11' => [
                 'AddDeliveryDateFromColumnToAmazonOrder',
                 'AddCustomValueToAttributeMapping',
-            ]
+                'AddAttributeOptionMapping',
+            ],
+            'y24_m12' => [
+                'AddLanguageToEbayComplianceDocuments',
+            ],
         ];
     }
 
@@ -478,6 +482,10 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y24_m10\AddEbayComplianceDocuments::class,
             \Ess\M2ePro\Setup\Update\y24_m10\AddAttributeMapping::class,
+
+            \Ess\M2ePro\Setup\Update\y24_m11\AddAttributeOptionMapping::class,
+
+            \Ess\M2ePro\Setup\Update\y24_m12\AddLanguageToEbayComplianceDocuments::class,
         ];
     }
 

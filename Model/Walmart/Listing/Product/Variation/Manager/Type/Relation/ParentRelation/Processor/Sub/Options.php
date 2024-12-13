@@ -1,18 +1,21 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
-/**
- * Class \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub\Options
- */
 class Options extends AbstractModel
 {
+    private \Ess\M2ePro\Model\Walmart\AttributeMapping\OptionReplacer $optionReplacer;
+
+    public function __construct(
+        \Ess\M2ePro\Model\Walmart\AttributeMapping\OptionReplacer $optionReplacer,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        parent::__construct($helperFactory, $modelFactory, $data);
+        $this->optionReplacer = $optionReplacer;
+    }
+
     //########################################
 
     protected function check()
@@ -91,6 +94,8 @@ class Options extends AbstractModel
 
     private function deleteBrokenChildren()
     {
+        $isNeedDeleteAllChildren = $this->getProcessor()->getTypeModel()->hasMatchedAttributes();
+
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $childListingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
 
@@ -100,7 +105,10 @@ class Options extends AbstractModel
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $childTypeModel */
             $childTypeModel = $walmartChildListingProduct->getVariationManager()->getTypeModel();
 
-            if ($childTypeModel->isVariationProductMatched()) {
+            if (
+                !$isNeedDeleteAllChildren
+                && $childTypeModel->isVariationProductMatched()
+            ) {
                 continue;
             }
 
@@ -120,10 +128,30 @@ class Options extends AbstractModel
         $productOptions = $this->getProcessor()->getTypeModel()->getNotRemovedUnusedProductOptions();
         $matchedAttributes = $this->getProcessor()->getTypeModel()->getMatchedAttributes();
 
+        $optionIds = $this->getProcessor()->getTypeModel()->getOptionIds();
+
         foreach ($productOptions as $productOption) {
             $channelOption = [];
-            foreach ($productOption as $attribute => $value) {
-                $channelOption[$matchedAttributes[$attribute]] = $value;
+            foreach ($productOption as $optionAttribute => $optionValue) {
+                $productTypeAttribute = $matchedAttributes[$optionAttribute];
+                $optionId = $optionIds[$optionValue] ?? null;
+                $productTypeId = $this
+                    ->getProcessor()
+                    ->getListingProduct()
+                    ->getChildObject()
+                    ->getProductType()
+                    ->getDictionaryId();
+
+                if ($optionId !== null) {
+                    $optionValue = $this->optionReplacer->replace(
+                        $productTypeId,
+                        $productTypeAttribute,
+                        $optionId,
+                        $optionValue
+                    );
+                }
+
+                $channelOption[$matchedAttributes[$optionAttribute]] = $optionValue;
             }
 
             $this->getProcessor()->getTypeModel()->createChildListingProduct($productOption, $channelOption);

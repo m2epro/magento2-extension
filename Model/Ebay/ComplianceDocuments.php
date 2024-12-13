@@ -22,6 +22,17 @@ class ComplianceDocuments extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     private const TYPE_TROUBLE_SHOOTING_GUIDE = 'TROUBLE_SHOOTING_GUIDE';
     private const TYPE_USER_GUIDE_OR_MANUAL = 'USER_GUIDE_OR_MANUAL';
     private const TYPE_INSTALLATION_INSTRUCTIONS = 'INSTALLATION_INSTRUCTIONS';
+
+    private const LANGUAGE_ENGLISH = 'ENGLISH';
+    private const LANGUAGE_SPANISH = 'SPANISH';
+    private const LANGUAGE_ITALIAN = 'ITALIAN';
+    private const LANGUAGE_GERMAN = 'GERMAN';
+    private const LANGUAGE_POLISH = 'POLISH';
+    private const LANGUAGE_DUTCH = 'DUTCH';
+    private const LANGUAGE_PORTUGESE = 'PORTUGESE';
+    private const LANGUAGE_FRENCH = 'FRENCH';
+    private const LANGUAGE_OTHER = 'OTHER';
+
     private \Ess\M2ePro\Helper\Data $dataHelper;
 
     public function __construct(
@@ -69,13 +80,29 @@ class ComplianceDocuments extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         ];
     }
 
-    public function init(int $accountId, string $type, string $url): self
+    public static function getDocumentLanguages(): array
+    {
+        return [
+            self::LANGUAGE_ENGLISH => __('English'),
+            self::LANGUAGE_SPANISH => __('Spanish'),
+            self::LANGUAGE_ITALIAN => __('Italian'),
+            self::LANGUAGE_GERMAN => __('German'),
+            self::LANGUAGE_POLISH => __('Polish'),
+            self::LANGUAGE_DUTCH => __('Dutch'),
+            self::LANGUAGE_PORTUGESE => __('Portuguese'),
+            self::LANGUAGE_FRENCH => __('French'),
+            self::LANGUAGE_OTHER => __('Other'),
+        ];
+    }
+
+    public function init(int $accountId, string $type, string $url, array $languages): self
     {
         $this->setData(ComplianceDocumentsResource::COLUMN_ACCOUNT_ID, $accountId);
         $this->setData(ComplianceDocumentsResource::COLUMN_HASH, $this->makeHash($type, $url));
         $this->setData(ComplianceDocumentsResource::COLUMN_TYPE, $type);
         $this->setData(ComplianceDocumentsResource::COLUMN_URL, $url);
         $this->setData(ComplianceDocumentsResource::COLUMN_STATUS, self::STATUS_PENDING);
+        $this->setLanguages($languages);
 
         return $this;
     }
@@ -83,6 +110,16 @@ class ComplianceDocuments extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function getHash(): string
     {
         return (string)$this->getData(ComplianceDocumentsResource::COLUMN_HASH);
+    }
+
+    public function getLanguages(): array
+    {
+        $languages = $this->getData(ComplianceDocumentsResource::COLUMN_LANGUAGES);
+        if (empty($languages)) {
+            return [];
+        }
+
+        return json_decode($languages, true);
     }
 
     public function getType(): string
@@ -120,7 +157,7 @@ class ComplianceDocuments extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return !empty($this->getEbayDocumentId());
     }
 
-    public function setStatusPending()
+    public function setStatusPending(): void
     {
         $this->setData(ComplianceDocumentsResource::COLUMN_STATUS, self::STATUS_PENDING);
     }
@@ -150,5 +187,10 @@ class ComplianceDocuments extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     private function getStatus(): int
     {
         return (int)$this->getData(ComplianceDocumentsResource::COLUMN_STATUS);
+    }
+
+    private function setLanguages(array $languages)
+    {
+        $this->setData(ComplianceDocumentsResource::COLUMN_LANGUAGES, json_encode($languages));
     }
 }

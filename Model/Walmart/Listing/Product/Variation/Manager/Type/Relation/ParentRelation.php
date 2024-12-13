@@ -553,6 +553,20 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         return $this->getUnusedOptions($this->getUnusedProductOptions(), $this->getRemovedProductOptions());
     }
 
+    public function getOptionIds(): array
+    {
+        $magentoProductVariations = $this->getMagentoProduct()->getVariationInstance()->getVariationsTypeStandard();
+
+        $result = [];
+        foreach ($magentoProductVariations['variations'] as $variation) {
+            foreach ($variation as $option) {
+                $result[$option['option']] = (int)$option['option_id'];
+            }
+        }
+
+        return $result;
+    }
+
     private function getUnusedOptions($currentOptions, $usedOptions)
     {
         if (empty($currentOptions)) {

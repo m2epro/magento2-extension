@@ -638,6 +638,10 @@ a.walmart-listing-view-switch-variation-mode:before {
     padding-right: 8px;
 }
 
+.listing-switcher-container {
+    margin-bottom: 2rem;
+}
+
 /* Disable events for action button child  */
 /* ================================================ */
 

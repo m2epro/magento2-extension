@@ -21,6 +21,7 @@ use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Product as ListingWizardP
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard\Step as ListingStepResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Wizard as ListingWizardResource;
 use Ess\M2ePro\Model\ResourceModel\AttributeMapping\Pair as PairResource;
+use Ess\M2ePro\Model\ResourceModel\AttributeOptionMapping\Pair as OptionPairResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments as ComplianceDocumentsResource;
 use Ess\M2ePro\Model\ResourceModel\Ebay\ComplianceDocuments\ListingProductRelation
     as EbayComplianceDocumentListingProductRelationResource;
@@ -2931,6 +2932,112 @@ class Installer
 
         $this->getConnection()->createTable($attributeMappingTable);
         # endregion
+
+        //region attribute_option_mapping
+        $tableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_ATTRIBUTE_OPTION_MAPPING
+        );
+
+        $newTable = $this->getConnection()->newTable($tableName);
+        $newTable
+            ->addColumn(
+                OptionPairResource::COLUMN_ID,
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                [
+                    'unsigned' => true,
+                    'primary' => true,
+                    'nullable' => false,
+                    'auto_increment' => true,
+                ]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_COMPONENT,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                50,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_TYPE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                100,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_PRODUCT_TYPE_ID,
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_CHANNEL_ATTRIBUTE_TITLE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_CHANNEL_ATTRIBUTE_CODE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_CHANNEL_OPTION_TITLE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_CHANNEL_OPTION_CODE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_MAGENTO_ATTRIBUTE_CODE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_MAGENTO_OPTION_ID,
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable' => false, 'unsigned' => true]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_MAGENTO_OPTION_TITLE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_UPDATE_DATE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+            ->addColumn(
+                OptionPairResource::COLUMN_CREATE_DATE,
+                \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+                null,
+                ['default' => null]
+            )
+        ;
+
+        $newTable
+            ->addIndex('component', OptionPairResource::COLUMN_COMPONENT)
+            ->addIndex('type', OptionPairResource::COLUMN_TYPE)
+            ->addIndex('create_date', OptionPairResource::COLUMN_CREATE_DATE);
+
+        $newTable
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci')
+            ->setOption('row_format', 'dynamic');
+
+        $this->getConnection()->createTable($newTable);
+        //endregion
 
         # region tag
         $tagTable = $this->getConnection()->newTable($this->getFullTableName('tag'));
@@ -7512,6 +7619,10 @@ class Installer
                 ComplianceDocumentsResource::COLUMN_ERROR,
                 Table::TYPE_TEXT,
                 255
+            )
+            ->addColumn(
+                ComplianceDocumentsResource::COLUMN_LANGUAGES,
+                Table::TYPE_TEXT
             )
             ->addColumn(
                 ComplianceDocumentsResource::COLUMN_CREATE_DATE,

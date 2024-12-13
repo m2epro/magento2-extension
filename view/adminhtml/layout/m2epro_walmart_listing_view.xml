@@ -5,13 +5,13 @@
             <container name="ess.m2epro.walmart.listing.switchers"
                        htmlTag="div"
                        htmlClass="listing-view-switchers-container">
-                <block class="Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher"
-                       name="walmart_listing_view_switcher"/>
                 <block class="Ess\M2ePro\Block\Adminhtml\Listing\Switcher" name="walmart_listing_switcher">
                     <arguments>
                         <argument name="component_mode" xsi:type="string">walmart</argument>
                     </arguments>
                 </block>
+                <block class="Ess\M2ePro\Block\Adminhtml\Walmart\Listing\View\Switcher"
+                       name="walmart_listing_view_switcher"/>
             </container>
         </referenceBlock>
     </body>

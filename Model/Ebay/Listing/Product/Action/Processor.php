@@ -251,6 +251,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function executeParallel(array $actions)
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Processor\Connector\Multiple\Dispatcher $dispatcher */
         $dispatcher = $this->modelFactory
             ->getObject('Ebay_Listing_Product_Action_Processor_Connector_Multiple_Dispatcher');
 

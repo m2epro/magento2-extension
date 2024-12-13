@@ -10,10 +10,13 @@ class AttributeMapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
     private AttributeMapping\BundleAttributesFieldsetFill $variationOptionFieldsetFill;
     /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\AttributeMapping\GpsrAttributesFieldsetFill */
     private AttributeMapping\GpsrAttributesFieldsetFill $gpsrAttributesFieldsetFill;
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs\AttributeMapping\GroupedAttributesFieldsetFill */
+    private AttributeMapping\GroupedAttributesFieldsetFill $groupedAttributesFieldsetFill;
 
     public function __construct(
         AttributeMapping\BundleAttributesFieldsetFill $variationOptionFieldsetFill,
         AttributeMapping\GpsrAttributesFieldsetFill $gpsrAttributesFieldsetFill,
+        AttributeMapping\GroupedAttributesFieldsetFill $groupedAttributesFieldsetFill,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -21,6 +24,8 @@ class AttributeMapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
     ) {
         $this->variationOptionFieldsetFill = $variationOptionFieldsetFill;
         $this->gpsrAttributesFieldsetFill = $gpsrAttributesFieldsetFill;
+        $this->groupedAttributesFieldsetFill = $groupedAttributesFieldsetFill;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -36,6 +41,7 @@ class AttributeMapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
         // ----------------------------------------
         $this->addGpsrAttributesFieldset($form);
         $this->addBundleAttributesFieldset($form);
+        $this->addGroupedAttributesFieldset($form);
         // ----------------------------------------
 
         $form->setUseContainer(true);
@@ -72,10 +78,22 @@ class AttributeMapping extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
         $fieldset = $form->addFieldset(
             'bundle_attributes',
             [
-                'legend' => __('Bundle Attributes'),
+                'legend' => __('Bundle Product Attributes'),
                 'collapsable' => true,
             ]
         );
         $this->variationOptionFieldsetFill->fill($fieldset);
+    }
+
+    private function addGroupedAttributesFieldset(\Magento\Framework\Data\Form $form): void
+    {
+        $fieldset = $form->addFieldset(
+            'grouped_attributes',
+            [
+                'legend' => __('Grouped Product Attributes'),
+                'collapsable' => true,
+            ]
+        );
+        $this->groupedAttributesFieldsetFill->fill($fieldset);
     }
 }

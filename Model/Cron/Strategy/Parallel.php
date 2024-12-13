@@ -122,6 +122,7 @@ class Parallel extends AbstractModel
 
             $transactionalManager->unlock();
 
+            /** @var \Ess\M2ePro\Model\Lock\Item\Manager $taskLockItemManager */
             $taskLockItemManager = $this->modelFactory->getObject('Lock_Item_Manager', [
                 'nick' => 'cron_task_' . str_replace("/", "_", $taskNick),
             ]);

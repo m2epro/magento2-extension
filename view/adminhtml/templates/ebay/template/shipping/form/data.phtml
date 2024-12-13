@@ -23,10 +23,11 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
     <tbody>
 
         <tr id="shipping_variant_%type%_%i%_tr" class="shipping-variant" style="border-top: 1px solid #d6d6d6">
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <select style="width: 100%;" name="shipping[shipping_service][%i%]" class="shipping-service M2ePro-validate-shipping-service select admin__control-select" onchange="EbayTemplateShippingObj.serviceChange.call(this)"></select>
+                <div class="delivery-days-range" style="position: absolute; color: #4d4d4d; padding-top: .75rem"></div>
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <input name="shipping[shipping_type][%i%]" value="%type%" type="hidden" />
                 <select style="width: 100%" name="shipping[cost_mode][%i%]" class="cost-mode select admin__control-select" onchange="EbayTemplateShippingObj.serviceCostModeChange.call(this)">
                     <option value="<?php echo Service::COST_MODE_FREE ?>" class="shipping-mode-option-free"><?php echo $block->__('Free'); ?></option>
@@ -35,25 +36,25 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
                     <option value="<?php echo Service::COST_MODE_CALCULATED ?>" class="shipping-mode-option-calc"><?php echo $block->__('Calculated'); ?></option>
                 </select>
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <input name="shipping[shipping_cost_value][%i%]" type="text" style="width: 100%; display: none;" class="shipping-cost-cv input-text M2ePro-required-when-visible M2ePro-validation-float admin__control-text a-right" />
                 <span class="shipping-cost-ca">
                     <!-- shipping_cost_attribute[%i%] -->
                 </span>
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <input name="shipping[shipping_cost_additional_value][%i%]" type="text" style="width: 100%; display: none;" class="shipping-cost-additional input-text M2ePro-validation-float admin__control-text a-right" />
                 <span class="shipping-cost-additional-ca">
                     <!-- shipping_cost_additional_attribute[%i%] -->
                 </span>
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <?php echo $block->marketplaceData['currency'] ?>
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <input name="shipping[shipping_priority][%i%]" type="text" class="shipping-priority input-text admin__control-text a-right" />
             </td>
-            <td style="text-align: center;">
+            <td style="text-align: center; padding-bottom: 3rem">
                 <?php echo $block->getChildHtml('remove_shipping_method_button'); ?>
             </td>
         </tr>

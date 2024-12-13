@@ -143,7 +143,8 @@ class ProductProcessor
         $newDocument->init(
             (int)$account->getId(),
             $findUrlResult->getType(),
-            $findUrlResult->getUrl()
+            $findUrlResult->getUrl(),
+            $findUrlResult->getLanguages(),
         );
 
         $this->complianceDocumentsRepository->create($newDocument);

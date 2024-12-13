@@ -19,6 +19,7 @@ class ProcessListActions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions()
     {
+        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Action\ListAction\Processor $actionsProcessor */
         $actionsProcessor = $this->modelFactory->getObject('Walmart_Listing_Product_Action_ListAction_Processor');
         $actionsProcessor->process();
     }

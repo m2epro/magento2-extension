@@ -10,10 +10,14 @@ use Ess\M2ePro\Model\Ebay\ComplianceDocuments\ProductDocumentUrlFinder\ResultCol
 class ProductDocumentUrlFinder
 {
     private \Ess\M2ePro\Helper\Data $dataHelper;
+    private \Ess\M2ePro\Helper\Magento\Attribute $attributeHelper;
 
-    public function __construct(\Ess\M2ePro\Helper\Data $dataHelper)
-    {
+    public function __construct(
+        \Ess\M2ePro\Helper\Data $dataHelper,
+        \Ess\M2ePro\Helper\Magento\Attribute $attributeHelper
+    ) {
         $this->dataHelper = $dataHelper;
+        $this->attributeHelper = $attributeHelper;
     }
 
     public function process(\Ess\M2ePro\Model\Listing\Product $listingProduct): ResultCollection
@@ -31,6 +35,7 @@ class ProductDocumentUrlFinder
 
         foreach ($complianceDocumentsSetting as $documentSetting) {
             $type = $documentSetting['document_type'];
+            $languages = $documentSetting['document_languages'] ?? [];
             $attributeCode = $documentSetting['document_attribute'];
 
             $typeAttributeCodeHash = $this->dataHelper->md5String($type . '-' . $attributeCode);
@@ -39,15 +44,16 @@ class ProductDocumentUrlFinder
             $documentUrl = $listingProduct->getMagentoProduct()->getAttributeValue($attributeCode);
             $notFoundAttributes = $listingProduct->getMagentoProduct()->getNotFoundAttributes();
 
-            if ($notFoundAttributes !== []) {
+            if (!empty($notFoundAttributes)) {
                 $errorMessage = sprintf(
                     'The compliance document was not uploaded on eBay: ' .
                     'attribute "%s" was not found in the product',
-                    $attributeCode
+                    $this->attributeHelper->getAttributeLabel($attributeCode)
                 );
                 $complianceDocuments[$typeAttributeCodeHash] = Result::createFail(
                     $type,
                     $attributeCode,
+                    $languages,
                     $errorMessage
                 );
 
@@ -58,11 +64,12 @@ class ProductDocumentUrlFinder
                 $errorMessage = sprintf(
                     'The compliance document was not uploaded on eBay: ' .
                     'attribute "%s" is missing a value',
-                    $attributeCode
+                    $this->attributeHelper->getAttributeLabel($attributeCode)
                 );
                 $complianceDocuments[$typeAttributeCodeHash] = Result::createFail(
                     $type,
                     $attributeCode,
+                    $languages,
                     $errorMessage
                 );
 
@@ -73,11 +80,12 @@ class ProductDocumentUrlFinder
                 $errorMessage = sprintf(
                     'The compliance document was not uploaded on eBay: ' .
                     'invalid document URL value in attribute "%s"',
-                    $attributeCode,
+                    $this->attributeHelper->getAttributeLabel($attributeCode),
                 );
                 $complianceDocuments[$typeAttributeCodeHash] = Result::createFail(
                     $type,
                     $attributeCode,
+                    $languages,
                     $errorMessage
                 );
                 continue;
@@ -86,6 +94,7 @@ class ProductDocumentUrlFinder
             $complianceDocuments[$typeAttributeCodeHash] = Result::createSuccess(
                 $type,
                 $attributeCode,
+                $languages,
                 $documentUrl
             );
         }

@@ -1,7 +1,8 @@
 define([
     'jquery',
+    'mage/translate',
     'M2ePro/Common'
-], function (jQuery) {
+], function (jQuery, $t) {
     window.EbayTemplateShipping = Class.create(Common, {
 
         // ---------------------------------------
@@ -932,6 +933,9 @@ define([
         {
             var row = $(this).up('tr');
 
+            const selectedOption = $(this).options[$(this).selectedIndex];
+            row.select('.delivery-days-range')[0].innerText = selectedOption.getAttribute('data-delivery-days-range')
+
             if (this.up('table').id != 'shipping_international_table') {
                 this.down(0).hide();
             }
@@ -1181,9 +1185,12 @@ define([
             }
 
             $H(EbayTemplateShippingObj.shippingServices).each(function (category) {
-
                 categoryMethods = '';
                 category.value.methods.each(function (service) {
+                    const daysRange = $t('%min-%max working days')
+                            .replace('%min', Math.abs(service['data']['ShippingTimeMin']))
+                            .replace('%max', Math.abs(service['data']['ShippingTimeMax']))
+
                     var isServiceOfSelectedDestination = (locationType == 'local' && service.is_international == 0) || (locationType == 'international' && service.is_international == 1);
                     var isServiceOfSelectedType = (isCalculated && service.is_calculated == 1) || (!isCalculated && service.is_flat == 1);
 
@@ -1193,13 +1200,13 @@ define([
 
                     if (isCalculated) {
                         if (service.data.ShippingPackage.indexOf(selectedPackage) != -1) {
-                            categoryMethods += '<option value="' + service.ebay_id + '">' + service.title + '</option>';
+                            categoryMethods += `<option value="${service.ebay_id}" data-delivery-days-range="${daysRange}">${service.title}</option>`;
                         }
 
                         return;
                     }
 
-                    categoryMethods += '<option value="' + service.ebay_id + '">' + service.title + '</option>';
+                    categoryMethods += `<option value="${service.ebay_id}" data-delivery-days-range="${daysRange}">${service.title}</option>`;
                 });
 
                 if (categoryMethods != '') {

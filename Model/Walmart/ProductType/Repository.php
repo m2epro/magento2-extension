@@ -223,6 +223,22 @@ class Repository
         return $result;
     }
 
+    /**
+     * @param int[] $dictionaryIds
+     *
+     * @return \Ess\M2ePro\Model\Walmart\ProductType[]
+     */
+    public function findByDictionaryIds(array $dictionaryIds): array
+    {
+        $collection = $this->productTypeCollectionFactory->create();
+        $collection->addFieldToFilter(
+            ProductTypeResource::COLUMN_DICTIONARY_PRODUCT_TYPE_ID,
+            ['in' => $dictionaryIds]
+        );
+
+        return array_values($collection->getItems());
+    }
+
     public function findByMarketplaceIdAndNick(
         int $marketplaceId,
         string $nick

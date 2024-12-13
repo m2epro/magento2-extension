@@ -29,7 +29,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing
         $this->addContent($this->getLayout()->createBlock(\Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Edit::class));
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
+            __('Edit Listing "%listing_title" Settings', ['listing_title' => $listing->getTitle()])
         );
 
         $this->setPageHelpLink('configuring-policies');

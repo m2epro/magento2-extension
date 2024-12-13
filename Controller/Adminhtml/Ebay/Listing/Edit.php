@@ -30,7 +30,7 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $this->addContent($this->getLayout()->createBlock(Policies::class));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
+            __('Edit Listing "%listing_title" Settings', ['listing_title' => $listing->getTitle()])
         );
 
         return $this->getResult();

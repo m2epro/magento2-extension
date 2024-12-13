@@ -99,7 +99,7 @@ class View extends Main
         $this->setPageHelpLink('m2e-pro-listings');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
+            __('Listing "%listing_title"', ['listing_title' => $listing->getTitle()])
         );
 
         $this->addContent($this

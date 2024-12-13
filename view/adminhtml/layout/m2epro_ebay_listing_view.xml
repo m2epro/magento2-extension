@@ -5,13 +5,13 @@
             <container name="ess.m2epro.ebay.listing.switchers"
                        htmlTag="div"
                        htmlClass="listing-view-switchers-container">
-                <block class="Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher"
-                       name="ebay_listing_view_switcher"/>
                 <block class="Ess\M2ePro\Block\Adminhtml\Listing\Switcher" name="ebay_listing_switcher">
                     <arguments>
                         <argument name="component_mode" xsi:type="string">ebay</argument>
                     </arguments>
                 </block>
+                <block class="Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher"
+                       name="ebay_listing_view_switcher"/>
             </container>
         </referenceBlock>
     </body>

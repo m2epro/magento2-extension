@@ -75,6 +75,7 @@ class Tables
     public const TABLE_STOP_QUEUE = self::PREFIX . 'stop_queue';
 
     public const TABLE_ATTRIBUTE_MAPPING = self::PREFIX . 'attribute_mapping';
+    public const TABLE_ATTRIBUTE_OPTION_MAPPING = self::PREFIX . 'attribute_option_mapping';
 
     /** @var \Magento\Framework\App\ResourceConnection */
     private $resourceConnection;

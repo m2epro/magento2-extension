@@ -52,6 +52,16 @@ class Repository
         return $model;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Walmart\Dictionary\ProductType[]
+     */
+    public function getAll(): array
+    {
+        $collection = $this->collectionFactory->create();
+
+        return array_values($collection->getItems());
+    }
+
     public function findByNick(string $nick, int $marketplaceId): ?\Ess\M2ePro\Model\Walmart\Dictionary\ProductType
     {
         $collection = $this->collectionFactory->create();
