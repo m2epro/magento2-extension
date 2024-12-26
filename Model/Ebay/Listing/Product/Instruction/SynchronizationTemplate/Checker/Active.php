@@ -524,7 +524,7 @@ class Active extends AbstractModel
      */
     public function isMeetReviseSubtitleRequirements(): bool
     {
-        return $this->ebayReviseChecker->isNeedReviseForTitle(
+        return $this->ebayReviseChecker->isNeedReviseForSubtitle(
             $this->input->getListingProduct()->getChildObject()
         );
     }

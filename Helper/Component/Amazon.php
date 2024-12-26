@@ -32,8 +32,10 @@ class Amazon
     public const MARKETPLACE_BE = 48;
     public const MARKETPLACE_ZA = 49;
     public const MARKETPLACE_SA = 50;
+    public const MARKETPLACE_IE = 51;
 
     public const NATIVE_ID_MARKETPLACE_SA = 22;
+    public const NATIVE_ID_MARKETPLACE_IE = 23;
 
     public const EEA_COUNTRY_CODES = [
         'AT', 'BE', 'BG', 'HR', 'CY',

@@ -398,6 +398,7 @@ class Config extends AbstractConfig
             ],
             'y24_m12' => [
                 'AddLanguageToEbayComplianceDocuments',
+                'AddAmazonMarketplaceIreland',
             ],
         ];
     }
@@ -437,7 +438,6 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y23_m09\AddOnlineBestOfferForEbayProduct::class,
             \Ess\M2ePro\Setup\Update\y23_m09\RefactorAmazonOrderColumns::class,
             \Ess\M2ePro\Setup\Update\y23_m09\RemoveLastAccessAndRunFromConfigTable::class,
-            \Ess\M2ePro\Setup\Update\y23_m09\AddAmazonProductTypeAttributeMappingTable::class,
             \Ess\M2ePro\Setup\Update\y23_m09\AddPriceRoundingToEbayAmazonWalmartSellingTemplate::class,
             \Ess\M2ePro\Setup\Update\y23_m10\CreateEbayCategorySpecificValidationResultTable::class,
             \Ess\M2ePro\Setup\Update\y23_m10\ImproveAmazonOrderPrefixes::class,
@@ -469,7 +469,6 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonShippingPalletDelivery::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddPriceLastUpdateDateColumnToEbayListingProductTable::class,
             \Ess\M2ePro\Setup\Update\y24_m06\RemoveAuEpidsVisibleFromConfigTable::class,
-            \Ess\M2ePro\Setup\Update\y24_m06\AddAmazonMarketplaceSaudiArabia::class,
             \Ess\M2ePro\Setup\Update\y24_m06\AddEbayBundleOptionMappingTable::class,
 
             \Ess\M2ePro\Setup\Update\y24_m07\AddProductIdentifiersSettingsForAmazonListing::class,

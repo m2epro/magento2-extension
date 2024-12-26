@@ -937,13 +937,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             'items' => $items
         ];
 
-        $orderId = $this->getParentObject()->getId();
+        $isRefundAction = $this->isShipped()
+            || $this->isPartiallyShipped()
+            || $this->getParentObject()->isOrderStatusUpdatingToShipped();
 
-        $action = \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
-        if (
-            $this->isShipped() || $this->isPartiallyShipped() ||
-            $this->getParentObject()->isOrderStatusUpdatingToShipped()
-        ) {
+        $action = $isRefundAction
+            ? \Ess\M2ePro\Model\Order\Change::ACTION_REFUND
+            : \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL;
+
+        if ($action == \Ess\M2ePro\Model\Order\Change::ACTION_REFUND) {
             if (empty($items)) {
                 $this->getParentObject()->addErrorLog(
                     'Amazon Order was not refunded. Reason: %msg%',
@@ -958,16 +960,31 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
                 return false;
             }
 
-            $action = \Ess\M2ePro\Model\Order\Change::ACTION_REFUND;
+            if (
+                empty($adjustmentFee)
+                && empty($adjustmentRefund)
+                && empty($shippingRefund)
+                && empty(array_sum(array_column($items, 'cancelled_qty')))
+            ) {
+                $this->getParentObject()->addErrorLog(
+                    'Amazon order cannot be refunded: The Credit Memo does not specify any refund amount. ' .
+                    'Please ensure the Credit Memo includes a refund cost to process the refund.',
+                );
+
+                return false;
+            }
         }
 
-        if ($action == \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL && $this->isCancellationRequested()) {
+        if (
+            $action == \Ess\M2ePro\Model\Order\Change::ACTION_CANCEL
+            && $this->isCancellationRequested()
+        ) {
             $params['cancel_reason'] =
                 \Ess\M2ePro\Model\Amazon\Order\Creditmemo\Handler::AMAZON_REFUND_REASON_BUYER_CANCELED;
         }
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $orderId,
+            $this->getParentObject()->getId(),
             $action,
             $this->getParentObject()->getLog()->getInitiator(),
             \Ess\M2ePro\Helper\Component\Amazon::NICK,

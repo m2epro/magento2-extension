@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
 
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\QueryBuilderFactory;
+use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder;
 use Ess\M2ePro\Model\ChangeTracker\Common\TemporaryTable;
 use Magento\Framework\App\ResourceConnection;
 
@@ -38,22 +39,16 @@ class InventoryStock
         $this->logger = $logger;
     }
 
-    /**
-     * @return string
-     */
-    public function getInventoryStockTableName(): string
+    public function getInventoryStockTableName(TrackerInterface $tracker): string
     {
         if ($this->magentoHelper->isMSISupportingVersion()) {
-            return $this->getMsiInventoryTableName();
+            return $this->getMsiInventoryTableName($tracker);
         }
 
         return 'cataloginventory_stock_item';
     }
 
-    /**
-     * @return \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
-     */
-    public function getInventoryQuery(): \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder
+    public function getInventoryQuery(TrackerInterface $tracker): SelectQueryBuilder
     {
         $stockSubQuery = $this->queryBuilder
             ->makeSubQuery()
@@ -111,10 +106,7 @@ class InventoryStock
             );
     }
 
-    /**
-     * @return string
-     */
-    private function getMsiInventoryTableName(): string
+    private function getMsiInventoryTableName(TrackerInterface $tracker): string
     {
         if (
             $this->msiTableName !== ''
@@ -123,9 +115,10 @@ class InventoryStock
             return $this->msiTableName;
         }
 
-        $inventoryQuery = $this->getInventoryQuery();
+        $inventoryQuery = $this->getInventoryQuery($tracker);
         $this->logger->debug('Stock temporary table', [
-            'query' => 'CREATE TEMPORARY TABLE IF NOT EXISTS `tmp_stock` ' . (string)$inventoryQuery->getQuery(),
+            'query' => 'CREATE TEMPORARY TABLE IF NOT EXISTS `tmp_stock` ' . $inventoryQuery->getQuery(),
+            'tracker' => $tracker
         ]);
 
         $start = microtime(true);
@@ -134,7 +127,9 @@ class InventoryStock
             $this->getDbAdapter()
         );
         $createdTime = (float)number_format(microtime(true) - $start, 4);
-        $this->logger->debug("Stock temporary table created in $createdTime seconds");
+        $this->logger->debug("Stock temporary table created in $createdTime seconds", [
+            'tracker' => $tracker
+        ]);
 
         return $this->msiTableName;
     }

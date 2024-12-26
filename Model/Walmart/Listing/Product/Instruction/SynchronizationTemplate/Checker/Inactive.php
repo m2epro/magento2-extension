@@ -183,15 +183,6 @@ class Inactive extends AbstractModel
             return false;
         }
 
-        if (
-            $walmartListingProduct
-                ->getWalmartMarketplace()
-                ->isSupportedProductType()
-            && !$walmartListingProduct->isExistsProductType()
-        ) {
-            return false;
-        }
-
         $variationResource = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource();
 
         if ($walmartSynchronizationTemplate->isRelistStatusEnabled()) {

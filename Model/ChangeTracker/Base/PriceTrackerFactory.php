@@ -1,29 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
+
+use Ess\M2ePro\Model\ChangeTracker\TrackerConfiguration;
 
 class PriceTrackerFactory implements TrackerFactoryInterface
 {
-    /** @var \Magento\Framework\ObjectManagerInterface */
-    private $objectManager;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
-    /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     */
-    public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager
-    ) {
+    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
+    {
         $this->objectManager = $objectManager;
     }
 
-    /**
-     * @param string $channel
-     *
-     * @return \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface
-     */
-    public function create(string $channel): TrackerInterface
+    public function createByConfiguration(TrackerConfiguration $trackerConfiguration): TrackerInterface
     {
-        switch ($channel) {
+        switch ($trackerConfiguration->component) {
             case TrackerInterface::CHANNEL_EBAY:
                 $class = \Ess\M2ePro\Model\ChangeTracker\Ebay\PriceTracker::class;
                 break;
@@ -34,11 +28,13 @@ class PriceTrackerFactory implements TrackerFactoryInterface
                 $class = \Ess\M2ePro\Model\ChangeTracker\Walmart\PriceTracker::class;
                 break;
             default:
-                throw new \RuntimeException('Unknown chanel ' . $channel);
+                throw new \RuntimeException('Unknown chanel ' . $trackerConfiguration->component);
         }
 
         return $this->objectManager->create($class, [
-            'channel' => $channel,
+            'channel' => $trackerConfiguration->component,
+            'listingProductIdFrom' => $trackerConfiguration->listingProductIdFrom,
+            'listingProductIdTo' => $trackerConfiguration->listingProductIdTo,
         ]);
     }
 }

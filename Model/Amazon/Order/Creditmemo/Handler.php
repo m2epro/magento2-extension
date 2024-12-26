@@ -45,14 +45,6 @@ class Handler extends \Ess\M2ePro\Model\Order\Creditmemo\Handler
                 $price = $creditmemoItem->getPrice() ?? 0.0;
                 $tax = $creditmemoItem->getTaxAmount() ?? 0.0;
 
-                if ($price > $item->getChildObject()->getPrice()) {
-                    $price = $item->getChildObject()->getPrice();
-                }
-
-                if ($tax > $item->getChildObject()->getTaxAmount()) {
-                    $tax = $item->getChildObject()->getTaxAmount();
-                }
-
                 $cancelledItemQty = $cancelledQty;
                 if ($cancelledItemQty > $item->getChildObject()->getQtyPurchased()) {
                     $cancelledItemQty = $item->getChildObject()->getQtyPurchased();

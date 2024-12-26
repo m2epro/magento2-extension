@@ -107,6 +107,22 @@ class TrackerLogger implements LoggerInterface
             return;
         }
 
+        if (array_key_exists('tracker', $context)) {
+            /** @var \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface $tracker */
+            $tracker = $context['tracker'];
+            unset($context['tracker']);
+
+            $prefix = sprintf(
+                '<b>%s</b> >> <b>%s</b> >> <b>[%s - %s]</b> >> ',
+                strtoupper($tracker->getChannel()),
+                strtoupper($tracker->getType()),
+                $tracker->getListingProductIdFrom(),
+                $tracker->getListingProductIdTo()
+            );
+
+            $message = $prefix . $message;
+        }
+
         $this->tmpLogs[] = [
             'date' => Date::createCurrentGmt()->format('Y-m-d H:i:s'),
             'level' => Logger::getLevelName($level),

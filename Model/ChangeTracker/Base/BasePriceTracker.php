@@ -20,19 +20,25 @@ abstract class BasePriceTracker implements TrackerInterface
     protected $attributesQueryBuilder;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition\AbstractPriceCondition */
     private $priceConditionBuilder;
+    private int $listingProductIdFrom;
+    private int $listingProductIdTo;
 
     public function __construct(
         string $channel,
         QueryBuilderFactory $queryBuilderFactory,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         PriceConditionFactory $conditionFactory,
-        TrackerLogger $logger
+        TrackerLogger $logger,
+        int $listingProductIdFrom,
+        int $listingProductIdTo
     ) {
         $this->channel = $channel;
         $this->queryBuilder = $queryBuilderFactory->make();
         $this->attributesQueryBuilder = $attributesQueryBuilder;
         $this->priceConditionBuilder = $conditionFactory->create($channel);
         $this->logger = $logger;
+        $this->listingProductIdFrom = $listingProductIdFrom;
+        $this->listingProductIdTo = $listingProductIdTo;
     }
 
     /**
@@ -49,6 +55,16 @@ abstract class BasePriceTracker implements TrackerInterface
     public function getChannel(): string
     {
         return $this->channel;
+    }
+
+    public function getListingProductIdFrom(): int
+    {
+        return $this->listingProductIdFrom;
+    }
+
+    public function getListingProductIdTo(): int
+    {
+        return $this->listingProductIdTo;
     }
 
     /**
@@ -174,6 +190,12 @@ abstract class BasePriceTracker implements TrackerInterface
                 'marketplace',
                 $this->setChannelToTableName('m2epro_%s_marketplace'),
                 'marketplace.marketplace_id = l.marketplace_id'
+            )->andWhere(
+                sprintf(
+                    'lp.id >= %s AND lp.id <= %s',
+                    $this->getListingProductIdFrom(),
+                    $this->getListingProductIdTo()
+                )
             );
 
         /* We do not include grouped and bundle products */
@@ -222,7 +244,7 @@ abstract class BasePriceTracker implements TrackerInterface
 
         /* Required selects */
         $query->addSelect('listing_product_id', 'product.listing_product_id');
-        $query->addSelect('calculated_price', $this->priceConditionBuilder->getCondition());
+        $query->addSelect('calculated_price', $this->priceConditionBuilder->getCondition($this));
 
         $query->addSelect('product_id', 'product.product_id')
               ->addSelect('status', 'product.status')
@@ -346,11 +368,24 @@ abstract class BasePriceTracker implements TrackerInterface
         );
         $select->andWhere('listing.component_mode = ?', $this->getChannel());
 
+        $select->leftJoin(
+            'listing_product',
+            'm2epro_listing_product',
+            'listing.id = listing_product.listing_id'
+        )->andWhere(
+            sprintf(
+                'listing_product.id >= %s AND listing_product.id <= %s',
+                $this->getListingProductIdFrom(),
+                $this->getListingProductIdTo()
+            )
+        );
+
         $ratesByStores = $select->fetchAll();
 
-        $this->logger->info('Get Currency Rates', [
+        $this->logger->debug('Get Currency Rates', [
             'sql' => $select->getQuery()->__tostring(),
             'result' => $ratesByStores,
+            'tracker' => $this,
         ]);
 
         if ($ratesByStores === []) {

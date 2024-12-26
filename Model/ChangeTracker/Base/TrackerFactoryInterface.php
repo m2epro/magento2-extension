@@ -2,16 +2,9 @@
 
 namespace Ess\M2ePro\Model\ChangeTracker\Base;
 
-/**
- * Query factory interface
- */
+use Ess\M2ePro\Model\ChangeTracker\TrackerConfiguration;
+
 interface TrackerFactoryInterface
 {
-    /**
-     * @param string $channel
-     *
-     * @return \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface
-     * @throws \RuntimeException
-     */
-    public function create(string $channel): TrackerInterface;
+    public function createByConfiguration(TrackerConfiguration $trackerConfiguration): TrackerInterface;
 }

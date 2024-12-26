@@ -1,29 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\Cron\Task\Listing\Product;
 
 class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'listing/product/change_tracker';
 
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface[] */
-    private $builders = [];
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Base\InventoryTrackerFactory */
-    private $inventoryTrackerFactory;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolderFactory */
-    private $changeHolderFactory;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Base\PriceTrackerFactory */
-    private $priceTrackerFactory;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler */
-    private $profiler;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger */
-    private $logger;
-    /** @var \Ess\M2ePro\Model\ResourceModel\Account\Collection */
-    private $accountCollection;
-    /** @var \Ess\M2ePro\Helper\Module\ChangeTracker */
-    private $changeTrackerHelper;
+    private \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper;
+    private \Ess\M2ePro\Model\ChangeTracker\ChangeTrackerProcessor $changeTrackerProcessor;
 
     public function __construct(
+        \Ess\M2ePro\Model\ChangeTracker\ChangeTrackerProcessor $changeTrackerProcessor,
         \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
@@ -38,8 +27,8 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\ChangeTracker\Base\ChangeHolderFactory $changeHolderFactory,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\Profiler $profiler,
         \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\TrackerLogger $logger,
-        \Ess\M2ePro\Model\ResourceModel\Account\Collection $accountCollection,
-        \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper
+        \Ess\M2ePro\Helper\Module\ChangeTracker $changeTrackerHelper,
+        \Ess\M2ePro\Model\ChangeTracker\PartManager $chunkManager
     ) {
         parent::__construct(
             $cronManager,
@@ -57,8 +46,9 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->changeHolderFactory = $changeHolderFactory;
         $this->profiler = $profiler;
         $this->logger = $logger;
-        $this->accountCollection = $accountCollection;
         $this->changeTrackerHelper = $changeTrackerHelper;
+        $this->chunkManager = $chunkManager;
+        $this->changeTrackerProcessor = $changeTrackerProcessor;
     }
 
     /**
@@ -79,53 +69,10 @@ class ChangeTracker extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     }
 
     /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Zend_Db_Statement_Exception
      * @throws \Throwable
      */
     protected function performActions(): void
     {
-        $this->profiler->start();
-        $this->initBuilders([
-            $this->inventoryTrackerFactory,
-            $this->priceTrackerFactory,
-        ]);
-        $this->profiler->stop();
-
-        $this->logger->info('Prepare builders. ' . $this->profiler->logString());
-
-        foreach ($this->builders as $builder) {
-            $holder = $this->changeHolderFactory->create();
-            $holder->holdChanges($builder);
-        }
-    }
-
-    /**
-     * @param \Ess\M2ePro\Model\ChangeTracker\Base\TrackerFactoryInterface[] $factories
-     *
-     * @return void
-     */
-    private function initBuilders(array $factories): void
-    {
-        foreach ($this->getActiveChannels() as $channel) {
-            foreach ($factories as $factory) {
-                $this->builders[] = $factory->create($channel);
-            }
-        }
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getActiveChannels(): array
-    {
-        $collection = $this->accountCollection;
-        $select = $collection->getSelect();
-        $select->reset(\Magento\Framework\DB\Select::COLUMNS);
-        $select->columns(['channel' => 'component_mode']);
-        $select->distinct();
-
-        return $collection->getColumnValues('channel');
+        $this->changeTrackerProcessor->process();
     }
 }

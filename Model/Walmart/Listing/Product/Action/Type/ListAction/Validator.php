@@ -86,6 +86,20 @@ class Validator extends \Ess\M2ePro\Model\Walmart\Listing\Product\Action\Type\Va
         return true;
     }
 
+    private function validateWalmartProductType(): bool
+    {
+        if (
+            $this->getWalmartMarketplace()->isSupportedProductType()
+            && !$this->getWalmartListingProduct()->isExistsProductType()
+        ) {
+            $this->addMessage('Product Type are not set.');
+
+            return false;
+        }
+
+        return true;
+    }
+
     //########################################
 
     private function getSku()

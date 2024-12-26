@@ -433,7 +433,8 @@ class AllItemsOptions
 
         $optionCollection = $this->optionCollectionFactory->create();
         foreach ($optionsData as $optionData) {
-            $optionLabel = $magentoProductTypes[($optionData['type_id'])];
+            $optionLabel = $magentoProductTypes[$optionData['type_id']]
+                ?? (string)__('Unknown Product Type "%type"', ['type' => $optionData['type_id']]);
             $optionValue = $optionData['type_id'];
 
             $option = $this->optionFactory->create($optionLabel, $optionValue);

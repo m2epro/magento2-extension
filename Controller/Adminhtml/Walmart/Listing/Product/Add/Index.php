@@ -257,8 +257,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
     private function processStep3(\Ess\M2ePro\Model\Marketplace $marketplace): void
     {
         if (
-            !$marketplace->getChildObject()
-                         ->isSupportedProductType()
+            $this->isMovedFromOther($this->getListing())
+            || !$marketplace->getChildObject()
+                            ->isSupportedProductType()
         ) {
             $this->review($marketplace);
 
@@ -313,12 +314,16 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
             return;
         }
 
-        if ($marketplace->getChildObject()->isSupportedProductType()) {
+        $isMovedFromOther = $this->isMovedFromOther($this->getListing());
+        if (
+            !$isMovedFromOther
+            && $marketplace->getChildObject()->isSupportedProductType()
+        ) {
             $this->removeProductsWithoutProductTypes($additionalData['adding_listing_products_ids']);
         }
 
         //-- Remove successfully moved Unmanaged items
-        if (isset($additionalData['source']) && $additionalData['source'] == SourceModeBlock::MODE_OTHER) {
+        if ($isMovedFromOther) {
             $this->deleteListingOthers();
         }
         //--
@@ -347,6 +352,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Walmart\Listing\Product\Abs
         $this->clear();
 
         $this->addContent($blockReview);
+    }
+
+    private function isMovedFromOther(\Ess\M2ePro\Model\Listing $listing): bool
+    {
+        $source = $listing->getSettings('additional_data')['source'] ?? null;
+
+        return $source === SourceModeBlock::MODE_OTHER;
     }
 
     private function removeProductsWithoutProductTypes(array $addingListingProductsIds): void

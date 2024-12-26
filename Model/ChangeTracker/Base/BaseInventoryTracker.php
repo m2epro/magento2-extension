@@ -21,6 +21,8 @@ abstract class BaseInventoryTracker implements TrackerInterface
     private $attributesQueryBuilder;
     /** @var \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker */
     private $enterpriseChecker;
+    private int $listingProductIdFrom;
+    private int $listingProductIdTo;
 
     public function __construct(
         string $channel,
@@ -28,7 +30,9 @@ abstract class BaseInventoryTracker implements TrackerInterface
         InventoryStock $inventoryStock,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
         TrackerLogger $logger,
-        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\EnterpriseChecker $enterpriseChecker,
+        int $listingProductIdFrom,
+        int $listingProductIdTo
     ) {
         $this->channel = $channel;
         $this->inventoryStock = $inventoryStock;
@@ -36,6 +40,8 @@ abstract class BaseInventoryTracker implements TrackerInterface
         $this->logger = $logger;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
         $this->enterpriseChecker = $enterpriseChecker;
+        $this->listingProductIdFrom = $listingProductIdFrom;
+        $this->listingProductIdTo = $listingProductIdTo;
     }
 
     /**
@@ -52,6 +58,16 @@ abstract class BaseInventoryTracker implements TrackerInterface
     public function getChannel(): string
     {
         return $this->channel;
+    }
+
+    public function getListingProductIdFrom(): int
+    {
+        return $this->listingProductIdFrom;
+    }
+
+    public function getListingProductIdTo(): int
+    {
+        return $this->listingProductIdTo;
     }
 
     /**
@@ -145,6 +161,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             'query' => (string)$mainQuery->getQuery(),
             'type' => $this->getType(),
             'channel' => $this->getChannel(),
+            'tracker' => $this
         ]);
 
         return $mainQuery->getQuery();
@@ -216,6 +233,13 @@ abstract class BaseInventoryTracker implements TrackerInterface
                 'lpvo',
                 'm2epro_listing_product_variation_option',
                 'lpvo.listing_product_variation_id = lpv.id'
+            )
+            ->andWhere(
+                sprintf(
+                    'lp.id >= %s AND lp.id <= %s',
+                    $this->getListingProductIdFrom(),
+                    $this->getListingProductIdTo()
+                )
             );
 
         /* We do not include grouped and bundle products in the selection */
@@ -367,7 +391,7 @@ abstract class BaseInventoryTracker implements TrackerInterface
             ->from('product', $this->productSubQuery())
             ->innerJoin(
                 'stock',
-                $this->inventoryStock->getInventoryStockTableName(),
+                $this->inventoryStock->getInventoryStockTableName($this),
                 'product.product_id = stock.product_id'
             )
             ->leftJoin(

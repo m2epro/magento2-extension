@@ -61,17 +61,6 @@ class Active extends AbstractModel
             return false;
         }
 
-        /** @var \Ess\M2ePro\Model\Walmart\Listing\Product $walmartListingProduct */
-        $walmartListingProduct = $listingProduct->getChildObject();
-        if (
-            $walmartListingProduct
-                ->getWalmartMarketplace()
-                ->isSupportedProductType()
-            && !$walmartListingProduct->isExistsProductType()
-        ) {
-            return false;
-        }
-
         if ($scheduledAction = $this->input->getScheduledAction()) {
             if ($scheduledAction->isActionTypeDelete() && $scheduledAction->isForce()) {
                 return false;
@@ -265,15 +254,6 @@ class Active extends AbstractModel
         $variationResource = $this->activeRecordFactory->getObject('Listing_Product_Variation')->getResource();
 
         if (!$walmartSynchronizationTemplate->isStopMode()) {
-            return false;
-        }
-
-        if (
-            $walmartListingProduct
-                ->getWalmartMarketplace()
-                ->isSupportedProductType()
-            && !$walmartListingProduct->isExistsProductType()
-        ) {
             return false;
         }
 

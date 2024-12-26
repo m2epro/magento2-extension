@@ -42,7 +42,7 @@ class ChangeHolder
      */
     public function holdChanges(TrackerInterface $tracker): void
     {
-        $this->logger->info(sprintf("%s Start collect changes", $this->logTags($tracker)));
+        $this->logger->info('Start collect changes', ['tracker' => $tracker]);
 
         // Prepare SQL query
         $this->profiler->start();
@@ -53,11 +53,8 @@ class ChangeHolder
         }
         $this->profiler->stop();
         $this->logger->info(
-            sprintf(
-                '%s Prepare SQL query time - <b>%s</b> sec.',
-                $this->logTags($tracker),
-                $this->profiler->getTime()
-            )
+            sprintf('Prepare SQL query time - <b>%s</b> sec.', $this->profiler->getTime()),
+            ['tracker' => $tracker]
         );
 
         // Execute SQL query
@@ -70,11 +67,8 @@ class ChangeHolder
         }
         $this->profiler->stop();
         $this->logger->info(
-            sprintf(
-                '%s Execute SQL query time - <b>%s</b> sec.',
-                $this->logTags($tracker),
-                $this->profiler->getTime()
-            )
+            sprintf('Execute SQL query time - <b>%s</b> sec.', $this->profiler->getTime()),
+            ['tracker' => $tracker]
         );
 
         // Insert instruction
@@ -90,19 +84,13 @@ class ChangeHolder
         }
         $this->profiler->stop();
         $this->logger->info(
-            sprintf(
-                '%s Insert instructions time - <b>%s</b> sec.',
-                $this->logTags($tracker),
-                $this->profiler->getTime()
-            )
+            sprintf('Insert instructions time - <b>%s</b> sec.', $this->profiler->getTime()),
+            ['tracker' => $tracker]
         );
 
         $this->logger->info(
-            sprintf(
-                '%s Added instructions: <b>%s</b>',
-                $this->logTags($tracker),
-                $instructionCounter
-            )
+            sprintf('Added instructions: <b>%s</b>', $instructionCounter),
+            ['tracker' => $tracker]
         );
     }
 
@@ -165,14 +153,5 @@ class ChangeHolder
         $this->logger->writeLogs();
 
         throw $exception;
-    }
-
-    private function logTags(\Ess\M2ePro\Model\ChangeTracker\Base\TrackerInterface $tracker): string
-    {
-        return sprintf(
-            '<b>%s</b> >> <b>%s</b> >>',
-            strtoupper($tracker->getChannel()),
-            strtoupper($tracker->getType())
-        );
     }
 }

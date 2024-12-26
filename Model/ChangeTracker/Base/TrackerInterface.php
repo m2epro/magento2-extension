@@ -11,18 +11,13 @@ interface TrackerInterface
     public const TYPE_PRICE = "price";
     public const TYPE_INVENTORY = "inventory";
 
-    /**
-     * @return string
-     */
     public function getType(): string;
 
-    /**
-     * @return string
-     */
     public function getChannel(): string;
 
-    /**
-     * @return \Magento\Framework\DB\Select
-     */
+    public function getListingProductIdFrom(): int;
+
+    public function getListingProductIdTo(): int;
+
     public function getDataQuery(): \Magento\Framework\DB\Select;
 }

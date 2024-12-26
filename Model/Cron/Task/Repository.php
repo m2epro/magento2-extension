@@ -88,6 +88,7 @@ class Repository extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Cron\Task\Listing\Product\ChangeTracker::NICK => [
             'component' => self::COMPONENT_GENERAL,
             'group' => self::GROUP_SYSTEM,
+            'can-work-parallel' => true,
         ],
         \Ess\M2ePro\Model\Cron\Task\Listing\Product\InspectDirectChanges::NICK => [
             'component' => self::COMPONENT_GENERAL,
