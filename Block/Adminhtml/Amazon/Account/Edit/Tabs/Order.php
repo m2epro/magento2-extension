@@ -150,6 +150,14 @@ in the Shipping Address of your Magento Order.'
 
         $formData = array_replace_recursive($defaults, $formData);
 
+        $formData['magento_orders_settings']['listing']['create_from_date'] = $this->convertGmtToLocal(
+            $formData['magento_orders_settings']['listing']['create_from_date'] ?? null
+        );
+
+        $formData['magento_orders_settings']['listing_other']['create_from_date'] = $this->convertGmtToLocal(
+            $formData['magento_orders_settings']['listing_other']['create_from_date'] ?? null
+        );
+
         if (is_array($formData['magento_orders_settings']['tax']['excluded_states'])) {
             $formData['magento_orders_settings']['tax']['excluded_states'] = implode(
                 ',',
@@ -227,8 +235,7 @@ HTML
                     'Select the start date for channel orders to be created in Magento.'
                     . ' Orders purchased before this date will not be imported into Magento.'
                 ),
-                'value' => $this->getMagentoOrdersListingsCreateFromDate($amazonAccount)
-                                ->format('Y-m-d H:i:s')
+                'value' => $formData['magento_orders_settings']['listing']['create_from_date'],
             ]
         );
 
@@ -304,8 +311,7 @@ HTML
                     'Select the start date for channel orders to be created in Magento.'
                     . ' Orders purchased before this date will not be imported into Magento.'
                 ),
-                'value' => $this->getMagentoOrdersListingsOtherCreateFromDate($amazonAccount)
-                                ->format('Y-m-d H:i:s'),
+                'value' => $formData['magento_orders_settings']['listing_other']['create_from_date'],
             ]
         );
 
@@ -1113,34 +1119,18 @@ HTML
         return parent::_prepareForm();
     }
 
-    private function getMagentoOrdersListingsCreateFromDate(
-        ?\Ess\M2ePro\Model\Amazon\Account $amazonAccount
-    ): \DateTime {
-        if ($amazonAccount === null) {
-            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
-        }
-
-        return $amazonAccount
-            ->getMagentoOrdersListingsCreateFromDate()
-            ->setTimezone(self::getDateTimeZone());
-    }
-
-    private function getMagentoOrdersListingsOtherCreateFromDate(
-        ?\Ess\M2ePro\Model\Amazon\Account $amazonAccount
-    ): \DateTime {
-        if ($amazonAccount === null) {
-            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
-        }
-
-        return $amazonAccount
-            ->getMagentoOrdersListingsOtherCreateFromDate()
-            ->setTimezone(self::getDateTimeZone());
-    }
-
-    public static function getDateTimeZone(): \DateTimeZone
+    private function convertGmtToLocal(?string $dateTimeString): ?string
     {
-        return new \DateTimeZone(
-            \Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone()
-        );
+        if (empty($dateTimeString)) {
+            return null;
+        }
+
+        try {
+            $date = \Ess\M2ePro\Helper\Date::createDateGmt($dateTimeString);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        return \Ess\M2ePro\Helper\Date::createWithLocalTimeZone($date)->format('Y-m-d H:i:s');
     }
 }

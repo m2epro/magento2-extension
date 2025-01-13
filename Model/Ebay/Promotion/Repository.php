@@ -235,4 +235,26 @@ class Repository
 
         return (bool)$collectionListingProduct->getSize();
     }
+
+    /**
+     * @return \Ess\M2ePro\Model\Ebay\Listing\Product\Promotion[]
+     */
+    public function findPromotionProductsWithoutPromotion(): array
+    {
+        $collectionListingProduct = $this->listingProductPromotionCollectionFactory->create();
+        $collectionListingProduct->joinLeft(
+            ['promotion' => $this->promotionResource->getMainTable()],
+            sprintf(
+                'main_table.%s = promotion.%s',
+                EbayListingProductPromotionResource::COLUMN_PROMOTION_ID,
+                EbayPromotionResource::COLUMN_ID
+            ),
+            []
+        );
+        $collectionListingProduct->getSelect()->where(
+            sprintf('promotion.%s IS NULL', EbayPromotionResource::COLUMN_ID)
+        );
+
+        return array_values($collectionListingProduct->getItems());
+    }
 }

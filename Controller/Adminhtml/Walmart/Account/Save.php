@@ -128,15 +128,19 @@ class Save extends Account
 
     private function saveAccount(\Ess\M2ePro\Model\Account $account, array $data): void
     {
-        $data['magento_orders_settings']['listing']['create_from_date'] = new \DateTime(
-            $data['magento_orders_settings']['listing']['create_from_date'],
-            \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order::getDateTimeZone()
-        );
+        if (!empty($data['magento_orders_settings']['listing']['create_from_date'])) {
+            $data['magento_orders_settings']['listing']['create_from_date'] =
+                \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+                    $data['magento_orders_settings']['listing']['create_from_date']
+                );
+        }
 
-        $data['magento_orders_settings']['listing_other']['create_from_date'] = new \DateTime(
-            $data['magento_orders_settings']['listing_other']['create_from_date'],
-            \Ess\M2ePro\Block\Adminhtml\Walmart\Account\Edit\Tabs\Order::getDateTimeZone()
-        );
+        if (!empty($data['magento_orders_settings']['listing_other']['create_from_date'])) {
+            $data['magento_orders_settings']['listing_other']['create_from_date'] =
+                \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+                    $data['magento_orders_settings']['listing_other']['create_from_date']
+                );
+        }
 
         $this->accountBuilder->build($account, $data);
     }
@@ -150,7 +154,7 @@ class Save extends Account
         }
 
         /** @var \Ess\M2ePro\Model\Walmart\Connector\Account\Update\EntityRequester $connectorObj */
-        $connectorObj =  $this->connectorDispatcher->getConnector(
+        $connectorObj = $this->connectorDispatcher->getConnector(
             'account',
             'update',
             'entityRequester',
@@ -209,11 +213,9 @@ class Save extends Account
         array $previousMagentoOrdersSettings
     ): void {
         if (
-            $walmartAccount->isMagentoOrdersListingsModeEnabled()
-            && (
-                $previousMagentoOrdersSettings['listing']['is_enabled'] === false
-                || $walmartAccount->getMagentoOrdersListingsCreateFromDate()->format('Y-m-d H:i:s')
-                !== $previousMagentoOrdersSettings['listing']['create_from_date']->format('Y-m-d H:i:s')
+            $this->isNeedCreateMagentoOrdersListing(
+                $walmartAccount,
+                $previousMagentoOrdersSettings
             )
         ) {
             $this->magentoOrderCreateService->createMagentoOrdersListingsByFromDate(
@@ -223,11 +225,9 @@ class Save extends Account
         }
 
         if (
-            $walmartAccount->isMagentoOrdersListingsOtherModeEnabled()
-            && (
-                $previousMagentoOrdersSettings['listing_other']['is_enabled'] === false
-                || $walmartAccount->getMagentoOrdersListingsOtherCreateFromDate()->format('Y-m-d H:i:s')
-                !== $previousMagentoOrdersSettings['listing_other']['create_from_date']->format('Y-m-d H:i:s')
+            $this->isNeedCreateMagentoOrdersListingOther(
+                $walmartAccount,
+                $previousMagentoOrdersSettings
             )
         ) {
             $this->magentoOrderCreateService->createMagentoOrdersListingsOtherByFromDate(
@@ -290,5 +290,51 @@ class Save extends Account
                                            ->addFieldToFilter($search, $value);
 
         return (bool)$collection->getSize();
+    }
+
+    private function isNeedCreateMagentoOrdersListing(
+        \Ess\M2ePro\Model\Walmart\Account $walmartAccount,
+        array $previousMagentoOrdersSettings
+    ): bool {
+        if (!$walmartAccount->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        if (!$walmartAccount->getMagentoOrdersListingsCreateFromDate()) {
+            return false;
+        }
+
+        if (
+            $previousMagentoOrdersSettings['listing']['is_enabled'] === false
+            || $previousMagentoOrdersSettings['listing']['create_from_date'] === null
+        ) {
+            return true;
+        }
+
+        return $walmartAccount->getMagentoOrdersListingsCreateFromDate()->format('Y-m-d H:i')
+            !== $previousMagentoOrdersSettings['listing']['create_from_date']->format('Y-m-d H:i');
+    }
+
+    private function isNeedCreateMagentoOrdersListingOther(
+        \Ess\M2ePro\Model\Walmart\Account $walmartAccount,
+        array $previousMagentoOrdersSettings
+    ): bool {
+        if (!$walmartAccount->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        if (!$walmartAccount->getMagentoOrdersListingsOtherCreateFromDate()) {
+            return false;
+        }
+
+        if (
+            $previousMagentoOrdersSettings['listing_other']['is_enabled'] === false
+            || $previousMagentoOrdersSettings['listing_other']['create_from_date'] === null
+        ) {
+            return true;
+        }
+
+        return $walmartAccount->getMagentoOrdersListingsOtherCreateFromDate()->format('Y-m-d H:i')
+            !== $previousMagentoOrdersSettings['listing_other']['create_from_date']->format('Y-m-d H:i');
     }
 }

@@ -101,15 +101,19 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
     private function updateSettings(\Ess\M2ePro\Model\Account $account, array $data): \Ess\M2ePro\Model\Account
     {
-        $data['magento_orders_settings']['listing']['create_from_date'] = new \DateTime(
-            $data['magento_orders_settings']['listing']['create_from_date'],
-            \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order::getDateTimeZone()
-        );
+        if (!empty($data['magento_orders_settings']['listing']['create_from_date'])) {
+            $data['magento_orders_settings']['listing']['create_from_date'] =
+                \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+                    $data['magento_orders_settings']['listing']['create_from_date']
+                );
+        }
 
-        $data['magento_orders_settings']['listing_other']['create_from_date'] = new \DateTime(
-            $data['magento_orders_settings']['listing_other']['create_from_date'],
-            \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Order::getDateTimeZone()
-        );
+        if (!empty($data['magento_orders_settings']['listing_other']['create_from_date'])) {
+            $data['magento_orders_settings']['listing_other']['create_from_date'] =
+                \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+                    $data['magento_orders_settings']['listing_other']['create_from_date']
+                );
+        }
 
         return $this->accountUpdate->updateSettings($account, $data);
     }
@@ -132,32 +136,64 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         \Ess\M2ePro\Model\Ebay\Account $ebayAccount,
         array $previousMagentoOrdersSettings
     ): void {
-        if (
-            $ebayAccount->isMagentoOrdersListingsModeEnabled()
-            && (
-                $previousMagentoOrdersSettings['listing']['is_enabled'] === false
-                || $ebayAccount->getMagentoOrdersListingsCreateFromDate()->format('Y-m-d H:i:s')
-                !== $previousMagentoOrdersSettings['listing']['create_from_date']->format('Y-m-d H:i:s')
-            )
-        ) {
+        if ($this->isNeedCreateMagentoOrdersListing($ebayAccount, $previousMagentoOrdersSettings)) {
             $this->magentoOrderCreateService->createMagentoOrdersListingsByFromDate(
                 (int)$ebayAccount->getId(),
                 $ebayAccount->getMagentoOrdersListingsCreateFromDate()
             );
         }
 
-        if (
-            $ebayAccount->isMagentoOrdersListingsOtherModeEnabled()
-            && (
-                $previousMagentoOrdersSettings['listing_other']['is_enabled'] === false
-                || $ebayAccount->getMagentoOrdersListingsOtherCreateFromDate()->format('Y-m-d H:i:s')
-                !== $previousMagentoOrdersSettings['listing_other']['create_from_date']->format('Y-m-d H:i:s')
-            )
-        ) {
+        if ($this->isNeedCreateMagentoOrdersListingOther($ebayAccount, $previousMagentoOrdersSettings)) {
             $this->magentoOrderCreateService->createMagentoOrdersListingsOtherByFromDate(
                 (int)$ebayAccount->getId(),
                 $ebayAccount->getMagentoOrdersListingsOtherCreateFromDate()
             );
         }
+    }
+
+    private function isNeedCreateMagentoOrdersListing(
+        \Ess\M2ePro\Model\Ebay\Account $ebayAccount,
+        array $previousMagentoOrdersSettings
+    ): bool {
+        if (!$ebayAccount->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        if (!$ebayAccount->getMagentoOrdersListingsCreateFromDate()) {
+            return false;
+        }
+
+        if (
+            $previousMagentoOrdersSettings['listing']['is_enabled'] === false
+            || $previousMagentoOrdersSettings['listing']['create_from_date'] === null
+        ) {
+            return true;
+        }
+
+        return $ebayAccount->getMagentoOrdersListingsCreateFromDate()->format('Y-m-d H:i')
+            !== $previousMagentoOrdersSettings['listing']['create_from_date']->format('Y-m-d H:i');
+    }
+
+    private function isNeedCreateMagentoOrdersListingOther(
+        \Ess\M2ePro\Model\Ebay\Account $ebayAccount,
+        array $previousMagentoOrdersSettings
+    ): bool {
+        if (!$ebayAccount->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        if (!$ebayAccount->getMagentoOrdersListingsOtherCreateFromDate()) {
+            return false;
+        }
+
+        if (
+            $previousMagentoOrdersSettings['listing_other']['is_enabled'] === false
+            || $previousMagentoOrdersSettings['listing_other']['create_from_date'] === null
+        ) {
+            return true;
+        }
+
+        return $ebayAccount->getMagentoOrdersListingsOtherCreateFromDate()->format('Y-m-d H:i')
+            !== $previousMagentoOrdersSettings['listing_other']['create_from_date']->format('Y-m-d H:i');
     }
 }

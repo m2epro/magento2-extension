@@ -117,7 +117,7 @@ class Data
     // ---------------------------------------
 
     /**
-     * @deprecated
+     * @deprecated use \Ess\M2ePro\Helper\Date::createWithLocalTimeZone
      * @see use explicitly \DateTime
      * @param string $date
      * @param bool $returnTimestamp
@@ -138,7 +138,7 @@ class Data
     }
 
     /**
-     * @deprecated
+     * @deprecated use \Ess\M2ePro\Helper\Date::createWithGmtTimeZone
      * @see use explicitly \DateTime
      * @param string $date
      * @param bool $returnTimestamp

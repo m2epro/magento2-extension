@@ -381,7 +381,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             return false;
         }
 
-        return $amazonOrder->getPurchaseCreateDate() >= $amazonAccount->getMagentoOrdersListingsOtherCreateFromDate();
+        return $amazonOrder->getPurchaseCreateDate()
+            >= $amazonAccount->getMagentoOrdersListingsOtherCreateFromDateOrAccountCreateDate();
     }
 
     private function isOrdersCreationEnabledForListings(
@@ -392,7 +393,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
             return false;
         }
 
-        return $amazonOrder->getPurchaseCreateDate() >= $amazonAccount->getMagentoOrdersListingsCreateFromDate();
+        return $amazonOrder->getPurchaseCreateDate()
+            >= $amazonAccount->getMagentoOrdersListingsCreateFromDateOrAccountCreateDate();
     }
 
     /**

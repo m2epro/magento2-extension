@@ -81,6 +81,14 @@ class Order extends AbstractForm
 
         $formData = array_replace_recursive($defaults, $formData);
 
+        $formData['magento_orders_settings']['listing']['create_from_date'] = $this->convertGmtToLocal(
+            $formData['magento_orders_settings']['listing']['create_from_date'] ?? null
+        );
+
+        $formData['magento_orders_settings']['listing_other']['create_from_date'] = $this->convertGmtToLocal(
+            $formData['magento_orders_settings']['listing_other']['create_from_date'] ?? null
+        );
+
         $form = $this->_formFactory->create();
 
         $form->addField(
@@ -139,8 +147,7 @@ HTML
                     'Select the start date for channel orders to be created in Magento.'
                     . ' Orders purchased before this date will not be imported into Magento.'
                 ),
-                'value' => $this->getMagentoOrdersListingsCreateFromDate($walmartAccount)
-                                ->format('Y-m-d H:i:s')
+                'value' => $formData['magento_orders_settings']['listing']['create_from_date']
             ]
         );
 
@@ -216,8 +223,7 @@ HTML
                     'Select the start date for channel orders to be created in Magento.'
                     . ' Orders purchased before this date will not be imported into Magento.'
                 ),
-                'value' => $this->getMagentoOrdersListingsOtherCreateFromDate($walmartAccount)
-                                ->format('Y-m-d H:i:s'),
+                'value' => $formData['magento_orders_settings']['listing_other']['create_from_date'],
             ]
         );
 
@@ -772,34 +778,18 @@ HTML
         return parent::_prepareForm();
     }
 
-    private function getMagentoOrdersListingsCreateFromDate(
-        ?\Ess\M2ePro\Model\Walmart\Account $walmartAccount
-    ): \DateTime {
-        if ($walmartAccount === null) {
-            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
-        }
-
-        return $walmartAccount
-            ->getMagentoOrdersListingsCreateFromDate()
-            ->setTimezone(self::getDateTimeZone());
-    }
-
-    private function getMagentoOrdersListingsOtherCreateFromDate(
-        ?\Ess\M2ePro\Model\Walmart\Account $walmartAccount
-    ): \DateTime {
-        if ($walmartAccount === null) {
-            return \Ess\M2ePro\Helper\Date::createCurrentInCurrentZone();
-        }
-
-        return $walmartAccount
-            ->getMagentoOrdersListingsOtherCreateFromDate()
-            ->setTimezone(self::getDateTimeZone());
-    }
-
-    public static function getDateTimeZone(): \DateTimeZone
+    private function convertGmtToLocal(?string $dateTimeString): ?string
     {
-        return new \DateTimeZone(
-            \Ess\M2ePro\Helper\Date::getTimezone()->getConfigTimezone()
-        );
+        if (empty($dateTimeString)) {
+            return null;
+        }
+
+        try {
+            $date = \Ess\M2ePro\Helper\Date::createDateGmt($dateTimeString);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        return \Ess\M2ePro\Helper\Date::createWithLocalTimeZone($date)->format('Y-m-d H:i:s');
     }
 }

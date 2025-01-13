@@ -31,6 +31,14 @@ class Command extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
             $response->setTrackingNumber($trackingNumber);
         }
 
+        $carrierCode = $responseData['package']['carrier_code'] ?? null;
+        if (
+            $carrierCode !== null
+            && method_exists($response, 'setCarrierCode')
+        ) {
+            $response->setCarrierCode($carrierCode);
+        }
+
         $this->responseData = $response;
     }
 }

@@ -10,8 +10,7 @@ class EventDispatcher
     private const REGION_EUROPE = 'europe';
     private const REGION_ASIA_PACIFIC = 'asia-pacific';
 
-    /** @var \Magento\Framework\Event\ManagerInterface */
-    private $eventManager;
+    private \Magento\Framework\Event\ManagerInterface $eventManager;
 
     public function __construct(\Magento\Framework\Event\ManagerInterface $eventManager)
     {
@@ -26,6 +25,7 @@ class EventDispatcher
         $this->eventManager->dispatch('ess_magento_order_created', [
             'channel' => $order->getComponentMode(),
             'channel_order_id' => (int)$order->getId(),
+            'channel_external_order_id' => $this->findChannelExternalOrderId($order),
             'magento_order_id' => (int)$order->getMagentoOrderId(),
             'magento_order_increment_id' => $order->getMagentoOrder()->getIncrementId(),
             'channel_purchase_date' => $this->findPurchaseDate($order),
@@ -36,6 +36,18 @@ class EventDispatcher
             'is_european_region' => $marketplace->isEuropeanRegion(),
             'is_asian_pacific_region' => $marketplace->isAsianPacificRegion(),
         ]);
+    }
+
+    private function findChannelExternalOrderId(\Ess\M2ePro\Model\Order $order): ?string
+    {
+        if ($order->isComponentModeEbay()) {
+            /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
+            $ebayOrder = $order->getChildObject();
+
+            return $ebayOrder->getEbayOrderId();
+        }
+
+        return null;
     }
 
     private function findPurchaseDate(\Ess\M2ePro\Model\Order $order): ?\DateTime
@@ -61,6 +73,8 @@ class EventDispatcher
 
         return self::REGION_ASIA_PACIFIC;
     }
+
+    // ----------------------------------------
 
     public function dispatchEventInvoiceCreated(\Ess\M2ePro\Model\Order $order): void
     {

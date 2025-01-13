@@ -1,18 +1,16 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\DataBuilder;
 
 class Details extends AbstractModel
 {
-    private $listingProductFactory;
+    private \Ess\M2ePro\Model\Listing\ProductFactory $listingProductFactory;
+    private \Ess\M2ePro\Helper\Module\Renderer\Description $descriptionRender;
 
     public function __construct(
+        \Ess\M2ePro\Helper\Module\Renderer\Description $descriptionRender,
         \Ess\M2ePro\Model\Listing\ProductFactory $listingProductFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -21,6 +19,7 @@ class Details extends AbstractModel
     ) {
         parent::__construct($activeRecordFactory, $helperFactory, $modelFactory, $data);
 
+        $this->descriptionRender = $descriptionRender;
         $this->listingProductFactory = $listingProductFactory;
     }
 
@@ -359,7 +358,7 @@ class Details extends AbstractModel
 
         foreach ($fieldSpecifications as $item) {
             if ($item['mode'] === \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE) {
-                $resultData[] = $this->replaceAttributesInValue($magentoProduct, $item['value']);
+                $resultData[] = $this->descriptionRender->parseWithoutMagentoTemplate($item['value'], $magentoProduct);
             } else {
                 $resultData[] = $magentoProduct->getAttributeValue($item['attribute_code'], false);
             }
@@ -370,21 +369,5 @@ class Details extends AbstractModel
         }
 
         return $resultData;
-    }
-
-    private function replaceAttributesInValue($magentoProduct, $value)
-    {
-        preg_match_all("/#([a-z_0-9]+?)#/i", $value, $matches);
-
-        if (empty($matches[0])) {
-            return $value;
-        }
-
-        foreach ($matches[1] as $attributeCode) {
-            $attributeValue = $magentoProduct->getAttributeValue($attributeCode);
-            $value = str_replace("#$attributeCode#", $attributeValue, $value);
-        }
-
-        return $value;
     }
 }

@@ -125,15 +125,20 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
 
     private function saveAccount(\Ess\M2ePro\Model\Account $account, array $data): void
     {
-        $data['magento_orders_settings']['listing']['create_from_date'] = new \DateTime(
-            $data['magento_orders_settings']['listing']['create_from_date'],
-            \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order::getDateTimeZone()
-        );
+        if (!empty($data['magento_orders_settings']['listing']['create_from_date'])) {
+            ;
+            $data['magento_orders_settings']['listing']['create_from_date'] =
+                \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+                    $data['magento_orders_settings']['listing']['create_from_date']
+                );
+        }
 
-        $data['magento_orders_settings']['listing_other']['create_from_date'] = new \DateTime(
-            $data['magento_orders_settings']['listing_other']['create_from_date'],
-            \Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs\Order::getDateTimeZone()
-        );
+        if (!empty($data['magento_orders_settings']['listing_other']['create_from_date'])) {
+            $data['magento_orders_settings']['listing_other']['create_from_date'] =
+                \Ess\M2ePro\Helper\Date::createDateInCurrentZone(
+                    $data['magento_orders_settings']['listing_other']['create_from_date']
+                );
+        }
 
         $this->accountBuilder->build($account, $data);
     }
@@ -156,32 +161,64 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         \Ess\M2ePro\Model\Amazon\Account $amazonAccount,
         array $previousMagentoOrdersSettings
     ): void {
-        if (
-            $amazonAccount->isMagentoOrdersListingsModeEnabled()
-            && (
-                $previousMagentoOrdersSettings['listing']['is_enabled'] === false
-                || $amazonAccount->getMagentoOrdersListingsCreateFromDate()->format('Y-m-d H:i:s')
-                !== $previousMagentoOrdersSettings['listing']['create_from_date']->format('Y-m-d H:i:s')
-            )
-        ) {
+        if ($this->isNeedCreateMagentoOrdersListing($amazonAccount, $previousMagentoOrdersSettings)) {
             $this->magentoOrderCreateService->createMagentoOrdersListingsByFromDate(
                 (int)$amazonAccount->getId(),
                 $amazonAccount->getMagentoOrdersListingsCreateFromDate()
             );
         }
 
-        if (
-            $amazonAccount->isMagentoOrdersListingsOtherModeEnabled()
-            && (
-                $previousMagentoOrdersSettings['listing_other']['is_enabled'] === false
-                || $amazonAccount->getMagentoOrdersListingsOtherCreateFromDate()->format('Y-m-d H:i:s')
-                !== $previousMagentoOrdersSettings['listing_other']['create_from_date']->format('Y-m-d H:i:s')
-            )
-        ) {
+        if ($this->isNeedCreateMagentoOrdersListingOther($amazonAccount, $previousMagentoOrdersSettings)) {
             $this->magentoOrderCreateService->createMagentoOrdersListingsOtherByFromDate(
                 (int)$amazonAccount->getId(),
                 $amazonAccount->getMagentoOrdersListingsOtherCreateFromDate()
             );
         }
+    }
+
+    private function isNeedCreateMagentoOrdersListing(
+        \Ess\M2ePro\Model\Amazon\Account $amazonAccount,
+        array $previousMagentoOrdersSettings
+    ): bool {
+        if (!$amazonAccount->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        if (!$amazonAccount->getMagentoOrdersListingsCreateFromDate()) {
+            return false;
+        }
+
+        if (
+            $previousMagentoOrdersSettings['listing']['is_enabled'] === false
+            || $previousMagentoOrdersSettings['listing']['create_from_date'] === null
+        ) {
+            return true;
+        }
+
+        return $amazonAccount->getMagentoOrdersListingsCreateFromDate()->format('Y-m-d H:i')
+            !== $previousMagentoOrdersSettings['listing']['create_from_date']->format('Y-m-d H:i');
+    }
+
+    private function isNeedCreateMagentoOrdersListingOther(
+        \Ess\M2ePro\Model\Amazon\Account $amazonAccount,
+        array $previousMagentoOrdersSettings
+    ): bool {
+        if (!$amazonAccount->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        if (!$amazonAccount->getMagentoOrdersListingsOtherCreateFromDate()) {
+            return false;
+        }
+
+        if (
+            $previousMagentoOrdersSettings['listing_other']['is_enabled'] === false
+            || $previousMagentoOrdersSettings['listing_other']['create_from_date'] === null
+        ) {
+            return true;
+        }
+
+        return $amazonAccount->getMagentoOrdersListingsOtherCreateFromDate()->format('Y-m-d H:i')
+            !== $previousMagentoOrdersSettings['listing_other']['create_from_date']->format('Y-m-d H:i');
     }
 }

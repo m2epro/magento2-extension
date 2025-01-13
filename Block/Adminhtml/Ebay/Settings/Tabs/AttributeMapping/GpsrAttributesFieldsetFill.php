@@ -38,6 +38,13 @@ class GpsrAttributesFieldsetFill
                 Provider::ATTR_RESPONSIBLE_PERSON_CODE_TYPES,
             ],
         ],
+        'product_safety' => [
+            'title' => 'Product Safety',
+            'attributes' => [
+                Provider::ATTR_PRODUCT_SAFETY_STATEMENTS,
+                Provider::ATTR_PRODUCT_SAFETY_PICTOGRAMS,
+            ],
+        ],
     ];
 
     private \Ess\M2ePro\Helper\Magento\Attribute $attributeHelper;

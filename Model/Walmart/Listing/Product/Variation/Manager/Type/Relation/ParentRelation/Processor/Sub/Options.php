@@ -130,21 +130,25 @@ class Options extends AbstractModel
 
         $optionIds = $this->getProcessor()->getTypeModel()->getOptionIds();
 
+        $walmartListingProduct = $this->getProcessor()
+                                      ->getWalmartListingProduct();
+        $dictionaryProductTypeId = $walmartListingProduct->isExistsProductType()
+            ? $walmartListingProduct->getProductType()
+                                    ->getDictionaryId()
+            : null;
+
         foreach ($productOptions as $productOption) {
             $channelOption = [];
             foreach ($productOption as $optionAttribute => $optionValue) {
                 $productTypeAttribute = $matchedAttributes[$optionAttribute];
                 $optionId = $optionIds[$optionValue] ?? null;
-                $productTypeId = $this
-                    ->getProcessor()
-                    ->getListingProduct()
-                    ->getChildObject()
-                    ->getProductType()
-                    ->getDictionaryId();
 
-                if ($optionId !== null) {
+                if (
+                    $dictionaryProductTypeId !== null
+                    && $optionId !== null
+                ) {
                     $optionValue = $this->optionReplacer->replace(
-                        $productTypeId,
+                        $dictionaryProductTypeId,
                         $productTypeAttribute,
                         $optionId,
                         $optionValue

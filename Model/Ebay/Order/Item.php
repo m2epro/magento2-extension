@@ -399,7 +399,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($ebayOrder->getPurchaseCreateDate());
 
-        return $purchaseCreateDate >= $ebayAccount->getMagentoOrdersListingsOtherCreateFromDate();
+        return $purchaseCreateDate >= $ebayAccount->getMagentoOrdersListingsOtherCreateFromDateOrCreateAccountDate();
     }
 
     private function isOrdersCreationEnabledForListings(
@@ -412,7 +412,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
         $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($ebayOrder->getPurchaseCreateDate());
 
-        return $purchaseCreateDate >= $ebayAccount->getMagentoOrdersListingsCreateFromDate();
+        return $purchaseCreateDate >= $ebayAccount->getMagentoOrdersListingsCreateFromDateOrCreateAccountDate();
     }
 
     public function getAssociatedProductId()

@@ -413,16 +413,11 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             return $date;
         }
 
-        $date = clone $date;
-
-        return $date->setTimezone(new \DateTimeZone(\Ess\M2ePro\Helper\Date::getTimezone()->getDefaultTimezone()))
-                    ->format('Y-m-d H:i:s');
+        return \Ess\M2ePro\Helper\Date::createWithGmtTimeZone($date)->format('Y-m-d H:i:s');
     }
 
     public function getDefaultData(): array
     {
-        $currentGmtDate = \Ess\M2ePro\Helper\Date::createCurrentGmt()->format('Y-m-d H:i:s');
-
         return [
             'title' => '',
             'user_id' => '',
@@ -444,13 +439,13 @@ class Builder extends \Ess\M2ePro\Model\ActiveRecord\AbstractBuilder
             'magento_orders_settings' => [
                 'listing' => [
                     'mode' => 1,
-                    'create_from_date' => $currentGmtDate,
+                    'create_from_date' => null,
                     'store_mode' => Account::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
                     'store_id' => null,
                 ],
                 'listing_other' => [
                     'mode' => 1,
-                    'create_from_date' => $currentGmtDate,
+                    'create_from_date' => null,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IGNORE,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
                     'store_id' => null,

@@ -259,7 +259,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
         $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($walmartOrder->getPurchaseCreateDate());
 
-        return $purchaseCreateDate >= $walmartAccount->getMagentoOrdersListingsOtherCreateFromDate();
+        return $purchaseCreateDate >= $walmartAccount->getMagentoOrdersListingsOtherCreateFromDateOrCreateAccountDate();
     }
 
     private function isOrdersCreationEnabledForListings(
@@ -272,7 +272,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Walmart\Abstra
 
         $purchaseCreateDate = \Ess\M2ePro\Helper\Date::createDateGmt($walmartOrder->getPurchaseCreateDate());
 
-        return $purchaseCreateDate >= $walmartAccount->getMagentoOrdersListingsCreateFromDate();
+        return $purchaseCreateDate >= $walmartAccount->getMagentoOrdersListingsCreateFromDateOrCreateAccountDate();
     }
 
     /**

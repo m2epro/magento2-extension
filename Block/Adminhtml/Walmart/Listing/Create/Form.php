@@ -194,7 +194,7 @@ HTML
         $fieldset = $form->addFieldset(
             'policies_settings',
             [
-                'legend' => __('Policies Settings'),
+                'legend' => __('Policies'),
                 'collapsable' => false,
             ]
         );

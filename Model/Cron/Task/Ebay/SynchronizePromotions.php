@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay;
 
+use Ess\M2ePro\Model\Ebay\Promotion\DeletePromotionProductsWithoutPromotion;
+
 class SynchronizePromotions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     public const NICK = 'ebay/synchronize_promotions';
@@ -16,6 +18,7 @@ class SynchronizePromotions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     private \Ess\M2ePro\Model\Ebay\Promotion\TimingManager $timingManager;
     private \Ess\M2ePro\Model\Ebay\Marketplace\Repository $marketplaceRepository;
     private \Ess\M2ePro\Model\Ebay\Account\Repository $accountRepository;
+    private DeletePromotionProductsWithoutPromotion $deletePromotionProductsWithoutPromotion;
 
     public function __construct(
         \Ess\M2ePro\Helper\Server\Maintenance $serverMaintenanceHelper,
@@ -23,6 +26,7 @@ class SynchronizePromotions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         \Ess\M2ePro\Model\Ebay\Promotion\TimingManager $timingManager,
         \Ess\M2ePro\Model\Ebay\Marketplace\Repository $marketplaceRepository,
         \Ess\M2ePro\Model\Ebay\Account\Repository $accountRepository,
+        DeletePromotionProductsWithoutPromotion $deletePromotionProductsWithoutPromotion,
         \Ess\M2ePro\Model\Cron\Manager $cronManager,
         \Ess\M2ePro\Helper\Data $helperData,
         \Magento\Framework\Event\Manager $eventManager,
@@ -50,6 +54,7 @@ class SynchronizePromotions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $this->timingManager = $timingManager;
         $this->marketplaceRepository = $marketplaceRepository;
         $this->accountRepository = $accountRepository;
+        $this->deletePromotionProductsWithoutPromotion = $deletePromotionProductsWithoutPromotion;
     }
 
     public function isPossibleToRun(): bool
@@ -63,6 +68,8 @@ class SynchronizePromotions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 
     protected function performActions(): void
     {
+        $this->deletePromotionProductsWithoutPromotion->process();
+
         $accounts = $this->accountRepository->getAll();
 
         if (empty($accounts)) {

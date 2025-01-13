@@ -27,6 +27,9 @@ class Provider
     public const ATTR_RESPONSIBLE_PERSON_PHONE = 'Responsible Person Phone';
     public const ATTR_RESPONSIBLE_PERSON_CODE_TYPES = 'Responsible Person Code Types';
 
+    public const ATTR_PRODUCT_SAFETY_STATEMENTS = 'Product Safety Statements';
+    public const ATTR_PRODUCT_SAFETY_PICTOGRAMS = 'Product Safety Pictograms';
+
     private const ATTRIBUTES = [
         [
             'title' => self::ATTR_MANUFACTURER_COMPANY_NAME,
@@ -103,6 +106,14 @@ class Provider
         [
             'title' => self::ATTR_RESPONSIBLE_PERSON_CODE_TYPES,
             'code' => self::ATTR_RESPONSIBLE_PERSON_CODE_TYPES
+        ],
+        [
+            'title' => self::ATTR_PRODUCT_SAFETY_STATEMENTS,
+            'code' => self::ATTR_PRODUCT_SAFETY_STATEMENTS
+        ],
+        [
+            'title' => self::ATTR_PRODUCT_SAFETY_PICTOGRAMS,
+            'code' => self::ATTR_PRODUCT_SAFETY_PICTOGRAMS
         ],
     ];
 

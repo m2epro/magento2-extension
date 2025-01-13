@@ -17,6 +17,20 @@ class Repository
         $this->orderCollectionFactory = $orderCollectionFactory;
     }
 
+    public function findByMagentoOrderId(int $id): ?\Ess\M2ePro\Model\Order
+    {
+        $collection = $this->orderCollectionFactory->createWithAmazonChildMode();
+        $collection->addFieldToFilter(OrderResource::COLUMN_MAGENTO_ORDER_ID, $id);
+
+        /** @var \Ess\M2ePro\Model\Order|false $entity */
+        $entity = $collection->fetchItem();
+        if ($entity === false) {
+            return null;
+        }
+
+        return $entity;
+    }
+
     /**
      * @return \Ess\M2ePro\Model\Order[]
      */

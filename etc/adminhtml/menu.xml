@@ -112,11 +112,11 @@
         <!-- walmart configuration -->
 
         <add id="Ess_M2ePro::walmart_configuration" title="Configuration" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::walmart" resource="Ess_M2ePro::walmart_configuration" />
-        <add id="Ess_M2ePro::walmart_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_account" resource="Ess_M2ePro::walmart_configuration_accounts" />
+        <add id="Ess_M2ePro::walmart_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_template/index" resource="Ess_M2ePro::walmart_configuration_templates" />
         <add id="Ess_M2ePro::walmart_configuration_product_types" title="Product Types" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_productType/index" resource="Ess_M2ePro::walmart_configuration_product_types" />
-        <add id="Ess_M2ePro::walmart_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_marketplace/" resource="Ess_M2ePro::walmart_configuration_marketplaces" />
-        <add id="Ess_M2ePro::walmart_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_template/index" resource="Ess_M2ePro::walmart_configuration_templates" />
-        <add id="Ess_M2ePro::walmart_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_settings/index" resource="Ess_M2ePro::walmart_configuration_settings" />
+        <add id="Ess_M2ePro::walmart_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_account" resource="Ess_M2ePro::walmart_configuration_accounts" />
+        <add id="Ess_M2ePro::walmart_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_settings/index" resource="Ess_M2ePro::walmart_configuration_settings" />
+        <add id="Ess_M2ePro::walmart_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::walmart_configuration" action="m2epro/walmart_marketplace/" resource="Ess_M2ePro::walmart_configuration_marketplaces" />
 
         <!-- walmart help center -->
 

@@ -6,6 +6,13 @@ namespace Ess\M2ePro\Model\Walmart\ProductType\AttributeSetting;
 
 class Provider
 {
+    private \Ess\M2ePro\Helper\Module\Renderer\Description $descriptionRender;
+
+    public function __construct(\Ess\M2ePro\Helper\Module\Renderer\Description $descriptionRender)
+    {
+        $this->descriptionRender = $descriptionRender;
+    }
+
     /**
      * @return Provider\Item[]
      */
@@ -39,7 +46,11 @@ class Provider
         $result = [];
         foreach ($attributeSetting->getValues() as $settingValue) {
             if ($settingValue->isCustom()) {
-                $result[] = $settingValue->getValue();
+                $result[] = $this->descriptionRender->parseWithoutMagentoTemplate(
+                    $settingValue->getValue(),
+                    $product
+                );
+
                 continue;
             }
 

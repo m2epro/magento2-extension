@@ -116,11 +116,7 @@ class Date
     // ---------------------------------------
 
     /**
-     * @param string $date
-     * @param bool $returnTimestamp
-     * @param string $format
-     *
-     * @return int|string
+     * @deprecated use createWithLocalTimeZone
      */
     public function gmtDateToTimezone($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
@@ -135,11 +131,7 @@ class Date
     }
 
     /**
-     * @param string $date
-     * @param bool $returnTimestamp
-     * @param string $format
-     *
-     * @return int|string
+     * @deprecated use createWithGmtTimeZone
      */
     public function timezoneDateToGmt($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
@@ -268,5 +260,21 @@ class Date
 
         return self::$localeResolver = \Magento\Framework\App\ObjectManager::getInstance()
             ->get(\Magento\Framework\Locale\ResolverInterface::class);
+    }
+
+    public static function createWithLocalTimeZone(\DateTime $inputDateTime): \DateTime
+    {
+        $localTimezone = new \DateTimeZone(self::getTimezone()->getConfigTimezone());
+        $clonedDateTime = clone $inputDateTime;
+
+        return $clonedDateTime->setTimezone($localTimezone);
+    }
+
+    public static function createWithGmtTimeZone(\DateTime $inputDateTime): \DateTime
+    {
+        $gmtTimezone = new \DateTimeZone(self::getTimezone()->getDefaultTimezone());
+        $clonedDateTime = clone $inputDateTime;
+
+        return $clonedDateTime->setTimezone($gmtTimezone);
     }
 }

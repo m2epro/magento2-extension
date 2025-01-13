@@ -122,9 +122,17 @@ HTML;
             unset($values[Specific::VALUE_MODE_EBAY_RECOMMENDED]);
         }
 
+        $specificWithForceCustomValueMode = [
+            \Ess\M2ePro\Model\Ebay\AttributeMapping\Gpsr\Provider::ATTR_PRODUCT_SAFETY_STATEMENTS,
+            \Ess\M2ePro\Model\Ebay\AttributeMapping\Gpsr\Provider::ATTR_PRODUCT_SAFETY_PICTOGRAMS,
+        ];
+
         if (
-            $specific['type'] === Specific::RENDER_TYPE_SELECT_ONE
-            || $specific['type'] === Specific::RENDER_TYPE_SELECT_MULTIPLE
+            !in_array($specific['id'], $specificWithForceCustomValueMode, true)
+            && (
+                $specific['type'] === Specific::RENDER_TYPE_SELECT_ONE
+                || $specific['type'] === Specific::RENDER_TYPE_SELECT_MULTIPLE
+            )
         ) {
             unset($values[Specific::VALUE_MODE_CUSTOM_VALUE]);
         }

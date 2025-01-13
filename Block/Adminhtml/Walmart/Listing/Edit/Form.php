@@ -72,7 +72,7 @@ class Form extends AbstractForm
         $fieldset = $form->addFieldset(
             'policies_settings',
             [
-                'legend' => __('Policies Settings'),
+                'legend' => __('Policies'),
                 'collapsable' => false,
             ]
         );

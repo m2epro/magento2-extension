@@ -1,10 +1,6 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Helper\Module\Renderer;
 
@@ -22,24 +18,11 @@ class Description
     public const LAYOUT_MODE_ROW = 'row';
     public const LAYOUT_MODE_COLUMN = 'column';
 
-    /** @var \Magento\Store\Model\App\Emulation */
-    private $appEmulation;
-    /** @var \Magento\Email\Model\Template\Filter */
-    private $filter;
-    /** @var \Magento\Framework\View\LayoutInterface */
-    private $layout;
+    private \Magento\Store\Model\App\Emulation $appEmulation;
+    private \Magento\Email\Model\Template\Filter $filter;
+    private \Magento\Framework\View\LayoutInterface $layout;
 
-    /** @var \Ess\M2ePro\Helper\Module\Configuration */
-    private $moduleConfiguration;
-
-    /**
-     * @param \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
-     * @param \Magento\Store\Model\App\Emulation $appEmulation
-     * @param \Magento\Email\Model\Template\Filter $filter
-     * @param \Magento\Framework\View\LayoutInterface $layout
-     */
     public function __construct(
-        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration,
         \Magento\Store\Model\App\Emulation $appEmulation,
         \Magento\Email\Model\Template\Filter $filter,
         \Magento\Framework\View\LayoutInterface $layout
@@ -47,7 +30,6 @@ class Description
         $this->appEmulation = $appEmulation;
         $this->filter = $filter;
         $this->layout = $layout;
-        $this->moduleConfiguration = $moduleConfiguration;
     }
 
     // ----------------------------------------
@@ -62,9 +44,7 @@ class Description
         );
         //--
 
-        $text = $this->insertAttributes($text, $magentoProduct);
-        $text = $this->insertImages($text, $magentoProduct);
-        $text = $this->insertMediaGalleries($text, $magentoProduct);
+        $text = $this->parseWithoutMagentoTemplate($text, $magentoProduct);
 
         // the CMS static block replacement i.e. {{media url=’image.jpg’}}
         $this->filter->setVariables(['product' => $magentoProduct->getProduct()]);
@@ -74,6 +54,15 @@ class Description
         $this->appEmulation->stopEnvironmentEmulation();
 
         //--
+
+        return $text;
+    }
+
+    public function parseWithoutMagentoTemplate(string $text, \Ess\M2ePro\Model\Magento\Product $magentoProduct): string
+    {
+        $text = $this->insertAttributes($text, $magentoProduct);
+        $text = $this->insertImages($text, $magentoProduct);
+        $text = $this->insertMediaGalleries($text, $magentoProduct);
 
         return $text;
     }
@@ -97,7 +86,7 @@ class Description
                 if ($attributeCode == 'weight') {
                     $value = (float)$value;
                 } elseif (in_array($attributeCode, ['price', 'special_price'])) {
-                    $value = $magentoProduct->getProduct()->getFormatedPrice();
+                    $value = $magentoProduct->getProduct()->getFormattedPrice();
                 }
                 $search[] = '#' . $attributeCode . '#';
                 $replace[] = $value;

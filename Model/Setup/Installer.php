@@ -2907,7 +2907,7 @@ class Installer
                                       ->addColumn(
                                           PairResource::COLUMN_VALUE,
                                           Table::TYPE_TEXT,
-                                          255,
+                                          null,
                                           ['nullable' => false]
                                       )
                                       ->addColumn(

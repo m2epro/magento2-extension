@@ -505,14 +505,24 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getSetting('magento_orders_settings', ['listing', 'mode'], 1) == 1;
     }
 
-    public function getMagentoOrdersListingsCreateFromDate(): \DateTime
+    public function getMagentoOrdersListingsCreateFromDateOrCreateAccountDate(): \DateTime
+    {
+        $date = $this->getMagentoOrdersListingsCreateFromDate();
+        if ($date !== null) {
+            return $date;
+        }
+
+        /** @var \Ess\M2ePro\Model\Account $parentObject */
+        $parentObject = $this->getParentObject();
+
+        return $parentObject->getCreateDate();
+    }
+
+    public function getMagentoOrdersListingsCreateFromDate(): ?\DateTime
     {
         $date = $this->getSetting('magento_orders_settings', ['listing', 'create_from_date']);
-        if ($date === null) {
-            /** @var \Ess\M2ePro\Model\Account $parentObject */
-            $parentObject = $this->getParentObject();
-
-            return $parentObject->getCreateDate();
+        if (empty($date)) {
+            return null;
         }
 
         return \Ess\M2ePro\Helper\Date::createDateGmt($date);
@@ -552,14 +562,24 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         return $this->getSetting('magento_orders_settings', ['listing_other', 'mode'], 1) == 1;
     }
 
-    public function getMagentoOrdersListingsOtherCreateFromDate(): \DateTime
+    public function getMagentoOrdersListingsOtherCreateFromDateOrCreateAccountDate(): \DateTime
+    {
+        $date = $this->getMagentoOrdersListingsOtherCreateFromDate();
+        if ($date !== null) {
+            return $date;
+        }
+
+        /** @var \Ess\M2ePro\Model\Account $parentObject */
+        $parentObject = $this->getParentObject();
+
+        return $parentObject->getCreateDate();
+    }
+
+    public function getMagentoOrdersListingsOtherCreateFromDate(): ?\DateTime
     {
         $date = $this->getSetting('magento_orders_settings', ['listing_other', 'create_from_date']);
-        if ($date === null) {
-            /** @var \Ess\M2ePro\Model\Account $parentObject */
-            $parentObject = $this->getParentObject();
-
-            return $parentObject->getCreateDate();
+        if (empty($date)) {
+            return null;
         }
 
         return \Ess\M2ePro\Helper\Date::createDateGmt($date);
