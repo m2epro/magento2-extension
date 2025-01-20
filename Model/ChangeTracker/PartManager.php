@@ -53,6 +53,7 @@ class PartManager
 
             if ($batchCounter % self::PART_BATCH_SIZE === 0) {
                 yield $this->createPart($batch);
+                $batch = [];
             }
         }
 
