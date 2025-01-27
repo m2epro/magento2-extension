@@ -592,7 +592,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getMagentoOrdersListingsCreateFromDate(): ?\DateTime
     {
         $date = $this->getSetting('magento_orders_settings', ['listing', 'create_from_date']);
-        if ($date === null) {
+        if (empty($date)) {
             return null;
         }
 
