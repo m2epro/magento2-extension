@@ -15,6 +15,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 use Ess\M2ePro\Helper\Module;
 use Ess\M2ePro\Helper\Magento\Category;
 use Ess\M2ePro\Helper\Module\Database\Structure;
+use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
 use Magento\Catalog\Model\Product\Type;
 
 class Grid extends AbstractGrid
@@ -25,6 +26,7 @@ class Grid extends AbstractGrid
     private Structure $databaseHelper;
 
     public function __construct(
+        ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
         WizardRuntimeStorage $uiWizardRuntimeStorage,
         ListingRuntimeStorage $uiListingRuntimeStorage,
         ListingResource $listingResource,
@@ -44,6 +46,7 @@ class Grid extends AbstractGrid
         $this->databaseHelper = $databaseHelper;
 
         parent::__construct(
+            $excludeSimpleProductsInVariation,
             $uiWizardRuntimeStorage,
             $uiListingRuntimeStorage,
             $listingResource,

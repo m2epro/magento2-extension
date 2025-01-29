@@ -289,6 +289,13 @@ if (empty($currency)) {
 
                             </td>
                         </tr>
+                        <?php $paymentMethodDetails = $this->order->getChildObject()->getPaymentMethodDetails(); ?>
+                        <?php if (!empty($paymentMethodDetails)) : ?>
+                        <tr>
+                            <td class="label"><?= __('Payment Method'); ?></td>
+                            <td class="value"><b><?= implode(', ', $paymentMethodDetails) ?></b></td>
+                        </tr>
+                        <?php endif; ?>
                         <?php if ($this->order->getChildObject()->canSendMagentoCreditmemo() ||
                             $this->order->getChildObject()->canSendMagentoInvoice()) { ?>
                             <tr>

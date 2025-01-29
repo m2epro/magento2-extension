@@ -13,6 +13,7 @@ use Ess\M2ePro\Model\Listing\Ui\RuntimeStorage as ListingRuntimeStorage;
 use Ess\M2ePro\Model\Ebay\Listing\Wizard\Ui\RuntimeStorage as WizardRuntimeStorage;
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 use Ess\M2ePro\Helper\Module;
+use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Store\Model\WebsiteFactory;
 
@@ -21,6 +22,7 @@ class Grid extends AbstractGrid
     private \Magento\Store\Model\WebsiteFactory $websiteFactory;
 
     public function __construct(
+        ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
         WizardRuntimeStorage $uiWizardRuntimeStorage,
         ListingRuntimeStorage $uiListingRuntimeStorage,
         ListingResource $listingResource,
@@ -38,6 +40,7 @@ class Grid extends AbstractGrid
         $this->websiteFactory = $websiteFactory;
 
         parent::__construct(
+            $excludeSimpleProductsInVariation,
             $uiWizardRuntimeStorage,
             $uiListingRuntimeStorage,
             $listingResource,

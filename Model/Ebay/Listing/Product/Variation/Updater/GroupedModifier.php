@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater\MagentoVariations;
-
-use Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater\MagentoVariations;
+namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater;
 
 class GroupedModifier
 {
@@ -23,7 +21,7 @@ class GroupedModifier
         array $rawMagentoVariations,
         \Ess\M2ePro\Model\Magento\Product $magentoProduct
     ): bool {
-        return MagentoVariations::canBeCreated($rawMagentoVariations)
+        return GroupedModifier\MagentoVariations::canBeCreated($rawMagentoVariations)
             && $magentoProduct->isGroupedType();
     }
 
@@ -35,7 +33,7 @@ class GroupedModifier
             return $rawMagentoVariations;
         }
 
-        $magentoVariations = new MagentoVariations($rawMagentoVariations);
+        $magentoVariations = new GroupedModifier\MagentoVariations($rawMagentoVariations);
 
         $valueOfVariationAttribute = $this->findValueOfVariationAttribute($magentoProduct);
         if ($valueOfVariationAttribute !== null) {
@@ -81,7 +79,7 @@ class GroupedModifier
 
     private function addOptions(
         string $attributeCodeOfOptionTitle,
-        MagentoVariations $magentoVariations,
+        GroupedModifier\MagentoVariations $magentoVariations,
         \Ess\M2ePro\Model\Magento\Product $magentoProduct
     ): void {
         $typeInstance = $magentoProduct->getTypeInstance();

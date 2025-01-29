@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
+use Ess\M2ePro\Model\Ebay\Template\Description as TemplateDescription;
 use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
 class Preview extends AbstractBlock
@@ -631,34 +632,22 @@ JS
     private function getConditionHumanTitle($code)
     {
         $codes = [
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW =>
-                $this->__('New'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER =>
-                $this->__('New Other'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT =>
-                $this->__('New With Defects'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_CERTIFIED_REFURBISHED =>
-                $this->__('Manufacturer Refurbished'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_EXCELLENT_REFURBISHED =>
-                $this->__('Excellent (Refurbished)'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD_REFURBISHED =>
-                $this->__('Very Good (Refurbished)'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD_REFURBISHED =>
-                $this->__('Good (Refurbished)'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED =>
-                $this->__('Seller Refurbished, Re-manufactured'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_LIKE_NEW =>
-                $this->__('Like New'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED =>
-                $this->__('Used'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD =>
-                $this->__('Very Good'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD =>
-                $this->__('Good'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE =>
-                $this->__('Acceptable'),
-            \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING =>
-                $this->__('For Parts or Not Working'),
+            TemplateDescription::CONDITION_EBAY_NEW => __('New'),
+            TemplateDescription::CONDITION_EBAY_NEW_OTHER => __('New Other'),
+            TemplateDescription::CONDITION_EBAY_NEW_WITH_DEFECT => __('New With Defects'),
+            TemplateDescription::CONDITION_EBAY_CERTIFIED_REFURBISHED => __('Manufacturer Refurbished'),
+            TemplateDescription::CONDITION_EBAY_EXCELLENT_REFURBISHED => __('Excellent (Refurbished)'),
+            TemplateDescription::CONDITION_EBAY_VERY_GOOD_REFURBISHED => __('Very Good (Refurbished)'),
+            TemplateDescription::CONDITION_EBAY_GOOD_REFURBISHED => __('Good (Refurbished)'),
+            TemplateDescription::CONDITION_EBAY_SELLER_REFURBISHED => __('Seller Refurbished, Re-manufactured'),
+            TemplateDescription::CONDITION_EBAY_LIKE_NEW => __('Like New'),
+            TemplateDescription::CONDITION_EBAY_PRE_OWNED_EXCELLENT => __('Excellent (Pre-owned)'),
+            TemplateDescription::CONDITION_EBAY_USED_EXCELLENT => __('Good (Pre-owned)'),
+            TemplateDescription::CONDITION_EBAY_PRE_OWNED_FAIR => __('Fair (Pre-owned)'),
+            TemplateDescription::CONDITION_EBAY_VERY_GOOD => __('Very Good'),
+            TemplateDescription::CONDITION_EBAY_GOOD => __('Good'),
+            TemplateDescription::CONDITION_EBAY_ACCEPTABLE => __('Acceptable'),
+            TemplateDescription::CONDITION_EBAY_NOT_WORKING => __('For Parts or Not Working'),
         ];
 
         if (!isset($codes[$code])) {

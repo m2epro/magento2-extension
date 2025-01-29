@@ -1,41 +1,35 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
+declare(strict_types=1);
 
 namespace Ess\M2ePro\Helper\View\Walmart;
 
 class Controller
 {
-    /** @var \Ess\M2ePro\Model\Factory */
-    private $modelFactory;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
+    private \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationSession;
 
-    /**
-     * @param \Ess\M2ePro\Model\Factory $modelFactory
-     */
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationSession
     ) {
-        $this->modelFactory = $modelFactory;
+        $this->objectManager = $objectManager;
+        $this->notificationSession = $notificationSession;
     }
 
     public function addMessages(): void
     {
-        /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationChannel */
-        $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_Session');
         $issueLocators = [
-            'Walmart_Marketplace_Issue_NotUpdated'
+            \Ess\M2ePro\Model\Walmart\Marketplace\Issue\NotUpdated::class,
+            \Ess\M2ePro\Model\Module\Issue\NewVersion::class,
         ];
 
         foreach ($issueLocators as $locator) {
             /** @var \Ess\M2ePro\Model\Issue\LocatorInterface $locatorModel */
-            $locatorModel = $this->modelFactory->getObject($locator);
+            $locatorModel = $this->objectManager->create($locator);
 
             foreach ($locatorModel->getIssues() as $issue) {
-                $notificationChannel->addMessage($issue);
+                $this->notificationSession->addMessage($issue);
             }
         }
     }

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Category;
 
+use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\SourceMode\Product\Grid
 {
     private $selectedIds = [];
@@ -20,6 +22,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
     private $databaseHelper;
 
     public function __construct(
+        ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
         \Ess\M2ePro\Helper\Magento\Category $magentoCategoryHelper,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
@@ -35,6 +38,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Add\Sourc
         $this->magentoCategoryHelper = $magentoCategoryHelper;
         $this->databaseHelper = $databaseHelper;
         parent::__construct(
+            $excludeSimpleProductsInVariation,
             $magentoProductCollectionFactory,
             $type,
             $websiteFactory,

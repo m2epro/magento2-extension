@@ -188,6 +188,16 @@ class Module
         return $this->packageInfo->getVersion(self::IDENTIFIER);
     }
 
+    public function hasLatestVersion(): bool
+    {
+        return (bool)$this->getLatestVersion();
+    }
+
+    public function getLatestVersion(): string
+    {
+        return (string)$this->registry->getValue('/installation/public_last_version/');
+    }
+
     /**
      * @return mixed
      */

@@ -1,9 +1,4 @@
 <?php
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
 
 // @codingStandardsIgnoreFile
 
@@ -11,38 +6,26 @@
 
 ?>
 
-<style type="text/css">
-
+<style>
     div.switcher {
         margin-bottom: 30px;
         padding: 1.5em;
     }
-
-    div.switcher span.label {
-        font-weight: bold;
+    div.switcher label span {
+        margin-left: .5em;
     }
-
-    div.switcher span.value {
-        color: #8e9393;
-    }
-
-    .tips_show_products_others_listings_filter {
+    div.switcher .item {
         display: inline-block;
+        margin-left: 15px;
     }
-
+    div.switcher .item:first-child {
+        margin-left: initial;
+    }
 </style>
 
 <div class="switcher m2epro-box-style">
-    <input
-        id="switcher_show_products_others_listings_filter"
-        type="checkbox"
-        class="admin__control-checkbox"
-        <?php if ($block->isChecked()) :
-            ?>checked="checked"<?php
-        endif; ?>
-        onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
-    >
-    <label for="switcher_show_products_others_listings_filter" class="admin__field-label">
-        <span><?php echo $block->__('Show Products presented in other M2E Pro Listings'); ?></span>
-    </label>
+    <?php foreach ($block->getAllFilters() as $filter) : ?>
+        <?= $block->renderFilter($filter) ?>
+    <?php endforeach; ?>
 </div>
+

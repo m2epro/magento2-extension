@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Model\ChangeTracker\Common\PriceCondition;
 
 use Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder;
@@ -7,40 +9,32 @@ use Ess\M2ePro\Model\Listing\Product\PriceRounder;
 
 abstract class AbstractPriceCondition
 {
-    /** @var array */
-    protected $sellingPolicyData;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder */
-    protected $attributesQueryBuilder;
-    /** @var \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder */
-    protected $queryBuilder;
-    /** @var string */
-    protected $channel;
+    protected array $sellingPolicyData;
 
-    /**
-     * @param string $channel
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\ProductAttributesQueryBuilder $attributesQueryBuilder
-     * @param \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder
-     */
+    protected \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder;
+    private ProductAttributesQueryBuilder $attributesQueryBuilder;
+    private string $channel;
+    private \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\MagentoAttributes $magentoAttributes;
+    private \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration;
+
     public function __construct(
         string $channel,
         ProductAttributesQueryBuilder $attributesQueryBuilder,
-        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder
+        \Ess\M2ePro\Model\ChangeTracker\Common\QueryBuilder\SelectQueryBuilder $queryBuilder,
+        \Ess\M2ePro\Model\ChangeTracker\Common\Helpers\MagentoAttributes $magentoAttributes,
+        \Ess\M2ePro\Helper\Module\Configuration $moduleConfiguration
     ) {
         $this->channel = $channel;
         $this->attributesQueryBuilder = $attributesQueryBuilder;
         $this->queryBuilder = $queryBuilder;
+        $this->magentoAttributes = $magentoAttributes;
+        $this->moduleConfiguration = $moduleConfiguration;
 
         $this->sellingPolicyData = $this->loadSellingPolicyData();
     }
 
-    /**
-     * @return array
-     */
     abstract protected function loadSellingPolicyData(): array;
 
-    /**
-     * @return string
-     */
     public function getCondition(): string
     {
         $queryData = [];
@@ -70,20 +64,13 @@ abstract class AbstractPriceCondition
         }
 
         if ($caseBody === '') {
-            return new \Zend_Db_Expr(0);
+            return (string)(new \Zend_Db_Expr(0));
         }
 
         return "CASE $caseBody END";
     }
 
-    /**
-     * @param int $mode
-     * @param string $modeAttribute
-     *
-     * @return string
-     * @throws \Exception
-     */
-    protected function getPriceColumnCondition(int $mode, string $modeAttribute): string
+    protected function getPriceColumnCondition(int $mode, string $attributeCode): string
     {
         if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT) {
             return 'product.price * product.currency_rate';
@@ -105,14 +92,20 @@ abstract class AbstractPriceCondition
         }
 
         if ($mode === \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
-            $attributeQuery = $this->attributesQueryBuilder
-                ->getQueryForAttribute(
-                    $modeAttribute,
-                    'product.store_id',
-                    'product.product_id'
-                );
+            $attributeQuery = $this
+                ->attributesQueryBuilder
+                ->getQueryForAttribute($attributeCode, 'product.store_id', 'product.product_id');
 
-            return "($attributeQuery) * product.currency_rate";
+            $condition = "( $attributeQuery )";
+
+            if (
+                $this->magentoAttributes->isFrontendInputPrice($attributeCode)
+                && $this->moduleConfiguration->isEnableMagentoAttributePriceTypeConvertingMode()
+            ) {
+                $condition .= ' * product.currency_rate';
+            }
+
+            return $condition;
         }
 
         throw new \RuntimeException(

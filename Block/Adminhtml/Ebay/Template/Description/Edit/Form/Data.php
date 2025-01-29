@@ -114,56 +114,67 @@ class Data extends AbstractForm
 
         $conditions = [
             [
-                'label' => $this->__('New, New with tags, New with box, Brand New'),
+                'label' => __('New, New with tags, New with box, Brand New'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_NEW],
             ],
             [
-                'label' => $this->__('New Other, New without tags, New without box'),
+                'label' => __('New Other, New without tags, New without box'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_NEW_OTHER],
             ],
             [
-                'label' => $this->__('New With Defects'),
+                'label' => __('New With Defects'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_NEW_WITH_DEFECT],
             ],
             [
-                'label' => $this->__('Certified Refurbished'),
+                'label' => __('Certified Refurbished'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_CERTIFIED_REFURBISHED],
             ],
             [
-                'label' => $this->__('Excellent (Refurbished)'),
+                'label' => __('Excellent (Refurbished)'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_EXCELLENT_REFURBISHED],
             ],
             [
-                'label' => $this->__('Very Good (Refurbished)'),
+                'label' => __('Very Good (Refurbished)'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_VERY_GOOD_REFURBISHED],
             ],
             [
-                'label' => $this->__('Good (Refurbished)'),
+                'label' => __('Good (Refurbished)'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GOOD_REFURBISHED],
             ],
             [
-                'label' => $this->__('Seller Refurbished, Re-manufactured'),
+                'label' => __('Seller Refurbished, Re-manufactured'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_SELLER_REFURBISHED],
             ],
             [
-                'label' => $this->__('Like New'),
+                'label' => __('Like New'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_LIKE_NEW],
             ],
             [
-                'label' => $this->__('Used, Pre-owned, Like new'),
-                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_USED],
+                'label' => __('Excellent (Pre-owned)'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_PRE_OWNED_EXCELLENT],
             ],
             [
-                'label' => $this->__('Very Good'),
+                'label' => __('Good (Pre-owned)'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_USED_EXCELLENT],
+            ],
+            [
+                'label' => __('Fair (Pre-owned)'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_PRE_OWNED_FAIR],
+            ],
+            [
+                'label' => __('Very Good'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_VERY_GOOD],
             ],
-            ['label' => $this->__('Good'), 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GOOD]],
             [
-                'label' => $this->__('Acceptable'),
+                'label' => __('Good'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GOOD]
+            ],
+            [
+                'label' => __('Acceptable'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_ACCEPTABLE],
             ],
             [
-                'label' => $this->__('For Parts or Not Working'),
+                'label' => __('For Parts or Not Working'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_NOT_WORKING],
             ],
         ];

@@ -10,6 +10,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
     public const COLUMN_DATE_OF_INVOICE_SENDING = 'date_of_invoice_sending';
     public const COLUMN_PURCHASE_CREATE_DATE = 'purchase_create_date';
     public const COLUMN_DELIVERY_DATE_FROM = 'delivery_date_from';
+    public const COLUMN_PAYMENT_METHOD_DETAILS = 'payment_method_details';
 
     /** @var bool  */
     protected $_isPkAutoIncrement = false;

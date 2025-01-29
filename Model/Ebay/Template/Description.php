@@ -39,7 +39,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const CONDITION_EBAY_GOOD_REFURBISHED = 2030;
     public const CONDITION_EBAY_SELLER_REFURBISHED = 2500;
     public const CONDITION_EBAY_LIKE_NEW = 2750;
-    public const CONDITION_EBAY_USED = 3000;
+    public const CONDITION_EBAY_PRE_OWNED_EXCELLENT = 2990;
+    public const CONDITION_EBAY_USED_EXCELLENT = 3000;
+    public const CONDITION_EBAY_PRE_OWNED_FAIR = 3010;
     public const CONDITION_EBAY_VERY_GOOD = 4000;
     public const CONDITION_EBAY_GOOD = 5000;
     public const CONDITION_EBAY_ACCEPTABLE = 6000;

@@ -7,7 +7,7 @@ use Ess\M2ePro\Model\ResourceModel\Amazon\Order as ResourceAmazonOrder;
 
 /**
  * @method \Ess\M2ePro\Model\Order getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Order getResource()
+ * @method ResourceAmazonOrder getResource()
  */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
@@ -99,7 +99,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function _construct()
     {
         parent::_construct();
-        $this->_init(\Ess\M2ePro\Model\ResourceModel\Amazon\Order::class);
+        $this->_init(ResourceAmazonOrder::class);
     }
 
     public function getProxy()
@@ -934,7 +934,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             'adjustment_refund' => $adjustmentRefund,
             'shipping_refund' => $shippingRefund,
             'shipping_tax_refund' => $shippingTaxRefund,
-            'items' => $items
+            'items' => $items,
         ];
 
         $isRefundAction = $this->isShipped()
@@ -1269,5 +1269,15 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function setReplacedAmazonOrderId(?string $value): void
     {
         $this->setData('replaced_amazon_order_id', $value);
+    }
+
+    public function getPaymentMethodDetails(): array
+    {
+        $data = $this->getData(ResourceAmazonOrder::COLUMN_PAYMENT_METHOD_DETAILS);
+        if (empty($data)) {
+            return [];
+        }
+
+        return json_decode($data, true);
     }
 }

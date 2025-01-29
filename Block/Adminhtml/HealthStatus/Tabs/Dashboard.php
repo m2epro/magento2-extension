@@ -172,9 +172,7 @@ HTML
     protected function prepareInfo()
     {
         $this->currentVersion = $this->moduleHelper->getPublicVersion();
-        $this->latestPublicVersion = $this->moduleHelper->getRegistry()->getValue(
-            '/installation/public_last_version/'
-        );
+        $this->latestPublicVersion = $this->moduleHelper->getLatestVersion();
     }
 
     protected function _toHtml()

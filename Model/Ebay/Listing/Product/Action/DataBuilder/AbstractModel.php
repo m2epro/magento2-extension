@@ -160,10 +160,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
         $this->addWarningMessage(
             __(
-                '%1: Attribute(s) %2 were not found' .
-                ' in this Product and its value was not sent.',
-                $this->getHelper('Module\Translation')->__($title),
-                implode(',', $attributesTitles)
+                '%attribute_title%: Attribute(s) %attributes% were not found in this Product, ' .
+                'and their values were not sent to the channel.',
+                [
+                    'attribute_title' => __($title),
+                    'attributes' => implode(', ', $attributesTitles),
+                ]
             )
         );
     }

@@ -1,32 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ess\M2ePro\Helper\View\Amazon;
 
 class Controller
 {
-    private \Ess\M2ePro\Model\Factory $modelFactory;
+    private \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationSession;
+    private \Magento\Framework\ObjectManagerInterface $objectManager;
 
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationSession
     ) {
-        $this->modelFactory = $modelFactory;
+        $this->notificationSession = $notificationSession;
+        $this->objectManager = $objectManager;
     }
 
     public function addMessages(): void
     {
-        /** @var \Ess\M2ePro\Model\Issue\Notification\Channel\Magento\Session $notificationChannel */
-        $notificationChannel = $this->modelFactory->getObject('Issue_Notification_Channel_Magento_Session');
         $issueLocators = [
-            'Amazon_Marketplace_Issue_ProductTypeOutOfDate',
-            'Amazon_Repricing_Issue_InvalidToken',
+            \Ess\M2ePro\Model\Amazon\Marketplace\Issue\ProductTypeOutOfDate::class,
+            \Ess\M2ePro\Model\Amazon\Repricing\Issue\InvalidToken::class,
+            \Ess\M2ePro\Model\Module\Issue\NewVersion::class,
         ];
 
         foreach ($issueLocators as $locator) {
-            /** @var \Ess\M2ePro\Model\Amazon\Marketplace\Issue\ProductTypeOutOfDate|\Ess\M2ePro\Model\Amazon\Repricing\Issue\InvalidToken $locatorModel */
-            $locatorModel = $this->modelFactory->getObject($locator);
+            /** @var \Ess\M2ePro\Model\Issue\LocatorInterface $locatorModel */
+            $locatorModel = $this->objectManager->create($locator);
 
             foreach ($locatorModel->getIssues() as $issue) {
-                $notificationChannel->addMessage($issue);
+                $this->notificationSession->addMessage($issue);
             }
         }
     }

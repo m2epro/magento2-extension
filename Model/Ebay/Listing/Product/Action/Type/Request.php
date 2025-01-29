@@ -580,6 +580,13 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         return $data;
     }
 
+    public function getConditionData(): array
+    {
+        $dataBuilder = $this->getDataBuilder('condition');
+
+        return $dataBuilder->getBuilderData();
+    }
+
     //########################################
 
     /**

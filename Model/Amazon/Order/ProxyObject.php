@@ -235,10 +235,16 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
      */
     public function getPaymentData()
     {
+        $paymentMethod = '';
+        $paymentMethodDetails = $this->order->getPaymentMethodDetails();
+        if (!empty($paymentMethodDetails)) {
+            $paymentMethod = implode(', ', $paymentMethodDetails);
+        }
+
         $paymentData = [
             'method' => $this->payment->getCode(),
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'payment_method' => '',
+            'payment_method' => $paymentMethod,
             'channel_order_id' => $this->order->getAmazonOrderId(),
             'channel_final_fee' => 0,
             'cash_on_delivery_cost' => 0,

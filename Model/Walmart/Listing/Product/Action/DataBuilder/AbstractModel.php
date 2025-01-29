@@ -207,11 +207,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
                                        );
         }
         $this->addWarningMessage(
-            $this->getHelper('Module\Translation')->__(
-                '%attribute_title%: Attribute(s) %attributes% were not found' .
-                ' in this Product and its value was not sent.',
-                $this->getHelper('Module\Translation')->__($title),
-                implode(',', $attributesTitles)
+            __(
+                '%attribute_title%: Attribute(s) %attributes% were not found in this Product, ' .
+                'and their values were not sent to the channel.',
+                [
+                    'attribute_title' => __($title),
+                    'attributes' => implode(', ', $attributesTitles),
+                ]
             )
         );
     }

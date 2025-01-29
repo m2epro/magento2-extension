@@ -184,7 +184,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('name', [
-            'header' => $this->__('Title'),
+            'header' => $this->__('Product Title'),
             'align' => 'left',
             'type' => 'text',
             'index' => 'name',
@@ -220,7 +220,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('sku', [
-            'header' => $this->__('SKU'),
+            'header' => $this->__('Product SKU'),
             'align' => 'left',
             'width' => '90px',
             'type' => 'text',

@@ -115,7 +115,7 @@ JS
         $fieldset = $form->addFieldset(
             'smart_tracker_fieldset',
             [
-                'legend' => __('[Beta] Enhanced Inventory Tracker')
+                'legend' => __('Enhanced Inventory Tracker')
             ]
         );
 

@@ -399,8 +399,11 @@ class Config extends AbstractConfig
             'y24_m12' => [
                 'AddLanguageToEbayComplianceDocuments',
                 'AddAmazonMarketplaceIreland',
-                'ChangeColumnValueSizeInAttributeMappingTable'
+                'ChangeColumnValueSizeInAttributeMappingTable',
             ],
+            'y25_m01' => [
+                'AddPaymentMethodDetailsColumnToAmazonOrder',
+            ]
         ];
     }
 
@@ -488,6 +491,8 @@ class Config extends AbstractConfig
 
             \Ess\M2ePro\Setup\Update\y24_m12\AddLanguageToEbayComplianceDocuments::class,
             \Ess\M2ePro\Setup\Update\y24_m12\ChangeColumnValueSizeInAttributeMappingTable::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m01\AddPaymentMethodDetailsColumnToAmazonOrder::class,
         ];
     }
 

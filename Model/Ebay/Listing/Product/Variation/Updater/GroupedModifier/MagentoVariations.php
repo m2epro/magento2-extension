@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater;
+namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater\GroupedModifier;
 
 use Ess\M2ePro\Model\Magento\Product\Variation;
 

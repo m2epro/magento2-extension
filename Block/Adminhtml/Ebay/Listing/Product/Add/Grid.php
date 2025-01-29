@@ -2,6 +2,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
+use Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter;
+
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     /** @var \Ess\M2ePro\Model\Listing */
@@ -69,7 +71,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // Hide products others listings
         // ---------------------------------------
         $hideParam = true;
-        if ($this->getRequest()->has('show_products_others_listings')) {
+        if ($this->getRequest()->has(ShowOthersListingsProductsFilter::PARAM_NAME_SHOW_PRODUCT_IN_OTHER_LISTING)) {
             $hideParam = false;
         }
 

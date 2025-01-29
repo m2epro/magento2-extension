@@ -126,21 +126,6 @@ class Details extends AbstractModel
                 continue;
             }
 
-            $specificKeys = [
-                \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_NAME,
-                \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_DESCRIPTION,
-                \Ess\M2ePro\Helper\Component\Amazon\ProductType::SPECIFIC_KEY_BULLET_POINT,
-            ];
-
-            if (in_array($name, $specificKeys)) {
-                $fieldData = $this->prepareFieldValue($values);
-
-                if ($fieldData !== null && $fieldData !== '') {
-                    $result[$name] = $fieldData;
-                }
-                continue;
-            }
-
             $finalValues = [];
             foreach ($values as $value) {
                 if ($finalValue = $this->buildSingleSpecificData($value)) {
@@ -163,16 +148,16 @@ class Details extends AbstractModel
      */
     private function buildSingleSpecificData(array $setting): ?string
     {
+        $magentoProduct = $this->getAmazonListingProduct()->getActualMagentoProduct();
+        if (!$magentoProduct->exists()) {
+            return null;
+        }
+
         switch ((int)$setting['mode']) {
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE:
-                return $setting['value'];
+                return $this->descriptionRender
+                    ->parseWithoutMagentoTemplate($setting['value'], $magentoProduct);
             case \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_ATTRIBUTE:
-                $magentoProduct = $this->getAmazonListingProduct()
-                                       ->getActualMagentoProduct();
-                if (!$magentoProduct->exists()) {
-                    return null;
-                }
-
                 $attributeValue = $magentoProduct->getAttributeValue($setting['attribute_code'], false);
 
                 if (!empty($setting['images_limit'])) {
@@ -344,30 +329,5 @@ class Details extends AbstractModel
         }
 
         return ['list_price' => $regularListPrice];
-    }
-
-    protected function prepareFieldValue(array $fieldSpecifications)
-    {
-        $magentoProduct = $this->getAmazonListingProduct()
-                               ->getActualMagentoProduct();
-        if (!$magentoProduct->exists()) {
-            return null;
-        }
-
-        $resultData = [];
-
-        foreach ($fieldSpecifications as $item) {
-            if ($item['mode'] === \Ess\M2ePro\Model\Amazon\Template\ProductType::FIELD_CUSTOM_VALUE) {
-                $resultData[] = $this->descriptionRender->parseWithoutMagentoTemplate($item['value'], $magentoProduct);
-            } else {
-                $resultData[] = $magentoProduct->getAttributeValue($item['attribute_code'], false);
-            }
-        }
-
-        if (count($resultData) === 1) {
-            return reset($resultData);
-        }
-
-        return $resultData;
     }
 }

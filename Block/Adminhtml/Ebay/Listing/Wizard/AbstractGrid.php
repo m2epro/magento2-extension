@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard;
 
+use Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter;
 use Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid as EbayMagentoGrid;
 use Ess\M2ePro\Helper\Magento\Product as ProductHelper;
 use Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory;
@@ -15,6 +16,7 @@ use Ess\M2ePro\Model\Ebay\Listing\Wizard\Ui\RuntimeStorage as WizardRuntimeStora
 use Ess\M2ePro\Block\Adminhtml\Magento\Context\Template;
 use Ess\M2ePro\Helper\Module;
 use Magento\Catalog\Model\Product\Type;
+use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
 
 abstract class AbstractGrid extends EbayMagentoGrid
 {
@@ -26,8 +28,11 @@ abstract class AbstractGrid extends EbayMagentoGrid
     private ListingRuntimeStorage $uiListingRuntimeStorage;
     private WizardRuntimeStorage $uiWizardRuntimeStorage;
     private Module $moduleHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation */
+    private ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation;
 
     public function __construct(
+        ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
         WizardRuntimeStorage $uiWizardRuntimeStorage,
         ListingRuntimeStorage $uiListingRuntimeStorage,
         ListingResource $listingResource,
@@ -49,6 +54,7 @@ abstract class AbstractGrid extends EbayMagentoGrid
         $this->uiListingRuntimeStorage = $uiListingRuntimeStorage;
         $this->uiWizardRuntimeStorage = $uiWizardRuntimeStorage;
         $this->moduleHelper = $moduleHelper;
+        $this->excludeSimpleProductsInVariation = $excludeSimpleProductsInVariation;
 
         parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
@@ -125,10 +131,22 @@ abstract class AbstractGrid extends EbayMagentoGrid
         }
         // ---------------------------------------
 
+        $hideSimpleProducts = true;
+        if ($this->getRequest()->has(ShowOthersListingsProductsFilter::PARAM_NAME_SHOW_CHILD_PRODUCTS_IN_VARIATIONS)) {
+            $hideSimpleProducts = false;
+        }
+
+        $includeSimpleProductsInVariation = $this
+            ->getRequest()
+            ->has(ShowOthersListingsProductsFilter::PARAM_NAME_SHOW_CHILD_PRODUCTS_IN_VARIATIONS);
+        if (!$includeSimpleProductsInVariation) {
+            $this->excludeSimpleProductsInVariation->filter($collection, (int)$this->getListing()->getId());
+        }
+
         // Hide products others listings
         // ---------------------------------------
         $hideParam = true;
-        if ($this->getRequest()->has('show_products_others_listings')) {
+        if ($this->getRequest()->has(ShowOthersListingsProductsFilter::PARAM_NAME_SHOW_PRODUCT_IN_OTHER_LISTING)) {
             $hideParam = false;
         }
 

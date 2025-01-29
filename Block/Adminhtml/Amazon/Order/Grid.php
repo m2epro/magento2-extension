@@ -393,8 +393,13 @@ class Grid extends AbstractGrid
 
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
+        $purchaseDate = $row->getChildObject()->getData('purchase_create_date');
+        if (empty($purchaseDate)) {
+            return '';
+        }
+
         return $this->_localeDate->formatDate(
-            $row->getChildObject()->getData('purchase_create_date'),
+            $purchaseDate,
             \IntlDateFormatter::MEDIUM,
             true
         );
@@ -402,8 +407,13 @@ class Grid extends AbstractGrid
 
     public function callbackShippingDateTo($value, $row, $column, $isExport)
     {
+        $shippingDate = $row->getChildObject()->getData('shipping_date_to');
+        if (empty($shippingDate)) {
+            return '';
+        }
+
         return $this->_localeDate->formatDate(
-            $row->getChildObject()->getData('shipping_date_to'),
+            $shippingDate,
             \IntlDateFormatter::MEDIUM,
             true
         );
@@ -413,7 +423,7 @@ class Grid extends AbstractGrid
     {
         $deliveryDate = $row->getChildObject()->getData('delivery_date_from');
         if (empty($deliveryDate)) {
-            return __('N/A');
+            return '';
         }
 
         return $this->_localeDate->formatDate(

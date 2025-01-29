@@ -96,6 +96,13 @@ class Builder extends AbstractModel
             $this->setData('status', \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELLATION_REQUESTED);
         }
 
+        if (!empty($data['payment_method_details'])) {
+            $this->setData(
+                'payment_method_details',
+                json_encode($data['payment_method_details'], JSON_THROW_ON_ERROR)
+            );
+        }
+
         // ---------------------------------------
 
         // Init sale data

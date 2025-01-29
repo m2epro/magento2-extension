@@ -213,6 +213,7 @@ class Items extends \Ess\M2ePro\Model\Amazon\Connector\Command\RealTime
 
                 $order['currency'] = trim((string)($orderData['currency'] ?? ''));
                 $order['paid_amount'] = (float)($orderData['amount_paid'] ?? 0);
+                $order['payment_method_details'] = $orderData['payment_method_details'] ?? [];
                 $order['tax_details'] = $orderData['price']['taxes'] ?? [];
                 $order['tax_registration_details'] = $orderData['tax_registration_details'] ?? [];
 

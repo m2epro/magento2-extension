@@ -5,11 +5,11 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
     private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory;
-    private Updater\MagentoVariations\GroupedModifier $magentoVariationModifierForGrouped;
+    private Updater\GroupedModifier $magentoVariationModifierForGrouped;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        Updater\MagentoVariations\GroupedModifier $magentoVariationModifierForGrouped,
+        Updater\GroupedModifier $magentoVariationModifierForGrouped,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {

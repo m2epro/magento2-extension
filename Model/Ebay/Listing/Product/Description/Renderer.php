@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Description;
 
+use Ess\M2ePro\Model\Ebay\Template\Description as TemplateDescription;
+
 /**
  * Class \Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer
  */
@@ -280,40 +282,24 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getCondition()
     {
-        $conditions = array_combine(
-            [
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_OTHER,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NEW_WITH_DEFECT,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_CERTIFIED_REFURBISHED,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_EXCELLENT_REFURBISHED,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD_REFURBISHED,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD_REFURBISHED,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_SELLER_REFURBISHED,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_LIKE_NEW,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_USED,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_VERY_GOOD,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_GOOD,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_ACCEPTABLE,
-                \Ess\M2ePro\Model\Ebay\Template\Description::CONDITION_EBAY_NOT_WORKING,
-            ],
-            [
-                $this->getHelper('Module\Translation')->__('New'),
-                $this->getHelper('Module\Translation')->__('New Other'),
-                $this->getHelper('Module\Translation')->__('New With Defects'),
-                $this->getHelper('Module\Translation')->__('Manufacturer Refurbished'),
-                $this->getHelper('Module\Translation')->__('Excellent (Refurbished)'),
-                $this->getHelper('Module\Translation')->__('Very Good (Refurbished)'),
-                $this->getHelper('Module\Translation')->__('Good (Refurbished)'),
-                $this->getHelper('Module\Translation')->__('Seller Refurbished'),
-                $this->getHelper('Module\Translation')->__('Like New'),
-                $this->getHelper('Module\Translation')->__('Used'),
-                $this->getHelper('Module\Translation')->__('Very Good'),
-                $this->getHelper('Module\Translation')->__('Good'),
-                $this->getHelper('Module\Translation')->__('Acceptable'),
-                $this->getHelper('Module\Translation')->__('For Parts or Not Working'),
-            ]
-        );
+        $conditions = [
+            TemplateDescription::CONDITION_EBAY_NEW => __('New'),
+            TemplateDescription::CONDITION_EBAY_NEW_OTHER => __('New Other'),
+            TemplateDescription::CONDITION_EBAY_NEW_WITH_DEFECT => __('New With Defects'),
+            TemplateDescription::CONDITION_EBAY_CERTIFIED_REFURBISHED => __('Manufacturer Refurbished'),
+            TemplateDescription::CONDITION_EBAY_EXCELLENT_REFURBISHED => __('Excellent (Refurbished)'),
+            TemplateDescription::CONDITION_EBAY_VERY_GOOD_REFURBISHED => __('Very Good (Refurbished)'),
+            TemplateDescription::CONDITION_EBAY_GOOD_REFURBISHED => __('Good (Refurbished)'),
+            TemplateDescription::CONDITION_EBAY_SELLER_REFURBISHED => __('Seller Refurbished'),
+            TemplateDescription::CONDITION_EBAY_LIKE_NEW => __('Like New'),
+            TemplateDescription::CONDITION_EBAY_PRE_OWNED_EXCELLENT => __('Excellent (Pre-owned)'),
+            TemplateDescription::CONDITION_EBAY_USED_EXCELLENT => __('Good (Pre-owned)'),
+            TemplateDescription::CONDITION_EBAY_PRE_OWNED_FAIR => __('Fair (Pre-owned)'),
+            TemplateDescription::CONDITION_EBAY_VERY_GOOD => __('Very Good'),
+            TemplateDescription::CONDITION_EBAY_GOOD => __('Good'),
+            TemplateDescription::CONDITION_EBAY_ACCEPTABLE => __('Acceptable'),
+            TemplateDescription::CONDITION_EBAY_NOT_WORKING => __('For Parts or Not Working'),
+        ];
 
         $condition = $this->listingProduct->getDescriptionTemplateSource()->getCondition();
 
@@ -321,7 +307,7 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
             return $conditions[$condition];
         }
 
-        return $this->getHelper('Module\Translation')->__('N/A');
+        return __('N/A');
     }
 
     protected function getConditionDescription()

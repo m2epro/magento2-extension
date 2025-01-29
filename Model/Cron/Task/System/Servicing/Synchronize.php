@@ -20,6 +20,7 @@ class Synchronize extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function performActions(): void
     {
+        /** @var \Ess\M2ePro\Model\Servicing\Dispatcher $dispatcher */
         $dispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');
         $dispatcher->process();
     }

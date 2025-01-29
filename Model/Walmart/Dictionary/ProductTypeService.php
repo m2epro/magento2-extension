@@ -13,8 +13,7 @@ class ProductTypeService
     public function __construct(
         \Ess\M2ePro\Model\Walmart\Dictionary\ProductType\Repository $productTypeDictionaryRepository,
         \Ess\M2ePro\Model\Walmart\Dictionary\ProductTypeFactory $productTypeDictionaryFactory,
-        \Ess\M2ePro\Model\Walmart\Connector\ProductType\GetInfo\Processor $getInfoConnectProcessor,
-        \Ess\M2ePro\Model\Walmart\Marketplace\Repository $walmartMarketplaceRepository
+        \Ess\M2ePro\Model\Walmart\Connector\ProductType\GetInfo\Processor $getInfoConnectProcessor
     ) {
         $this->productTypeDictionaryRepository = $productTypeDictionaryRepository;
         $this->getInfoConnectProcessor = $getInfoConnectProcessor;

@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Product;
 
+use Ess\M2ePro\Block\Adminhtml\Listing\Product\ShowOthersListingsProductsFilter;
+use Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     private $listing;
@@ -15,12 +18,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected $magentoProductCollectionFactory;
     protected $type;
     protected $websiteFactory;
-    /** @var \Ess\M2ePro\Helper\Magento\Product */
-    protected $magentoProductHelper;
-    /** @var \Ess\M2ePro\Helper\Data\GlobalData */
-    private $globalDataHelper;
+
+    protected \Ess\M2ePro\Helper\Magento\Product $magentoProductHelper;
+    private \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper;
+    /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Product\Filter\ExcludeSimpleProductsInVariation */
+    private ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation;
 
     public function __construct(
+        ExcludeSimpleProductsInVariation $excludeSimpleProductsInVariation,
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
@@ -36,6 +41,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->websiteFactory = $websiteFactory;
         $this->magentoProductHelper = $magentoProductHelper;
         $this->globalDataHelper = $globalDataHelper;
+        $this->excludeSimpleProductsInVariation = $excludeSimpleProductsInVariation;
         parent::__construct($context, $backendHelper, $dataHelper, $data);
     }
 
@@ -88,7 +94,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // Hide products others listings
         // ---------------------------------------
         $hideParam = true;
-        if ($this->getRequest()->has('show_products_others_listings')) {
+        if ($this->getRequest()->has(ShowOthersListingsProductsFilter::PARAM_NAME_SHOW_PRODUCT_IN_OTHER_LISTING)) {
             $hideParam = false;
         }
 
@@ -105,6 +111,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
                        ->where('lp.product_id IS NULL');
         }
         // ---------------------------------------
+
+        $includeSimpleProductsInVariation = $this
+            ->getRequest()
+            ->has(ShowOthersListingsProductsFilter::PARAM_NAME_SHOW_CHILD_PRODUCTS_IN_VARIATIONS);
+        if (
+            !$includeSimpleProductsInVariation
+            && !empty($this->listing['id'] ?? 0)
+        ) {
+            $this->excludeSimpleProductsInVariation->filter($collection, (int)$this->listing['id']);
+        }
 
         $collection->addFieldToFilter(
             [

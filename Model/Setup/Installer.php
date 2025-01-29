@@ -10178,6 +10178,12 @@ class Installer
                                      ['default' => null]
                                  )
                                  ->addColumn(
+                                     \Ess\M2ePro\Model\ResourceModel\Amazon\Order::COLUMN_PAYMENT_METHOD_DETAILS,
+                                     Table::TYPE_TEXT,
+                                     self::LONG_COLUMN_SIZE,
+                                     ['default' => null]
+                                 )
+                                 ->addColumn(
                                      'ioss_number',
                                      Table::TYPE_TEXT,
                                      72,

@@ -95,7 +95,10 @@ class Processor
 
         $instructionCollection = $this->instructionCollectionFactory->create();
         $instructionCollection->applySkipUntilFilter();
-        $instructionCollection->addFieldToFilter('listing_product_id', array_keys($listingsProducts));
+        $instructionCollection->addFieldToFilter(
+            'listing_product_id',
+            ['in' => array_keys($listingsProducts)]
+        );
 
         /** @var \Ess\M2ePro\Model\Listing\Product\Instruction[] $instructions */
         $instructions = $instructionCollection->getItems();

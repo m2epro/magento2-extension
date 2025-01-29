@@ -142,7 +142,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $childColumnsData = $this->getConnection()->describeTable($resource->getChildTable($this->childMode));
         foreach ($childColumnsData as $columnData) {
-            if (!isset($data[$columnData['COLUMN_NAME']])) {
+            if (!array_key_exists($columnData['COLUMN_NAME'], $data)) {
                 continue;
             }
 
