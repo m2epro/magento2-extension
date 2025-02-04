@@ -7,7 +7,7 @@
 
         <!-- ebay menu -->
 
-        <add id="Ess_M2ePro::ebay" title="Integration" module="Ess_M2ePro" sortOrder="31" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::ebay" />
+        <add id="Ess_M2ePro::ebay" title="eBay" module="Ess_M2ePro" sortOrder="31" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::ebay" />
 
         <!-- ebay dashboard -->
 
@@ -45,7 +45,7 @@
 
         <!-- amazon menu -->
 
-        <add id="Ess_M2ePro::amazon" title="Integration" module="Ess_M2ePro" sortOrder="32" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::amazon" />
+        <add id="Ess_M2ePro::amazon" title="Amazon" module="Ess_M2ePro" sortOrder="32" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::amazon" />
 
         <!-- amazon dashboard -->
 
@@ -89,7 +89,7 @@
 
         <!-- walmart menu -->
 
-        <add id="Ess_M2ePro::walmart" title="Integration" module="Ess_M2ePro" sortOrder="33" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::walmart" />
+        <add id="Ess_M2ePro::walmart" title="Walmart" module="Ess_M2ePro" sortOrder="33" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::walmart" />
 
         <!-- walmart dashboard -->
 

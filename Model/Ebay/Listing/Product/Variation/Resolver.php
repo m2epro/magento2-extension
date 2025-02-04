@@ -42,10 +42,12 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Configuration */
     private $componentEbayConfiguration;
 
+    private \Ess\M2ePro\Model\Ebay\Listing\Product\VariationService $variationService;
     /** @var \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay */
     private $componentEbayCategoryEbay;
 
     public function __construct(
+        \Ess\M2ePro\Model\Ebay\Listing\Product\VariationService $variationService,
         \Ess\M2ePro\Helper\Component\Ebay\Category\Ebay $componentEbayCategoryEbay,
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -56,6 +58,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
     ) {
         parent::__construct($helperFactory, $modelFactory, $data);
 
+        $this->variationService = $variationService;
         $this->parentFactory = $parentFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->componentEbayConfiguration = $componentEbayConfiguration;
@@ -173,9 +176,7 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function prepareModuleVariations()
     {
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater $variationUpdater */
-        $variationUpdater = $this->modelFactory->getObject('Ebay_Listing_Product_Variation_Updater');
-        $variationUpdater->process($this->listingProduct);
+        $this->variationService->update($this->listingProduct);
 
         $trimmedSpecificsReplacements = [];
         $specificsReplacements = $this->listingProduct->getSetting(

@@ -223,8 +223,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ]);
 
         $this->addColumn('sku', [
-            'header' => __('SKU'),
-            'header_export' => __('Walmart SKU'),
+            'header' => __('Channel SKU'),
+            'header_export' => __('Channel SKU'),
             'align' => 'left',
             'width' => '150px',
             'type' => 'text',

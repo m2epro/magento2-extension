@@ -337,22 +337,13 @@ class Data
         return self::normalizeToUtf($data);
     }
 
-    /**
-     * @param string $string
-     * @param int $neededLength
-     * @param int $longWord
-     * @param int $minWordLen
-     * @param int $atEndOfWord
-     *
-     * @return string
-     */
-    public function reduceWordsInString(
+    public static function reduceWordsInString(
         $string,
-        $neededLength,
-        $longWord = 6,
-        $minWordLen = 2,
-        $atEndOfWord = '.'
-    ) {
+        int $neededLength,
+        int $longWord = 6,
+        int $minWordLen = 2,
+        string $atEndOfWord = '.'
+    ): string {
         $oldEncoding = mb_internal_encoding();
         mb_internal_encoding('UTF-8');
 

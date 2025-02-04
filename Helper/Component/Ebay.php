@@ -24,8 +24,6 @@ class Ebay
     public const MARKETPLACE_IN = 16;
 
     public const LISTING_DURATION_GTC = 100;
-    public const MAX_LENGTH_FOR_OPTION_VALUE = 50;
-    public const VARIATION_SKU_MAX_LENGTH = 80;
     public const ITEM_SKU_MAX_LENGTH = 50;
 
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
@@ -40,8 +38,6 @@ class Ebay
     private $config;
     /** @var \Ess\M2ePro\Helper\Data\Cache\Permanent */
     private $cachePermanent;
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Component\Ebay\Configuration $componentEbayConfiguration,
@@ -49,8 +45,7 @@ class Ebay
         \Ess\M2ePro\Helper\Module\Translation $moduleTranslation,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Data\Cache\Permanent $cachePermanent,
-        \Ess\M2ePro\Model\Config\Manager $config,
-        \Ess\M2ePro\Helper\Data $dataHelper
+        \Ess\M2ePro\Model\Config\Manager $config
     ) {
         $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -58,7 +53,6 @@ class Ebay
         $this->moduleTranslation = $moduleTranslation;
         $this->config = $config;
         $this->cachePermanent = $cachePermanent;
-        $this->dataHelper = $dataHelper;
     }
 
     // ----------------------------------------
@@ -293,86 +287,6 @@ class Ebay
         }
 
         return $title;
-    }
-
-    // ----------------------------------------
-
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
-    public function prepareOptionsForVariations(array $options): array
-    {
-        $set = [];
-        foreach ($options['set'] as $optionTitle => $optionsSet) {
-            foreach ($optionsSet as $singleOptionKey => $singleOption) {
-                $set[trim($optionTitle)][$singleOptionKey] = trim(
-                    $this->dataHelper->reduceWordsInString(
-                        $singleOption,
-                        self::MAX_LENGTH_FOR_OPTION_VALUE
-                    )
-                );
-            }
-        }
-        $options['set'] = $set;
-
-        foreach ($options['variations'] as &$variation) {
-            foreach ($variation as &$singleOption) {
-                $singleOption['option'] = trim(
-                    $this->dataHelper->reduceWordsInString(
-                        $singleOption['option'],
-                        self::MAX_LENGTH_FOR_OPTION_VALUE
-                    )
-                );
-                $singleOption['attribute'] = trim($singleOption['attribute']);
-            }
-        }
-        unset($singleOption, $variation);
-
-        return $options;
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
-    public function prepareOptionsForOrders(array $options): array
-    {
-        foreach ($options as &$singleOption) {
-            if ($singleOption instanceof \Magento\Catalog\Model\Product) {
-                $reducedName = trim(
-                    $this->dataHelper->reduceWordsInString(
-                        $singleOption->getName(),
-                        self::MAX_LENGTH_FOR_OPTION_VALUE
-                    )
-                );
-                $singleOption->setData('name', $reducedName);
-
-                continue;
-            }
-
-            foreach ($singleOption['values'] as &$singleOptionValue) {
-                foreach ($singleOptionValue['labels'] as &$singleOptionLabel) {
-                    $singleOptionLabel = trim(
-                        $this->dataHelper->reduceWordsInString(
-                            $singleOptionLabel,
-                            self::MAX_LENGTH_FOR_OPTION_VALUE
-                        )
-                    );
-                }
-            }
-        }
-
-        if (isset($options['additional']['attributes'])) {
-            foreach ($options['additional']['attributes'] as $code => &$title) {
-                $title = trim($title);
-            }
-            unset($title);
-        }
-
-        return $options;
     }
 
     // ----------------------------------------

@@ -218,6 +218,16 @@ class Active extends AbstractModel
         }
 
         if (
+            $configurator->isQtyAllowed()
+            && !$configurator->isPriceAllowed()
+        ) {
+            if ($this->isMeetForceRevisePriceRequirements()) {
+                $configurator->allowPrice();
+                $tags['price'] = true;
+            }
+        }
+
+        if (
             !$this->input->getListingProduct()->hasBlockingByError()
             && $this->input->hasInstructionWithTypes($this->getReviseTitleInstructionTypes())
         ) {
@@ -616,5 +626,21 @@ class Active extends AbstractModel
         return $this->ebayReviseChecker->isNeedReviseForOther(
             $this->input->getListingProduct()->getChildObject()
         );
+    }
+
+    private function isMeetForceRevisePriceRequirements(): bool
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $this->input->getListingProduct()->getChildObject();
+
+        if ($ebayListingProduct->isProductInPromotion()) {
+            return false;
+        }
+
+        if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isReviseUpdatePrice()) {
+            return false;
+        }
+
+        return true;
     }
 }

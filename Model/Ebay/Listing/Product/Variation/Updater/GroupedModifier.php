@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater;
 
+use Ess\M2ePro\Model\Magento\Product\Variation\StandardSuite;
+use Ess\M2ePro\Model\Magento\Product\Variation;
+
 class GroupedModifier
 {
     private \Ess\M2ePro\Model\Ebay\AttributeMapping\GroupedService $groupedAttributeMapping;
@@ -17,44 +20,53 @@ class GroupedModifier
         $this->magentoProductFactory = $magentoProductFactory;
     }
 
-    public function canModify(
-        array $rawMagentoVariations,
-        \Ess\M2ePro\Model\Magento\Product $magentoProduct
-    ): bool {
-        return GroupedModifier\MagentoVariations::canBeCreated($rawMagentoVariations)
-            && $magentoProduct->isGroupedType();
+    public function canModify(StandardSuite $suite): bool
+    {
+        return $suite->hasGroupedAttributeLabel();
     }
 
-    public function modify(
-        array $rawMagentoVariations,
-        \Ess\M2ePro\Model\Magento\Product $magentoProduct
-    ): array {
-        if (!$this->canModify($rawMagentoVariations, $magentoProduct)) {
-            return $rawMagentoVariations;
+    public function modify(StandardSuite $suite, \Ess\M2ePro\Model\Magento\Product $magentoProduct): void
+    {
+        if (!$this->canModify($suite)) {
+            return;
         }
 
-        $magentoVariations = new GroupedModifier\MagentoVariations($rawMagentoVariations);
+        $options = $this->getOptions($magentoProduct);
+        $attribute = $this->retrieveVariationAttribute($magentoProduct);
 
-        $valueOfVariationAttribute = $this->findValueOfVariationAttribute($magentoProduct);
-        if ($valueOfVariationAttribute !== null) {
-            $magentoVariations->setVariationAttribute($valueOfVariationAttribute);
-        }
+        $changedVariations = $this->getChangedVariations(
+            $suite->getVariations(),
+            $options,
+            $attribute
+        );
 
-        $attributeCodeOfOptionTitle = $this->findProductAttributeCodeOfOptionTitle();
-        if ($attributeCodeOfOptionTitle !== null) {
-            $this->addOptions(
-                $attributeCodeOfOptionTitle,
-                $magentoVariations,
-                $magentoProduct
-            );
-        }
-
-        return $magentoVariations->getChangedMagentoVariations();
+        $suite->setVariations($changedVariations);
     }
 
-    private function findValueOfVariationAttribute(
-        \Ess\M2ePro\Model\Magento\Product $magentoProduct
-    ): ?string {
+    private function getOptions(\Ess\M2ePro\Model\Magento\Product $magentoProduct): array
+    {
+        $options = [];
+
+        $associatedProducts = $this->getAssociatedProducts($magentoProduct);
+
+        foreach ($associatedProducts as $associatedProduct) {
+            $newOptionTitle = $this->retrieveConfiguredTitle($associatedProduct);
+            if ($newOptionTitle === null) {
+                continue;
+            }
+
+            $options[] = [
+                'product_id' => (int)$associatedProduct->getId(),
+                'replaced_title' => $associatedProduct->getName(),
+                'new_title' => $newOptionTitle,
+            ];
+        }
+
+        return $options;
+    }
+
+    public function retrieveVariationAttribute(\Ess\M2ePro\Model\Magento\Product $magentoProduct): ?string
+    {
         $mapping = $this->groupedAttributeMapping->findConfiguredVariationAttribute();
         if ($mapping === null) {
             return null;
@@ -67,54 +79,82 @@ class GroupedModifier
         return !empty($value) ? $value : null;
     }
 
-    private function findProductAttributeCodeOfOptionTitle(): ?string
+    /**
+     * @return \Magento\Catalog\Model\Product[]
+     */
+    private function getAssociatedProducts(\Ess\M2ePro\Model\Magento\Product $magentoProduct): array
+    {
+        $typeInstance = $magentoProduct->getTypeInstance();
+
+        return $typeInstance->getAssociatedProducts(
+            $magentoProduct->getProduct()
+        );
+    }
+
+    public function retrieveConfiguredTitle(\Magento\Catalog\Model\Product $product): ?string
     {
         $mapping = $this->groupedAttributeMapping->findConfiguredVariationOptionTitle();
         if ($mapping === null) {
             return null;
         }
 
-        return $mapping->value;
-    }
-
-    private function addOptions(
-        string $attributeCodeOfOptionTitle,
-        GroupedModifier\MagentoVariations $magentoVariations,
-        \Ess\M2ePro\Model\Magento\Product $magentoProduct
-    ): void {
-        $typeInstance = $magentoProduct->getTypeInstance();
-        /** @var \Magento\Catalog\Model\Product[] $associatedProducts */
-        $associatedProducts = $typeInstance->getAssociatedProducts(
-            $magentoProduct->getProduct()
-        );
-
-        foreach ($associatedProducts as $associatedProduct) {
-            $newOptionTitle = $this->getProductAttributeValue(
-                $attributeCodeOfOptionTitle,
-                $associatedProduct
-            );
-            if ($newOptionTitle === null) {
-                continue;
-            }
-
-            $magentoVariations->addOption(
-                (int)$associatedProduct->getId(),
-                $associatedProduct->getName(),
-                $newOptionTitle
-            );
-        }
-    }
-
-    private function getProductAttributeValue(string $attributeCode, \Magento\Catalog\Model\Product $product): ?string
-    {
         $magentoProduct = $this->magentoProductFactory->create();
         $magentoProduct->loadProduct(
             $product->getId(),
             $product->getStoreId()
         );
 
-        $value = $magentoProduct->getAttributeValue($attributeCode);
+        $value = $magentoProduct->getAttributeValue($mapping->value);
 
         return !empty($value) ? $value : null;
+    }
+
+    private function getChangedVariations(
+        array $variations,
+        array $options,
+        ?string $newAttribute
+    ): array {
+        $attribute = Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL;
+
+        // Replace Variation Attribute
+        // ---------------------------------------
+        if ($newAttribute !== null) {
+            $attribute = $newAttribute;
+
+            // In set
+            $variations['set'][$attribute] = $variations['set'][Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL];
+            unset($variations['set'][Variation::GROUPED_PRODUCT_ATTRIBUTE_LABEL]);
+
+            // In variations
+            foreach ($variations['variations'] as &$list) {
+                foreach ($list as &$item) {
+                    $item['attribute'] = $attribute;
+                }
+            }
+        }
+
+        // Replace Variation Options
+        // ---------------------------------------
+        foreach ($options as $option) {
+            // In set
+            foreach ($variations['set'][$attribute] as $key => $currentTitle) {
+                if ($currentTitle === $option['replaced_title']) {
+                    $variations['set'][$attribute][$key] = $option['new_title'];
+                }
+            };
+
+            // In variations
+            foreach ($variations['variations'] as &$list) {
+                foreach ($list as &$item) {
+                    if ((int)$item['product_id'] === $option['product_id']) {
+                        $item['option'] = $option['new_title'];
+                    }
+                }
+            }
+        }
+
+        // ---------------------------------------
+
+        return $variations;
     }
 }

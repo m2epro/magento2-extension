@@ -5,6 +5,9 @@ namespace Ess\M2ePro\Observer\Product\AddUpdate;
 use Ess\M2ePro\Model\Ebay\Bundle\Options\Mapping\ObserverHandler\BundleOptionsCollector;
 use Ess\M2ePro\Model\Magento\Product\ChangeProcessor\AbstractModel as ChangeProcessorAbstract;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater as EbayVariationUpdater;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Updater as AmazonVariationUpdater;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Updater as WalmartVariationUpdater;
 
 class After extends AbstractAddUpdate
 {
@@ -125,12 +128,10 @@ class After extends AbstractAddUpdate
         $listingsProductsForProcess = [];
 
         foreach ($this->getAffectedListingsProducts() as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
             if (!isset($variationUpdatersByComponent[$listingProduct->getComponentMode()])) {
                 $variationUpdaterModel = ucwords($listingProduct->getComponentMode())
                     . '\Listing\Product\Variation\Updater';
-                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater $variationUpdaterObject */
+                /** @var EbayVariationUpdater|AmazonVariationUpdater|WalmartVariationUpdater $variationUpdaterObject */
                 $variationUpdaterObject = $this->modelFactory->getObject($variationUpdaterModel);
                 $variationUpdatersByComponent[$listingProduct->getComponentMode()] = $variationUpdaterObject;
             }
@@ -158,13 +159,11 @@ class After extends AbstractAddUpdate
 
         foreach ($listingsProductsForProcess as $listingProduct) {
             $listingProduct->getMagentoProduct()->enableCache();
-
             $variationUpdater = $variationUpdatersByComponent[$listingProduct->getComponentMode()];
             $variationUpdater->process($listingProduct);
         }
 
         foreach ($variationUpdatersByComponent as $variationUpdater) {
-            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater $variationUpdater */
             $variationUpdater->afterMassProcessEvent();
         }
 

@@ -374,7 +374,9 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             return [];
         }
 
-        $magentoOptions = $this->prepareMagentoOptions($magentoProduct->getVariationInstance()->getVariationsTypeRaw());
+        $magentoOptions = $this->getMagentoOptions(
+            $magentoProduct->getVariationInstance()->getVarioationsRawSuite()
+        );
 
         $storedItemOptions = (array)$this->getChildObject()->getVariationProductOptions();
         $orderItemOptions = (array)$this->getChildObject()->getVariationOptions();
@@ -398,13 +400,18 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         throw new \Ess\M2ePro\Model\Exception($optionsFinder->getOptionsNotFoundMessage());
     }
 
-    public function prepareMagentoOptions($options)
+    private function getMagentoOptions(\Ess\M2ePro\Model\Magento\Product\Variation\RawSuite $rawSuite): array
     {
-        if (method_exists($this->getChildObject(), 'prepareMagentoOptions')) {
-            return $this->getChildObject()->prepareMagentoOptions($options);
+        if ($this->isComponentModeEbay()) {
+            /** @var \Ess\M2ePro\Model\Ebay\Order\Item\OptionsFinder\MagentoOption\Modifier $ebayOptionsModifier */
+            $ebayOptionsModifier = \Magento\Framework\App\ObjectManager::getInstance()->get(
+                \Ess\M2ePro\Model\Ebay\Order\Item\OptionsFinder\MagentoOption\Modifier::class
+            );
+
+            $ebayOptionsModifier->modify($rawSuite);
         }
 
-        return $options;
+        return $rawSuite->getOptions();
     }
 
     //########################################

@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Model;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonProduct;
 use Ess\M2ePro\Model\Walmart\Listing\Product as WalmartProduct;
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater as EbayVariationUpdater;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Updater as AmazonVariationUpdater;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Updater as WalmartVariationUpdater;
 
 /**
  * @method \Ess\M2ePro\Model\Ebay\Listing|\Ess\M2ePro\Model\Amazon\Listing|
@@ -519,7 +522,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $listingProductTemp->getChildObject()->afterSaveNewEntity();
 
         $variationUpdaterModel = ucwords($this->getComponentMode()) . '\Listing\Product\Variation\Updater';
-        /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater $variationUpdaterObject */
+
+        /** @var EbayVariationUpdater|AmazonVariationUpdater|WalmartVariationUpdater $variationUpdater */
         $variationUpdaterObject = $this->modelFactory->getObject($variationUpdaterModel);
         $variationUpdaterObject->process($listingProductTemp);
         $variationUpdaterObject->afterMassProcessEvent();

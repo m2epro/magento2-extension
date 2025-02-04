@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Order;
 
 use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
@@ -15,7 +9,7 @@ use Ess\M2ePro\Model\Order\Exception\ProductCreationDisabled;
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
-    /** @var \Ess\M2ePro\Model\Ebay\Item $channelItem */
+    /** @var \Ess\M2ePro\Model\Ebay\Item */
     private $channelItem = null;
     /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Listing\Other */
     private $listingOtherResourceModel;
@@ -40,10 +34,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->productBuilderFactory = $productBuilderFactory;
-        $this->productFactory = $productFactory;
-        $this->listingOtherResourceModel = $listingOtherResourceModel;
-
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -55,6 +45,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
             $resourceCollection,
             $data
         );
+
+        $this->productBuilderFactory = $productBuilderFactory;
+        $this->productFactory = $productFactory;
+        $this->listingOtherResourceModel = $listingOtherResourceModel;
     }
 
     public function _construct()
@@ -62,8 +56,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         parent::_construct();
         $this->_init(\Ess\M2ePro\Model\ResourceModel\Ebay\Order\Item::class);
     }
-
-    //########################################
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Order\Item\ProxyObject
@@ -75,7 +67,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         ]);
     }
 
-    //########################################
+    #----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Order
@@ -93,7 +85,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->getEbayOrder()->getEbayAccount();
     }
 
-    //########################################
+    #----------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Ebay\Item
@@ -117,7 +109,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->channelItem->getId() !== null ? $this->channelItem : null;
     }
 
-    //########################################
+    #----------------------------------------
 
     public function getTransactionId()
     {
@@ -451,11 +443,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         $this->associateWithProduct($product);
 
         return $product->getId();
-    }
-
-    public function prepareMagentoOptions($options)
-    {
-        return $this->getHelper('Component\Ebay')->prepareOptionsForOrders($options);
     }
 
     /**

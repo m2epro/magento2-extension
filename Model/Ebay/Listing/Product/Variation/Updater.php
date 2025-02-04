@@ -5,18 +5,18 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
     private \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory;
-    private Updater\GroupedModifier $magentoVariationModifierForGrouped;
+    private Updater\GroupedModifier $groupedModifier;
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        Updater\GroupedModifier $magentoVariationModifierForGrouped,
+        Updater\GroupedModifier $groupedModifier,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         parent::__construct($helperFactory, $modelFactory);
 
         $this->ebayFactory = $ebayFactory;
-        $this->magentoVariationModifierForGrouped = $magentoVariationModifierForGrouped;
+        $this->groupedModifier = $groupedModifier;
     }
 
     public function process(\Ess\M2ePro\Model\Listing\Product $listingProduct)
@@ -25,37 +25,17 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             return;
         }
 
-        $rawMagentoVariations = $listingProduct->getMagentoProduct()
-                                               ->getVariationInstance()
-                                               ->getVariationsTypeStandard();
+        $suite = $listingProduct->getMagentoProduct()
+                                ->getVariationInstance()
+                                ->getVariationsStandardSuite();
 
-        if (
-            empty($rawMagentoVariations['set']) || !is_array($rawMagentoVariations['set']) ||
-            empty($rawMagentoVariations['variations']) || !is_array($rawMagentoVariations['variations'])
-        ) {
-            $rawMagentoVariations = [
-                'set' => [],
-                'variations' => [],
-            ];
+        if ($this->groupedModifier->canModify($suite)) {
+            $this->groupedModifier->modify($suite, $listingProduct->getMagentoProduct());
         }
 
-        if (
-            $this->magentoVariationModifierForGrouped->canModify(
-                $rawMagentoVariations,
-                $listingProduct->getMagentoProduct()
-            )
-        ) {
-            $rawMagentoVariations = $this->magentoVariationModifierForGrouped->modify(
-                $rawMagentoVariations,
-                $listingProduct->getMagentoProduct()
-            );
-        }
-
-        /** @var \Ess\M2ePro\Helper\Component\Ebay $ebayComponentHelper */
-        $ebayComponentHelper = $this->getHelper('Component\Ebay');
-        $rawMagentoVariations = $ebayComponentHelper->prepareOptionsForVariations($rawMagentoVariations);
-
-        $magentoVariations = $this->prepareMagentoVariations($rawMagentoVariations);
+        $magentoVariations = $suite->getVariations();
+        $magentoVariations = $this->prepareMagentoVariationOptions($magentoVariations);
+        $magentoVariations = $this->prepareMagentoVariations($magentoVariations);
 
         if (
             !$listingProduct->getMagentoProduct()->isSimpleType() &&
@@ -72,10 +52,49 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $this->addNewVariations($listingProduct, $addedVariations);
         $this->markAsDeletedVariations($deletedVariations);
 
-        $this->saveVariationsData($listingProduct, $rawMagentoVariations);
+        $this->saveVariationsData($listingProduct, $magentoVariations);
     }
 
-    //########################################
+    private function prepareMagentoVariationOptions(array $options): array
+    {
+        $set = [];
+        foreach ($options['set'] as $optionTitle => $optionsSet) {
+            foreach ($optionsSet as $singleOptionKey => $option) {
+                $set[trim($optionTitle)][$singleOptionKey] = Option::formatOptionValue((string)$option);
+            }
+        }
+        $options['set'] = $set;
+
+        foreach ($options['variations'] as &$variation) {
+            foreach ($variation as &$option) {
+                $option['option'] = Option::formatOptionValue((string)$option['option']);
+                $option['attribute'] = trim($option['attribute']);
+            }
+        }
+        unset($option, $variation);
+
+        return $options;
+    }
+
+    private function prepareMagentoVariations(array $variations): array
+    {
+        $result = [];
+
+        if (isset($variations['variations'])) {
+            $variations = $variations['variations'];
+        }
+
+        foreach ($variations as $variation) {
+            $result[] = [
+                'variation' => [],
+                'options' => $variation,
+            ];
+        }
+
+        return $result;
+    }
+
+    // ----------------------------------------
 
     protected function saveVariationsData(\Ess\M2ePro\Model\Listing\Product $listingProduct, $variationsData)
     {
@@ -97,7 +116,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         )->save();
     }
 
-    //########################################
+    // ----------------------------------------
 
     private function inspectAndFixProductOptionsIds(
         \Ess\M2ePro\Model\Listing\Product $listingProduct,
@@ -277,25 +296,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
     }
 
-    //########################################
-
-    private function prepareMagentoVariations($variations)
-    {
-        $result = [];
-
-        if (isset($variations['variations'])) {
-            $variations = $variations['variations'];
-        }
-
-        foreach ($variations as $variation) {
-            $result[] = [
-                'variation' => [],
-                'options' => $variation,
-            ];
-        }
-
-        return $result;
-    }
+    // ----------------------------------------
 
     private function prepareCurrentVariations($variations)
     {
@@ -363,5 +364,5 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         return implode('##', $hash);
     }
 
-    //########################################
+    // ----------------------------------------
 }

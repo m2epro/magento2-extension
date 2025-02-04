@@ -108,6 +108,13 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
+    public function getVariationsStandardSuite(): Variation\StandardSuite
+    {
+        return new Variation\StandardSuite(
+            $this->getVariationsTypeStandard()
+        );
+    }
+
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -644,6 +651,13 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
     }
 
     // ---------------------------------------
+
+    public function getVarioationsRawSuite(): Variation\RawSuite
+    {
+        return new Variation\RawSuite(
+            $this->getVariationsTypeRaw()
+        );
+    }
 
     public function getVariationsTypeRaw()
     {

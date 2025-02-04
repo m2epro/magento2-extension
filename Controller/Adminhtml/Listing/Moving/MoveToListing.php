@@ -1,12 +1,10 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
+
+use Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater as EbayVariationUpdater;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Updater as AmazonVariationUpdater;
+use Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Updater as WalmartVariationUpdater;
 
 class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
 {
@@ -44,9 +42,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing
         $variationUpdaterModel = ucwords($targetListing->getComponentMode())
             . '\Listing\Product\Variation\Updater';
 
-        /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Updater $variationUpdaterObject */
+        /** @var EbayVariationUpdater|AmazonVariationUpdater|WalmartVariationUpdater $variationUpdaterObject */
         $variationUpdaterObject = $this->modelFactory->getObject($variationUpdaterModel);
-        $variationUpdaterObject->beforeMassProcessEvent();
 
         $errorsCount = 0;
         foreach ($selectedProducts as $listingProductId) {

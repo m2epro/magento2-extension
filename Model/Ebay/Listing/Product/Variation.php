@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Listing\Product;
 
 /**
@@ -13,6 +7,8 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product;
  */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
+    private const SKU_MAX_LENGTH = 80;
+
     /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\PriceCalculatorFactory */
     private $priceCalculatorFactory;
 
@@ -436,7 +432,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
                 . $this->getHelper('Data')->convertStringToSku($option->getOption());
         }
 
-        if (mb_strlen($sku) > \Ess\M2ePro\Helper\Component\Ebay::VARIATION_SKU_MAX_LENGTH) {
+        if (mb_strlen($sku) > self::SKU_MAX_LENGTH) {
             $sku = 'RANDOM_' . sha1($sku);
         }
 
