@@ -226,6 +226,11 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
+        return $this->forceValidateQty();
+    }
+
+    protected function forceValidateQty(): bool
+    {
         $qty = $this->getQty();
         $clearQty = $this->getClearQty();
 

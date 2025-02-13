@@ -17,7 +17,7 @@ define([
 
         initObservers: function()
         {
-             $('account_id').observe('change', this.accountChange).simulate('change');
+            $('account_id').observe('change', this.accountChange.bind(this)).simulate('change');
         },
 
         duplicateClick: function($headId)
@@ -37,14 +37,9 @@ define([
             var form = $('edit_form');
             form.target = newWindow ? '_blank' : '_self';
 
-            var formData = {};
-            jQuery(form).find ('input, select').each(function (){
-                formData[this.name] = jQuery(this).val();
-            });
-
             new Ajax.Request(url, {
                 method: 'post',
-                parameters: formData,
+                parameters: this.collectFormData(form),
                 onSuccess: function (transport) {
                     var resultResponse = transport.responseText.evalJSON();
                     if (resultResponse.status === true) {
@@ -56,23 +51,52 @@ define([
             });
         },
 
+        saveFormUsingAjax: function() {
+            new Ajax.Request(M2ePro.url.get('formSubmit'), {
+                method: 'post',
+                parameters: this.collectFormData($('edit_form')),
+                onSuccess: function(transport) {
+                    var result = transport.responseText.evalJSON();
+
+                    if (result.status) {
+                        window.close();
+                    } else {
+                        console.error('Policy Saving Error');
+                    }
+                }
+            });
+        },
+
+        /**
+         * Collecting form data with ignoring disabled fields
+         */
+        collectFormData: function (form) {
+            var formData = {};
+            jQuery(form).find ('input, select').each(function (){
+                formData[this.name] = jQuery(this).val();
+            });
+
+            return formData;
+        },
+
         accountChange: function()
         {
-            var select = $('template_id');
-            var refresh = $('refresh_templates');
-            var options = '<option></option>';
+            var accountIdSelect = $('account_id');
+            var templateIdSelect = $('template_id');
+            var refreshTemplatesButton = $('refresh_templates');
+            var placeholderOptions = '<option></option>';
 
-            if (!$('account_id').hasAttribute('disabled')) {
-                select.update();
-                select.insert(options);
+            if (!accountIdSelect.hasAttribute('disabled')) {
+                templateIdSelect.update();
+                templateIdSelect.insert(placeholderOptions);
             }
 
-            if (!this.value) {
-                select.setAttribute("disabled", "disabled");
-                refresh.addClassName('disabled');
+            if (!accountIdSelect.value) {
+                templateIdSelect.setAttribute("disabled", "disabled");
+                refreshTemplatesButton.addClassName('disabled');
             } else {
-                select.removeAttribute('disabled');
-                refresh.removeClassName('disabled');
+                templateIdSelect.removeAttribute('disabled');
+                refreshTemplatesButton.removeClassName('disabled');
             }
         },
 

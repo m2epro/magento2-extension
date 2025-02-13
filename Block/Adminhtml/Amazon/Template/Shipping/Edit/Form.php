@@ -21,8 +21,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     private $globalDataHelper;
     /** @var \Ess\M2ePro\Helper\Component\Amazon */
     private $amazonHelper;
+    private \Ess\M2ePro\Model\Amazon\Account\Repository $amazonAccountRepository;
 
     public function __construct(
+        \Ess\M2ePro\Model\Amazon\Account\Repository $amazonAccountRepository,
         \Ess\M2ePro\Helper\Component\Amazon $amazonHelper,
         \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -36,6 +38,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->dataHelper = $dataHelper;
         $this->globalDataHelper = $globalDataHelper;
         $this->amazonHelper = $amazonHelper;
+        $this->amazonAccountRepository = $amazonAccountRepository;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -224,6 +227,11 @@ JS
             $default = $this->modelFactory->getObject('Amazon_Template_Shipping_Builder')->getDefaultData();
 
             $this->formData = array_merge($default, $this->formData);
+
+            $accountId = $this->getRequest()->getParam('account_id');
+            if (!empty($accountId)) {
+                $this->formData['account_id'] = (int)$accountId;
+            }
         }
 
         return $this->formData;
@@ -234,6 +242,19 @@ JS
      */
     public function getAccountDataOptions(): array
     {
+        if (!empty($this->formData['account_id'])) {
+            $account = $this->amazonAccountRepository->find($this->formData['account_id']);
+            if ($account === null) {
+                return [];
+            }
+            /** @var \Ess\M2ePro\Model\Account $parent */
+            $parent = $account->getParentObject();
+
+            return [
+                ['value' => $parent->getId(), 'label' => $parent->getTitle()]
+            ];
+        }
+
         $optionsResult = [
             ['value' => '', 'label' => '', 'attrs' => ['style' => 'display: none;']],
         ];

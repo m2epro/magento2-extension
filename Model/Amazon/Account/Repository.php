@@ -21,6 +21,23 @@ class Repository
         $this->collectionFactory = $collectionFactory;
     }
 
+    public function find(int $accountId): ?\Ess\M2ePro\Model\Amazon\Account
+    {
+        $collection = $this->collectionFactory->create();
+        $collection->addFieldToFilter(
+            \Ess\M2ePro\Model\ResourceModel\Amazon\Account::COLUMN_ACCOUNT_ID,
+            ['eq' => $accountId]
+        );
+
+        $account = $collection->getFirstItem();
+
+        if ($account->isObjectNew()) {
+            return null;
+        }
+
+        return $account;
+    }
+
     public function isExistsWithMerchantId(string $merchantId): bool
     {
         return !empty($this->retrieveByMerchantId($merchantId));

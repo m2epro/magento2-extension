@@ -98,30 +98,6 @@ class ProxyObject extends \Ess\M2ePro\Model\Order\ProxyObject
         return $amazonAccount->getMagentoOrdersNumberRegularPrefix(); //General
     }
 
-    public function getCustomer()
-    {
-        $customer = parent::getCustomer();
-        /** @var \Ess\M2ePro\Model\Amazon\Account $amazonAccount */
-        $amazonAccount = $this->order->getParentObject()->getAccount()->getChildObject();
-
-        $buyerCompanyName = $this->getBuyerCompanyName();
-        if (
-            !empty($buyerCompanyName)
-            && $amazonAccount->isMagentoOrdersCustomerNew()
-        ) {
-            foreach ($customer->getAddresses() as $address) {
-                if (!$address->isDefaultBilling()) {
-                    continue;
-                }
-
-                $address->setCompany($buyerCompanyName);
-                $this->addressRepository->save($address);
-            }
-        }
-
-        return $customer;
-    }
-
     public function getBillingAddressData(): array
     {
         if ($this->order->getAmazonAccount()->useMagentoOrdersShippingAddressAsBillingAlways()) {

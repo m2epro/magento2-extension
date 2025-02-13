@@ -35,6 +35,6 @@ class ExcludedCountries extends AbstractBlock
 
     public function getCountriesList()
     {
-        return array_chunk($this->amazonHelper->getEEACountriesList(), 6, true);
+        return array_chunk($this->amazonHelper->getEEACountriesList(), 7, true);
     }
 }

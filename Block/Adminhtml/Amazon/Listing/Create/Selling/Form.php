@@ -1124,6 +1124,7 @@ HTML
                     '*/amazon_template_shipping/new',
                     [
                         'wizard' => $this->getRequest()->getParam('wizard'),
+                        'account_id' => $formData['account_id'],
                         'close_on_save' => 1,
                     ]
                 ),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Wizard\Category\Chooser\Specific;
 
+use Ess\M2ePro\Block\Adminhtml\Ebay\Template\Category\Chooser\Specific\Form\Element\Dictionary;
 use Ess\M2ePro\Model\Ebay\Template\Category\Specific as Specific;
 use Ess\M2ePro\Model\Ebay\Template\Category\BuilderFactory;
 use Ess\M2ePro\Helper\Component\Ebay\Category\Ebay;
@@ -147,6 +148,13 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             $this->dataHelper->getClassConstants(\Ess\M2ePro\Model\Ebay\Template\Category\Specific::class)
         );
 
+        $parentHtml = parent::_toHtml();
+
+        $jsCustomChangeSpecifics = '';
+        if (Dictionary::$isSetMappedAttribute) {
+            $jsCustomChangeSpecifics = 'EbayTemplateCategorySpecificsObj.markAsCustomChanged();';
+        }
+
         $this->js->add(
             <<<JS
     require([
@@ -155,11 +163,10 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
         window.EbayTemplateCategorySpecificsObj = new EbayTemplateCategorySpecifics();
         EbayTemplateCategorySpecificsObj.createSpecificsSnapshot();
+        $jsCustomChangeSpecifics
     });
 JS
         );
-
-        $parentHtml = parent::_toHtml();
 
         return <<<HTML
 <div id="chooser_container_specific">

@@ -44,6 +44,7 @@ class Amazon
         'IT', 'LV', 'LI', 'LT', 'LU',
         'MT', 'NL', 'NO', 'PL', 'PT',
         'RO', 'SK', 'SI', 'ES', 'SE',
+        'CH',
     ];
 
     /** @var \Magento\Directory\Model\ResourceModel\Country\CollectionFactory */

@@ -94,8 +94,6 @@ class Options extends AbstractModel
 
     private function deleteBrokenChildren()
     {
-        $isNeedDeleteAllChildren = $this->getProcessor()->getTypeModel()->hasMatchedAttributes();
-
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $childListingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
 
@@ -105,16 +103,20 @@ class Options extends AbstractModel
             /** @var \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $childTypeModel */
             $childTypeModel = $walmartChildListingProduct->getVariationManager()->getTypeModel();
 
+            if ($childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
+                continue;
+            }
+
             if (
-                !$isNeedDeleteAllChildren
+                $this->isCorrectMatched($childTypeModel)
                 && $childTypeModel->isVariationProductMatched()
             ) {
                 continue;
             }
 
             if (
-                $childListingProduct->isLocked() || $walmartChildListingProduct->getSku()
-                || $childListingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+                $childListingProduct->isLocked()
+                || $walmartChildListingProduct->getSku()
             ) {
                 continue;
             }
@@ -126,38 +128,9 @@ class Options extends AbstractModel
     private function matchNewChildren()
     {
         $productOptions = $this->getProcessor()->getTypeModel()->getNotRemovedUnusedProductOptions();
-        $matchedAttributes = $this->getProcessor()->getTypeModel()->getMatchedAttributes();
-
-        $optionIds = $this->getProcessor()->getTypeModel()->getOptionIds();
-
-        $walmartListingProduct = $this->getProcessor()
-                                      ->getWalmartListingProduct();
-        $dictionaryProductTypeId = $walmartListingProduct->isExistsProductType()
-            ? $walmartListingProduct->getProductType()
-                                    ->getDictionaryId()
-            : null;
 
         foreach ($productOptions as $productOption) {
-            $channelOption = [];
-            foreach ($productOption as $optionAttribute => $optionValue) {
-                $productTypeAttribute = $matchedAttributes[$optionAttribute];
-                $optionId = $optionIds[$optionValue] ?? null;
-
-                if (
-                    $dictionaryProductTypeId !== null
-                    && $optionId !== null
-                ) {
-                    $optionValue = $this->optionReplacer->replace(
-                        $dictionaryProductTypeId,
-                        $productTypeAttribute,
-                        $optionId,
-                        $optionValue
-                    );
-                }
-
-                $channelOption[$matchedAttributes[$optionAttribute]] = $optionValue;
-            }
-
+            $channelOption = $this->convertProductOptionToChannelOption($productOption);
             $this->getProcessor()->getTypeModel()->createChildListingProduct($productOption, $channelOption);
         }
     }
@@ -181,5 +154,57 @@ class Options extends AbstractModel
         }
     }
 
-    //########################################
+    private function convertProductOptionToChannelOption(array $productOption): array
+    {
+        $matchedAttributes = $this->getProcessor()->getTypeModel()->getMatchedAttributes();
+        $optionIds = $this->getProcessor()->getTypeModel()->getOptionIds();
+        $walmartListingProduct = $this->getProcessor()->getWalmartListingProduct();
+        $dictionaryProductTypeId = $walmartListingProduct->isExistsProductType()
+            ? $walmartListingProduct->getProductType()->getDictionaryId()
+            : null;
+
+        $channelOption = [];
+        foreach ($productOption as $optionAttribute => $optionValue) {
+            $productTypeAttribute = $matchedAttributes[$optionAttribute];
+            $optionId = $optionIds[$optionValue] ?? null;
+
+            if (
+                $dictionaryProductTypeId !== null
+                && $optionId !== null
+            ) {
+                $optionValue = $this->optionReplacer->replace(
+                    $dictionaryProductTypeId,
+                    $productTypeAttribute,
+                    $optionId,
+                    $optionValue
+                );
+            }
+
+            $channelOption[$matchedAttributes[$optionAttribute]] = $optionValue;
+        }
+
+        return $channelOption;
+    }
+
+    private function isCorrectMatched(
+        \Ess\M2ePro\Model\Walmart\Listing\Product\Variation\Manager\Type\Relation\Child $childTypeModel
+    ): bool {
+        $currentChannelOption = $childTypeModel->getChannelOptions();
+        $channelOption = $this->convertProductOptionToChannelOption($childTypeModel->getProductOptions());
+
+        if (count($currentChannelOption) !== count($channelOption)) {
+            return false;
+        }
+
+        return $this->hashArray($currentChannelOption) === $this->hashArray($channelOption);
+    }
+
+    private function hashArray(array $data): string
+    {
+        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
+        $dataHelper = $this->helperFactory->getObject('Data');
+        ksort($data);
+
+        return $dataHelper->md5String(json_encode($data));
+    }
 }
