@@ -34,8 +34,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         $magentoVariations = $suite->getVariations();
-        $magentoVariations = $this->prepareMagentoVariationOptions($magentoVariations);
-        $magentoVariations = $this->prepareMagentoVariations($magentoVariations);
+        $magentoVariationsData = $this->prepareMagentoVariationOptions($magentoVariations);
+        $magentoVariations = $this->prepareMagentoVariations($magentoVariationsData);
 
         if (
             !$listingProduct->getMagentoProduct()->isSimpleType() &&
@@ -52,7 +52,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $this->addNewVariations($listingProduct, $addedVariations);
         $this->markAsDeletedVariations($deletedVariations);
 
-        $this->saveVariationsData($listingProduct, $magentoVariations);
+        $this->saveVariationsData($listingProduct, $magentoVariationsData);
     }
 
     private function prepareMagentoVariationOptions(array $options): array
