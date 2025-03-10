@@ -5985,11 +5985,14 @@ class Installer
                                                   ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayTemplateCategorySpecificTable);
 
-        $ebayTemplateDescriptionTable = $this->getConnection()->newTable(
-            $this->getFullTableName('ebay_template_description')
-        )
+        #region ebay_template_description
+        $ebayTemplateDescriptionTableName = $this->getFullTableName(
+            \Ess\M2ePro\Helper\Module\Database\Tables::TABLE_EBAY_TEMPLATE_DESCRIPTION
+        );
+        $ebayTemplateDescriptionTable = $this->getConnection()
+                                             ->newTable($ebayTemplateDescriptionTableName)
                                              ->addColumn(
-                                                 'template_description_id',
+                                                 EbayTemplateDescription::COLUMN_TEMPLATE_DESCRIPTION_ID,
                                                  Table::TYPE_INTEGER,
                                                  null,
                                                  ['unsigned' => true, 'primary' => true, 'nullable' => false]
@@ -6061,10 +6064,34 @@ class Installer
                                                  ['unsigned' => true, 'nullable' => false, 'default' => 0]
                                              )
                                              ->addColumn(
-                                                 'condition_note_template',
+                                                 EbayTemplateDescription::COLUMN_CONDITION_NOTE_TEMPLATE,
                                                  Table::TYPE_TEXT,
                                                  null,
                                                  ['nullable' => false]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
+                                                 Table::TYPE_INTEGER,
+                                                 null,
+                                                 ['unsigned' => true, 'nullable' => true]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_CONDITION_GRADE_ID,
+                                                 Table::TYPE_INTEGER,
+                                                 null,
+                                                 ['unsigned' => true, 'nullable' => true]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER,
+                                                 Table::TYPE_TEXT,
+                                                 255,
+                                                 ['nullable' => true]
+                                             )
+                                             ->addColumn(
+                                                 EbayTemplateDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID,
+                                                 Table::TYPE_INTEGER,
+                                                 null,
+                                                 ['unsigned' => true, 'nullable' => true]
                                              )
                                              ->addColumn(
                                                  'product_details',
@@ -6204,6 +6231,7 @@ class Installer
                                              ->setOption('collate', 'utf8_general_ci')
                                              ->setOption('row_format', 'dynamic');
         $this->getConnection()->createTable($ebayTemplateDescriptionTable);
+        #endregion
 
         $ebayTemplateOtherCategoryTable = $this->getConnection()->newTable(
             $this->getFullTableName('ebay_template_store_category')
@@ -11741,7 +11769,7 @@ class Installer
         $this->getConnection()->insertMultiple(
             $this->getFullTableName(TablesHelper::TABLE_AMAZON_MARKETPLACE),
             [
-                [
+                [   // Canada
                     'marketplace_id' => 24,
                     'default_currency' => 'CAD',
                     'is_merchant_fulfillment_available' => 1,
@@ -11749,7 +11777,7 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Germany
                     'marketplace_id' => 25,
                     'default_currency' => 'EUR',
                     'is_merchant_fulfillment_available' => 1,
@@ -11757,7 +11785,7 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // France
                     'marketplace_id' => 26,
                     'default_currency' => 'EUR',
                     'is_merchant_fulfillment_available' => 1,
@@ -11765,7 +11793,7 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // United Kingdom
                     'marketplace_id' => 28,
                     'default_currency' => 'GBP',
                     'is_merchant_fulfillment_available' => 1,
@@ -11773,7 +11801,7 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // United States
                     'marketplace_id' => 29,
                     'default_currency' => 'USD',
                     'is_merchant_fulfillment_available' => 1,
@@ -11781,7 +11809,7 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Spain
                     'marketplace_id' => 30,
                     'default_currency' => 'EUR',
                     'is_merchant_fulfillment_available' => 1,
@@ -11789,7 +11817,7 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // Italy
                     'marketplace_id' => 31,
                     'default_currency' => 'EUR',
                     'is_merchant_fulfillment_available' => 1,
@@ -11797,7 +11825,7 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // Mexico
                     'marketplace_id' => 34,
                     'default_currency' => 'MXN',
                     'is_merchant_fulfillment_available' => 1,
@@ -11805,7 +11833,7 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Australia
                     'marketplace_id' => 35,
                     'default_currency' => 'AUD',
                     'is_merchant_fulfillment_available' => 0,
@@ -11813,15 +11841,15 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Netherlands
                     'marketplace_id' => 39,
                     'default_currency' => 'EUR',
                     'is_merchant_fulfillment_available' => 1,
-                    'is_business_available' => 1,
+                    'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // Turkey
                     'marketplace_id' => 40,
                     'default_currency' => 'TRY',
                     'is_merchant_fulfillment_available' => 1,
@@ -11829,7 +11857,7 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Sweden
                     'marketplace_id' => 41,
                     'default_currency' => 'SEK',
                     'is_merchant_fulfillment_available' => 1,
@@ -11837,7 +11865,7 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Japan
                     'marketplace_id' => 42,
                     'default_currency' => 'JPY',
                     'is_merchant_fulfillment_available' => 1,
@@ -11845,7 +11873,7 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Poland
                     'marketplace_id' => 43,
                     'default_currency' => 'PLN',
                     'is_merchant_fulfillment_available' => 1,
@@ -11853,23 +11881,23 @@ class Installer
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Brazil
                     'marketplace_id' => 44,
                     'default_currency' => 'BRL',
                     'is_merchant_fulfillment_available' => 1,
-                    'is_business_available' => 1,
+                    'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Singapore
                     'marketplace_id' => 45,
                     'default_currency' => 'SGD',
                     'is_merchant_fulfillment_available' => 1,
-                    'is_business_available' => 1,
+                    'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // India
                     'marketplace_id' => 46,
                     'default_currency' => 'INR',
                     'is_merchant_fulfillment_available' => 1,
@@ -11877,44 +11905,43 @@ class Installer
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // United Arab Emirates
                     'marketplace_id' => 47,
                     'default_currency' => 'AED',
                     'is_merchant_fulfillment_available' => 1,
-                    'is_business_available' => 1,
+                    'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 0,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // Belgium
                     'marketplace_id' => 48,
                     'default_currency' => 'EUR',
                     'is_merchant_fulfillment_available' => 1,
-                    'is_business_available' => 1,
+                    'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 0,
                 ],
-                [
+                [   // South Africa
                     'marketplace_id' => 49,
                     'default_currency' => 'ZAR',
                     'is_merchant_fulfillment_available' => 1,
-                    'is_business_available' => 1,
+                    'is_business_available' => 0,
                     'is_vat_calculation_service_available' => 1,
                     'is_product_tax_code_policy_available' => 1,
                 ],
-                [
+                [   // Saudi Arabia
                     AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 50,
                     AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'SAR',
                     AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
-                    AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
+                    AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 0,
                     AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,
                     AmazonMarketplaceResource::COLUMN_IS_PRODUCT_TAX_CODE_POLICY_AVAILABLE => 0,
                 ],
-                [
-                    AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID
-                    => \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_IE,
+                [   // Ireland
+                    AmazonMarketplaceResource::COLUMN_MARKETPLACE_ID => 51,
                     AmazonMarketplaceResource::COLUMN_DEFAULT_CURRENCY => 'EUR',
                     AmazonMarketplaceResource::COLUMN_IS_MERCHANT_FULFILLMENT_AVAILABLE => 1,
-                    AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 1,
+                    AmazonMarketplaceResource::COLUMN_IS_BUSINESS_AVAILABLE => 0,
                     AmazonMarketplaceResource::COLUMN_IS_VAT_CALCULATION_SERVICE_AVAILABLE => 1,
                     AmazonMarketplaceResource::COLUMN_IS_PRODUCT_TAX_CODE_POLICY_AVAILABLE => 0,
                 ],

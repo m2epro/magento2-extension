@@ -13,9 +13,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory */
     protected $ebayFactory;
 
-    /** @var \Magento\Framework\Locale\CurrencyInterface */
-    protected $localeCurrency;
-
     /** @var \Magento\Framework\App\ResourceConnection */
     protected $resourceConnection;
 
@@ -31,7 +28,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\View\Ebay $ebayViewHelper,
         \Ess\M2ePro\Helper\Data\Session $sessionDataHelper,
@@ -45,7 +41,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     ) {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->ebayFactory = $ebayFactory;
-        $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         $this->ebayViewHelper = $ebayViewHelper;
         $this->sessionDataHelper = $sessionDataHelper;
@@ -804,10 +799,5 @@ JS
         );
 
         return parent::_toHtml();
-    }
-
-    private function convertAndFormatPriceCurrency($price, $currency)
-    {
-        return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
 }

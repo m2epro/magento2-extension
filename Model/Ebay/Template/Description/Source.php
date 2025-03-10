@@ -2,10 +2,17 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
+use Ess\M2ePro\Model\Ebay\Template\Description as Description;
+
 class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     public const GALLERY_IMAGES_COUNT_MAX = 23;
     public const VARIATION_IMAGES_COUNT_MAX = 12;
+
+    private const CONDITIONAL_REPLACE_MAP = [
+        Description::CONDITION_EBAY_GRADED => Description::CONDITION_EBAY_LIKE_NEW,
+        Description::CONDITION_EBAY_UNGRADED => Description::CONDITION_EBAY_VERY_GOOD,
+    ];
 
     /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
     private $magentoProduct;
@@ -176,9 +183,18 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return int|string
-     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getCondition()
+    {
+        $condition = $this->getConditionFromTemplate();
+
+        return self::CONDITIONAL_REPLACE_MAP[(int)$condition] ?? $condition;
+    }
+
+    /**
+     * @return int|string
+     */
+    private function getConditionFromTemplate()
     {
         $src = $this->getEbayDescriptionTemplate()->getConditionSource();
 
@@ -191,6 +207,44 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $src['value'];
+    }
+
+    /**
+     * @return array{
+     *     required_descriptors: array<int, int>,
+     *     optional_descriptors: array<int, string>
+     * }
+     */
+    public function getConditionDescriptors(): array
+    {
+        $condition = (int)$this->getConditionFromTemplate();
+        $template = $this->getEbayDescriptionTemplate();
+
+        $requiredDescriptors = [];
+        $optionalDescriptors = [];
+
+        if ($condition === Description::CONDITION_EBAY_GRADED) {
+            $requiredDescriptors = [
+                Description::CONDITION_DESCRIPTOR_ID_PROFESSIONAL_GRADER
+                => $template->getConditionProfessionalGraderId(),
+                Description::CONDITION_DESCRIPTOR_ID_GRADE => $template->getConditionGradeId(),
+            ];
+
+            if ($certNumber = $template->retrieveConditionGradeCertificationNumber()) {
+                $optionalDescriptors[Description::CONDITION_DESCRIPTOR_ID_CERTIFICATION_NUMBER] = $certNumber;
+            }
+        }
+
+        if ($condition === Description::CONDITION_EBAY_UNGRADED) {
+            $requiredDescriptors = [
+                Description::CONDITION_DESCRIPTOR_ID_CARD_CONDITION => $template->getConditionGradeCardConditionId(),
+            ];
+        }
+
+        return [
+            'required_descriptors' => $requiredDescriptors,
+            'optional_descriptors' => $optionalDescriptors,
+        ];
     }
 
     /**

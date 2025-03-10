@@ -208,7 +208,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
         $this->addWarningMessage(
             __(
-                '%attribute_title%: Attribute(s) %attributes% were not found in this Product, ' .
+                '%attribute_title: Attribute(s) %attributes were not found in this Product, ' .
                 'and their values were not sent to the channel.',
                 [
                     'attribute_title' => __($title),

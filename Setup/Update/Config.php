@@ -403,7 +403,11 @@ class Config extends AbstractConfig
             ],
             'y25_m01' => [
                 'AddPaymentMethodDetailsColumnToAmazonOrder',
-            ]
+            ],
+            'y25_m02' => [
+                'DisableB2BForSomeAmazonMarketplaces',
+                'AddConditionDescriptorIntoEbayDescriptionTemplate',
+            ],
         ];
     }
 
@@ -493,6 +497,9 @@ class Config extends AbstractConfig
             \Ess\M2ePro\Setup\Update\y24_m12\ChangeColumnValueSizeInAttributeMappingTable::class,
 
             \Ess\M2ePro\Setup\Update\y25_m01\AddPaymentMethodDetailsColumnToAmazonOrder::class,
+
+            \Ess\M2ePro\Setup\Update\y25_m02\DisableB2BForSomeAmazonMarketplaces::class,
+            \Ess\M2ePro\Setup\Update\y25_m02\AddConditionDescriptorIntoEbayDescriptionTemplate::class,
         ];
     }
 

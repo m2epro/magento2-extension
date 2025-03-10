@@ -253,7 +253,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      *
      * @return array
      */
-    // todo PHPdoc should be changed
     protected function resolveVariationMpnIssue(array $data)
     {
         if (!$this->getIsVariationItem() || !$this->getConfigurator()->isVariationsAllowed()) {
@@ -569,6 +568,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
             return [];
         }
 
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Other $dataBuilder */
         $dataBuilder = $this->getDataBuilder('other');
         $data = $dataBuilder->getBuilderData();
 
@@ -582,6 +582,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     public function getConditionData(): array
     {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Action\DataBuilder\Condition $dataBuilder */
         $dataBuilder = $this->getDataBuilder('condition');
 
         return $dataBuilder->getBuilderData();

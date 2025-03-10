@@ -217,7 +217,10 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'After you <strong>Enable</strong> this option, you can provide the settings for
                     <strong>Business Price</strong> and <strong >Quantity Discounts</strong>
                     within M2E Pro Selling Policy.<br />
-                    <strong>Note:</strong> your Business Account must be approved by Amazon.'
+                    <strong>Note:</strong> your Business Account must be approved by Amazon.<br/>
+                    Countries where customers shop on Amazon Business -
+                    <strong>US, Canada, Mexico, UK, France, Germany, Italy, Spain, Japan,</strong>
+                    and <strong>India</strong>'
                 ),
             ]
         );

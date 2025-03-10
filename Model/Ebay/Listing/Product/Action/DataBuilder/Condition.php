@@ -17,15 +17,48 @@ class Condition extends AbstractModel
     private function getConditionData(): array
     {
         $this->searchNotFoundAttributes();
-        $data = $this->getEbayListingProduct()->getDescriptionTemplateSource()->getCondition();
+        $source = $this->getEbayListingProduct()
+                       ->getDescriptionTemplateSource();
+
+        $condition = $source->getCondition();
 
         if (!$this->processNotFoundAttributes('Condition')) {
             return [];
         }
 
-        return [
-            'item_condition' => $data,
+        $result = [
+            'item_condition' => $condition,
         ];
+
+        $descriptors = $this->getConditionDescriptors($source);
+        if (!empty($descriptors)) {
+            $result['item_condition_descriptors'] = $descriptors;
+        }
+
+        return $result;
+    }
+
+    private function getConditionDescriptors(\Ess\M2ePro\Model\Ebay\Template\Description\Source $source): array
+    {
+        $descriptors = [];
+        $conditionDescriptors = $source->getConditionDescriptors();
+
+        foreach ($conditionDescriptors['required_descriptors'] as $descriptorId => $gradeId) {
+            $descriptors[] = [
+                'name' => (string)$descriptorId,
+                'value' => (string)$gradeId,
+            ];
+        }
+
+        foreach ($conditionDescriptors['optional_descriptors'] as $descriptorId => $gradeVal) {
+            $descriptors[] = [
+                'name' => (string)$descriptorId,
+                'value' => null,
+                'additional_info' => $gradeVal,
+            ];
+        }
+
+        return $descriptors;
     }
 
     private function getConditionNoteData(): array

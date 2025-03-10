@@ -571,7 +571,13 @@ abstract class PriceCalculator extends AbstractModel
                 }
 
                 $tempValue = (float)$option->getMagentoProduct()->getSpecialPrice();
-                $tempValue <= 0 && $tempValue = (float)$option->getMagentoProduct()->getPrice();
+                if ($tempValue <= 0) {
+                    $tempValue = (float)$option->getMagentoProduct()->getPrice();
+                }
+
+                $qty = $this->getMagentoProduct()->getBundleDefaultQty($option->getProductId());
+
+                $tempValue *= $qty;
 
                 $value += $tempValue;
             }

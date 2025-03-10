@@ -4,6 +4,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Template\Description;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as ResourceDescription;
 
 class Data extends AbstractForm
 {
@@ -112,6 +113,8 @@ class Data extends AbstractForm
             ]
         );
 
+        // region Conditions
+
         $conditions = [
             [
                 'label' => __('New, New with tags, New with box, Brand New'),
@@ -167,7 +170,7 @@ class Data extends AbstractForm
             ],
             [
                 'label' => __('Good'),
-                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GOOD]
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GOOD],
             ],
             [
                 'label' => __('Acceptable'),
@@ -176,6 +179,14 @@ class Data extends AbstractForm
             [
                 'label' => __('For Parts or Not Working'),
                 'attrs' => ['attribute_code' => Description::CONDITION_EBAY_NOT_WORKING],
+            ],
+            [
+                'label' => __('Graded'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_GRADED],
+            ],
+            [
+                'label' => __('Ungraded'),
+                'attrs' => ['attribute_code' => Description::CONDITION_EBAY_UNGRADED],
             ],
         ];
 
@@ -330,6 +341,86 @@ class Data extends AbstractForm
                 'after_element_html' => $button->toHtml(),
             ]
         );
+
+        $professionalGraderValues = ['' => __('None')];
+        foreach (Description::getConditionalProfessionalGraderIdLabelMap() as $id => $label) {
+            $professionalGraderValues[] = [
+                'value' => $id,
+                'label' => __($label),
+            ];
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_professional_grader',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_professional_grader_tr',
+                'label' => __('Professional Grader'),
+                'title' => __('Professional Grader'),
+                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID),
+                'value' => $formData[ResourceDescription::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID],
+                'values' => $professionalGraderValues,
+                'required' => true,
+            ]
+        );
+
+        $gradeValues = ['' => __('None')];
+        foreach (Description::getConditionalGradeIdLabelMap() as $id => $label) {
+            $gradeValues[] = [
+                'value' => $id,
+                'label' => __($label),
+            ];
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_grade',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_grade_tr',
+                'label' => __('Grade'),
+                'title' => __('Grade'),
+                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_GRADE_ID),
+                'value' => $formData[ResourceDescription::COLUMN_CONDITION_GRADE_ID],
+                'values' => $gradeValues,
+                'required' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'condition_descriptor_certification_number',
+            'text',
+            [
+                'container_id' => 'condition_descriptor_certification_number_tr',
+                'label' => __('Certification Number'),
+                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER),
+                'value' => $formData[ ResourceDescription::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER],
+                'class' => 'M2ePro-validate-condition-descriptor-certification-number-length',
+            ]
+        );
+
+        $cardConditionValues = ['' => __('None')];
+        foreach (Description::getConditionalCardIdLabelMap() as $id => $val) {
+            $cardConditionValues[] = [
+                'value' => $id,
+                'label' => __($val),
+            ];
+        }
+
+        $fieldset->addField(
+            'condition_descriptor_card_condition',
+            self::SELECT,
+            [
+                'container_id' => 'condition_descriptor_card_condition_tr',
+                'label' => __('Card Condition'),
+                'title' => __('Card Condition'),
+                'name' => sprintf('description[%s]', ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID),
+                'value' => $formData[ResourceDescription::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID],
+                'values' => $cardConditionValues,
+                'required' => true,
+            ]
+        );
+
+        // endregion
 
         $fieldset = $form->addFieldset(
             'magento_block_ebay_template_description_form_data_image',
@@ -1414,16 +1505,19 @@ HTML
 
         $this->jsTranslator->addTranslations(
             [
-                'Adding Image' => $this->__('Adding Image'),
-                'Seller Notes must be less then 1000 symbols.' => $this->__(
+                'Adding Image' => __('Adding Image'),
+                'Seller Notes must be less then 1000 symbols.' => __(
                     'Seller Notes must be less then 1000 symbols.'
                 ),
-                'Custom Insertions' => $this->__('Custom Insertions'),
-                'Show Editor' => $this->__('Show Editor'),
-                'Hide Editor' => $this->__('Hide Editor'),
-                'Description Preview' => $this->__('Description Preview'),
-                'Please enter a valid Magento product ID.' => $this->__('Please enter a valid Magento product ID.'),
-                'Please enter Description Value.' => $this->__('Please enter Description Value.'),
+                'Certification Number must be less then 30 symbols.' => __(
+                    'Certification Number must be less then 30 symbols.'
+                ),
+                'Custom Insertions' => __('Custom Insertions'),
+                'Show Editor' => __('Show Editor'),
+                'Hide Editor' => __('Hide Editor'),
+                'Description Preview' => __('Description Preview'),
+                'Please enter a valid Magento product ID.' => __('Please enter a valid Magento product ID.'),
+                'Please enter Description Value.' => __('Please enter Description Value.'),
             ]
         );
 

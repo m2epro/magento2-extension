@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as DescriptionResource;
+
 class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
 {
     public function isDifferent(): bool
@@ -100,6 +102,10 @@ class Diff extends \Ess\M2ePro\Model\ActiveRecord\Diff
             'condition_attribute',
             'condition_note_mode',
             'condition_note_template',
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID,
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID,
         ];
 
         return $this->isSettingsDifferent($keys);

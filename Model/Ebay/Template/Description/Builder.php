@@ -1,25 +1,15 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 use Ess\M2ePro\Model\Ebay\Template\Description as Description;
+use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as DescriptionResource;
 
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
 {
-    /** @var \Magento\Framework\Filesystem\DriverPool */
-    private $driverPool;
-
-    /** @var \Magento\Framework\HTTP\PhpEnvironment\Request */
-    private $phpEnvironmentRequest;
-
-    /** @var \Ess\M2ePro\Helper\Data */
-    private $dataHelper;
+    private \Magento\Framework\Filesystem\DriverPool $driverPool;
+    private \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest;
+    private \Ess\M2ePro\Helper\Data $dataHelper;
 
     public function __construct(
         \Ess\M2ePro\Helper\Data $dataHelper,
@@ -36,8 +26,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         $this->dataHelper = $dataHelper;
     }
-
-    //########################################
 
     protected function prepareData()
     {
@@ -71,6 +59,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['description_template'] = $this->rawData['description_template'];
         }
 
+        // region Condition
         if (isset($this->rawData['condition_mode'])) {
             $data['condition_mode'] = (int)$this->rawData['condition_mode'];
         }
@@ -83,6 +72,26 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             $data['condition_attribute'] = $this->rawData['condition_attribute'];
         }
 
+        if ((int)$data[DescriptionResource::COLUMN_CONDITION_MODE] === Description::CONDITION_MODE_EBAY) {
+            if ((int)$data[DescriptionResource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_GRADED) {
+                $data[DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID] = (int)$this->getRequiredField(
+                    DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID
+                );
+                $data[DescriptionResource::COLUMN_CONDITION_GRADE_ID] = (int)$this->getRequiredField(
+                    DescriptionResource::COLUMN_CONDITION_GRADE_ID
+                );
+                $data[DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER] = $this->rawData[
+                    DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER
+                ];
+            }
+
+            if ((int)$data[DescriptionResource::COLUMN_CONDITION_VALUE] === Description::CONDITION_EBAY_UNGRADED) {
+                $data[DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID] = (int)$this->getRequiredField(
+                    DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID
+                );
+            }
+        }
+
         if (isset($this->rawData['condition_note_mode'])) {
             $data['condition_note_mode'] = (int)$this->rawData['condition_note_mode'];
         }
@@ -90,6 +99,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         if (isset($this->rawData['condition_note_template'])) {
             $data['condition_note_template'] = $this->rawData['condition_note_template'];
         }
+        // endregion
 
         if (isset($this->rawData['product_details'])) {
             $data['product_details'] = $this->rawData['product_details'];
@@ -297,7 +307,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
         return $data;
     }
 
-    //########################################
+    private function getRequiredField(string $key): string
+    {
+        if (empty($this->rawData[$key])) {
+            throw new \InvalidArgumentException("Required field '{$key}' is missing or empty.");
+        }
+
+        return $this->rawData[$key];
+    }
 
     public function getDefaultData()
     {
@@ -311,9 +328,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\AbstractBuilder
             'description_mode' => '',
             'description_template' => '',
 
-            'condition_mode' => Description::CONDITION_MODE_EBAY,
-            'condition_value' => Description::CONDITION_EBAY_NEW,
-            'condition_attribute' => '',
+            DescriptionResource::COLUMN_CONDITION_MODE => Description::CONDITION_MODE_EBAY,
+            DescriptionResource::COLUMN_CONDITION_VALUE => Description::CONDITION_EBAY_NEW,
+            DescriptionResource::COLUMN_CONDITION_ATTRIBUTE => '',
+
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID => null,
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID => null,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER => null,
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID => null,
 
             'condition_note_mode' => Description::CONDITION_NOTE_MODE_NONE,
             'condition_note_template' => '',

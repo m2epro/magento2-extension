@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Template;
 
 use Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description as DescriptionResource;
@@ -46,6 +40,13 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public const CONDITION_EBAY_GOOD = 5000;
     public const CONDITION_EBAY_ACCEPTABLE = 6000;
     public const CONDITION_EBAY_NOT_WORKING = 7000;
+    public const CONDITION_EBAY_GRADED = 27501;
+    public const CONDITION_EBAY_UNGRADED = 4001;
+
+    public const CONDITION_DESCRIPTOR_ID_PROFESSIONAL_GRADER = 27501;
+    public const CONDITION_DESCRIPTOR_ID_GRADE = 27502;
+    public const CONDITION_DESCRIPTOR_ID_CERTIFICATION_NUMBER = 27503;
+    public const CONDITION_DESCRIPTOR_ID_CARD_CONDITION = 40001;
 
     public const CONDITION_NOTE_MODE_NONE = 0;
     public const CONDITION_NOTE_MODE_CUSTOM = 1;
@@ -105,14 +106,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public const INSTRUCTION_TYPE_MAGENTO_STATIC_BLOCK_IN_DESCRIPTION_CHANGED = 'magento_static_block_in_description_changed';
 
-    protected $driverPool;
-
-    /**
-     * @var \Ess\M2ePro\Model\Ebay\Template\Description\Source[]
-     */
-    private $descriptionSourceModels = [];
-
-    //########################################
+    private \Magento\Framework\Filesystem\DriverPool $driverPool;
+    /** @var \Ess\M2ePro\Model\Ebay\Template\Description\Source[] */
+    private array $descriptionSourceModels = [];
 
     public function __construct(
         \Magento\Framework\Filesystem\DriverPool $driverPool,
@@ -126,7 +122,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->driverPool = $driverPool;
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -138,9 +133,9 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
             $resourceCollection,
             $data
         );
-    }
 
-    //########################################
+        $this->driverPool = $driverPool;
+    }
 
     public function _construct()
     {
@@ -156,7 +151,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -182,7 +177,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
                                             ->getSize();
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function save()
     {
@@ -191,7 +186,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return parent::save();
     }
 
-    //########################################
+    // ----------------------------------------
 
     public function delete()
     {
@@ -223,7 +218,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return $temp;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
@@ -245,7 +240,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return $this->descriptionSourceModels[$productId];
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -255,7 +250,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return (bool)$this->getData('is_custom_template');
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -430,7 +425,125 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return $attributes;
     }
 
-    //########################################
+    // ----------------------------------------
+
+    public function getConditionProfessionalGraderId(): int
+    {
+        $id = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_PROFESSIONAL_GRADER_ID
+        );
+
+        if ($id === null) {
+            throw new \RuntimeException('Condition Professional Grader ID not found');
+        }
+
+        return (int)$id;
+    }
+
+    public function getConditionGradeId(): int
+    {
+        $id = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_GRADE_ID
+        );
+
+        if ($id === null) {
+            throw new \RuntimeException('Condition Grade ID not found');
+        }
+
+        return (int)$id;
+    }
+
+    public function retrieveConditionGradeCertificationNumber(): ?string
+    {
+        return $this->getDataByKey(DescriptionResource::COLUMN_CONDITION_GRADE_CERTIFICATION_NUMBER);
+    }
+
+    public function getConditionGradeCardConditionId(): int
+    {
+        $id = $this->getDataByKey(
+            DescriptionResource::COLUMN_CONDITION_GRADE_CARD_CONDITION_ID
+        );
+
+        if ($id === null) {
+            throw new \RuntimeException('Grade Card Condition not found');
+        }
+
+        return (int)$id;
+    }
+
+    public static function getConditionalProfessionalGraderIdLabelMap(): array
+    {
+        return [
+            275010 => 'Professional Sports Authenticator (PSA)',
+            275011 => 'Beckett Collectors Club Grading (BCCG)',
+            275012 => 'Beckett Vintage Grading (BVG)',
+            275013 => 'Beckett Grading Services (BGS)',
+            275014 => 'Certified Sports Guaranty (CSG)',
+            275015 => 'Certified Guaranty Company (CGC)',
+            275016 => 'Sportscard Guaranty Corporation (SGC)',
+            275017 => 'K Sportscard Authentication (KSA)',
+            275018 => 'Gem Mint Authentication (GMA)',
+            275019 => 'Hybrid Grading Approach (HGA)',
+            2750110 => 'International Sports Authentication (ISA)',
+            2750111 => 'Professional Card Authenticator (PCA)',
+            2750112 => 'Gold Standard Grading (GSG)',
+            2750113 => 'Platin Grading Service (PGS)',
+            2750114 => 'MNT Grading (MNT)',
+            2750115 => 'Technical Authentication & Grading (TAG)',
+            2750116 => 'Rare Edition (Rare)',
+            2750117 => 'Revolution Card Grading (RCG)',
+            2750118 => 'Premier Card Grading (PCG)',
+            2750119 => 'Ace Grading (Ace)',
+            2750120 => 'Card Grading Australia (CGA)',
+            2750121 => 'Trading Card Grading (TCG)',
+            2750122 => 'ARK Grading (ARK)',
+            2750123 => 'Other',
+        ];
+    }
+
+    public static function getConditionalGradeIdLabelMap(): array
+    {
+        return [
+            275020 => '10',
+            275021 => '9.5',
+            275022 => '9',
+            275023 => '8.5',
+            275024 => '8',
+            275025 => '7.5',
+            275026 => '7',
+            275027 => '6.5',
+            275028 => '6',
+            275029 => '5.5',
+            2750210 => '5',
+            2750211 => '4.5',
+            2750212 => '4',
+            2750213 => '3.5',
+            2750214 => '3',
+            2750215 => '2.5',
+            2750216 => '2',
+            2750217 => '1.5',
+            2750218 => '1',
+            2750219 => 'Authentic',
+            2750220 => 'Authentic Altered',
+            2750221 => 'Authentic - Trimmed',
+            2750222 => 'Authentic - Coloured',
+        ];
+    }
+
+    public static function getConditionalCardIdLabelMap(): array
+    {
+        return [
+            400010 => 'Near Mint or Better',
+            400011 => 'Excellent',
+            400012 => 'Very Good',
+            400013 => 'Poor',
+            400015 => 'Lightly Played (Excellent)',
+            400016 => 'Moderately Played (Very Good)',
+            400017 => 'Heavily Played (Poor)',
+        ];
+    }
+
+    // ----------------------------------------
 
     /**
      * @return array
@@ -489,7 +602,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return $attributes;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return array
@@ -590,7 +703,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return $productDetails[$type]['attribute'];
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool
@@ -684,7 +797,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return $this->getGalleryType() == self::GALLERY_TYPE_PLUS;
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return int
@@ -909,7 +1022,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return (bool)$this->getData('use_supersize_images');
     }
 
-    //########################################
+    // ----------------------------------------
 
     /**
      * @return bool

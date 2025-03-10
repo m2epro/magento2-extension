@@ -36,6 +36,18 @@ define([
                 return value.length <= 1000;
             }, M2ePro.translator.translate('Seller Notes must be less then 1000 symbols.'));
 
+            jQuery.validator.addMethod('M2ePro-validate-condition-descriptor-certification-number-length', function(value) {
+
+                if (
+                    $('condition_value').value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_EBAY_GRADED')
+                    || value.length === 0
+                ) {
+                    return true;
+                }
+
+                return value.length <= 30;
+            }, M2ePro.translator.translate('Certification Number must be less then 30 symbols.'));
+
             jQuery.validator.addMethod('M2ePro-validate-magento-product-id', function(value) {
 
                 var isValidMagentoProductId = false;
@@ -200,12 +212,22 @@ define([
                 conditionValue = $('condition_value'),
                 conditionAttribute = $('condition_attribute');
 
+            self.hideAllConditionDescriptors();
+
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_MODE_NONE')) {
                 isConditionNoteNeeded = false;
             } else if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_MODE_EBAY')) {
                 self.updateHiddenValue(this, conditionValue);
                 conditionAttribute.value = '';
                 isConditionNoteNeeded = conditionValue.value != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_EBAY_NEW');
+
+                if (conditionValue.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_EBAY_GRADED')) {
+                    self.showGradedConditionDescriptors();
+                    isConditionNoteNeeded = false;
+                } else if (conditionValue.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::CONDITION_EBAY_UNGRADED')) {
+                    self.showUngradedConditionDescriptors();
+                    isConditionNoteNeeded = false;
+                }
             } else {
                 self.updateHiddenValue(this, conditionAttribute);
                 conditionValue.value = '';
@@ -219,6 +241,27 @@ define([
                 $('condition_note_tr').hide();
                 $('custom_condition_note_tr').hide();
             }
+        },
+
+        hideAllConditionDescriptors: function() {
+            $('condition_descriptor_professional_grader_tr').hide();
+            $('condition_descriptor_grade_tr').hide();
+            $('condition_descriptor_certification_number_tr').hide();
+            $('condition_descriptor_card_condition_tr').hide();
+        },
+
+        showGradedConditionDescriptors: function() {
+            $('condition_descriptor_professional_grader_tr').show();
+            $('condition_descriptor_grade_tr').show();
+            $('condition_descriptor_certification_number_tr').show();
+            $('condition_descriptor_card_condition_tr').hide();
+        },
+
+        showUngradedConditionDescriptors: function() {
+            $('condition_descriptor_professional_grader_tr').hide();
+            $('condition_descriptor_grade_tr').hide();
+            $('condition_descriptor_certification_number_tr').hide();
+            $('condition_descriptor_card_condition_tr').show();
         },
 
         condition_note_mode_change: function() {

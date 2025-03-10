@@ -63,9 +63,6 @@ define([
 
                 this.reloadParams = this.reloadParams || {};
 
-                console.log(this.reloadParams)
-                console.log(Form.serializeElements(elements))
-
                 for (var reloadParam in this.reloadParams) {
                     reloadParam.match('^rule|^hide') && delete this.reloadParams[reloadParam];
                 }
@@ -87,9 +84,6 @@ define([
                 if (advancedFilter.isNeedClearRuleForm(this.reloadParams)) {
                     advancedFilter.clearRuleForm(this.reloadParams)
                 }
-
-                console.log(this.reloadParams)
-                console.log(Form.serializeElements(elements))
 
                 this.reload(this.addVarToUrl(this.filterVar, base64_encode(Form.serializeElements(elements))));
                 advancedFilter.clearGridReloadParams(this.reloadParams);

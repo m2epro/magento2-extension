@@ -560,7 +560,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Walmart\Listing\Product\Variation
         $result = [];
         foreach ($magentoProductVariations['variations'] as $variation) {
             foreach ($variation as $option) {
-                $result[$option['option']] = (int)$option['option_id'];
+                if (isset($option['option_id'])) {
+                    $result[$option['option']] = (int)$option['option_id'];
+                }
             }
         }
 

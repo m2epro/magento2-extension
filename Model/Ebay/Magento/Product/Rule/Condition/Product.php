@@ -1,19 +1,39 @@
 <?php
 
-/**
- * @author     M2E Pro Developers Team
- * @copyright  M2E LTD
- * @license    Commercial use is forbidden
- */
-
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Condition;
 
-/**
- * Class \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Condition\Product
- */
 class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 {
-    //########################################
+    private \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate;
+
+    public function __construct(
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        \Magento\Backend\Model\UrlInterface $url,
+        \Magento\Eav\Model\Config $config,
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
+        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Magento\Framework\Locale\FormatInterface $localeFormat,
+        \Ess\M2ePro\Helper\Data $helperData,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Rule\Model\Condition\Context $context,
+        array $data = []
+    ) {
+        parent::__construct(
+            $url,
+            $config,
+            $attrSetCollection,
+            $productFactory,
+            $localeFormat,
+            $helperData,
+            $modelFactory,
+            $helperFactory,
+            $context,
+            $data
+        );
+
+        $this->localeDate = $localeDate;
+    }
 
     /**
      * @return array
@@ -44,8 +64,6 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
     }
 
     /**
-     * @param $filterId
-     *
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
     protected function getCustomFilterInstance($filterId, $isReadyToCache = true)
@@ -77,11 +95,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         return $model;
     }
 
-    //########################################
-
     /**
-     * @param mixed $validatedValue
-     *
      * @return bool
      */
     public function validateAttribute($validatedValue)
@@ -102,5 +116,45 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
         return parent::validateAttribute($validatedValue);
     }
 
-    //########################################
+    public function getValueParsed()
+    {
+        /**
+         * @see parent::validateAttribute()
+         * @see \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom\EbayStartDate::getValueByProductInstance()
+         * @see \Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom\EbayEndDate::getValueByProductInstance()
+         */
+        if (
+            $this->isAttribute('ebay_start_date')
+            || $this->isAttribute('ebay_end_date')
+        ) {
+            return $this->getTimestampValueParsed();
+        }
+
+        return parent::getValueParsed();
+    }
+
+    private function isAttribute(string $attribute): bool
+    {
+        return $this->getData('attribute') === $attribute;
+    }
+
+    private function getTimestampValueParsed(): int
+    {
+        if ($this->getData('value_parsed') !== null) {
+            return $this->getData('value_parsed');
+        }
+
+        $date = $this->localeDate->formatDate(
+            $this->getData('value'),
+            \IntlDateFormatter::MEDIUM,
+            true
+        );
+
+        $timestamp = (int)\Ess\M2ePro\Helper\Date::createDateGmt($date)
+                                                 ->format('U');
+
+        $this->setData('value_parsed', $timestamp);
+
+        return $timestamp;
+    }
 }

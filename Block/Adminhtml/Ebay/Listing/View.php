@@ -113,19 +113,6 @@ class View extends AbstractContainer
         );
         // ---------------------------------------
 
-        // ---------------------------------------
-        //$this->addButton(
-        //    'add_products',
-        //    [
-        //        'id' => 'add_products',
-        //        'label' => $this->__('Add Products'),
-        //        'class' => 'add',
-        //        'button_class' => '',
-        //        'class_name' => \Ess\M2ePro\Block\Adminhtml\Magento\Button\DropDown::class,
-        //        'options' => $this->getAddProductsDropDownItems(),
-        //    ]
-        //);
-
         $newWizardIndexPageUrl = $this->getUrl(
             '*/ebay_listing_wizard/create',
             [
